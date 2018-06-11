@@ -10,49 +10,27 @@
 #include <netdb.h>
 #include <errno.h>
 #include <time.h>
+#include "sha256.h"
+#include <arpa/inet.h>
 
-#define HELLO_PORT 12345
+#define BITCOIN_PORT 18444
 
 static const char* USAGE = "USAGE: injector <server_hostname>\n";
 
-/* all state for hello is stored here */
-typedef struct _Hello Hello;
-struct _Hello {
-    /* the epoll descriptor to which we will add our sockets.
-     * we use this descriptor with epoll to watch events on our sockets. */
-    int ed;
+#define LOG_ERROR 1
+#define LOG_WARNING 2
+#define LOG_INFO 3
+#define LOG_DEBUG 4
 
-    /* track if our client got a response and we can exit */
-    int isDone;
-
-    /* storage for client mode */
-    struct {
-        int sd;
-        char* serverHostName;
-        in_addr_t serverIP;
-    } client;
-
-    /* storage for server mode */
-    struct {
-        int sd;
-    } server;
-};
-
-#define HELLO_LOG_ERROR 1
-#define HELLO_LOG_WARNING 2
-#define HELLO_LOG_INFO 3
-#define HELLO_LOG_DEBUG 4
-
-/* our hello code only relies on a log function, so let's supply that implementation here */
-static void _hello_log(int level, const char* functionName, const char* format, ...) {
+static void _log(int level, const char* functionName, const char* format, ...) {
     char* levelString = "unknown";
-    if(level == HELLO_LOG_ERROR) {
+    if(level == LOG_ERROR) {
         levelString = "error";
-    } else if(level == HELLO_LOG_WARNING) {
+    } else if(level == LOG_WARNING) {
         levelString = "warning";
-    } else if(level == HELLO_LOG_INFO) {
+    } else if(level == LOG_INFO) {
         levelString = "info";
-    } else if(level == HELLO_LOG_DEBUG) {
+    } else if(level == LOG_DEBUG) {
         levelString = "debug";
     }
 
@@ -66,268 +44,236 @@ static void _hello_log(int level, const char* functionName, const char* format, 
     printf("%s", "\n");
 }
 
-static int _hello_startClient(Hello* h, char* serverHostname) {
-    h->client.serverHostName = strndup(serverHostname, (size_t) 50);
+static int
+connect_to_server (char *serverHostname)
+{
+    int s, sfd;
 
-    /* get the address of the server */
     struct addrinfo* serverInfo;
-    int res = getaddrinfo(h->client.serverHostName, NULL, NULL, &serverInfo);
-    if (res == -1) {
-        _hello_log(HELLO_LOG_ERROR, __FUNCTION__, "unable to start client: error in getaddrinfo");
+    s = getaddrinfo(serverHostname, NULL, NULL, &serverInfo);
+    if (s != 0) {
+        _log(LOG_ERROR, __FUNCTION__, "unable to start client: error in getaddrinfo");
         return -1;
     }
 
-    h->client.serverIP = ((struct sockaddr_in*) (serverInfo->ai_addr))->sin_addr.s_addr;
+    in_addr_t serverIP = ((struct sockaddr_in*) (serverInfo->ai_addr))->sin_addr.s_addr;
     freeaddrinfo(serverInfo);
 
     /* create the client socket and get a socket descriptor */
-    h->client.sd = socket(AF_INET, (SOCK_STREAM | SOCK_NONBLOCK), 0);
-    if (h->client.sd == -1) {
-        _hello_log(HELLO_LOG_ERROR, __FUNCTION__, "unable to start client: error in socket");
+    sfd = socket(AF_INET, (SOCK_STREAM | SOCK_NONBLOCK), 0);
+    if (sfd == -1) {
+        _log(LOG_ERROR, __FUNCTION__, "unable to start client: error in socket");
         return -1;
     }
 
-    /* our client socket address information for connecting to the server */
     struct sockaddr_in serverAddress;
     memset(&serverAddress, 0, sizeof(serverAddress));
     serverAddress.sin_family = AF_INET;
-    serverAddress.sin_addr.s_addr = h->client.serverIP;
-    serverAddress.sin_port = htons(HELLO_PORT);
+    serverAddress.sin_addr.s_addr = serverIP;
+    serverAddress.sin_port = htons(BITCOIN_PORT);
 
     /* connect to server. since we are non-blocking, we expect this to return EINPROGRESS */
-    res = connect(h->client.sd, (struct sockaddr *) &serverAddress, sizeof(serverAddress));
+    int res = connect(sfd, (struct sockaddr *) &serverAddress, sizeof(serverAddress));
     if (res == -1 && errno != EINPROGRESS) {
-        _hello_log(HELLO_LOG_ERROR, __FUNCTION__, "unable to start client: error in connect");
+        _log(LOG_ERROR, __FUNCTION__, "unable to start client: error in connect");
         return -1;
     }
 
-    /* specify the events to watch for on this socket.
-     * the client wants to know when it can send a hello message. */
-    struct epoll_event ev;
-    ev.events = EPOLLOUT;
-    ev.data.fd = h->client.sd;
-
-    /* start watching the client socket */
-    res = epoll_ctl(h->ed, EPOLL_CTL_ADD, h->client.sd, &ev);
-    if (res == -1) {
-        _hello_log(HELLO_LOG_ERROR, __FUNCTION__, "unable to start client: error in epoll_ctl");
-        return -1;
-    }
-
-    /* success! */
-    return 0;
+    return sfd;
 }
 
-static void _hello_free(Hello* h) {
-    assert(h);
+static void make_message(unsigned char *msg, unsigned int magic, const char *command, const char *payload, unsigned payload_size) {
+    int message_size = 4 + 12 + 4 + 4 + payload_size;
 
-    if (h->client.sd)
-        close(h->client.sd);
-    if (h->client.serverHostName)
-        free(h->client.serverHostName);
-    if (h->ed)
-        close(h->ed);
+    /* calculate checksum of the message */
+    BYTE buf[SHA256_BLOCK_SIZE];
+    BYTE checksum[SHA256_BLOCK_SIZE];
+    SHA256_CTX ctx;
+    sha256_init(&ctx);
+    sha256_update(&ctx, payload, payload_size);
+    sha256_final(&ctx, buf);
 
-    free(h);
+    sha256_init(&ctx);
+    sha256_update(&ctx, buf, SHA256_BLOCK_SIZE);
+    sha256_final(&ctx, checksum);
+    
+
+    /* create message of bitcoin protocol */
+    memcpy(msg, &magic, sizeof(int));
+    memcpy(msg+4, command, 12);
+    memcpy(msg+4+12, &payload_size, sizeof(unsigned));
+    memcpy(msg+4+12+4, checksum, 4);
+    memcpy(msg+4+12+4+4, payload, payload_size);
+
+    /* print created message */
+    printf("msg=");
+    for (int i = 0; i < message_size; i++) printf("%02x", msg[i]);
+    printf("\n");
+
+    return;
 }
 
-static Hello* _hello_new(int argc, char* argv[]) {
-    if (argc != 2) {
-        _hello_log(HELLO_LOG_WARNING, __FUNCTION__, USAGE);
-        return NULL;
+unsigned long long llrand() {
+    unsigned long long r = 0;
+
+    for (int i = 0; i < 5; ++i) {
+        r = (r << 15) | (rand() & 0x7FFF);
     }
 
-    /* use epoll to asynchronously watch events for all of our sockets */
-    int mainEpollDescriptor = epoll_create(1);
-    if (mainEpollDescriptor == -1) {
-        _hello_log(HELLO_LOG_ERROR, __FUNCTION__, "Error in main epoll_create");
-        close(mainEpollDescriptor);
-        return NULL;
-    }
-
-    /* get memory for the new state */
-    Hello* h = calloc(1, sizeof(Hello));
-    assert(h);
-
-    h->ed = mainEpollDescriptor;
-    h->isDone = 0;
-
-    /* extract the server hostname from argv if in client mode */
-    int isFail = 0;
-    isFail = _hello_startClient(h, argv[1]);
-
-    if (isFail) {
-        _hello_free(h);
-        return NULL;
-    } else {
-        return h;
-    }
-}
-
-static void _hello_activateClient(Hello* h, int sd, uint32_t events) {
-    ssize_t numBytes = 0;
-    char message[10];
-    assert(h->client.sd == sd);
-
-    if (events & EPOLLOUT) {
-        _hello_log(HELLO_LOG_INFO, __FUNCTION__, "EPOLLOUT is set");
-    }
-    if (events & EPOLLIN) {
-        _hello_log(HELLO_LOG_INFO, __FUNCTION__, "EPOLLIN is set");
-    }
-
-    /* to keep things simple, there is explicitly no resilience here.
-     * we allow only one chance to send the message and one to receive the response.
-     */
-
-    if (events & EPOLLOUT) {
-        /* the kernel can accept data from us,
-         * and we care because we registered EPOLLOUT on sd with epoll */
-
-        /* prepare the message */
-        memset(message, 0, (size_t) 10);
-        snprintf(message, 10, "%s", "Hello?");
-
-        /* send the message */
-        numBytes = send(sd, message, (size_t) 6, 0);
-
-        /* log result */
-        if (numBytes == 6) {
-            _hello_log(HELLO_LOG_INFO, __FUNCTION__, "successfully sent '%s' message", message);
-        } else {
-            _hello_log(HELLO_LOG_WARNING, __FUNCTION__, "unable to send message");
-        }
-
-        /* tell epoll we don't care about writing anymore */
-        struct epoll_event ev;
-        memset(&ev, 0, sizeof(struct epoll_event));
-        ev.events = EPOLLIN;
-        ev.data.fd = sd;
-        epoll_ctl(h->ed, EPOLL_CTL_MOD, sd, &ev);
-    } else if (events & EPOLLIN) {
-        /* there is data available to read from the kernel,
-         * and we care because we registered EPOLLIN on sd with epoll */
-
-        /* prepare to accept the message */
-        memset(message, 0, (size_t) 10);
-
-        numBytes = recv(sd, message, (size_t) 6, 0);
-
-        /* log result */
-        if (numBytes > 0) {
-            _hello_log(HELLO_LOG_INFO, __FUNCTION__, "successfully received '%s' message",
-                    message);
-        } else {
-            _hello_log(HELLO_LOG_WARNING, __FUNCTION__, "unable to receive message");
-        }
-
-        /* tell epoll we no longer want to watch this socket */
-        epoll_ctl(h->ed, EPOLL_CTL_DEL, sd, NULL);
-
-        close(sd);
-        h->client.sd = 0;
-        h->isDone = 1;
-    }
-}
-
-static int _hello_getEpollDescriptor(Hello* h) {
-    assert(h);
-    return h->ed;
-}
-static int _hello_isDone(Hello* h) {
-    assert(h);
-    return h->isDone;
-}
-
-static void _hello_ready(Hello* h) {
-    assert(h);
-
-    /* collect the events that are ready */
-    struct epoll_event epevs[10];
-    int nfds = epoll_wait(h->ed, epevs, 10, 0);
-    if (nfds == -1) {
-        _hello_log(HELLO_LOG_ERROR, __FUNCTION__, "error in epoll_wait");
-        return;
-    }
-
-    /* activate correct component for every socket thats ready */
-    for (int i = 0; i < nfds; i++) {
-        int d = epevs[i].data.fd;
-        uint32_t e = epevs[i].events;
-        _hello_activateClient(h, d, e);
-    }
+    return r & 0xFFFFFFFFFFFFFFFFULL;
 }
 
 int main(int argc, char *argv[]) {
-    _hello_log(HELLO_LOG_INFO, __FUNCTION__, "Starting Hello program");
+    _log(LOG_INFO, __FUNCTION__, "Starting program");
 
-    /* create the new state according to user inputs */
-    Hello* helloState = _hello_new(argc, argv);
-    if (!helloState) {
-        _hello_log(HELLO_LOG_INFO, __FUNCTION__, "Error initializing new Hello instance");
+    /* create network socket to bitcoin peer */
+    int sfd = connect_to_server(argv[1]);
+
+    unsigned int magic = 0xdab5bffa;
+    char command[12];
+
+    /* create version message payload */
+    int version = 70015;
+    uint64_t services = 0;
+    int64_t timestamp = (int64_t)time(NULL);
+    uint32_t ipaddr = inet_addr("127.0.0.1");
+    uint16_t port = htons(18444);
+    uint64_t nonce = llrand();
+    BYTE user_agent_bytes = 0;
+    int32_t start_height = 0;
+    BYTE relay = 1;
+
+    int ver_payload_size = 4+8+8+26+26+8+1+4+1;
+    BYTE ver_payload[ver_payload_size];
+    memcpy(ver_payload, &version, sizeof(int));
+    memcpy(ver_payload+4, &services, sizeof(uint64_t));
+    memcpy(ver_payload+4+8, &timestamp, sizeof(int64_t));
+    memcpy(ver_payload+4+8+8, &services, sizeof(uint64_t));
+    const char prefix_ipv4[12] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff};
+    memcpy(ver_payload+4+8+8+8, prefix_ipv4 ,12);
+    memcpy(ver_payload+4+8+8+8+12, &ipaddr, sizeof(uint32_t));
+    memcpy(ver_payload+4+8+8+8+12+4, &port, sizeof(uint16_t));
+    memcpy(ver_payload+4+8+8+26, &services, sizeof(uint64_t));
+    memcpy(ver_payload+4+8+8+26+8, prefix_ipv4 ,12);
+    memcpy(ver_payload+4+8+8+26+8+12, &ipaddr, sizeof(uint32_t));
+    memcpy(ver_payload+4+8+8+26+8+12+4, &port, sizeof(uint16_t));
+    memcpy(ver_payload+4+8+8+26+26, &nonce, sizeof(uint64_t));
+    memcpy(ver_payload+4+8+8+26+26+8, &user_agent_bytes, sizeof(BYTE));
+    memcpy(ver_payload+4+8+8+26+26+8+1, &start_height, sizeof(int32_t));
+    memcpy(ver_payload+4+8+8+26+26+8+1+4, &relay, sizeof(BYTE));
+    printf("ver_payload=");
+    for (int i = 0; i < ver_payload_size; i++) printf("%02x", ver_payload[i]);
+    printf("\n");
+
+    /* create version message */
+    bzero(command, 12);
+    sprintf(command, "version");
+    int msg_size = 4 + 12 + 4 + 4 + ver_payload_size;
+    unsigned char *version_msg = (unsigned char *)malloc(msg_size);
+    make_message(version_msg, magic, command, ver_payload, ver_payload_size);
+    printf("ver_message=");
+    for (int i = 0; i < msg_size; i++) printf("%02x", version_msg[i]);
+    printf("\n");
+
+    /* send version message to bitcoin peer */
+    int numBytes = send (sfd, version_msg, msg_size, 0);
+    if ( numBytes != msg_size) {
+        _log(LOG_ERROR, __FUNCTION__, "Error while write to socket");
         return -1;
     }
-
-    /* now we need to watch all of the hello descriptors in our main loop
-     * so we know when we can wait on any of them without blocking. */
-    int mainepolld = epoll_create(1);
-    if (mainepolld == -1) {
-        _hello_log(HELLO_LOG_INFO, __FUNCTION__, "Error in main epoll_create");
-        close(mainepolld);
-        return -1;
+    else {
+        _log(LOG_INFO, __FUNCTION__, "Sent version message to peer");
+        free(version_msg);
     }
 
-    /* hello has one main epoll descriptor that watches all of its sockets,
-     * so we now register that descriptor so we can watch for its events */
-    struct epoll_event mainevent;
-    mainevent.events = EPOLLIN | EPOLLOUT;
-    mainevent.data.fd = _hello_getEpollDescriptor(helloState);
-    if (!mainevent.data.fd) {
-        _hello_log(HELLO_LOG_INFO, __FUNCTION__, "Error retrieving hello epoll descriptor");
-        close(mainepolld);
-        return -1;
-    }
-    epoll_ctl(mainepolld, EPOLL_CTL_ADD, mainevent.data.fd, &mainevent);
-
-    /* main loop - wait for events from the hello descriptors */
-    struct epoll_event events[100];
-    int nReadyFDs;
-    _hello_log(HELLO_LOG_INFO, __FUNCTION__, "entering main loop to watch descriptors");
-
+    /* receive version reply */
+    char message[1000];
+    bzero(message, 1000);
+    int n = 0;
+    int fail_count = 0;
     while (1) {
-        /* wait for some events */
-        _hello_log(HELLO_LOG_INFO, __FUNCTION__, "waiting for events");
-        nReadyFDs = epoll_wait(mainepolld, events, 100, -1);
-        if (nReadyFDs == -1) {
-            _hello_log(HELLO_LOG_INFO, __FUNCTION__, "Error in client epoll_wait");
-            return -1;
+        while ( (n = recv(sfd, message, sizeof(message)-1, 0)) > 0 ){
+            printf("numBytes received=%d, message=[%s]\n", n, message);
         }
-
-        /* activate if something is ready */
-        _hello_log(HELLO_LOG_INFO, __FUNCTION__, "processing event");
-        if (nReadyFDs > 0) {
-            _hello_ready(helloState);
-        }
-
-        /* break out if hello is done */
-        if (_hello_isDone(helloState)) {
-            break;
+        if (n == -1) {
+            sleep(1);
+            fail_count++;
+            if (fail_count == 3)
+                break;
         }
     }
+    printf ("n=%d\n", n);
 
-
-    _hello_log(HELLO_LOG_INFO, __FUNCTION__, "finished main loop, cleaning up");
-
-    /* de-register the hello epoll descriptor */
-    mainevent.data.fd = _hello_getEpollDescriptor(helloState);
-    if (mainevent.data.fd) {
-        epoll_ctl(mainepolld, EPOLL_CTL_DEL, mainevent.data.fd, &mainevent);
+    /* create verack message */
+    bzero(command, 12);
+    sprintf(command, "verack");
+    char *empty_payload = "";
+    msg_size = 4 + 12 + 4 + 4 + strlen(empty_payload);
+    char *verack_msg = (char *)malloc(msg_size);
+    make_message(verack_msg, magic, command, empty_payload, strlen(empty_payload));
+    
+    /* send verack message to bitcoin peer */
+    numBytes = send (sfd, verack_msg, msg_size, 0);
+    if ( numBytes != msg_size) {
+        _log(LOG_ERROR, __FUNCTION__, "Error while write to socket");
+        return -1;
+    }
+    else {
+        _log(LOG_INFO, __FUNCTION__, "Sent verack to peer");
+        free(verack_msg);
     }
 
-    /* cleanup and close */
-    close(mainepolld);
-    _hello_free(helloState);
+    /* receive verack reply */
+    bzero(message, 1000);
+    n = 0;
+    fail_count = 0;
+    while (1) {
+        while ( (n = recv(sfd, message, sizeof(message)-1, 0)) > 0 ){
+            printf("numBytes received=%d, message=[%s]\n", n, message);
+        }
+        if (n == -1) {
+            sleep(1);
+            fail_count++;
+            if (fail_count == 3)
+                break;
+        }
+    }
+    printf ("n=%d\n", n);
 
-    _hello_log(HELLO_LOG_INFO, __FUNCTION__, "exiting cleanly");
+    /* create generate message */
+    bzero(command, 12);
+    sprintf(command, "generate");
+    msg_size = 4 + 12 + 4 + 4 + strlen(empty_payload);
+    char *generate_msg = (char *)malloc(msg_size);
+    make_message(generate_msg, magic, command, empty_payload, strlen(empty_payload));
+
+    /* send generate message to bitcoin peer */
+    numBytes = send (sfd, generate_msg, msg_size, 0);
+    if ( numBytes != msg_size) {
+        _log(LOG_ERROR, __FUNCTION__, "Error while write to socket");
+        return -1;
+    }
+    else {
+        _log(LOG_INFO, __FUNCTION__, "Sent generate message to peer");
+        free(generate_msg);
+    }
+
+    bzero(message, 1000);
+    n = 0;
+    fail_count = 0;
+    while (1) {
+        while ( (n = recv(sfd, message, sizeof(message)-1, 0)) > 0 ){
+            printf("numBytes received=%d, message=[%s]\n", n, message);
+        }
+        if (n == -1) {
+            sleep(1);
+            fail_count++;
+            if (fail_count == 3)
+                break;
+        }
+    }
+    printf ("n=%d\n", n);
+
+    return 0;
 }
 

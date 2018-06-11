@@ -47,7 +47,7 @@ if (${SHADOW} STREQUAL "ON")
   # target_link_libraries(shadow-plugin-hello)
   install(TARGETS shadow-injector-bitcoin DESTINATION plugins)
 else (${SHADOW} STREQUAL "ON") 
-    add_executable(injector injector.c)
+  add_executable(injector injector.c sha256.c)
 endif (${SHADOW} STREQUAL "ON") 
 
 #if (${SHADOW} STREQUAL "OFF")

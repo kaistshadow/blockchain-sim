@@ -47,14 +47,24 @@ def setup_bitcoin_plugin():
     os.system("git -C %s checkout ." % bitcoin_path)
     os.system("git -C %s checkout v0.16.0" % bitcoin_path)
     os.system("git -C %s clean -d -f -x" % bitcoin_path)
-    os.system("cd %s; ./autogen.sh; ./configure --disable-wallet; make -C src obj/build.h; make -C src/secp256k1 src/ecmult_static_context.h"% bitcoin_path)
+    os.system("cd %s; ./autogen.sh; ./configure --disable-wallet --enable-debug; make -C src obj/build.h; make -C src/secp256k1 src/ecmult_static_context.h"% bitcoin_path)
     
     # compile and install bitcoin plugin
-    if not os.path.exists("plugins/shadow-plugin-bitcoin/DisableSanityCheck.patch"):
-        print "No appropriate patch exists"
-        exit(1)
-    else:
-        os.system("cd %s; git apply ../../DisableSanityCheck.patch" % bitcoin_path)
+    if "v0.15.0" in check_output(["git", "-C", bitcoin_path, "status"]):
+        if not os.path.exists("plugins/shadow-plugin-bitcoin/DisableSanityCheck_v0.15.0.patch") or not os.path.exists("plugins/shadow-plugin-bitcoin/HandleGeneratePacket_v0.15.0.patch"):
+            print "No appropriate patch exists"
+            exit(1)
+        else:
+            os.system("cd %s; git apply ../../DisableSanityCheck_v0.15.0.patch" % bitcoin_path)
+            os.system("cd %s; git apply ../../HandleGeneratePacket_v0.15.0.patch" % bitcoin_path)
+    elif "v0.16.0" in check_output(["git", "-C", bitcoin_path, "status"]):
+        if not os.path.exists("plugins/shadow-plugin-bitcoin/DisableSanityCheck_v0.16.0.patch") or not os.path.exists("plugins/shadow-plugin-bitcoin/HandleGeneratePacket_v0.16.0.patch"):
+            print "No appropriate patch exists"
+            exit(1)
+        else:
+            os.system("cd %s; git apply ../../DisableSanityCheck_v0.16.0.patch" % bitcoin_path)
+            os.system("cd %s; git apply ../../HandleGeneratePacket_v0.16.0.patch" % bitcoin_path)
+        
 
     build_path = "plugins/shadow-plugin-bitcoin/build"
     os.system("cd %s; cmake ../; make; make install" % build_path)

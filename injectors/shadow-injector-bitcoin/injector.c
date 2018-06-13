@@ -13,7 +13,8 @@
 #include "sha256.h"
 #include <arpa/inet.h>
 
-#define BITCOIN_PORT 18444
+/* #define BITCOIN_PORT 18444 */
+#define BITCOIN_PORT 8333
 
 static const char* USAGE = "USAGE: injector <server_hostname>\n";
 
@@ -60,7 +61,7 @@ connect_to_server (char *serverHostname)
     freeaddrinfo(serverInfo);
 
     /* create the client socket and get a socket descriptor */
-    sfd = socket(AF_INET, (SOCK_STREAM | SOCK_NONBLOCK), 0);
+    sfd = socket(AF_INET, (SOCK_STREAM), IPPROTO_TCP);
     if (sfd == -1) {
         _log(LOG_ERROR, __FUNCTION__, "unable to start client: error in socket");
         return -1;
@@ -78,7 +79,13 @@ connect_to_server (char *serverHostname)
         _log(LOG_ERROR, __FUNCTION__, "unable to start client: error in connect");
         return -1;
     }
-
+    else if (res == -1) {
+        _log(LOG_ERROR, __FUNCTION__, "unable to start client: error in connect");
+        return -1;
+    }
+    else {
+        _log(LOG_INFO, __FUNCTION__, "connect established with socketfd %d", sfd);
+    }
     return sfd;
 }
 
@@ -129,7 +136,8 @@ int main(int argc, char *argv[]) {
     /* create network socket to bitcoin peer */
     int sfd = connect_to_server(argv[1]);
 
-    unsigned int magic = 0xdab5bffa;
+    unsigned int magic = 0xd9b4bef9; // mainnet
+    /* unsigned int magic = 0xdab5bffa; // testnet */
     char command[12];
 
     /* create version message payload */
@@ -137,7 +145,7 @@ int main(int argc, char *argv[]) {
     uint64_t services = 0;
     int64_t timestamp = (int64_t)time(NULL);
     uint32_t ipaddr = inet_addr("127.0.0.1");
-    uint16_t port = htons(18444);
+    uint16_t port = htons(BITCOIN_PORT);
     uint64_t nonce = llrand();
     BYTE user_agent_bytes = 0;
     int32_t start_height = 0;
@@ -191,18 +199,24 @@ int main(int argc, char *argv[]) {
     bzero(message, 1000);
     int n = 0;
     int fail_count = 0;
-    while (1) {
-        while ( (n = recv(sfd, message, sizeof(message)-1, 0)) > 0 ){
-            printf("numBytes received=%d, message=[%s]\n", n, message);
-        }
-        if (n == -1) {
-            sleep(1);
-            fail_count++;
-            if (fail_count == 3)
-                break;
-        }
+    n = recv(sfd, message, sizeof(message)-1, 0);
+    if (n > 0) {
+        printf("numBytes received=%d, message=[%s]\n", n, message);
     }
-    printf ("n=%d\n", n);
+    else if (n == -1) {
+        _log(LOG_ERROR, __FUNCTION__, "Error while read socket");
+    }
+    /* while (1) { */
+    /*     while ( (n = recv(sfd, message, sizeof(message)-1, 0)) > 0 ){ */
+    /*         printf("numBytes received=%d, message=[%s]\n", n, message); */
+    /*     } */
+    /*     if (n == -1) { */
+    /*         sleep(1); */
+    /*         fail_count++; */
+    /*         if (fail_count == 3) */
+    /*             break; */
+    /*     } */
+    /* } */
 
     /* create verack message */
     bzero(command, 12);
@@ -226,19 +240,13 @@ int main(int argc, char *argv[]) {
     /* receive verack reply */
     bzero(message, 1000);
     n = 0;
-    fail_count = 0;
-    while (1) {
-        while ( (n = recv(sfd, message, sizeof(message)-1, 0)) > 0 ){
-            printf("numBytes received=%d, message=[%s]\n", n, message);
-        }
-        if (n == -1) {
-            sleep(1);
-            fail_count++;
-            if (fail_count == 3)
-                break;
-        }
+    n = recv(sfd, message, sizeof(message)-1, 0);
+    if (n > 0) {
+        printf("numBytes received=%d, message=[%s]\n", n, message);
     }
-    printf ("n=%d\n", n);
+    else if (n == -1) {
+        _log(LOG_ERROR, __FUNCTION__, "Error while read socket");
+    }
 
     /* create generate message */
     bzero(command, 12);
@@ -260,19 +268,13 @@ int main(int argc, char *argv[]) {
 
     bzero(message, 1000);
     n = 0;
-    fail_count = 0;
-    while (1) {
-        while ( (n = recv(sfd, message, sizeof(message)-1, 0)) > 0 ){
-            printf("numBytes received=%d, message=[%s]\n", n, message);
-        }
-        if (n == -1) {
-            sleep(1);
-            fail_count++;
-            if (fail_count == 3)
-                break;
-        }
+    n = recv(sfd, message, sizeof(message)-1, 0);
+    if (n > 0) {
+        printf("numBytes received=%d, message=[%s]\n", n, message);
     }
-    printf ("n=%d\n", n);
+    else if (n == -1) {
+        _log(LOG_ERROR, __FUNCTION__, "Error while read socket");
+    }
 
     return 0;
 }

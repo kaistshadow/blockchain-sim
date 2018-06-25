@@ -15,7 +15,7 @@ Blockchain-sim is now under development on top of the open-source discrete-event
 
 # How to run
 
-Currently, we only support bitcoin (v1.16.0, v1.15.0) and the simulation for basic P2P network connection. Arbitrary generation of the transactions or blocks and its propagation are not yet tested.
+Currently, we only support bitcoin (v0.16.0, v0.15.0) and the simulation for basic P2P network connection. Arbitrary generation of the transactions or blocks and its propagation are not yet tested.
 
 To install the necessary parts (Shadow network simulator and bitcoin parts) and to run the basic experiments (P2P network connection of the bitcoin nodes), we built a python script.
 

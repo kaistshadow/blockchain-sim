@@ -1,10 +1,12 @@
 import os
 import lxml.etree as ET
 from subprocess import check_output
+import argparse
 
 def setup_shadow():
     if os.path.exists(os.path.expanduser("~/.shadow/bin")):
         print "Shadow simulator is already installed"
+        print "If you want to force re-installation, remove the installed shadow by erasing ~/.shadow directory"
     else:
         print "Installing..."
         os.system("sudo apt-get install libc-dbg")
@@ -112,9 +114,15 @@ def run_shadow_bitcoin_multiple_node(node_num, worker_num):
     os.system("cd %s; shadow -w %d ../resource/%s | tee shadow.result/shadow_%d_%d.result" % (run_path, worker_num, "example_multiple_generated.xml", node_num, worker_num))
 
 if __name__ == '__main__':
-    setup_shadow()
+    parser = argparse.ArgumentParser(description='Script for installation and simulation')
+    parser.add_argument("--install", action="store_true", help="Install the shadow simulator and bitcoin-plugin")
 
-    setup_bitcoin_plugin()
+    args = parser.parse_args()
+    OPT_INSTALL = args.install
+    
+    if OPT_INSTALL:
+        setup_shadow()
+        setup_bitcoin_plugin()
 
     run_shadow_bitcoin_example()
 

@@ -21,9 +21,10 @@ Currently, we only support bitcoin (v0.16.0, v0.15.0) and the simulation for bas
 
 To install the necessary parts (Shadow network simulator and bitcoin parts) and to run the basic experiments (P2P network connection of the bitcoin nodes), we built a python script.
 
-You can exclude `--install` option after the first run. (Without `--install` option, the script only initiates a simulation using pre-installed simulator and bitcoin binary.)
-
+Run the following commands.
 ```
+git clone https://github.com/kaistshadow/blockchain-sim
+cd blockchain-sim
 python setup.py --install
 ```
 
@@ -31,5 +32,6 @@ If following message is printed at screen, the simulation was successful.
 ```
 ** Stopping Shadow, returning code 0 (success)
 ```
-
 After running a script, you can check the result of stdout, stderr for each node in the directory `plugins/shadow-plugin-bitcoin/run/shadow.data/hosts/`.
+
+You can exclude `--install` option after the first run. (Without `--install` option, the script only initiates a simulation using pre-installed simulator and bitcoin binary.)

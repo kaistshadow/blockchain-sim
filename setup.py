@@ -14,11 +14,10 @@ def setup_shadow():
         if "Ubuntu 14.04" in check_output(["bash", "-c", "cat /etc/lsb-release | grep DESCRIPTION"]):
             os.system("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0 libigraph0-dev cmake make xz-utils")
             print "Installing glib manually..."
-            if not os.path.exists("./glib-2.42.1"):
-                os.system("wget http://ftp.gnome.org/pub/gnome/sources/glib/2.42/glib-2.42.1.tar.xz")
-                os.system("tar xaf glib-2.42.1.tar.xz")
-                os.system("cd glib-2.42.1; ./configure --enable-debug --prefix=%s; make; make install" % os.path.expanduser("~/.shadow"))
-                os.system("rm -rf glib-2.42.1.tar.xz")
+            os.system("wget http://ftp.gnome.org/pub/gnome/sources/glib/2.42/glib-2.42.1.tar.xz")
+            os.system("tar xaf glib-2.42.1.tar.xz")
+            os.system("cd glib-2.42.1; ./configure --prefix=%s; make; make install" % os.path.expanduser("~/.shadow"))
+            os.system("rm -rf glib-2.42.1 glib-2.42.1.tar.xz")
         else:
             os.system("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0v5 libigraph0-dev cmake make xz-utils")
 
@@ -40,13 +39,6 @@ def setup_bitcoin_plugin():
     
     os.system("sudo apt-get install -y autoconf libtool libboost-all-dev libssl-dev libevent-dev")    
 
-    bdb_path = "./plugins/shadow-plugin-bitcoin/build/bdb"
-    if not os.path.exists(bdb_path):  # refer https://bitzuma.com/posts/compile-bitcoin-core-from-source-on-ubuntu/
-        os.system("mkdir -p %s" % bdb_path)
-        os.system("cd %s; wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz; tar -xvf db-4.8.30.NC.tar.gz; cd db-4.8.30.NC/build_unix; mkdir -p build; BDB_PREFIX=$(pwd)/build; ../dist/configure --disable-shared --enable-debug --enable-cxx --with-pic --prefix=$BDB_PREFIX; make install" % bdb_path) # enable-debug
-    bdb_prefix = os.path.abspath("./plugins/shadow-plugin-bitcoin/build/bdb/db-4.8.30.NC/build_unix/build")
-    print bdb_prefix
-
     bitcoin_path = "./plugins/shadow-plugin-bitcoin/build/bitcoin"
     if not os.path.exists(bitcoin_path):
         os.system("mkdir -p %s" % bitcoin_path)
@@ -55,7 +47,7 @@ def setup_bitcoin_plugin():
     os.system("git -C %s checkout ." % bitcoin_path)
     os.system("git -C %s checkout v0.16.0" % bitcoin_path)
     os.system("git -C %s clean -d -f -x" % bitcoin_path)
-    os.system('cd %s; ./autogen.sh; ./configure --enable-debug CPPFLAGS="-I%s/include/ -O2" LDFLAGS="-L%s/lib/" ; make -C src obj/build.h; make -C src/secp256k1 src/ecmult_static_context.h'% (bitcoin_path, bdb_prefix, bdb_prefix))
+    os.system("cd %s; ./autogen.sh; ./configure --disable-wallet --enable-debug; make -C src obj/build.h; make -C src/secp256k1 src/ecmult_static_context.h"% bitcoin_path)
     
     # compile and install bitcoin plugin
     if "v0.15.0" in check_output(["git", "-C", bitcoin_path, "status"]):
@@ -66,11 +58,11 @@ def setup_bitcoin_plugin():
             os.system("cd %s; git apply ../../DisableSanityCheck_v0.15.0.patch" % bitcoin_path)
             os.system("cd %s; git apply ../../HandleGeneratePacket_v0.15.0.patch" % bitcoin_path)
     elif "v0.16.0" in check_output(["git", "-C", bitcoin_path, "status"]):
-        if not os.path.exists("plugins/shadow-plugin-bitcoin/HandleGeneratePacket_v0.16.0.patch"):
+        if not os.path.exists("plugins/shadow-plugin-bitcoin/DisableSanityCheck_v0.16.0.patch") or not os.path.exists("plugins/shadow-plugin-bitcoin/HandleGeneratePacket_v0.16.0.patch"):
             print "No appropriate patch exists"
             exit(1)
         else:
-            # os.system("cd %s; git apply ../../DisableSanityCheck_v0.16.0.patch" % bitcoin_path)
+            os.system("cd %s; git apply ../../DisableSanityCheck_v0.16.0.patch" % bitcoin_path)
             os.system("cd %s; git apply ../../HandleGeneratePacket_v0.16.0.patch" % bitcoin_path)
         
 
@@ -107,7 +99,6 @@ def setup_multiple_node_xml(node_num):
     
 def run_shadow_bitcoin_example():
     run_path = "plugins/shadow-plugin-bitcoin/run"
-    os.system("rm -rf %s/data/bcdnode*" % run_path)
     os.system("mkdir -p %s" % run_path)
     os.system("mkdir -p %s/data/bcdnode1; mkdir -p %s/data/bcdnode2;" % (run_path, run_path))
     os.system("cd %s; shadow ../resource/example.xml" % run_path)

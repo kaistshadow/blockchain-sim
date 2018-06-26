@@ -43,7 +43,7 @@ if (${SHADOW} STREQUAL "ON")
   include(ShadowTools)
 
   ## create and install a shared library that can plug into shadow
-  add_shadow_plugin(shadow-injector-bitcoin injector.c sha256.c)
+  add_shadow_plugin(shadow-injector-bitcoin injector.c)
   # target_link_libraries(shadow-plugin-hello)
   install(TARGETS shadow-injector-bitcoin DESTINATION plugins)
 else (${SHADOW} STREQUAL "ON") 

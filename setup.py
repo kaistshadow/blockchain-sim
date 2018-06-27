@@ -128,6 +128,10 @@ if __name__ == '__main__':
 
     run_shadow_bitcoin_example()
 
+    # temporary code : need to be improved later
+    print "If shadow is not found, execute following commands on your bash. (type without dollor sign)"
+    print "$ source ~/.bashrc"
+
 
     ### Following commands are example for the experiment of multiple bitcoin nodes.
     # setup_multiple_node_xml(100)

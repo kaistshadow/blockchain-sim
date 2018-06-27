@@ -39,6 +39,8 @@ def setup_bitcoin_plugin():
         os.system("git clone https://github.com/kaistshadow/shadow-plugin-bitcoin %s" % bitcoin_plugin_path)
         os.system("mkdir -p %s/build" % bitcoin_plugin_path)
     
+    os.system("git -C %s checkout 3f54b69" % bitcoin_plugin_path) # checkout wallet-disabled version.
+
     os.system("sudo apt-get install -y autoconf libtool libboost-all-dev libssl-dev libevent-dev")    
 
     bitcoin_path = "./plugins/shadow-plugin-bitcoin/build/bitcoin"

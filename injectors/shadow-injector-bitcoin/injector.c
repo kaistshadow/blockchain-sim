@@ -13,7 +13,8 @@
 #include "sha256.h"
 #include <arpa/inet.h>
 
-#define BITCOIN_PORT 18444
+/* #define BITCOIN_PORT 8333  // mainnet */
+#define BITCOIN_PORT 18444  // regtest net
 
 static const char* USAGE = "USAGE: injector <server_hostname>\n";
 
@@ -60,7 +61,7 @@ connect_to_server (char *serverHostname)
     freeaddrinfo(serverInfo);
 
     /* create the client socket and get a socket descriptor */
-    sfd = socket(AF_INET, (SOCK_STREAM | SOCK_NONBLOCK), 0);
+    sfd = socket(AF_INET, (SOCK_STREAM), 0);
     if (sfd == -1) {
         _log(LOG_ERROR, __FUNCTION__, "unable to start client: error in socket");
         return -1;
@@ -99,9 +100,9 @@ static void make_message(unsigned char *msg, unsigned int magic, const char *com
     
 
     /* create message of bitcoin protocol */
-    memcpy(msg, &magic, sizeof(int));
+    memcpy(msg, &magic, 4);
     memcpy(msg+4, command, 12);
-    memcpy(msg+4+12, &payload_size, sizeof(unsigned));
+    memcpy(msg+4+12, &payload_size, 4);
     memcpy(msg+4+12+4, checksum, 4);
     memcpy(msg+4+12+4+4, payload, payload_size);
 
@@ -123,13 +124,40 @@ unsigned long long llrand() {
     return r & 0xFFFFFFFFFFFFFFFFULL;
 }
 
+int recv_message(int sfd, char *message) {
+    int n = 0;
+    n = recv(sfd, message, 24, 0);
+    if (n < 24) {
+        printf("no valid message received. numBytes received=%d\n", n);
+        return -1;
+    }
+
+    uint32_t length;
+    memcpy(&length, &message[16], 4);
+
+    printf("payload length=[%d]\n",length);
+
+    if (length > 0) {
+        int payload_n = 0;
+        if ( (payload_n = recv(sfd, &message[24], length, 0)) <= 0) {
+            printf("error: no proper payload received.\n");
+            return -1;
+        }
+        else
+            n += payload_n;
+    }
+
+    return n;
+}
+
 int main(int argc, char *argv[]) {
     _log(LOG_INFO, __FUNCTION__, "Starting program");
 
     /* create network socket to bitcoin peer */
     int sfd = connect_to_server(argv[1]);
 
-    unsigned int magic = 0xdab5bffa;
+    /* unsigned int magic = 0xd9b4bef9; // mainnet */
+    unsigned int magic = 0xdab5bffa; // regtest net
     char command[12];
 
     /* create version message payload */
@@ -137,7 +165,7 @@ int main(int argc, char *argv[]) {
     uint64_t services = 0;
     int64_t timestamp = (int64_t)time(NULL);
     uint32_t ipaddr = inet_addr("127.0.0.1");
-    uint16_t port = htons(18444);
+    uint16_t port = htons(BITCOIN_PORT);
     uint64_t nonce = llrand();
     BYTE user_agent_bytes = 0;
     int32_t start_height = 0;
@@ -145,6 +173,7 @@ int main(int argc, char *argv[]) {
 
     int ver_payload_size = 4+8+8+26+26+8+1+4+1;
     BYTE ver_payload[ver_payload_size];
+    printf("sizeof(int)=%d, sizeof(uint64_t)=%d, sizeof(uint32_t)=%d, sizeof(uint16_t)=%d, sizeof(BYTE)=%d\n", sizeof(int), sizeof(uint64_t), sizeof(uint32_t), sizeof(uint16_t), sizeof(BYTE));
     memcpy(ver_payload, &version, sizeof(int));
     memcpy(ver_payload+4, &services, sizeof(uint64_t));
     memcpy(ver_payload+4+8, &timestamp, sizeof(int64_t));
@@ -190,19 +219,9 @@ int main(int argc, char *argv[]) {
     char message[1000];
     bzero(message, 1000);
     int n = 0;
-    int fail_count = 0;
-    while (1) {
-        while ( (n = recv(sfd, message, sizeof(message)-1, 0)) > 0 ){
-            printf("numBytes received=%d, message=[%s]\n", n, message);
-        }
-        if (n == -1) {
-            sleep(1);
-            fail_count++;
-            if (fail_count == 3)
-                break;
-        }
+    if ((n = recv_message(sfd, message)) > 0 ) {
+        printf("numBytes received=%d, message=[%s]\n", n, message);
     }
-    printf ("n=%d\n", n);
 
     /* create verack message */
     bzero(command, 12);
@@ -223,22 +242,19 @@ int main(int argc, char *argv[]) {
         free(verack_msg);
     }
 
-    /* receive verack reply */
+    /* receive verack reply 
+       wait until receiving sendcmpct message */
     bzero(message, 1000);
     n = 0;
-    fail_count = 0;
     while (1) {
-        while ( (n = recv(sfd, message, sizeof(message)-1, 0)) > 0 ){
+        if ((n = recv_message(sfd, message)) > 0 ) {
             printf("numBytes received=%d, message=[%s]\n", n, message);
         }
-        if (n == -1) {
-            sleep(1);
-            fail_count++;
-            if (fail_count == 3)
-                break;
-        }
+
+        if (n > 0 && strstr( message, "sendcmpct") != NULL)
+            break;
     }
-    printf ("n=%d\n", n);
+
 
     /* create generate message */
     bzero(command, 12);
@@ -258,21 +274,17 @@ int main(int argc, char *argv[]) {
         free(generate_msg);
     }
 
+    /* wait until receiving inv message */
     bzero(message, 1000);
     n = 0;
-    fail_count = 0;
     while (1) {
-        while ( (n = recv(sfd, message, sizeof(message)-1, 0)) > 0 ){
+        if ((n = recv_message(sfd, message)) > 0 ) {
             printf("numBytes received=%d, message=[%s]\n", n, message);
         }
-        if (n == -1) {
-            sleep(1);
-            fail_count++;
-            if (fail_count == 3)
-                break;
-        }
+
+        if (n > 0 && strstr( message, "inv") != NULL)
+            break;
     }
-    printf ("n=%d\n", n);
 
     return 0;
 }

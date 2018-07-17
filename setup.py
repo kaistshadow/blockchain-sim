@@ -39,8 +39,6 @@ def setup_bitcoin_plugin():
         os.system("git clone https://github.com/kaistshadow/shadow-plugin-bitcoin %s" % bitcoin_plugin_path)
         os.system("mkdir -p %s/build" % bitcoin_plugin_path)
     
-    os.system("git -C %s checkout 3f54b69" % bitcoin_plugin_path) # checkout wallet-disabled version.
-
     os.system("sudo apt-get install -y autoconf libtool libboost-all-dev libssl-dev libevent-dev")    
 
     bitcoin_path = "./plugins/shadow-plugin-bitcoin/build/bitcoin"
@@ -106,6 +104,16 @@ def run_shadow_bitcoin_example():
     os.system("mkdir -p %s" % run_path)
     os.system("mkdir -p %s/data/bcdnode1; mkdir -p %s/data/bcdnode2;" % (run_path, run_path))
     os.system("cd %s; shadow ../resource/example.xml" % run_path)
+
+def setup_injector_plugin():
+    injector_plugin_path = "./injectors/shadow-injector-bitcoin/build"
+    os.system("cd %s; cmake ../ -DSHADOW=ON; make; make install" % injector_plugin_path)
+    
+def run_shadow_bitcoin_injector_example():
+    run_path = "plugins/shadow-plugin-bitcoin/run"
+    os.system("mkdir -p %s" % run_path)
+    os.system("mkdir -p %s/data/bcdnode1; mkdir -p %s/data/bcdnode2;" % (run_path, run_path))
+    os.system("cd %s; shadow ../resource/example_injector.xml" % run_path)
     
 def run_shadow_bitcoin_multiple_node(node_num, worker_num):
     run_path = "plugins/shadow-plugin-bitcoin/run"
@@ -118,15 +126,21 @@ def run_shadow_bitcoin_multiple_node(node_num, worker_num):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
     parser.add_argument("--install", action="store_true", help="Install the shadow simulator and bitcoin-plugin")
+    parser.add_argument("--injector", action="store_true", help="Run bitcoin-plugin and injector-plugin")
 
     args = parser.parse_args()
     OPT_INSTALL = args.install
+    OPT_INJECTOR = args.injector
     
     if OPT_INSTALL:
         setup_shadow()
         setup_bitcoin_plugin()
 
-    run_shadow_bitcoin_example()
+    if OPT_INJECTOR:
+        setup_injector_plugin()
+        run_shadow_bitcoin_injector_example()
+    else:
+        run_shadow_bitcoin_example()
 
     # temporary code : need to be improved later
     print "If shadow is not found, execute following commands on your bash. (type without dollor sign)"

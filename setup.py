@@ -106,8 +106,8 @@ def run_shadow_bitcoin_example():
     os.system("cd %s; shadow ../resource/example.xml" % run_path)
 
 def setup_injector_plugin():
-    injector_plugin_path = "./injectors/shadow-injector-bitcoin/build"
-    os.system("cd %s; cmake ../ -DSHADOW=ON; make; make install" % injector_plugin_path)
+    injector_plugin_path = "./injectors/shadow-injector-bitcoin"
+    os.system("cd %s; mkdir build; cd build; cmake ../ -DSHADOW=ON; make; make install" % injector_plugin_path)
     
 def run_shadow_bitcoin_injector_example():
     run_path = "plugins/shadow-plugin-bitcoin/run"

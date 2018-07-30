@@ -34,40 +34,18 @@ def setup_shadow():
 def setup_bitcoin_plugin():
     bitcoin_plugin_path = "./plugins/shadow-plugin-bitcoin"
 
+    # cloning plugin repository
     if not os.path.exists(bitcoin_plugin_path):
         os.system("mkdir -p %s" % bitcoin_plugin_path)
         os.system("git clone https://github.com/kaistshadow/shadow-plugin-bitcoin %s" % bitcoin_plugin_path)
-        os.system("mkdir -p %s/build" % bitcoin_plugin_path)
+        # os.system("mkdir -p %s/build" % bitcoin_plugin_path)
+        os.system("git -C %s submodule init")
+        os.system("git -C %s submodule update")
     
+    # install dependencies
     os.system("sudo apt-get install -y autoconf libtool libboost-all-dev libssl-dev libevent-dev")    
 
-    bitcoin_path = "./plugins/shadow-plugin-bitcoin/build/bitcoin"
-    if not os.path.exists(bitcoin_path):
-        os.system("mkdir -p %s" % bitcoin_path)
-        os.system("git clone https://github.com/bitcoin/bitcoin.git %s" % bitcoin_path)
-    
-    os.system("git -C %s checkout ." % bitcoin_path)
-    os.system("git -C %s checkout v0.16.0" % bitcoin_path)
-    os.system("git -C %s clean -d -f -x" % bitcoin_path)
-    os.system("cd %s; ./autogen.sh; ./configure --disable-wallet --enable-debug; make -C src obj/build.h; make -C src/secp256k1 src/ecmult_static_context.h"% bitcoin_path)
-    
-    # compile and install bitcoin plugin
-    if "v0.15.0" in check_output(["git", "-C", bitcoin_path, "status"]):
-        if not os.path.exists("plugins/shadow-plugin-bitcoin/DisableSanityCheck_v0.15.0.patch") or not os.path.exists("plugins/shadow-plugin-bitcoin/HandleGeneratePacket_v0.15.0.patch"):
-            print "No appropriate patch exists"
-            exit(1)
-        else:
-            os.system("cd %s; git apply ../../DisableSanityCheck_v0.15.0.patch" % bitcoin_path)
-            os.system("cd %s; git apply ../../HandleGeneratePacket_v0.15.0.patch" % bitcoin_path)
-    elif "v0.16.0" in check_output(["git", "-C", bitcoin_path, "status"]):
-        if not os.path.exists("plugins/shadow-plugin-bitcoin/DisableSanityCheck_v0.16.0.patch") or not os.path.exists("plugins/shadow-plugin-bitcoin/HandleGeneratePacket_v0.16.0.patch"):
-            print "No appropriate patch exists"
-            exit(1)
-        else:
-            os.system("cd %s; git apply ../../DisableSanityCheck_v0.16.0.patch" % bitcoin_path)
-            os.system("cd %s; git apply ../../HandleGeneratePacket_v0.16.0.patch" % bitcoin_path)
-        
-
+    # make and install plugin
     build_path = "plugins/shadow-plugin-bitcoin/build"
     os.system("cd %s; cmake ../; make; make install" % build_path)
     

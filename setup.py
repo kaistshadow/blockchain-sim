@@ -3,16 +3,17 @@ import lxml.etree as ET
 from subprocess import check_output
 import argparse
 
-def setup_shadow():
+def prepare_shadow():
     if os.path.exists(os.path.expanduser("~/.shadow/bin")):
         print "Shadow simulator is already installed"
         print "If you want to force re-installation, remove the installed shadow by erasing ~/.shadow directory"
     else:
         print "Installing..."
+        
+        # install dependencies
         os.system("sudo apt-get install libc-dbg")
         os.system("sudo apt-get install -y python python-matplotlib python-numpy python-scipy python-networkx python-lxml")
         os.system("sudo apt-get install -y git dstat screen htop libffi-dev")
-
         if "Ubuntu 14.04" in check_output(["bash", "-c", "cat /etc/lsb-release | grep DESCRIPTION"]):
             os.system("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0 libigraph0-dev cmake make xz-utils")
             print "Installing glib manually..."
@@ -23,32 +24,25 @@ def setup_shadow():
         else:
             os.system("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0v5 libigraph0-dev cmake make xz-utils")
 
-        
-        if not os.path.exists("./shadow"):
-            os.system("git clone https://github.com/kaistshadow/shadow.git")
-        os.system("cd shadow; ./setup build --clean --debug --test")
-        os.system("cd shadow; ./setup install")
-        os.system("echo 'export PATH=$PATH:%s' >> ~/.bashrc && . ~/.bashrc" % os.path.expanduser("~/.shadow/bin"))
-    
+        # cloning shadow repository (submodule)
+        os.system("git submodule init shadow")
+        os.system("git submodule update shadow")
 
-def setup_bitcoin_plugin():
+def prepare_bitcoin_plugin():
     bitcoin_plugin_path = "./plugins/shadow-plugin-bitcoin"
 
-    # cloning plugin repository
-    if not os.path.exists(bitcoin_plugin_path):
-        os.system("mkdir -p %s" % bitcoin_plugin_path)
-        os.system("git clone https://github.com/kaistshadow/shadow-plugin-bitcoin %s" % bitcoin_plugin_path)
-        # os.system("mkdir -p %s/build" % bitcoin_plugin_path)
-        os.system("git -C %s submodule init")
-        os.system("git -C %s submodule update")
+    # cloning plugin repository (submodule)
+    os.system("git submodule init plugins/shadow-plugin-bitcoin")
+    os.system("git submodule update plugins/shadow-plugin-bitcoin")
+
+    # cloning bitcoin repository (submodule)
+    os.system("git -C %s submodule init" % bitcoin_plugin_path)
+    os.system("git -C %s submodule update" % bitcoin_plugin_path)
     
     # install dependencies
     os.system("sudo apt-get install -y autoconf libtool libboost-all-dev libssl-dev libevent-dev")    
 
-    # make and install plugin
-    build_path = "plugins/shadow-plugin-bitcoin/build"
-    os.system("cd %s; cmake ../; make; make install" % build_path)
-    
+
 def setup_multiple_node_xml(node_num):
     baseline_xml = "plugins/shadow-plugin-bitcoin/resource/example.xml"
     new_xml = "plugins/shadow-plugin-bitcoin/resource/example_multiple_generated.xml"
@@ -111,8 +105,11 @@ if __name__ == '__main__':
     OPT_INJECTOR = args.injector
     
     if OPT_INSTALL:
-        setup_shadow()
-        setup_bitcoin_plugin()
+        prepare_shadow()
+        prepare_bitcoin_plugin()
+        os.system("mkdir build; cd build; cmake ../; make; make install")
+        os.system("echo 'export PATH=$PATH:%s' >> ~/.bashrc && . ~/.bashrc" % os.path.expanduser("~/.shadow/bin"))
+
 
     if OPT_INJECTOR:
         setup_injector_plugin()

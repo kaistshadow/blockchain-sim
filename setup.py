@@ -70,12 +70,6 @@ def setup_multiple_node_xml(node_num):
 
     tree.write(new_xml, pretty_print=True)
     
-def run_shadow_bitcoin_example():
-    run_path = "plugins/shadow-plugin-bitcoin/run"
-    os.system("mkdir -p %s" % run_path)
-    os.system("mkdir -p %s/data/bcdnode1; mkdir -p %s/data/bcdnode2;" % (run_path, run_path))
-    os.system("cd %s; shadow ../resource/example.xml" % run_path)
-
 def setup_injector_plugin():
     injector_plugin_path = "./injectors/shadow-injector-bitcoin"
     os.system("cd %s; mkdir build; cd build; cmake ../ -DSHADOW=ON; make; make install" % injector_plugin_path)
@@ -98,27 +92,27 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
     parser.add_argument("--install", action="store_true", help="Install the shadow simulator and bitcoin-plugin")
     parser.add_argument("--injector", action="store_true", help="Run bitcoin-plugin and injector-plugin")
+    parser.add_argument("--test", action="store_true", help="Run tests")
 
     args = parser.parse_args()
     OPT_INSTALL = args.install
     OPT_INJECTOR = args.injector
+    OPT_TEST = args.test
     
     if OPT_INSTALL:
         prepare_shadow()
         prepare_bitcoin_plugin()
         os.system("mkdir build; cd build; cmake ../; make; make install")
         os.system("echo 'export PATH=$PATH:%s' >> ~/.bashrc && . ~/.bashrc" % os.path.expanduser("~/.shadow/bin"))
-
+        print "After installing the shadow, execute following commands on your bash. (type without dollor sign)"
+        print "$ source ~/.bashrc"
 
     if OPT_INJECTOR:
         setup_injector_plugin()
         run_shadow_bitcoin_injector_example()
-    else:
-        run_shadow_bitcoin_example()
 
-    # temporary code : need to be improved later
-    print "If shadow is not found, execute following commands on your bash. (type without dollor sign)"
-    print "$ source ~/.bashrc"
+    if OPT_TEST:
+        os.system("cd build; make test")
 
 
     ### Following commands are example for the experiment of multiple bitcoin nodes.

@@ -26,12 +26,12 @@ Run the following commands.
 git clone https://github.com/kaistshadow/blockchain-sim
 cd blockchain-sim
 python setup.py --install
+python setup.py --test
 ```
 
 If following message is printed at screen, the simulation was successful.
 ```
-** Stopping Shadow, returning code 0 (success)
+100% tests passed, 0 tests failed out of N
 ```
-After running a script, you can check the result of stdout, stderr for each node in the directory `plugins/shadow-plugin-bitcoin/run/shadow.data/hosts/`.
+After running tests, you can check the result of tests (stdout, stderr for each node) in the directory `test/`.
 
-You can exclude `--install` option after the first run. (Without `--install` option, the script only initiates a simulation using pre-installed simulator and bitcoin binary.)

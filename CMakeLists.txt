@@ -32,6 +32,10 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 set(CMAKE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/../plugins/shadow-plugin-bitcoin")
 set(CMAKE_BINARY_DIR "${CMAKE_BINARY_DIR}/../")
 set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.shadow")
-
 add_subdirectory(plugins/shadow-plugin-bitcoin)
 
+
+## add tests
+set(SHADOW_ROOT "${CMAKE_INSTALL_PREFIX}")
+enable_testing()
+add_subdirectory(test)

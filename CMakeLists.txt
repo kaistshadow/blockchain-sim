@@ -35,6 +35,10 @@ set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.shadow")
 add_subdirectory(plugins/shadow-plugin-bitcoin)
 
 
+## add BLEEP
+add_subdirectory(plugins/blockchain-peer)
+
+
 ## add tests
 set(SHADOW_ROOT "${CMAKE_INSTALL_PREFIX}")
 enable_testing()

@@ -101,15 +101,15 @@ void InitializePeerList() {
         // initiate server
         server_port = 19000;
         int incoming_sd = initialize_server(server_port);
-        inPeerList.push_back(Peer("127.0.0.1", incoming_sd));
+        inPeerList.push_back(Peer("bleep2", incoming_sd)); // hardcoded hostname for simple shadow test
         std::cout << "inPeer : " << incoming_sd << std::endl;
     }
     else if (NodeId == 1) {
         // connect to neighbor
-        std::string neighbor_hostname = "127.0.0.1";
+        std::string neighbor_hostname = "bleep1"; // hardcoded hostname for simple shadow test
         neighbor_port = 19000;
-        int out_sd = connect_to_node("127.0.0.1", neighbor_port);        
-        outPeerList.push_back(Peer("127.0.0.1", out_sd));
+        int out_sd = connect_to_node("bleep1", neighbor_port);        
+        outPeerList.push_back(Peer("bleep1", out_sd));
         std::cout << "outPeer : " << out_sd << std::endl;
     }
     

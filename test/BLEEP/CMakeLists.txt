@@ -1,0 +1,4 @@
+# register the test
+add_test(NAME BLEEP 
+  COMMAND ${SHADOW_ROOT}/bin/shadow ${CMAKE_CURRENT_SOURCE_DIR}/example.xml
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

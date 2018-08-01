@@ -32,19 +32,50 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="BLEEP_PEER_EXAMPLE" path="libBLOCKCHAIN_PEER_EXAMPLE.so" />
+  <plugin id="BLEEP_PEER_SIMPLE_CONSENSUS" path="libBLOCKCHAIN_PEER_SIMPLE_CONSENSUS.so" />
 
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="20" />
   <!-- our nodes -->
 
-  <node id="bleep1">
-    <application plugin="BLEEP_PEER_EXAMPLE" time="13" arguments="0" />
+  <node id="bleep0">
+    <application plugin="BLEEP_PEER_SIMPLE_CONSENSUS" time="10" arguments="0"/>
   </node>
 
+  <node id="bleep1">
+    <application plugin="BLEEP_PEER_SIMPLE_CONSENSUS" time="10" arguments="1"/>
+  </node>
 
   <node id="bleep2">
-    <application plugin="BLEEP_PEER_EXAMPLE" time="14" arguments="1"/>
+    <application plugin="BLEEP_PEER_SIMPLE_CONSENSUS" time="10" arguments="2"/>
+  </node>
+
+  <node id="bleep3">
+    <application plugin="BLEEP_PEER_SIMPLE_CONSENSUS" time="10" arguments="3"/>
+  </node>
+
+  <node id="bleep4">
+    <application plugin="BLEEP_PEER_SIMPLE_CONSENSUS" time="10" arguments="4"/>
+  </node>
+
+  <node id="bleep5">
+    <application plugin="BLEEP_PEER_SIMPLE_CONSENSUS" time="10" arguments="5"/>
+  </node>
+
+  <node id="bleep6">
+    <application plugin="BLEEP_PEER_SIMPLE_CONSENSUS" time="10" arguments="6"/>
+  </node>
+
+  <node id="bleep7">
+    <application plugin="BLEEP_PEER_SIMPLE_CONSENSUS" time="10" arguments="7"/>
+  </node>
+
+  <node id="bleep8">
+    <application plugin="BLEEP_PEER_SIMPLE_CONSENSUS" time="10" arguments="8"/>
+  </node>
+
+  <node id="bleep9">
+    <application plugin="BLEEP_PEER_SIMPLE_CONSENSUS" time="10" arguments="9"/>
   </node>
 
 </shadow>

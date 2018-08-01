@@ -9,7 +9,7 @@
 #include <time.h>
 
 #include "simplepeerlist.h"
-#include "node.h"
+#include "nodeinfos.h"
 
 
 PeerList inPeerList = std::vector<Peer>();
@@ -97,18 +97,18 @@ static int connect_to_node (std::string hostname, int port) {
 // Check out how real bitcoin client handles this problem.
 void InitializePeerList() {
     int server_port, neighbor_port;
-    if (NodeId == 0) {
+    if (GetLocalNodeId() == 0) {
         // initiate server
         server_port = 19000;
         int incoming_sd = initialize_server(server_port);
         inPeerList.push_back(Peer("bleep2", incoming_sd)); // hardcoded hostname for simple shadow test
         std::cout << "inPeer : " << incoming_sd << std::endl;
     }
-    else if (NodeId == 1) {
+    else if (GetLocalNodeId() == 1) {
         // connect to neighbor
-        std::string neighbor_hostname = "bleep1"; // hardcoded hostname for simple shadow test
+        std::string neighbor_hostname("bleep1"); // hardcoded hostname for simple shadow test
         neighbor_port = 19000;
-        int out_sd = connect_to_node("bleep1", neighbor_port);        
+        int out_sd = connect_to_node(neighbor_hostname, neighbor_port);        
         outPeerList.push_back(Peer("bleep1", out_sd));
         std::cout << "outPeer : " << out_sd << std::endl;
     }

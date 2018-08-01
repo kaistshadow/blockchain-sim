@@ -18,10 +18,9 @@ option (SHADOW
 message("SHADOW:" ${SHADOW})
 
 set(SRCS
-  main.cpp
   p2p/simplepeerlist.cpp
   p2p/gossipprotocol.cpp
-  p2p/node.cpp
+  p2p/nodeinfos.cpp
   consensus/simpleconsensus.cpp
 )
   
@@ -54,9 +53,14 @@ endif()
 include(ShadowTools)
 
 ## create and install a shared library that can plug into shadow
-add_shadow_plugin(BLOCKCHAIN_PEER ${SRCS})
+add_shadow_plugin(BLOCKCHAIN_PEER_EXAMPLE node_example.cpp ${SRCS})
 # target_link_libraries(shadow-plugin-hello)
-install(TARGETS BLOCKCHAIN_PEER DESTINATION plugins)
+install(TARGETS BLOCKCHAIN_PEER_EXAMPLE DESTINATION plugins)
 
 ## create local executable
-add_executable(BLOCKCHAIN_PEER_LOCAL ${SRCS})
+add_executable(BLOCKCHAIN_PEER_EXAMPLE_LOCAL node_example.cpp ${SRCS})
+
+
+## 
+add_shadow_plugin(BLOCKCHAIN_PEER_SIMPLE_CONSENSUS node_simpleconsensus.cpp ${SRCS})
+install(TARGETS BLOCKCHAIN_PEER_SIMPLE_CONSENSUS DESTINATION plugins)

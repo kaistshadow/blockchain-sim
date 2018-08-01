@@ -6,7 +6,7 @@
 
 class Peer{ 
  public:
-    Peer(std::string hn, int socket) { hostname = hostname; sfd = socket;}
+    Peer(std::string hn, int socket) { hostname = hn; sfd = socket;}
     std::string hostname;
     int sfd;
 };

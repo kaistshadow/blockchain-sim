@@ -64,3 +64,10 @@ add_executable(BLOCKCHAIN_PEER_EXAMPLE_LOCAL node_example.cpp ${SRCS})
 ## 
 add_shadow_plugin(BLOCKCHAIN_PEER_SIMPLE_CONSENSUS node_simpleconsensus.cpp ${SRCS})
 install(TARGETS BLOCKCHAIN_PEER_SIMPLE_CONSENSUS DESTINATION plugins)
+
+##
+add_executable(PEER_NONBLOCK_IO_LOCAL node_nonblock_io.cpp ${SRCS})
+add_shadow_plugin(PEER_NONBLOCK_IO node_nonblock_io.cpp ${SRCS})
+install(TARGETS PEER_NONBLOCK_IO DESTINATION plugins)
+
+

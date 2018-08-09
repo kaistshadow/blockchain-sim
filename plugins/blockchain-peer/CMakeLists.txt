@@ -70,4 +70,9 @@ add_executable(PEER_NONBLOCK_IO_LOCAL node_nonblock_io.cpp ${SRCS})
 add_shadow_plugin(PEER_NONBLOCK_IO node_nonblock_io.cpp ${SRCS})
 install(TARGETS PEER_NONBLOCK_IO DESTINATION plugins)
 
+##
+add_executable(INJECTOR_SIMPLE_LOCAL node_injector_simple.cpp ${SRCS})
+add_shadow_plugin(INJECTOR_SIMPLE node_injector_simple.cpp ${SRCS})
+install(TARGETS INJECTOR_SIMPLE DESTINATION plugins)
+
 

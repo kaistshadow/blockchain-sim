@@ -18,3 +18,8 @@ add_test(NAME BLEEP-simple-consensus
 add_test(NAME BLEEP-nonblock-io
   COMMAND python test-nonblock-io.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+
+add_test(NAME BLEEP-injector-simple
+  COMMAND python test-injector-simple.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

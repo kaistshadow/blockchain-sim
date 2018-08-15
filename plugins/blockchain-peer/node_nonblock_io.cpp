@@ -15,7 +15,7 @@
 
 #include <vector>
 
-#include "p2p/simplepeerlist.h"
+// #include "p2p/simplepeerlist.h"
 #include "p2p/nodeinfos.h"
 
 #define MYPORT 3456    /* the port users will be connecting to */
@@ -93,7 +93,7 @@ void NodeInit() {
     /*******************************  init for client socket end  *******************************/
 
     // initialize the list of neighbor nodes
-    InitializePeerList();
+    // InitializePeerList();
 }
 
 void NodeLoop(char *servhostname) {

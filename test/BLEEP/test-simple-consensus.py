@@ -7,7 +7,7 @@ if __name__ == '__main__':
     datadir = "simple-consensus-datadir"
     shadow_configfile = "simple-consensus.xml"
     shadow_plugin = "PEER_SIMPLECONSENSUS"
-    shadow_inject_plugin = "INJECTOR_SIMPLE"
+    shadow_inject_plugin = "INJECTOR_SIMPLECONSENSUS"
 
     ## run shadow for test
     returnCode = os.system("~/.shadow/bin/shadow -d %s %s" % (datadir, shadow_configfile))
@@ -33,7 +33,7 @@ if __name__ == '__main__':
         test_pass = False
         f = open(outputfile0)
         for line in f:
-            if "The string is: This_is_transaction_generated_by_injector" in line:
+            if "Transaction(0 sends 12.34 to 1) is inserted into TxPool" in line:
                 test_pass = True
         if not test_pass:
             print "test failed for node 0"
@@ -52,47 +52,38 @@ if __name__ == '__main__':
             sys.exit(-1)
 
     ## 3. check results of peer node 3 (connection establishment? tx gossipping?)
-    # outputfile3 = "./%s/hosts/bleep3/stdout-bleep3.%s.1000.log" % (datadir, shadow_plugin)
-    # test_pass = False
-    # if os.path.exists(outputfile3):
-    #     f = open(outputfile3)
-    #     for line in f:
-    #         if "connection established" in line:
-    #             test_pass = True
-    #     if not test_pass:
-    #         print "test failed for node 3"
-    #         sys.exit(-1)
-
-    #     test_pass = False
-    #     f = open(outputfile3)
-    #     for line in f:
-    #         if "The string is: This_is_transaction_generated_by_injector" in line:
-    #             test_pass = True
-    #     if not test_pass:
-    #         print "test failed for node 3"
-    #         sys.exit(-1)
+    outputfile3 = "./%s/hosts/bleep3/stdout-bleep3.%s.1000.log" % (datadir, shadow_plugin)
+    test_pass = False
+    if os.path.exists(outputfile3):
+        f = open(outputfile3)
+        for line in f:
+            if "Transaction(0 sends 12.34 to 1) is inserted into TxPool" in line:
+                test_pass = True
+        if not test_pass:
+            print "test failed for node 3: tx is not transferred!"
+            sys.exit(-1)
 
 
     ## 3. check results of injector node 4 (connection establishment? sent transaction?)
-    outputfile5 = "./%s/hosts/bleep5/stdout-bleep5.%s.1000.log" % (datadir, shadow_inject_plugin)
+    outputfile4 = "./%s/hosts/bleep4/stdout-bleep4.%s.1000.log" % (datadir, shadow_inject_plugin)
     test_pass = False
-    if os.path.exists(outputfile5):
+    if os.path.exists(outputfile4):
         test_pass = False
-        f = open(outputfile5)
+        f = open(outputfile4)
         for line in f:
             if "connection established" in line:
                 test_pass = True
         if not test_pass:
-            print "test failed for node 5 (injector)"
+            print "test failed for node 4 (injector)"
             sys.exit(-1)
 
         test_pass = False
-        f = open(outputfile5)
+        f = open(outputfile4)
         for line in f:
             if "sented string" in line:
                 test_pass = True
         if not test_pass:
-            print "test failed for node 5 (injector)"
+            print "test failed for node 4 (injector)"
             sys.exit(-1)
 
     print "test passed for all nodes"

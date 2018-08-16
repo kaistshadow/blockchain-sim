@@ -107,6 +107,9 @@ SimplePeerList* SimplePeerList::GetInstance() {
 // (so, it only supports a single outpeer, currently.)
 void SimplePeerList::InitializePeerList(char *servhostname) {
 
+    if (strcmp(servhostname, "none") == 0)
+        return;
+
     std::cout << "outPeer : " << servhostname << "\n";
     Peer* outPeer = new Peer(servhostname);
     outPeerList.push_back(outPeer);

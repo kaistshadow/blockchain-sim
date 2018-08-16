@@ -33,7 +33,7 @@
 
   <!-- the plug-ins we will be using -->
   <plugin id="PEER_SIMPLECONSENSUS" path="libPEER_SIMPLECONSENSUS.so" />
-  <plugin id="INJECTOR_SIMPLE" path="libINJECTOR_SIMPLE.so" />
+  <plugin id="INJECTOR_SIMPLECONSENSUS" path="libINJECTOR_SIMPLECONSENSUS.so" />
 
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="20" />
@@ -52,11 +52,11 @@
   </node>
 
   <node id="bleep3">
-    <application plugin="PEER_SIMPLECONSENSUS" time="10" arguments="bleep0"/>
+    <application plugin="PEER_SIMPLECONSENSUS" time="10" arguments="none"/>
   </node>
 
   <node id="bleep4">
-    <application plugin="INJECTOR_SIMPLE" time="12" arguments="bleep0"/>
+    <application plugin="INJECTOR_SIMPLECONSENSUS" time="12" arguments="bleep0"/>
   </node>
 
 

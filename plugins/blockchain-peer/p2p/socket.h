@@ -2,8 +2,10 @@
 #define P2P_SOCKET_H
 
 #include <vector>
+#include <queue>
 
 #include "simplepeerlist.h"
+#include "socketmessage.h"
 
 #define MYPORT 3456    /* the port users will be connecting to */
 #define BACKLOG 10     /* how many pending connections queue will hold */
@@ -22,6 +24,7 @@ class SocketInterface {
     vector<int> recv_sfd_list;  // socket ids for non-blocking receiving sockets
     vector<int> send_sfd_list;  // socket ids for connected sockets (sending)
 
+    std::queue<SocketMessage> msgQueue;
  public:
     static SocketInterface* GetInstance(); // singleton pattern
 
@@ -36,13 +39,19 @@ class SocketInterface {
      * 2. process non-blocking connect (and make send_sockets)
      * 3. process non-blocking recv
      */
-    void ProcessNonblockSocket(PeerList outPeerList);
+    void ProcessNonblockSocket(PeerList inPeerList, PeerList outPeerList);
 
     /**
      * Set and Get a server socket
      */
     void SetListenSocket(int sfd);
     int GetListenSocket();
+
+    /** 
+     * Push message into message queue.
+     */
+    void PushToQueue(SocketMessage msg) { msgQueue.push(msg); }
+    void ProcessQueue();
 };
 
 

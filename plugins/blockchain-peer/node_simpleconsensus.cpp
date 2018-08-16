@@ -6,6 +6,7 @@
 #include "p2p/gossipprotocol.h"
 // #include "p2p/nodeinfos.h"
 #include "p2p/socket.h"
+#include "blockchain/txpool.h"
 
 #include "consensus/simpleconsensus.h"
 
@@ -42,14 +43,19 @@ void NodeLoop() {
 
         // process non-blocking network socket events
         // process non-blocking accept and non-blocking recv
+        PeerList inPeerList = SimplePeerList::GetInstance()->GetInPeerList();
         PeerList outPeerList = SimplePeerList::GetInstance()->GetOutPeerList();
-        SocketInterface::GetInstance()->ProcessNonblockSocket(outPeerList);
+        SocketInterface::GetInstance()->ProcessNonblockSocket(inPeerList, outPeerList);
         
-        // ideal gossip protocol
-        // RunGossipProtocol(); # TODO 1
             
         // ideal consensus protocol
         // RunConsensusProtocol(GetLocalNodeId());  # TODO 2
+
+
+        // Process pending messages in messageQueues for each module
+        TxPool::GetInstance()->ProcessQueue();
+        SimpleGossipProtocol::GetInstance()->ProcessQueue();
+        SocketInterface::GetInstance()->ProcessQueue();
     }
     return;
 }

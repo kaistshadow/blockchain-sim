@@ -17,11 +17,18 @@ option (SHADOW
 
 message("SHADOW:" ${SHADOW})
 
+find_package(Boost REQUIRED serialization)
+
+include_directories(${Boost_INCLUDE_DIRS})
+
 set(SRCS
   p2p/simplepeerlist.cpp
   p2p/gossipprotocol.cpp
   p2p/nodeinfos.cpp
   p2p/socket.cpp
+  p2p/socketmessage.cpp
+  blockchain/transaction.cpp
+  blockchain/txpool.cpp
   consensus/simpleconsensus.cpp
 )
   
@@ -63,15 +70,27 @@ install(TARGETS BLOCKCHAIN_PEER_SIMPLE_CONSENSUS DESTINATION plugins)
 add_executable(PEER_NONBLOCK_IO_LOCAL node_nonblock_io.cpp ${SRCS})
 add_shadow_plugin(PEER_NONBLOCK_IO node_nonblock_io.cpp ${SRCS})
 install(TARGETS PEER_NONBLOCK_IO DESTINATION plugins)
+target_link_libraries(PEER_NONBLOCK_IO_LOCAL ${Boost_LIBRARIES})
+target_link_libraries(PEER_NONBLOCK_IO ${Boost_LIBRARIES})
+
 
 ##
 add_executable(INJECTOR_SIMPLE_LOCAL node_injector_simple.cpp ${SRCS})
 add_shadow_plugin(INJECTOR_SIMPLE node_injector_simple.cpp ${SRCS})
 install(TARGETS INJECTOR_SIMPLE DESTINATION plugins)
+target_link_libraries(INJECTOR_SIMPLE_LOCAL ${Boost_LIBRARIES})
+target_link_libraries(INJECTOR_SIMPLE ${Boost_LIBRARIES})
 
 
 ##
 add_executable(PEER_SIMPLECONSENSUS_LOCAL node_simpleconsensus.cpp ${SRCS})
 add_shadow_plugin(PEER_SIMPLECONSENSUS node_simpleconsensus.cpp ${SRCS})
 install(TARGETS PEER_SIMPLECONSENSUS DESTINATION plugins)
+target_link_libraries(PEER_SIMPLECONSENSUS_LOCAL ${Boost_LIBRARIES})
+target_link_libraries(PEER_SIMPLECONSENSUS ${Boost_LIBRARIES})
+
+##
+add_shadow_plugin(INJECTOR_SIMPLECONSENSUS node_injector_simpleconsensus.cpp ${SRCS})
+install(TARGETS INJECTOR_SIMPLECONSENSUS DESTINATION plugins)
+target_link_libraries(INJECTOR_SIMPLECONSENSUS ${Boost_LIBRARIES})
 

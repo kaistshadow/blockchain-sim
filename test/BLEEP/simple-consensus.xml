@@ -32,19 +32,32 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="BLEEP_PEER_EXAMPLE" path="libBLOCKCHAIN_PEER_EXAMPLE.so" />
+  <plugin id="PEER_SIMPLECONSENSUS" path="libPEER_SIMPLECONSENSUS.so" />
+  <plugin id="INJECTOR_SIMPLECONSENSUS" path="libINJECTOR_SIMPLECONSENSUS.so" />
 
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="20" />
   <!-- our nodes -->
 
-  <node id="bleep1">
-    <application plugin="BLEEP_PEER_EXAMPLE" time="13" arguments="0" />
+  <node id="bleep0">
+    <application plugin="PEER_SIMPLECONSENSUS" time="10" arguments="bleep1"/>
   </node>
 
+  <node id="bleep1">
+    <application plugin="PEER_SIMPLECONSENSUS" time="10" arguments="bleep2"/>
+  </node>
 
   <node id="bleep2">
-    <application plugin="BLEEP_PEER_EXAMPLE" time="14" arguments="1"/>
+    <application plugin="PEER_SIMPLECONSENSUS" time="10" arguments="bleep3"/>
   </node>
+
+  <node id="bleep3">
+    <application plugin="PEER_SIMPLECONSENSUS" time="10" arguments="none"/>
+  </node>
+
+  <node id="bleep4">
+    <application plugin="INJECTOR_SIMPLECONSENSUS" time="12" arguments="bleep0"/>
+  </node>
+
 
 </shadow>

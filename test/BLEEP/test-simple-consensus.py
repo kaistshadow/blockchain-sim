@@ -64,7 +64,7 @@ if __name__ == '__main__':
             sys.exit(-1)
 
 
-    ## 3. check results of injector node 4 (connection establishment? sent transaction?)
+    ## 4. check results of injector node 4 (connection establishment? sent transaction?)
     outputfile4 = "./%s/hosts/bleep4/stdout-bleep4.%s.1000.log" % (datadir, shadow_inject_plugin)
     test_pass = False
     if os.path.exists(outputfile4):
@@ -85,6 +85,26 @@ if __name__ == '__main__':
         if not test_pass:
             print "test failed for node 4 (injector)"
             sys.exit(-1)
+
+    ################### Test added for block propagation
+    ## 5. check results of peer node 3 (block gossipping?)
+    outputfile3 = "./%s/hosts/bleep3/stdout-bleep3.%s.1000.log" % (datadir, shadow_plugin)
+    test_pass = False
+    if os.path.exists(outputfile3):
+        f = open(outputfile3)
+        for line in f:
+            if "Following block is received" in line:
+                test_pass = True
+
+        test_pass = False
+        f = open(outputfile3)
+        for line in f:
+            if "Block (idx:0) has following transactions" in line:
+                test_pass = True
+        if not test_pass:
+            print "test failed for node 3: tx is not transferred!"
+            sys.exit(-1)
+
 
     print "test passed for all nodes"
     sys.exit(0)

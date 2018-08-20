@@ -3,11 +3,13 @@
 
 #include <iostream>
 #include <boost/variant.hpp>
+#include <boost/serialization/variant.hpp>
 
 #include "../blockchain/transaction.h"
 #include "../blockchain/block.h"
 
 #define P2PMessage_TRANSACTION 0
+#define P2PMessage_BLOCK 1
 /* enum P2PMessageType { */
 /*     TRANSACTION = 0, */
 /* }; */
@@ -16,6 +18,7 @@ class P2PMessage {
  public:
     P2PMessage() {};
     P2PMessage(int t, Transaction x) { type = t; data = x; };
+    P2PMessage(int t, Block blk) { type = t; data = blk; };
     int type;
     boost::variant< Transaction, Block > data; // make it variant
 

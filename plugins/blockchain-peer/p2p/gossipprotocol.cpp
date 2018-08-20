@@ -46,6 +46,32 @@ void SimpleGossipProtocol::RunGossipProtocol(P2PMessage msg) {
             exit(1);
         }
     }
+    else if (msg.type == P2PMessage_BLOCK) {
+        PeerList outPeerList = SimplePeerList::GetInstance()->GetOutPeerList();
+        for (PeerList::iterator it = outPeerList.begin(); it != outPeerList.end(); it++) {    
+            Peer* p = *it;
+            if (p->conn_status == CONNECTED) {
+                // create SocketMessage and insert into the queue
+                SocketMessage socketMsg;
+                socketMsg.SetSocketfd(p->sfd);
+                socketMsg.SetP2PMessage(msg);
+                std::string payload = GetSerializedString(socketMsg);
+                socketMsg.SetPayload(payload);
+
+                SocketInterface::GetInstance()->PushToQueue(socketMsg);
+            }
+        }
+
+        Block *blk = boost::get<Block>(&msg.data);
+        if (blk) {
+            std::cout << "Following block is received" << "\n";
+            std::cout << *blk << "\n";
+        }
+        else {
+            std::cout << "Wrong data in P2PMessage" << "\n";
+            exit(1);
+        }
+    }
 }
 
 void SimpleGossipProtocol::ProcessQueue() {

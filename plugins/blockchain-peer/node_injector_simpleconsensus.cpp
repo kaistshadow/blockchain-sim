@@ -106,55 +106,112 @@ void NodeLoop(char *servhostname) {
     for (vector<int>::iterator it = client_sfd_list.begin(); it != client_sfd_list.end(); it++) {
         int sfd = *it;
 
-        // create SocketMessage and insert into the queue
-        Transaction tx(0,1,12.34); // send 100.0 to node 1 from node 0
-        P2PMessage p2pmessage(P2PMessage_TRANSACTION, tx);
-        // SocketMessage msg(sfd, p2pmessage);
-        SocketMessage msg;
-        msg.SetSocketfd(sfd);
-        msg.SetP2PMessage(p2pmessage);
-        std::string payload = GetSerializedString(msg);
-        msg.SetPayload(payload);
+        {
+            // 1. create Transaction and inject
+            Transaction tx(0,1,12.34); // send 12.34 to node 1 from node 0
+            P2PMessage p2pmessage(P2PMessage_TRANSACTION, tx);
+            SocketMessage msg;
+            msg.SetSocketfd(sfd);
+            msg.SetP2PMessage(p2pmessage);
+            std::string payload = GetSerializedString(msg);
+            msg.SetPayload(payload);
 
-        cout << "Following tx will be injected" << "\n";
-        cout << tx << "\n";
+            cout << "Following tx will be injected" << "\n";
+            cout << tx << "\n";
 
-        SocketMessage msg2 = GetDeserializedMsg(payload);
-
-        cout << "Following tx is deserialized (with boost variant)" << "\n";
-        Transaction deserialized_tx = boost::get<Transaction>(msg2.GetP2PMessage().data);
-        cout << deserialized_tx << "\n";
-
+            // SocketMessage msg2 = GetDeserializedMsg(payload);
+            // cout << "Following tx is deserialized (with boost variant)" << "\n";
+            // Transaction deserialized_tx = boost::get<Transaction>(msg2.GetP2PMessage().data);
+            // cout << deserialized_tx << "\n";
             
-        int payload_length = msg.GetPayloadLength();
+            int payload_length = msg.GetPayloadLength();
 
-        int n = send(sfd, (char*)&payload_length, sizeof(int), 0);
-        if (n < 0){ 
-            cout << "send errno=" << errno << "\n";
-            exit(1);
-        }
-        else if (n < sizeof(int)) {
-            cout << "Warning : sented string is less than requested" << "\n";
-            cout << "sented string length: " << n << "\n";
-            exit(1);
-        }
-        else {
-            cout << "sented string length: " << n << "\n";
-        }            
+            int n = send(sfd, (char*)&payload_length, sizeof(int), 0);
+            if (n < 0){ 
+                cout << "send errno=" << errno << "\n";
+                exit(1);
+            }
+            else if (n < sizeof(int)) {
+                cout << "Warning : sented string is less than requested" << "\n";
+                cout << "sented string length: " << n << "\n";
+                exit(1);
+            }
+            else {
+                cout << "sented string length: " << n << "\n";
+            }            
             
-        n = send(sfd,msg.GetPayload().c_str(),payload_length,0);
-        if (n < 0){ 
-            cout << "send errno=" << errno << "\n";
-            exit(1);
+            n = send(sfd,msg.GetPayload().c_str(),payload_length,0);
+            if (n < 0){ 
+                cout << "send errno=" << errno << "\n";
+                exit(1);
+            }
+            else if (n < payload_length) {
+                cout << "Warning : sented string is less than requested" << "\n";
+                cout << "sented string length: " << n << "\n";
+                exit(1);
+            }
+            else {
+                cout << "sented string length: " << n << "\n";
+            }            
         }
-        else if (n < payload_length) {
-            cout << "Warning : sented string is less than requested" << "\n";
-            cout << "sented string length: " << n << "\n";
-            exit(1);
+
+
+
+        {
+            // 2. Create Block and inject
+            std::list<Transaction> tx_list;
+            Transaction tx(0,1,123.45); // send 123.45 to node 1 from node 0
+            tx_list.push_back(tx);
+            Transaction tx2(3,2,43.21); // send 43.21 to node 2 from node 3
+            tx_list.push_back(tx2);
+            Block block(0, tx_list);
+        
+            P2PMessage p2pmessage(P2PMessage_BLOCK, block);
+            SocketMessage msg;
+            msg.SetSocketfd(sfd);
+            msg.SetP2PMessage(p2pmessage);
+            std::string payload = GetSerializedString(msg);
+            msg.SetPayload(payload);
+
+            cout << "Following block will be injected" << "\n";
+            cout << block << "\n";
+
+            SocketMessage msg2 = GetDeserializedMsg(payload);
+            cout << "Following block is deserialized (with boost variant)" << "\n";
+            Block deserialized_block = boost::get<Block>(msg2.GetP2PMessage().data);
+            cout << deserialized_block << "\n";
+            
+            int payload_length = msg.GetPayloadLength();
+
+            int n = send(sfd, (char*)&payload_length, sizeof(int), 0);
+            if (n < 0){ 
+                cout << "send errno=" << errno << "\n";
+                exit(1);
+            }
+            else if (n < sizeof(int)) {
+                cout << "Warning : sented string is less than requested" << "\n";
+                cout << "sented string length: " << n << "\n";
+                exit(1);
+            }
+            else {
+                cout << "sented string length: " << n << "\n";
+            }            
+            
+            n = send(sfd,msg.GetPayload().c_str(),payload_length,0);
+            if (n < 0){ 
+                cout << "send errno=" << errno << "\n";
+                exit(1);
+            }
+            else if (n < payload_length) {
+                cout << "Warning : sented string is less than requested" << "\n";
+                cout << "sented string length: " << n << "\n";
+                exit(1);
+            }
+            else {
+                cout << "sented string length: " << n << "\n";
+            }            
         }
-        else {
-            cout << "sented string length: " << n << "\n";
-        }            
+
     }
 
     return;

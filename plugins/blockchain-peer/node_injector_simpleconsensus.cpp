@@ -121,8 +121,9 @@ void NodeLoop(char *servhostname) {
 
         SocketMessage msg2 = GetDeserializedMsg(payload);
 
-        cout << "Following tx is deserialized" << "\n";
-        cout << msg2.GetP2PMessage().tx << "\n";
+        cout << "Following tx is deserialized (with boost variant)" << "\n";
+        Transaction deserialized_tx = boost::get<Transaction>(msg2.GetP2PMessage().data);
+        cout << deserialized_tx << "\n";
 
             
         int payload_length = msg.GetPayloadLength();

@@ -4,6 +4,8 @@
 #include "../blockchain/txpool.h"
 #include "socket.h"
 
+#include <boost/variant.hpp>
+
 SimpleGossipProtocol* SimpleGossipProtocol::instance = 0;
 
 SimpleGossipProtocol* SimpleGossipProtocol::GetInstance() {
@@ -35,7 +37,14 @@ void SimpleGossipProtocol::RunGossipProtocol(P2PMessage msg) {
             }
         }
         
-        TxPool::GetInstance()->PushTxToQueue(msg.tx);
+        Transaction *tx = boost::get<Transaction>(&msg.data);
+        if (tx) {
+            TxPool::GetInstance()->PushTxToQueue(*tx);
+        }
+        else {
+            std::cout << "Wrong data in P2PMessage" << "\n";
+            exit(1);
+        }
     }
 }
 

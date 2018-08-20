@@ -2,8 +2,10 @@
 #define P2P_MESSAGE_H
 
 #include <iostream>
+#include <boost/variant.hpp>
 
 #include "../blockchain/transaction.h"
+#include "../blockchain/block.h"
 
 #define P2PMessage_TRANSACTION 0
 /* enum P2PMessageType { */
@@ -13,9 +15,9 @@
 class P2PMessage {
  public:
     P2PMessage() {};
-    P2PMessage(int t, Transaction x) { type = t; tx = x; };
+    P2PMessage(int t, Transaction x) { type = t; data = x; };
     int type;
-    Transaction tx; // make it variant
+    boost::variant< Transaction, Block > data; // make it variant
 
  private:
     friend class boost::serialization::access;
@@ -26,7 +28,7 @@ class P2PMessage {
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version) {
         ar & type;
-        ar & tx;
+        ar & data;
     }
 };
 

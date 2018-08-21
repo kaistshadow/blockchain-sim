@@ -2,6 +2,7 @@
 #define BLOCK_H
 
 #include <iostream>
+#include <string>
 #include <list>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -12,13 +13,13 @@
 class Block {
  public:
     Block() {};
-    Block(int index, std::list<Transaction> input_tx_list) { block_index = index; tx_list = input_tx_list; }
+    Block(std::string id, std::list<Transaction> input_tx_list) { block_id = id; tx_list = input_tx_list; }
 
     const std::list<Transaction>& GetTransactions() const { return tx_list; }
-    int GetIndex() const {return block_index; }
+    std::string GetId() const {return block_id; }
 
  private:
-    int block_index;
+    std::string block_id;
     std::list<Transaction> tx_list;
 
 
@@ -29,7 +30,7 @@ class Block {
     
     template<class Archive>
         void serialize(Archive & ar, const unsigned int version) {
-        ar & block_index;
+        ar & block_id;
         ar & tx_list;
     }
 };

@@ -7,9 +7,11 @@
 
 #include "../blockchain/transaction.h"
 #include "../blockchain/block.h"
+#include "../consensus/simpleconsensusmessage.h"
 
 #define P2PMessage_TRANSACTION 0
 #define P2PMessage_BLOCK 1
+#define P2PMessage_SIMPLECONSENSUSMESSAGE 2
 /* enum P2PMessageType { */
 /*     TRANSACTION = 0, */
 /* }; */
@@ -19,8 +21,9 @@ class P2PMessage {
     P2PMessage() {};
     P2PMessage(int t, Transaction x) { type = t; data = x; };
     P2PMessage(int t, Block blk) { type = t; data = blk; };
+    P2PMessage(int t, SimpleConsensusMessage msg) { type = t; data = msg; };
     int type;
-    boost::variant< Transaction, Block > data; // make it variant
+    boost::variant< Transaction, Block, SimpleConsensusMessage > data; // make it variant
 
  private:
     friend class boost::serialization::access;

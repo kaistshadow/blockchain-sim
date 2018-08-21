@@ -3,6 +3,7 @@
 #include "simplepeerlist.h"
 #include "../blockchain/txpool.h"
 #include "socket.h"
+#include "../consensus/simpleconsensus.h"
 
 #include <boost/variant.hpp>
 
@@ -68,6 +69,18 @@ void SimpleGossipProtocol::RunGossipProtocol(P2PMessage msg) {
             std::cout << *blk << "\n";
         }
         else {
+            std::cout << "Wrong data in P2PMessage" << "\n";
+            exit(1);
+        }
+    }
+    else if (msg.type == P2PMessage_SIMPLECONSENSUSMESSAGE) {
+        // Do not propagate a simpleconsensusmessage to p2p network.
+        // We assume that simpleconsensusmessage are targeted message. (unlike a non-targeted p2p message)
+
+        SimpleConsensusMessage *consensusMsg = boost::get<SimpleConsensusMessage>(&msg.data);
+        if (consensusMsg) {
+            SimpleConsensus::GetInstance()->PushToQueue(*consensusMsg);            
+        } else {
             std::cout << "Wrong data in P2PMessage" << "\n";
             exit(1);
         }

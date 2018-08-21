@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 
 #include "p2p/simplepeerlist.h"
 #include "p2p/gossipprotocol.h"
@@ -38,8 +39,10 @@ void NodeInit(char *servhostname) {
 }
 
 void NodeLoop() {
+    time_t start = time(0);
     while (true) {
         usleep(100000);
+        // cout << "time:" << difftime(time(0), start) << "\n";
 
         // process non-blocking network socket events
         // process non-blocking accept and non-blocking recv
@@ -50,12 +53,14 @@ void NodeLoop() {
             
         // ideal consensus protocol
         // RunConsensusProtocol(GetLocalNodeId());  # TODO 2
+        SimpleConsensus::GetInstance()->RunConsensusProtocol();
 
 
         // Process pending messages in messageQueues for each module
         TxPool::GetInstance()->ProcessQueue();
         SimpleGossipProtocol::GetInstance()->ProcessQueue();
         SocketInterface::GetInstance()->ProcessQueue();
+        SimpleConsensus::GetInstance()->ProcessQueue();
     }
     return;
 }

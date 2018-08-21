@@ -5,7 +5,6 @@
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/iostreams/device/array.hpp>
-#include <boost/serialization/string.hpp>
 
 using namespace boost::archive;
 

@@ -27,6 +27,7 @@ set(SRCS
   p2p/nodeinfos.cpp
   p2p/socket.cpp
   p2p/socketmessage.cpp
+  blockchain/block.cpp
   blockchain/transaction.cpp
   blockchain/txpool.cpp
   consensus/simpleconsensus.cpp

@@ -13,6 +13,7 @@
 #include <netdb.h>
 
 
+#include <map>
 #include <vector>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
@@ -24,7 +25,7 @@
 #include "blockchain/transaction.h"
 #include "p2p/p2pmessage.h"
 #include "p2p/socketmessage.h"
-
+#include "consensus/simpleconsensusmessage.h"
 
 #define MYPORT 3456    /* the port users will be connecting to */
 #define BACKLOG 10     /* how many pending connections queue will hold */
@@ -37,60 +38,43 @@ enum BLOCKING_CONNECT_STATUS {
 };
 
 int client_sfd;
+map< string, int > socket_m;
 
-void NodeInit();
+void NodeInit(int argc, char *argv[]);
 
-void NodeLoop(char *servhostname);
+void NodeLoop(char *argv[]);
 
 int main(int argc, char *argv[]) {
     // int nodeid = atoi(argv[1]);
     cout << "simpleconsensus injector started!\n";
 
-    NodeInit();
-    NodeLoop(argv[1]);
+    NodeInit(argc, argv);
+    NodeLoop(argv);
 }
 
-void NodeInit() {
+void connect_to_node(char *hostname) {
 
-    /*******************************  init for client socket start *******************************/
-
-    int 			cli_sockfd;  /* listen on sock_fd, new connection on new_fd */
-
+    // blocking connect
+    int 			cli_sockfd;
     if ((cli_sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("socket");
         exit(1);
     }
-    client_sfd = cli_sockfd;
-    
-    /*******************************  init for client socket end  *******************************/
 
-    // initialize the list of neighbor nodes
-    // InitializePeerList();
-}
-
-void NodeLoop(char *servhostname) {
-    socklen_t 			sin_size;
-    int				last_fd;	/* Thelast sockfd that is connected	*/
-    int n;
-    BLOCKING_CONNECT_STATUS conn_status = IDLE;
-    
-    vector<int> client_sfd_list; // currently, i assumed that this injector only connects to a single peer.
-
-    // blocking connect
     struct sockaddr_in servaddr;
     struct addrinfo* servinfo;
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(MYPORT);
 
-    n = getaddrinfo(servhostname, NULL, NULL, &servinfo);
+    int n = getaddrinfo(hostname, NULL, NULL, &servinfo);
     if (n != 0) {
         cout << "error in connection : getaddrinfo" << "\n";
         exit(1);
     }
     servaddr.sin_addr.s_addr = ((struct sockaddr_in*) (servinfo->ai_addr))->sin_addr.s_addr;
 
-    n = connect(client_sfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
+    n = connect(cli_sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
 
     if (n < 0) {
         perror("connect");
@@ -98,62 +82,138 @@ void NodeLoop(char *servhostname) {
     } 
     else if (n == 0) {
         cout << "connection established" << "\n";
-        client_sfd_list.push_back(client_sfd);
-        conn_status = CONNECTED;
+        socket_m.insert(make_pair(hostname, cli_sockfd));
     }
 
-    // blocking send
-    for (vector<int>::iterator it = client_sfd_list.begin(); it != client_sfd_list.end(); it++) {
-        int sfd = *it;
+    return;
+}
 
-        // create SocketMessage and insert into the queue
-        Transaction tx(0,1,12.34); // send 100.0 to node 1 from node 0
-        P2PMessage p2pmessage(P2PMessage_TRANSACTION, tx);
-        // SocketMessage msg(sfd, p2pmessage);
+void send_SocketMessage(int sfd, SocketMessage msg) {
+    int payload_length = msg.GetPayloadLength();
+
+    int n = send(sfd, (char*)&payload_length, sizeof(int), 0);
+    if (n < 0){ 
+        cout << "send errno=" << errno << "\n";
+        exit(1);
+    }
+    else if (n < sizeof(int)) {
+        cout << "Warning : sented string is less than requested" << "\n";
+        cout << "sented string length: " << n << "\n";
+        exit(1);
+    }
+    else {
+        cout << "sented string length: " << n << "\n";
+    }            
+            
+    n = send(sfd,msg.GetPayload().c_str(),payload_length,0);
+    if (n < 0){ 
+        cout << "send errno=" << errno << "\n";
+        exit(1);
+    }
+    else if (n < payload_length) {
+        cout << "Warning : sented string is less than requested" << "\n";
+        cout << "sented string length: " << n << "\n";
+        exit(1);
+    }
+    else {
+        cout << "sented string length: " << n << "\n";
+    }           
+    return;
+}
+
+void InjectTransaction(int sfd, int from, int to, double value) {
+    Transaction tx(from, to, value);
+    P2PMessage p2pmessage(P2PMessage_TRANSACTION, tx);
+    SocketMessage msg;
+    msg.SetSocketfd(sfd);
+    msg.SetP2PMessage(p2pmessage);
+    std::string payload = GetSerializedString(msg);
+    msg.SetPayload(payload);
+
+    cout << "Following tx will be injected" << "\n";
+    cout << tx << "\n";
+
+    send_SocketMessage(sfd, msg);
+}
+
+void NodeInit(int argc, char *argv[]) {
+
+    for (int i = 1; i < argc; i++) {
+        connect_to_node(argv[i]);
+    }
+}
+
+
+void NodeLoop(char *argv[]) {
+    int n;
+    
+    vector<int> client_sfd_list; 
+
+    {
+        // 1. create Transaction and inject to first node
+        int sfd = socket_m.find(argv[1])->second;
+        InjectTransaction(sfd, 0,1,12.34); // send 12.34 to node 1 from node 0
+        InjectTransaction(sfd, 0,2,10);
+        InjectTransaction(sfd, 1,3,10);
+        InjectTransaction(sfd, 2,0,11);
+        InjectTransaction(sfd, 1,0,12.34);
+    }
+
+    {
+        // 2. Create Block and inject to first node
+        int sfd = socket_m.find(argv[1])->second;
+        std::list<Transaction> tx_list;
+        Transaction tx(0,1,123.45); // send 123.45 to node 1 from node 0
+        tx_list.push_back(tx);
+        Transaction tx2(3,2,43.21); // send 43.21 to node 2 from node 3
+        tx_list.push_back(tx2);
+        Block block("injected block 0", tx_list);
+        
+        P2PMessage p2pmessage(P2PMessage_BLOCK, block);
         SocketMessage msg;
         msg.SetSocketfd(sfd);
         msg.SetP2PMessage(p2pmessage);
         std::string payload = GetSerializedString(msg);
         msg.SetPayload(payload);
 
-        cout << "Following tx will be injected" << "\n";
-        cout << tx << "\n";
+        cout << "Following block will be injected" << "\n";
+        cout << block << "\n";
 
         SocketMessage msg2 = GetDeserializedMsg(payload);
+        cout << "Following block is deserialized (with boost variant)" << "\n";
+        Block deserialized_block = boost::get<Block>(msg2.GetP2PMessage().data);
+        cout << deserialized_block << "\n";
 
-        cout << "Following tx is deserialized" << "\n";
-        cout << msg2.GetP2PMessage().tx << "\n";
+        send_SocketMessage(sfd, msg);
+    }
 
-            
-        int payload_length = msg.GetPayloadLength();
+    {
+        // 3. Quorum initialization and Leader Election.
+        for (auto it = socket_m.begin(); it != socket_m.end(); it++) {
+            std::string node_id = it->first;
+            int sfd = it->second;
+            SimpleConsensusMessage consensusMsg(SimpleConsensusMessage_INIT_QUORUM, node_id); 
+            P2PMessage p2pmessage(P2PMessage_SIMPLECONSENSUSMESSAGE, consensusMsg);
+            SocketMessage msg;
+            msg.SetSocketfd(sfd);
+            msg.SetP2PMessage(p2pmessage);
+            std::string payload = GetSerializedString(msg);
+            msg.SetPayload(payload);
 
-        int n = send(sfd, (char*)&payload_length, sizeof(int), 0);
-        if (n < 0){ 
-            cout << "send errno=" << errno << "\n";
-            exit(1);
+            send_SocketMessage(sfd, msg);
         }
-        else if (n < sizeof(int)) {
-            cout << "Warning : sented string is less than requested" << "\n";
-            cout << "sented string length: " << n << "\n";
-            exit(1);
-        }
-        else {
-            cout << "sented string length: " << n << "\n";
-        }            
-            
-        n = send(sfd,msg.GetPayload().c_str(),payload_length,0);
-        if (n < 0){ 
-            cout << "send errno=" << errno << "\n";
-            exit(1);
-        }
-        else if (n < payload_length) {
-            cout << "Warning : sented string is less than requested" << "\n";
-            cout << "sented string length: " << n << "\n";
-            exit(1);
-        }
-        else {
-            cout << "sented string length: " << n << "\n";
-        }            
+
+        std::string node_id(argv[1]); // node0 is elected as a leader
+        int sfd = socket_m.find(argv[1])->second;
+        SimpleConsensusMessage consensusMsg(SimpleConsensusMessage_LEADER_ELECTION, node_id); 
+        P2PMessage p2pmessage(P2PMessage_SIMPLECONSENSUSMESSAGE, consensusMsg);
+        SocketMessage msg;
+        msg.SetSocketfd(sfd);
+        msg.SetP2PMessage(p2pmessage);
+        std::string payload = GetSerializedString(msg);
+        msg.SetPayload(payload);
+
+        send_SocketMessage(sfd, msg);
     }
 
     return;

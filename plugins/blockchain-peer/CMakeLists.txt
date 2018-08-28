@@ -53,7 +53,6 @@ else()
 endif()
 
 ## we use cmake files from shadow
-set(CMAKE_MODULE_PATH "${SHADOW_ROOT}/share/cmake/Modules")
 if(EXISTS "${CMAKE_MODULE_PATH}")
   message(STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
 else()

@@ -105,7 +105,7 @@ SimplePeerList* SimplePeerList::GetInstance() {
 
 // InitializePeerList : make outPeer for given hostname. 
 // (so, it only supports a single outpeer, currently.)
-void SimplePeerList::InitializePeerList(char *servhostname) {
+void SimplePeerList::AddPeerList(char *servhostname) {
 
     if (strcmp(servhostname, "none") == 0)
         return;

@@ -21,7 +21,13 @@ find_package(Boost REQUIRED serialization)
 
 include_directories(${Boost_INCLUDE_DIRS})
 
+set(STELLAR_SRCS
+  consensus/stellarconsensus.cpp
+  consensus/stellarquorum.cpp
+)
+
 set(SRCS
+  ${STELLAR_SRCS}
   p2p/simplepeerlist.cpp
   p2p/gossipprotocol.cpp
   p2p/nodeinfos.cpp
@@ -32,6 +38,7 @@ set(SRCS
   blockchain/txpool.cpp
   consensus/simpleconsensus.cpp
 )
+
   
 
 ## we need to know where shadow is installed
@@ -56,7 +63,9 @@ endif()
 if(EXISTS "${CMAKE_MODULE_PATH}")
   message(STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
 else()
-  message(FATAL_ERROR "CMAKE_MODULE_PATH path does not exist: '${CMAKE_MODULE_PATH}'")
+  set(CMAKE_MODULE_PATH "${SHADOW_ROOT}/share/cmake/Modules")
+  message(STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
+  # message(FATAL_ERROR "CMAKE_MODULE_PATH path does not exist: '${CMAKE_MODULE_PATH}'")
 endif()
 include(ShadowTools)
 
@@ -94,3 +103,16 @@ add_shadow_plugin(INJECTOR_SIMPLECONSENSUS node_injector_simpleconsensus.cpp ${S
 install(TARGETS INJECTOR_SIMPLECONSENSUS DESTINATION plugins)
 target_link_libraries(INJECTOR_SIMPLECONSENSUS ${Boost_LIBRARIES})
 
+
+## stellar consensus
+add_executable(PEER_STELLARCONSENSUS_LOCAL node_simpleconsensus.cpp ${SRCS})
+add_shadow_plugin(PEER_STELLARCONSENSUS node_stellarconsensus.cpp ${SRCS})
+install(TARGETS PEER_STELLARCONSENSUS DESTINATION plugins)
+target_link_libraries(PEER_STELLARCONSENSUS_LOCAL ${Boost_LIBRARIES})
+target_link_libraries(PEER_STELLARCONSENSUS ${Boost_LIBRARIES})
+
+add_executable(INJECTOR_STELLARCONSENSUS_LOCAL node_injector_stellarconsensus.cpp ${SRCS})
+add_shadow_plugin(INJECTOR_STELLARCONSENSUS node_injector_stellarconsensus.cpp ${SRCS})
+install(TARGETS INJECTOR_STELLARCONSENSUS DESTINATION plugins)
+target_link_libraries(INJECTOR_STELLARCONSENSUS ${Boost_LIBRARIES})
+target_link_libraries(INJECTOR_STELLARCONSENSUS_LOCAL ${Boost_LIBRARIES})

@@ -4,6 +4,7 @@
 #include "../blockchain/txpool.h"
 #include "socket.h"
 #include "../consensus/simpleconsensus.h"
+#include "../consensus/stellarconsensus.h"
 
 #include <boost/variant.hpp>
 
@@ -85,6 +86,41 @@ void SimpleGossipProtocol::RunGossipProtocol(P2PMessage msg) {
             exit(1);
         }
     }
+    else if (msg.type == P2PMessage_STELLARCONSENSUSMESSAGE) {
+        // 
+        bool broadcast = false;
+
+        StellarConsensusMessage *consensusMsg = boost::get<StellarConsensusMessage>(&msg.data);
+        if (consensusMsg) {
+            StellarConsensus::GetInstance()->PushToQueue(*consensusMsg);            
+            
+            if (consensusMsg->type != StellarConsensusMessage_INIT_QUORUM)
+                broadcast = true;
+        } else {
+            std::cout << "Wrong data in P2PMessage STELLARCONSENSUSMESSAGE" << "\n";
+            exit(1);
+        }
+
+        // propagate a message to p2p network.
+        if (broadcast) {
+            PeerList outPeerList = SimplePeerList::GetInstance()->GetOutPeerList();
+            for (PeerList::iterator it = outPeerList.begin(); it != outPeerList.end(); it++) {    
+                Peer* p = *it;
+                if (p->conn_status == CONNECTED) {
+                    // create SocketMessage and insert into the queue
+                    SocketMessage socketMsg;
+                    socketMsg.SetSocketfd(p->sfd);
+                    socketMsg.SetP2PMessage(msg);
+                    std::string payload = GetSerializedString(socketMsg);
+                    socketMsg.SetPayload(payload);
+
+                    SocketInterface::GetInstance()->PushToQueue(socketMsg);
+                }
+            }
+        }
+
+    }
+
 }
 
 void SimpleGossipProtocol::ProcessQueue() {

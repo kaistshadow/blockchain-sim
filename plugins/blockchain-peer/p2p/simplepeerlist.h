@@ -50,7 +50,7 @@ class SimplePeerList {
      * Initialize the list of neighbor nodes
      * This function will update the global variable called "peerList".
      */
-    void InitializePeerList(char *servhostname);
+    void AddPeerList(char *servhostname);
     
     PeerList& GetOutPeerList() { return outPeerList; };
     PeerList& GetInPeerList() { return inPeerList; };

@@ -5,15 +5,14 @@
 
 #include "p2p/simplepeerlist.h"
 #include "p2p/gossipprotocol.h"
-// #include "p2p/nodeinfos.h"
 #include "p2p/socket.h"
 #include "blockchain/txpool.h"
 
-#include "consensus/simpleconsensus.h"
+#include "consensus/stellarconsensus.h"
 
 using namespace std;
 
-void NodeInit(char *servhostname);
+void NodeInit(int argc, char *argv[]);
 
 void NodeLoop();
 
@@ -21,21 +20,23 @@ int main(int argc, char *argv[]) {
     // int nodeid = atoi(argv[1]);
     cout << "Blockchain peer " << " started!" << "\n";
 
-    NodeInit(argv[1]);
+    NodeInit(argc, argv);
     NodeLoop();
 }
 
-void NodeInit(char *servhostname) {
-    // initialize node id
-    // SetLocalNodeId(nodeid);
+// assume that command arguments are given as follows
+// ./command <node_id_of_neighbor> <node_id_of_neighbor> ...
+void NodeInit(int argc, char *argv[]) {
 
-    // initialize the list of neighbor nodes
-    SimplePeerList::GetInstance()->AddPeerList(servhostname);  
-
-    PeerList outPeerList = SimplePeerList::GetInstance()->GetOutPeerList();
-
+    for (int i = 1; i < argc; i++) {
+        // add neighbor node 
+        SimplePeerList::GetInstance()->AddPeerList(argv[i]);
+    }
+    
     // initialize network socket
+    PeerList outPeerList = SimplePeerList::GetInstance()->GetOutPeerList();    
     SocketInterface::GetInstance()->InitializeSocket(outPeerList);
+
 }
 
 void NodeLoop() {
@@ -53,14 +54,14 @@ void NodeLoop() {
             
         // ideal consensus protocol
         // RunConsensusProtocol(GetLocalNodeId());  # TODO 2
-        SimpleConsensus::GetInstance()->RunConsensusProtocol();
+        // SimpleConsensus::GetInstance()->RunConsensusProtocol();
 
 
         // Process pending messages in messageQueues for each module
         TxPool::GetInstance()->ProcessQueue();
         SimpleGossipProtocol::GetInstance()->ProcessQueue();
         SocketInterface::GetInstance()->ProcessQueue();
-        SimpleConsensus::GetInstance()->ProcessQueue();
+        StellarConsensus::GetInstance()->ProcessQueue();
     }
     return;
 }

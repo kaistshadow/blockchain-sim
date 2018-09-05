@@ -1,45 +1,43 @@
 #ifndef NETWORK_MESSAGE_H
 #define NETWORK_MESSAGE_H
 
-#include <iostream>
 #include <string>
-#include <boost/serialization/string.hpp>
-
+#include <vector>
 #include "p2pmessage.h"
 
-class SocketMessage {
- private:
-    int socket_fd;
-    P2PMessage p2pMessage; 
+typedef enum method {
+  M_NETWORKFAIL = 0, // NOT use protocol->socket direction
+  M_BROADCAST   = 1,
+  M_UNICAST     = 2,
+  M_CONNECT     = 4,
+  M_DISCONNECT  = 8
+} Method;
 
-    friend class boost::serialization::access;
-    // When the class Archive corresponds to an output archive, the
-    // & operator is defined similar to <<.  Likewise, when the class Archive
-    // is a type of input archive the & operator is defined similar to >>
-    
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version) {
-        ar & socket_fd;
-        ar & p2pMessage;
-    }
-
-    int length;
-    std::string network_payload;
-
+class SocketMessage{
  public:
-    SocketMessage() {};
+  SocketMessage() {};
     
-    P2PMessage& GetP2PMessage() { return p2pMessage; }
-    int GetPayloadLength() { return length; }
-    std::string GetPayload() { return network_payload; }
+  std::string GetDstPeer() {return dst_peer;}
+  int         GetSocketfd(){return socket_fd;}
+  int         GetMethod()  {return method;}
+  P2PMessage  GetP2PMessage() {return p2pmessage;}
 
-    void SetSocketfd(int sfd) { socket_fd = sfd; }
-    void SetP2PMessage(P2PMessage msg) { p2pMessage = msg; }
-    void SetPayload(std::string payload) { network_payload = payload; length = payload.size(); }
-};
+  void SetDstPeer(std::string pn) {dst_peer  = pn;}
+  void SetSocketfd(int sfd)       {socket_fd = sfd;}  
+  void SetP2PMessage(P2PMessage msg) {p2pmessage = msg;}
+  
+  // ** HAVE TO USE THIS FUNCTION **
+  void SetMethod(int m, int fd); 
 
-std::string GetSerializedString(SocketMessage msg);
+  // list of sfd used for broad/uni cast.
+  // automatically be filled in by using "SetMethod" funtion
+  std::vector<int> sockets; 
 
-SocketMessage GetDeserializedMsg(std::string str);
+ private:
+  int         socket_fd;  // socket fd for dst peer (for specific target) 
+  std::string dst_peer;   // name of destination peer (Use for M_CONNECT)
+  int         method;     // work that socket interface have to do
+  P2PMessage  p2pmessage; 
+}; 
 
-#endif
+#endif // NETWORK_MESSAGE_H

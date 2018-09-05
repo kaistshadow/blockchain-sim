@@ -2,50 +2,34 @@
 #define P2P_GOSSIPPROTOCOL_H
 
 #include <queue>
+#include <string>
+#include "socketmessage.h"
 
-#include "simplepeerlist.h"
-#include "p2pmessage.h"
+#define ARWL 4
+#define PRWL 2
+#define TEST 1
 
 class SimpleGossipProtocol {
  private:
-    SimpleGossipProtocol() {}; //singleton pattern
-    static SimpleGossipProtocol* instance; // singleton pattern
+  SimpleGossipProtocol() {};                  // singleton pattern
+  static SimpleGossipProtocol* instance;      // singleton pattern
 
-    std::queue<P2PMessage> msgQueue;
+  std::queue<SocketMessage> msgQueue;
+  std::string HostId;
+
  public:
-    static SimpleGossipProtocol* GetInstance(); // singleton pattern
+  static SimpleGossipProtocol* GetInstance(); // singleton pattern
+  
+  void InitProtocolInterface (char* id){
+    HostId = std::string(id);
+  }
+  std::string GetHostId() {return HostId;}
 
-    /**
-     * Run gossip protocol.
-     * Receive any pending requests from inPeerList, and broadcast them to outPeerList.
-     */
-    void RunGossipProtocol(P2PMessage msg);
+  void RunMembershipProtocol(SocketMessage msg);
+  void RunGossipProtocol(SocketMessage msg);
 
-    /** 
-     * Push message into message queue.
-     */
-    void PushToQueue(P2PMessage msg) { msgQueue.push(msg); }
-    void ProcessQueue();
+  void PushToQueue(SocketMessage msg) {msgQueue.push(msg);}
+  void ProcessQueue();
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #endif // P2P_GOSSIPPROTOCOL_H

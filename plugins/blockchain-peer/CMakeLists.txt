@@ -24,7 +24,6 @@ include_directories(${Boost_INCLUDE_DIRS})
 set(SRCS
   p2p/simplepeerlist.cpp
   p2p/gossipprotocol.cpp
-  p2p/nodeinfos.cpp
   p2p/socket.cpp
   p2p/socketmessage.cpp
   blockchain/block.cpp
@@ -33,7 +32,6 @@ set(SRCS
   consensus/simpleconsensus.cpp
 )
   
-
 ## we need to know where shadow is installed
 if("${SHADOW_ROOT}" STREQUAL "")
   set(SHADOW_ROOT "$ENV{HOME}/.shadow")
@@ -60,8 +58,6 @@ else()
 endif()
 include(ShadowTools)
 
-
-
 ## create and install a shared library that can plug into shadow
 add_shadow_plugin(BLOCKCHAIN_PEER_SIMPLE_CONSENSUS node_simpleconsensus.cpp ${SRCS})
 install(TARGETS BLOCKCHAIN_PEER_SIMPLE_CONSENSUS DESTINATION plugins)
@@ -73,14 +69,12 @@ install(TARGETS PEER_NONBLOCK_IO DESTINATION plugins)
 target_link_libraries(PEER_NONBLOCK_IO_LOCAL ${Boost_LIBRARIES})
 target_link_libraries(PEER_NONBLOCK_IO ${Boost_LIBRARIES})
 
-
 ##
 add_executable(INJECTOR_SIMPLE_LOCAL node_injector_simple.cpp ${SRCS})
 add_shadow_plugin(INJECTOR_SIMPLE node_injector_simple.cpp ${SRCS})
 install(TARGETS INJECTOR_SIMPLE DESTINATION plugins)
 target_link_libraries(INJECTOR_SIMPLE_LOCAL ${Boost_LIBRARIES})
 target_link_libraries(INJECTOR_SIMPLE ${Boost_LIBRARIES})
-
 
 ##
 add_executable(PEER_SIMPLECONSENSUS_LOCAL node_simpleconsensus.cpp ${SRCS})

@@ -19,8 +19,7 @@ void SimplePeerList::InitPeerList(int argc, char* argv[]) {
   for (int i=2; i<argc; i++) {    
     MembershipMessage msg = MembershipMessage(P_JOIN, 1, 1, std::string(argv[1]));
     P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
-    
-    SocketMessage smsg = SocketMessage();
+    SocketMessage    smsg = SocketMessage();
     smsg.SetDstPeer(std::string(argv[i]));
     smsg.SetMethod(M_CONNECT, -1);
     smsg.SetP2PMessage(pmsg);

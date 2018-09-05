@@ -137,13 +137,21 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 }
 
 void SimpleGossipProtocol::RunGossipProtocol(SocketMessage msg) {
-  P2PMessage pmsg = msg.GetP2PMessage();
  
-  if (pmsg.type == P2PMessage_MEMBERSHIP) {
-    RunMembershipProtocol(msg);
+  if (msg.GetMethod() == M_NETWORKFAIL) {
+    //SimplePeerList::GetInstance()->DropFailPeer(msg.GetSocketfd());
     return;
   }
-  // Add other type message processing
+
+  P2PMessage pmsg = msg.GetP2PMessage();
+  switch(pmsg.type) {
+    case P2PMessage_MEMBERSHIP:
+      {
+	RunMembershipProtocol(msg);
+      }
+      break;
+      // Add other type message processing
+  }
 }
 
 void SimpleGossipProtocol::ProcessQueue() {

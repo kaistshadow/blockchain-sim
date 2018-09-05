@@ -6,8 +6,10 @@ void SocketMessage::SetMethod(int m, int fd) {
   method = m;
   if (fd == -1) return;
 
-  if (method == M_NETWORKFAIL)
+  if (method == M_NETWORKFAIL) {
+    socket_fd = fd;
     return;
+  }
   if (method & M_CONNECT)
     return;
 

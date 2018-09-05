@@ -151,11 +151,13 @@ void SocketInterface::SyncSendMsg(SocketMessage msg){
   int numbytes = send(sfd, (char*)&payload_len, sizeof(int), 0);
   if (numbytes < sizeof(int)) {
     std::cout << "send event: network fail\n"; 
+    SendFailMsg(sfd);
     return;
   }
   numbytes = send(sfd, payload.c_str(), payload_len, 0);
   if (numbytes < payload_len) {
     std::cout << "send event: network fail\n"; 
+    SendFailMsg(sfd);
     return;
   }
   std::cout << "send event: SyncSendMsg payload size: "<<numbytes<<" to "<< sfd<<'\n';
@@ -168,6 +170,14 @@ void SocketInterface::SyncSendMsg(SocketMessage msg){
   flags = fcntl(sfd, F_GETFL, 0);
   fcntl(sfd, F_SETFL, flags | O_NONBLOCK);
 } 
+
+void SocketInterface::SendFailMsg(int sfd){
+  SocketMessage smsg = SocketMessage();
+  smsg.SetMethod(M_NETWORKFAIL, sfd);
+  SimpleGossipProtocol::GetInstance()->PushToQueue(smsg);
+
+  DeleteSocketDataEntry(sfd);
+}
 
 SocketData* SocketInterface::FindSocketDataEntry(int sfd) {
   for (int i=0; i<socket_view.size();i++) {
@@ -183,7 +193,10 @@ void SocketInterface::CreateSocketDataEntry(int sfd) {
 
 void SocketInterface::DeleteSocketDataEntry(int sfd) {
   for (int i=0; i<socket_view.size();i++) {
-    if (socket_view[i].sfd == sfd) socket_view.erase(socket_view.begin()+i);
+    if (socket_view[i].sfd == sfd) {
+      socket_view.erase(socket_view.begin()+i);
+      close(sfd);
+    }
   }
 }
 
@@ -271,6 +284,7 @@ void SocketInterface::ProcessNetworkEvent() {
 	    int numbytes = recv(fd, &len, sizeof(int), 0);
 	    if (numbytes <= 0) {
 	      std::cout << "recv length fail\n";	      
+	      SendFailMsg(fd);
 	      return;
 	    }
        	    entry->status      = RECV_LENGTH;
@@ -283,6 +297,7 @@ void SocketInterface::ProcessNetworkEvent() {
 	    int numbytes = recv(fd, buffer, entry->payload_len, 0);
 	    if (numbytes <= 0) {
 	      std::cout << "recv packet fail\n";	      
+	      SendFailMsg(fd);
 	      return;
 	    }
 	    std::string str(buffer, entry->payload_len);

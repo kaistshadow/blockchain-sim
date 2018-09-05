@@ -7,7 +7,7 @@
 
 #define ARWL 4
 #define PRWL 2
-#define TEST 1
+#define TEST 0
 
 class SimpleGossipProtocol {
  private:

@@ -55,7 +55,7 @@ void SimpleConsensus::RunConsensusProtocol() {
             Block block("consensus block", tx_list);
             std::cout << block;
             P2PMessage p2pmessage(P2PMessage_BLOCK, block);
-            SimpleGossipProtocol::GetInstance()->PushToQueue(p2pmessage);
+            //SimpleGossipProtocol::GetInstance()->PushToQueue(p2pmessage);
         }
 
         // set next time for doing consensus

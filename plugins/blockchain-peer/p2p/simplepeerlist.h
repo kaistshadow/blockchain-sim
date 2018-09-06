@@ -35,6 +35,7 @@ class SimplePeerList {
   
   void DropRandomFromActive();
   void DropFromActive(int fd);
+  int  ExistInActiveById(std::string pn);
   int  ExistInActive(int fd);
   void AddToActive(Peer node);
 

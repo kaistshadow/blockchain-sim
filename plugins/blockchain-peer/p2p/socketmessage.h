@@ -6,11 +6,11 @@
 #include "p2pmessage.h"
 
 typedef enum method {
-  M_NETWORKFAIL = 0, // NOT use protocol->socket direction
-  M_BROADCAST   = 1,
-  M_UNICAST     = 2,
-  M_CONNECT     = 4,
-  M_DISCONNECT  = 8
+  M_NETWORKFAIL = 1, // NOT use protocol->socket direction
+  M_BROADCAST   = 2,
+  M_UNICAST     = 4,
+  M_CONNECT     = 8,
+  M_DISCONNECT  = 16
 } Method;
 
 class SocketMessage{

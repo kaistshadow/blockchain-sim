@@ -59,6 +59,13 @@ void SimplePeerList::DropFromActive(int fd) {
   }
 }
 
+int SimplePeerList::ExistInActiveById(std::string pn) {
+  for (int i=0; i<active_view.size(); i++){
+    if (active_view[i].peername == pn) return i;
+  }
+  return -1;
+}
+
 int SimplePeerList::ExistInActive(int fd) {
   for (int i=0; i<active_view.size(); i++){
     if (active_view[i].sfd == fd) return i;
@@ -129,21 +136,17 @@ void SimplePeerList::AddToPassive(Peer node) {
 }
 
 void SimplePeerList::PrintActive() {
-  if (active_view.size()) {
-    std::cout << "---Active view---\n";
-    for (int i=0; i<active_view.size(); i++) {
-      std::cout << active_view[i].peername << ", " << active_view[i].sfd << '\n';     
-    }
-    std::cout << "-----------------\n\n";
+  std::cout << "---Active view---\n";
+  for (int i=0; i<active_view.size(); i++) {
+    std::cout << active_view[i].peername << ", " << active_view[i].sfd << '\n';     
   }
+  std::cout << "-----------------\n\n";
 } 
 
 void SimplePeerList::PrintPassive() {
-  if (passive_view.size()) {
-    std::cout << "---Passive view---\n";
-    for (int i=0; i<passive_view.size(); i++) {
-      std::cout << passive_view[i].peername << ", " << passive_view[i].sfd << '\n';     
-    }
-    std::cout << "-----------------\n\n";
+  std::cout << "---Passive view---\n";
+  for (int i=0; i<passive_view.size(); i++) {
+    std::cout << passive_view[i].peername << ", " << passive_view[i].sfd << '\n';     
   }
+  std::cout << "-----------------\n\n";
 } 

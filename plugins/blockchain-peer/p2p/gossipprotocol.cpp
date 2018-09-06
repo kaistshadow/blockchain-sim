@@ -38,9 +38,8 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
       {
 	Peer newactive = Peer(src, sfd);
 	SimplePeerList::GetInstance()->AddToActive(newactive);
-	std::cout << "j\n";
 	
-	MembershipMessage msg = MembershipMessage(P_JOINREPLY, 0, 0, GetHostId());
+	MembershipMessage msg = MembershipMessage(P_JOINREPLY, 1, 1, GetHostId());
 	P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
 	SocketMessage    smsg = SocketMessage();
 	smsg.SetDstPeer(src);
@@ -50,7 +49,7 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
      
 	if (TEST) break;
 	if (SimplePeerList::GetInstance()->active_view.size() >= 2) {
-	  MembershipMessage msg2 = MembershipMessage(P_FORWARDJOIN, 1, 0, src);
+	  MembershipMessage msg2 = MembershipMessage(P_FORWARDJOIN, 1, 1, src);
 	  P2PMessage       pmsg2 = P2PMessage(P2PMessage_MEMBERSHIP, msg2);
 	  SocketMessage    smsg2 = SocketMessage();
 	  smsg2.SetMethod(M_BROADCAST, sfd);
@@ -89,21 +88,26 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
       // 3. increase ttl and transfer to random peer inside active view
       {
 	PeerList active_view = SimplePeerList::GetInstance()->active_view;
-	if (ttl == ARWL || active_view.size() == 1) {
-	  MembershipMessage msg = MembershipMessage(P_FORWARDJOINREPLY, 1, 1, GetHostId());
-	  P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
-	  SocketMessage    smsg = SocketMessage();
-	  smsg.SetDstPeer(src);
-	  smsg.SetMethod(M_CONNECT, sfd);
-	  smsg.SetP2PMessage(pmsg);
-	  SocketInterface::GetInstance()->PushToQueue(smsg);
-	  break;
+	if (GetHostId() != src) {
+	  if (ttl == ARWL || active_view.size() == 1) {
+	    if (SimplePeerList::GetInstance()->ExistInActiveById(src) == -1) {
+	      MembershipMessage msg = MembershipMessage(P_FORWARDJOINREPLY, 1, 1, GetHostId());
+	      P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
+	      SocketMessage    smsg = SocketMessage();
+	      smsg.SetDstPeer(src);
+	      smsg.SetMethod(M_CONNECT, sfd);
+	      smsg.SetP2PMessage(pmsg);
+	      SocketInterface::GetInstance()->PushToQueue(smsg);
+	      return;
+	    }
+	  }
+	  if (ttl == PRWL) {
+	    Peer newpassive = Peer(src, -1);
+	    SimplePeerList::GetInstance()->AddToPassive(newpassive);
+	  }
 	}
-	if (ttl == PRWL) {
-	  Peer newpassive = Peer(src, -1);
-	  SimplePeerList::GetInstance()->AddToPassive(newpassive);
-	}
-	
+	if (ttl == ARWL || active_view.size() == 1) return;
+
 	srand(time(0));
 	int idx, fd; 
 	while (1) {
@@ -113,7 +117,7 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 	    break;
 	  }
 	}
-	MembershipMessage msg = MembershipMessage(P_FORWARDJOIN, ttl+1, 0, src);
+	MembershipMessage msg = MembershipMessage(P_FORWARDJOIN, ttl+1, 1, src);
 	P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
 	SocketMessage    smsg = SocketMessage();
 	smsg.SetMethod(M_UNICAST, fd);
@@ -129,15 +133,23 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
       // If opt == 0, reply with ++ttl, opt=0
       {
 	if (ttl == 1) {
-	  Peer newactive = Peer(src, sfd);
-	  SimplePeerList::GetInstance()->AddToActive(newactive);
-
-	  MembershipMessage msg = MembershipMessage(P_FORWARDJOINREPLY, ttl+1, 1, GetHostId());
-	  P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
-	  SocketMessage    smsg = SocketMessage();
-	  smsg.SetMethod(M_UNICAST, sfd);
-	  smsg.SetP2PMessage(pmsg);
-	  SocketInterface::GetInstance()->PushToQueue(smsg);
+	  int idx = SimplePeerList::GetInstance()->ExistInActiveById(src);
+	  if (idx == -1) {
+	    Peer newactive = Peer(src, sfd);
+	    SimplePeerList::GetInstance()->AddToActive(newactive);
+	  
+	    MembershipMessage msg = MembershipMessage(P_FORWARDJOINREPLY, ttl+1, 1, GetHostId());
+	    P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
+	    SocketMessage    smsg = SocketMessage();
+	    smsg.SetMethod(M_UNICAST, sfd);
+	    smsg.SetP2PMessage(pmsg);
+	    SocketInterface::GetInstance()->PushToQueue(smsg);
+	  }
+	  else if (SimplePeerList::GetInstance()->active_view[idx].sfd != sfd) {
+	    SocketMessage smsg = SocketMessage();
+	    smsg.SetMethod(M_DISCONNECT, sfd);
+	    SocketInterface::GetInstance()->PushToQueue(smsg);
+	  }
 	}
 	else if (ttl == 2) {
 	  Peer newactive = Peer(src, sfd);
@@ -230,8 +242,11 @@ void SimpleGossipProtocol::RunGossipProtocol(SocketMessage msg) {
     
     // Drop fail peer from active view and choose a random peer from passive
     // To insert that peer into active, send P_NEIGHBOR msg to the candidate
-    int idx;
-    if ((idx = instance->ExistInActive(sfd)) != -1) {
+    int idx = instance->ExistInActive(sfd);
+    if (idx != -1) {
+      if (instance->active_view[idx].sfd != sfd)
+	return;
+
       instance->active_view.erase(instance->active_view.begin() + idx);
       if (instance->passive_view.size() == 0) 
 	return;
@@ -257,6 +272,7 @@ void SimpleGossipProtocol::RunGossipProtocol(SocketMessage msg) {
     }
     // Drop fail peer from passive. if it is not in passive then nothing happen
     instance->DropFromPassive(sfd);
+    return;
   }
 
   P2PMessage pmsg = msg.GetP2PMessage();

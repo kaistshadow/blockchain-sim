@@ -53,7 +53,11 @@
   </node>
 
   <node id="bleep4">
-    <application plugin="plugin" time="35" arguments="bleep4 bleep1" />
+    <application plugin="plugin" time="40" arguments="bleep4 bleep1" />
+  </node>
+
+  <node id="bleep5">
+    <application plugin="plugin" time="50" arguments="bleep5 bleep1" />
   </node>
 
 </shadow>

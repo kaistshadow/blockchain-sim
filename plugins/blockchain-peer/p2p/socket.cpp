@@ -160,7 +160,7 @@ void SocketInterface::SyncSendMsg(SocketMessage msg){
     SendFailMsg(sfd);
     return;
   }
-  std::cout << "send event: SyncSendMsg payload size: "<<numbytes<<" to "<< sfd<<'\n';
+  //std::cout << "send event: SyncSendMsg payload size: "<<numbytes<<" to "<< sfd<<'\n';
 
   if (p.GetMethod() == M_DISCONNECT){
     DeleteSocketDataEntry(sfd);
@@ -267,8 +267,7 @@ void SocketInterface::ProcessNetworkEvent() {
 	int newfd = accept(fd, NULL, NULL);
 	CreateSocketDataEntry(newfd);
 	SetEvent(EPOLL_CTL_ADD, EPOLLIN, newfd);
-
-	std::cout << "recv event: accept done\n";
+	//std::cout << "recv event: accept done\n";
 	continue;
       }      
 
@@ -310,7 +309,7 @@ void SocketInterface::ProcessNetworkEvent() {
 	    
 	    entry->status      = RECV_IDLE;
 	    entry->payload_len = 0;
-	    std::cout << "recv event: payload size: "<<numbytes<< " from "<<fd<<'\n';
+	    //std::cout << "recv event: payload size: "<<numbytes<< " from "<<fd<<'\n';
 	  }
 	  break;
       }

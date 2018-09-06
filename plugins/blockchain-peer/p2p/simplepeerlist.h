@@ -5,7 +5,7 @@
 #include <string>
 #include "socketmessage.h"
 
-#define ActiveSize 10 //4
+#define ActiveSize 4
 #define PassiveSize 30
 
 class Peer{ 
@@ -35,12 +35,16 @@ class SimplePeerList {
   
   void DropRandomFromActive();
   void DropFromActive(int fd);
+  int  ExistInActive(int fd);
   void AddToActive(Peer node);
-  void PrintActive();
 
   void DropRandomFromPassive();
   void DropFromPassive(int fd);
+  int  ExistInPassiveById(std::string pn);
+  int  ExistInPassive(int fd);
   void AddToPassive(Peer node);
+
+  void PrintActive();
   void PrintPassive();
 };
 

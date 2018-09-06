@@ -38,6 +38,7 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
       {
 	Peer newactive = Peer(src, sfd);
 	SimplePeerList::GetInstance()->AddToActive(newactive);
+	std::cout << "j\n";
 	
 	MembershipMessage msg = MembershipMessage(P_JOINREPLY, 0, 0, GetHostId());
 	P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
@@ -48,7 +49,7 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 	SocketInterface::GetInstance()->PushToQueue(smsg);
      
 	if (TEST) break;
-	if (SimplePeerList::GetInstance()->active_view.size()>=2) {
+	if (SimplePeerList::GetInstance()->active_view.size() >= 2) {
 	  MembershipMessage msg2 = MembershipMessage(P_FORWARDJOIN, 1, 0, src);
 	  P2PMessage       pmsg2 = P2PMessage(P2PMessage_MEMBERSHIP, msg2);
 	  SocketMessage    smsg2 = SocketMessage();
@@ -65,6 +66,20 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
       {
 	Peer newactive = Peer(src, sfd);
 	SimplePeerList::GetInstance()->AddToActive(newactive);
+      }
+      break;
+
+    case P_DISCONNECT:
+      // remove src peer from active and insert drop node into passive
+      {
+	int idx;
+	if ((idx = SimplePeerList::GetInstance()->ExistInActive(sfd)) == -1)
+	  return;
+
+	SimplePeerList* instance = SimplePeerList::GetInstance();
+	Peer dropnode = instance->active_view[idx];
+	instance->DropFromActive(dropnode.sfd);
+	instance->AddToPassive(dropnode);
       }
       break;
    
@@ -89,8 +104,8 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 	  SimplePeerList::GetInstance()->AddToPassive(newpassive);
 	}
 	
-	int idx, fd; 
 	srand(time(0));
+	int idx, fd; 
 	while (1) {
 	  idx = rand() % active_view.size();
        	  if (active_view[idx].sfd != sfd) {
@@ -131,6 +146,77 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
       }
       break;
 
+    case P_NEIGHBOR:
+      // 1. if host's active view is full, then only high pri will be accepted
+      // 2, else accept all
+      {
+	SimplePeerList* instance = SimplePeerList::GetInstance();
+	int accept = 1;
+	if (instance->active_view.size() == ActiveSize && opt == 0) {
+	  accept == 0;
+	}
+	
+	MembershipMessage msg = MembershipMessage(P_NEIGHBORREPLY, 1, accept, GetHostId());
+	P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
+	SocketMessage    smsg = SocketMessage();
+	smsg.SetMethod(M_UNICAST, sfd);
+	smsg.SetP2PMessage(pmsg);
+	SocketInterface::GetInstance()->PushToQueue(smsg);
+	
+     	if (accept) {
+	  Peer newactive = Peer(src, sfd);
+	  instance->AddToActive(newactive);
+	}
+	else {
+	  int idx = instance->ExistInPassiveById(src);
+	  if (idx != -1) {
+	    instance->passive_view[idx].sfd = sfd;
+	  }
+	}
+      }
+      break;
+
+    case P_NEIGHBORREPLY:
+      // 1. if opt == 1, then add src peer into active
+      // 2. else, send NEIGHBOR to another candidate from passive
+      {
+	SimplePeerList* instance = SimplePeerList::GetInstance();
+	if (opt) {
+	  Peer newactive = Peer(src, sfd);
+	  instance->AddToActive(newactive);
+	}
+	else {
+	  if (instance->passive_view.size() == 1)
+	    return;
+
+	  srand(time(0));
+	  int idx = sfd;
+	  while (idx == sfd) { 
+	    idx = rand() % (int)instance->passive_view.size();
+	  }
+	  int pri = instance->active_view.size()==0 ? 1:0;
+	  int fd  = instance->passive_view[idx].sfd;    	  
+	  MembershipMessage msg = MembershipMessage(P_NEIGHBOR, 1, pri, GetHostId());
+	  P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
+	  SocketMessage    smsg = SocketMessage();
+	  if (fd == -1) {
+	    smsg.SetDstPeer(instance->passive_view[idx].peername);
+	    smsg.SetMethod(M_CONNECT, fd);
+	  }
+	  else {
+	    smsg.SetMethod(M_UNICAST, fd);
+	  }	   
+	  smsg.SetP2PMessage(pmsg);
+	  SocketInterface::GetInstance()->PushToQueue(smsg);
+	}
+      }
+      break;
+
+    case P_SHUFFLE:{;}
+      break;
+    case P_SHUFFLEREPLY:{;}
+      break;
+      
     default:
       break;
   }
@@ -139,8 +225,38 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 void SimpleGossipProtocol::RunGossipProtocol(SocketMessage msg) {
  
   if (msg.GetMethod() == M_NETWORKFAIL) {
-    //SimplePeerList::GetInstance()->DropFailPeer(msg.GetSocketfd());
-    return;
+    int sfd = msg.GetSocketfd();
+    SimplePeerList* instance =SimplePeerList::GetInstance();
+    
+    // Drop fail peer from active view and choose a random peer from passive
+    // To insert that peer into active, send P_NEIGHBOR msg to the candidate
+    int idx;
+    if ((idx = instance->ExistInActive(sfd)) != -1) {
+      instance->active_view.erase(instance->active_view.begin() + idx);
+      if (instance->passive_view.size() == 0) 
+	return;
+     
+      srand(time(0));
+      idx = rand() % (int)instance->passive_view.size();
+      int pri = instance->active_view.size()==0 ? 1:0;
+      int fd  = instance->passive_view[idx].sfd;
+      
+      MembershipMessage msg = MembershipMessage(P_NEIGHBOR, 1, pri, GetHostId());
+      P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
+      SocketMessage    smsg = SocketMessage();
+      if (fd == -1) {
+	smsg.SetDstPeer(instance->passive_view[idx].peername);
+	smsg.SetMethod(M_CONNECT, fd);
+      }
+      else {
+	smsg.SetMethod(M_UNICAST, fd);
+      }	
+      smsg.SetP2PMessage(pmsg);
+      SocketInterface::GetInstance()->PushToQueue(smsg);
+      return;
+    }
+    // Drop fail peer from passive. if it is not in passive then nothing happen
+    instance->DropFromPassive(sfd);
   }
 
   P2PMessage pmsg = msg.GetP2PMessage();
@@ -150,7 +266,18 @@ void SimpleGossipProtocol::RunGossipProtocol(SocketMessage msg) {
 	RunMembershipProtocol(msg);
       }
       break;
-      // Add other type message processing
+   
+    case P2PMessage_TRANSACTION:
+      {;}
+      break;
+      
+    case P2PMessage_BLOCK:
+      {;}
+      break;
+
+    case P2PMessage_SIMPLECONSENSUSMESSAGE:
+      {;}
+      break;      
   }
 }
 

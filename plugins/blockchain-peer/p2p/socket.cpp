@@ -126,11 +126,11 @@ int SocketInterface::ConnectToPeer(std::string pn){
   
   res = connect(sfd, (struct sockaddr*)&address, sizeof(address));
   if (res == -1 && errno != EINPROGRESS) {
-    close(sfd); 
-    if (errno == EISCONN) return 0;
-    return -1;
+    close(sfd); return -1;
   }
-  CreateSocketDataEntry(sfd);
+
+  SocketData* entry= CreateSocketDataEntry(sfd);
+  entry->SetId(pn);
   return sfd;
 } 
 
@@ -186,9 +186,18 @@ SocketData* SocketInterface::FindSocketDataEntry(int sfd) {
   return NULL;
 }
 
-void SocketInterface::CreateSocketDataEntry(int sfd) {
+
+SocketData* SocketInterface::FindSocketDataEntryById(std::string pn) {
+  for (int i=0; i<socket_view.size();i++) {
+    if (socket_view[i].id == pn) return &socket_view[i];
+  }
+  return NULL;
+}
+
+SocketData* SocketInterface::CreateSocketDataEntry(int sfd) {
   SocketData entry = SocketData(sfd);
   socket_view.push_back(entry);
+  return &socket_view[socket_view.size()-1];
 }
 
 void SocketInterface::DeleteSocketDataEntry(int sfd) {
@@ -209,18 +218,37 @@ void SocketInterface::InsertSocketData(int sfd, SocketMessage msg) {
 
 void SocketInterface::ProcessMsg(SocketMessage msg) {
   std::vector<int> list = msg.sockets;
-  if (list.empty()) {
-    if (msg.GetMethod() == M_CONNECT){
-      int newsfd = ConnectToPeer(msg.GetDstPeer());
-      if (newsfd != -1) {
-	msg.SetSocketfd(newsfd);
-	InsertSocketData(newsfd, msg);
-	SetEvent(EPOLL_CTL_ADD, EPOLLOUT, newsfd);
-      }
+  int type = msg.GetMethod();
+  
+  if (type == M_CONNECT) {
+    if (!list.empty()) { 
+      std::cout << "wrong socket list\n";
+      return;
+    }
+    if (FindSocketDataEntryById(msg.GetDstPeer()) != NULL)
+      return;
+
+    int newsfd = ConnectToPeer(msg.GetDstPeer());
+    if (newsfd != -1) {
+      msg.SetSocketfd(newsfd);
+      InsertSocketData(newsfd, msg);
+      SetEvent(EPOLL_CTL_ADD, EPOLLOUT, newsfd);
     }
     return;
   }
-
+  
+  if (type == M_UPDATE) {
+    SocketData* entry = FindSocketDataEntry(msg.GetSocketfd()); 
+    if (!entry) {
+      std::cout << "can't find socket data entry\n";
+      return;
+    }
+    if (entry->info_status == INFO_INCOMPLETE) {
+      entry->SetId(msg.GetDstPeer());
+    }
+    return;
+  }
+  
   for (int i=0; i<list.size(); i++) {  
     msg.SetSocketfd(list[i]);
     SyncSendMsg(msg);
@@ -265,9 +293,10 @@ void SocketInterface::ProcessNetworkEvent() {
     if (ev & EPOLLIN) {
       if (listen_fd == fd) {
 	int newfd = accept(fd, NULL, NULL);
-	CreateSocketDataEntry(newfd);
+	SocketData* entry = CreateSocketDataEntry(newfd);
+	entry->SetId(std::string());
+
 	SetEvent(EPOLL_CTL_ADD, EPOLLIN, newfd);
-	//std::cout << "recv event: accept done\n";
 	continue;
       }      
 
@@ -275,14 +304,17 @@ void SocketInterface::ProcessNetworkEvent() {
       memset(buffer, 0, 2000);
       SocketData* entry = FindSocketDataEntry(fd);
       if (!entry) continue;
-      
+     
       switch (entry->status) {
 	case RECV_IDLE:
 	  {
 	    int len=0;
 	    int numbytes = recv(fd, &len, sizeof(int), 0);
 	    if (numbytes <= 0) {
-	      std::cout << "recv length fail\n";	      
+	      if (numbytes == 0)
+		std::cout << "connection closed\n";	      
+	      else
+		std::cout << "recv length fail\n";	      
 	      SendFailMsg(fd);
 	      return;
 	    }
@@ -300,11 +332,14 @@ void SocketInterface::ProcessNetworkEvent() {
 	      return;
 	    }
 	    std::string str(buffer, entry->payload_len);
-	    P2PMessage pmsg = GetDeserializedMsg(str);
+	    P2PMessage  pmsg = GetDeserializedMsg(str);
 
 	    SocketMessage smsg = SocketMessage();
-	    smsg.SetSocketfd(fd);
-	    smsg.SetP2PMessage(pmsg);      
+	    smsg.SetP2PMessage(pmsg);   
+	    if (entry->info_status == INFO_INCOMPLETE)
+	      smsg.SetMethod(M_UPDATE, fd);
+	    else
+	      smsg.SetSocketfd(fd);
 	    SimpleGossipProtocol::GetInstance()->PushToQueue(smsg);    
 	    
 	    entry->status      = RECV_IDLE;

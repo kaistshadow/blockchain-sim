@@ -10,7 +10,8 @@ typedef enum method {
   M_BROADCAST   = 2,
   M_UNICAST     = 4,
   M_CONNECT     = 8,
-  M_DISCONNECT  = 16
+  M_DISCONNECT  = 16,
+  M_UPDATE      = 32
 } Method;
 
 class SocketMessage{

@@ -84,3 +84,8 @@ include(ShadowTools)
 add_shadow_plugin(MEMBERSHIP node_membershiptest.cpp ${SRCS})
 install(TARGETS MEMBERSHIP DESTINATION plugins)
 target_link_libraries(MEMBERSHIP ${Boost_LIBRARIES})
+
+## membership injector
+add_shadow_plugin(INJECTOR_MEMBERSHIP node_injector_simplemembership.cpp ${SRCS})
+install(TARGETS INJECTOR_MEMBERSHIP DESTINATION plugins)
+target_link_libraries(INJECTOR_MEMBERSHIP ${Boost_LIBRARIES})

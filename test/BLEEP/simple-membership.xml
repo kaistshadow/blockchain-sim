@@ -35,7 +35,7 @@
 
   <!-- the plug-ins we will be using -->
   <plugin id="plugin" path="libMEMBERSHIP.so" />
-
+  
   <!-- the length of our experiment in seconds -->
   <kill time="250" />
 
@@ -58,6 +58,10 @@
 
   <node id="bleep5">
     <application plugin="plugin" time="50" arguments="bleep5 bleep1" />
+  </node>
+
+  <node id="bleep6">
+    <application plugin="plugin" time="60" arguments="bleep6 bleep1" />
   </node>
 
 </shadow>

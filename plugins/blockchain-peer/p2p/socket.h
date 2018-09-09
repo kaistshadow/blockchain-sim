@@ -11,8 +11,13 @@
 #define BACKLOG 10 
 
 enum RECV_STATUS {
-  RECV_IDLE = 0,
+  RECV_IDLE   = 0,
   RECV_LENGTH = 1,
+};
+
+enum INFO_STATUS {
+  INFO_INCOMPLETE = 0,
+  INFO_COMPLETE   = 1,
 };
 
 class SocketData {
@@ -20,13 +25,17 @@ class SocketData {
   SocketData(int fd) {
     sfd    = fd;
     status = RECV_IDLE;
+    info_status = INFO_INCOMPLETE;
   }
   int sfd;
+  std::string id;
   std::queue<SocketMessage> msgQueue;   
  
   int payload_len;
   RECV_STATUS status;
+  INFO_STATUS info_status;
 
+  void SetId(std::string ID) {id = ID; info_status = INFO_COMPLETE;}
   void PushToQueue(SocketMessage msg) {msgQueue.push(msg);}
 };
 typedef std::vector<SocketData> SocketList;
@@ -50,7 +59,8 @@ class SocketInterface {
   void SendFailMsg(int sfd);
 
   SocketData* FindSocketDataEntry(int sfd);
-  void CreateSocketDataEntry(int sfd);
+  SocketData* FindSocketDataEntryById(std::string pn);
+  SocketData* CreateSocketDataEntry(int sfd);
   void ModifySocketDataEntry(int sfd, int newsfd);
   void DeleteSocketDataEntry(int sfd);
   void InsertSocketData(int sfd, SocketMessage msg); 

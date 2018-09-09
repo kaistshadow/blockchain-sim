@@ -12,6 +12,8 @@
 #include "../blockchain/txpool.h"
 #include "../consensus/simpleconsensus.h"
 
+int CNT = 0;
+
 SimpleGossipProtocol* SimpleGossipProtocol::instance = 0;
 SimpleGossipProtocol* SimpleGossipProtocol::GetInstance() {
   if (instance == 0) {
@@ -235,8 +237,9 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 }
 
 void SimpleGossipProtocol::RunGossipProtocol(SocketMessage msg) {
- 
-  if (msg.GetMethod() == M_NETWORKFAIL) {
+  int stype = msg.GetMethod();
+
+  if (stype == M_NETWORKFAIL) {
     int sfd = msg.GetSocketfd();
     SimplePeerList* instance =SimplePeerList::GetInstance();
     
@@ -275,6 +278,17 @@ void SimpleGossipProtocol::RunGossipProtocol(SocketMessage msg) {
     return;
   }
 
+  if (stype == M_UPDATE) {
+    int sfd = msg.GetSocketfd();
+    MembershipMessage hmsg = boost::get<MembershipMessage>(msg.GetP2PMessage().data);
+    std::string src = hmsg.src_peer;
+    
+    SocketMessage smsg = SocketMessage();
+    smsg.SetMethod(M_UPDATE, sfd);
+    SocketInterface::GetInstance()->PushToQueue(smsg);
+    return;
+  }
+  
   P2PMessage pmsg = msg.GetP2PMessage();
   switch(pmsg.type) {
     case P2PMessage_MEMBERSHIP:
@@ -284,7 +298,14 @@ void SimpleGossipProtocol::RunGossipProtocol(SocketMessage msg) {
       break;
    
     case P2PMessage_TRANSACTION:
-      {;}
+      {	
+	if (!CNT) {
+	  msg.SetMethod(M_BROADCAST, msg.GetSocketfd());
+	  SocketInterface::GetInstance()->PushToQueue(msg);
+	  CNT = 1;
+	  std::cout << "tx recv\n";
+	}
+      }
       break;
       
     case P2PMessage_BLOCK:

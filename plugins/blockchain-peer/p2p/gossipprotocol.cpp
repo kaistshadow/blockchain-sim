@@ -72,6 +72,7 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 
     case P_DISCONNECT:
       // remove src peer from active and insert drop node into passive
+      // if passive is not empty choose random from passvie and send neighbor
       {
 	int idx;
 	if ((idx = SimplePeerList::GetInstance()->ExistInActive(sfd)) == -1)
@@ -81,6 +82,24 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 	Peer dropnode = instance->active_view[idx];
 	instance->DropFromActive(dropnode.sfd);
 	instance->AddToPassive(dropnode);
+	
+	srand(time(0));
+	idx = rand() % (int)instance->passive_view.size();
+	int pri = instance->active_view.size()==0 ? 1:0;
+	int fd  = instance->passive_view[idx].sfd;
+      
+	MembershipMessage msg = MembershipMessage(P_NEIGHBOR, 1, pri, GetHostId());
+	P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
+	SocketMessage    smsg = SocketMessage();
+	if (fd == -1) {
+	  smsg.SetDstPeer(instance->passive_view[idx].peername);
+	  smsg.SetMethod(M_CONNECT, fd);
+	}
+	else {
+	  smsg.SetMethod(M_UNICAST, fd);
+	}	
+	smsg.SetP2PMessage(pmsg);
+	SocketInterface::GetInstance()->PushToQueue(smsg);
       }
       break;
    

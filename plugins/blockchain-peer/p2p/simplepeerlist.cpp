@@ -141,7 +141,7 @@ void SimplePeerList::PrintActive() {
     if (i == active_view.size()-1)
       std::cout << active_view[i].peername << '\n';
     else
-      std::cout << active_view[i].peername << ", ";
+      std::cout << active_view[i].peername << ',';
     //std::cout << active_view[i].peername << ", " << active_view[i].sfd << '\n';     
   }
   //std::cout << "-----------------\n\n";
@@ -152,7 +152,7 @@ void SimplePeerList::PrintPassive() {
 
   std::cout << "---Passive view---\n";
   for (int i=0; i<passive_view.size(); i++) {
-    std::cout << passive_view[i].peername << ", " << passive_view[i].sfd << '\n';     
+    std::cout << passive_view[i].peername << "," << passive_view[i].sfd << '\n';     
   }
   std::cout << "-----------------\n\n";
 } 

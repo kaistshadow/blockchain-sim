@@ -5,7 +5,7 @@
 #include <string>
 #include "socketmessage.h"
 
-#define ActiveSize 4
+#define ActiveSize 5
 #define PassiveSize 30
 
 class Peer{ 

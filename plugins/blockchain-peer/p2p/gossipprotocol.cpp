@@ -186,7 +186,7 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 	SimplePeerList* instance = SimplePeerList::GetInstance();
 	int accept = 1;
 	if (instance->active_view.size() == ActiveSize && opt == 0) {
-	  accept == 0;
+	  accept = 0;
 	}
 	
 	MembershipMessage msg = MembershipMessage(P_NEIGHBORREPLY, 1, accept, GetHostId());
@@ -245,9 +245,98 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
       }
       break;
 
-    case P_SHUFFLE:{;}
+    case P_SHUFFLE:
+      // if ttl == 5, check the shuffle list from src and fill in host's passive view
+      // And then, send shuffle reply to src
+      // else, randomly propagate the msg to neighbor inside active view
+      {
+      	SimplePeerList* instance = SimplePeerList::GetInstance();
+	if (GetHostId() != src) {
+	  if (ttl == 5 || instance->active_view.size() == 1) {
+	    // process shuffle list inside msg
+	    std::vector<std::string> slist = hmsg.shuffle_list;
+	    std::string newid;
+	    int cnt;
+
+	    for (cnt=0; cnt<slist.size(); cnt++) {
+	      newid = slist[cnt];
+	      if (instance->ExistInActiveById(newid)  != -1)
+		continue;
+	      if (instance->ExistInPassiveById(newid) != -1)
+		continue;
+	      int fd = (cnt == 0) ? sfd:fd;
+	      Peer newpassive = Peer(newid, fd);
+	      instance->AddToPassive(newpassive);
+	    }
+	    
+	    // send Reply with own shuffle list
+	    MembershipMessage msg = MembershipMessage(P_SHUFFLEREPLY, 1, 1, GetHostId());
+	    //msg.SetShuffleList(GetHostId(), cnt);
+	    P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
+	    SocketMessage    smsg = SocketMessage();
+	    smsg.SetDstPeer(src);
+	    smsg.SetP2PMessage(pmsg);
+	    
+	    // set socket num 
+	    int idx;
+	    if ((idx = instance->ExistInActiveById(src)) != -1) {
+	      smsg.SetMethod(M_UNICAST, instance->active_view[idx].sfd);
+	    }
+	    else if ((idx = instance->ExistInPassiveById(src)) != -1){
+	      int fd = instance->passive_view[idx].sfd;
+	      if (fd == -1)
+		smsg.SetMethod(M_CONNECT, fd);
+	      else
+		smsg.SetMethod(M_UNICAST, fd);
+	    }
+	    else {
+	      smsg.SetMethod(M_CONNECT, -1);
+	    }
+	    SocketInterface::GetInstance()->PushToQueue(smsg);
+	    return;
+	  }
+	}
+	if (ttl == 5 || instance->active_view.size() == 1) return;
+
+	//forward msg
+	PeerList active_view = instance->active_view;
+	srand(time(0));
+	int idx, fd; 
+	while (1) {
+	  idx = rand() % active_view.size();
+       	  if (active_view[idx].sfd != sfd) {
+	    fd = active_view[idx].sfd; break;
+	  }
+	}
+       	hmsg.ttl++;
+	P2PMessage    pmsg = P2PMessage(P2PMessage_MEMBERSHIP, hmsg);
+	SocketMessage smsg = SocketMessage();
+	smsg.SetMethod(M_UNICAST, fd);
+	smsg.SetP2PMessage(pmsg);
+	SocketInterface::GetInstance()->PushToQueue(smsg);
+      }
       break;
-    case P_SHUFFLEREPLY:{;}
+
+    case P_SHUFFLEREPLY:
+      // if receive this msg, then insert all node inside msg into passive view
+      // if there are duplicated node, then skip that one ONLY insert new one
+      // if passive view is full, then drop random node (or front = oldest)
+      {
+	SimplePeerList* instance = SimplePeerList::GetInstance();
+	std::vector<std::string> slist = hmsg.shuffle_list;
+	std::string newid;
+	int cnt;
+	for (cnt=0; cnt<slist.size(); cnt++) {
+	  newid = slist[cnt];
+	  if (instance->ExistInActiveById(newid)  != -1)
+	    continue;
+	  if (instance->ExistInPassiveById(newid) != -1)
+	    continue;
+	  int fd = (cnt == 0) ? sfd:fd;
+	  Peer newpassive = Peer(newid, fd);
+	  instance->AddToPassive(newpassive);
+	}
+      }
       break;
       
     default:

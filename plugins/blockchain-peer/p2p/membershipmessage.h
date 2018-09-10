@@ -2,10 +2,12 @@
 #define MEMBERSHIPMESSAGE_H
 
 #include <iostream>
+#include <vector>
 #include <string>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/string.hpp>
+#include <boost/serialization/vector.hpp>
 
 typedef enum membership_type{
   P_JOIN, 
@@ -32,7 +34,8 @@ class MembershipMessage {
   int ttl;
   int opt;
   std::string src_peer;
-
+  std::vector<std::string> shuffle_list;
+  
   std::string GetSrcPeer() {return src_peer;}
 
  private:
@@ -47,6 +50,7 @@ class MembershipMessage {
     ar & ttl;
     ar & opt;
     ar & src_peer;
+    ar & shuffle_list;
   }
 };
 

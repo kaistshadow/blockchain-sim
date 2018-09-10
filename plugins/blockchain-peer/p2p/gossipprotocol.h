@@ -5,8 +5,12 @@
 #include <string>
 #include "socketmessage.h"
 
-#define ARWL 4
-#define PRWL 2
+#define ARWL 6
+#define PRWL 3
+
+#define Ka 3
+#define Kp 4
+
 #define TEST 0
 
 class SimpleGossipProtocol {

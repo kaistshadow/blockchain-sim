@@ -6,17 +6,17 @@ void SocketMessage::SetMethod(int m, int fd) {
   method = m;
   if (fd == -1) return;
 
-  if (method & M_NETWORKFAIL) {
+  if (method == M_NETWORKFAIL) {
     socket_fd = fd;
     return;
   }
-  if (method & M_UPDATE) {
+  if (method == M_UPDATE) {
     socket_fd = fd;
   }
-  if (method & M_CONNECT)
+  if (method == M_CONNECT)
     return;
   
-  if (method & M_BROADCAST) {
+  if (method == M_BROADCAST) {
     PeerList active_view = SimplePeerList::GetInstance()->active_view;
     int temp;
     for (int i=0; i<active_view.size(); i++) {
@@ -24,7 +24,7 @@ void SocketMessage::SetMethod(int m, int fd) {
       if (fd != temp){
 	sockets.push_back(temp);
       }
-   }
+    }
   }
 
   if (method & M_UNICAST || method & M_DISCONNECT) {

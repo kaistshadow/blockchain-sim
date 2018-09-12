@@ -2,6 +2,7 @@
 #define P2P_GOSSIPPROTOCOL_H
 
 #include <queue>
+#include <vector>
 #include <string>
 #include "socketmessage.h"
 
@@ -12,6 +13,7 @@
 #define Kp 4
 
 #define TEST 0
+#define SHUFFLE_OP 0
 
 class SimpleGossipProtocol {
  private:
@@ -21,6 +23,9 @@ class SimpleGossipProtocol {
   std::queue<SocketMessage> msgQueue;
   std::string HostId;
 
+  std::vector<std::string> SetShuffleList(int na, int np);
+  int  ProcessShuffleList(std::vector<std::string> list);
+
  public:
   static SimpleGossipProtocol* GetInstance(); // singleton pattern
   
@@ -29,7 +34,9 @@ class SimpleGossipProtocol {
   }
   std::string GetHostId() {return HostId;}
 
+  void SendShuffleMessage();
   void RunMembershipProtocol(SocketMessage msg);
+
   void RunGossipProtocol(SocketMessage msg);
 
   void PushToQueue(SocketMessage msg) {msgQueue.push(msg);}

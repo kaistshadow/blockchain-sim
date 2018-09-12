@@ -34,6 +34,7 @@ class SimplePeerList {
   Peer* FindPeerFromAll(int fd);
   
   void DropRandomFromActive();
+  void DropFromActiveById(std::string pn);
   void DropFromActive(int fd);
   int  ExistInActiveById(std::string pn);
   int  ExistInActive(int fd);

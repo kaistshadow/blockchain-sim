@@ -63,7 +63,7 @@ class SocketInterface {
   SocketData* CreateSocketDataEntry(int sfd);
   void ModifySocketDataEntry(int sfd, int newsfd);
   void DeleteSocketDataEntry(int sfd);
-  void InsertSocketData(int sfd, SocketMessage msg); 
+  int  InsertSocketData(int sfd, SocketMessage msg); 
 
   void ProcessMsg(SocketMessage msg);
   std::queue<SocketMessage> msgQueue;
@@ -77,6 +77,7 @@ class SocketInterface {
   void PushToQueue(SocketMessage msg) {msgQueue.push(msg);}
   void ProcessQueue();
   void ProcessNetworkEvent();
+  void PrintSocketList();
 };
 
 std::string GetSerializedString(P2PMessage msg);

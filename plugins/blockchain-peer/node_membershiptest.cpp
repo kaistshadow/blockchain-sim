@@ -35,9 +35,12 @@ void NodeLoop() {
   time_t start = time(0);
   cout << "Node Loop start!\n\n";
 
+  int cnt = 0;
   while (true) {
     usleep(100000);
-    SocketInterface::GetInstance()->ProcessQueue();            ;
+    
+    if (++cnt%5 == 0) SimpleGossipProtocol::GetInstance()->SendShuffleMessage();
+    SocketInterface::GetInstance()->ProcessQueue();          
     SocketInterface::GetInstance()->ProcessNetworkEvent();
     SimpleGossipProtocol::GetInstance()->ProcessQueue();
   }

@@ -44,7 +44,7 @@
   </node>
 
   <node id="bleep1">
-    <application plugin="PEER_STELLARCONSENSUS" time="10" arguments="bleep7"/>
+    <application plugin="PEER_STELLARCONSENSUS" time="10" arguments="bleep2 bleep7"/>
   </node>
 
   <node id="bleep2">
@@ -52,15 +52,15 @@
   </node>
 
   <node id="bleep3">
-    <application plugin="PEER_STELLARCONSENSUS" time="10" arguments="bleep7"/>
+    <application plugin="PEER_STELLARCONSENSUS" time="10" arguments="bleep2 bleep1 bleep7"/>
   </node>
 
   <node id="bleep4">
-    <application plugin="PEER_STELLARCONSENSUS" time="10" arguments="bleep7"/>
+    <application plugin="PEER_STELLARCONSENSUS" time="10" arguments="bleep7 bleep5 bleep6"/>
   </node>
 
   <node id="bleep5">
-    <application plugin="PEER_STELLARCONSENSUS" time="10" arguments="bleep7"/>
+    <application plugin="PEER_STELLARCONSENSUS" time="10" arguments="bleep7 bleep6"/>
   </node>
 
   <node id="bleep6">
@@ -68,7 +68,7 @@
   </node>
 
   <node id="bleep7">
-    <application plugin="PEER_STELLARCONSENSUS" time="10" arguments="none"/>
+    <application plugin="PEER_STELLARCONSENSUS" time="10" arguments="bleep1 bleep3 bleep5 bleep4"/>
   </node>
 
 </shadow>

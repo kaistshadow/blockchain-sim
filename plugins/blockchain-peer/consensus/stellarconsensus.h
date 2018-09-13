@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <queue>
+#include <map>
 
 #include "stellarconsensusvalue.h"
 #include "stellarconsensusmessage.h"
@@ -15,14 +16,22 @@ class StellarConsensus{
 
     std::queue<StellarConsensusMessage> msgQueue;
 
-    void CheckQuorumThreshold(StellarConsensusMessage msg); // 
-    
+    bool CheckQuorumThreshold_nominate(StellarConsensusValue v); // 
+    bool CheckQuorumThreshold_accept_nominate(StellarConsensusValue v); // 
+    bool CheckBlockThreshold_nominate(StellarConsensusValue v); // 
+    bool CheckBlockThreshold_accept_nominate(StellarConsensusValue v); // 
+    void UpdateRoundLeader();
+    bool CheckEcho(SCPNominate msg);
+
     StellarQuorums quorums;
     StellarQuorumSlices slices;
+    std::string my_node_id;
+    std::string round_leader = "";
 
-    std::vector<StellarConsensusValue> votedValues;
-    std::vector<StellarConsensusValue> acceptedValues;
-    std::vector<StellarConsensusValue> candidateValues;
+    std::set<StellarConsensusValue> votedValues; 
+    std::set<StellarConsensusValue> acceptedValues;
+    std::set<StellarConsensusValue> candidateValues;
+    std::map<std::string, SCPNominate> latestMessages; 
  public:
     static StellarConsensus* GetInstance(); // singleton pattern
 
@@ -31,6 +40,7 @@ class StellarConsensus{
      */
     void PushToQueue(StellarConsensusMessage msg) { msgQueue.push(msg); }
     void ProcessQueue();
+    std::string GetNodeId() {return my_node_id;}
 
 };
 

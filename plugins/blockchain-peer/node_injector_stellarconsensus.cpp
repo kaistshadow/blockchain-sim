@@ -117,6 +117,21 @@ void send_SocketMessage(int sfd, SocketMessage msg) {
     return;
 }
 
+void InjectTransaction(int sfd, int from, int to, double value) {
+    Transaction tx(from, to, value);
+    P2PMessage p2pmessage(P2PMessage_TRANSACTION, tx);
+    SocketMessage msg;
+    msg.SetSocketfd(sfd);
+    msg.SetP2PMessage(p2pmessage);
+    std::string payload = GetSerializedString(msg);
+    msg.SetPayload(payload);
+
+    cout << "Following tx will be injected" << "\n";
+    cout << tx << "\n";
+
+    send_SocketMessage(sfd, msg);
+}
+
 // assume that command arguments are given as follows
 // ./command <node_id_of_neighbor> <node_id_of_neighbor> ...
 void NodeInit(int argc, char *argv[]) {
@@ -160,6 +175,7 @@ void NodeLoop(char *argv[]) {
             SCPInit scpInitMsg;
             scpInitMsg.quorums = quorums;
             scpInitMsg.slices = slices;
+            scpInitMsg.node_id = node_id;
             consensusMsg.msg = scpInitMsg;
             
             P2PMessage p2pmessage(P2PMessage_STELLARCONSENSUSMESSAGE, consensusMsg);
@@ -178,6 +194,55 @@ void NodeLoop(char *argv[]) {
          
             send_SocketMessage(sfd, msg);
         }
+    }
+
+    // {
+    //     // 2. inject some transactions
+    //     int sfd = socket_m.find("bleep2")->second;
+    //     InjectTransaction(sfd, 0,1,12.34); // send 12.34 to node 1 from node 0
+    //     InjectTransaction(sfd, 0,2,10);
+    //     InjectTransaction(sfd, 1,3,10);
+    //     InjectTransaction(sfd, 2,0,11);
+    //     InjectTransaction(sfd, 1,0,12.34);
+    // }
+
+    {
+        // 2. Stellar Nominate message
+        std::string node_id(argv[6]); // node0 is elected as a leader
+        int sfd = socket_m.find(argv[6])->second;
+
+        std::list<Transaction> tx_list;
+        Transaction tx(1,2,100);
+        Transaction tx2(3,4,200);
+        tx_list.push_back(tx);
+        tx_list.push_back(tx2);
+        StellarConsensusValue value1(tx_list);
+        
+        SCPNominate scpNominateMsg;
+        scpNominateMsg.sender_id = "bleep7";
+        scpNominateMsg.slotIndex = 1;
+        scpNominateMsg.voted.insert(value1);
+
+        StellarConsensusMessage consensusMsg;
+        consensusMsg.type = StellarConsensusMessage_NOMINATE;
+        consensusMsg.msg = scpNominateMsg;
+            
+        P2PMessage p2pmessage(P2PMessage_STELLARCONSENSUSMESSAGE, consensusMsg);
+        SocketMessage msg;
+        msg.SetSocketfd(sfd);
+        msg.SetP2PMessage(p2pmessage);
+        std::string payload = GetSerializedString(msg);
+        msg.SetPayload(payload);
+
+        // SocketMessage msg2 = GetDeserializedMsg(payload);
+        // StellarConsensusMessage deserialized_msg = boost::get<StellarConsensusMessage>(msg2.GetP2PMessage().data)
+        // SCPInit initMsg = boost::get<SCPInit>(deserialized_msg.msg);
+        // cout << initMsg.quorums;
+        // cout << initMsg.slices;
+         
+        send_SocketMessage(sfd, msg);
+
+
     }    
 
 }

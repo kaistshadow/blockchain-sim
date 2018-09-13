@@ -16,7 +16,8 @@ class StellarQuorums {
     StellarQuorums() {};
     void AddQuorum(std::set<std::string> q) { quorums.push_back(q); }
     
-    const std::list< std::set<std::string> >& GetQuorums() const { return quorums; }
+    std::list< std::set<std::string> > GetQuorums() const { return quorums; }
+    bool inSameQuorum(std::string a, std::string b);
  private:
     std::list< std::set<std::string> > quorums;
     
@@ -39,7 +40,7 @@ class StellarQuorumSlices {
         quorumslices.insert(std::make_pair( node_id, slice));
     }
 
-    const std::map< std::string, std::set<std::string> >& GetSlices() const { return quorumslices; }
+    std::map< std::string, std::set<std::string> > GetSlices() const { return quorumslices; }
  private:
     std::map< std::string, std::set<std::string> > quorumslices;
 

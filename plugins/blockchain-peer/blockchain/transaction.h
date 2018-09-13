@@ -29,5 +29,7 @@ class Transaction {
 
 std::ostream& operator<<(std::ostream&, const Transaction&); // in order to overload the << operator
 
+bool operator<(Transaction const & lhs, Transaction const & rhs);
+bool operator==(Transaction const & lhs, Transaction const & rhs);
 
 #endif

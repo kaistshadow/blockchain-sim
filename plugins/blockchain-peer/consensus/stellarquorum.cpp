@@ -1,5 +1,15 @@
 #include "stellarquorum.h"
 
+bool StellarQuorums::inSameQuorum(std::string a, std::string b) {
+    for (auto it = quorums.begin(); it != quorums.end(); it++) {
+        std::set<std::string> quorum = *it;
+        if (quorum.find(a) != quorum.end() && quorum.find(b) != quorum.end()) {
+            return true;
+        }
+    }
+    return false;
+}
+
 std::ostream& operator<<(std::ostream& os, const StellarQuorums& quorums) {
     const std::list< std::set<std::string> >& q_list = quorums.GetQuorums();
     for (auto it = q_list.begin(); it != q_list.end(); it++) {

@@ -24,10 +24,11 @@ include_directories(${Boost_INCLUDE_DIRS})
 set(STELLAR_SRCS
   consensus/stellarconsensus.cpp
   consensus/stellarquorum.cpp
+  consensus/stellarconsensusvalue.cpp
+  crypto/sha256.cpp
 )
 
 set(SRCS
-  ${STELLAR_SRCS}
   p2p/simplepeerlist.cpp
   p2p/gossipprotocol.cpp
   p2p/nodeinfos.cpp
@@ -37,6 +38,7 @@ set(SRCS
   blockchain/transaction.cpp
   blockchain/txpool.cpp
   consensus/simpleconsensus.cpp
+  ${STELLAR_SRCS}
 )
 
   

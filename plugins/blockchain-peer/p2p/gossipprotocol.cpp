@@ -92,9 +92,13 @@ void SimpleGossipProtocol::RunGossipProtocol(P2PMessage msg) {
 
         StellarConsensusMessage *consensusMsg = boost::get<StellarConsensusMessage>(&msg.data);
         if (consensusMsg) {
-            StellarConsensus::GetInstance()->PushToQueue(*consensusMsg);            
+
+            if ( !msg.IsProcessedByNode(StellarConsensus::GetInstance()->GetNodeId()) ) {
+                StellarConsensus::GetInstance()->PushToQueue(*consensusMsg);          
+                msg.SetProcessedByNode(StellarConsensus::GetInstance()->GetNodeId());
+            }  
             
-            if (consensusMsg->type != StellarConsensusMessage_INIT_QUORUM)
+            if (consensusMsg->type != StellarConsensusMessage_INIT_QUORUM && msg.GetHopCount() < 4 )
                 broadcast = true;
         } else {
             std::cout << "Wrong data in P2PMessage STELLARCONSENSUSMESSAGE" << "\n";
@@ -103,6 +107,7 @@ void SimpleGossipProtocol::RunGossipProtocol(P2PMessage msg) {
 
         // propagate a message to p2p network.
         if (broadcast) {
+            msg.IncreaseHopCount();
             PeerList outPeerList = SimplePeerList::GetInstance()->GetOutPeerList();
             for (PeerList::iterator it = outPeerList.begin(); it != outPeerList.end(); it++) {    
                 Peer* p = *it;

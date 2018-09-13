@@ -169,8 +169,6 @@ void SimplePeerList::PrintActive() {
 } 
 
 void SimplePeerList::PrintPassive() {
-  return;
-
   std::cerr << '\n';
   if (passive_view.size() == 0) {
     std::cerr << "None\n";

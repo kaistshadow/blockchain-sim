@@ -37,7 +37,7 @@
   <plugin id="plugin" path="libMEMBERSHIP.so" />
   
   <!-- the length of our experiment in seconds -->
-  <kill time="600" />
+  <kill time="200" />
 
   <!-- our nodes and the applications they run -->
   <node id="bleep1">

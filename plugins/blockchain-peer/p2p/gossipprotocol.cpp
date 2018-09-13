@@ -32,24 +32,15 @@ std::vector<std::string> SimpleGossipProtocol::SetShuffleList(int na, int np) {
   int num_a = (na >= active_view.size()) ? active_view.size() :na;
   int num_p = (np >= passive_view.size())? passive_view.size():np;
 
-  list.push_back(GetHostId());
+  list.push_back(HostId);
 
+  //Have to choose randomly
   for (int i=0; i<num_a; i++)
     list.push_back(active_view[i].peername);
 
   for (int i=0; i<num_p; i++)
     list.push_back(passive_view[i].peername);
 
-  /*
-  std::cerr << "send sfl = ";
-  for (int i=0; i<list.size(); i++) {
-    if (i== list.size()-1)
-      std::cerr << list[i];
-    else
-      std::cerr << list[i] << ',';
-  }
-  std::cerr << '\n';
-  */
   return list;
 }
 
@@ -59,8 +50,6 @@ void SimpleGossipProtocol::SendShuffleMessage() {
   SimplePeerList* instance = SimplePeerList::GetInstance();
   PeerList     active_view = instance->active_view;
   if (active_view.size() == 0) return;
-
-  //std::cerr << "\nperiodic shuffle\n";
 
   MembershipMessage msg = MembershipMessage(P_SHUFFLE, 1, 1, GetHostId());
   msg.shuffle_list = SetShuffleList(Ka, Kp);
@@ -73,8 +62,7 @@ void SimpleGossipProtocol::SendShuffleMessage() {
   int idx = rand() % active_view.size();
   int  fd = active_view[idx].sfd;
   smsg.SetDstPeer(active_view[idx].peername);
-  smsg.SetMethod(M_UNICAST, fd);
- 
+  smsg.SetMethod(M_UNICAST, fd); 
   SocketInterface::GetInstance()->PushToQueue(smsg);
 }
 
@@ -83,20 +71,15 @@ int SimpleGossipProtocol::ProcessShuffleList(std::vector<std::string> list) {
   int         cnt; 
   std::string newid;
 
-  //std::cerr << "recv sfl = ";
   for (cnt = 0; cnt < list.size(); cnt++) {
     newid = list[cnt];
 
-    //std::cerr << newid <<' ';
     if (HostId == newid) continue;
     if (instance->ExistInActiveById(newid)  != -1) continue;    
     if (instance->ExistInPassiveById(newid) != -1) continue;
-    
-    //std::cerr << "add " << newid << '\n';
     Peer newpassive = Peer(newid, -1);
     instance->AddToPassive(newpassive);
   }
-  //std::cerr << "\n";
   return cnt;
 }
 
@@ -113,7 +96,6 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
  
   
   if (stype == M_UPDATE) {
-    //std::cerr << "send update to si:" <<src <<'\n'; 
     SocketMessage smsg = SocketMessage();
     smsg.SetDstPeer(src);
     smsg.SetMethod(M_UPDATE, sfd);
@@ -127,7 +109,6 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
       // 3. Broadcast FORWARDJOIN p2p msg 
       {
 	Peer newactive = Peer(src, sfd);
-	std::cout << "JOIN from "  << src << '\n';
 	SimplePeerList::GetInstance()->AddToActive(newactive);
 	
 	MembershipMessage msg = MembershipMessage(P_JOINREPLY, 1, 1, GetHostId());
@@ -155,7 +136,6 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
       // 2. so insert src peer into host's active view too
       {
 	Peer newactive = Peer(src, sfd);
-	std::cout << "JOINREPLY from "  << src << '\n';
 	SimplePeerList::GetInstance()->AddToActive(newactive);
       }
       break;
@@ -171,7 +151,6 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 	SimplePeerList* instance = SimplePeerList::GetInstance();
 	Peer dropnode = instance->active_view[idx];
 	
-	std::cout << "DISCONNECT from "<< src << '\n';
 	instance->DropFromActiveById(dropnode.peername);
 	instance->AddToPassive(dropnode);
 	
@@ -228,6 +207,8 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 	}
 
 	if (ttl == PRWL) {
+	  if (GetHostId() == src) 
+	    return;
 	  Peer newpassive = Peer(src, -1);
 	  SimplePeerList::GetInstance()->AddToPassive(newpassive);
 	}
@@ -256,7 +237,6 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 	if (ttl == 1) {
 	  int idx = SimplePeerList::GetInstance()->ExistInActiveById(src);
 	  if (idx == -1) {
-	    std::cout << "FORWARDJOINREPLY(1) from " << src <<'\n';
 	    Peer newactive = Peer(src, sfd);
 	    SimplePeerList::GetInstance()->AddToActive(newactive);
 	  
@@ -273,7 +253,6 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 	  return;
 	}
 	if (ttl == 2) {
-	  std::cout << "FORWARDJOINREPLY(2) from "  << src <<'\n';
 	  Peer newactive = Peer(src, sfd);
 	  SimplePeerList::GetInstance()->AddToActive(newactive);
 	}
@@ -291,7 +270,6 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 	}
 	
      	if (accept) {
-	  std::cout << "NEIGHBOR from "  << src << '\n';
 	  Peer newactive = Peer(src, sfd);
 	  instance->AddToActive(newactive);
 	}
@@ -311,7 +289,6 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
       {
 	SimplePeerList* instance = SimplePeerList::GetInstance();
 	if (opt) {
-	  std::cout << "NEIGHBORREPLY(1) from "  << src << '\n';
 	  Peer newactive = Peer(src, sfd);
 	  instance->AddToActive(newactive);
 	  return;
@@ -325,7 +302,6 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 	  }
 	}
 	if (disconnect) {
-	  std::cerr << "CLOSE TEMP CONNECT WITH " << src << '\n';	
 	  SocketMessage smsg = SocketMessage();
 	  smsg.SetDstPeer(src);
 	  smsg.SetMethod(M_DISCONNECT, sfd);
@@ -368,7 +344,6 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
       	SimplePeerList* instance = SimplePeerList::GetInstance();
 	if (ttl == 5 || instance->active_view.size() == 1) {	   
 	  if (GetHostId() != src) {
-	    //std::cerr << "\nshuffle\n";
 	    MembershipMessage msg = MembershipMessage(P_SHUFFLEREPLY, 1, 1, GetHostId());
 	    int cnt = ProcessShuffleList(hmsg.shuffle_list);
 	    msg.shuffle_list = SetShuffleList(0, cnt-1);
@@ -404,7 +379,7 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 	srand(time(0)); 
 	while (1) {
 	  idx = rand() % active_view.size();
-       	  if ((fd = active_view[idx].sfd) != sfd) {break;}
+       	  if ((fd = active_view[idx].sfd) != sfd) break;
 	}
        	
 	hmsg.ttl++;
@@ -421,7 +396,6 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
       // if there are duplicated node, then skip that one ONLY insert new one
       // if passive view is full, then drop random node (or front = oldest)
       {
-	//std::cerr << "\nshuffle reply\n";
 	ProcessShuffleList(hmsg.shuffle_list);
       }
       break;
@@ -445,9 +419,6 @@ void SimpleGossipProtocol::RunGossipProtocol(SocketMessage msg) {
     int idx = instance->ExistInActive(sfd);
     if (idx != -1) {
       Peer dropnode = instance->active_view[idx];
-      
-      std::cout << "NF :" << dropnode.peername << '\n';
-      
       instance->DropFromActiveById(dropnode.peername);
      
       dropnode.sfd = -1;
@@ -474,10 +445,8 @@ void SimpleGossipProtocol::RunGossipProtocol(SocketMessage msg) {
     
     idx = instance->ExistInPassive(sfd);
     if (idx =! -1) {
-      std::cerr << "NF: passive\n"; 
       instance->passive_view[idx].sfd = -1;    
     }
-    std::cerr << "NF: occur\n"; 
     return;
   }
 

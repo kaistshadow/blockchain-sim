@@ -139,7 +139,7 @@ int SocketInterface::ConnectToPeer(std::string pn){
 void SocketInterface::SyncSendMsg(SocketMessage msg){
   SocketMessage p = msg;
   int sfd = msg.GetSocketfd();
-
+  
   std::string payload = GetSerializedString(p.GetP2PMessage());
   int     payload_len = payload.size();
   if (payload_len <= 0) {
@@ -278,12 +278,12 @@ void SocketInterface::ProcessMsg(SocketMessage msg) {
   if (type & M_BROADCAST || type & M_UNICAST) {
     for (int i=0; i<list.size(); i++) {  
       msg.SetSocketfd(list[i]);
-   
+      
       if (InsertSocketData(list[i], msg) == -1) {
 	std::cerr << "can't find socket data entry\n";
 	continue;
       }
-      SetEvent(EPOLL_CTL_MOD, EPOLLOUT, list[i]);
+      SetEvent(EPOLL_CTL_MOD, EPOLLOUT, list[i]);      
     }
   }
 }
@@ -307,7 +307,10 @@ void SocketInterface::ProcessQueue() {
 void SocketInterface::ProcessNetworkEvent() {
   struct epoll_event events[150]; 
   int num_fds = epoll_wait(ed, events, 150, 0);
-  if (num_fds == -1) return;  
+  if (num_fds == -1) {
+    std::cerr << "EPOLL wait error("<<errno<<")\n";
+    return;
+  }  
 
   for (int i=0; i<num_fds; i++) {
     int      fd = events[i].data.fd;

@@ -13,7 +13,7 @@ void NodeInit(int argc, char *argv[]);
 void NodeLoop();
 
 int main(int argc, char *argv[]) {
-  cout << "Blockchain Peer start!\n";
+  //cout << "Blockchain Peer start!\n";
   NodeInit(argc,argv);
   NodeLoop();
 }
@@ -28,7 +28,7 @@ void NodeInit(int argc, char *argv[]) {
  
   // 3. Initailisze Peerlist
   SimplePeerList::GetInstance()->InitPeerList(argc, argv); 
-  cout << "initialization Done!\n";
+  //cout << "initialization Done!\n";
 }
 
 void NodeLoop() {

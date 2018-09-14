@@ -25,8 +25,6 @@ void SimplePeerList::InitPeerList(int argc, char* argv[]) {
     smsg.SetMethod(M_CONNECT, -1);
     smsg.SetP2PMessage(pmsg);
     SocketInterface::GetInstance()->PushToQueue(smsg);
-
-    std::cout << "Send JOIN To " << std::string(argv[i]) << "\n";
   }
 }
 
@@ -169,6 +167,7 @@ void SimplePeerList::PrintActive() {
 } 
 
 void SimplePeerList::PrintPassive() {
+  return;
   std::cerr << '\n';
   if (passive_view.size() == 0) {
     std::cerr << "None\n";

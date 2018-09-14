@@ -136,7 +136,7 @@ int SocketInterface::ConnectToPeer(std::string pn){
   return sfd;
 } 
 
-void SocketInterface::SyncSendMsg(SocketMessage msg){
+int SocketInterface::SyncSendMsg(SocketMessage msg){
   SocketMessage p = msg;
   int sfd = msg.GetSocketfd();
   
@@ -144,7 +144,7 @@ void SocketInterface::SyncSendMsg(SocketMessage msg){
   int     payload_len = payload.size();
   if (payload_len <= 0) {
     std::cerr << "send event: Serialization fault\n";
-    return;
+    return 0;
   }
 
   if (sfd<=1) 
@@ -154,21 +154,21 @@ void SocketInterface::SyncSendMsg(SocketMessage msg){
   if (numbytes < sizeof(int)) {
     std::cerr << "send event: network fail(length):"<<numbytes<<' '<<errno<<'\n';
     SendFailMsg(sfd);
-    return;
+    return -1;
   }
 
   numbytes = send(sfd, payload.c_str(), payload_len, 0);
   if (numbytes < payload_len) {
     std::cerr << "send event: network fail(payload):"<<numbytes<<' '<<errno<<'\n'; 
-    std::cerr << "sfd = "<<sfd<<'\n';
     SendFailMsg(sfd);
-    return;
+    return -1;
   }
 
   if (p.GetMethod() & M_DISCONNECT) {
     DeleteSocketDataEntry(sfd);
-    return;
+    return -1;
   }
+  return 1;
 } 
 
 void SocketInterface::SendFailMsg(int sfd){
@@ -209,6 +209,7 @@ void SocketInterface::DeleteSocketDataEntry(int sfd) {
   for (int i=0; i<socket_view.size();i++) {
     if (socket_view[i].sfd == sfd) {
       socket_view.erase(socket_view.begin()+i);
+      SetEvent(EPOLL_CTL_DEL, EPOLLIN, sfd);
       close(sfd);
     }
   }
@@ -318,13 +319,21 @@ void SocketInterface::ProcessNetworkEvent() {
     
     /*Have to controll network fail cases : Push FAIL msg to Protocol*/
     if (ev & EPOLLOUT) {
-      SocketData* entry = FindSocketDataEntry(fd);      
+      SocketData* entry = FindSocketDataEntry(fd);
+      if (!entry) {
+	std::cerr << "no entry exists(out)\n";
+	continue;
+      }
+	
+      int res = 1;
       while(!entry->msgQueue.empty()){
-	SyncSendMsg(entry->msgQueue.front());
+	res = SyncSendMsg(entry->msgQueue.front());
+	if (res == -1) break;
 	entry->msgQueue.pop();
       }
-      SetEvent(EPOLL_CTL_MOD, EPOLLIN, fd);    
-    }
+      if (res != -1)
+	SetEvent(EPOLL_CTL_MOD, EPOLLIN, fd);
+    }   
 
     if (ev & EPOLLIN) {
       if (listen_fd == fd) {
@@ -340,7 +349,7 @@ void SocketInterface::ProcessNetworkEvent() {
       memset(buffer, 0, 2000);
       SocketData* entry = FindSocketDataEntry(fd);
       if (!entry) {
-	std::cerr << "can't find sd at processing\n";	      
+	std::cerr << "no entry exists(in)\n";	      
 	continue;
       }
      
@@ -351,7 +360,7 @@ void SocketInterface::ProcessNetworkEvent() {
 	    int numbytes = recv(fd, &len, sizeof(int), 0);
 	    if (numbytes <= 0) {
 	      if (numbytes == 0)
-		std::cerr << "connection closed\n";	      
+		std::cerr << "connection closed(i)\n";	      
 	      else
 		std::cerr << "recv length fail\n";	      
 	      SendFailMsg(fd);
@@ -367,9 +376,9 @@ void SocketInterface::ProcessNetworkEvent() {
 	    int numbytes = recv(fd, buffer, entry->payload_len, 0);
 	    if (numbytes <= 0) {
 	      if (numbytes == 0)
-		std::cerr << "connection closed\n";
+		std::cerr << "connection closed(l)\n";
 	      else
-		std::cerr << "recv packet fail\n";	      
+		std::cerr << "recv payload fail\n";	      
 	      SendFailMsg(fd);
 	      return;
 	    }
@@ -387,8 +396,9 @@ void SocketInterface::ProcessNetworkEvent() {
 	    SimpleGossipProtocol::GetInstance()->PushToQueue(smsg);    
  	    entry->status      = RECV_IDLE;
 	    entry->payload_len = 0;
-	    //std::cout << "recv event: payload size: "<<numbytes<< " from "<<fd<<'\n';
 	  }
+	  break;
+	default:
 	  break;
       }
     }

@@ -55,7 +55,7 @@ class SocketInterface {
   void InitListeningSocket();
 
   int  ConnectToPeer(std::string pn);
-  void SyncSendMsg(SocketMessage msg);
+  int  SyncSendMsg(SocketMessage msg);
   void SendFailMsg(int sfd);
 
   SocketData* FindSocketDataEntry(int sfd);

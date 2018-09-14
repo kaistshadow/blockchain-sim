@@ -247,10 +247,6 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 	    smsg.SetP2PMessage(pmsg);
 	    SocketInterface::GetInstance()->PushToQueue(smsg);
 	  }
-	  else {
-	    std::cerr << "FORWARDJOINREPLY(1) already exists\n";
-	  }
-	  return;
 	}
 	if (ttl == 2) {
 	  Peer newactive = Peer(src, sfd);

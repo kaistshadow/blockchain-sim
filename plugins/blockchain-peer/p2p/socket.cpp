@@ -76,6 +76,7 @@ void SocketInterface::InitEventDescriptor() {
   if (epoll == -1) {
     perror("create epoll"); return;
   }
+  std::cout << "epoll fd : " << epoll <<'\n';
   ed = epoll;
 }
 
@@ -152,14 +153,20 @@ int SocketInterface::SyncSendMsg(SocketMessage msg){
    
   int numbytes = send(sfd, (char*)&payload_len, sizeof(int), 0);
   if (numbytes < sizeof(int)) {
-    std::cerr << "send event: network fail(length):"<<numbytes<<' '<<errno<<'\n';
+    if (numbytes == 0)
+      std::cerr << "connection closed(sl)\n";
+    else
+      std::cerr << "send event: network fail(length):"<<numbytes<<' '<<errno<<'\n';
     SendFailMsg(sfd);
     return -1;
   }
 
   numbytes = send(sfd, payload.c_str(), payload_len, 0);
   if (numbytes < payload_len) {
-    std::cerr << "send event: network fail(payload):"<<numbytes<<' '<<errno<<'\n'; 
+    if (numbytes == 0)
+      std::cerr << "connection closed(sp)\n";
+    else
+      std::cerr << "send event: network fail(payload):"<<numbytes<<' '<<errno<<'\n'; 
     SendFailMsg(sfd);
     return -1;
   }

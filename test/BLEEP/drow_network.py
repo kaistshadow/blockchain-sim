@@ -43,7 +43,6 @@ if __name__ == '__main__':
     shadow_plugin = "plugin"
 
     Graph = nx.DiGraph()
-    #color_map = []
     for i in range(1,num+1):
         node = "%d" % (i)
         Graph.add_node(node)

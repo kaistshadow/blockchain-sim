@@ -9,6 +9,6 @@ else
 fi
 
 python setup_enviorment.py $1
-#python print_log.py $1
+python print_log.py $1
 python print_err_log.py $1
 python drow_network.py $1

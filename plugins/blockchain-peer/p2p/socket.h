@@ -49,6 +49,7 @@ class SocketInterface {
   int server_fd;  // socket for seed server-hostpeer connetction
   int ed;         // EPOLL descriptor for event handling
   SocketList socket_view;
+  //int main_ed;
 
   void SetEvent(int mod, int event, int fd);
   void InitEventDescriptor(); 

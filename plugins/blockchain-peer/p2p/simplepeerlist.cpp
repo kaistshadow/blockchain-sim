@@ -45,6 +45,7 @@ void SimplePeerList::DropRandomFromActive() {
   SocketInterface::GetInstance()->PushToQueue(smsg);
   
   active_view.erase(active_view.begin() + idx);
+
   PrintActive();  
   AddToPassive(dropnode);
 }
@@ -92,11 +93,11 @@ void SimplePeerList::AddToActive(Peer node) {
     PrintPassive();
   }
   if (ExistInActiveById(node.peername) != -1) {
-    PrintActive();
     return;
   }
 
   if (active_view.size() == ActiveSize) {
+    std::cout<<"R\n";
     DropRandomFromActive();
   }
   active_view.push_back(node);
@@ -167,7 +168,6 @@ void SimplePeerList::PrintActive() {
 } 
 
 void SimplePeerList::PrintPassive() {
-  return;
   std::cerr << '\n';
   if (passive_view.size() == 0) {
     std::cerr << "None\n";

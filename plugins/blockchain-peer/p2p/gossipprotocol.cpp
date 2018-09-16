@@ -35,11 +35,46 @@ std::vector<std::string> SimpleGossipProtocol::SetShuffleList(int na, int np) {
   list.push_back(HostId);
 
   //Have to choose randomly
+  /*
   for (int i=0; i<num_a; i++)
     list.push_back(active_view[i].peername);
 
   for (int i=0; i<num_p; i++)
     list.push_back(passive_view[i].peername);
+
+  */
+
+  srand(time(0));
+  while (num_a) {
+    int idx = rand() % active_view.size();
+    int res = 1;
+    for (int i = 0; i<list.size(); i++) {
+      if (list[i] == active_view[idx].peername) {
+	res = 0;
+	break;
+      }
+    }
+    if (res) {
+      list.push_back(active_view[idx].peername);
+      num_a -= 1;
+    }
+  }
+
+  srand(time(0));
+  while (num_p) {
+    int idx = rand() % passive_view.size();
+    int res = 1;
+    for (int i = 0; i<list.size(); i++) {
+      if (list[i] == passive_view[idx].peername) {
+	res = 0;
+	break;
+      }
+    }
+    if (res) {
+      list.push_back(passive_view[idx].peername);
+      num_p -= 1;
+    }
+  }
 
   return list;
 }
@@ -73,7 +108,6 @@ int SimpleGossipProtocol::ProcessShuffleList(std::vector<std::string> list) {
 
   for (cnt = 0; cnt < list.size(); cnt++) {
     newid = list[cnt];
-
     if (HostId == newid) continue;
     if (instance->ExistInActiveById(newid)  != -1) continue;    
     if (instance->ExistInPassiveById(newid) != -1) continue;
@@ -180,9 +214,12 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
       // 3. increase ttl and transfer to random peer inside active view
       {
 	PeerList active_view = SimplePeerList::GetInstance()->active_view;
+	std::cerr << "recv fj from " << src << '\n';
+
 	if (ttl == ARWL || active_view.size() == 1) {
 	  if (GetHostId() == src) 
 	    return;
+
 	  if (SimplePeerList::GetInstance()->ExistInActiveById(src) == -1) {
 	    MembershipMessage msg = MembershipMessage(P_FORWARDJOINREPLY, 1, 1, GetHostId());
 	    P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
@@ -205,20 +242,25 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 	  }
 	  return;
 	}
-
-	if (ttl == PRWL) {
-	  if (GetHostId() == src) 
-	    return;
-	  Peer newpassive = Peer(src, -1);
-	  SimplePeerList::GetInstance()->AddToPassive(newpassive);
+	else if (ttl == PRWL) {
+	  if (GetHostId() != src) { 
+	    Peer newpassive = Peer(src, -1);
+	    SimplePeerList::GetInstance()->AddToPassive(newpassive);
+	  }
 	}
-	
+
+	if (HostId == "bleep5")
+	  std::cerr << active_view.size()<<','<<sfd<<'\n';
+
 	srand(time(0));
 	int idx, fd; 
 	while (1) {
 	  idx = rand() % active_view.size();
        	  if ((fd = active_view[idx].sfd) != sfd) break;
 	}
+
+	std::cerr << "forward fj from " << src << " to " << active_view[idx].peername <<'\n';
+
 	MembershipMessage msg = MembershipMessage(P_FORWARDJOIN, ttl+1, 1, src);
 	P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
 	SocketMessage    smsg = SocketMessage();
@@ -356,14 +398,14 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 	    else if ((idx = instance->ExistInPassiveById(src)) != -1){
 	      int fd = instance->passive_view[idx].sfd;
 	      if (fd == -1) {
-		smsg.SetMethod(M_CONNECT|M_DISCONNECT, -1);
+		smsg.SetMethod(M_CONNECT, -1);
 	      }
 	      else {
 		smsg.SetMethod(M_UNICAST, fd);
 	      }
 	    }
 	    else {
-	      smsg.SetMethod(M_CONNECT|M_DISCONNECT, -1);
+	      smsg.SetMethod(M_CONNECT, -1);
 	    }
 	    SocketInterface::GetInstance()->PushToQueue(smsg);
 	  }
@@ -392,7 +434,39 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
       // if there are duplicated node, then skip that one ONLY insert new one
       // if passive view is full, then drop random node (or front = oldest)
       {
-	ProcessShuffleList(hmsg.shuffle_list);
+      	SimplePeerList* instance = SimplePeerList::GetInstance();
+	int HaveConnection = 0;
+	int idx;
+	if ((idx = instance->ExistInActiveById(src))  != -1) {
+	  HaveConnection = 1;
+	}
+	if ((idx = instance->ExistInPassiveById(src)) != -1){
+	  if (instance->passive_view[idx].sfd == sfd) {
+	    HaveConnection = 1;
+	  } 
+	}
+
+	if (ttl == 1) {
+	  ProcessShuffleList(hmsg.shuffle_list);
+	  MembershipMessage msg = MembershipMessage(P_SHUFFLEREPLY, 2, HaveConnection, GetHostId());
+	  P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
+	  SocketMessage    smsg = SocketMessage();
+	  smsg.SetDstPeer(src);
+	  smsg.SetMethod(M_UNICAST, sfd);
+	  smsg.SetP2PMessage(pmsg);
+	  SocketInterface::GetInstance()->PushToQueue(smsg);
+	  return;
+	}     
+	if (ttl == 2) {
+	  if (opt) return;
+	  if (!HaveConnection) {
+	    SocketMessage smsg = SocketMessage();
+	    smsg.SetDstPeer(src);
+	    smsg.SetMethod(M_DISCONNECT, sfd);
+	    SocketInterface::GetInstance()->PushToQueue(smsg);
+	    return;
+	  }
+	}
       }
       break;
       
@@ -462,6 +536,9 @@ void SimpleGossipProtocol::RunGossipProtocol(SocketMessage msg) {
 	  CNT = 1;
 	  std::cout << "tx recv\n";
 	}
+	
+	//Transaction tx = boost::get<Transaction>(pmsg);
+	//TxPool::GetInstance()->PushTxToQueue(tx);
       }
       break;
       
@@ -470,7 +547,11 @@ void SimpleGossipProtocol::RunGossipProtocol(SocketMessage msg) {
       break;
 
     case P2PMessage_SIMPLECONSENSUSMESSAGE:
-      {;}
+      {
+	;
+	//SimpleConsensusMessage cmsg = boost::get<SimpleConsensusMessage>(pmsg);
+	//SimpleConsensus::GetInstance()->PushToQueue(cmsg);
+      }
       break;      
   }
 }

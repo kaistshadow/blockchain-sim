@@ -24,7 +24,7 @@ def setup_multiple_node_xml(node_num):
     for i in range(1, node_num+1):
         node_id = "bleep%d" % (i)
         node = ET.SubElement(shadow, "node", id=node_id)            
-        time = str(3*i)
+        time = str(2*i)
         if i == 1:
             ET.SubElement(node,"application",plugin="plugin",time=time,arguments= node_id)
         else:

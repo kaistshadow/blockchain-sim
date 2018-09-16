@@ -12,10 +12,12 @@ void SocketMessage::SetMethod(int m, int fd) {
   }
   if (method == M_UPDATE) {
     socket_fd = fd;
-  }
-  if (method == M_CONNECT)
     return;
-  
+  }
+  if (method == M_CONNECT) {
+    return;
+  }
+
   if (method == M_BROADCAST) {
     PeerList active_view = SimplePeerList::GetInstance()->active_view;
     int temp;

@@ -142,11 +142,11 @@ int SocketInterface::SyncSendMsg(SocketMessage msg){
   SocketMessage p = msg;
   int sfd = msg.GetSocketfd();
   
-  
+  /*
   int flags = fcntl(sfd, F_GETFL, 0);
   if (fcntl(sfd, F_SETFL, flags & (~O_NONBLOCK)))
     std::cerr << "fail to convert to b\n";
-  
+  */
 
   std::string payload = GetSerializedString(p.GetP2PMessage());
   int     payload_len = payload.size();
@@ -183,11 +183,11 @@ int SocketInterface::SyncSendMsg(SocketMessage msg){
     return -1;
   }
 
-
+  /*
   flags = fcntl(sfd, F_GETFL, 0);
   if (fcntl(sfd, F_SETFL, flags | O_NONBLOCK) == -1)
     std::cerr << "fail to convert to nb\n";
-
+  */
 
   return 1;
 } 
@@ -304,16 +304,16 @@ void SocketInterface::ProcessMsg(SocketMessage msg) {
   if (type == M_BROADCAST || type == M_UNICAST) {
     for (int i=0; i<list.size(); i++) {  
       msg.SetSocketfd(list[i]);
-
+      /*
       if (SyncSendMsg(msg) == -1)
 	std::cerr << "fail to send msg\n";      
-      /*
+      */
+    
       if (InsertSocketData(list[i], msg) == -1) {
 	//std::cerr << "can't find socket data entry(i)\n";
 	continue;
       }
       SetEvent(EPOLL_CTL_MOD, EPOLLOUT, list[i]);      
-      */
     }
   }
 }
@@ -420,10 +420,10 @@ void SocketInterface::ProcessNetworkEvent() {
 	    if (entry->info_status == INFO_INCOMPLETE) {
 	      smsg.SetMethod(M_UPDATE, fd);
 	    }
-	    else
+	    else {
 	      //smsg.SetSocketfd(fd);
 	      smsg.SetMethod(M_NORMAL, fd);
-	    
+	    }
 	    SimpleGossipProtocol::GetInstance()->PushToQueue(smsg);    
  	    entry->status      = RECV_IDLE;
 	    entry->payload_len = 0;
@@ -438,7 +438,6 @@ void SocketInterface::ProcessNetworkEvent() {
 }
 
 void SocketInterface::PrintSocketList() {
-  return;
   for (int i=0; i<socket_view.size(); i++){
     SocketData sd = socket_view[i];
     std::cerr <<'('<< sd.sfd << ','<<sd.id<<')';

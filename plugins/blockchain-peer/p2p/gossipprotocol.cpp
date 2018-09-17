@@ -35,15 +35,13 @@ std::vector<std::string> SimpleGossipProtocol::SetShuffleList(int na, int np) {
   list.push_back(HostId);
 
   //Have to choose randomly
-  /*
   for (int i=0; i<num_a; i++)
     list.push_back(active_view[i].peername);
 
   for (int i=0; i<num_p; i++)
     list.push_back(passive_view[i].peername);
 
-  */
-
+  /*
   srand(time(0));
   while (num_a) {
     int idx = rand() % active_view.size();
@@ -75,6 +73,7 @@ std::vector<std::string> SimpleGossipProtocol::SetShuffleList(int na, int np) {
       num_p -= 1;
     }
   }
+  */
 
   return list;
 }
@@ -159,6 +158,10 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 	  P2PMessage       pmsg2 = P2PMessage(P2PMessage_MEMBERSHIP, msg2);
 	  SocketMessage    smsg2 = SocketMessage();
 	  smsg2.SetMethod(M_BROADCAST, sfd);
+	  
+	  for (int i=0;i<smsg2.sockets.size();i++)
+	    std::cerr << smsg2.sockets[i] <<'\n';
+
 	  smsg2.SetP2PMessage(pmsg2);
 	  SocketInterface::GetInstance()->PushToQueue(smsg2);
 	}
@@ -214,7 +217,13 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
       // 3. increase ttl and transfer to random peer inside active view
       {
 	PeerList active_view = SimplePeerList::GetInstance()->active_view;
-	std::cerr << "recv fj from " << src << '\n';
+
+	int i = SimplePeerList::GetInstance()->ExistInActive(sfd);
+	if (i != -1)
+	  std::cerr << "recv fj(" << src <<") from "<< active_view[i].peername <<'\n';
+	else 
+	  std::cerr << "recv from non-active\n";
+
 
 	if (ttl == ARWL || active_view.size() == 1) {
 	  if (GetHostId() == src) 

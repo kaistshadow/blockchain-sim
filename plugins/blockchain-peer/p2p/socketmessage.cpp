@@ -27,6 +27,7 @@ void SocketMessage::SetMethod(int m, int fd) {
 	sockets.push_back(temp);
       }
     }
+    return;
   }
 
   if (method & M_UNICAST || method & M_DISCONNECT) {

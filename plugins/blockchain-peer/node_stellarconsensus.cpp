@@ -7,10 +7,16 @@
 #include "p2p/gossipprotocol.h"
 #include "p2p/socket.h"
 #include "blockchain/txpool.h"
+#include "blockchain/ledgermanager.h"
 
-#include "consensus/stellarconsensus.h"
+#include "consensus/stellarconsensus2.h"
+#include "consensus/stellarconsensusdriver.h"
 
+#include "util/eventqueue.h"
+#include "util/globalclock.h"
 using namespace std;
+
+StellarConsensusDriver stellarConsensusDriver;
 
 void NodeInit(int argc, char *argv[]);
 
@@ -37,13 +43,23 @@ void NodeInit(int argc, char *argv[]) {
     PeerList outPeerList = SimplePeerList::GetInstance()->GetOutPeerList();    
     SocketInterface::GetInstance()->InitializeSocket(outPeerList);
 
+    // initialize blockchain (currently from file.) 
+    // TODO: initialize blockchain by retrieving live blockchain from network
+
+    LedgerManager::SetInstance(stellarConsensusDriver, "blk.dat");
+    LedgerManager::GetInstance()->InitLedger();
+
+    utility::globalclock_start = time(0);
 }
 
 void NodeLoop() {
-    time_t start = time(0);
     while (true) {
         usleep(100000);
-        // cout << "time:" << difftime(time(0), start) << "\n";
+        // cout << "globalclock:" << utility::GetGlobalClock() << "\n";
+
+        // process synchronous event queue
+        EventQueueManager::GetInstance()->ProcessQueue();
+
 
         // process non-blocking network socket events
         // process non-blocking accept and non-blocking recv
@@ -52,6 +68,9 @@ void NodeLoop() {
         SocketInterface::GetInstance()->ProcessNonblockSocket(inPeerList, outPeerList);
         
             
+        // LedgerManager has main logic to proceed consensus and append a new block
+        LedgerManager::GetInstance()->Loop();
+
         // ideal consensus protocol
         // RunConsensusProtocol(GetLocalNodeId());  # TODO 2
         // SimpleConsensus::GetInstance()->RunConsensusProtocol();
@@ -61,7 +80,7 @@ void NodeLoop() {
         TxPool::GetInstance()->ProcessQueue();
         SimpleGossipProtocol::GetInstance()->ProcessQueue();
         SocketInterface::GetInstance()->ProcessQueue();
-        StellarConsensus::GetInstance()->ProcessQueue();
+        StellarConsensus2::GetInstance()->ProcessQueue();
     }
     return;
 }

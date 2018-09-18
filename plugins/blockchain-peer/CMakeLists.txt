@@ -17,15 +17,19 @@ option (SHADOW
 
 message("SHADOW:" ${SHADOW})
 
-find_package(Boost REQUIRED serialization)
+find_package(Boost REQUIRED serialization filesystem system)
+
+message(STATUS "Boost_LIBRARIES:" ${Boost_LIBRARIES})
 
 include_directories(${Boost_INCLUDE_DIRS})
 
 set(STELLAR_SRCS
   consensus/stellarconsensus.cpp
+  consensus/stellarconsensus2.cpp
   consensus/stellarquorum.cpp
   consensus/stellarconsensusvalue.cpp
   crypto/sha256.cpp
+  consensus/stellarconsensusdriver.cpp
 )
 
 set(SRCS
@@ -37,7 +41,10 @@ set(SRCS
   blockchain/block.cpp
   blockchain/transaction.cpp
   blockchain/txpool.cpp
+  blockchain/ledgermanager.cpp
   consensus/simpleconsensus.cpp
+  util/eventqueue.cpp
+  util/globalclock.cpp
   ${STELLAR_SRCS}
 )
 
@@ -118,3 +125,11 @@ add_shadow_plugin(INJECTOR_STELLARCONSENSUS node_injector_stellarconsensus.cpp $
 install(TARGETS INJECTOR_STELLARCONSENSUS DESTINATION plugins)
 target_link_libraries(INJECTOR_STELLARCONSENSUS ${Boost_LIBRARIES})
 target_link_libraries(INJECTOR_STELLARCONSENSUS_LOCAL ${Boost_LIBRARIES})
+
+
+## dump blockchain 
+add_executable(DUMP_BLOCKCHAIN_LOCAL dump_blockchain.cpp ${SRCS})
+add_shadow_plugin(DUMP_BLOCKCHAIN dump_blockchain.cpp ${SRCS})
+install(TARGETS DUMP_BLOCKCHAIN DESTINATION plugins)
+target_link_libraries(DUMP_BLOCKCHAIN ${Boost_LIBRARIES})
+target_link_libraries(DUMP_BLOCKCHAIN_LOCAL ${Boost_LIBRARIES})

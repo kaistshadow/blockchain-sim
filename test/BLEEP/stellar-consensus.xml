@@ -33,14 +33,16 @@
 
   <!-- the plug-ins we will be using -->
   <plugin id="PEER_STELLARCONSENSUS" path="libPEER_STELLARCONSENSUS.so" />
-  <plugin id="INJECTOR_STELLARCONSENSUS" path="libINJECTOR_STELLARCONSENSUS.so" />
+  <!-- <plugin id="INJECTOR_STELLARCONSENSUS" path="libINJECTOR_STELLARCONSENSUS.so" /> -->
+  <plugin id="DUMP_BLOCKCHAIN" path="libDUMP_BLOCKCHAIN.so" />
 
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="50" />
   <!-- our nodes -->
 
   <node id="bleep0">
-    <application plugin="INJECTOR_STELLARCONSENSUS" time="12" arguments="bleep1 bleep2 bleep3 bleep4 bleep5 bleep6 bleep7"/>
+    <!-- <application plugin="INJECTOR_STELLARCONSENSUS" time="12" arguments="bleep1 bleep2 bleep3 bleep4 bleep5 bleep6 bleep7"/> -->
+    <application plugin="DUMP_BLOCKCHAIN" time="3" arguments=""/>
   </node>
 
   <node id="bleep1">

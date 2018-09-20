@@ -117,7 +117,6 @@ int SimpleGossipProtocol::ProcessShuffleList(std::vector<std::string> list) {
 }
 
 void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
-  // We only need 'soket_fd', and 'p2pmessage' to process HyParView
   int sfd   = msg.GetSocketfd();
   int stype = msg.GetMethod();
   MembershipMessage hmsg = boost::get<MembershipMessage>(msg.GetP2PMessage().data);
@@ -128,12 +127,14 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
   std::string src = hmsg.src_peer;
  
   
-  if (stype == M_UPDATE) {
-    SocketMessage smsg = SocketMessage();
-    smsg.SetDstPeer(src);
-    smsg.SetMethod(M_UPDATE, sfd);
-    SocketInterface::GetInstance()->PushToQueue(smsg);
-  }
+  if (stype == M_UPDATE) 
+    // Transfer Update msg with peer id to socket interface
+    {
+      SocketMessage smsg = SocketMessage();
+      smsg.SetDstPeer(src);
+      smsg.SetMethod(M_UPDATE, sfd);
+      SocketInterface::GetInstance()->PushToQueue(smsg);
+    }
 
   switch (type) {
     case P_JOIN:
@@ -158,10 +159,6 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 	  P2PMessage       pmsg2 = P2PMessage(P2PMessage_MEMBERSHIP, msg2);
 	  SocketMessage    smsg2 = SocketMessage();
 	  smsg2.SetMethod(M_BROADCAST, sfd);
-	  
-	  for (int i=0;i<smsg2.sockets.size();i++)
-	    std::cerr << smsg2.sockets[i] <<'\n';
-
 	  smsg2.SetP2PMessage(pmsg2);
 	  SocketInterface::GetInstance()->PushToQueue(smsg2);
 	}
@@ -179,12 +176,15 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 
     case P_DISCONNECT:
       // remove src peer from active and insert drop node into passive
-      // if passive is not empty choose random from passvie and send neighbor
+      // Choose random from passvie and send NEIGHBOR
+      // size of passive view can not be 0 in this case.
       {
 	int idx = SimplePeerList::GetInstance()->ExistInActiveById(src);
-	if (idx == -1)
+	if (idx == -1) {
+	  std::cerr<< "recv P_DISCONNECT from non-active member("<<src<<")\n"; 
 	  return;
-
+	}
+	
 	SimplePeerList* instance = SimplePeerList::GetInstance();
 	Peer dropnode = instance->active_view[idx];
 	
@@ -214,17 +214,9 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
     case P_FORWARDJOIN:
       // 1. check AddActive  condition
       // 2. check AddPassvie condition
-      // 3. increase ttl and transfer to random peer inside active view
+      // 3. increase ttl and transfer to single random peer inside active view
       {
 	PeerList active_view = SimplePeerList::GetInstance()->active_view;
-
-	int i = SimplePeerList::GetInstance()->ExistInActive(sfd);
-	if (i != -1)
-	  std::cerr << "recv fj(" << src <<") from "<< active_view[i].peername <<'\n';
-	else 
-	  std::cerr << "recv from non-active\n";
-
-
 	if (ttl == ARWL || active_view.size() == 1) {
 	  if (GetHostId() == src) 
 	    return;
@@ -258,17 +250,12 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
 	  }
 	}
 
-	if (HostId == "bleep5")
-	  std::cerr << active_view.size()<<','<<sfd<<'\n';
-
 	srand(time(0));
 	int idx, fd; 
 	while (1) {
 	  idx = rand() % active_view.size();
        	  if ((fd = active_view[idx].sfd) != sfd) break;
 	}
-
-	std::cerr << "forward fj from " << src << " to " << active_view[idx].peername <<'\n';
 
 	MembershipMessage msg = MembershipMessage(P_FORWARDJOIN, ttl+1, 1, src);
 	P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
@@ -280,10 +267,9 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
       break;
 
     case P_FORWARDJOINREPLY:
-      // If opt == 1,
+      // If opt == 1 (always 1),
       // 1. if ttl == 1, add to active_view and reply with ttl = 2
       // 2. if ttl == 2, just add to active view
-      // If opt == 0, reply with ++ttl, opt=0
       {
 	if (ttl == 1) {
 	  int idx = SimplePeerList::GetInstance()->ExistInActiveById(src);
@@ -543,7 +529,7 @@ void SimpleGossipProtocol::RunGossipProtocol(SocketMessage msg) {
 	  msg.SetMethod(M_BROADCAST, msg.GetSocketfd());
 	  SocketInterface::GetInstance()->PushToQueue(msg);
 	  CNT = 1;
-	  std::cout << "tx recv\n";
+	  std::cerr << "tx recv\n";
 	}
 	
 	//Transaction tx = boost::get<Transaction>(pmsg);

@@ -62,7 +62,7 @@ int connect_to_node(std::string pn) {
     close(sfd); return -1;
   }
 
-  cout << "connection established\n";
+  std::cout << "connection established\n";
   socket_m.insert(make_pair(pn, sfd));
   return sfd;
 }
@@ -85,7 +85,7 @@ void send_SocketMessage(int sfd, SocketMessage msg) {
     std::cout << "send event: network fail\n";
     return;
   }
-  cout << "send done\n";
+  std::cout << "send done\n";
 }
 
 void InjectTransaction(int sfd, int from, int to, double value) {

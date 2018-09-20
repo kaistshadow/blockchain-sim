@@ -24,12 +24,18 @@ def setup_multiple_node_xml(node_num):
     for i in range(1, node_num+1):
         node_id = "bleep%d" % (i)
         node = ET.SubElement(shadow, "node", id=node_id)            
-        time = str(2*i)
+        time = str(1*i)
         if i == 1:
             ET.SubElement(node,"application",plugin="plugin",time=time,arguments= node_id)
         else:
             ET.SubElement(node,"application",plugin="plugin",time=time,arguments="%s bleep1" %(node_id))
-   
+
+    #injector_id = "injector"
+    #injector    = ET.SubElement(shadow, "node", id=injector_id)            
+    #time        = str(2*node_num+5)
+    #ET.SubElement(injector,"application",plugin="injector",time=time,arguments= "bleep1")
+    
+
     tree.write(new_xml, pretty_print=True)
     print "new xml path : " + new_xml
     return 0

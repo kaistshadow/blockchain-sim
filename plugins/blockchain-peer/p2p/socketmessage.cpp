@@ -10,14 +10,17 @@ void SocketMessage::SetMethod(int m, int fd) {
     socket_fd = fd;
     return;
   }
-  if (method == M_UPDATE) {
+  
+  if (method == M_UPDATE || method == M_NORMAL) {
     socket_fd = fd;
     return;
   }
+
   if (method == M_CONNECT) {
     return;
   }
 
+  sockets.clear();
   if (method == M_BROADCAST) {
     PeerList active_view = SimplePeerList::GetInstance()->active_view;
     int temp;
@@ -27,10 +30,12 @@ void SocketMessage::SetMethod(int m, int fd) {
 	sockets.push_back(temp);
       }
     }
+    socket_fd = -1;
     return;
   }
 
-  if (method & M_UNICAST || method & M_DISCONNECT) {
+  if (method == M_UNICAST || method & M_DISCONNECT) {
     sockets.push_back(fd);
+    return;
   }
 }

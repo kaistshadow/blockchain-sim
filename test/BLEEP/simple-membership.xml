@@ -35,9 +35,10 @@
 
   <!-- the plug-ins we will be using -->
   <plugin id="plugin" path="libMEMBERSHIP.so" />
+  <plugin id="injector" path="libINJECTOR_MEMBERSHIP.so" />
   
   <!-- the length of our experiment in seconds -->
-  <kill time="200" />
+  <kill time="350" />
 
   <!-- our nodes and the applications they run -->
   <node id="bleep1">

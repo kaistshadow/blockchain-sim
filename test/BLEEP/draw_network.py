@@ -20,6 +20,7 @@ def check_edge(i, j):
     return 1
 
 def set_node_color(num, nodes):
+    #if use injector, set num + (# of injector)
     for idx in range(num):
         color.append('white')
         
@@ -33,7 +34,6 @@ def set_node_color(num, nodes):
             color[a2] = 'red'
 
 if __name__ == '__main__':
-    
     if len (sys.argv) != 2 :
         print "Command line input error"
         sys.exit (1)

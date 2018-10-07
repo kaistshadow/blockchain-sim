@@ -26,6 +26,7 @@ set(SRCS
   p2p/gossipprotocol.cpp
   p2p/socket.cpp
   p2p/socketmessage.cpp
+  p2p/plumtree.cpp
   blockchain/block.cpp
   blockchain/transaction.cpp
   blockchain/txpool.cpp

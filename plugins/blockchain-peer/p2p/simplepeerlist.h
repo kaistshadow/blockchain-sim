@@ -5,15 +5,26 @@
 #include <string>
 #include "socketmessage.h"
 
-#define ActiveSize 5
-#define PassiveSize 30
+#define ActiveSize   5//3
+#define PassiveSize 30//15
+#define Eager 1
+#define Lazy  0
 
 class Peer{ 
  public:
-  Peer(std::string pn, int fd) {peername=pn;sfd=fd;}
+  Peer(std::string pn, int fd) {
+    peername = pn;
+    sfd      = fd;
+    state    = Eager;
+  }
   std::string peername;
   int sfd;
+
+  // Things below are for Gossiping, Plum Tree
+  int  state; 
+  void set_state(int s) {state=s;}  
 };
+
 typedef std::vector<Peer> PeerList;
 
 class SimplePeerList {

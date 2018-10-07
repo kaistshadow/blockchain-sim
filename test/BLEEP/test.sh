@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 if [ 1 -eq $# ]; then
     echo "number of peers : " $1
 else 

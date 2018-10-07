@@ -284,7 +284,7 @@ void SocketInterface::ProcessMsg(SocketMessage msg) {
     return;
   }
   
-  if (type == M_BROADCAST || type == M_UNICAST) {
+  if (type == M_BROADCAST || type == BROADCAST || type == M_UNICAST) {
     for (int i=0; i<msg.sockets.size(); i++) {  
       int sfd = msg.sockets[i];
       msg.SetSocketfd(sfd);

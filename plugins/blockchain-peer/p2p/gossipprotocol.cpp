@@ -10,6 +10,7 @@
 #include "p2pmessage.h"
 #include "socketmessage.h"
 
+#include "plumtree.h"
 #include "../blockchain/txpool.h"
 #include "../consensus/simpleconsensus.h"
 
@@ -74,7 +75,6 @@ std::vector<std::string> SimpleGossipProtocol::SetShuffleList(int na, int np) {
     }
   }
   */
-
   return list;
 }
 
@@ -125,8 +125,7 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
   int  ttl = hmsg.ttl;
   int  opt = hmsg.opt;
   std::string src = hmsg.src_peer;
- 
-  
+   
   if (stype == M_UPDATE) 
     // Transfer Update msg with peer id to socket interface
     {
@@ -470,13 +469,12 @@ void SimpleGossipProtocol::RunMembershipProtocol(SocketMessage msg) {
   }
 }
 
-void SimpleGossipProtocol::RunGossipProtocol(SocketMessage msg) {
+void SimpleGossipProtocol::RunGossipInterface(SocketMessage msg) {
   int stype = msg.GetMethod();
-
   if (stype == M_NETWORKFAIL) {
     int sfd = msg.GetSocketfd();
     if (sfd <= 0) {
-      std::cerr << "strange network fail socekt\n"; 
+      std::cerr << "networkfail: strange socekt number\n"; 
       return;
     }
       
@@ -515,46 +513,21 @@ void SimpleGossipProtocol::RunGossipProtocol(SocketMessage msg) {
     return;
   }
 
-  P2PMessage pmsg = msg.GetP2PMessage();
-  switch(pmsg.type) {
-    case P2PMessage_MEMBERSHIP:
-      {
-	RunMembershipProtocol(msg);
-      }
-      break;
-   
-    case P2PMessage_TRANSACTION:
-      {	
-	if (!CNT) {
-	  msg.SetMethod(M_BROADCAST, msg.GetSocketfd());
-	  SocketInterface::GetInstance()->PushToQueue(msg);
-	  CNT = 1;
-	  std::cerr << "tx recv\n";
-	}
-	
-	//Transaction tx = boost::get<Transaction>(pmsg);
-	//TxPool::GetInstance()->PushTxToQueue(tx);
-      }
-      break;
-      
-    case P2PMessage_BLOCK:
-      {;}
-      break;
-
-    case P2PMessage_SIMPLECONSENSUSMESSAGE:
-      {
-	;
-	//SimpleConsensusMessage cmsg = boost::get<SimpleConsensusMessage>(pmsg);
-	//SimpleConsensus::GetInstance()->PushToQueue(cmsg);
-      }
-      break;      
+  // if type == MEMBERSHIP, then run membership protocol HyParView
+  // else, then run gossip protocol PlumTree
+  int p2pmessage_type = msg.GetP2PMessage().type;
+  if (p2pmessage_type == P2PMessage_MEMBERSHIP) {
+    RunMembershipProtocol(msg);
+  }
+  else {
+    GossipProtocol::GetInstance()->RunGossipProtocol(msg);
   }
 }
 
 void SimpleGossipProtocol::ProcessQueue() {
   while (!msgQueue.empty()) {
     SocketMessage msg = msgQueue.front();     
-    RunGossipProtocol(msg);
+    RunGossipInterface(msg);
     msgQueue.pop();
   }
 }

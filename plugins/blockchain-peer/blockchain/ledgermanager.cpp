@@ -6,10 +6,16 @@
 
 #include "ledgermanager.h"
 
-LedgerManager::LedgerManager(ConsensusDriver& driver, std::string filename)
-    : consensusDriver(driver) {
-    ledger_filename = filename; 
+LedgerManager::LedgerManager(std::string filename)
+    :ledger_filename("")
+{ 
+    ledger_filename = filename;
 }
+
+// LedgerManager::LedgerManager(ConsensusDriver& driver, std::string filename)
+//     : consensusDriver(driver) {
+//     ledger_filename = filename; 
+// }
 
 LedgerManager* LedgerManager::instance = 0;
 
@@ -20,11 +26,17 @@ LedgerManager* LedgerManager::GetInstance() {
     }
     return instance;
 }
-void LedgerManager::SetInstance(ConsensusDriver& driver, std::string filename) {
+void LedgerManager::SetInstance(std::string filename) {
     if (instance == 0) {
-        instance = new LedgerManager(driver, "blk.dat");
+        instance = new LedgerManager("blk.dat");
     }
 }
+
+// void LedgerManager::SetInstance(ConsensusDriver& driver, std::string filename) {
+//     if (instance == 0) {
+//         instance = new LedgerManager(driver, "blk.dat");
+//     }
+// }
 
 
 
@@ -66,14 +78,14 @@ void LedgerManager::Loop() {
 
     // Check if the consensus protocol has any new consensus results.
     // If there exists new consensus result, update ledger.
-    if (consensusDriver.HasNewConsensus()) {
-        consensusDriver.UpdateLedger();
-    } 
+    // if (consensusDriver.HasNewConsensus()) {
+    //     consensusDriver.UpdateLedger();
+    // } 
 
     // Check if the consensus protocol is ready to trigger next consensus slot.
     // If it is ready, trigger the next consensus.
     // For example, if it uses stellar consensus protocol,
     // it initiates SCP's nomination protocol periodically.
-    if (consensusDriver.PrepareNextConsensus()) 
-        consensusDriver.TriggerNextConsensus();
+    // if (consensusDriver.PrepareNextConsensus()) 
+    //     consensusDriver.TriggerNextConsensus();
 }

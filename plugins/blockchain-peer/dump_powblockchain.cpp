@@ -22,10 +22,11 @@
 #include <boost/iostreams/device/back_inserter.hpp>
 
 
-#include "blockchain/ledgermanager.h"
+#include "blockchain/powledgermanager.h"
 #include "blockchain/transaction.h"
-#include "blockchain/block.h"
+#include "blockchain/powblock.h"
 #include "consensus/stellarconsensusdriver.h"
+#include "util/types.h"
 
 #define MYPORT 3456    /* the port users will be connecting to */
 #define BACKLOG 10     /* how many pending connections queue will hold */
@@ -52,24 +53,28 @@ void DumpBlockchain(char *argv[]) {
         Transaction tx2(3,4,200);
         tx_list.push_back(tx);
         tx_list.push_back(tx2);
-        Block blk1("0", tx_list);
+        POWBlock blk1("0", tx_list);
+        blk1.SetBlockIdx(0);
+        blk1.SetBlockHash(utility::UINT256_t(0x11111111));
         
         std::list<Transaction> tx_list2;
         Transaction tx3(2,1,50);
         Transaction tx4(3,5,1000);
         tx_list2.push_back(tx3);
         tx_list2.push_back(tx4);
-        Block blk2("1", tx_list2);
+        POWBlock blk2("1", tx_list2);
+        blk2.SetBlockIdx(1);
+        blk2.SetBlockHash(utility::UINT256_t(0x22222222));
 
-        std::list<Block> blk_list;
+        std::list<POWBlock> blk_list;
         blk_list.push_back(blk1);
         blk_list.push_back(blk2);
 
         // StellarConsensusDriver driver;
         // LedgerManager::SetInstance(driver, "blk.dat");
-        LedgerManager::SetInstance("blk.dat");
-        LedgerManager::GetInstance()->SetLedger(blk_list);
-        LedgerManager::GetInstance()->SaveLedgerToFile();
+        POWLedgerManager::SetInstance("blk.dat");
+        POWLedgerManager::GetInstance()->SetLedger(blk_list);
+        POWLedgerManager::GetInstance()->SaveLedgerToFile();
     }
 
 

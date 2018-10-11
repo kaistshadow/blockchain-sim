@@ -9,6 +9,8 @@ if __name__ == '__main__':
     shadow_plugin = "PEER_SIMPLECONSENSUS"
     shadow_inject_plugin = "INJECTOR_SIMPLECONSENSUS"
 
+    os.system("rm -rf %s" % datadir)
+
     ## run shadow for test
     returnCode = os.system("~/.shadow/bin/shadow -d %s %s" % (datadir, shadow_configfile))
     if returnCode != 0:

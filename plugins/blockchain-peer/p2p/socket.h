@@ -28,6 +28,8 @@ class SocketInterface {
  public:
     static SocketInterface* GetInstance(); // singleton pattern
 
+    void UnicastP2PMsg(P2PMessage msg, const char *hostname);
+
     /**
      * Initialize the non-blocking socket for listening socket. 
      */

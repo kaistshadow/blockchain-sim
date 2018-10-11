@@ -21,3 +21,7 @@ add_test(NAME BLEEP-injector-simple
 add_test(NAME BLEEP-stellar-consensus
   COMMAND python test-stellar-consensus.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_test(NAME BLEEP-pow-consensus
+  COMMAND python test-pow-consensus.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

@@ -12,11 +12,13 @@
 #include "../blockchain/block.h"
 #include "../consensus/simpleconsensusmessage.h"
 #include "../consensus/stellarconsensusmessage.h"
+#include "../blockchain/powblock.h"
 
 #define P2PMessage_TRANSACTION 0
 #define P2PMessage_BLOCK 1
 #define P2PMessage_SIMPLECONSENSUSMESSAGE 2
 #define P2PMessage_STELLARCONSENSUSMESSAGE 3
+#define P2PMessage_POWBLOCK 4
 /* enum P2PMessageType { */
 /*     TRANSACTION = 0, */
 /* }; */
@@ -28,8 +30,9 @@ class P2PMessage {
     P2PMessage(int t, Block blk) { type = t; data = blk; hop = 0; };
     P2PMessage(int t, SimpleConsensusMessage msg) { type = t; data = msg; hop = 0; };
     P2PMessage(int t, StellarConsensusMessage msg) { type = t; data = msg; hop = 0;};
+    P2PMessage(int t, POWBlock blk) { type = t; data = blk; hop = 0;};
     int type;
-    boost::variant< Transaction, Block, SimpleConsensusMessage, StellarConsensusMessage > data; // make it variant
+    boost::variant< Transaction, Block, SimpleConsensusMessage, StellarConsensusMessage, POWBlock > data; // make it variant
 
     int GetHopCount() { return hop; }
     void IncreaseHopCount() { hop += 1; }

@@ -76,6 +76,78 @@ void SocketInterface::InitClientSocket(PeerList outPeerList) {
 }
 
 /**
+ * temporary implementation for unicast
+ */
+void SocketInterface::UnicastP2PMsg(P2PMessage msg, const char *hostname) {
+    int 			cli_sockfd;
+    if ((cli_sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        perror("socket");
+        exit(1);
+    }
+
+    struct sockaddr_in servaddr;
+    struct addrinfo* servinfo;
+    bzero(&servaddr, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_port = htons(MYPORT);
+
+    int n = getaddrinfo(hostname, NULL, NULL, &servinfo);
+    if (n != 0) {
+        cout << "error in connection : getaddrinfo" << "\n";
+        exit(1);
+    }
+    servaddr.sin_addr.s_addr = ((struct sockaddr_in*) (servinfo->ai_addr))->sin_addr.s_addr;
+
+    n = connect(cli_sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
+
+    if (n < 0) {
+        perror("connect");
+        exit(1);
+    } 
+    else if (n == 0) {
+        cout << "connection established for unicast" << "\n";
+    }
+
+    SocketMessage sockmsg;
+    sockmsg.SetSocketfd(cli_sockfd);
+    sockmsg.SetP2PMessage(msg);
+    std::string payload = GetSerializedString(sockmsg);
+    sockmsg.SetPayload(payload);
+
+    // send_socketmessage
+    int payload_length = sockmsg.GetPayloadLength();
+    n = send(cli_sockfd, (char*)&payload_length, sizeof(int), 0);
+    if (n < 0){ 
+        std::cout << "send errno=" << errno << "\n";
+        exit(1);
+    }
+    else if (n < sizeof(int)) {
+        std::cout << "Warning : sented string is less than requested" << "\n";
+        std::cout << "sented string length: " << n << "\n";
+        exit(1);
+    }
+    else {
+        std::cout << "sented string length: " << n << "\n";
+    }            
+
+
+    n = send(cli_sockfd,sockmsg.GetPayload().c_str(),payload_length,0);
+    if (n < 0){ 
+        std::cout << "send errno=" << errno << "\n";
+        exit(1);
+    }
+    else if (n < payload_length) {
+        std::cout << "Warning : sented string is less than requested" << "\n";
+        std::cout << "sented string length: " << n << "\n";
+        exit(1);
+    }
+    else {
+        std::cout << "sented string length: " << n << "\n";
+    }           
+
+}
+
+/**
  * Initialize the non-blocking socket for listening socket and client socket.
  */
 void SocketInterface::InitializeSocket(PeerList outPeerList) {

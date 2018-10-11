@@ -8,9 +8,9 @@
 #include "p2p/socket.h"
 #include "blockchain/txpool.h"
 #include "blockchain/ledgermanager.h"
+#include "blockchain/powledgermanager.h"
 
-#include "consensus/stellarconsensus2.h"
-#include "consensus/stellarconsensusdriver.h"
+#include "consensus/powconsensus.h"
 
 #include "util/eventqueue.h"
 #include "util/globalclock.h"
@@ -20,15 +20,13 @@
 
 using namespace std;
 
-StellarConsensusDriver stellarConsensusDriver;
-
 void NodeInit(int argc, char *argv[]);
 
 void NodeLoop();
 
 int main(int argc, char *argv[]) {
     // int nodeid = atoi(argv[1]);
-    cout << "Blockchain peer " << " started!" << "\n";
+    cout << "Blockchain peer for PoW consensus" << " started!" << "\n";
 
     NodeInit(argc, argv);
     NodeLoop();
@@ -49,9 +47,9 @@ void NodeInit(int argc, char *argv[]) {
 
     // initialize blockchain (currently from file.) 
     // TODO: initialize blockchain by retrieving live blockchain from network
-
-    LedgerManager::SetInstance(stellarConsensusDriver, "blk.dat");
-    LedgerManager::GetInstance()->InitLedger();
+    POWLedgerManager::SetInstance("blk.dat");
+    POWLedgerManager::GetInstance()->InitLedger();
+    
 
     utility::globalclock_start = time(0);
 }
@@ -94,8 +92,11 @@ void NodeLoop() {
     utility::UINT256_t hash_out2_int(hash_out2, 32);
     cout << "hash_out2_int:" << hash_out2_int << "\n";
 
+    utility::UINT256_t temp = utility::UINT256_t(hash_out2, 32);
+    cout << "temp:" << hash_out2_int << "\n";
+
     while (true) {
-        usleep(100000);
+        usleep(1000);
         // cout << "globalclock:" << utility::GetGlobalClock() << "\n";
 
         // process synchronous event queue
@@ -109,10 +110,8 @@ void NodeLoop() {
         SocketInterface::GetInstance()->ProcessNonblockSocket(inPeerList, outPeerList);
         
             
-        // LedgerManager has main logic to proceed consensus and append a new block
-        LedgerManager::GetInstance()->Loop();
-
-        // ideal consensus protocol
+        // consensus protocol
+        POWConsensus::GetInstance()->Run();
         // RunConsensusProtocol(GetLocalNodeId());  # TODO 2
         // SimpleConsensus::GetInstance()->RunConsensusProtocol();
 
@@ -121,7 +120,7 @@ void NodeLoop() {
         TxPool::GetInstance()->ProcessQueue();
         SimpleGossipProtocol::GetInstance()->ProcessQueue();
         SocketInterface::GetInstance()->ProcessQueue();
-        StellarConsensus2::GetInstance()->ProcessQueue();
+        POWConsensus::GetInstance()->ProcessQueue();
     }
     return;
 }

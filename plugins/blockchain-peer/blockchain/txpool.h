@@ -1,6 +1,7 @@
 #ifndef TXPOOL_H
 #define TXPOOL_H
 
+#include <list>
 #include <vector>
 #include <queue> 
 
@@ -16,10 +17,14 @@ class TxPool {
  public:
     static TxPool* GetInstance(); // sigleton pattern
 
-    std::vector<Transaction> items;
+    std::list<Transaction> items;
 
     void PushTxToQueue(Transaction tx) { msgQueue.push(tx); }
     void ProcessQueue();
+
+    int GetPendingTxNum() { return items.size(); }
+    std::list<Transaction> GetTxs(int num);
+    void RemoveTxs(std::list<Transaction> txs);
 };
 
 

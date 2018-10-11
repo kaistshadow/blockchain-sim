@@ -40,17 +40,20 @@ void SimpleConsensus::RunConsensusProtocol() {
     double time_elapsed = difftime(time(0), start_time);
     if (isLeader && next_epoch_time <= difftime(time(0), start_time)) {
         // for every second, leader tries to proceed a consensus protocol
-        if (TxPool::GetInstance()->items.size() >= 5) {
+        // if (TxPool::GetInstance()->items.size() >= 5) {
+        if (TxPool::GetInstance()->GetPendingTxNum() >= 5) {
             std::cout << "Consensus on block" << "\n";
 
-            std::vector<Transaction>& txpool = TxPool::GetInstance()->items;
-            std::list<Transaction> tx_list;
-            tx_list.push_back(txpool[0]);
-            tx_list.push_back(txpool[1]);
-            tx_list.push_back(txpool[2]);
-            tx_list.push_back(txpool[3]);
-            tx_list.push_back(txpool[4]);
-            txpool.erase (txpool.begin(), txpool.begin()+5);
+            std::list<Transaction> tx_list = TxPool::GetInstance()->GetTxs(5);
+            TxPool::GetInstance()->RemoveTxs(tx_list);
+            // std::list<Transaction>& txpool = TxPool::GetInstance()->items;
+            // std::list<Transaction> tx_list;
+            // tx_list.push_back(txpool[0]);
+            // tx_list.push_back(txpool[1]);
+            // tx_list.push_back(txpool[2]);
+            // tx_list.push_back(txpool[3]);
+            // tx_list.push_back(txpool[4]);
+            // txpool.erase (txpool.begin(), txpool.begin()+5);
             
             Block block("consensus block", tx_list);
             std::cout << block;

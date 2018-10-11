@@ -32,6 +32,12 @@ set(STELLAR_SRCS
   consensus/stellarconsensusdriver.cpp
 )
 
+set(POW_SRCS
+  blockchain/powledgermanager.cpp
+  blockchain/powblock.cpp
+  consensus/powconsensus.cpp
+)
+
 set(SRCS
   p2p/simplepeerlist.cpp
   p2p/gossipprotocol.cpp
@@ -45,6 +51,7 @@ set(SRCS
   consensus/simpleconsensus.cpp
   util/eventqueue.cpp
   util/globalclock.cpp
+  util/types.cpp
   ${STELLAR_SRCS}
 )
 
@@ -85,26 +92,26 @@ add_shadow_plugin(BLOCKCHAIN_PEER_SIMPLE_CONSENSUS node_simpleconsensus.cpp ${SR
 install(TARGETS BLOCKCHAIN_PEER_SIMPLE_CONSENSUS DESTINATION plugins)
 
 ##
-add_executable(PEER_NONBLOCK_IO_LOCAL node_nonblock_io.cpp ${SRCS})
+# add_executable(PEER_NONBLOCK_IO_LOCAL node_nonblock_io.cpp ${SRCS})
 add_shadow_plugin(PEER_NONBLOCK_IO node_nonblock_io.cpp ${SRCS})
 install(TARGETS PEER_NONBLOCK_IO DESTINATION plugins)
-target_link_libraries(PEER_NONBLOCK_IO_LOCAL ${Boost_LIBRARIES})
+# target_link_libraries(PEER_NONBLOCK_IO_LOCAL ${Boost_LIBRARIES})
 target_link_libraries(PEER_NONBLOCK_IO ${Boost_LIBRARIES})
 
 
 ##
-add_executable(INJECTOR_SIMPLE_LOCAL node_injector_simple.cpp ${SRCS})
+# add_executable(INJECTOR_SIMPLE_LOCAL node_injector_simple.cpp ${SRCS})
 add_shadow_plugin(INJECTOR_SIMPLE node_injector_simple.cpp ${SRCS})
 install(TARGETS INJECTOR_SIMPLE DESTINATION plugins)
-target_link_libraries(INJECTOR_SIMPLE_LOCAL ${Boost_LIBRARIES})
+# target_link_libraries(INJECTOR_SIMPLE_LOCAL ${Boost_LIBRARIES})
 target_link_libraries(INJECTOR_SIMPLE ${Boost_LIBRARIES})
 
 
 ##
-add_executable(PEER_SIMPLECONSENSUS_LOCAL node_simpleconsensus.cpp ${SRCS})
+# add_executable(PEER_SIMPLECONSENSUS_LOCAL node_simpleconsensus.cpp ${SRCS})
 add_shadow_plugin(PEER_SIMPLECONSENSUS node_simpleconsensus.cpp ${SRCS})
 install(TARGETS PEER_SIMPLECONSENSUS DESTINATION plugins)
-target_link_libraries(PEER_SIMPLECONSENSUS_LOCAL ${Boost_LIBRARIES})
+# target_link_libraries(PEER_SIMPLECONSENSUS_LOCAL ${Boost_LIBRARIES})
 target_link_libraries(PEER_SIMPLECONSENSUS ${Boost_LIBRARIES})
 
 ##
@@ -114,22 +121,39 @@ target_link_libraries(INJECTOR_SIMPLECONSENSUS ${Boost_LIBRARIES})
 
 
 ## stellar consensus
-add_executable(PEER_STELLARCONSENSUS_LOCAL node_simpleconsensus.cpp ${SRCS})
-add_shadow_plugin(PEER_STELLARCONSENSUS node_stellarconsensus.cpp ${SRCS})
-install(TARGETS PEER_STELLARCONSENSUS DESTINATION plugins)
-target_link_libraries(PEER_STELLARCONSENSUS_LOCAL ${Boost_LIBRARIES})
-target_link_libraries(PEER_STELLARCONSENSUS ${Boost_LIBRARIES})
+# add_executable(PEER_STELLARCONSENSUS_LOCAL node_simpleconsensus.cpp ${SRCS})
+# add_shadow_plugin(PEER_STELLARCONSENSUS node_stellarconsensus.cpp ${SRCS})
+# install(TARGETS PEER_STELLARCONSENSUS DESTINATION plugins)
+# target_link_libraries(PEER_STELLARCONSENSUS_LOCAL ${Boost_LIBRARIES})
+# target_link_libraries(PEER_STELLARCONSENSUS ${Boost_LIBRARIES})
 
-add_executable(INJECTOR_STELLARCONSENSUS_LOCAL node_injector_stellarconsensus.cpp ${SRCS})
-add_shadow_plugin(INJECTOR_STELLARCONSENSUS node_injector_stellarconsensus.cpp ${SRCS})
-install(TARGETS INJECTOR_STELLARCONSENSUS DESTINATION plugins)
-target_link_libraries(INJECTOR_STELLARCONSENSUS ${Boost_LIBRARIES})
-target_link_libraries(INJECTOR_STELLARCONSENSUS_LOCAL ${Boost_LIBRARIES})
+# add_executable(INJECTOR_STELLARCONSENSUS_LOCAL node_injector_stellarconsensus.cpp ${SRCS})
+# add_shadow_plugin(INJECTOR_STELLARCONSENSUS node_injector_stellarconsensus.cpp ${SRCS})
+# install(TARGETS INJECTOR_STELLARCONSENSUS DESTINATION plugins)
+# target_link_libraries(INJECTOR_STELLARCONSENSUS ${Boost_LIBRARIES})
+# target_link_libraries(INJECTOR_STELLARCONSENSUS_LOCAL ${Boost_LIBRARIES})
 
 
 ## dump blockchain 
-add_executable(DUMP_BLOCKCHAIN_LOCAL dump_blockchain.cpp ${SRCS})
+# add_executable(DUMP_BLOCKCHAIN_LOCAL dump_blockchain.cpp ${SRCS})
 add_shadow_plugin(DUMP_BLOCKCHAIN dump_blockchain.cpp ${SRCS})
 install(TARGETS DUMP_BLOCKCHAIN DESTINATION plugins)
 target_link_libraries(DUMP_BLOCKCHAIN ${Boost_LIBRARIES})
-target_link_libraries(DUMP_BLOCKCHAIN_LOCAL ${Boost_LIBRARIES})
+# target_link_libraries(DUMP_BLOCKCHAIN_LOCAL ${Boost_LIBRARIES})
+
+## POW blockchain 
+add_executable(PEER_POWCONSENSUS_LOCAL node_powconsensus.cpp ${SRCS} ${POW_SRCS})
+add_shadow_plugin(PEER_POWCONSENSUS node_powconsensus.cpp ${SRCS} ${POW_SRCS})
+install(TARGETS PEER_POWCONSENSUS DESTINATION plugins)
+target_link_libraries(PEER_POWCONSENSUS_LOCAL ${Boost_LIBRARIES})
+target_link_libraries(PEER_POWCONSENSUS ${Boost_LIBRARIES})
+
+## POW blockchain
+add_shadow_plugin(INJECTOR_POWCONSENSUS node_injector_powconsensus.cpp ${SRCS})
+install(TARGETS INJECTOR_POWCONSENSUS DESTINATION plugins)
+target_link_libraries(INJECTOR_POWCONSENSUS ${Boost_LIBRARIES})
+
+## dump POW blockchain 
+add_shadow_plugin(DUMP_POWBLOCKCHAIN dump_powblockchain.cpp ${SRCS} ${POW_SRCS})
+install(TARGETS DUMP_POWBLOCKCHAIN DESTINATION plugins)
+target_link_libraries(DUMP_POWBLOCKCHAIN ${Boost_LIBRARIES})

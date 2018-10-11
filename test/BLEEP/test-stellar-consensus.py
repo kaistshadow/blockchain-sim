@@ -9,7 +9,9 @@ if __name__ == '__main__':
     shadow_plugin = "PEER_STELLARCONSENSUS"
     shadow_inject_plugin = "INJECTOR_STELLARCONSENSUS"
 
-    ## run shadow for test
+    os.system("rm -rf %s" % datadir)
+
+    ## run shadow for test  (Currently, stellar (and its test) is not implemented)
     returnCode = os.system("~/.shadow/bin/shadow -d %s %s" % (datadir, shadow_configfile))
     if returnCode != 0:
         print "test failed"

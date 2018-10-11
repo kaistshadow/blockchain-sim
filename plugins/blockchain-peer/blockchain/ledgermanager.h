@@ -11,16 +11,18 @@
 
 class LedgerManager {
  private:
-    LedgerManager(ConsensusDriver& driver, std::string filename);  // singleton pattern
+    LedgerManager(std::string filename); // singleton pattern
+    /* LedgerManager(ConsensusDriver& driver, std::string filename);  // singleton pattern */
     static LedgerManager* instance; // singleton pattern
 
     std::string ledger_filename;
     std::list<Block> ledger;
-    ConsensusDriver& consensusDriver;  // interface for controlling consensus
+    /* ConsensusDriver& consensusDriver;  // interface for controlling consensus */
     
  public:
     static LedgerManager* GetInstance(); // singleton pattern
-    static void SetInstance(ConsensusDriver& driver, std::string filename); // singleton pattern
+    static void SetInstance(std::string filename); // singleton pattern
+    /* static void SetInstance(ConsensusDriver& driver, std::string filename); // singleton pattern */
 
     // main loop procedure for triggering a consensus for new block
     void Loop();
@@ -29,7 +31,7 @@ class LedgerManager {
     void InitLedger();
 
     // allocate consensus driver
-    void InitConsensusDriver(ConsensusDriver& driver) { consensusDriver = driver; }
+    /* void InitConsensusDriver(ConsensusDriver& driver) { consensusDriver = driver; } */
 
     /**
      * Load Ledger from file.

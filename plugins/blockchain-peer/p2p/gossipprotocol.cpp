@@ -6,6 +6,8 @@
 #include "../consensus/simpleconsensus.h"
 #include "../consensus/stellarconsensus.h"
 
+#include "../blockchain/powledgermanager.h"
+
 #include <boost/variant.hpp>
 
 SimpleGossipProtocol* SimpleGossipProtocol::instance = 0;
@@ -68,6 +70,50 @@ void SimpleGossipProtocol::RunGossipProtocol(P2PMessage msg) {
         if (blk) {
             std::cout << "Following block is received" << "\n";
             std::cout << *blk << "\n";
+        }
+        else {
+            std::cout << "Wrong data in P2PMessage" << "\n";
+            exit(1);
+        }
+    }
+    else if (msg.type == P2PMessage_POWBLOCK) {
+        PeerList outPeerList = SimplePeerList::GetInstance()->GetOutPeerList();
+        for (PeerList::iterator it = outPeerList.begin(); it != outPeerList.end(); it++) {    
+            Peer* p = *it;
+            if (p->conn_status == CONNECTED) {
+                // create SocketMessage and insert into the queue
+                SocketMessage socketMsg;
+                socketMsg.SetSocketfd(p->sfd);
+                socketMsg.SetP2PMessage(msg);
+                std::string payload = GetSerializedString(socketMsg);
+                socketMsg.SetPayload(payload);
+
+                SocketInterface::GetInstance()->PushToQueue(socketMsg);
+            }
+        }
+
+        POWBlock *blk = boost::get<POWBlock>(&msg.data);
+        if (blk) {
+            unsigned long nextblkidx = POWLedgerManager::GetInstance()->GetNextBlockIdx();
+            POWBlock *lastblk = POWLedgerManager::GetInstance()->GetLastBlock(); 
+            if (lastblk == nullptr) {
+                cout << "txpool size:" << TxPool::GetInstance()->items.size() << "\n";
+                TxPool::GetInstance()->RemoveTxs(blk->GetTransactions());
+                cout << "after remove txpool size:" << TxPool::GetInstance()->items.size() << "\n";
+                POWLedgerManager::GetInstance()->AppendBlock(*blk);
+                std::cout << "Following block is received and appended" << "\n";
+                std::cout << *blk << "\n";
+            }
+            else if (lastblk->GetBlockHash() == blk->GetPrevBlockHash() && nextblkidx == blk->GetBlockIdx()) {
+                cout << "txpool size:" << TxPool::GetInstance()->items.size() << "\n";
+                TxPool::GetInstance()->RemoveTxs(blk->GetTransactions());
+                cout << "after remove txpool size:" << TxPool::GetInstance()->items.size() << "\n";
+                POWLedgerManager::GetInstance()->AppendBlock(*blk);
+                std::cout << "Following block is received and appended" << "\n";
+                std::cout << *blk << "\n";
+            }
+            else
+                std::cout << "Block is received but not appended" << "\n";
         }
         else {
             std::cout << "Wrong data in P2PMessage" << "\n";

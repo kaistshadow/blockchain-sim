@@ -26,6 +26,8 @@
 #include "p2p/p2pmessage.h"
 #include "p2p/socketmessage.h"
 #include "consensus/simpleconsensusmessage.h"
+#include "p2p/socket.h"
+#include "p2p/plumtree.h"
 
 #define MYPORT 3456    /* the port users will be connecting to */
 #define BACKLOG 10     /* how many pending connections queue will hold */
@@ -89,7 +91,8 @@ void connect_to_node(char *hostname) {
 }
 
 void send_SocketMessage(int sfd, SocketMessage msg) {
-    int payload_length = msg.GetPayloadLength();
+    std::string payload = GetSerializedString(msg.GetP2PMessage());
+    int     payload_length = payload.size();
 
     int n = send(sfd, (char*)&payload_length, sizeof(int), 0);
     if (n < 0){ 
@@ -105,7 +108,7 @@ void send_SocketMessage(int sfd, SocketMessage msg) {
         cout << "sented string length: " << n << "\n";
     }            
             
-    n = send(sfd,msg.GetPayload().c_str(),payload_length,0);
+    n = send(sfd,payload.c_str(),payload_length,0);
     if (n < 0){ 
         cout << "send errno=" << errno << "\n";
         exit(1);
@@ -124,11 +127,15 @@ void send_SocketMessage(int sfd, SocketMessage msg) {
 void InjectTransaction(int sfd, int from, int to, double value) {
     Transaction tx(from, to, value);
     P2PMessage p2pmessage(P2PMessage_TRANSACTION, tx);
+
+    // added
+    p2pmessage.g_mid = GossipProtocol::GetInstance()->CreateMsgId(p2pmessage);
+
     SocketMessage msg;
     msg.SetSocketfd(sfd);
     msg.SetP2PMessage(p2pmessage);
-    std::string payload = GetSerializedString(msg);
-    msg.SetPayload(payload);
+    // std::string payload = GetSerializedString(msg);
+    // msg.SetPayload(payload);
 
     cout << "Following tx will be injected" << "\n";
     cout << tx << "\n";

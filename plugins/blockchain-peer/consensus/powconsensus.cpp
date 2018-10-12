@@ -5,6 +5,7 @@
 #include "../p2p/p2pmessage.h"
 #include "../p2p/socket.h"
 #include "../blockchain/powledgermanager.h"
+#include "../p2p/gossipprotocol.h"
 
 // Make a consensus using simple proof of work
 // Consensus Source : pending transactions 
@@ -80,7 +81,8 @@ POWBlock *POWConsensus::Prepare() {
 void POWConsensus::InjectValidBlockToP2PNetwork(POWBlock* pendingBlk) {
     P2PMessage p2pmessage(P2PMessage_POWBLOCK, *pendingBlk);
 
-    SocketInterface::GetInstance()->UnicastP2PMsg(p2pmessage, "bleep1"); // hardcoded line for test
+    SimpleGossipProtocol::GetInstance()->PushToUpperQueue(p2pmessage);
+    // SocketInterface::GetInstance()->UnicastP2PMsg(p2pmessage, "bleep1"); // hardcoded line for test
 }
 
 void POWConsensus::Run() {

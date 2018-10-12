@@ -25,6 +25,8 @@
 #include "blockchain/transaction.h"
 #include "p2p/p2pmessage.h"
 #include "p2p/socketmessage.h"
+#include "p2p/socket.h"
+#include "p2p/plumtree.h"
 #include "consensus/simpleconsensusmessage.h"
 
 #define MYPORT 3456    /* the port users will be connecting to */
@@ -89,46 +91,38 @@ void connect_to_node(char *hostname) {
 }
 
 void send_SocketMessage(int sfd, SocketMessage msg) {
-    int payload_length = msg.GetPayloadLength();
+    std::string payload = GetSerializedString(msg.GetP2PMessage());
+    int     payload_len = payload.size();
+    if (payload_len <= 0) {
+        std::cerr << "send event: Serialization fault\n";
+        return;
+    }
 
-    int n = send(sfd, (char*)&payload_length, sizeof(int), 0);
-    if (n < 0){ 
-        cout << "send errno=" << errno << "\n";
-        exit(1);
+    int numbytes = send(sfd, (char*)&payload_len, sizeof(int), 0);
+    if (numbytes < sizeof(int)) {
+        std::cerr << "send event: network fail\n";
+        return;
     }
-    else if (n < sizeof(int)) {
-        cout << "Warning : sented string is less than requested" << "\n";
-        cout << "sented string length: " << n << "\n";
-        exit(1);
+    numbytes = send(sfd, payload.c_str(), payload_len, 0);
+    if (numbytes < payload_len) {
+        std::cerr << "send event: network fail\n";
+        return;
     }
-    else {
-        cout << "sented string length: " << n << "\n";
-    }            
-            
-    n = send(sfd,msg.GetPayload().c_str(),payload_length,0);
-    if (n < 0){ 
-        cout << "send errno=" << errno << "\n";
-        exit(1);
-    }
-    else if (n < payload_length) {
-        cout << "Warning : sented string is less than requested" << "\n";
-        cout << "sented string length: " << n << "\n";
-        exit(1);
-    }
-    else {
-        cout << "sented string length: " << n << "\n";
-    }           
-    return;
+    std::cout << "send done\n";
 }
 
 void InjectTransaction(int sfd, int from, int to, double value) {
     Transaction tx(from, to, value);
     P2PMessage p2pmessage(P2PMessage_TRANSACTION, tx);
+
+    // added
+    p2pmessage.g_mid = GossipProtocol::GetInstance()->CreateMsgId(p2pmessage);
+
     SocketMessage msg;
     msg.SetSocketfd(sfd);
     msg.SetP2PMessage(p2pmessage);
-    std::string payload = GetSerializedString(msg);
-    msg.SetPayload(payload);
+    // std::string payload = GetSerializedString(msg);
+    // msg.SetPayload(payload);
 
     cout << "Following tx will be injected" << "\n";
     cout << tx << "\n";
@@ -170,48 +164,64 @@ void NodeLoop(char *argv[]) {
         Block block("injected block 0", tx_list);
         
         P2PMessage p2pmessage(P2PMessage_BLOCK, block);
+
+        // added
+        p2pmessage.g_mid = GossipProtocol::GetInstance()->CreateMsgId(p2pmessage);
+
         SocketMessage msg;
         msg.SetSocketfd(sfd);
         msg.SetP2PMessage(p2pmessage);
-        std::string payload = GetSerializedString(msg);
-        msg.SetPayload(payload);
+        // std::string payload = GetSerializedString(msg);
+        // msg.SetPayload(payload);
 
         cout << "Following block will be injected" << "\n";
         cout << block << "\n";
 
-        SocketMessage msg2 = GetDeserializedMsg(payload);
-        cout << "Following block is deserialized (with boost variant)" << "\n";
-        Block deserialized_block = boost::get<Block>(msg2.GetP2PMessage().data);
-        cout << deserialized_block << "\n";
+        // SocketMessage msg2 = GetDeserializedMsg(payload);
+        // cout << "Following block is deserialized (with boost variant)" << "\n";
+        // Block deserialized_block = boost::get<Block>(msg2.GetP2PMessage().data);
+        // cout << deserialized_block << "\n";
 
         send_SocketMessage(sfd, msg);
     }
 
     {
         // 3. Quorum initialization and Leader Election.
-        for (auto it = socket_m.begin(); it != socket_m.end(); it++) {
-            std::string node_id = it->first;
-            int sfd = it->second;
-            SimpleConsensusMessage consensusMsg(SimpleConsensusMessage_INIT_QUORUM, node_id); 
-            P2PMessage p2pmessage(P2PMessage_SIMPLECONSENSUSMESSAGE, consensusMsg);
-            SocketMessage msg;
-            msg.SetSocketfd(sfd);
-            msg.SetP2PMessage(p2pmessage);
-            std::string payload = GetSerializedString(msg);
-            msg.SetPayload(payload);
+        // Remove quorum initialization (node id assigning) process. Since we now have GetHostId function. 
 
-            send_SocketMessage(sfd, msg);
-        }
+        // for (auto it = socket_m.begin(); it != socket_m.end(); it++) {
+        //     std::string node_id = it->first;
+        //     int sfd = it->second;
+        //     SimpleConsensusMessage consensusMsg(SimpleConsensusMessage_INIT_QUORUM, node_id); 
+        //     P2PMessage p2pmessage(P2PMessage_SIMPLECONSENSUSMESSAGE, consensusMsg);
 
+        //     //added
+        //     p2pmessage.g_mid = GossipProtocol::GetInstance()->CreateMsgId(p2pmessage);
+
+        //     SocketMessage msg;
+        //     msg.SetSocketfd(sfd);
+        //     msg.SetP2PMessage(p2pmessage);
+        //     // std::string payload = GetSerializedString(msg);
+        //     // msg.SetPayload(payload);
+
+        //     send_SocketMessage(sfd, msg);
+        // }
+
+
+        // Broadcast leader election message. 
         std::string node_id(argv[1]); // node0 is elected as a leader
         int sfd = socket_m.find(argv[1])->second;
         SimpleConsensusMessage consensusMsg(SimpleConsensusMessage_LEADER_ELECTION, node_id); 
         P2PMessage p2pmessage(P2PMessage_SIMPLECONSENSUSMESSAGE, consensusMsg);
+
+        //added
+        p2pmessage.g_mid = GossipProtocol::GetInstance()->CreateMsgId(p2pmessage);
+
         SocketMessage msg;
         msg.SetSocketfd(sfd);
         msg.SetP2PMessage(p2pmessage);
-        std::string payload = GetSerializedString(msg);
-        msg.SetPayload(payload);
+        // std::string payload = GetSerializedString(msg);
+        // msg.SetPayload(payload);
 
         send_SocketMessage(sfd, msg);
     }

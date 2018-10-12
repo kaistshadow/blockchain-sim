@@ -44,6 +44,7 @@ set(SRCS
   p2p/nodeinfos.cpp
   p2p/socket.cpp
   p2p/socketmessage.cpp
+  p2p/plumtree.cpp
   blockchain/block.cpp
   blockchain/transaction.cpp
   blockchain/txpool.cpp
@@ -114,7 +115,7 @@ install(TARGETS PEER_SIMPLECONSENSUS DESTINATION plugins)
 # target_link_libraries(PEER_SIMPLECONSENSUS_LOCAL ${Boost_LIBRARIES})
 target_link_libraries(PEER_SIMPLECONSENSUS ${Boost_LIBRARIES})
 
-##
+# ##
 add_shadow_plugin(INJECTOR_SIMPLECONSENSUS node_injector_simpleconsensus.cpp ${SRCS})
 install(TARGETS INJECTOR_SIMPLECONSENSUS DESTINATION plugins)
 target_link_libraries(INJECTOR_SIMPLECONSENSUS ${Boost_LIBRARIES})
@@ -157,3 +158,9 @@ target_link_libraries(INJECTOR_POWCONSENSUS ${Boost_LIBRARIES})
 add_shadow_plugin(DUMP_POWBLOCKCHAIN dump_powblockchain.cpp ${SRCS} ${POW_SRCS})
 install(TARGETS DUMP_POWBLOCKCHAIN DESTINATION plugins)
 target_link_libraries(DUMP_POWBLOCKCHAIN ${Boost_LIBRARIES})
+
+##
+add_shadow_plugin(PEER_PLUMTREE node_membershiptest.cpp ${SRCS})
+install(TARGETS PEER_PLUMTREE DESTINATION plugins)
+target_link_libraries(PEER_PLUMTREE ${Boost_LIBRARIES})
+

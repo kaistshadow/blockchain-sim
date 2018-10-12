@@ -3,69 +3,62 @@
 
 #include <vector>
 #include <string>
+#include "socketmessage.h"
 
-enum CONNECT_STATUS {
-    IDLE = 0,
-    CONNECTING = 1,
-    CONNECTED = 2,
-    NONE = 4,
-};
-
-enum RECV_STATUS {
-    RECV_IDLE = 0,
-    RECV_LENGTH = 1,
-    RECV_NONE = 2,
-};
+#define ActiveSize   5//3
+#define PassiveSize 30//15
+#define Eager 1
+#define Lazy  0
 
 class Peer{ 
  public:
-    Peer(int socket) { sfd = socket; }
-    Peer(std::string hn) { hostname = hn; conn_status = IDLE; }
-    Peer(std::string hn, int socket) { hostname = hn; sfd = socket; }
-    std::string hostname;
-    int sfd;
-    CONNECT_STATUS conn_status;
-    RECV_STATUS recv_status;
-    int payload_len;
+  Peer(std::string pn, int fd) {
+    peername = pn;
+    sfd      = fd;
+    state    = Eager;
+  }
+  std::string peername;
+  int sfd;
+
+  // Things below are for Gossiping, Plum Tree
+  int  state; 
+  void set_state(int s) {state=s;}  
 };
 
-
-typedef std::vector<Peer*> PeerList;
+typedef std::vector<Peer> PeerList;
 
 class SimplePeerList {
  private:
-    SimplePeerList() { 
-        inPeerList = std::vector<Peer*>();
-        outPeerList = std::vector<Peer*>();
-    }; // singleton pattern
-    static SimplePeerList* instance; // singleton pattern
+  SimplePeerList() { 
+    active_view  = std::vector<Peer>();
+    passive_view = std::vector<Peer>();
+  };                                    // singleton pattern
+  static SimplePeerList* instance;      // singleton pattern
     
-    PeerList inPeerList;
-    PeerList outPeerList;
-
  public:
-    static SimplePeerList* GetInstance(); // sigleton pattern
+  static SimplePeerList* GetInstance(); // sigleton pattern
 
-    /**
-     * Initialize the list of neighbor nodes
-     * This function will update the global variable called "peerList".
-     */
-    void AddPeerList(char *servhostname);
-    
-    PeerList& GetOutPeerList() { return outPeerList; };
-    PeerList& GetInPeerList() { return inPeerList; };
+  PeerList active_view;
+  PeerList passive_view;
+  
+  void  InitPeerList(int argc, char *argv[]);
+  Peer* FindPeerFromAll(int fd);
+  
+  void DropRandomFromActive();
+  void DropFromActiveById(std::string pn);
+  void DropFromActive(int fd);
+  int  ExistInActiveById(std::string pn);
+  int  ExistInActive(int fd);
+  void AddToActive(Peer node);
+
+  void DropRandomFromPassive();
+  void DropFromPassive(int fd);
+  int  ExistInPassiveById(std::string pn);
+  int  ExistInPassive(int fd);
+  void AddToPassive(Peer node);
+
+  void PrintActive();
+  void PrintPassive();
 };
-
-
-
-
-
-
-
-
-
-
-
-
 
 #endif // P2P_SIMPLEPEERLIST_H

@@ -191,8 +191,10 @@ void StellarConsensus::ProcessQueue() {
 
                     P2PMessage p2pmessage(P2PMessage_STELLARCONSENSUSMESSAGE, consensusMsg);
                     p2pmessage.SetProcessedByNode(GetNodeId());
-                    SimpleGossipProtocol::GetInstance()->PushToQueue(p2pmessage);
+                    SimpleGossipProtocol::GetInstance()->PushToUpperQueue(p2pmessage);
                     // send to P2P gossip protocol module!
+                    // SimpleGossipProtocol::GetInstance()->PushToQueue(p2pmessage);
+
                 }
             }
         }

@@ -17,7 +17,6 @@ add_test(NAME BLEEP-injector-simple
   COMMAND python test-injector-simple.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-
 add_test(NAME BLEEP-stellar-consensus
   COMMAND python test-stellar-consensus.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
@@ -25,3 +24,8 @@ add_test(NAME BLEEP-stellar-consensus
 add_test(NAME BLEEP-pow-consensus
   COMMAND python test-pow-consensus.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_test(NAME BLEEP-plumtree-broadcast
+  COMMAND python test-plumtree-broadcast.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  

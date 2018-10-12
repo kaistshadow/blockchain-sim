@@ -6,6 +6,7 @@
 #include "p2p/simplepeerlist.h"
 #include "p2p/gossipprotocol.h"
 #include "p2p/socket.h"
+#include "p2p/plumtree.h"
 #include "blockchain/txpool.h"
 #include "blockchain/ledgermanager.h"
 #include "blockchain/powledgermanager.h"
@@ -33,17 +34,27 @@ int main(int argc, char *argv[]) {
 }
 
 // assume that command arguments are given as follows
-// ./command <node_id_of_neighbor> <node_id_of_neighbor> ...
+// ./command <my_node_id> <node_id_of_neighboring_p2p_node> ...
 void NodeInit(int argc, char *argv[]) {
+    // 1. Initialize Socket Interface
+    SocketInterface::GetInstance()->InitSocketInterface();
+ 
+    // 2. Initialize Protocol Interface
+    SimpleGossipProtocol::GetInstance()->InitProtocolInterface(argv[1]);
+ 
+    // 3. Initailisze Peerlist
+    SimplePeerList::GetInstance()->InitPeerList(argc, argv); 
 
-    for (int i = 1; i < argc; i++) {
-        // add neighbor node 
-        SimplePeerList::GetInstance()->AddPeerList(argv[i]);
-    }
+
+    // for (int i = 1; i < argc; i++) {
+    //     // add neighbor node 
+    //     SimplePeerList::GetInstance()->AddPeerList(argv[i]);
+    // }
     
-    // initialize network socket
-    PeerList outPeerList = SimplePeerList::GetInstance()->GetOutPeerList();    
-    SocketInterface::GetInstance()->InitializeSocket(outPeerList);
+    // // initialize network socket
+    // PeerList outPeerList = SimplePeerList::GetInstance()->GetOutPeerList();    
+    // SocketInterface::GetInstance()->InitializeSocket(outPeerList);
+
 
     // initialize blockchain (currently from file.) 
     // TODO: initialize blockchain by retrieving live blockchain from network
@@ -105,9 +116,14 @@ void NodeLoop() {
 
         // process non-blocking network socket events
         // process non-blocking accept and non-blocking recv
-        PeerList inPeerList = SimplePeerList::GetInstance()->GetInPeerList();
-        PeerList outPeerList = SimplePeerList::GetInstance()->GetOutPeerList();
-        SocketInterface::GetInstance()->ProcessNonblockSocket(inPeerList, outPeerList);
+        // PeerList inPeerList = SimplePeerList::GetInstance()->GetInPeerList();
+        // PeerList outPeerList = SimplePeerList::GetInstance()->GetOutPeerList();
+        // SocketInterface::GetInstance()->ProcessNonblockSocket(inPeerList, outPeerList);
+
+        // Socket Layer
+        SocketInterface::GetInstance()->ProcessQueue();          
+        SocketInterface::GetInstance()->ProcessNetworkEvent();
+
         
             
         // consensus protocol
@@ -121,6 +137,10 @@ void NodeLoop() {
         SimpleGossipProtocol::GetInstance()->ProcessQueue();
         SocketInterface::GetInstance()->ProcessQueue();
         POWConsensus::GetInstance()->ProcessQueue();
+
+        // Gossip Layer:
+        // process Upper queue of Gossip Layer which store p2pmsgs from Consensus Layer
+        GossipProtocol::GetInstance()->ProcessQueue();
     }
     return;
 }

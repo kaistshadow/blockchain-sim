@@ -31,6 +31,10 @@ if __name__ == '__main__':
                 block_nonce = line.split(":")[1].split(",")[1].split("=")[1]
                 bleep1_blockidx_blocknonce[block_idx] = block_nonce
     
+    if len(bleep1_blockidx_blocknonce) == 0:
+        print "test failed. No valid block is propagated"
+        sys.exit(-1)
+    
     if os.path.exists(outputfile2):
         f = open(outputfile2)
         for line in f:

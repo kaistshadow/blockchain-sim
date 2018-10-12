@@ -1,82 +1,229 @@
 #include <iostream>
-
+#include <string>
+#include <vector>
 #include <errno.h> 
-#include <string.h> 
-#include <sys/types.h> 
-#include <netinet/in.h> 
-#include <sys/socket.h> 
-#include <sys/wait.h> 
-#include <fcntl.h> /* Added for the nonblocking socket */
+#include <assert.h>
+
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <netinet/in.h> 
+#include <sys/epoll.h>
+#include <sys/types.h> 
+#include <sys/socket.h> 
+#include <unistd.h>
+#include <fcntl.h>
 
-#include <vector>
-
+#include "p2pmessage.h"
+#include "socketmessage.h"
 #include "socket.h"
 #include "simplepeerlist.h"
 #include "gossipprotocol.h"
 
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/iostreams/stream.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/iostreams/device/array.hpp>
+using namespace boost::archive;
+
 SocketInterface* SocketInterface::instance = 0;
-
 SocketInterface* SocketInterface::GetInstance() {
-    if (instance == 0) {
-        instance = new SocketInterface();
-    }
-    return instance;
+  if (instance == 0) {
+    instance = new SocketInterface();
+  }
+  return instance;
 }
 
-
-void SocketInterface::InitServerSocket() {
-    int 			sockfd;     /* listen on sock_fd */
-    struct 	sockaddr_in 	my_addr;    /* my address information */
-    int 			sin_size;
-
-    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-        perror("socket");
-        exit(1);
-    }
-
-    my_addr.sin_family = AF_INET;         /* host byte order */
-    my_addr.sin_port = htons(MYPORT);     /* short, network byte order */
-    my_addr.sin_addr.s_addr = INADDR_ANY; /* auto-fill with my IP */
-    bzero(&(my_addr.sin_zero), 8);        /* zero the rest of the struct */
-
-    if (bind(sockfd, (struct sockaddr *)&my_addr, sizeof(struct sockaddr)) == -1) {
-        perror("bind");
-        exit(1);
-    }
-
-    if (listen(sockfd, BACKLOG) == -1) {
-        perror("listen");
-        exit(1);
-    }
-
-    fcntl(sockfd, F_SETFL, O_NONBLOCK); /* Change the socket into non-blocking state	*/
-
-    SetListenSocket(sockfd);
+std::string GetSerializedString(P2PMessage msg) {
+  std::string serial_str;
+  // serialize obj into an std::string payload
+  boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+  boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
+  boost::archive::binary_oarchive oa(s);
+  oa << msg;
+  s.flush();
+  return serial_str;
 }
 
-void SocketInterface::InitClientSocket(PeerList outPeerList) {
+P2PMessage GetDeserializedMsg(std::string str) {
+  P2PMessage msg;
+  // wrap buffer inside a stream and deserialize string_read into obj
+  boost::iostreams::basic_array_source<char> device(str.c_str(), str.size());
+  boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
+  boost::archive::binary_iarchive ia(s);
+  ia >> msg;
+  return msg;
+}
 
-    // initialize socket for client connection
-    for (PeerList::iterator it = outPeerList.begin(); it != outPeerList.end(); it++) {    
-        Peer* p = *it;
-        int cli_sockfd;  
+void SocketInterface::SetEvent(int mod, int event, int fd){
+  assert(ed);
 
-        if ((cli_sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-            perror("socket");
-            exit(1);
-        }
-    
-        int flags = fcntl(cli_sockfd, F_GETFL, 0);
-        fcntl(cli_sockfd, F_SETFL, flags | O_NONBLOCK); /* Change the socket into non-blocking state	*/
+  if (fd == -1) {
+    perror("set_event"); return;
+  }
+  struct epoll_event ev;
+  ev.events  = event;
+  ev.data.fd = fd;
+  
+  int res = epoll_ctl(ed, mod, fd, &ev);
+  if (res == -1){
+    perror("set_event"); return;
+  }
+}
 
-        p->sfd = cli_sockfd;
+void SocketInterface::InitEventDescriptor() {
+  int epoll = epoll_create(1);
+  if (epoll == -1) {
+    perror("create epoll"); 
+    return;
+  }
+  ed = epoll;
+}
+
+void SocketInterface::InitListeningSocket() {
+  assert(ed);
+
+  int sfd = socket(AF_INET, (SOCK_STREAM | SOCK_NONBLOCK), 0);
+  if (sfd == -1) {
+    perror("listen_fd"); return;
+  }
+  struct sockaddr_in address;
+  memset(&address, 0, sizeof(address));
+  address.sin_family      = AF_INET;
+  address.sin_addr.s_addr = INADDR_ANY;
+  address.sin_port        = htons(MYPORT);
+  
+  int res = bind(sfd, (struct sockaddr*)&address, sizeof(address));
+  if (res == -1) {
+    close(sfd);
+    perror("listen_fd"); return;
+  }
+  res = listen(sfd, BACKLOG);
+  if (res == -1) {
+    close(sfd); 
+    perror("listen_fd"); return;
+  }
+
+  assert(sfd);
+  SetEvent(EPOLL_CTL_ADD, EPOLLIN, sfd);
+  listen_fd = sfd;
+}
+
+int SocketInterface::ConnectToPeer(std::string pn){  
+  struct addrinfo* peerinfo;
+  int res = getaddrinfo((const char*)pn.c_str(), NULL, NULL, &peerinfo);
+  if (res == -1) return -1;
+  
+  in_addr_t ip = ((struct sockaddr_in*)(peerinfo->ai_addr))->sin_addr.s_addr;
+  freeaddrinfo(peerinfo);
+
+  int sfd = socket(AF_INET, (SOCK_STREAM | SOCK_NONBLOCK), 0);
+  if (sfd == -1) return -1;
+
+  struct sockaddr_in address;
+  memset(&address, 0, sizeof(address));
+  address.sin_family      = AF_INET;
+  address.sin_port        = htons(MYPORT);
+  address.sin_addr.s_addr = ip;
+  
+  res = connect(sfd, (struct sockaddr*)&address, sizeof(address));
+  if (res == -1 && errno != EINPROGRESS) {
+    close(sfd); return -1;
+  }
+
+  SocketData* entry= CreateSocketDataEntry(sfd);
+  entry->SetId(pn);
+
+  PrintSocketList();
+  return sfd;
+} 
+
+int SocketInterface::SendSerializedMsg(SocketMessage msg){
+  int sfd = msg.GetSocketfd();
+  
+  std::string payload = GetSerializedString(msg.GetP2PMessage());
+  int     payload_len = payload.size();
+  if (payload_len <= 0) {
+    std::cerr << "send event: Serialization fault\n";
+    return 0;
+  }
+   
+  int numbytes = send(sfd, (char*)&payload_len, sizeof(int), 0);
+  if (numbytes < sizeof(int)) {
+    if (numbytes == 0)
+      std::cerr << "send event: connection closed(1)\n";
+    else
+      std::cerr << "send event: network fail(1):"<<numbytes<<','<<errno<<'\n';
+    SendFailMsg(sfd);
+    return -1;
+  }
+
+  numbytes = send(sfd, payload.c_str(), payload_len, 0);
+  if (numbytes < payload_len) {
+    if (numbytes == 0)
+      std::cerr << "send event: connection closed(2)\n";
+    else
+      std::cerr << "send event: network fail(2):"<<numbytes<<','<<errno<<'\n'; 
+    SendFailMsg(sfd);
+    return -1;
+  }
+
+  if (msg.GetMethod() == M_DISCONNECT) {
+    DeleteSocketDataEntry(sfd);
+    return -1;
+  }
+
+  return 1;
+} 
+
+void SocketInterface::SendFailMsg(int sfd){
+  SocketMessage smsg = SocketMessage();
+  smsg.SetMethod(M_NETWORKFAIL, sfd);
+  SimpleGossipProtocol::GetInstance()->PushToQueue(smsg);
+
+  SocketData* entry = FindSocketDataEntry(sfd);
+  if (entry)
+    std::cerr << "NF: from " << entry->id << '\n';
+  else
+    std::cerr << "NF: no entry exists sfd = " << sfd << '\n';
+
+  DeleteSocketDataEntry(sfd);
+}
+
+SocketData* SocketInterface::FindSocketDataEntry(int sfd) {
+  for (int i=0; i<socket_view.size();i++) {
+    if (socket_view[i].sfd == sfd) return &socket_view[i];
+  }
+  return NULL;
+}
+
+SocketData* SocketInterface::FindSocketDataEntryById(std::string pn) {
+  for (int i=0; i<socket_view.size();i++) {
+    if (socket_view[i].id == pn) return &socket_view[i];
+  }
+  return NULL;
+}
+
+SocketData* SocketInterface::CreateSocketDataEntry(int sfd) {
+  SocketData entry = SocketData(sfd);
+  socket_view.push_back(entry);
+  return &socket_view[socket_view.size()-1];
+}
+
+void SocketInterface::DeleteSocketDataEntry(int sfd) {
+  for (int i=0; i<socket_view.size();i++) {
+    if (socket_view[i].sfd == sfd) {
+      socket_view.erase(socket_view.begin()+i);
+      SetEvent(EPOLL_CTL_DEL, EPOLLIN, sfd);
+      close(sfd);
     }
+  }
+  PrintSocketList();
 }
 
 /**
- * temporary implementation for unicast
+ * DEPRECATED (temporarily used for testing PoW consensus)
+ * temporary implementation for unicast 
  */
 void SocketInterface::UnicastP2PMsg(P2PMessage msg, const char *hostname) {
     int 			cli_sockfd;
@@ -93,7 +240,7 @@ void SocketInterface::UnicastP2PMsg(P2PMessage msg, const char *hostname) {
 
     int n = getaddrinfo(hostname, NULL, NULL, &servinfo);
     if (n != 0) {
-        cout << "error in connection : getaddrinfo" << "\n";
+        std::cout << "error in connection : getaddrinfo" << "\n";
         exit(1);
     }
     servaddr.sin_addr.s_addr = ((struct sockaddr_in*) (servinfo->ai_addr))->sin_addr.s_addr;
@@ -105,17 +252,17 @@ void SocketInterface::UnicastP2PMsg(P2PMessage msg, const char *hostname) {
         exit(1);
     } 
     else if (n == 0) {
-        cout << "connection established for unicast" << "\n";
+        std::cout << "connection established for unicast" << "\n";
     }
 
     SocketMessage sockmsg;
     sockmsg.SetSocketfd(cli_sockfd);
     sockmsg.SetP2PMessage(msg);
-    std::string payload = GetSerializedString(sockmsg);
-    sockmsg.SetPayload(payload);
 
     // send_socketmessage
-    int payload_length = sockmsg.GetPayloadLength();
+    std::string payload = GetSerializedString(msg);
+    int     payload_length = payload.size();
+
     n = send(cli_sockfd, (char*)&payload_length, sizeof(int), 0);
     if (n < 0){ 
         std::cout << "send errno=" << errno << "\n";
@@ -131,7 +278,7 @@ void SocketInterface::UnicastP2PMsg(P2PMessage msg, const char *hostname) {
     }            
 
 
-    n = send(cli_sockfd,sockmsg.GetPayload().c_str(),payload_length,0);
+    n = send(cli_sockfd,payload.c_str(),payload_length,0);
     if (n < 0){ 
         std::cout << "send errno=" << errno << "\n";
         exit(1);
@@ -147,237 +294,210 @@ void SocketInterface::UnicastP2PMsg(P2PMessage msg, const char *hostname) {
 
 }
 
-/**
- * Initialize the non-blocking socket for listening socket and client socket.
- */
-void SocketInterface::InitializeSocket(PeerList outPeerList) {
-    InitServerSocket();
-
-    InitClientSocket(outPeerList);
+int SocketInterface::InsertSocketData(int sfd, SocketMessage msg) {
+  SocketData* entry = FindSocketDataEntry(sfd);
+  if (entry) {
+    entry->PushToQueue(msg);
+    return 0;
+  }
+  return -1;
 }
 
-/**
- * Process socket events
- * 1. process non-blocking accept (and make recv_sockets)
- * 2. process non-blocking connect (and make send_sockets)
- * 3. process non-blocking recv
- */
-void SocketInterface::ProcessNonblockSocket(PeerList inPeerList, PeerList outPeerList) {
-    struct 	sockaddr_in 	their_addr; /* connector's address information */
-    int                         new_fd; /* new connection on new_fd */
-    socklen_t 			sin_size;
-    char			string_read[2000];
-    int n;
+void SocketInterface::ProcessMsg(SocketMessage msg) {
+  int type = msg.GetMethod();
+  
+  if (type & M_CONNECT) {
+    if (!msg.sockets.empty()) { 
+      std::cerr << "Msg Process: connect: non empty socket list\n";
+      return;
+    }
     
-    // 1. Process non-blocking accept
-    sin_size = sizeof(struct sockaddr_in);
-    new_fd = accept(GetListenSocket(), (struct sockaddr *)&their_addr, &sin_size);
-    if (new_fd == -1 && errno != EAGAIN) {
-        perror("accept");
-        cout << "errno=" << errno << "\n";
+    SocketData* entry = FindSocketDataEntryById(msg.GetDstPeer());
+    if (entry) {
+      int sfd = entry->sfd;
+      if (type & M_DISCONNECT) {
+	msg.SetMethod(M_DISCONNECT, sfd);
+      }
+      else {
+	msg.SetSocketfd(sfd);
+      }
+      InsertSocketData(sfd, msg);
+      SetEvent(EPOLL_CTL_MOD, EPOLLOUT, sfd);
+      return;
     }
-    else if (new_fd != -1) {
-        cout << "server: got connection from " << inet_ntoa(their_addr.sin_addr) << "\n"; 
-        fcntl(new_fd, F_SETFL, O_NONBLOCK);
-        recv_sfd_list.push_back(new_fd); 
-        Peer* inPeer = new Peer(new_fd);
-        inPeer->recv_status = RECV_IDLE;
-        inPeer->conn_status = NONE;
-        SimplePeerList::GetInstance()->GetInPeerList().push_back(inPeer);
+  
+    int newsfd = ConnectToPeer(msg.GetDstPeer());
+    if (newsfd != -1) {
+      msg.SetSocketfd(newsfd);
+      InsertSocketData(newsfd, msg);
+      SetEvent(EPOLL_CTL_ADD, EPOLLOUT, newsfd);
     }
-        
-    // 2. Process non-blocking connect
-    for (PeerList::iterator it = outPeerList.begin(); it != outPeerList.end(); it++) {    
-        Peer* p = *it;
-
-        switch (p->conn_status) {
-        case IDLE:
-            struct sockaddr_in servaddr;
-            struct addrinfo* servinfo;
-            bzero(&servaddr, sizeof(servaddr));
-            servaddr.sin_family = AF_INET;
-            servaddr.sin_port = htons(MYPORT);
-
-            n = getaddrinfo(p->hostname.c_str(), NULL, NULL, &servinfo);
-            if (n != 0) {
-                cout << "error in connection : getaddrinfo" << "\n";
-                exit(1);
-            }
-            servaddr.sin_addr.s_addr = ((struct sockaddr_in*) (servinfo->ai_addr))->sin_addr.s_addr;
-
-            // if (inet_pton(AF_INET, servip, &servaddr.sin_addr) <= 0) {
-            //     perror("inet_pton");
-            //     exit(1);
-            // }
-
-            n = connect(p->sfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
-
-            if (n < 0 && errno != EINPROGRESS) {
-                perror("connect");
-                exit(1);
-            } 
-            else if (n == 0) {
-                cout << "connection established" << "\n";
-                p->conn_status = CONNECTED;
-                send_sfd_list.push_back(p->sfd);
-                int flags = fcntl(p->sfd, F_GETFL, 0);
-                fcntl(p->sfd, F_SETFL, flags & (~O_NONBLOCK)); /* Change the socket into blocking state	*/
-            }
-            else {
-                p->conn_status = CONNECTING;
-            }
-            break;
-        case CONNECTING:
-            fd_set rset, wset;
-            struct timeval tval;
-
-            FD_ZERO(&rset);
-            FD_SET(p->sfd, &rset);
-            wset = rset;
-            tval.tv_sec = 0;
-            tval.tv_usec = 0;
-            
-            n = select(p->sfd+1, &rset, &wset, NULL, &tval);
-            if (n == 1) {
-                if (FD_ISSET(p->sfd, &rset) || FD_ISSET(p->sfd, &wset)) {
-                    int error = 0;
-                    socklen_t len = sizeof(error);
-                    if (getsockopt(p->sfd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
-                        perror("getsockopt");
-                        exit(1);
-                    }
-
-                    if (error) {
-                        cout << "connection failed" << "\n";
-                        exit(1);
-                    }
-                    else {
-                        cout << "connection established" << "\n";
-                        p->conn_status = CONNECTED;
-                        send_sfd_list.push_back(p->sfd);
-
-                        int flags = fcntl(p->sfd, F_GETFL, 0);
-                        fcntl(p->sfd, F_SETFL, flags & (~O_NONBLOCK)); /* Change the socket into blocking state	*/
-
-                    }
-                }
-            }
-
-            break;
-        case CONNECTED:
-            break;
-        }
-        
+    else {
+      std::cerr << "Msg Process: connect: create connection failed\n";
     }
-
-    // 3. Process non-blocking recv
-    for (PeerList::iterator it = inPeerList.begin(); it != inPeerList.end(); it++) {    
-        Peer* p = *it;
-
-        switch (p->recv_status) {
-        case RECV_IDLE:
-            {
-                int length = 0;
-                n = recv(p->sfd,&length,sizeof(int),0);
-                if (n == -1 && errno != EAGAIN){ 
-                    perror("recv - non blocking \n");
-                    cout << "errno=" << errno << "\n";
-                    exit(1);
-                }
-                else if (n == 0) {
-                    cout << "socket disconnected" << "\n";
-                }
-                else if (n > 0) {
-                    p->payload_len = length;
-                    p->recv_status = RECV_LENGTH;
-                    cout << "receive network packet length:" << length << "\n";
-                    // string_read[n] = '\0';
-                    // cout << "The string is: " << string_read << "\n";
-                }
-                break;
-            }
-        case RECV_LENGTH:
-            n = recv(p->sfd,string_read,p->payload_len,0);
-            if (n == -1 && errno != EAGAIN){ 
-                perror("recv - non blocking \n");
-                cout << "errno=" << errno << "\n";
-                exit(1);
-            }
-            else if (n == 0) {
-                cout << "socket disconnected" << "\n";
-            }
-            else if (n > 0) {
-                if (p->payload_len != n) {
-                    cout << "received only part of payload" << "\n";
-                    exit(1);
-                }
-                p->recv_status = RECV_IDLE;
-                string_read[n] = '\0';
-
-                cout << "receive payload" << "\n";
-                std::string str(string_read, p->payload_len);
-                SocketMessage msg = GetDeserializedMsg(str);
-                
-                // // wrap buffer inside a stream and deserialize string_read into obj
-                // boost::iostreams::basic_array_source<char> device(string_read, p->payload_len);
-                // boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
-                // boost::archive::binary_iarchive ia(s);
-                // ia >> msg;
-                
-                SimpleGossipProtocol::GetInstance()->PushToQueue(msg.GetP2PMessage());
-                // cout << "The string is: " << string_read << "\n";
-            }
-            break;
-        }
+    return;
+  }
+  
+  if (type == M_UPDATE) {
+    SocketData* entry = FindSocketDataEntry(msg.GetSocketfd()); 
+    if (!entry) {
+      std::cerr << "Msg Process: update: can't find socket data entry\n";
+      return;
     }
+    if (entry->info_status == INFO_INCOMPLETE) {
+      entry->SetId(msg.GetDstPeer());
+      PrintSocketList();
+    }
+    return;
+  }
+
+  if (type == M_DISCONNECT) {
+    int sfd = msg.GetSocketfd();
+    DeleteSocketDataEntry(sfd);
+    return;
+  }
+  
+  if (type == M_BROADCAST || type == BROADCAST || type == M_UNICAST) {
+    for (int i=0; i<msg.sockets.size(); i++) {  
+      int sfd = msg.sockets[i];
+      msg.SetSocketfd(sfd);
+
+      if (InsertSocketData(sfd, msg) == -1) {
+	std::cerr << "Msg Process: multicast: can't find socket data entry,"<<sfd<<"\n";
+	continue;
+      }
+      SetEvent(EPOLL_CTL_MOD, EPOLLOUT, sfd);      
+    }
+    return;
+  }
 }
 
-void SocketInterface::SetListenSocket(int sfd) {
-    server_sfd = sfd;
+void SocketInterface::InitSocketInterface() {
+  InitEventDescriptor();
+  InitListeningSocket(); 
 }
 
 int SocketInterface::GetListenSocket() {
-    return server_sfd;
+  return listen_fd;
 }
 
 void SocketInterface::ProcessQueue() {
-    while (!msgQueue.empty()) {
-        SocketMessage msg = msgQueue.front();
-        
-        // send to blocking socket
-        for (vector<int>::iterator it = send_sfd_list.begin(); it != send_sfd_list.end(); it++) {
-            int sfd = *it;
+  while(!msgQueue.empty()){
+    ProcessMsg(msgQueue.front());
+    msgQueue.pop();
+  }
+}
 
-            int payload_length = msg.GetPayloadLength();
-            int n = send(sfd, (char*)&payload_length, sizeof(int), 0);
-            if (n < 0){ 
-                cout << "send errno=" << errno << "\n";
-                exit(1);
-            }
-            else if (n < sizeof(int)) {
-                cout << "Warning : sented string is less than requested" << "\n";
-                cout << "sented string length: " << n << "\n";
-                exit(1);
-            }
-            else {
-                cout << "sented string length: " << n << "\n";
-            }            
-            
-            n = send(sfd,msg.GetPayload().c_str(),payload_length,0);
-            if (n < 0){ 
-                cout << "send errno=" << errno << "\n";
-                exit(1);
-            }
-            else if (n < payload_length) {
-                cout << "Warning : sented string is less than requested" << "\n";
-                cout << "sented string length: " << n << "\n";
-                exit(1);
-            }
-            else {
-                cout << "sented string length: " << n << "\n";
-            }            
-        }
+void SocketInterface::ProcessNetworkEvent() {
 
-        msgQueue.pop();
+  struct epoll_event events[150]; 
+  int num_fds = epoll_wait(ed, events, 150, 0);
+  if (num_fds == -1) {
+    std::cerr << "EPOLL wait error("<<errno<<")\n";
+    return;
+  }   
+
+  for (int i=0; i<num_fds; i++) {
+    int      fd = events[i].data.fd;
+    uint32_t ev = events[i].events;
+
+    // Control OUT event first
+    if (ev & EPOLLOUT) {
+      SocketData* entry = FindSocketDataEntry(fd);
+      if (!entry) {
+	std::cerr << "send event: no entry exists\n";
+	continue;
+      }
+	
+      int res = 1;
+      while(!entry->msgQueue.empty()){
+	res = SendSerializedMsg(entry->msgQueue.front());
+	if (res == -1) break;
+	entry->msgQueue.pop();
+      }
+      if (res != -1)
+	SetEvent(EPOLL_CTL_MOD, EPOLLIN, fd);
+    }   
+
+    // Control IN event later
+    if (ev & EPOLLIN) {
+      if (listen_fd == fd) {
+	int newfd = accept(fd, NULL, NULL);
+	SocketData* entry = CreateSocketDataEntry(newfd);
+	SetEvent(EPOLL_CTL_ADD, EPOLLIN, newfd);
+
+	PrintSocketList();
+	continue;
+      }      
+
+      char buffer[2000];
+      memset(buffer, 0, 2000);
+      SocketData* entry = FindSocketDataEntry(fd);
+      if (!entry) {
+	std::cerr << "recv event: no entry exists\n";	      
+	continue;
+      }
+     
+      switch (entry->status) {
+	case RECV_IDLE:
+	  {
+	    int len=0;
+	    int numbytes = recv(fd, &len, sizeof(int), 0);
+	    if (numbytes <= 0) {
+	      if (numbytes == 0)
+		std::cerr << "recv event: connection closed(1)\n";	      
+	      else
+		std::cerr << "recv event: recv length fail\n";	      
+	      SendFailMsg(fd);
+	      break;
+	    }
+       	    entry->status      = RECV_LENGTH;
+	    entry->payload_len = len;
+	  } 
+	  break;
+	
+	case RECV_LENGTH:
+	  {
+	    int numbytes = recv(fd, buffer, entry->payload_len, 0);
+	    if (numbytes <= 0) {
+	      if (numbytes == 0) {
+		std::cerr << "recv event: connection closed(2)\n";
+	      }
+	      else {
+		std::cerr << "recv event: recv payload fail\n";	      
+	      }
+	      SendFailMsg(fd);
+	      break;
+	    }
+
+	    std::string str(buffer, entry->payload_len);
+	    P2PMessage    pmsg = GetDeserializedMsg(str);
+	    SocketMessage smsg = SocketMessage();
+	    smsg.SetP2PMessage(pmsg);   
+	    if (entry->info_status == INFO_INCOMPLETE) {
+	      smsg.SetMethod(M_UPDATE, fd);
+	    }
+	    else {
+	      smsg.SetMethod(M_NORMAL, fd);
+	    }
+	    SimpleGossipProtocol::GetInstance()->PushToQueue(smsg);    
+ 	    entry->status      = RECV_IDLE;
+	    entry->payload_len = 0;
+	  }
+	  break;
+
+	default:
+	  break;
+      }
     }
+  }
+}
+
+void SocketInterface::PrintSocketList() {
+  return;
+  for (int i=0; i<socket_view.size(); i++){
+    SocketData sd = socket_view[i];
+    std::cerr <<'('<< sd.sfd << ','<<sd.id<<')';
+  }
+  std::cerr <<'\n';
 }

@@ -1,116 +1,184 @@
-#include <unistd.h>
 #include <iostream>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <errno.h>
-#include <arpa/inet.h>
-#include <time.h>
+#include <string>
 
+#include "membershipmessage.h"
+#include "p2pmessage.h"
+#include "socketmessage.h"
 #include "simplepeerlist.h"
-#include "nodeinfos.h"
-
+#include "gossipprotocol.h"
+#include "socket.h"
 
 SimplePeerList* SimplePeerList::instance = 0;
-
 SimplePeerList* SimplePeerList::GetInstance() {
-    if (instance == 0) {
-        instance = new SimplePeerList();
+  if (instance == 0) {
+    instance = new SimplePeerList();
+  }
+  return instance;
+}
+
+void SimplePeerList::InitPeerList(int argc, char* argv[]) {
+  for (int i=2; i<argc; i++) {    
+    MembershipMessage msg = MembershipMessage(P_JOIN, 1, 1, std::string(argv[1]));
+    P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
+    SocketMessage    smsg = SocketMessage();
+    smsg.SetDstPeer(std::string(argv[i]));
+    smsg.SetMethod(M_CONNECT, -1);
+    smsg.SetP2PMessage(pmsg);
+    SocketInterface::GetInstance()->PushToQueue(smsg);
+  }
+}
+
+// This function is used when active view is fulled and 
+// try to add new node into it. (ex) JOIN, FORWARDJOIN
+void SimplePeerList::DropRandomFromActive() {
+  srand(time(0));
+  int       idx = rand() % (int)active_view.size();
+  Peer dropnode = active_view[idx];
+  
+  MembershipMessage msg = MembershipMessage(P_DISCONNECT, 1, 1, 
+					    SimpleGossipProtocol::GetInstance()->GetHostId());
+  P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
+  SocketMessage    smsg = SocketMessage();
+  smsg.SetDstPeer(dropnode.peername);
+  smsg.SetMethod(M_UNICAST, dropnode.sfd);
+  smsg.SetP2PMessage(pmsg);
+  SocketInterface::GetInstance()->PushToQueue(smsg);
+  
+  active_view.erase(active_view.begin() + idx);
+
+  PrintActive();  
+  AddToPassive(dropnode);
+}
+
+void SimplePeerList::DropFromActiveById(std::string pn) {
+  for (int i=0; i<active_view.size(); i++){
+    if (active_view[i].peername == pn) {
+      active_view.erase(active_view.begin() + i);
+      break;
     }
-    return instance;
+  }
+  PrintActive();
 }
 
-
-// TODO : Each node should open outgoing socket and ingoing sockets 
-
-// static int initialize_server (int port) {
-//     // initialize server socket
-//     // need to be corrected
-//     int server_sd = socket(AF_INET, (SOCK_STREAM), 0);
-
-//     /* setup the socket address info */
-//     struct sockaddr_in bindAddress;
-//     memset(&bindAddress, 0, sizeof(bindAddress));
-//     bindAddress.sin_family      = AF_INET;
-//     bindAddress.sin_addr.s_addr = INADDR_ANY;
-//     bindAddress.sin_port        = htons(port); 
-    
-//     /* bind the socket to the server port */
-//     int res = bind(server_sd, (struct sockaddr *) &bindAddress, sizeof(bindAddress));
-//     if (res == -1) {
-//         std::cout << "bind error!\n";
-//         return -1;
-//     }
-
-//     /* set as server socket that will listen for clients */
-//     res = listen(server_sd, 100);
-//     if (res == -1) {
-//         std::cout <<  "unable to start server: error in listen";
-//         return -1;
-//     }
-    
-//     struct sockaddr_in client;
-//     socklen_t client_len = sizeof(client);
-//     int client_sd = accept(server_sd, (struct sockaddr *) &client, &client_len);
-
-//     if (client_sd < 0)  {
-//         std::cout <<  "unable to start server: error in accept";
-//         return -1;
-//     }
-
-//     return client_sd;
-// } 
-
-// static int connect_to_node (std::string hostname, int port) {
-//     int s, sfd;
-
-//     struct addrinfo* serverInfo;
-//     s = getaddrinfo(hostname.c_str(), NULL, NULL, &serverInfo);
-//     if (s != 0) {
-//         std::cout << "unable to start client: error in getaddrinfo" << "\n";
-//         return -1;
-//     }
-
-//     in_addr_t serverIP = ((struct sockaddr_in*) (serverInfo->ai_addr))->sin_addr.s_addr;
-//     freeaddrinfo(serverInfo);
-
-//     /* create the client socket and get a socket descriptor */
-//     sfd = socket(AF_INET, (SOCK_STREAM), 0);
-//     if (sfd == -1) {
-//         std::cout << "unable to start client: error in socket" << "\n";;
-//         return -1;
-//     }
-
-//     struct sockaddr_in serverAddress;
-//     memset(&serverAddress, 0, sizeof(serverAddress));
-//     serverAddress.sin_family = AF_INET;
-//     serverAddress.sin_addr.s_addr = serverIP;
-//     serverAddress.sin_port = htons(port);
-
-//     /* connect to server. since we are non-blocking, we expect this to return EINPROGRESS */
-//     int res = connect(sfd, (struct sockaddr *) &serverAddress, sizeof(serverAddress));
-//     if (res == -1 && errno != EINPROGRESS) {
-//         std::cout << "unable to start client: error in connect" << "\n";
-//         return -1;
-//     }
-//     return sfd;
-// }
-
-
-// TODO : Implement more flexible peerlist setup process
-// For example, receiving peer ip list from command line interface
-// But, How to dynamically change the peerlist after initialization? 
-// Check out how real bitcoin client handles this problem.
-
-// InitializePeerList : make outPeer for given hostname. 
-// (so, it only supports a single outpeer, currently.)
-void SimplePeerList::AddPeerList(char *servhostname) {
-
-    if (strcmp(servhostname, "none") == 0)
-        return;
-
-    std::cout << "outPeer : " << servhostname << "\n";
-    Peer* outPeer = new Peer(servhostname);
-    outPeerList.push_back(outPeer);
+// this function is used when some active node is fail.
+void SimplePeerList::DropFromActive(int fd) {
+  for (int i=0; i<active_view.size(); i++){
+    if (active_view[i].sfd == fd) {
+      active_view.erase(active_view.begin() + i);
+      break;
+    }
+  }
+  PrintActive();
 }
+
+int SimplePeerList::ExistInActiveById(std::string pn) {
+  for (int i=0; i<active_view.size(); i++){
+    if (active_view[i].peername == pn) return i;
+  }
+  return -1;
+}
+
+int SimplePeerList::ExistInActive(int fd) {
+  for (int i=0; i<active_view.size(); i++){
+    if (active_view[i].sfd == fd) return i;
+  }
+  return -1;
+}
+
+// this function is used when host gets new node to be added.
+void SimplePeerList::AddToActive(Peer node) {
+  int idx = ExistInPassiveById(node.peername);
+  if (idx != -1) {
+    passive_view.erase(passive_view.begin() + idx);
+    PrintPassive();
+  }
+  if (ExistInActiveById(node.peername) != -1) {
+    return;
+  }
+
+  if (active_view.size() == ActiveSize) {
+    DropRandomFromActive();
+  }
+  active_view.push_back(node);
+  PrintActive();
+}
+
+void SimplePeerList::DropRandomFromPassive() {
+  srand(time(0));
+  int idx = rand() % (int)passive_view.size();
+  passive_view.erase(passive_view.begin() + idx);
+  PrintPassive();  
+}
+
+void SimplePeerList::DropFromPassive(int fd) {
+  for (int i=0; i<passive_view.size(); i++){
+    if (passive_view[i].sfd == fd) {
+      passive_view.erase(passive_view.begin() + i);
+      PrintPassive();
+      return;
+    }
+  }
+}
+
+int SimplePeerList::ExistInPassiveById(std::string pn) {
+  for (int i=0; i<passive_view.size(); i++){
+    if (passive_view[i].peername == pn)
+      return i;
+  }
+  return -1;
+}
+
+int SimplePeerList::ExistInPassive(int fd) {
+  for (int i=0; i<passive_view.size(); i++){
+    if (passive_view[i].sfd == fd)
+      return i;
+  }
+  return -1;
+}
+
+void SimplePeerList::AddToPassive(Peer node) {
+  if (ExistInActiveById(node.peername) != -1) {
+    return;
+  }
+  if (ExistInPassiveById(node.peername) != -1)
+    return;
+  
+  if (passive_view.size() == PassiveSize)
+    passive_view.erase(passive_view.begin());
+
+  passive_view.push_back(node);
+  PrintPassive();
+}
+
+void SimplePeerList::PrintActive() {
+  if (active_view.size() == 0) {
+    std::cout << '\n';
+    return;
+  }
+
+  for (int i=0; i<active_view.size(); i++) {
+    if (i == active_view.size()-1) {      
+      std::cout << active_view[i].peername <<"("<< active_view[i].state <<")"<< '\n';
+    }
+    else{
+      std::cout << active_view[i].peername <<"("<< active_view[i].state <<")"<< ',';     
+    }
+  }
+} 
+
+void SimplePeerList::PrintPassive() {
+  return;
+
+  std::cerr << '\n';
+  if (passive_view.size() == 0) {
+    std::cerr << "None\n";
+    return;
+  }
+
+  for (int i=0; i<passive_view.size(); i++) {
+    if (i == passive_view.size()-1)
+      std::cerr << passive_view[i].peername << '\n';
+    else
+      std::cerr << passive_view[i].peername << ',';
+  }
+} 

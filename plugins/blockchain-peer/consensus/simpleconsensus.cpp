@@ -22,8 +22,11 @@ void SimpleConsensus::ProcessQueue() {
             std::cerr << "Consensus: i'm selected as quorum and my id is : " << node_id << "\n";
         }
         else if (msg.type == SimpleConsensusMessage_LEADER_ELECTION) {
-            isLeader = true;
-            std::cerr << "Consensus: i'm elected as consensus leader!" << "\n";
+            std::string node_id = boost::get<std::string>(msg.value);
+            if (SimpleGossipProtocol::GetInstance()->GetHostId() == node_id) {
+                isLeader = true;
+                std::cerr << "Consensus: i'm elected as consensus leader!" << "\n";
+            }
         }
         msgQueue.pop();
     }
@@ -39,7 +42,7 @@ void SimpleConsensus::RunConsensusProtocol() {
     if (isLeader && next_epoch_time <= difftime(time(0), start_time)) {
         // for every second, leader tries to proceed a consensus protocol
         if (TxPool::GetInstance()->items.size() >= 5) {
-            std::cerr << "Consensus: Consensus on block" << "\n";
+            std::cout << "Consensus: Consensus on block" << "\n";
 
             std::vector<Transaction>& txpool = TxPool::GetInstance()->items;
             std::list<Transaction> tx_list;
@@ -51,7 +54,7 @@ void SimpleConsensus::RunConsensusProtocol() {
             txpool.erase (txpool.begin(), txpool.begin()+5);
             
             Block block("consensus block", tx_list);
-            std::cerr << "Consensus: " << block;
+            std::cout << "Consensus: " << block;
             P2PMessage p2pmessage(P2PMessage_BLOCK, block);
             
 	    SimpleGossipProtocol::GetInstance()->PushToUpperQueue(p2pmessage);

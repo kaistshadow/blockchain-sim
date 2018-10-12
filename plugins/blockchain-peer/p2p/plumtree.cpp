@@ -126,6 +126,19 @@ void GossipProtocol::RunGossipProtocol(SocketMessage msg) {
     case P2PMessage_BLOCK:
       {
 	std::cerr << "recv new blk\n";
+
+        // Must be propagated to proper ledgermanager.
+        // Currently, do thing.
+
+        Block *blk = boost::get<Block>(&pmsg.data);
+        if (blk) {
+            std::cout << "Following block is received" << "\n";
+            std::cout << *blk << "\n";
+        }
+        else {
+            std::cout << "Wrong data in P2PMessage" << "\n";
+            exit(1);
+        }
       }
       break;
 

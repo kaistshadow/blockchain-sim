@@ -24,6 +24,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 set(SRCS
   p2p/simplepeerlist.cpp
   p2p/gossipprotocol.cpp
+  p2p/nodeinfos.cpp
   p2p/socket.cpp
   p2p/socketmessage.cpp
   p2p/plumtree.cpp
@@ -33,6 +34,7 @@ set(SRCS
   consensus/simpleconsensus.cpp
 )
   
+
 ## we need to know where shadow is installed
 if("${SHADOW_ROOT}" STREQUAL "")
   set(SHADOW_ROOT "$ENV{HOME}/.shadow")
@@ -55,38 +57,48 @@ endif()
 if(EXISTS "${CMAKE_MODULE_PATH}")
   message(STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
 else()
-  message(FATAL_ERROR "CMAKE_MODULE_PATH path does not exist: '${CMAKE_MODULE_PATH}'")
+  set(CMAKE_MODULE_PATH "${SHADOW_ROOT}/share/cmake/Modules")
+  message(STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
+  # message(FATAL_ERROR "CMAKE_MODULE_PATH path does not exist: '${CMAKE_MODULE_PATH}'")
 endif()
 include(ShadowTools)
 
 
-##
-##add_executable(PEER_NONBLOCK_IO_LOCAL node_nonblock_io.cpp ${SRCS})
-##add_shadow_plugin(PEER_NONBLOCK_IO node_nonblock_io.cpp ${SRCS})
-##install(TARGETS PEER_NONBLOCK_IO DESTINATION plugins)
-##target_link_libraries(PEER_NONBLOCK_IO_LOCAL ${Boost_LIBRARIES})
-##target_link_libraries(PEER_NONBLOCK_IO ${Boost_LIBRARIES})
+
+## create and install a shared library that can plug into shadow
+add_shadow_plugin(BLOCKCHAIN_PEER_SIMPLE_CONSENSUS node_simpleconsensus.cpp ${SRCS})
+install(TARGETS BLOCKCHAIN_PEER_SIMPLE_CONSENSUS DESTINATION plugins)
 
 ##
-##add_executable(INJECTOR_SIMPLE_LOCAL node_injector_simple.cpp ${SRCS})
-##add_shadow_plugin(INJECTOR_SIMPLE node_injector_simple.cpp ${SRCS})
-##install(TARGETS INJECTOR_SIMPLE DESTINATION plugins)
-##target_link_libraries(INJECTOR_SIMPLE_LOCAL ${Boost_LIBRARIES})
-##target_link_libraries(INJECTOR_SIMPLE ${Boost_LIBRARIES})
+add_executable(PEER_NONBLOCK_IO_LOCAL node_nonblock_io.cpp ${SRCS})
+add_shadow_plugin(PEER_NONBLOCK_IO node_nonblock_io.cpp ${SRCS})
+install(TARGETS PEER_NONBLOCK_IO DESTINATION plugins)
+target_link_libraries(PEER_NONBLOCK_IO_LOCAL ${Boost_LIBRARIES})
+target_link_libraries(PEER_NONBLOCK_IO ${Boost_LIBRARIES})
+
 
 ##
-##add_executable(PEER_SIMPLECONSENSUS_LOCAL node_simpleconsensus.cpp ${SRCS})
-##add_shadow_plugin(PEER_SIMPLECONSENSUS node_simpleconsensus.cpp ${SRCS})
-##install(TARGETS PEER_SIMPLECONSENSUS DESTINATION plugins)
-##target_link_libraries(PEER_SIMPLECONSENSUS_LOCAL ${Boost_LIBRARIES})
-##target_link_libraries(PEER_SIMPLECONSENSUS ${Boost_LIBRARIES})
+add_executable(INJECTOR_SIMPLE_LOCAL node_injector_simple.cpp ${SRCS})
+add_shadow_plugin(INJECTOR_SIMPLE node_injector_simple.cpp ${SRCS})
+install(TARGETS INJECTOR_SIMPLE DESTINATION plugins)
+target_link_libraries(INJECTOR_SIMPLE_LOCAL ${Boost_LIBRARIES})
+target_link_libraries(INJECTOR_SIMPLE ${Boost_LIBRARIES})
 
-## membership added
-add_shadow_plugin(MEMBERSHIP node_membershiptest.cpp ${SRCS})
-install(TARGETS MEMBERSHIP DESTINATION plugins)
-target_link_libraries(MEMBERSHIP ${Boost_LIBRARIES})
 
-## membership injector
-add_shadow_plugin(INJECTOR_MEMBERSHIP node_injector_simplemembership.cpp ${SRCS})
-install(TARGETS INJECTOR_MEMBERSHIP DESTINATION plugins)
-target_link_libraries(INJECTOR_MEMBERSHIP ${Boost_LIBRARIES})
+##
+add_executable(PEER_SIMPLECONSENSUS_LOCAL node_simpleconsensus.cpp ${SRCS})
+add_shadow_plugin(PEER_SIMPLECONSENSUS node_simpleconsensus.cpp ${SRCS})
+install(TARGETS PEER_SIMPLECONSENSUS DESTINATION plugins)
+target_link_libraries(PEER_SIMPLECONSENSUS_LOCAL ${Boost_LIBRARIES})
+target_link_libraries(PEER_SIMPLECONSENSUS ${Boost_LIBRARIES})
+
+# ##
+add_shadow_plugin(INJECTOR_SIMPLECONSENSUS node_injector_simpleconsensus.cpp ${SRCS})
+install(TARGETS INJECTOR_SIMPLECONSENSUS DESTINATION plugins)
+target_link_libraries(INJECTOR_SIMPLECONSENSUS ${Boost_LIBRARIES})
+
+
+##
+add_shadow_plugin(PEER_PLUMTREE node_membershiptest.cpp ${SRCS})
+install(TARGETS PEER_PLUMTREE DESTINATION plugins)
+target_link_libraries(PEER_PLUMTREE ${Boost_LIBRARIES})

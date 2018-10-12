@@ -40,19 +40,19 @@
   <!-- our nodes -->
 
   <node id="bleep0">
-    <application plugin="PEER_SIMPLECONSENSUS" time="10" arguments="bleep1"/>
+    <application plugin="PEER_SIMPLECONSENSUS" time="10" arguments="bleep0"/>
   </node>
 
   <node id="bleep1">
-    <application plugin="PEER_SIMPLECONSENSUS" time="10" arguments="bleep2"/>
+    <application plugin="PEER_SIMPLECONSENSUS" time="10" arguments="bleep1 bleep0"/>
   </node>
 
   <node id="bleep2">
-    <application plugin="PEER_SIMPLECONSENSUS" time="10" arguments="bleep3"/>
+    <application plugin="PEER_SIMPLECONSENSUS" time="10" arguments="bleep2 bleep0"/>
   </node>
 
   <node id="bleep3">
-    <application plugin="PEER_SIMPLECONSENSUS" time="10" arguments="none"/>
+    <application plugin="PEER_SIMPLECONSENSUS" time="10" arguments="bleep3 bleep0"/>
   </node>
 
   <node id="bleep4">

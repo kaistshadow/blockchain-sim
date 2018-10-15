@@ -13,6 +13,7 @@
 #include "../blockchain/txpool.h"
 #include "../consensus/simpleconsensus.h"
 #include "../consensus/stellarconsensus.h"
+#include "../consensus/powconsensus.h"
 #include "../blockchain/powledgermanager.h"
 
 #include <boost/variant.hpp>
@@ -144,35 +145,10 @@ void GossipProtocol::RunGossipProtocol(SocketMessage msg) {
       }
       break;
 
-    case P2PMessage_POWBLOCK:
+    case P2PMessage_POWCONSENSUSMESSAGE:
       {
-        POWBlock *blk = boost::get<POWBlock>(&pmsg.data);
-        if (blk) {
-          unsigned long nextblkidx = POWLedgerManager::GetInstance()->GetNextBlockIdx();
-          POWBlock *lastblk = POWLedgerManager::GetInstance()->GetLastBlock(); 
-          if (lastblk == nullptr) {
-            std::cout << "txpool size:" << TxPool::GetInstance()->items.size() << "\n";
-            TxPool::GetInstance()->RemoveTxs(blk->GetTransactions());
-            std::cout << "after remove txpool size:" << TxPool::GetInstance()->items.size() << "\n";
-            POWLedgerManager::GetInstance()->AppendBlock(*blk);
-            std::cout << "Following block is received and appended" << "\n";
-            std::cout << *blk << "\n";
-          }
-          else if (lastblk->GetBlockHash() == blk->GetPrevBlockHash() && nextblkidx == blk->GetBlockIdx()) {
-            std::cout << "txpool size:" << TxPool::GetInstance()->items.size() << "\n";
-            TxPool::GetInstance()->RemoveTxs(blk->GetTransactions());
-            std::cout << "after remove txpool size:" << TxPool::GetInstance()->items.size() << "\n";
-            POWLedgerManager::GetInstance()->AppendBlock(*blk);
-            std::cout << "Following block is received and appended" << "\n";
-            std::cout << *blk << "\n";
-          }
-          else
-            std::cout << "Block is received but not appended" << "\n";
-        }
-        else {
-          std::cout << "Wrong data in P2PMessage" << "\n";
-          exit(1);
-        }
+        POWConsensusMessage powmsg = boost::get<POWConsensusMessage>(pmsg.data);
+        POWConsensus::GetInstance()->PushToQueue(powmsg);
       }
       break;
 

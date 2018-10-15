@@ -7,6 +7,8 @@
 #include "../blockchain/powledgermanager.h"
 #include "../p2p/gossipprotocol.h"
 
+#include "powconsensusmessage.h"
+
 // Make a consensus using simple proof of work
 // Consensus Source : pending transactions 
 // Consensus Target : ledger (i.e., block) (i.e., set of transactions)
@@ -79,7 +81,9 @@ POWBlock *POWConsensus::Prepare() {
 }
 
 void POWConsensus::InjectValidBlockToP2PNetwork(POWBlock* pendingBlk) {
-    P2PMessage p2pmessage(P2PMessage_POWBLOCK, *pendingBlk);
+    POWConsensusMessage powmsg(POWConsensusMessage_NEWBLOCK, *pendingBlk, SimpleGossipProtocol::GetInstance()->GetHostId());
+
+    P2PMessage p2pmessage(P2PMessage_POWCONSENSUSMESSAGE, powmsg);
 
     SimpleGossipProtocol::GetInstance()->PushToUpperQueue(p2pmessage);
     // SocketInterface::GetInstance()->UnicastP2PMsg(p2pmessage, "bleep1"); // hardcoded line for test
@@ -102,7 +106,7 @@ void POWConsensus::Run() {
     // 1. Try to gain authorization to produce next block (PoW)
     // 2. If it succeed to make valid block, then try a consensus over P2P network. (propagate)
     // 3. There's no rule to finalize block. So, it immediately append a new valid block to a ledger.
-    //    Instead, it follows longest chain rule. (final ledger can be modified later.)
+    //    However, it follows longest chain rule. (final ledger can be modified later.)
     //    Thus, implement a PoW-specific ledger. (Tree & pointer to currently longest chain)
     
     // 1. authorization
@@ -125,6 +129,8 @@ void POWConsensus::Run() {
     std::cout << *pendingBlk << "\n";
     POWLedgerManager::GetInstance()->AppendBlock(*pendingBlk);
     InjectValidBlockToP2PNetwork(pendingBlk);
+
+    delete pendingBlk;
 }
 
 void POWConsensus::ProcessQueue() {
@@ -132,8 +138,36 @@ void POWConsensus::ProcessQueue() {
         POWConsensusMessage msg = msgQueue.front();        
         msgQueue.pop();
 
-        // if msg is consensus message, 
-        // then remove consensed transactions from local pending requests
-        // and wait for request of consensus driver.
+        switch(msg.type) {
+        case POWConsensusMessage_NEWBLOCK:
+            POWBlock *blk = boost::get<POWBlock>(&msg.value);
+            if (blk) {
+                unsigned long nextblkidx = POWLedgerManager::GetInstance()->GetNextBlockIdx();
+                POWBlock *lastblk = POWLedgerManager::GetInstance()->GetLastBlock(); 
+                if (lastblk == nullptr) {
+                    std::cout << "txpool size:" << TxPool::GetInstance()->items.size() << "\n";
+                    TxPool::GetInstance()->RemoveTxs(blk->GetTransactions());
+                    std::cout << "after remove txpool size:" << TxPool::GetInstance()->items.size() << "\n";
+                    POWLedgerManager::GetInstance()->AppendBlock(*blk);
+                    std::cout << "Following block is received and appended" << "\n";
+                    std::cout << *blk << "\n";
+                }
+                else if (lastblk->GetBlockHash() == blk->GetPrevBlockHash() && nextblkidx == blk->GetBlockIdx()) {
+                    std::cout << "txpool size:" << TxPool::GetInstance()->items.size() << "\n";
+                    TxPool::GetInstance()->RemoveTxs(blk->GetTransactions());
+                    std::cout << "after remove txpool size:" << TxPool::GetInstance()->items.size() << "\n";
+                    POWLedgerManager::GetInstance()->AppendBlock(*blk);
+                    std::cout << "Following block is received and appended" << "\n";
+                    std::cout << *blk << "\n";
+                }
+                else
+                    std::cout << "Block is received but not appended" << "\n";
+            }
+            else {
+                std::cout << "Wrong data in P2PMessage" << "\n";
+                exit(1);
+            }
+            break;
+        }
     }
 }

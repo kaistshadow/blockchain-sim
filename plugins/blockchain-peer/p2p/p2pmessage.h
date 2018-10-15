@@ -14,14 +14,14 @@
 #include "../blockchain/block.h"
 #include "../consensus/simpleconsensusmessage.h"
 #include "../consensus/stellarconsensusmessage.h"
-#include "../blockchain/powblock.h"
+#include "../consensus/powconsensusmessage.h"
 #include "membershipmessage.h"
 
 #define P2PMessage_TRANSACTION 0
 #define P2PMessage_BLOCK 1
 #define P2PMessage_SIMPLECONSENSUSMESSAGE 2
 #define P2PMessage_STELLARCONSENSUSMESSAGE 3
-#define P2PMessage_POWBLOCK 4
+#define P2PMessage_POWCONSENSUSMESSAGE 4
 #define P2PMessage_MEMBERSHIP 5
 
 enum GOSSIP_TYPE {
@@ -38,7 +38,7 @@ class P2PMessage {
   P2PMessage(int t, Block blk)     {type = t; data = blk; g_type = GOSSIP; g_round = 0; hop = 0;};
   P2PMessage(int t, SimpleConsensusMessage msg) {type = t; data = msg; g_type = GOSSIP; g_round = 0; hop = 0;};
   P2PMessage(int t, StellarConsensusMessage msg) { type = t; data = msg; g_type = GOSSIP; g_round = 0; hop = 0;};
-  P2PMessage(int t, POWBlock blk) { type = t; data = blk; g_type = GOSSIP; g_round = 0; hop = 0;};
+  P2PMessage(int t, POWConsensusMessage msg) { type = t; data = msg; g_type = GOSSIP; g_round = 0; hop = 0;};
 
   P2PMessage(int t, MembershipMessage msg)      {type = t; data = msg; g_type = 0; g_round = 0; hop = 0;};
   // TODO : Add a msg type for gossip handling protocol that use IHAVE,GRAFT,PRUNE
@@ -50,7 +50,7 @@ class P2PMessage {
   
   // variables for distintion 
   int type;
-  boost::variant<Transaction, Block, SimpleConsensusMessage, MembershipMessage, StellarConsensusMessage, POWBlock> data;
+  boost::variant<Transaction, Block, SimpleConsensusMessage, MembershipMessage, StellarConsensusMessage, POWConsensusMessage> data;
 
   // p2p traffic control (temporarily used for testing stellar consensus)
   int GetHopCount() { return hop; }

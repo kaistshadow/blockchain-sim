@@ -4,8 +4,11 @@
 #include <vector>
 #include <queue>
 #include "simplepeerlist.h"
+#include "networkmessage.h"
 #include "p2pmessage.h"
+#include "unicastmessage.h"
 #include "socketmessage.h"
+
 
 #define MYPORT 3456
 #define BACKLOG 10 
@@ -80,10 +83,12 @@ class SocketInterface {
   void ProcessNetworkEvent();
   void PrintSocketList();
 
+  void SendUnicastMsg(UnicastMessage msg, std::string dest);
+
   void UnicastP2PMsg(P2PMessage msg, const char *hostname); // DEPRECATED (temporarily used for testing PoW consensus)
 };
 
-std::string GetSerializedString(P2PMessage msg);
-P2PMessage  GetDeserializedMsg(std::string str);
+std::string GetSerializedString(NetworkMessage msg);
+NetworkMessage  GetDeserializedMsg(std::string str);
 
 #endif // P2P_SOCKET_H

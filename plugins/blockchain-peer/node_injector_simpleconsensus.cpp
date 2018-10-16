@@ -23,6 +23,7 @@
 
 
 #include "blockchain/transaction.h"
+#include "p2p/networkmessage.h"
 #include "p2p/p2pmessage.h"
 #include "p2p/socketmessage.h"
 #include "p2p/socket.h"
@@ -91,7 +92,8 @@ void connect_to_node(char *hostname) {
 }
 
 void send_SocketMessage(int sfd, SocketMessage msg) {
-    std::string payload = GetSerializedString(msg.GetP2PMessage());
+    NetworkMessage nmsg(NetworkMessage_P2PMSG, msg.GetP2PMessage());
+    std::string payload = GetSerializedString(nmsg);
     int     payload_len = payload.size();
     if (payload_len <= 0) {
         std::cerr << "send event: Serialization fault\n";

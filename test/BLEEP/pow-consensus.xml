@@ -37,7 +37,7 @@
   <plugin id="DUMP_POWBLOCKCHAIN" path="libDUMP_POWBLOCKCHAIN.so" />
 
   <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="100" />
+  <kill time="30" />
   <!-- our nodes -->
 
   <node id="bleep0">

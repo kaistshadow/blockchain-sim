@@ -24,6 +24,7 @@
 
 #include "blockchain/transaction.h"
 #include "p2p/p2pmessage.h"
+#include "p2p/networkmessage.h"
 #include "p2p/socketmessage.h"
 #include "consensus/simpleconsensusmessage.h"
 #include "p2p/socket.h"
@@ -91,7 +92,8 @@ void connect_to_node(char *hostname) {
 }
 
 void send_SocketMessage(int sfd, SocketMessage msg) {
-    std::string payload = GetSerializedString(msg.GetP2PMessage());
+    NetworkMessage nmsg(NetworkMessage_P2PMSG, msg.GetP2PMessage());
+    std::string payload = GetSerializedString(nmsg);
     int     payload_length = payload.size();
 
     int n = send(sfd, (char*)&payload_length, sizeof(int), 0);
@@ -170,6 +172,42 @@ void NodeLoop(char *argv[]) {
         InjectTransaction(sfd, 3,1,20);
         InjectTransaction(sfd, 0,3,22);
         InjectTransaction(sfd, 1,2,22.22);
+
+        InjectTransaction(sfd, 1,0,33); 
+        InjectTransaction(sfd, 2,0,33);
+        InjectTransaction(sfd, 3,1,33);
+        InjectTransaction(sfd, 0,3,33);
+        InjectTransaction(sfd, 1,2,33);
+
+        InjectTransaction(sfd, 1,0,44); 
+        InjectTransaction(sfd, 2,0,44);
+        InjectTransaction(sfd, 3,1,44);
+        InjectTransaction(sfd, 0,3,44);
+        InjectTransaction(sfd, 1,2,44);
+
+        InjectTransaction(sfd, 1,0,55); 
+        InjectTransaction(sfd, 2,0,55);
+        InjectTransaction(sfd, 3,1,55);
+        InjectTransaction(sfd, 0,3,55);
+        InjectTransaction(sfd, 1,2,55);
+
+        InjectTransaction(sfd, 1,0,66); 
+        InjectTransaction(sfd, 2,0,66);
+        InjectTransaction(sfd, 3,1,66);
+        InjectTransaction(sfd, 0,3,66);
+        InjectTransaction(sfd, 1,2,66);
+
+        InjectTransaction(sfd, 1,0,77); 
+        InjectTransaction(sfd, 2,0,77);
+        InjectTransaction(sfd, 3,1,77);
+        InjectTransaction(sfd, 0,3,77);
+        InjectTransaction(sfd, 1,2,77);
+
+        InjectTransaction(sfd, 1,0,88); 
+        InjectTransaction(sfd, 2,0,88);
+        InjectTransaction(sfd, 3,1,88);
+        InjectTransaction(sfd, 0,3,88);
+        InjectTransaction(sfd, 1,2,88);
 
     }
 

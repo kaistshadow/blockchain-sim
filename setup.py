@@ -93,16 +93,22 @@ if __name__ == '__main__':
     parser.add_argument("--install", action="store_true", help="Install the shadow simulator and bitcoin-plugin")
     parser.add_argument("--injector", action="store_true", help="Run bitcoin-plugin and injector-plugin")
     parser.add_argument("--test", action="store_true", help="Run tests")
+    parser.add_argument("--debug", action="store_true", help="Include debug symbols for shadow")
 
     args = parser.parse_args()
     OPT_INSTALL = args.install
     OPT_INJECTOR = args.injector
     OPT_TEST = args.test
+    OPT_DEBUG = args.debug
+    
+    cmake_debug_opt = ""
+    if OPT_DEBUG:
+        cmake_debug_opt = "-DSHADOW_DEBUG=ON"
     
     if OPT_INSTALL:
         prepare_shadow()
         prepare_bitcoin_plugin()
-        os.system("mkdir build; cd build; cmake ../; make; make install")
+        os.system("mkdir build; cd build; cmake %s ../; make; make install" % cmake_debug_opt)
         os.system("echo 'export PATH=$PATH:%s' >> ~/.bashrc && . ~/.bashrc" % os.path.expanduser("~/.shadow/bin"))
         print "After installing the shadow, execute following commands on your bash. (type without dollor sign)"
         print "$ source ~/.bashrc"

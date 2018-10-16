@@ -46,7 +46,7 @@ unsigned long POWConsensus::RunProofOfWork(POWBlock *pendingBlk, int trial) {
         sha256_final(&ctx, hash_out);
 
         utility::UINT256_t hash_out_256(hash_out, 32);
-        unsigned char th[32] = {0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};
+        unsigned char th[32] = {0x00,0x0f,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};
 
         utility::UINT256_t threshold(th, 32);
         if (hash_out_256 < threshold) {
@@ -112,7 +112,7 @@ void POWConsensus::Run() {
     // 1. authorization
     // calculate hash 1 time. 
     // (maybe  inefficient but to avoid fork)
-    unsigned long nonce = RunProofOfWork(pendingBlk, 1); 
+    unsigned long nonce = RunProofOfWork(pendingBlk, 50); 
     if (!nonce) {
         return;
     }
@@ -140,32 +140,46 @@ void POWConsensus::ProcessQueue() {
 
         switch(msg.type) {
         case POWConsensusMessage_NEWBLOCK:
-            POWBlock *blk = boost::get<POWBlock>(&msg.value);
-            if (blk) {
-                unsigned long nextblkidx = POWLedgerManager::GetInstance()->GetNextBlockIdx();
-                POWBlock *lastblk = POWLedgerManager::GetInstance()->GetLastBlock(); 
-                if (lastblk == nullptr) {
-                    std::cout << "txpool size:" << TxPool::GetInstance()->items.size() << "\n";
-                    TxPool::GetInstance()->RemoveTxs(blk->GetTransactions());
-                    std::cout << "after remove txpool size:" << TxPool::GetInstance()->items.size() << "\n";
-                    POWLedgerManager::GetInstance()->AppendBlock(*blk);
-                    std::cout << "Following block is received and appended" << "\n";
-                    std::cout << *blk << "\n";
+            {
+                POWBlock *blk = boost::get<POWBlock>(&msg.value);
+                if (blk) {
+                    unsigned long nextblkidx = POWLedgerManager::GetInstance()->GetNextBlockIdx();
+                    POWBlock *lastblk = POWLedgerManager::GetInstance()->GetLastBlock(); 
+                    if (lastblk == nullptr) {
+                        std::cout << "txpool size:" << TxPool::GetInstance()->items.size() << "\n";
+                        TxPool::GetInstance()->RemoveTxs(blk->GetTransactions());
+                        std::cout << "after remove txpool size:" << TxPool::GetInstance()->items.size() << "\n";
+                        POWLedgerManager::GetInstance()->AppendBlock(*blk);
+                        std::cout << "Following block is received and appended" << "\n";
+                        std::cout << *blk << "\n";
+                    }
+                    else if (lastblk->GetBlockHash() == blk->GetPrevBlockHash() && nextblkidx == blk->GetBlockIdx()) {
+                        std::cout << "txpool size:" << TxPool::GetInstance()->items.size() << "\n";
+                        TxPool::GetInstance()->RemoveTxs(blk->GetTransactions());
+                        std::cout << "after remove txpool size:" << TxPool::GetInstance()->items.size() << "\n";
+                        POWLedgerManager::GetInstance()->AppendBlock(*blk);
+                        std::cout << "Following block is received and appended" << "\n";
+                        std::cout << *blk << "\n";
+                    }
+                    else if (nextblkidx < blk->GetBlockIdx()) {
+                        std::cout << "Block (sented by " << msg.msg_sender << ") is received and longer than mine" << "\n";
+                        POWConsensusMessage powmsg(POWConsensusMessage_REQBLOCKS, SimpleGossipProtocol::GetInstance()->GetHostId());
+                        UnicastMessage unimsg(UnicastMessage_POWCONSENSUSMESSAGE, powmsg);
+    
+                        SocketInterface::GetInstance()->SendUnicastMsg(unimsg, msg.msg_sender);
+                    }
+                    else 
+                        std::cout << "Block is received but not appended" << "\n";
                 }
-                else if (lastblk->GetBlockHash() == blk->GetPrevBlockHash() && nextblkidx == blk->GetBlockIdx()) {
-                    std::cout << "txpool size:" << TxPool::GetInstance()->items.size() << "\n";
-                    TxPool::GetInstance()->RemoveTxs(blk->GetTransactions());
-                    std::cout << "after remove txpool size:" << TxPool::GetInstance()->items.size() << "\n";
-                    POWLedgerManager::GetInstance()->AppendBlock(*blk);
-                    std::cout << "Following block is received and appended" << "\n";
-                    std::cout << *blk << "\n";
-                }
-                else
-                    std::cout << "Block is received but not appended" << "\n";
+                else {
+                    std::cout << "Wrong data in P2PMessage" << "\n";
+                    exit(1);
+                } 
             }
-            else {
-                std::cout << "Wrong data in P2PMessage" << "\n";
-                exit(1);
+            break;
+        case POWConsensusMessage_REQBLOCKS: 
+            {
+                std::cout << "REQBLOCKS message is received from " << msg.msg_sender << "\n";
             }
             break;
         }

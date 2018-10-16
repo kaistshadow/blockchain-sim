@@ -19,6 +19,7 @@
 #include <boost/iostreams/device/back_inserter.hpp>
 
 #include "p2p/socket.h"
+#include "p2p/networkmessage.h"
 #include "p2p/p2pmessage.h"
 #include "p2p/socketmessage.h"
 #include "p2p/plumtree.h"
@@ -68,7 +69,9 @@ int connect_to_node(std::string pn) {
 }
 
 void send_SocketMessage(int sfd, SocketMessage msg) {
-  std::string payload = GetSerializedString(msg.GetP2PMessage());
+  NetworkMessage nmsg(NetworkMessage_P2PMSG, msg.GetP2PMessage());
+  std::string payload = GetSerializedString(nmsg);
+  // std::string payload = GetSerializedString(msg.GetP2PMessage());
   int     payload_len = payload.size();
   if (payload_len <= 0) {
     std::cerr << "send event: Serialization fault\n";

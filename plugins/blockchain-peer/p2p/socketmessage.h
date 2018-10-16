@@ -1,5 +1,5 @@
-#ifndef NETWORK_MESSAGE_H
-#define NETWORK_MESSAGE_H
+#ifndef SOCKET_MESSAGE_H
+#define SOCKET_MESSAGE_H
 
 #include <string>
 #include <vector>
@@ -46,4 +46,4 @@ class SocketMessage{
   P2PMessage  p2pmessage; 
 }; 
 
-#endif // NETWORK_MESSAGE_H
+#endif // SOCKET_MESSAGE_H

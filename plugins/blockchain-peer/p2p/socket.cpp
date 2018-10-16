@@ -19,6 +19,8 @@
 #include "simplepeerlist.h"
 #include "gossipprotocol.h"
 
+#include "../consensus/powconsensus.h"
+
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/iostreams/stream.hpp>
@@ -34,7 +36,7 @@ SocketInterface* SocketInterface::GetInstance() {
   return instance;
 }
 
-std::string GetSerializedString(P2PMessage msg) {
+std::string GetSerializedString(NetworkMessage msg) {
   std::string serial_str;
   // serialize obj into an std::string payload
   boost::iostreams::back_insert_device<std::string> inserter(serial_str);
@@ -45,8 +47,8 @@ std::string GetSerializedString(P2PMessage msg) {
   return serial_str;
 }
 
-P2PMessage GetDeserializedMsg(std::string str) {
-  P2PMessage msg;
+NetworkMessage GetDeserializedMsg(std::string str) {
+  NetworkMessage msg;
   // wrap buffer inside a stream and deserialize string_read into obj
   boost::iostreams::basic_array_source<char> device(str.c_str(), str.size());
   boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
@@ -54,6 +56,27 @@ P2PMessage GetDeserializedMsg(std::string str) {
   ia >> msg;
   return msg;
 }
+
+// std::string GetSerializedString(P2PMessage msg) {
+//   std::string serial_str;
+//   // serialize obj into an std::string payload
+//   boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+//   boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
+//   boost::archive::binary_oarchive oa(s);
+//   oa << msg;
+//   s.flush();
+//   return serial_str;
+// }
+
+// P2PMessage GetDeserializedMsg(std::string str) {
+//   P2PMessage msg;
+//   // wrap buffer inside a stream and deserialize string_read into obj
+//   boost::iostreams::basic_array_source<char> device(str.c_str(), str.size());
+//   boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
+//   boost::archive::binary_iarchive ia(s);
+//   ia >> msg;
+//   return msg;
+// }
 
 void SocketInterface::SetEvent(int mod, int event, int fd){
   assert(ed);
@@ -141,7 +164,8 @@ int SocketInterface::ConnectToPeer(std::string pn){
 int SocketInterface::SendSerializedMsg(SocketMessage msg){
   int sfd = msg.GetSocketfd();
   
-  std::string payload = GetSerializedString(msg.GetP2PMessage());
+  NetworkMessage nmsg(NetworkMessage_P2PMSG, msg.GetP2PMessage());
+  std::string payload = GetSerializedString(nmsg);
   int     payload_len = payload.size();
   if (payload_len <= 0) {
     std::cerr << "send event: Serialization fault\n";
@@ -226,6 +250,8 @@ void SocketInterface::DeleteSocketDataEntry(int sfd) {
  * temporary implementation for unicast 
  */
 void SocketInterface::UnicastP2PMsg(P2PMessage msg, const char *hostname) {
+    NetworkMessage nmsg(NetworkMessage_P2PMSG, msg);
+
     int 			cli_sockfd;
     if ((cli_sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("socket");
@@ -260,7 +286,7 @@ void SocketInterface::UnicastP2PMsg(P2PMessage msg, const char *hostname) {
     sockmsg.SetP2PMessage(msg);
 
     // send_socketmessage
-    std::string payload = GetSerializedString(msg);
+    std::string payload = GetSerializedString(nmsg);
     int     payload_length = payload.size();
 
     n = send(cli_sockfd, (char*)&payload_length, sizeof(int), 0);
@@ -471,18 +497,38 @@ void SocketInterface::ProcessNetworkEvent() {
 	    }
 
 	    std::string str(buffer, entry->payload_len);
-	    P2PMessage    pmsg = GetDeserializedMsg(str);
-	    SocketMessage smsg = SocketMessage();
-	    smsg.SetP2PMessage(pmsg);   
-	    if (entry->info_status == INFO_INCOMPLETE) {
-	      smsg.SetMethod(M_UPDATE, fd);
-	    }
-	    else {
-	      smsg.SetMethod(M_NORMAL, fd);
-	    }
-	    SimpleGossipProtocol::GetInstance()->PushToQueue(smsg);    
- 	    entry->status      = RECV_IDLE;
-	    entry->payload_len = 0;
+            
+            NetworkMessage nmsg = GetDeserializedMsg(str);
+	    // P2PMessage    pmsg = GetDeserializedMsg(str);
+            SocketMessage smsg;
+            if (nmsg.type == NetworkMessage_P2PMSG) {
+                P2PMessage pmsg = boost::get<P2PMessage>(nmsg.data);
+                SocketMessage smsg = SocketMessage();
+                smsg.SetP2PMessage(pmsg);   
+                if (entry->info_status == INFO_INCOMPLETE) {
+                    smsg.SetMethod(M_UPDATE, fd);
+                }
+                else {
+                    smsg.SetMethod(M_NORMAL, fd);
+                }
+                SimpleGossipProtocol::GetInstance()->PushToQueue(smsg);    
+                entry->status      = RECV_IDLE;
+                entry->payload_len = 0;
+            }
+            else if (nmsg.type == NetworkMessage_UNIMSG) {
+                entry->status      = RECV_IDLE;
+                entry->payload_len = 0;
+                UnicastMessage umsg = boost::get<UnicastMessage>(nmsg.data);
+                switch(umsg.type) {
+                case UnicastMessage_POWCONSENSUSMESSAGE:
+                    POWConsensusMessage powmsg = boost::get<POWConsensusMessage>(umsg.data);
+                    POWConsensus::GetInstance()->PushToQueue(powmsg);
+                    std::cout << "pushed POWConsensusMessage (unicast msg) to queue" << "\n";
+                    break;
+                } 
+
+            }
+
 	  }
 	  break;
 
@@ -500,4 +546,62 @@ void SocketInterface::PrintSocketList() {
     std::cerr <<'('<< sd.sfd << ','<<sd.id<<')';
   }
   std::cerr <<'\n';
+}
+
+
+// Implemented and Commented by Yonggon Kim.
+// Currently, i have implemented this function with raw socket API (blocking connect & send)
+// Since it utilizes blocking connect, it might suffer from long latency. 
+// Later, we have to merge this function(SendUnicastMsg) into a SocketInterface APIs.
+// I already have tried to merge it, but failed because I couldn't fully understand about
+// how existing SocketInterface APIs works. (e.g., how it handles non-blocking connect API & sockets)
+void SocketInterface::SendUnicastMsg(UnicastMessage msg, std::string dest) {
+    int sfd;
+
+    if ((sfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        perror("socket");
+        exit(1);
+    }
+
+    struct sockaddr_in servaddr;
+    struct addrinfo* servinfo;
+    bzero(&servaddr, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_port = htons(MYPORT);
+
+    int n = getaddrinfo(dest.c_str(), NULL, NULL, &servinfo);
+    if (n != 0) {
+        std::cout << "error in connection : getaddrinfo" << "\n";
+        exit(1);
+    }
+    servaddr.sin_addr.s_addr = ((struct sockaddr_in*) (servinfo->ai_addr))->sin_addr.s_addr;
+
+    n = connect(sfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
+    if (n < 0) {
+        perror("connect");
+        exit(1);
+    } 
+  
+    NetworkMessage netmsg(NetworkMessage_UNIMSG, msg);
+
+    std::string payload = GetSerializedString(netmsg);
+    int payload_len = payload.size();
+
+    if (payload_len <= 0) {
+        std::cerr << "send event: Serialization fault\n";
+        return;
+    }
+
+    int numbytes = send(sfd, (char*)&payload_len, sizeof(int), 0);
+    if (numbytes < sizeof(int)) {
+        std::cerr << "send event: network fail\n";
+        return;
+    }
+    numbytes = send(sfd, payload.c_str(), payload_len, 0);
+    if (numbytes < payload_len) {
+        std::cerr << "send event: network fail\n";
+        return;
+    }
+
+    close(sfd);
 }

@@ -45,14 +45,14 @@ map< string, int > socket_m;
 
 void NodeInit(int argc, char *argv[]);
 
-void NodeLoop(char *argv[]);
+void NodeLoop(int argc, char *argv[]);
 
 int main(int argc, char *argv[]) {
     // int nodeid = atoi(argv[1]);
     cout << "powconsensus injector started!\n";
 
     NodeInit(argc, argv);
-    NodeLoop(argv);
+    NodeLoop(argc, argv);
 }
 
 void connect_to_node(char *hostname) {
@@ -147,67 +147,79 @@ void InjectTransaction(int sfd, int from, int to, double value) {
 
 void NodeInit(int argc, char *argv[]) {
 
-    for (int i = 1; i < argc; i++) {
+    for (int i = 1; i < argc - 1; i++) {
         connect_to_node(argv[i]);
     }
 }
 
 
-void NodeLoop(char *argv[]) {
+void NodeLoop(int argc, char *argv[]) {
     int n;
     
     vector<int> client_sfd_list; 
 
+    int inject_num = atoi(argv[argc-1]);
+
     {
         // 1. create Transaction and inject to first node
         int sfd = socket_m.find(argv[1])->second;
-        InjectTransaction(sfd, 0,1,12.34); // send 12.34 to node 1 from node 0
-        InjectTransaction(sfd, 0,2,10);
-        InjectTransaction(sfd, 1,3,10);
-        InjectTransaction(sfd, 2,0,11);
-        InjectTransaction(sfd, 1,0,12.34);
 
-        InjectTransaction(sfd, 1,0,22.34); 
-        InjectTransaction(sfd, 2,0,20);
-        InjectTransaction(sfd, 3,1,20);
-        InjectTransaction(sfd, 0,3,22);
-        InjectTransaction(sfd, 1,2,22.22);
+        for (int i = 1; i < inject_num; i++) {
+            float amount = 0.1 * i;
+            InjectTransaction(sfd, 0,1,amount); // send 12.34 to node 1 from node 0
+            InjectTransaction(sfd, 0,2,amount);
+            InjectTransaction(sfd, 1,3,amount);
+            InjectTransaction(sfd, 2,0,amount);
+            InjectTransaction(sfd, 1,0,amount);
+        }
 
-        InjectTransaction(sfd, 1,0,33); 
-        InjectTransaction(sfd, 2,0,33);
-        InjectTransaction(sfd, 3,1,33);
-        InjectTransaction(sfd, 0,3,33);
-        InjectTransaction(sfd, 1,2,33);
+        // InjectTransaction(sfd, 0,1,12.34); // send 12.34 to node 1 from node 0
+        // InjectTransaction(sfd, 0,2,10);
+        // InjectTransaction(sfd, 1,3,10);
+        // InjectTransaction(sfd, 2,0,11);
+        // InjectTransaction(sfd, 1,0,12.34);
 
-        InjectTransaction(sfd, 1,0,44); 
-        InjectTransaction(sfd, 2,0,44);
-        InjectTransaction(sfd, 3,1,44);
-        InjectTransaction(sfd, 0,3,44);
-        InjectTransaction(sfd, 1,2,44);
+        // InjectTransaction(sfd, 1,0,22.34); 
+        // InjectTransaction(sfd, 2,0,20);
+        // InjectTransaction(sfd, 3,1,20);
+        // InjectTransaction(sfd, 0,3,22);
+        // InjectTransaction(sfd, 1,2,22.22);
 
-        InjectTransaction(sfd, 1,0,55); 
-        InjectTransaction(sfd, 2,0,55);
-        InjectTransaction(sfd, 3,1,55);
-        InjectTransaction(sfd, 0,3,55);
-        InjectTransaction(sfd, 1,2,55);
+        // InjectTransaction(sfd, 1,0,33); 
+        // InjectTransaction(sfd, 2,0,33);
+        // InjectTransaction(sfd, 3,1,33);
+        // InjectTransaction(sfd, 0,3,33);
+        // InjectTransaction(sfd, 1,2,33);
 
-        InjectTransaction(sfd, 1,0,66); 
-        InjectTransaction(sfd, 2,0,66);
-        InjectTransaction(sfd, 3,1,66);
-        InjectTransaction(sfd, 0,3,66);
-        InjectTransaction(sfd, 1,2,66);
+        // InjectTransaction(sfd, 1,0,44); 
+        // InjectTransaction(sfd, 2,0,44);
+        // InjectTransaction(sfd, 3,1,44);
+        // InjectTransaction(sfd, 0,3,44);
+        // InjectTransaction(sfd, 1,2,44);
 
-        InjectTransaction(sfd, 1,0,77); 
-        InjectTransaction(sfd, 2,0,77);
-        InjectTransaction(sfd, 3,1,77);
-        InjectTransaction(sfd, 0,3,77);
-        InjectTransaction(sfd, 1,2,77);
+        // InjectTransaction(sfd, 1,0,55); 
+        // InjectTransaction(sfd, 2,0,55);
+        // InjectTransaction(sfd, 3,1,55);
+        // InjectTransaction(sfd, 0,3,55);
+        // InjectTransaction(sfd, 1,2,55);
 
-        InjectTransaction(sfd, 1,0,88); 
-        InjectTransaction(sfd, 2,0,88);
-        InjectTransaction(sfd, 3,1,88);
-        InjectTransaction(sfd, 0,3,88);
-        InjectTransaction(sfd, 1,2,88);
+        // InjectTransaction(sfd, 1,0,66); 
+        // InjectTransaction(sfd, 2,0,66);
+        // InjectTransaction(sfd, 3,1,66);
+        // InjectTransaction(sfd, 0,3,66);
+        // InjectTransaction(sfd, 1,2,66);
+
+        // InjectTransaction(sfd, 1,0,77); 
+        // InjectTransaction(sfd, 2,0,77);
+        // InjectTransaction(sfd, 3,1,77);
+        // InjectTransaction(sfd, 0,3,77);
+        // InjectTransaction(sfd, 1,2,77);
+
+        // InjectTransaction(sfd, 1,0,88); 
+        // InjectTransaction(sfd, 2,0,88);
+        // InjectTransaction(sfd, 3,1,88);
+        // InjectTransaction(sfd, 0,3,88);
+        // InjectTransaction(sfd, 1,2,88);
 
     }
 

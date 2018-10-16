@@ -58,7 +58,7 @@
   </node>
 
   <node id="bleep4">
-    <application plugin="INJECTOR_POWCONSENSUS" time="12" arguments="bleep1"/>
+    <application plugin="INJECTOR_POWCONSENSUS" time="12" arguments="bleep1 20"/>
   </node>
 
 

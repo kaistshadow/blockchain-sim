@@ -43,7 +43,8 @@ class POWLedgerManager {
      * Set and Get a server socket
      */
     void SetLedger(std::list<POWBlock> blocks) { pow_ledger = blocks; }
-    std::list<POWBlock> GetLedger() { return pow_ledger; }
+    std::list<POWBlock> &GetLedger() { return pow_ledger; }
+    void ReplaceLedger(std::list<POWBlock>::iterator pos, std::vector<POWBlock>::iterator start, std::vector<POWBlock>::iterator end);
 
 };
 

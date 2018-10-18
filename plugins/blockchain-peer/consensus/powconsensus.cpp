@@ -43,6 +43,9 @@ unsigned long POWConsensus::RunProofOfWork(POWBlock *pendingBlk, int trial) {
         sha256_init(&ctx);
         sha256_update(&ctx, (const unsigned char*)&nonce, sizeof(unsigned long));
         sha256_update(&ctx, (const unsigned char*)pendingBlk->GetTxHash().str().c_str(), pendingBlk->GetTxHash().str().size());
+        unsigned long blockidx = pendingBlk->GetBlockIdx();
+        sha256_update(&ctx, (const unsigned char*)&blockidx, sizeof(unsigned long));
+        sha256_update(&ctx, (const unsigned char*)pendingBlk->GetPrevBlockHash().str().c_str(), pendingBlk->GetPrevBlockHash().str().size());
         sha256_final(&ctx, hash_out);
 
         utility::UINT256_t hash_out_256(hash_out, 32);
@@ -71,6 +74,16 @@ POWBlock *POWConsensus::Prepare() {
 
         std::list<Transaction> tx_list = TxPool::GetInstance()->GetTxs(POW_BLOCK_TX_NUM);
         pendingBlk = new POWBlock("pendingblk", tx_list);
+
+        unsigned long blockidx = POWLedgerManager::GetInstance()->GetNextBlockIdx();
+        pendingBlk->SetBlockIdx(blockidx);
+        POWBlock *lastBlock = POWLedgerManager::GetInstance()->GetLastBlock();
+        if (lastBlock) {
+            pendingBlk->SetPrevBlockHash(lastBlock->GetBlockHash());
+        }
+        else {
+            pendingBlk->SetPrevBlockHash(utility::UINT256_t(0xffffff)); // no valid prev block hash since it's genesis block
+        }
     }
     else {
         // not enough pendingTx
@@ -112,25 +125,22 @@ void POWConsensus::Run() {
     // 1. authorization
     // calculate hash 1 time. 
     // (maybe  inefficient but to avoid fork)
-    unsigned long nonce = RunProofOfWork(pendingBlk, 50); 
+    unsigned long nonce = RunProofOfWork(pendingBlk, 15); 
     if (!nonce) {
         return;
     }
 
     // 2. append a new valid block to a ledger. and propagate to network
     TxPool::GetInstance()->RemoveTxs(pendingBlk->GetTransactions());
-    unsigned long blockidx = POWLedgerManager::GetInstance()->GetNextBlockIdx();
-    pendingBlk->SetBlockIdx(blockidx);
-    POWBlock *lastBlock = POWLedgerManager::GetInstance()->GetLastBlock();
-    if (lastBlock) {
-        pendingBlk->SetPrevBlockHash(lastBlock->GetBlockHash());
-    }
     std::cout << "valid block found and appended" << "\n";
     std::cout << *pendingBlk << "\n";
     POWLedgerManager::GetInstance()->AppendBlock(*pendingBlk);
     InjectValidBlockToP2PNetwork(pendingBlk);
 
     delete pendingBlk;
+
+    // 3. Longest chain rule is implemented by PoW-specific consensus message (REQBLOCKS & RESPBLOCKS)
+    // See also ProcessQueue().
 }
 
 void POWConsensus::ProcessQueue() {
@@ -146,22 +156,18 @@ void POWConsensus::ProcessQueue() {
                     unsigned long nextblkidx = POWLedgerManager::GetInstance()->GetNextBlockIdx();
                     POWBlock *lastblk = POWLedgerManager::GetInstance()->GetLastBlock(); 
                     if (lastblk == nullptr) {
-                        std::cout << "txpool size:" << TxPool::GetInstance()->items.size() << "\n";
                         TxPool::GetInstance()->RemoveTxs(blk->GetTransactions());
-                        std::cout << "after remove txpool size:" << TxPool::GetInstance()->items.size() << "\n";
                         POWLedgerManager::GetInstance()->AppendBlock(*blk);
-                        std::cout << "Following block is received and appended" << "\n";
+                        std::cout << "Block is received and appended" << "\n";
                         std::cout << *blk << "\n";
                     }
                     else if (lastblk->GetBlockHash() == blk->GetPrevBlockHash() && nextblkidx == blk->GetBlockIdx()) {
-                        std::cout << "txpool size:" << TxPool::GetInstance()->items.size() << "\n";
                         TxPool::GetInstance()->RemoveTxs(blk->GetTransactions());
-                        std::cout << "after remove txpool size:" << TxPool::GetInstance()->items.size() << "\n";
                         POWLedgerManager::GetInstance()->AppendBlock(*blk);
-                        std::cout << "Following block is received and appended" << "\n";
+                        std::cout << "Block is received and appended" << "\n";
                         std::cout << *blk << "\n";
                     }
-                    else if (nextblkidx < blk->GetBlockIdx()) {
+                    else if (nextblkidx <= blk->GetBlockIdx()) {
                         std::cout << "Block (sented by " << msg.msg_sender << ") is received and longer than mine" << "\n";
                         POWConsensusMessage powmsg(POWConsensusMessage_REQBLOCKS, SimpleGossipProtocol::GetInstance()->GetHostId());
                         UnicastMessage unimsg(UnicastMessage_POWCONSENSUSMESSAGE, powmsg);
@@ -180,6 +186,81 @@ void POWConsensus::ProcessQueue() {
         case POWConsensusMessage_REQBLOCKS: 
             {
                 std::cout << "REQBLOCKS message is received from " << msg.msg_sender << "\n";
+                
+                POWBlocks blks;
+                std::list<POWBlock>& ledger_blks = POWLedgerManager::GetInstance()->GetLedger();
+                for (auto blk : ledger_blks) {
+                    blks.push_back(blk);
+                }
+                // std::list<POWBlock>::const_iterator it = ledger_blks.end();
+                
+                // if (ledger_blks.size() > 1) {
+                //     it--;
+                //     it--;
+                //     if (it != ledger_blks.begin())
+                //         it--;
+                //     if (it != ledger_blks.begin())
+                //         it--;
+                //     if (it != ledger_blks.begin())
+                //         it--;
+                //     if (it != ledger_blks.begin())
+                //         it--;
+                //     if (it != ledger_blks.begin())
+                //         it--;
+                //     if (it != ledger_blks.begin())
+                //         it--;
+                //     if (it != ledger_blks.begin())
+                //         it--;
+                //     if (it != ledger_blks.begin())
+                //         it--;
+
+                //     for (; it != ledger_blks.end(); it++) {
+                //         blks.push_back(*it);
+                //     }
+                // }
+                POWConsensusMessage powmsg(POWConsensusMessage_RESPBLOCKS, blks, SimpleGossipProtocol::GetInstance()->GetHostId());
+                UnicastMessage unimsg(UnicastMessage_POWCONSENSUSMESSAGE, powmsg);
+                SocketInterface::GetInstance()->SendUnicastMsg(unimsg, msg.msg_sender);
+            }
+            break;
+        case POWConsensusMessage_RESPBLOCKS: 
+            {
+                std::cout << "RESPBLOCKS message is received from " << msg.msg_sender << "\n";
+                std::list<POWBlock>& ledger_blks = POWLedgerManager::GetInstance()->GetLedger();
+                POWBlocks *blks = boost::get<POWBlocks>(&msg.value);
+
+                std::list<POWBlock>::iterator my_it = ledger_blks.begin();
+                std::vector<POWBlock>::iterator longest_it = blks->begin();
+                while (longest_it->GetBlockIdx() > my_it->GetBlockIdx() && my_it != ledger_blks.end()) {
+                    my_it++;
+                }
+
+                // longest_it->BlockIdx == my_it->BlockIdx
+                while (my_it != ledger_blks.end() && longest_it != blks->end() &&
+                       longest_it->GetBlockHash() == my_it->GetBlockHash()) {
+                    my_it++;
+                    longest_it++;
+                }
+                
+                if (my_it != ledger_blks.end() && longest_it != blks->end()) {
+                    POWLedgerManager::GetInstance()->ReplaceLedger(my_it, longest_it, blks->end());
+                }
+
+                // for (; longest_it != blks->end() ; longest_it++) {
+                //     if (my_it != ledger_blks.end()) {
+                //         POWBlock longestchain_blk = *longest_it;
+                //         POWBlock mychain_blk = *my_it;
+                //         if (mychain_blk.GetBlockHash() != longestchain_blk.GetBlockHash()) {
+                //             std::cout << "Need to replace idx(" << mychain_blk.GetBlockIdx() << "," << longestchain_blk.GetBlockIdx() << ") " << mychain_blk.GetBlockHash() << " to " << longestchain_blk.GetBlockHash() << "\n";
+                //         }
+                //         my_it++;
+                //     }
+                //     else if (my_it == ledger_blks.end()) {
+                //         POWBlock longestchain_blk = *longest_it;
+                //         std::cout << "Need to append new block (idx:" << longestchain_blk.GetBlockIdx() << ") " << longestchain_blk.GetBlockHash() << "\n";
+                //         std::cout << "Current my Next BlockIdx=" << POWLedgerManager::GetInstance()->GetNextBlockIdx() << "\n";
+                //     }
+                // }
             }
             break;
         }

@@ -2,6 +2,7 @@
 #define POWBLOCK_H
 
 #include <iostream>
+#include <vector>
 #include <string>
 #include <list>
 #include <boost/archive/text_oarchive.hpp>
@@ -62,5 +63,6 @@ class POWBlock : public Block {
 
 std::ostream& operator<<(std::ostream&, const POWBlock&); // in order to overload the << operator
 
+typedef std::vector<POWBlock> POWBlocks;
 
 #endif

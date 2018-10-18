@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -484,21 +485,54 @@ void SocketInterface::ProcessNetworkEvent() {
 	
 	case RECV_LENGTH:
 	  {
-	    int numbytes = recv(fd, buffer, entry->payload_len, 0);
-	    if (numbytes <= 0) {
-	      if (numbytes == 0) {
-		std::cerr << "recv event: connection closed(2)\n";
-	      }
-	      else {
-		std::cerr << "recv event: recv payload fail\n";	      
-	      }
-	      SendFailMsg(fd);
-	      break;
-	    }
+            // int numbytes = recv(fd, buffer, entry->payload_len, 0);
+            // if (numbytes <= 0) {
+            //   if (numbytes == 0) {
+            //     std::cerr << "recv event: connection closed(2)\n";
+            //   }
+            //   else {
+            //     std::cerr << "recv event: recv payload fail\n";
+            //   }
+            //   SendFailMsg(fd);
+            //   break;
+            // }
+            // std::string str(buffer, entry->payload_len);
 
-	    std::string str(buffer, entry->payload_len);
-            
-            NetworkMessage nmsg = GetDeserializedMsg(str);
+            int total_recv_size = 0;
+            int numbytes = 0;
+            std::string recv_str;
+
+            while(1) {
+              int recv_size = std::min(2000, entry->payload_len - total_recv_size);
+              numbytes = recv(fd, buffer, recv_size, 0);              
+              if (numbytes > 0) {
+                total_recv_size += numbytes;
+                recv_str.append(buffer, numbytes);
+              }
+              else if (numbytes == 0) {
+                std::cerr << "recv event: connection closed\n";
+                break;
+              }
+              else if (numbytes < 0) {
+                if (errno != EWOULDBLOCK) {
+                  std::cerr << "recv event: recv payload fail\n";
+                  break;
+                }
+              }
+              // std::cout << "recv:length=[" << numbytes << "],data=[" << recv_str << "]\n";
+              if (total_recv_size == entry->payload_len)
+                break;
+              memset(buffer, 0, 2000);
+            }
+
+            // std::cout << "recv-end:total_recv_size=[" << total_recv_size << "], payload_len=[" << entry->payload_len << "]\n";
+            if (total_recv_size != entry->payload_len) {
+              std::cerr << "recv event: recv payload fail\n";	      
+              SendFailMsg(fd);
+              break;
+            }
+
+            NetworkMessage nmsg = GetDeserializedMsg(recv_str);
 	    // P2PMessage    pmsg = GetDeserializedMsg(str);
             SocketMessage smsg;
             if (nmsg.type == NetworkMessage_P2PMSG) {

@@ -5,6 +5,7 @@
 #include <boost/filesystem/fstream.hpp>
 
 #include "powledgermanager.h"
+#include "../blockchain/txpool.h"
 
 POWLedgerManager::POWLedgerManager(std::string filename)
 { 
@@ -65,3 +66,16 @@ POWBlock *POWLedgerManager::GetLastBlock() {
     else
         return &pow_ledger.back();
 }
+
+
+void POWLedgerManager::ReplaceLedger(std::list<POWBlock>::iterator pos, std::vector<POWBlock>::iterator start, std::vector<POWBlock>::iterator end) {
+    pow_ledger.erase(pos, pow_ledger.end());
+    while (start != end) {
+        TxPool::GetInstance()->RemoveTxs(start->GetTransactions());
+        pow_ledger.push_back(*start);
+        std::cout << "Longest chain block is appended" << "\n";
+        std::cout << *start << "\n";
+        start++;
+    }
+}
+

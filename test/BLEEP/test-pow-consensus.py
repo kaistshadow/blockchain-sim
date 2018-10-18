@@ -27,34 +27,40 @@ if __name__ == '__main__':
         f = open(outputfile1)
         for line in f:
             if "Block idx=" in line:
-                block_idx = line.split(":")[1].split(",")[0].split("=")[1]
+                block_idx = int(line.split(":")[1].split(",")[0].split("=")[1])
                 block_nonce = line.split(":")[1].split(",")[1].split("=")[1]
                 bleep1_blockidx_blocknonce[block_idx] = block_nonce
-    
+
     if len(bleep1_blockidx_blocknonce) == 0:
         print "test failed. No valid block is propagated"
         sys.exit(-1)
-    
+
+    bleep2_blockidx_blocknonce = {}
     if os.path.exists(outputfile2):
         f = open(outputfile2)
         for line in f:
             if "Block idx=" in line:
-                block_idx = line.split(":")[1].split(",")[0].split("=")[1]
+                block_idx = int(line.split(":")[1].split(",")[0].split("=")[1])
                 bleep2_block_nonce = line.split(":")[1].split(",")[1].split("=")[1]
-                if bleep1_blockidx_blocknonce[block_idx] != bleep2_block_nonce:
-                    print "test failed. consensed block is different for bleep1, bleep2"
-                    print "block_idx=%s, bleep1_block_nonce=%s, bleep2_block_nonce=%s" % (block_idx, bleep1_blockidx_blocknonce[block_idx], bleep2_block_nonce)
-                    sys.exit(-1)
-                    
+                bleep2_blockidx_blocknonce[block_idx] = bleep2_block_nonce
+        for idx in sorted(bleep1_blockidx_blocknonce.keys()):
+            if bleep1_blockidx_blocknonce[idx] != bleep2_blockidx_blocknonce[idx]:
+                print "test failed. consensed block is different for bleep1, bleep2"
+                print "block_idx=%d, bleep1_block_nonce=%s, bleep2_block_nonce=%s" % (idx, bleep1_blockidx_blocknonce[idx], bleep2_blockidx_blocknonce[idx])
+                sys.exit(-1)
+
+    bleep3_blockidx_blocknonce = {}
     if os.path.exists(outputfile3):
         f = open(outputfile3)
         for line in f:
             if "Block idx=" in line:
-                block_idx = line.split(":")[1].split(",")[0].split("=")[1]
+                block_idx = int(line.split(":")[1].split(",")[0].split("=")[1])
                 bleep3_block_nonce = line.split(":")[1].split(",")[1].split("=")[1]
-                if bleep1_blockidx_blocknonce[block_idx] != bleep3_block_nonce:
-                    print "test failed. consensed block is different for bleep1, bleep3"
-                    print "block_idx=%s, bleep1_block_nonce=%s, bleep3_block_nonce=%s" % (block_idx, bleep1_blockidx_blocknonce[block_idx], bleep3_block_nonce)
-                    sys.exit(-1)
+                bleep3_blockidx_blocknonce[block_idx] = bleep3_block_nonce
+        for idx in sorted(bleep1_blockidx_blocknonce.keys()):
+            if bleep1_blockidx_blocknonce[idx] != bleep3_blockidx_blocknonce[idx]:
+                print "test failed. consensed block is different for bleep1, bleep3"
+                print "block_idx=%d, bleep1_block_nonce=%s, bleep3_block_nonce=%s" % (idx, bleep1_blockidx_blocknonce[idx], bleep3_blockidx_blocknonce[idx])
+                sys.exit(-1)
     
 

@@ -43,25 +43,39 @@ if __name__ == '__main__':
 
     Graph = nx.DiGraph()
     Graph.add_node("genesis")
-    Graph.add_node("000000")
-    Graph.add_edge("genesis", "000000")
+    Graph.add_node("0000000")
+    Graph.add_edge("genesis", "0000000")
 
-    pattern = re.compile(r"Block hash=\[\[([0-9a-fA-F]{6}).+\]\[.+\]\],Prev Block hash=\[\[([0-9a-fA-F]{6}).+")
+    pattern = re.compile(r"Block idx=([0-9]+),.*,Block hash=\[\[([0-9a-fA-F]{7}).+\]\[.+\]\],Prev Block hash=\[\[([0-9a-fA-F]{7}).+")
 
     for i in range(1, nodenum):
         logfile = "./%s/hosts/bleep%d/stdout-bleep%d.%s.1000.log" % (datadir, i, i, shadow_plugin)        
         
+        blocks = {}
         f = open(logfile)
         for line in f:
             match = pattern.search(line)
             if match:
-                block_hash =  match.group(1)
-                prev_block_hash = match.group(2)
-                if not Graph.has_node(block_hash):
-                    Graph.add_node(block_hash)
-                if not Graph.has_node(prev_block_hash):
-                    Graph.add_node(prev_block_hash)
-                Graph.add_edge(prev_block_hash, block_hash)
+                block_idx = int(match.group(1))
+                block_hash =  match.group(2)
+                prev_block_hash = match.group(3)
+                blocks[block_idx] = (block_hash, prev_block_hash)
+                # if not Graph.has_node(block_hash):
+                #     Graph.add_node(block_hash)
+                # if not Graph.has_node(prev_block_hash):
+                #     Graph.add_node(prev_block_hash)
+                # Graph.add_edge(prev_block_hash, block_hash)
+        for idx in sorted(blocks.keys()):
+            (block_hash, prev_block_hash) = blocks[idx]
+            if not Graph.has_node(block_hash):
+                Graph.add_node(block_hash)
+            if not Graph.has_node(prev_block_hash):
+                Graph.add_node(prev_block_hash)
+            Graph.add_edge(prev_block_hash, block_hash)
+
+        # print blocks
+        # print sorted(blocks.keys())
+        (block_hash, prev_block_hash) = blocks[sorted(blocks.keys())[-1]]
         bleep_id = "bleep%d" % i
         Graph.add_node(bleep_id)
         Graph.add_edge(block_hash, bleep_id)

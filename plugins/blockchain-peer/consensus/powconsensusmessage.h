@@ -3,6 +3,7 @@
 
 #include <boost/variant.hpp>
 #include <boost/serialization/variant.hpp>
+#include <boost/serialization/vector.hpp>
 
 #include "../blockchain/powblock.h"
 
@@ -11,15 +12,17 @@
 // PoW Consensus Protocol Message 2. Request for Blocks
 #define POWConsensusMessage_REQBLOCKS 2
 // PoW Consensus Protocol Message 3. Response for Blocks
+#define POWConsensusMessage_RESPBLOCKS 3
 
 class POWConsensusMessage {
  public:
     POWConsensusMessage() {};
     POWConsensusMessage(int t, std::string sender) {type = t; msg_sender = sender; };
     POWConsensusMessage(int t, POWBlock v, std::string sender) { type = t; value = v; msg_sender = sender; };
+    POWConsensusMessage(int t, POWBlocks v, std::string sender) { type = t; value = v; msg_sender = sender; };
     
     int type;
-    boost::variant< POWBlock > value;
+    boost::variant< POWBlock, POWBlocks > value;
     std::string msg_sender;
 
  private:

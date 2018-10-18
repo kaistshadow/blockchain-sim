@@ -164,7 +164,7 @@ void NodeLoop(int argc, char *argv[]) {
         // 1. create Transaction and inject to first node
         int sfd = socket_m.find(argv[1])->second;
 
-        for (int i = 1; i < inject_num; i++) {
+        for (int i = 1; i <= inject_num; i++) {
             float amount = 0.1 * i;
             InjectTransaction(sfd, 0,1,amount); // send 12.34 to node 1 from node 0
             InjectTransaction(sfd, 0,2,amount);

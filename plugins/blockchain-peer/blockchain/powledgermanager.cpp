@@ -7,11 +7,6 @@
 #include "powledgermanager.h"
 #include "../blockchain/txpool.h"
 
-POWLedgerManager::POWLedgerManager(std::string filename)
-{ 
-    ledger_filename = filename;
-}
-
 POWLedgerManager* POWLedgerManager::instance = 0;
 
 POWLedgerManager* POWLedgerManager::GetInstance() {
@@ -27,15 +22,6 @@ void POWLedgerManager::SetInstance(std::string filename) {
     }
 }
 
-unsigned long POWLedgerManager::GetNextBlockIdx() {
-    return pow_ledger.size();
-}
-
-
-void POWLedgerManager::InitLedger() {
-    LoadLedgerFromFile();
-}
-
 void POWLedgerManager::LoadLedgerFromFile() {
     boost::filesystem::path myFile = boost::filesystem::current_path() / ledger_filename;
 
@@ -43,7 +29,7 @@ void POWLedgerManager::LoadLedgerFromFile() {
         boost::filesystem::ifstream ifs(myFile/*.native()*/);
         boost::archive::text_iarchive ta(ifs);
 
-        ta >> pow_ledger; // foo is empty until now, it's fed by myFile
+        ta >> list_ledger; // foo is empty until now, it's fed by myFile
 
         std::cout << "Read ledger from " << myFile << "\n";
     }
@@ -54,28 +40,8 @@ void POWLedgerManager::SaveLedgerToFile() {
     boost::filesystem::ofstream ofs(myFile);
     boost::archive::text_oarchive ta(ofs);
 
-    ta << pow_ledger; 
+    ta << list_ledger; 
     std::cout << "Wrote ledger to " << myFile << "\n";
     return;
-}
-
-
-POWBlock *POWLedgerManager::GetLastBlock() {
-    if (pow_ledger.size() == 0) 
-        return nullptr;
-    else
-        return &pow_ledger.back();
-}
-
-
-void POWLedgerManager::ReplaceLedger(std::list<POWBlock>::iterator pos, std::vector<POWBlock>::iterator start, std::vector<POWBlock>::iterator end) {
-    pow_ledger.erase(pos, pow_ledger.end());
-    while (start != end) {
-        TxPool::GetInstance()->RemoveTxs(start->GetTransactions());
-        pow_ledger.push_back(*start);
-        std::cout << "Longest chain block is appended" << "\n";
-        std::cout << *start << "\n";
-        start++;
-    }
 }
 

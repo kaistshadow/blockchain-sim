@@ -143,7 +143,7 @@ target_link_libraries(DUMP_BLOCKCHAIN ${Boost_LIBRARIES})
 # target_link_libraries(DUMP_BLOCKCHAIN_LOCAL ${Boost_LIBRARIES})
 
 ## POW blockchain 
-add_executable(PEER_POWCONSENSUS_LOCAL node_powconsensus.cpp ${SRCS} ${POW_SRCS})
+add_executable(PEER_POWCONSENSUS_LOCAL node_powconsensus.cpp ${SRCS} ${POW_SRCS} ${HEADERS})
 add_shadow_plugin(PEER_POWCONSENSUS node_powconsensus.cpp ${SRCS} ${POW_SRCS})
 install(TARGETS PEER_POWCONSENSUS DESTINATION plugins)
 target_link_libraries(PEER_POWCONSENSUS_LOCAL ${Boost_LIBRARIES})

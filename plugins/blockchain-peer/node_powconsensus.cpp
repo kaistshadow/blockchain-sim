@@ -59,7 +59,7 @@ void NodeInit(int argc, char *argv[]) {
     // initialize blockchain (currently from file.) 
     // TODO: initialize blockchain by retrieving live blockchain from network
     POWLedgerManager::SetInstance("blk.dat");
-    POWLedgerManager::GetInstance()->InitLedger();
+    POWLedgerManager::GetInstance()->LoadLedgerFromFile();
     
 
     utility::globalclock_start = time(0);

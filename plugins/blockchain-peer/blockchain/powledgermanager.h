@@ -6,13 +6,16 @@
 #include <queue>
 #include <list>
 
-#include "ledgerfilemanager.h"
 #include "listledgermanager.h"
 #include "powblock.h"
 
-class POWLedgerManager : public LedgerFileManager, public ListLedgerManager<POWBlock> {
+// POW ledger manager inherits following class
+// 1) std::list based ledger management class (ListLedgerManager)
+
+class POWLedgerManager : public ListLedgerManager<POWBlock> {
  private:
-    POWLedgerManager(std::string filename) : LedgerFileManager(filename) { } // singleton pattern
+    /* POWLedgerManager(std::string filename) : LedgerFileManager(filename) { } // singleton pattern */
+    POWLedgerManager(std::string filename) : ListLedgerManager<POWBlock>(filename) { } // singleton pattern
     static POWLedgerManager* instance; // singleton pattern
 
     /* std::list<POWBlock> pow_ledger; */
@@ -22,12 +25,14 @@ class POWLedgerManager : public LedgerFileManager, public ListLedgerManager<POWB
     static void SetInstance(std::string filename); // singleton pattern
 
     
-    /**
-     * Load Ledger from file.
-     * Save Ledger into file.
-     */
-    void LoadLedgerFromFile() override;
-    void SaveLedgerToFile() override;
+    void UpdateLedgerAsLongestChain(POWBlocks *blks);
+
+    /* /\** */
+    /*  * Load Ledger from file. */
+    /*  * Save Ledger into file. */
+    /*  *\/ */
+    /* void LoadLedgerFromFile() override; */
+    /* void SaveLedgerToFile() override; */
 
 
     // all following functions are inherited from ListLedgerManager<POWBlock>

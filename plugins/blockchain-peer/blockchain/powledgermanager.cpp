@@ -7,6 +7,9 @@
 #include "powledgermanager.h"
 #include "../blockchain/txpool.h"
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
 POWLedgerManager* POWLedgerManager::instance = 0;
 
 POWLedgerManager* POWLedgerManager::GetInstance() {
@@ -22,26 +25,36 @@ void POWLedgerManager::SetInstance(std::string filename) {
     }
 }
 
-void POWLedgerManager::LoadLedgerFromFile() {
-    boost::filesystem::path myFile = boost::filesystem::current_path() / ledger_filename;
+// Check whether the given blocks (blks) is longer chain than currently managed block chain (list_ledger)
+// If given blockchain has a block whose index is higher than current block chain, 
+// then update the current chain from forked position.
+void POWLedgerManager::UpdateLedgerAsLongestChain(POWBlocks* blks) {
+    int lastblkidx = list_ledger.size() - 1;
+    int given_lastblkidx = blks->back().GetBlockIdx();
+    if (given_lastblkidx <= list_ledger.size()-1)
+        return;
 
-    if (boost::filesystem::exists(myFile)) {
-        boost::filesystem::ifstream ifs(myFile/*.native()*/);
-        boost::archive::text_iarchive ta(ifs);
+    std::list<POWBlock>::iterator ledger_it = list_ledger.begin();
+    std::vector<POWBlock>::iterator received_blks_it = blks->begin();    
 
-        ta >> list_ledger; // foo is empty until now, it's fed by myFile
-
-        std::cout << "Read ledger from " << myFile << "\n";
+    // This while loop is for the situation where the given blks is partial blockchain
+    while (ledger_it != list_ledger.end() &&
+           ledger_it->GetBlockIdx() != received_blks_it->GetBlockIdx()) {
+        ledger_it++;
     }
-}
+    // Now blocks pointed by ledger_it and received_blks_it have same index
 
-void POWLedgerManager::SaveLedgerToFile() {
-    boost::filesystem::path myFile = boost::filesystem::current_path() / ledger_filename;
-    boost::filesystem::ofstream ofs(myFile);
-    boost::archive::text_oarchive ta(ofs);
+    while (ledger_it != list_ledger.end() && received_blks_it != blks->end() &&
+           ledger_it->GetBlockHash() == received_blks_it->GetBlockHash()) {
+        ledger_it++;
+        received_blks_it++;
+    }
+    // Now blocks pointed by ledger_it and received_blks_it have same index but different hash
 
-    ta << list_ledger; 
-    std::cout << "Wrote ledger to " << myFile << "\n";
-    return;
+    if (ledger_it != list_ledger.end() && received_blks_it != blks->end()) {
+        ReplaceLedger(ledger_it, received_blks_it, blks->end());
+
+        DumpLedgerToJSONFile("ledger.json");
+    }
 }
 

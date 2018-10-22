@@ -7,6 +7,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/list.hpp>
+#include <boost/property_tree/ptree.hpp>
 
 #include "transaction.h"
 
@@ -18,11 +19,11 @@ class Block {
     const std::list<Transaction>& GetTransactions() const { return tx_list; }
     std::string GetId() const {return block_id; }
 
- private:
+ protected:
     std::string block_id;
     std::list<Transaction> tx_list;
 
-
+ private:
     friend class boost::serialization::access;
     // When the class Archive corresponds to an output archive, the
     // & operator is defined similar to <<.  Likewise, when the class Archive

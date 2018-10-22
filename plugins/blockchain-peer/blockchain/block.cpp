@@ -1,6 +1,5 @@
 #include "block.h"
 
-
 std::ostream& operator<<(std::ostream& os, const Block& blk) {
     os << blk.GetId() << ":" << "Block has following transactions" << "\n";
     const std::list<Transaction>& tx_list = blk.GetTransactions();

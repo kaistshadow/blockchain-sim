@@ -53,6 +53,7 @@ set(SRCS
   util/eventqueue.cpp
   util/globalclock.cpp
   util/types.cpp
+  util/jsonserializer.cpp
   ${STELLAR_SRCS}
 )
 

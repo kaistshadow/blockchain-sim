@@ -8,6 +8,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/list.hpp>
+#include <boost/property_tree/ptree.hpp>
 
 #include "block.h"
 #include "transaction.h"
@@ -33,6 +34,10 @@ class POWBlock : public Block {
 
     void SetPrevBlockHash(utility::UINT256_t hash) { prev_block_hash = hash; }
     utility::UINT256_t GetPrevBlockHash() const { return prev_block_hash; }
+
+    // virtual function induces a segmentation fault of shadow simulator
+    // I don't know why! Need to debug later
+    // void DumpToJson(boost::property_tree::ptree& root) override;
 
  private:
     friend class boost::serialization::access;

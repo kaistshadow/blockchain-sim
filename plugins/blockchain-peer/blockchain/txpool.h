@@ -25,6 +25,7 @@ class TxPool {
     int GetPendingTxNum() { return items.size(); }
     std::list<Transaction> GetTxs(int num);
     void RemoveTxs(std::list<Transaction> txs);
+    void AddTxs(std::list<Transaction> txs);
 };
 
 

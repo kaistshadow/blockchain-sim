@@ -1,12 +1,11 @@
-#include "powconsensus.h"
+#include "powconsensus_centralized.h"
 #include "../crypto/sha256.h"
 #include "../blockchain/txpool.h"
 
-#include "../p2p/p2pmessage.h"
-#include "../p2p/socket.h"
+#include "../p2p/centralized/broadcastrequestmessage.h"
+#include "../p2p/centralized/unicastrequestmessage.h"
+#include "../p2p/centralized/simplesocketinterface.h"
 #include "../blockchain/powledgermanager.h"
-#include "../p2p/gossipprotocol.h"
-#include "../util/nodeinfo.h"
 
 #include "powconsensusmessage.h"
 
@@ -88,7 +87,7 @@ POWBlock *POWConsensus::Prepare() {
     }
     else {
         // not enough pendingTx
-        // std::cout << "Not enough pendingTx : " << TxPool::GetInstance()->GetPendingTxNum() << "\n";
+        std::cout << "Not enough pendingTx : " << TxPool::GetInstance()->GetPendingTxNum() << "\n";
     }
 
     return pendingBlk;
@@ -97,10 +96,11 @@ POWBlock *POWConsensus::Prepare() {
 void POWConsensus::InjectValidBlockToP2PNetwork(POWBlock* pendingBlk) {
     POWConsensusMessage powmsg(POWConsensusMessage_NEWBLOCK, *pendingBlk, NodeInfo::GetInstance()->GetHostId());
 
-    P2PMessage p2pmessage(P2PMessage_POWCONSENSUSMESSAGE, powmsg);
+    BroadcastRequestMessage brmsg(BroadcastRequestMessage_POWCONSENSUSMESSAGE, powmsg);
+    CentralizedNetworkMessage nmsg(CentralizedNetworkMessage_BROADCASTREQMSG, brmsg);
 
-    SimpleGossipProtocol::GetInstance()->PushToUpperQueue(p2pmessage);
-    // SocketInterface::GetInstance()->UnicastP2PMsg(p2pmessage, "bleep1"); // hardcoded line for test
+    SimpleSocketInterface::GetInstance()->SendNetworkMsg(nmsg, "bleep0"); // center is hardcoded to bleep0 for test
+    std::cout << "POWConsensus: newblock broadcasting is requested" << "\n";
 }
 
 void POWConsensus::Run() {
@@ -174,9 +174,10 @@ void POWConsensus::ProcessQueue() {
                     else if (nextblkidx <= blk->GetBlockIdx()) {
                         std::cout << "Block (sented by " << msg.msg_sender << ") is received and longer than mine" << "\n";
                         POWConsensusMessage powmsg(POWConsensusMessage_REQBLOCKS, NodeInfo::GetInstance()->GetHostId());
-                        UnicastMessage unimsg(UnicastMessage_POWCONSENSUSMESSAGE, powmsg);
-    
-                        SocketInterface::GetInstance()->SendUnicastMsg(unimsg, msg.msg_sender);
+                        UnicastRequestMessage umsg(UnicastRequestMessage_POWCONSENSUSMESSAGE, powmsg, msg.msg_sender);
+                        CentralizedNetworkMessage nmsg(CentralizedNetworkMessage_UNICASTREQMSG, umsg);
+
+                        SimpleSocketInterface::GetInstance()->SendNetworkMsg(nmsg, "bleep0"); // center is hardcoded to bleep0 for test
                     }
                     else 
                         std::cout << "Block is received but not appended" << "\n";
@@ -197,8 +198,10 @@ void POWConsensus::ProcessQueue() {
                     blks.push_back(blk);
                 }
                 POWConsensusMessage powmsg(POWConsensusMessage_RESPBLOCKS, blks, NodeInfo::GetInstance()->GetHostId());
-                UnicastMessage unimsg(UnicastMessage_POWCONSENSUSMESSAGE, powmsg);
-                SocketInterface::GetInstance()->SendUnicastMsg(unimsg, msg.msg_sender);
+                UnicastRequestMessage umsg(UnicastRequestMessage_POWCONSENSUSMESSAGE, powmsg, msg.msg_sender);
+                CentralizedNetworkMessage nmsg(CentralizedNetworkMessage_UNICASTREQMSG, umsg);
+
+                SimpleSocketInterface::GetInstance()->SendNetworkMsg(nmsg, "bleep0"); // center is hardcoded to bleep0 for test
             }
             break;
         case POWConsensusMessage_RESPBLOCKS: 

@@ -39,6 +39,9 @@ if __name__ == '__main__':
 
     nodenum = int(sys.argv[1])
     datadir = "pow-consensus-datadir"
+    # shadow_plugin = "PEER_POWCONSENSUS"
+    # datadir = "centralized-broadcast-datadir"
+    # datadir = "pow-consensus-large-datadir"
     shadow_plugin = "PEER_POWCONSENSUS"
 
     Graph = nx.DiGraph()

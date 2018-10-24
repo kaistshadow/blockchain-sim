@@ -50,3 +50,8 @@ void TxPool::RemoveTxs(std::list<Transaction> txs) {
             ++i;
     }
 }
+
+void TxPool::AddTxs(std::list<Transaction> txs) {
+    for (auto tx : txs)
+        items.push_back(tx);
+}

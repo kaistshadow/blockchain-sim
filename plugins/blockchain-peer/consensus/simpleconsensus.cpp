@@ -3,6 +3,7 @@
 #include "../blockchain/block.h"
 #include "../p2p/p2pmessage.h"
 #include "../p2p/gossipprotocol.h"
+#include "../util/nodeinfo.h"
 
 SimpleConsensus* SimpleConsensus::instance = 0;
 SimpleConsensus* SimpleConsensus::GetInstance() {
@@ -23,7 +24,7 @@ void SimpleConsensus::ProcessQueue() {
         }
         else if (msg.type == SimpleConsensusMessage_LEADER_ELECTION) {
             std::string node_id = boost::get<std::string>(msg.value);
-            if (SimpleGossipProtocol::GetInstance()->GetHostId() == node_id) {
+            if (NodeInfo::GetInstance()->GetHostId() == node_id) {
                 isLeader = true;
                 std::cerr << "Consensus: i'm elected as consensus leader!" << "\n";
             }

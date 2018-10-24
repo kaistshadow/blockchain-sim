@@ -9,7 +9,11 @@ T* ListLedgerManager<T>::GetLastBlock() {
 
 template <typename T>
 void ListLedgerManager<T>::ReplaceLedger(typename std::list<T>::iterator pos, typename std::vector<T>::iterator start, typename std::vector<T>::iterator end) {
+    for (typename std::list<T>::iterator it = pos; it != list_ledger.end(); it++) {
+        TxPool::GetInstance()->AddTxs(it->GetTransactions());
+    }
     list_ledger.erase(pos, list_ledger.end());
+
     while (start != end) {
         TxPool::GetInstance()->RemoveTxs(start->GetTransactions());
         list_ledger.push_back(*start);
@@ -50,7 +54,7 @@ void ListLedgerManager<T>::DumpLedgerToJSONFile(std::string jsonfilename) {
    for (auto& blk : list_ledger) {
        jsonSerializer.DumpToJson(root, blk);
    }
-   std::string path = std::string("json_dump/") + SimpleGossipProtocol::GetInstance()->GetHostId();
+   std::string path = std::string("json_dump/") + NodeInfo::GetInstance()->GetHostId();
    boost::filesystem::path dir(path.c_str());
    if (!boost::filesystem::exists(dir)) {
        boost::filesystem::create_directories(path.c_str());

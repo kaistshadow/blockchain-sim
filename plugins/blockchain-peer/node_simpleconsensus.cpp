@@ -9,6 +9,7 @@
 #include "p2p/socket.h"
 #include "p2p/plumtree.h"
 #include "blockchain/txpool.h"
+#include "util/nodeinfo.h"
 
 #include "consensus/simpleconsensus.h"
 
@@ -43,6 +44,9 @@ void NodeInit(int argc, char *argv[]) {
 
     // // initialize network socket
     // SocketInterface::GetInstance()->InitializeSocket(outPeerList);
+
+    // Set Node host id
+    NodeInfo::GetInstance()->SetHostId(std::string(argv[1]));
 }
 
 void NodeLoop() {

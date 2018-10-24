@@ -54,6 +54,7 @@ set(SRCS
   util/globalclock.cpp
   util/types.cpp
   util/jsonserializer.cpp
+  util/nodeinfo.cpp
   ${STELLAR_SRCS}
 )
 
@@ -165,3 +166,32 @@ add_shadow_plugin(PEER_PLUMTREE node_membershiptest.cpp ${SRCS})
 install(TARGETS PEER_PLUMTREE DESTINATION plugins)
 target_link_libraries(PEER_PLUMTREE ${Boost_LIBRARIES})
 
+## POW with centralized p2p
+set(CENTRALIZED_POW_SRCS
+  p2p/centralized/simplesocketinterface.cpp
+  p2p/centralized/peerlistmanager.cpp
+  p2p/centralized/centralizedmsgproxy.cpp
+  blockchain/block.cpp
+  blockchain/transaction.cpp
+  blockchain/txpool.cpp
+  blockchain/powledgermanager.cpp
+  blockchain/powblock.cpp
+  consensus/powconsensus_centralized.cpp
+  crypto/sha256.cpp
+  util/eventqueue.cpp
+  util/globalclock.cpp
+  util/types.cpp
+  util/jsonserializer.cpp
+  util/nodeinfo.cpp
+)
+add_shadow_plugin(PEER_CENTRALIZED_POWCONSENSUS node_centralized_powconsensus.cpp ${CENTRALIZED_POW_SRCS})
+install(TARGETS PEER_CENTRALIZED_POWCONSENSUS DESTINATION plugins)
+target_link_libraries(PEER_CENTRALIZED_POWCONSENSUS ${Boost_LIBRARIES})
+
+add_shadow_plugin(INJECTOR_CENTRALIZED_POWCONSENSUS node_injector_centralized_powconsensus.cpp ${CENTRALIZED_POW_SRCS})
+install(TARGETS INJECTOR_CENTRALIZED_POWCONSENSUS DESTINATION plugins)
+target_link_libraries(INJECTOR_CENTRALIZED_POWCONSENSUS ${Boost_LIBRARIES})
+
+add_shadow_plugin(PROXY_CENTRALIZED_POWCONSENSUS proxy_centralized_powconsensus.cpp ${CENTRALIZED_POW_SRCS})
+install(TARGETS PROXY_CENTRALIZED_POWCONSENSUS DESTINATION plugins)
+target_link_libraries(PROXY_CENTRALIZED_POWCONSENSUS ${Boost_LIBRARIES})

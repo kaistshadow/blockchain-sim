@@ -10,7 +10,7 @@
 #include "block.h"
 #include "txpool.h"
 #include "../util/jsonserializer.h"
-#include "../p2p/gossipprotocol.h" // for GetHostId() 
+#include "../util/nodeinfo.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>

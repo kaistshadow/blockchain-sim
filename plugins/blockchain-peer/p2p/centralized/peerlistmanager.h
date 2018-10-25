@@ -23,10 +23,12 @@ class Peer{
     Peer(std::string hn) { hostname = hn; conn_status = IDLE; }
     Peer(std::string hn, int socket) { hostname = hn; sfd = socket; }
     std::string hostname;
+    std::string ipaddr;
     int sfd;
     CONNECT_STATUS conn_status;
     RECV_STATUS recv_status;
     int payload_len;
+    int received_len;
 };
 
 
@@ -58,6 +60,9 @@ class SimplePeerListManager {
     
     PeerList& GetOutPeerList() { return outPeerList; };
     PeerList& GetInPeerList() { return inPeerList; };
+
+    std::string GetDomainFromIp(std::string ip);
+    void UpdateDomainNameForIp(std::string ip, std::string domain);
 };
 
 

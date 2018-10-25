@@ -35,3 +35,28 @@ void SimplePeerListManager::InitializeOutPeerList(int num_outpeer, char *hostnam
     }
 }
 
+
+std::string SimplePeerListManager::GetDomainFromIp(std::string ip) {
+    for (auto peer : inPeerList) {
+        if (peer->ipaddr == ip && peer->hostname != "")
+            return peer->hostname;
+    }
+    for (auto peer : outPeerList) {
+        if (peer->ipaddr == ip && peer->hostname != "")
+            return peer->hostname;
+    }
+    return "";
+}
+
+
+void SimplePeerListManager::UpdateDomainNameForIp(std::string ip, std::string domain) {
+    for (auto peer : inPeerList) {
+        if (peer->ipaddr == ip)
+            peer->hostname = domain;
+    }
+    for (auto peer : outPeerList) {
+        if (peer->ipaddr == ip)
+            peer->hostname = domain;
+    }
+    return;
+}

@@ -37,9 +37,9 @@
   <!-- our nodes -->
   <kill time="100"/>
 
-  <!-- <node id="dump_blockchain"> -->
-  <!--   <application arguments="" plugin="DUMP_POWBLOCKCHAIN" time="2"/> -->
-  <!-- </node> -->
+  <node id="dump_blockchain">
+    <application arguments="" plugin="DUMP_POWBLOCKCHAIN" time="2"/>
+  </node>
 
 
   <node id="bleep0">

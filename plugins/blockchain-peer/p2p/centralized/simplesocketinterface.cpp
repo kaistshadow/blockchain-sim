@@ -142,6 +142,9 @@ void SimpleSocketInterface::ProcessNonblockSocket(PeerList& inPeerList, PeerList
         Peer* inPeer = new Peer(new_fd);
         inPeer->recv_status = RECV_IDLE;
         inPeer->conn_status = NONE;
+        inPeer->ipaddr = std::string(inet_ntoa(their_addr.sin_addr));
+        inPeer->hostname = SimplePeerListManager::GetInstance()->GetDomainFromIp(inPeer->ipaddr);
+        cout << "server: got connection from (" << inPeer->ipaddr << "," << inPeer->hostname << ")" << "\n";
         SimplePeerListManager::GetInstance()->GetInPeerList().push_back(inPeer);
     }
         
@@ -164,6 +167,9 @@ void SimpleSocketInterface::ProcessNonblockSocket(PeerList& inPeerList, PeerList
             }
             servaddr.sin_addr.s_addr = ((struct sockaddr_in*) (servinfo->ai_addr))->sin_addr.s_addr;
 
+            p->ipaddr = std::string(inet_ntoa(((struct sockaddr_in*) (servinfo->ai_addr))->sin_addr));
+            std::cout << "peer connected to outpeer (" << p->ipaddr << "," << p->hostname << ")" << "\n";
+            SimplePeerListManager::GetInstance()->UpdateDomainNameForIp(p->ipaddr, p->hostname);
             // if (inet_pton(AF_INET, servip, &servaddr.sin_addr) <= 0) {
             //     perror("inet_pton");
             //     exit(1);
@@ -249,14 +255,15 @@ void SimpleSocketInterface::ProcessNonblockSocket(PeerList& inPeerList, PeerList
                 else if (n > 0) {
                     p->payload_len = length;
                     p->recv_status = RECV_LENGTH;
-                    cout << "receive network packet length:" << length << "\n";
+                    p->received_len = 0;
+                    cout << "receive from " << p->hostname << ", network packet length:" << length << "\n";
                     // string_read[n] = '\0';
                     // cout << "The string is: " << string_read << "\n";
                 }
                 break;
             }
         case RECV_LENGTH:
-            int total_recv_size = 0;
+            int total_recv_size = p->received_len;
             int numbytes = 0;
             std::string recv_str;
 
@@ -272,23 +279,26 @@ void SimpleSocketInterface::ProcessNonblockSocket(PeerList& inPeerList, PeerList
                 break;
               }
               else if (numbytes < 0) {
-                if (errno != EWOULDBLOCK) {
-                  std::cerr << "recv event: recv payload fail\n";
-                  break;
-                }
+                std::cerr << "recv event: recv payload fail\n";
+                break;
               }
               // std::cout << "recv:length=[" << numbytes << "],data=[" << recv_str << "]\n";
               if (total_recv_size == p->payload_len)
                 break;
+              else {
+                  std::cout << "recv: total_recv_size=" << total_recv_size << ", payload_len=" << p->payload_len << "\n";
+              }
               memset(string_read, 0, 2000);
             }
 
             if (p->payload_len != total_recv_size) {
-                std::cout << "error: received only part of payload" << "\n";
-                exit(1);
+                std::cout << "error: received only part of payload (maybe recv buffer is full)" << "\n";
+                p->received_len = total_recv_size;
+                break;
             }
-
-            cout << "received payload" << "\n";
+            else {
+                std::cout << "fully received payload. size:" << total_recv_size << "\n";
+            }
             p->recv_status = RECV_IDLE;
             CentralizedNetworkMessage nmsg = GetDeserializedMsg(recv_str);
             if (nmsg.type == CentralizedNetworkMessage_BROADCASTREQMSG) {

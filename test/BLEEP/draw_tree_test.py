@@ -33,12 +33,16 @@ def hierarchy_pos(G, root, width=1., vert_gap = 0.2, vert_loc = 0, xcenter = 0.5
     return pos
 
 if __name__ == '__main__':
-    if len (sys.argv) != 2 :
+    if not(len (sys.argv) == 2 or len(sys.argv) == 3):
         print "Command line input error"
+        print "USAGE: python draw_tree_test.py <nodenum>"
+        print "USAGE: python draw_tree_test.py <nodenum> <datadir>"
         sys.exit (1)
 
     nodenum = int(sys.argv[1])
     datadir = "pow-consensus-datadir"
+    if len(sys.argv) == 3:
+        datadir = sys.argv[2]
     # shadow_plugin = "PEER_POWCONSENSUS"
     # datadir = "centralized-broadcast-datadir"
     # datadir = "pow-consensus-large-datadir"

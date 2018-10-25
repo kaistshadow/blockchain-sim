@@ -2,7 +2,7 @@ import lxml.etree as ET
 
 def setup_multiple_node_xml(node_num):
     baseline_xml = "test/BLEEP/pow-consensus.xml"
-    new_xml = "test/BLEEP/pow-consensus.large.xml"
+    new_xml = "test/BLEEP/pow-consensus-large.xml"
 
     parser = ET.XMLParser(remove_blank_text=True, strip_cdata=False)
 

@@ -67,6 +67,67 @@ void CentralizedMessageProxy::ProcessQueue() {
     while (!unicastMsgQueue.empty()) {
         UnicastRequestMessage& msg = unicastMsgQueue.front();
         ProxyGeneratedMessage pmsg;
+
+        // bool send = true;
+        // switch(msg.type) {
+        // case UnicastRequestMessage_TRANSACTION:
+        //     {
+        //         Transaction tx = boost::get<Transaction>(msg.data);
+        //         pmsg.type = ProxyGeneratedMessage_TRANSACTION;
+        //         pmsg.data = tx;
+        //         break;
+        //     }
+        // case UnicastRequestMessage_BLOCK:
+        //     {
+        //         Block blk = boost::get<Block>(msg.data);
+        //         pmsg.type = ProxyGeneratedMessage_BLOCK;
+        //         pmsg.data = blk;
+        //         break;
+        //     }
+        // case UnicastRequestMessage_SIMPLECONSENSUSMESSAGE:
+        //     {
+        //         SimpleConsensusMessage smsg = boost::get<SimpleConsensusMessage>(msg.data);
+        //         pmsg.type = ProxyGeneratedMessage_SIMPLECONSENSUSMESSAGE;
+        //         pmsg.data = smsg;
+        //         break;
+        //     }
+        // case UnicastRequestMessage_POWCONSENSUSMESSAGE:
+        //     {
+        //         POWConsensusMessage powmsg = boost::get<POWConsensusMessage>(msg.data);
+        //         pmsg.type = ProxyGeneratedMessage_POWCONSENSUSMESSAGE;
+
+        //         POWConsensusMessage newpowmsg;
+        //         switch(powmsg.type) {
+        //         case POWConsensusMessage_NEWBLOCK:
+        //             {
+        //                 newpowmsg.type = POWConsensusMessage_NEWBLOCK;
+        //                 newpowmsg.value = boost::get<POWBlock>(powmsg.value);
+        //                 newpowmsg.msg_sender = powmsg.msg_sender;
+        //                 break;
+        //             }
+        //         case POWConsensusMessage_REQBLOCKS:
+        //             {
+        //                 newpowmsg.type = POWConsensusMessage_REQBLOCKS;
+        //                 newpowmsg.value = POWConsensusMessage_REQBLOCKS;  // dummy value. but wrong behavior if not assigned
+        //                 newpowmsg.msg_sender = powmsg.msg_sender;
+        //                 break;
+        //             }
+        //         case POWConsensusMessage_RESPBLOCKS:
+        //             {
+        //                 POWBlocks blks = boost::get<POWBlocks>(powmsg.value);
+        //                 for (auto received_blk : blks) {
+        //                     std::cout << "CentralizedMessageProxy: RESPBLOCKS msg's block: "<< received_blk.GetNonce() << "\n";
+        //                 }
+        //                 newpowmsg.type = POWConsensusMessage_RESPBLOCKS;
+        //                 newpowmsg.value = blks;
+        //                 newpowmsg.msg_sender = powmsg.msg_sender;
+        //                 break;
+        //             }
+        //         }
+        //         pmsg.data = newpowmsg;
+        //         break;
+        //     }
+        // }
         pmsg.type = msg.type;
         pmsg.data = msg.data;
         

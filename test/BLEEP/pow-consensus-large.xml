@@ -29,51 +29,43 @@
              </graph>
              </graphml>]]></topology>
   <!-- the plug-ins we will be using -->
-  <plugin id="PEER_POWCONSENSUS" path="libPEER_CENTRALIZED_POWCONSENSUS.so"/>
-  <plugin id="INJECTOR_POWCONSENSUS" path="libINJECTOR_CENTRALIZED_POWCONSENSUS.so"/>
+  <plugin id="PEER_POWCONSENSUS" path="libPEER_POWCONSENSUS.so"/>
+  <plugin id="INJECTOR_POWCONSENSUS" path="libINJECTOR_POWCONSENSUS.so"/>
   <plugin id="DUMP_POWBLOCKCHAIN" path="libDUMP_POWBLOCKCHAIN.so"/>
-  <plugin id="PROXY_POWCONSENSUS" path="libPROXY_CENTRALIZED_POWCONSENSUS.so"/>
   <!-- the length of our experiment in seconds  1404101800-->
   <!-- our nodes -->
-  <kill time="100"/>
-
-  <!-- <node id="dump_blockchain"> -->
-  <!--   <application arguments="" plugin="DUMP_POWBLOCKCHAIN" time="2"/> -->
-  <!-- </node> -->
-
-
+  <kill time="50"/>
   <node id="bleep0">
-    <application arguments="bleep0 bleep1 bleep2 bleep3 bleep4 bleep5 bleep6 bleep7 bleep8 bleep9" plugin="PROXY_POWCONSENSUS" time="3"/>
+    <application arguments="" plugin="DUMP_POWBLOCKCHAIN" time="3"/>
   </node>
   <node id="bleep1">
-    <application arguments="bleep1 bleep0" plugin="PEER_POWCONSENSUS" time="5"/>
+    <application arguments="bleep1" plugin="PEER_POWCONSENSUS" time="5"/>
   </node>
   <node id="bleep2">
-    <application arguments="bleep2 bleep0" plugin="PEER_POWCONSENSUS" time="5"/>
+    <application arguments="bleep2 bleep1" plugin="PEER_POWCONSENSUS" time="5"/>
   </node>
   <node id="bleep3">
-    <application arguments="bleep3 bleep0" plugin="PEER_POWCONSENSUS" time="5"/>
+    <application arguments="bleep3 bleep1" plugin="PEER_POWCONSENSUS" time="5"/>
   </node>
   <node id="bleep4">
-    <application arguments="bleep4 bleep0" plugin="PEER_POWCONSENSUS" time="5"/>
+    <application arguments="bleep4 bleep1" plugin="PEER_POWCONSENSUS" time="5"/>
   </node>
   <node id="bleep5">
-    <application arguments="bleep5 bleep0" plugin="PEER_POWCONSENSUS" time="5"/>
+    <application arguments="bleep5 bleep1" plugin="PEER_POWCONSENSUS" time="5"/>
   </node>
   <node id="bleep6">
-    <application arguments="bleep6 bleep0" plugin="PEER_POWCONSENSUS" time="5"/>
+    <application arguments="bleep6 bleep1" plugin="PEER_POWCONSENSUS" time="5"/>
   </node>
   <node id="bleep7">
-    <application arguments="bleep7 bleep0" plugin="PEER_POWCONSENSUS" time="5"/>
+    <application arguments="bleep7 bleep1" plugin="PEER_POWCONSENSUS" time="5"/>
   </node>
   <node id="bleep8">
-    <application arguments="bleep8 bleep0" plugin="PEER_POWCONSENSUS" time="5"/>
+    <application arguments="bleep8 bleep1" plugin="PEER_POWCONSENSUS" time="5"/>
   </node>
   <node id="bleep9">
-    <application arguments="bleep9 bleep0" plugin="PEER_POWCONSENSUS" time="5"/>
+    <application arguments="bleep9 bleep1" plugin="PEER_POWCONSENSUS" time="5"/>
   </node>
   <node id="bleep10">
-    <application arguments="bleep0 10" plugin="INJECTOR_POWCONSENSUS" time="10"/>
+    <application arguments="bleep1 10" plugin="INJECTOR_POWCONSENSUS" time="10"/>
   </node>
-
 </shadow>

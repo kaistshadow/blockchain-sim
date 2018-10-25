@@ -25,7 +25,15 @@ add_test(NAME BLEEP-pow-consensus
   COMMAND python test-pow-consensus.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_test(NAME BLEEP-plumtree-broadcast
-  COMMAND python test-plumtree-broadcast.py
+add_test(NAME BLEEP-pow-consensus-large
+  COMMAND python test-pow-consensus-large.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_test(NAME BLEEP-centralized-broadcast
+  COMMAND python test-centralized-broadcast.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   
+# add_test(NAME BLEEP-plumtree-broadcast
+#   COMMAND python test-plumtree-broadcast.py
+#   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+

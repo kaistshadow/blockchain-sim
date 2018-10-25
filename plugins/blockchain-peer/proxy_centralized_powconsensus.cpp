@@ -83,7 +83,7 @@ void NodeLoop() {
     cout << "temp:" << hash_out2_int << "\n";
 
     while (true) {
-        usleep(10);
+        usleep(1000);
         // cout << "globalclock:" << utility::GetGlobalClock() << "\n";
 
         // process non-blocking network socket events

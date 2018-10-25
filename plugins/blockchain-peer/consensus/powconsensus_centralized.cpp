@@ -87,7 +87,7 @@ POWBlock *POWConsensus::Prepare() {
     }
     else {
         // not enough pendingTx
-        std::cout << "Not enough pendingTx : " << TxPool::GetInstance()->GetPendingTxNum() << "\n";
+        // std::cout << "Not enough pendingTx : " << TxPool::GetInstance()->GetPendingTxNum() << "\n";
     }
 
     return pendingBlk;

@@ -369,8 +369,10 @@ void SimpleSocketInterface::SendNetworkMsg(CentralizedNetworkMessage& msg, std::
         exit(-1);
     }
   
+    std::cout << "SendNetworkMsg:" << "send to " << dest << "\n";
     std::string payload = GetSerializedString(msg);
     int payload_len = payload.size();
+    std::cout << "SendNetworkMsg:" << "send to " << dest << ", payload size=" << payload_len << "\n";
 
     if (payload_len <= 0) {
         std::cerr << "send event: Serialization fault\n";
@@ -387,6 +389,7 @@ void SimpleSocketInterface::SendNetworkMsg(CentralizedNetworkMessage& msg, std::
         std::cerr << "send event: network fail\n";
         return;
     }
+    std::cout << "SendNetworkMsg:" << "send to " << dest << ", payload size=" << payload_len << " complete\n";
 }
 
 

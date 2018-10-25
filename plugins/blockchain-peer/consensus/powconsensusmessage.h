@@ -17,12 +17,12 @@
 class POWConsensusMessage {
  public:
     POWConsensusMessage() {};
-    POWConsensusMessage(int t, std::string sender) {type = t; msg_sender = sender; };
+    POWConsensusMessage(int t, std::string sender) {type = t; value = t; msg_sender = sender; };
     POWConsensusMessage(int t, POWBlock v, std::string sender) { type = t; value = v; msg_sender = sender; };
     POWConsensusMessage(int t, POWBlocks v, std::string sender) { type = t; value = v; msg_sender = sender; };
     
     int type;
-    boost::variant< POWBlock, POWBlocks > value;
+    boost::variant< int, POWBlock, POWBlocks > value;
     std::string msg_sender;
 
  private:

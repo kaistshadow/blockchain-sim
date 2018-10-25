@@ -4,9 +4,12 @@ import argparse
 import sys
 
 if __name__ == '__main__':
-    datadir = "centralized-broadcast-datadir"
-    shadow_configfile = "centralized-broadcast.xml"
+    datadir = "pow-consensus-large-datadir"
+    shadow_configfile = "pow-consensus-large.xml"
     shadow_plugin = "PEER_POWCONSENSUS"
+    # shadow_inject_plugin = "INJECTOR_STELLARCONSENSUS"
+
+    os.system("rm -rf %s" % datadir)
 
     ## run shadow for test
     returnCode = os.system("~/.shadow/bin/shadow -d %s %s" % (datadir, shadow_configfile))
@@ -19,7 +22,6 @@ if __name__ == '__main__':
     outputfile2 = "./%s/hosts/bleep2/stdout-bleep2.%s.1000.log" % (datadir, shadow_plugin)
     outputfile3 = "./%s/hosts/bleep3/stdout-bleep3.%s.1000.log" % (datadir, shadow_plugin)
     outputfile9 = "./%s/hosts/bleep9/stdout-bleep9.%s.1000.log" % (datadir, shadow_plugin)
-
     test_pass = True
     bleep1_blockidx_blocknonce = {}
     if os.path.exists(outputfile1):
@@ -75,3 +77,5 @@ if __name__ == '__main__':
                 print "test failed. consensed block is different for bleep1, bleep9"
                 print "block_idx=%d, bleep1_block_nonce=%s, bleep9_block_nonce=%s" % (idx, bleep1_blockidx_blocknonce[idx], bleep9_blockidx_blocknonce[idx])
                 sys.exit(-1)
+
+

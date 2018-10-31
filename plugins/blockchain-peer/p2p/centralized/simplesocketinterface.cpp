@@ -18,6 +18,7 @@
 #include "../../blockchain/txpool.h"
 #include "../../consensus/simpleconsensus.h"
 #include "../../consensus/powconsensus.h"
+#include "../../util/globalclock.h"
 
 
 #include <boost/archive/binary_oarchive.hpp>
@@ -256,6 +257,7 @@ void SimpleSocketInterface::ProcessNonblockSocket(PeerList& inPeerList, PeerList
                     p->payload_len = length;
                     p->recv_status = RECV_LENGTH;
                     p->received_len = 0;
+                    p->recv_str = "";
                     cout << "receive from " << p->hostname << ", network packet length:" << length << "\n";
                     // string_read[n] = '\0';
                     // cout << "The string is: " << string_read << "\n";
@@ -265,14 +267,13 @@ void SimpleSocketInterface::ProcessNonblockSocket(PeerList& inPeerList, PeerList
         case RECV_LENGTH:
             int total_recv_size = p->received_len;
             int numbytes = 0;
-            std::string recv_str;
 
             while(1) {
               int recv_size = std::min(2000, p->payload_len - total_recv_size);
               numbytes = recv(p->sfd, string_read, recv_size, 0);              
               if (numbytes > 0) {
                 total_recv_size += numbytes;
-                recv_str.append(string_read, numbytes);
+                p->recv_str.append(string_read, numbytes);
               }
               else if (numbytes == 0) {
                 std::cerr << "recv event: connection closed\n";
@@ -292,15 +293,15 @@ void SimpleSocketInterface::ProcessNonblockSocket(PeerList& inPeerList, PeerList
             }
 
             if (p->payload_len != total_recv_size) {
-                std::cout << "error: received only part of payload (maybe recv buffer is full)" << "\n";
                 p->received_len = total_recv_size;
+                std::cout << utility::GetGlobalClock() << ":error: received only part of payload (maybe recv buffer is full)" << "received_len:" << p->received_len << ", payload_len:" << p->payload_len << ", from:" << p->hostname << "\n";
                 break;
             }
             else {
-                std::cout << "fully received payload. size:" << total_recv_size << "\n";
+                std::cout << "fully received payload. size:" << total_recv_size << ", from:" << p->hostname << "\n";
             }
             p->recv_status = RECV_IDLE;
-            CentralizedNetworkMessage nmsg = GetDeserializedMsg(recv_str);
+            CentralizedNetworkMessage nmsg = GetDeserializedMsg(p->recv_str);
             if (nmsg.type == CentralizedNetworkMessage_BROADCASTREQMSG) {
                 BroadcastRequestMessage pmsg = boost::get<BroadcastRequestMessage>(nmsg.data);
                 CentralizedMessageProxy::GetInstance()->PushToQueue(pmsg);

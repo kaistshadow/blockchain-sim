@@ -98,5 +98,5 @@ if __name__ == '__main__':
     pos = hierarchy_pos(Graph, "genesis")
 
     # labeldict = {}
-    nx.draw(Graph, pos=pos, labels=labeldict, with_labels = True, width=2, node_size = 1, node_shape = 's', arrowstyle='simple', arrowsize="1", node_color = 'white')
+    nx.draw(Graph, pos=pos, labels=labeldict, with_labels = True, width=2, node_size = 1, node_shape = 's', arrowstyle='simple', arrowsize=1, node_color = 'white')
     plt.show()

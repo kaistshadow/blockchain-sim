@@ -165,7 +165,9 @@ int SocketInterface::ConnectToPeer(std::string pn){
 int SocketInterface::SendSerializedMsg(SocketMessage msg){
   int sfd = msg.GetSocketfd();
   
+  //P2PMSG type
   NetworkMessage nmsg(NetworkMessage_P2PMSG, msg.GetP2PMessage());
+ 
   std::string payload = GetSerializedString(nmsg);
   int     payload_len = payload.size();
   if (payload_len <= 0) {
@@ -378,7 +380,7 @@ void SocketInterface::ProcessMsg(SocketMessage msg) {
     return;
   }
 
-  if (type == M_DISCONNECT) {
+  if (type == M_DISCONNECT) { //need to change 
     int sfd = msg.GetSocketfd();
     DeleteSocketDataEntry(sfd);
     return;
@@ -394,6 +396,11 @@ void SocketInterface::ProcessMsg(SocketMessage msg) {
 	continue;
       }
       SetEvent(EPOLL_CTL_MOD, EPOLLOUT, sfd);      
+
+      // for debug
+      P2PMessage pmsg = msg.GetP2PMessage();
+      if (pmsg.g_type == GOSSIP)
+	std::cout << "send mid:"<< pmsg.g_mid << "\n";
     }
     return;
   }
@@ -519,13 +526,12 @@ void SocketInterface::ProcessNetworkEvent() {
                   break;
                 }
               }
-              // std::cout << "recv:length=[" << numbytes << "],data=[" << recv_str << "]\n";
-              if (total_recv_size == entry->payload_len)
+              
+	      if (total_recv_size == entry->payload_len)
                 break;
               memset(buffer, 0, 2000);
             }
 
-            // std::cout << "recv-end:total_recv_size=[" << total_recv_size << "], payload_len=[" << entry->payload_len << "]\n";
             if (total_recv_size != entry->payload_len) {
               std::cerr << "recv event: recv payload fail\n";	      
               SendFailMsg(fd);
@@ -559,10 +565,8 @@ void SocketInterface::ProcessNetworkEvent() {
                     POWConsensus::GetInstance()->PushToQueue(powmsg);
                     std::cout << "pushed POWConsensusMessage (unicast msg) to queue" << "\n";
                     break;
-                } 
-
+                } 	        
             }
-
 	  }
 	  break;
 
@@ -615,7 +619,7 @@ void SocketInterface::SendUnicastMsg(UnicastMessage msg, std::string dest) {
         perror("connect");
         exit(1);
     } 
-  
+
     NetworkMessage netmsg(NetworkMessage_UNIMSG, msg);
 
     std::string payload = GetSerializedString(netmsg);

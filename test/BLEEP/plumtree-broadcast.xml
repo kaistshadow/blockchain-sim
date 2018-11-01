@@ -36,9 +36,10 @@
   <!-- the plug-ins we will be using -->
   <plugin id="plugin" path="libPEER_PLUMTREE.so" />
   <!-- <plugin id="injector" path="libINJECTOR_MEMBERSHIP.so" /> -->
+  <plugin id="injector" path="libINJECTOR_SIMPLECONSENSUS.so" />
   
   <!-- the length of our experiment in seconds -->
-  <kill time="350" />
+  <kill time="150" />
 
   <!-- our nodes and the applications they run -->
   <node id="bleep1">
@@ -63,6 +64,26 @@
 
   <node id="bleep6">
     <application plugin="plugin" time="60" arguments="bleep6 bleep1" />
+  </node>
+
+  <node id="bleep7">
+    <application plugin="plugin" time="65" arguments="bleep7 bleep1" />
+  </node>
+
+  <node id="bleep8">
+    <application plugin="plugin" time="70" arguments="bleep8 bleep1" />
+  </node>
+
+  <node id="bleep9">
+    <application plugin="plugin" time="75" arguments="bleep9 bleep1" />
+  </node>
+
+  <node id="bleep10">
+    <application plugin="plugin" time="80" arguments="bleep10 bleep1" />
+  </node>
+
+  <node id="injector">
+    <application plugin="injector" time="85" arguments="bleep1" />
   </node>
 
 </shadow>

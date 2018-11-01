@@ -15,7 +15,7 @@ class GossipProtocol {
   static GossipProtocol* GetInstance(); // sigleton pattern
 
   // variables and functions below are for mID and storage
-  std::vector<int> receivedMsgs;
+  std::vector<size_t> receivedMsgs;
   size_t CreateMsgId(P2PMessage msg);
   int    CheckAlreadyReceived(P2PMessage msg);
 

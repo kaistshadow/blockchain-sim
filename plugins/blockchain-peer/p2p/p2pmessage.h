@@ -45,9 +45,9 @@ class P2PMessage {
 
   // variables for Gossip protocol PlumTree
   int g_type;
-  int g_mid;
   int g_round;
-  
+  size_t g_mid;
+ 
   // variables for distintion 
   int type;
   boost::variant<Transaction, Block, SimpleConsensusMessage, MembershipMessage, StellarConsensusMessage, POWConsensusMessage> data;

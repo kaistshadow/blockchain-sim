@@ -59,29 +59,54 @@ int GossipProtocol::CheckAlreadyReceived(P2PMessage msg) {
 
 void GossipProtocol::RunGossipProtocol(SocketMessage msg) {
   P2PMessage pmsg = msg.GetP2PMessage();
+  int    sfd = msg.GetSocketfd();
   int g_type = pmsg.g_type;
+  PeerList* active_view = &SimplePeerList::GetInstance()->active_view;
 
   // if receiving GOSSIP type msgs, then need to check host already received it or not
   // if yes, the link that gave the msg to host is slow path so set sender as Lazy
   // if no, means first time, then since it is fast link so set sender as Eager
   // And push mid of new msg into "receivedMsgs"
+  // g_types like IHAVE, GRAFT are used to optimize/recover gossip overlay
+  // so we do not need to implement right now
   if (g_type == GOSSIP) {
-    int res = CheckAlreadyReceived(pmsg);
-    int sfd = msg.GetSocketfd();
-    PeerList* active_view = &SimplePeerList::GetInstance()->active_view;
+    int   res = CheckAlreadyReceived(pmsg);
+    int exist = 0;
     
     for (int i=0; i<active_view->size(); i++) {
       if (sfd == (*active_view)[i].sfd) {
-	(*active_view)[i].state = (res == 0)? Eager:Lazy;
+	if ((*active_view)[i].state == Eager) {
+	  (*active_view)[i].state = (res == 0)? Eager:Lazy;
+	  /*
+	  if (res) {
+	    if (pmsg.type == P2PMessage_POWCONSENSUSMESSAGE)
+	      std::cout << "@@Prune(CS) to "<< (*active_view)[i].peername <<" due to "<<pmsg.g_mid<<"\n";
+	    if (pmsg.type == P2PMessage_TRANSACTION)
+	      std::cout << "@@Prune(TX) to "<< (*active_view)[i].peername <<" due to "<<pmsg.g_mid<<"\n";
+	  }
+	  */
+	}
+	else {
+	  // receive new msg through Lazy edge
+	  if (!res) {
+	    std::cerr << "RunGossip: Recv New msg through Lazy edge\n";
+	    return;
+   	  } 
+	}
 	SimplePeerList::GetInstance()->PrintActive();
+	exist = 1;
 	break;
       }
+    }
+    if (!exist) {
+      std::cerr << "RunGossip: No such socket in active\n";   
     }
 
     if (!res) { 
       receivedMsgs.push_back(pmsg.g_mid);
     }
-    else { //send PRUNE
+    else { 
+      //send PRUNE to change opposite's edge state to Lazy
       P2PMessage pmsg;
       pmsg.g_type  = PRUNE;
       pmsg.g_mid   = 0;
@@ -89,26 +114,26 @@ void GossipProtocol::RunGossipProtocol(SocketMessage msg) {
       
       SocketMessage smsg;
       smsg.SetP2PMessage(pmsg);
-      smsg.SetMethod(M_UNICAST, msg.GetSocketfd());
-      SocketInterface::GetInstance()->PushToQueue(msg);
+      smsg.SetMethod(M_UNICAST, sfd);
+      SocketInterface::GetInstance()->PushToQueue(smsg);
+      // Do we need to broadcast already recieved msg? check the paper 
       return;
     }
   }
-  else if (g_type == PRUNE) {
-    int sfd = msg.GetSocketfd();
-    PeerList* active_view = &SimplePeerList::GetInstance()->active_view;
-    
+  else if (g_type == PRUNE) {    
+    int exist = 0;
     for (int i=0; i<active_view->size(); i++) {
       if (sfd == (*active_view)[i].sfd) {
 	(*active_view)[i].state = Lazy;
 	SimplePeerList::GetInstance()->PrintActive();
+	exist = 1;
 	break;
       }
     }
+    if (!exist) 
+      std::cerr << "RunGossip: No such socket in active(prune)\n";
     return;
   }
-  // g_types like IHAVE, GRAFT are used to optimize/recover gossip overlay
-  // so we do not need to implement right now
   else { 
     std::cerr << "RunGossip: Not use IHAVE,GRAFT yet\n";
     return;
@@ -155,8 +180,6 @@ void GossipProtocol::RunGossipProtocol(SocketMessage msg) {
     case P2PMessage_STELLARCONSENSUSMESSAGE:
       {
         // Not implemented yet. Even Not updated for plumtree
-
-        // 
         bool broadcast = false;
 
         StellarConsensusMessage *consensusMsg = boost::get<StellarConsensusMessage>(&pmsg.data);
@@ -173,7 +196,6 @@ void GossipProtocol::RunGossipProtocol(SocketMessage msg) {
           std::cout << "Wrong data in P2PMessage STELLARCONSENSUSMESSAGE" << "\n";
           exit(1);
         }
-
         // propagate a message to p2p network.
         // if (broadcast) {
         //   msg.IncreaseHopCount();
@@ -192,7 +214,6 @@ void GossipProtocol::RunGossipProtocol(SocketMessage msg) {
         //     }
         //   }
         // }
-
       }
 
     case P2PMessage_SIMPLECONSENSUSMESSAGE:
@@ -210,7 +231,6 @@ void GossipProtocol::RunGossipProtocol(SocketMessage msg) {
   // Broadcast to whole peer which have Eager state
   // In this case, the "g_mid" does not change and also "g_type"
   // Yet, we do not use "g_round" so using BROADCAST is fine
-  int sfd = msg.GetSocketfd();
   msg.SetMethod(BROADCAST, sfd);
   SocketInterface::GetInstance()->PushToQueue(msg);
 }
@@ -225,7 +245,19 @@ void GossipProtocol::ProcessQueue() {
   while(!queue->empty()){
     P2PMessage pmsg = queue->front();
     pmsg.g_mid = CreateMsgId(pmsg);
-  
+
+    // check created mid alreay exists in storage
+    // if not, inset it into the storage
+    // else, print error log since its not allowed
+    int res = CheckAlreadyReceived(pmsg);
+    if (!res) { 
+      receivedMsgs.push_back(pmsg.g_mid);
+      std::cout << "@@mid: "<<pmsg.g_mid<<"\n";
+    }
+    else {
+      std::cerr << "@@PlumTree: broadcast already known mid\n";
+    }
+    
     SocketMessage msg = SocketMessage();
     msg.SetP2PMessage(pmsg);
     msg.SetMethod(BROADCAST, 0);

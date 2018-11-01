@@ -48,12 +48,16 @@ if __name__ == '__main__':
     # datadir = "pow-consensus-large-datadir"
     shadow_plugin = "PEER_POWCONSENSUS"
 
+    labeldict = {}
+
     Graph = nx.DiGraph()
     Graph.add_node("genesis")
-    Graph.add_node("0000000")
-    Graph.add_edge("genesis", "0000000")
+    labeldict["genesis"] = "genesis"
+    Graph.add_node("00000000000000")
+    labeldict["00000000000000"] = "0000"
+    Graph.add_edge("genesis", "00000000000000")
 
-    pattern = re.compile(r"Block idx=([0-9]+),.*,Block hash=\[\[([0-9a-fA-F]{7}).+\]\[.+\]\],Prev Block hash=\[\[([0-9a-fA-F]{7}).+")
+    pattern = re.compile(r"Block idx=([0-9]+),.*,Block hash=\[\[([0-9a-fA-F]{14}).+\]\[.+\]\],Prev Block hash=\[\[([0-9a-fA-F]{14}).+")
 
     for i in range(1, nodenum):
         logfile = "./%s/hosts/bleep%d/stdout-bleep%d.%s.1000.log" % (datadir, i, i, shadow_plugin)        
@@ -76,8 +80,10 @@ if __name__ == '__main__':
             (block_hash, prev_block_hash) = blocks[idx]
             if not Graph.has_node(block_hash):
                 Graph.add_node(block_hash)
+                labeldict[block_hash] = block_hash[:4]
             if not Graph.has_node(prev_block_hash):
                 Graph.add_node(prev_block_hash)
+                labeldict[prev_block_hash] = prev_block_hash[:4]
             Graph.add_edge(prev_block_hash, block_hash)
 
         # print blocks
@@ -85,10 +91,12 @@ if __name__ == '__main__':
         (block_hash, prev_block_hash) = blocks[sorted(blocks.keys())[-1]]
         bleep_id = "bleep%d" % i
         Graph.add_node(bleep_id)
+        labeldict[bleep_id] = bleep_id
         Graph.add_edge(block_hash, bleep_id)
 
 
     pos = hierarchy_pos(Graph, "genesis")
 
-    nx.draw(Graph, pos=pos, with_labels = True, width=2, node_size = 1000, node_shape = 's', arrowstyle='simple', node_color = 'white')
+    # labeldict = {}
+    nx.draw(Graph, pos=pos, labels=labeldict, with_labels = True, width=2, node_size = 1, node_shape = 's', arrowstyle='simple', arrowsize="1", node_color = 'white')
     plt.show()

@@ -51,9 +51,8 @@ void POWLedgerManager::UpdateLedgerAsLongestChain(POWBlocks* blks) {
     }
     // Now blocks pointed by ledger_it and received_blks_it have same index but different hash
 
-    if (ledger_it != list_ledger.end() && received_blks_it != blks->end()) {
+    if (received_blks_it != blks->end()) {
         ReplaceLedger(ledger_it, received_blks_it, blks->end());
-
         DumpLedgerToJSONFile("ledger.json");
     }
 }

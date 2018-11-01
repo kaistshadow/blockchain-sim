@@ -38,5 +38,47 @@ def setup_multiple_node_xml(node_num):
 
     tree.write(new_xml, pretty_print=True)
 
+def setup_multiple_node_xml_centralized(node_num):
+    baseline_xml = "test/BLEEP/centralized-broadcast.xml"
+    new_xml = "test/BLEEP/centralized-broadcast-large.xml"
+
+    parser = ET.XMLParser(remove_blank_text=True, strip_cdata=False)
+
+    tree = ET.parse(baseline_xml, parser)
+
+    shadow = tree.getroot()
+
+    for node in shadow.findall('node'):
+        shadow.remove(node)
+        
+    for node in shadow.findall('kill'):
+        shadow.remove(node)
+    ET.SubElement(shadow, "kill", time="50")
+
+
+    node = ET.SubElement(shadow, "node", id="dump_blockchain")
+    ET.SubElement(node, "application", plugin="DUMP_POWBLOCKCHAIN", time="2", arguments="")
+
+
+    node_array = ["bleep%d"% i for i in range(1,node_num)]
+    node = ET.SubElement(shadow, "node", id="bleep0")
+    ET.SubElement(node, "application", plugin="PROXY_POWCONSENSUS", time="3", arguments="bleep0 "+ " ".join(node_array))
+    
+    for i in range(1,node_num):
+        node_id = "bleep%d" % (i)
+
+        node = ET.SubElement(shadow, "node", id=node_id)            
+        time = str(5 + i/100)
+        argument = "bleep1"
+        argument = "bleep%d bleep0" % i
+        ET.SubElement(node, "application", plugin="PEER_POWCONSENSUS", time=time, arguments=argument)
+
+    node_id = "bleep%d" % (node_num)
+    node = ET.SubElement(shadow, "node", id=node_id)
+    ET.SubElement(node, "application", plugin="INJECTOR_POWCONSENSUS", time="10", arguments="bleep0 20")
+
+    tree.write(new_xml, pretty_print=True)
+
 if __name__ == '__main__':
-    setup_multiple_node_xml(10)
+    # setup_multiple_node_xml(10)
+    setup_multiple_node_xml_centralized(500)

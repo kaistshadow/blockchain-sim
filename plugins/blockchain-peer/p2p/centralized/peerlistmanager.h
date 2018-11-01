@@ -29,6 +29,7 @@ class Peer{
     RECV_STATUS recv_status;
     int payload_len;
     int received_len;
+    std::string recv_str;
 };
 
 

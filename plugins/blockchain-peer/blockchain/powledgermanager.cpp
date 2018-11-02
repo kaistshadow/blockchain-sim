@@ -57,3 +57,64 @@ void POWLedgerManager::UpdateLedgerAsLongestChain(POWBlocks* blks) {
     }
 }
 
+utility::UINT256_t POWLedgerManager::CalculateCurrentDifficulty() {
+    unsigned char default_th[32] = {0x00,0x0f,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};
+
+    if (list_ledger.size() < 2)
+        return utility::UINT256_t(default_th, 32);
+    if (list_ledger.back().GetDifficulty() == 0)
+        return utility::UINT256_t(default_th, 32);
+
+    std::list<POWBlock>::reverse_iterator rit = list_ledger.rbegin();
+    double last_timestamp = (*rit).GetTimestamp();
+    utility::UINT256_t last_difficulty = (*rit).GetDifficulty();
+    
+    int i = 0;
+    std::vector<double> time_diffs;
+
+    rit++;
+    while (rit != list_ledger.rend() && i < 100) {
+        double past_timestamp = (*rit).GetTimestamp();
+        double time_diff = last_timestamp - past_timestamp;
+        time_diffs.push_back(time_diff);
+        last_timestamp = past_timestamp;
+
+        rit++;
+        i++;
+    }
+
+    
+    int short_diff_num = 0;
+    int proper_diff_num = 0;
+    int long_diff_num = 0;
+    for (auto time_diff : time_diffs) {
+        if (time_diff < 1)
+            short_diff_num++;
+        else if (2 <= time_diff && time_diff <= 50)
+            proper_diff_num++;
+        else if (50 < time_diff)
+            long_diff_num++;
+    }
+
+    utility::UINT256_t new_difficulty;
+    if (short_diff_num > proper_diff_num + long_diff_num)
+        new_difficulty = last_difficulty >> 1;
+    else if (proper_diff_num > short_diff_num + long_diff_num)
+        new_difficulty = last_difficulty;
+    else if (long_diff_num > short_diff_num + proper_diff_num)
+        new_difficulty = (last_difficulty << 1) | 0x1;
+    else
+        new_difficulty = last_difficulty;
+    
+    // if (0.5 <= time_diff && time_diff < 10)
+    //     new_difficulty = last_difficulty;
+    // else if (time_diff < 0.5)
+    //     new_difficulty = last_difficulty >> 1;
+    // else if (time_diff > 10)
+    //     new_difficulty = (last_difficulty << 1) | 0x1;
+        
+    // std::cout  << "last_timestamp:"<< last_timestamp <<",past_timestamp:" <<past_timestamp <<",time_diff=" <<time_diff << ",last_difficulty="<<last_difficulty << ",new_diffi=" << new_difficulty << "\n";
+
+    return new_difficulty;
+            
+}

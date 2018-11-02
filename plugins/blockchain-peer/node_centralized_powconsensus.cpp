@@ -16,6 +16,7 @@
 #include "util/eventqueue.h"
 #include "util/globalclock.h"
 #include "util/types.h"
+#include "util/logmanager.h"
 
 #include "crypto/sha256.h"
 
@@ -50,7 +51,8 @@ void NodeInit(int argc, char *argv[]) {
     POWLedgerManager::GetInstance()->LoadLedgerFromFile();
     
 
-    utility::globalclock_start = time(0);
+    utility::globalclock_start = std::chrono::high_resolution_clock::now();
+    utility::logger_opt = LOGGER_OFF;
 
     // Set Node host id
     NodeInfo::GetInstance()->SetHostId(std::string(argv[1]));
@@ -98,7 +100,7 @@ void NodeLoop() {
     cout << "temp:" << hash_out2_int << "\n";
 
     while (true) {
-        usleep(1000);
+        usleep(100000);
         // cout << "globalclock:" << utility::GetGlobalClock() << "\n";
 
         // process synchronous event queue

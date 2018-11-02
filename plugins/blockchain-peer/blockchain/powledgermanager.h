@@ -27,6 +27,8 @@ class POWLedgerManager : public ListLedgerManager<POWBlock> {
     
     void UpdateLedgerAsLongestChain(POWBlocks *blks);
 
+    utility::UINT256_t CalculateCurrentDifficulty();
+
     /* /\** */
     /*  * Load Ledger from file. */
     /*  * Save Ledger into file. */

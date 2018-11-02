@@ -15,7 +15,7 @@ def setup_multiple_node_xml(node_num):
         
     for node in shadow.findall('kill'):
         shadow.remove(node)
-    ET.SubElement(shadow, "kill", time="50")
+    ET.SubElement(shadow, "kill", time="200")
 
 
     node = ET.SubElement(shadow, "node", id="bleep0")
@@ -53,7 +53,7 @@ def setup_multiple_node_xml_centralized(node_num):
         
     for node in shadow.findall('kill'):
         shadow.remove(node)
-    ET.SubElement(shadow, "kill", time="50")
+    ET.SubElement(shadow, "kill", time="1000")
 
 
     node = ET.SubElement(shadow, "node", id="dump_blockchain")
@@ -68,14 +68,15 @@ def setup_multiple_node_xml_centralized(node_num):
         node_id = "bleep%d" % (i)
 
         node = ET.SubElement(shadow, "node", id=node_id)            
-        time = str(5 + i/100)
+        # time = str(5 + i/100)
+        time = str(5)
         argument = "bleep1"
         argument = "bleep%d bleep0" % i
         ET.SubElement(node, "application", plugin="PEER_POWCONSENSUS", time=time, arguments=argument)
 
     node_id = "bleep%d" % (node_num)
     node = ET.SubElement(shadow, "node", id=node_id)
-    ET.SubElement(node, "application", plugin="INJECTOR_POWCONSENSUS", time="10", arguments="bleep0 20")
+    ET.SubElement(node, "application", plugin="INJECTOR_POWCONSENSUS", time="10", arguments="bleep0 30")
 
     tree.write(new_xml, pretty_print=True)
 

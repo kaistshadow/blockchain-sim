@@ -53,7 +53,8 @@ void NodeInit(int argc, char *argv[]) {
     LedgerManager::SetInstance(stellarConsensusDriver, "blk.dat");
     LedgerManager::GetInstance()->InitLedger();
 
-    utility::globalclock_start = time(0);
+    // utility::globalclock_start = time(0);
+    utility::globalclock_start = std::chrono::high_resolution_clock::now();
 }
 
 void NodeLoop() {

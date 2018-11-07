@@ -5,7 +5,7 @@
 #include <string>
 #include "socketmessage.h"
 
-#define ActiveSize   5//3
+#define ActiveSize  5//3
 #define PassiveSize 30//15
 #define Eager 1
 #define Lazy  0

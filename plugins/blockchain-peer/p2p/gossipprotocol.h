@@ -7,8 +7,8 @@
 #include "socketmessage.h"
 #include "p2pmessage.h"
 
-#define ARWL 3//6
-#define PRWL 1//3
+#define ARWL 6//3//6
+#define PRWL 3//1//3
 #define Ka 3
 #define Kp 4
 

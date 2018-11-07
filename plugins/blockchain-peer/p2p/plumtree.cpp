@@ -147,14 +147,13 @@ void GossipProtocol::RunGossipProtocol(SocketMessage msg) {
       {
 	Transaction tx = boost::get<Transaction>(pmsg.data);
 	TxPool::GetInstance()->PushTxToQueue(tx);
-	std::cerr << "recv new tx\n";
+	//std::cerr << "recv new tx\n";
       }
       break;
 
     case P2PMessage_BLOCK:
       {
-	std::cerr << "recv new blk\n";
-
+	//std::cerr << "recv new blk\n";
         // Must be propagated to proper ledgermanager.
         // Currently, do thing.
 
@@ -220,7 +219,7 @@ void GossipProtocol::RunGossipProtocol(SocketMessage msg) {
       {
 	SimpleConsensusMessage cmsg = boost::get<SimpleConsensusMessage>(pmsg.data);
 	SimpleConsensus::GetInstance()->PushToQueue(cmsg);
-	std::cerr << "recv new css msg\n";
+	//std::cerr << "recv new css msg\n";
       }
       break;
       

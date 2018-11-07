@@ -32,15 +32,17 @@ def set_edge_color(edges):
         i = edges.index(overlay[idx])
         a1 = overlay[idx][0]
         a2 = overlay[idx][1]
-        j = edges.index((a2,a1))
-
-        if overlay_color[i] == 'lightgray':
-            overlay_color[i] = 'red'            
-            overlay_color[j] = 'red'
-
-        elif overlay_color[i] == 'red':
-            overlay_color[i] = 'darkgreen'            
-            overlay_color[j] = 'darkgreen'
+        
+        if (a2,a1) in edges:
+            j = edges.index((a2,a1))
+            if overlay_color[i] == 'lightgray':
+                overlay_color[i] = 'red'            
+                overlay_color[j] = 'red'
+            elif overlay_color[i] == 'red':
+                overlay_color[i] = 'darkgreen'            
+                overlay_color[j] = 'darkgreen'
+        else:
+            overlay_color[i] = 'red'
 
 # Check Edges to make HyparView Overlay
 def check_edge(i, j):
@@ -118,11 +120,6 @@ if __name__ == '__main__':
     set_node_color(num, list(Graph.node()))
     set_edge_color(list(Graph.edges()))
 
-    #nx.draw(Graph, node_color=color_map, with_labels = True)
-    #pos = nx.circular_layout(Graph)
-    #nx.draw_circular(Graph, with_labels = True)
-    #nx.draw_random(Graph, with_labels = True)
-    #nx.draw_spring(Graph, with_labels = True) 
     nx.draw(Graph, with_labels = True, node_color = color, edge_color = overlay_color, width=2)
     #nx.draw(Graph, with_labels = True, node_color = color, width=2)
 

@@ -209,8 +209,9 @@ void SocketInterface::SendFailMsg(int sfd){
   SimpleGossipProtocol::GetInstance()->PushToQueue(smsg);
 
   SocketData* entry = FindSocketDataEntry(sfd);
-  if (entry)
-    std::cerr << "NF: from " << entry->id << '\n';
+  // for debugging
+  if (entry) 
+    std::cerr << "NF: from " << entry->id << ".\n";
   else
     std::cerr << "NF: no entry exists sfd = " << sfd << '\n';
 
@@ -238,7 +239,7 @@ SocketData* SocketInterface::CreateSocketDataEntry(int sfd) {
 }
 
 void SocketInterface::DeleteSocketDataEntry(int sfd) {
-  for (int i=0; i<socket_view.size();i++) {
+  for (int i=0; i<socket_view.size(); i++) {
     if (socket_view[i].sfd == sfd) {
       socket_view.erase(socket_view.begin()+i);
       SetEvent(EPOLL_CTL_DEL, EPOLLIN, sfd);
@@ -251,7 +252,6 @@ void SocketInterface::DeleteSocketDataEntry(int sfd) {
 /**
  * DEPRECATED (temporarily used for testing PoW consensus)
  * temporary implementation for unicast 
- */
 void SocketInterface::UnicastP2PMsg(P2PMessage msg, const char *hostname) {
     NetworkMessage nmsg(NetworkMessage_P2PMSG, msg);
 
@@ -322,6 +322,7 @@ void SocketInterface::UnicastP2PMsg(P2PMessage msg, const char *hostname) {
     }           
 
 }
+*/
 
 int SocketInterface::InsertSocketData(int sfd, SocketMessage msg) {
   SocketData* entry = FindSocketDataEntry(sfd);
@@ -334,8 +335,10 @@ int SocketInterface::InsertSocketData(int sfd, SocketMessage msg) {
 
 void SocketInterface::ProcessMsg(SocketMessage msg) {
   int type = msg.GetMethod();
-  
-  if (type & M_CONNECT) {
+ 
+  // Method for connecting to specific node
+  // Now, assuming CONNECT always brings P2P Msg to be transmitted
+  if (type == M_CONNECT) {//&->==
     if (!msg.sockets.empty()) { 
       std::cerr << "Msg Process: connect: non empty socket list\n";
       return;
@@ -344,7 +347,7 @@ void SocketInterface::ProcessMsg(SocketMessage msg) {
     SocketData* entry = FindSocketDataEntryById(msg.GetDstPeer());
     if (entry) {
       int sfd = entry->sfd;
-      if (type & M_DISCONNECT) {
+      if (type & M_DISCONNECT) {//now, useless due to ==
 	msg.SetMethod(M_DISCONNECT, sfd);
       }
       else {
@@ -366,7 +369,8 @@ void SocketInterface::ProcessMsg(SocketMessage msg) {
     }
     return;
   }
-  
+ 
+  // Method for maintain SocketDataEntry, update node ID related to given socket# 
   if (type == M_UPDATE) {
     SocketData* entry = FindSocketDataEntry(msg.GetSocketfd()); 
     if (!entry) {
@@ -380,12 +384,14 @@ void SocketInterface::ProcessMsg(SocketMessage msg) {
     return;
   }
 
-  if (type == M_DISCONNECT) { //need to change 
+  // Method for disconnect to specific node, delete entry from SocketDataEntry list.
+  if (type == M_DISCONNECT) {
     int sfd = msg.GetSocketfd();
     DeleteSocketDataEntry(sfd);
     return;
   }
   
+  // Methods that use socket# list, "sockets", for multicasting msgs or one msg.
   if (type == M_BROADCAST || type == BROADCAST || type == M_UNICAST) {
     for (int i=0; i<msg.sockets.size(); i++) {  
       int sfd = msg.sockets[i];
@@ -396,11 +402,12 @@ void SocketInterface::ProcessMsg(SocketMessage msg) {
 	continue;
       }
       SetEvent(EPOLL_CTL_MOD, EPOLLOUT, sfd);      
-
+      /*
       // for debug
       P2PMessage pmsg = msg.GetP2PMessage();
       if (pmsg.g_type == GOSSIP)
 	std::cout << "send mid:"<< pmsg.g_mid << "\n";
+      */
     }
     return;
   }
@@ -479,7 +486,7 @@ void SocketInterface::ProcessNetworkEvent() {
 	    int numbytes = recv(fd, &len, sizeof(int), 0);
 	    if (numbytes <= 0) {
 	      if (numbytes == 0)
-		std::cerr << "recv event: connection closed(1)\n";	      
+		std::cerr << "recv event: connection closed(idle)\n";	      
 	      else
 		std::cerr << "recv event: recv length fail\n";	      
 	      SendFailMsg(fd);
@@ -517,7 +524,7 @@ void SocketInterface::ProcessNetworkEvent() {
                 recv_str.append(buffer, numbytes);
               }
               else if (numbytes == 0) {
-                std::cerr << "recv event: connection closed\n";
+                std::cerr << "recv event: connection closed(len)\n";
                 break;
               }
               else if (numbytes < 0) {
@@ -581,9 +588,9 @@ void SocketInterface::PrintSocketList() {
   return;
   for (int i=0; i<socket_view.size(); i++){
     SocketData sd = socket_view[i];
-    std::cerr <<'('<< sd.sfd << ','<<sd.id<<')';
+    std::cout <<'('<< sd.sfd << ','<<sd.id<<')';
   }
-  std::cerr <<'\n';
+  std::cout <<'\n';
 }
 
 

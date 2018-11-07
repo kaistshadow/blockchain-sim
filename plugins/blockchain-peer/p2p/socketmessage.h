@@ -7,8 +7,8 @@
 
 typedef enum method {
   // For Membership
-  M_NORMAL      = 0, // May be useless(check)
-  M_NETWORKFAIL = 1, // NOT use protocol->socket direction
+  M_NORMAL      = 0, // ONLY use socket->protocol direction
+  M_NETWORKFAIL = 1, // ONLY use socket->protocol direction
   M_BROADCAST   = 2,
   M_UNICAST     = 4,
   M_CONNECT     = 8,
@@ -16,7 +16,7 @@ typedef enum method {
   M_UPDATE      = 32,
 
   // For Gossip
-  BROADCAST,
+  BROADCAST
 } Method;
 
 class SocketMessage{

@@ -92,7 +92,12 @@ void SimplePeerList::AddToActive(Peer node) {
     passive_view.erase(passive_view.begin() + idx);
     PrintPassive();
   }
-  if (ExistInActiveById(node.peername) != -1) {
+  
+  idx = ExistInActiveById(node.peername);
+  if (idx != -1) {
+    if (active_view[idx].sfd != node.sfd) {
+      std::cerr << "AddToActive: same id,diff sfd "<<active_view[idx].sfd<<"|"<<node.sfd<<"\n";
+    }
     return;
   }
 
@@ -107,6 +112,7 @@ void SimplePeerList::DropRandomFromPassive() {
   srand(time(0));
   int idx = rand() % (int)passive_view.size();
   passive_view.erase(passive_view.begin() + idx);
+  // Need to close the socket if droped node have a connection
   PrintPassive();  
 }
 
@@ -114,6 +120,7 @@ void SimplePeerList::DropFromPassive(int fd) {
   for (int i=0; i<passive_view.size(); i++){
     if (passive_view[i].sfd == fd) {
       passive_view.erase(passive_view.begin() + i);
+      // Need to close the socket if droped node have a connection
       PrintPassive();
       return;
     }
@@ -143,9 +150,10 @@ void SimplePeerList::AddToPassive(Peer node) {
   if (ExistInPassiveById(node.peername) != -1)
     return;
   
-  if (passive_view.size() == PassiveSize)
+  if (passive_view.size() == PassiveSize) {
     passive_view.erase(passive_view.begin());
-
+    // Need to close the socket if droped node have a connection
+  }
   passive_view.push_back(node);
   PrintPassive();
 }

@@ -6,7 +6,7 @@ void SocketMessage::SetMethod(int m, int fd) {
   method = m;
   if (fd == -1 || method == M_CONNECT) 
     return;
-  if (method == M_NETWORKFAIL || method == M_UPDATE || method == M_NORMAL) {
+  if (method == M_NETWORKFAIL || method == M_NORMAL || method == M_UPDATE || method == M_DISCONNECT) {
     socket_fd = fd;
     return;
   }
@@ -31,8 +31,9 @@ void SocketMessage::SetMethod(int m, int fd) {
   }
 
   // Set sockets with only one sfd
-  if (method == M_UNICAST || method & M_DISCONNECT) {
+  if (method == M_UNICAST) {
     sockets.push_back(fd);
+    socket_fd = -1;
     return;
   }
 }

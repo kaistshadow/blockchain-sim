@@ -8,6 +8,7 @@
 #include "../blockchain/powledgermanager.h"
 #include "../util/globalclock.h"
 #include "../util/hexstring.h"
+#include "../util/logmanager.h"
 
 #include "powconsensusmessage.h"
 
@@ -40,6 +41,7 @@ unsigned long POWConsensus::RunProofOfWork(POWBlock *pendingBlk, int trial) {
         srand((unsigned int)time(0));
         unsigned long nonce = rand() * rand() * rand();
         unsigned char hash_out[32];
+        utility::UINT256_t threshold = POWLedgerManager::GetInstance()->CalculateCurrentDifficulty();
 
         SHA256_CTX ctx;
         sha256_init(&ctx);
@@ -48,15 +50,20 @@ unsigned long POWConsensus::RunProofOfWork(POWBlock *pendingBlk, int trial) {
         unsigned long blockidx = pendingBlk->GetBlockIdx();
         sha256_update(&ctx, (const unsigned char*)&blockidx, sizeof(unsigned long));
         sha256_update(&ctx, (const unsigned char*)pendingBlk->GetPrevBlockHash().str().c_str(), pendingBlk->GetPrevBlockHash().str().size());
+        double timestamp = utility::GetGlobalClock();
+        sha256_update(&ctx, (const unsigned char*)&timestamp, sizeof(double));
         sha256_final(&ctx, hash_out);
 
         utility::UINT256_t hash_out_256(hash_out, 32);
-        unsigned char th[32] = {0x00,0x0f,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};
+        // unsigned char th[32] = {0x00,0x00,0x0f,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};
+        // utility::UINT256_t threshold(th, 32);
 
-        utility::UINT256_t threshold(th, 32);
         if (hash_out_256 < threshold) {
             pendingBlk->SetNonce(nonce);
             pendingBlk->SetBlockHash(hash_out_256);
+            pendingBlk->SetTimestamp(timestamp);
+            pendingBlk->SetDifficulty(threshold);
+            std::cout << "valid block found : Difficulty =" << threshold << "\n";
             return nonce;
         }
     }
@@ -135,10 +142,16 @@ void POWConsensus::Run() {
 
     // 2. append a new valid block to a ledger. and propagate to network
     TxPool::GetInstance()->RemoveTxs(pendingBlk->GetTransactions());
-    std::string rawhash = pendingBlk->GetBlockHash().str().substr(0,6);
-    std::string hashval = utility::HexStr(rawhash);
-    std::cout << utility::GetGlobalClock() << ":valid block found and appended : " << hashval << "\n";
-    std::cout << *pendingBlk << "\n";
+    if (utility::GetLoggerOption() == LOGGER_ON) {
+        std::string rawhash = pendingBlk->GetBlockHash().str().substr(0,6);
+        std::string hashval = utility::HexStr(rawhash);
+        std::cout << utility::GetGlobalClock() << ":valid block found and appended : " << hashval << "\n";
+        std::cout << *pendingBlk << "\n";
+    }
+    else {
+        std::cout << utility::GetGlobalClock() << ":valid block found and appended" << "\n";
+        std::cout << *pendingBlk << "\n";
+    }
     POWLedgerManager::GetInstance()->AppendBlock(*pendingBlk);
     POWLedgerManager::GetInstance()->DumpLedgerToJSONFile("ledger.json");
     InjectValidBlockToP2PNetwork(pendingBlk);
@@ -166,20 +179,32 @@ void POWConsensus::ProcessQueue() {
                         POWLedgerManager::GetInstance()->AppendBlock(*blk);
                         POWLedgerManager::GetInstance()->DumpLedgerToJSONFile("ledger.json");
 
-                        std::string rawhash = blk->GetBlockHash().str().substr(0,6);
-                        std::string hashval = utility::HexStr(rawhash);
-                        std::cout << utility::GetGlobalClock() << ":Block is received and appended :" << hashval << "\n";
-                        std::cout << *blk << "\n";
+                        if (utility::GetLoggerOption() == LOGGER_ON) {
+                            std::string rawhash = blk->GetBlockHash().str().substr(0,6);
+                            std::string hashval = utility::HexStr(rawhash);
+                            std::cout << utility::GetGlobalClock() << ":Block is received and appended :" << hashval << "\n";
+                            std::cout << *blk << "\n";
+                        }
+                        else {
+                            std::cout << utility::GetGlobalClock() << ":Block is received and appended" << "\n";
+                            std::cout << *blk << "\n";
+                        }
                     }
                     else if (lastblk->GetBlockHash() == blk->GetPrevBlockHash() && nextblkidx == blk->GetBlockIdx()) {
                         TxPool::GetInstance()->RemoveTxs(blk->GetTransactions());
                         POWLedgerManager::GetInstance()->AppendBlock(*blk);
                         POWLedgerManager::GetInstance()->DumpLedgerToJSONFile("ledger.json");
 
-                        std::string rawhash = blk->GetBlockHash().str().substr(0,6);
-                        std::string hashval = utility::HexStr(rawhash);
-                        std::cout << utility::GetGlobalClock() << ":Block is received and appended :" << hashval << "\n";
-                        std::cout << *blk << "\n";
+                        if (utility::GetLoggerOption() == LOGGER_ON) {
+                            std::string rawhash = blk->GetBlockHash().str().substr(0,6);
+                            std::string hashval = utility::HexStr(rawhash);
+                            std::cout << utility::GetGlobalClock() << ":Block is received and appended :" << hashval << "\n";
+                            std::cout << *blk << "\n";
+                        }
+                        else {
+                            std::cout << utility::GetGlobalClock() << ":Block is received and appended" << "\n";
+                            std::cout << *blk << "\n";
+                        }
                     }
                     else if (nextblkidx <= blk->GetBlockIdx()) {
                         std::cout << "Block (sented by " << msg.msg_sender << ") is received and longer than mine" << "\n";
@@ -191,9 +216,13 @@ void POWConsensus::ProcessQueue() {
                     }
                     else {
                         // cout << blk->GetBlockHash() << "\n";
-                        std::string rawhash = blk->GetBlockHash().str().substr(0,6);
-                        std::string hashval = utility::HexStr(rawhash);
-                        std::cout << utility::GetGlobalClock() << ":Block is received but not appended :" << hashval << "\n";
+                        if (utility::GetLoggerOption() == LOGGER_ON) {
+                            std::string rawhash = blk->GetBlockHash().str().substr(0,6);
+                            std::string hashval = utility::HexStr(rawhash);
+                            std::cout << utility::GetGlobalClock() << ":Block is received but not appended :" << hashval << "\n";
+                        }
+                        else
+                            std::cout << utility::GetGlobalClock() << ":Block is received but not appended" << "\n";
                     }
                 }
                 else {
@@ -221,9 +250,13 @@ void POWConsensus::ProcessQueue() {
         case POWConsensusMessage_RESPBLOCKS: 
             {
                 POWBlocks *blks = boost::get<POWBlocks>(&msg.value);
-                std::string rawhash = blks->back().GetBlockHash().str().substr(0,6);
-                std::string hashval = utility::HexStr(rawhash);
-                std::cout << utility::GetGlobalClock() << ":RESPBLOCKS message is received from " << msg.msg_sender << ": last block hash=" << hashval << "\n";
+                if (utility::GetLoggerOption() == LOGGER_ON) {
+                    std::string rawhash = blks->back().GetBlockHash().str().substr(0,6);
+                    std::string hashval = utility::HexStr(rawhash);
+                    std::cout << utility::GetGlobalClock() << ":RESPBLOCKS message is received from " << msg.msg_sender << ": last block hash=" << hashval << "\n";
+                }
+                else
+                    std::cout << utility::GetGlobalClock() << ":RESPBLOCKS message is received from " << msg.msg_sender << "\n";
 
                 POWLedgerManager::GetInstance()->UpdateLedgerAsLongestChain(blks);
             }

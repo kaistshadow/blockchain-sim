@@ -7,6 +7,7 @@
 #include "../blockchain/powledgermanager.h"
 #include "../p2p/gossipprotocol.h"
 #include "../util/nodeinfo.h"
+#include "../util/globalclock.h"
 
 #include "powconsensusmessage.h"
 
@@ -39,6 +40,7 @@ unsigned long POWConsensus::RunProofOfWork(POWBlock *pendingBlk, int trial) {
         srand((unsigned int)time(0));
         unsigned long nonce = rand() * rand() * rand();
         unsigned char hash_out[32];
+        utility::UINT256_t threshold = POWLedgerManager::GetInstance()->CalculateCurrentDifficulty();
 
         SHA256_CTX ctx;
         sha256_init(&ctx);
@@ -47,15 +49,19 @@ unsigned long POWConsensus::RunProofOfWork(POWBlock *pendingBlk, int trial) {
         unsigned long blockidx = pendingBlk->GetBlockIdx();
         sha256_update(&ctx, (const unsigned char*)&blockidx, sizeof(unsigned long));
         sha256_update(&ctx, (const unsigned char*)pendingBlk->GetPrevBlockHash().str().c_str(), pendingBlk->GetPrevBlockHash().str().size());
+        double timestamp = utility::GetGlobalClock();
+        sha256_update(&ctx, (const unsigned char*)&timestamp, sizeof(double));
         sha256_final(&ctx, hash_out);
 
         utility::UINT256_t hash_out_256(hash_out, 32);
-        unsigned char th[32] = {0x00,0x0f,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};
+        // unsigned char th[32] = {0x00,0x0f,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};
+        // utility::UINT256_t threshold(th, 32);
 
-        utility::UINT256_t threshold(th, 32);
         if (hash_out_256 < threshold) {
             pendingBlk->SetNonce(nonce);
             pendingBlk->SetBlockHash(hash_out_256);
+            pendingBlk->SetTimestamp(timestamp);
+            pendingBlk->SetDifficulty(threshold);
             return nonce;
         }
     }

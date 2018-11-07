@@ -35,6 +35,12 @@ class POWBlock : public Block {
     void SetPrevBlockHash(utility::UINT256_t hash) { prev_block_hash = hash; }
     utility::UINT256_t GetPrevBlockHash() const { return prev_block_hash; }
 
+    void SetTimestamp(double t) { timestamp = t; }
+    double GetTimestamp() const { return timestamp; }
+
+    void SetDifficulty(utility::UINT256_t d) {difficulty = d; }
+    utility::UINT256_t GetDifficulty() const { return difficulty; }
+
     // virtual function induces a segmentation fault of shadow simulator
     // I don't know why! Need to debug later
     // void DumpToJson(boost::property_tree::ptree& root) override;
@@ -52,6 +58,8 @@ class POWBlock : public Block {
         ar & tx_hash;
         ar & block_hash;
         ar & prev_block_hash;
+        ar & timestamp;
+        ar & difficulty;
     }
 
     void SetTxHash();
@@ -61,6 +69,9 @@ class POWBlock : public Block {
     unsigned long block_idx;
     utility::UINT256_t block_hash;
     utility::UINT256_t prev_block_hash;
+
+    double timestamp = 0;
+    utility::UINT256_t difficulty = 0;  // Currently, it's just threshold value. (unlike real bitcoin formula)
 
     /* std::string block_id; */
     /* std::list<Transaction> tx_list; */

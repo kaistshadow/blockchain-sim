@@ -1,5 +1,5 @@
 import os
-from subprocess import check_output
+from subprocess import check_output, Popen, PIPE
 import argparse
 import sys
 
@@ -12,10 +12,21 @@ if __name__ == '__main__':
     os.system("rm -rf %s" % datadir)
 
     ## run shadow for test
-    returnCode = os.system("~/.shadow/bin/shadow -d %s %s" % (datadir, shadow_configfile))
-    if returnCode != 0:
+    # returnCode = os.system("~/.shadow/bin/shadow -d %s %s" % (datadir, shadow_configfile))
+    # if returnCode != 0:
+    #     print "test failed"
+    #     sys.exit(-1)
+    shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-d", datadir, shadow_configfile], stdout=PIPE)
+    shadow_stdout = shadow.communicate()[0]
+    shadow_returnCode = shadow.returncode
+    for line in shadow_stdout:
+        if "critical" in shadow_stdout:
+            print "critical error is occurred during shadow simulation"
+            sys.exit(-1)
+    if shadow_returnCode != 0:
         print "test failed"
         sys.exit(-1)
+
 
     ## check Block idx and Block nonce (consensus over p2p network)
     outputfile1 = "./%s/hosts/bleep1/stdout-bleep1.%s.1000.log" % (datadir, shadow_plugin)

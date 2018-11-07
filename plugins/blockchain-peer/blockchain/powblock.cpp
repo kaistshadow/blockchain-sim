@@ -44,7 +44,9 @@ std::ostream& operator<<(std::ostream& os, const POWBlock& blk) {
     os << blk.GetId() << ":" << "Block idx=" << blk.GetBlockIdx() << ",";
     os << "Block nonce=" << blk.GetNonce() << ",";    
     os << "Block hash=" << blk.GetBlockHash() << ",";    
-    os << "Prev Block hash=" << blk.GetPrevBlockHash() << "\n";    
+    os << "Prev Block hash=" << blk.GetPrevBlockHash() << ","; 
+    os << "Timestamp=[" << blk.GetTimestamp() << "],";    
+    os << "Difficulty=" << blk.GetDifficulty() << "\n";    
 
     return os;
 }

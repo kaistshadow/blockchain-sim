@@ -6,6 +6,7 @@
 #include "../../consensus/simpleconsensus.h"
 #include "../../util/globalclock.h"
 #include "../../util/hexstring.h"
+#include "../../util/logmanager.h"
 
 #include <boost/variant.hpp>
 
@@ -66,9 +67,11 @@ void CentralizedMessageProxy::ProcessQueue() {
             if (powmsg.type == POWConsensusMessage_NEWBLOCK) {
                 POWBlock blk = boost::get<POWBlock>(powmsg.value);
 
-                std::string rawhash = blk.GetBlockHash().str().substr(0,6);
-                std::string hashval = utility::HexStr(rawhash);
-                std::cout << utility::GetGlobalClock() << ":CentralizedMessageProxy: broadcast newblock " << ": block hash=" << hashval << "\n"; 
+                if (utility::GetLoggerOption() == LOGGER_ON) {
+                    std::string rawhash = blk.GetBlockHash().str().substr(0,6);
+                    std::string hashval = utility::HexStr(rawhash);
+                    std::cout << utility::GetGlobalClock() << ":CentralizedMessageProxy: broadcast newblock " << ": block hash=" << hashval << "\n"; 
+                }
             }
         }
         
@@ -149,9 +152,11 @@ void CentralizedMessageProxy::ProcessQueue() {
             POWConsensusMessage powmsg = boost::get<POWConsensusMessage>(msg.data);
             if (powmsg.type == POWConsensusMessage_RESPBLOCKS) {
                 POWBlocks blks = boost::get<POWBlocks>(powmsg.value);
-                std::string rawhash = blks.back().GetBlockHash().str().substr(0,6);
-                std::string hashval = utility::HexStr(rawhash);
-                std::cout << utility::GetGlobalClock() << ":CentralizedMessageProxy: send blockresp to " << msg.dest << ": last block hash=" << hashval << "\n"; 
+                if (utility::GetLoggerOption() == LOGGER_ON) {
+                    std::string rawhash = blks.back().GetBlockHash().str().substr(0,6);
+                    std::string hashval = utility::HexStr(rawhash);
+                    std::cout << utility::GetGlobalClock() << ":CentralizedMessageProxy: send blockresp to " << msg.dest << ": last block hash=" << hashval << "\n"; 
+                }
             }
         }
         std::cout << "CentralizedMessageProxy: send to " << msg.dest << "\n"; 

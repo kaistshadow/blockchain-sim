@@ -10,6 +10,7 @@
 #include "util/eventqueue.h"
 #include "util/globalclock.h"
 #include "util/types.h"
+#include "util/logmanager.h"
 
 #include "crypto/sha256.h"
 
@@ -38,7 +39,8 @@ void NodeInit(int argc, char *argv[]) {
     PeerList& outPeerList = SimplePeerListManager::GetInstance()->GetOutPeerList();
     SimpleSocketInterface::GetInstance()->InitializeSocket(outPeerList);
 
-    utility::globalclock_start = time(0);
+    utility::globalclock_start = std::chrono::high_resolution_clock::now();
+    utility::logger_opt = LOGGER_OFF;
 }
 
 void NodeLoop() {

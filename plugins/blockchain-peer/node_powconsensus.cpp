@@ -63,7 +63,8 @@ void NodeInit(int argc, char *argv[]) {
     POWLedgerManager::GetInstance()->LoadLedgerFromFile();
     
 
-    utility::globalclock_start = time(0);
+    // utility::globalclock_start = time(0);
+    utility::globalclock_start = std::chrono::high_resolution_clock::now();
 
     // Set Node host id
     NodeInfo::GetInstance()->SetHostId(std::string(argv[1]));

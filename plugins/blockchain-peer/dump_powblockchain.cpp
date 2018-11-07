@@ -27,6 +27,7 @@
 #include "blockchain/powblock.h"
 #include "consensus/stellarconsensusdriver.h"
 #include "util/types.h"
+#include "util/globalclock.h"
 
 #define MYPORT 3456    /* the port users will be connecting to */
 #define BACKLOG 10     /* how many pending connections queue will hold */
@@ -56,6 +57,7 @@ void DumpBlockchain(char *argv[]) {
         POWBlock blk1("0", tx_list);
         blk1.SetBlockIdx(0);
         blk1.SetBlockHash(utility::UINT256_t(0x11111111));
+        blk1.SetTimestamp(utility::GetGlobalClock());
         
         std::list<Transaction> tx_list2;
         Transaction tx3(2,1,50);
@@ -65,10 +67,11 @@ void DumpBlockchain(char *argv[]) {
         POWBlock blk2("1", tx_list2);
         blk2.SetBlockIdx(1);
         blk2.SetBlockHash(utility::UINT256_t(0x22222222));
+        blk2.SetTimestamp(utility::GetGlobalClock());
 
         std::list<POWBlock> blk_list;
         blk_list.push_back(blk1);
-        blk_list.push_back(blk2);
+        // blk_list.push_back(blk2);
 
         // StellarConsensusDriver driver;
         // LedgerManager::SetInstance(driver, "blk.dat");

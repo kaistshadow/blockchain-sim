@@ -184,6 +184,7 @@ set(CENTRALIZED_POW_SRCS
   util/jsonserializer.cpp
   util/nodeinfo.cpp
   util/hexstring.cpp
+  util/logmanager.cpp
 )
 add_shadow_plugin(PEER_CENTRALIZED_POWCONSENSUS node_centralized_powconsensus.cpp ${CENTRALIZED_POW_SRCS})
 install(TARGETS PEER_CENTRALIZED_POWCONSENSUS DESTINATION plugins)

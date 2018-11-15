@@ -585,7 +585,6 @@ void SocketInterface::ProcessNetworkEvent() {
 }
 
 void SocketInterface::PrintSocketList() {
-  return;
   for (int i=0; i<socket_view.size(); i++){
     SocketData sd = socket_view[i];
     std::cout <<'('<< sd.sfd << ','<<sd.id<<')';

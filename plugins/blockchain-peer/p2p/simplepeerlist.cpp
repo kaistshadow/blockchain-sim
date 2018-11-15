@@ -1,6 +1,9 @@
 #include <iostream>
 #include <string>
 
+#include <chrono>
+#include <time.h>
+
 #include "membershipmessage.h"
 #include "p2pmessage.h"
 #include "socketmessage.h"
@@ -95,9 +98,9 @@ void SimplePeerList::AddToActive(Peer node) {
   
   idx = ExistInActiveById(node.peername);
   if (idx != -1) {
-    if (active_view[idx].sfd != node.sfd) {
-      std::cerr << "AddToActive: same id,diff sfd "<<active_view[idx].sfd<<"|"<<node.sfd<<"\n";
-    }
+    //if (active_view[idx].sfd != node.sfd) { // for debug
+    //  std::cerr << "AddToActive: same id,diff sfd "<<active_view[idx].sfd<<"|"<<node.sfd<<"\n";
+    //}
     return;
   }
 
@@ -111,17 +114,28 @@ void SimplePeerList::AddToActive(Peer node) {
 void SimplePeerList::DropRandomFromPassive() {
   srand(time(0));
   int idx = rand() % (int)passive_view.size();
+  int sfd = passive_view[idx].sfd;
   passive_view.erase(passive_view.begin() + idx);
-  // Need to close the socket if droped node have a connection
   PrintPassive();  
+
+  // Need to close the socket if droped node have a connection
+  if (sfd != -1) {
+    SocketMessage smsg = SocketMessage();
+    smsg.SetMethod(M_DISCONNECT, sfd);
+    SocketInterface::GetInstance()->PushToQueue(smsg);
+  }
 }
 
 void SimplePeerList::DropFromPassive(int fd) {
   for (int i=0; i<passive_view.size(); i++){
     if (passive_view[i].sfd == fd) {
       passive_view.erase(passive_view.begin() + i);
-      // Need to close the socket if droped node have a connection
       PrintPassive();
+      
+      // Need to close the socket if droped node have a connection
+      SocketMessage smsg = SocketMessage();
+      smsg.SetMethod(M_DISCONNECT, fd);
+      SocketInterface::GetInstance()->PushToQueue(smsg);        
       return;
     }
   }
@@ -129,30 +143,24 @@ void SimplePeerList::DropFromPassive(int fd) {
 
 int SimplePeerList::ExistInPassiveById(std::string pn) {
   for (int i=0; i<passive_view.size(); i++){
-    if (passive_view[i].peername == pn)
-      return i;
+    if (passive_view[i].peername == pn) return i;
   }
   return -1;
 }
 
 int SimplePeerList::ExistInPassive(int fd) {
   for (int i=0; i<passive_view.size(); i++){
-    if (passive_view[i].sfd == fd)
-      return i;
+    if (passive_view[i].sfd == fd) return i;
   }
   return -1;
 }
 
 void SimplePeerList::AddToPassive(Peer node) {
-  if (ExistInActiveById(node.peername) != -1) {
-    return;
-  }
-  if (ExistInPassiveById(node.peername) != -1)
-    return;
-  
+  if (ExistInActiveById(node.peername)  != -1) return;
+  if (ExistInPassiveById(node.peername) != -1) return;
   if (passive_view.size() == PassiveSize) {
-    passive_view.erase(passive_view.begin());
-    // Need to close the socket if droped node have a connection
+    DropRandomFromPassive();
+    //passive_view.erase(passive_view.begin());
   }
   passive_view.push_back(node);
   PrintPassive();
@@ -160,17 +168,15 @@ void SimplePeerList::AddToPassive(Peer node) {
 
 void SimplePeerList::PrintActive() {
   if (active_view.size() == 0) {
-    std::cout << '\n';
+    std::cout <<" time="<<std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count()<< '\n';
     return;
   }
-
   for (int i=0; i<active_view.size(); i++) {
-    if (i == active_view.size()-1) {      
-      std::cout << active_view[i].peername <<"("<< active_view[i].state <<")"<< '\n';
-    }
-    else{
-      std::cout << active_view[i].peername <<"("<< active_view[i].state <<")"<< ',';     
-    }
+    std::cout << active_view[i].peername <<"("<< active_view[i].state <<")";  
+    if (i == active_view.size()-1)
+      std::cout <<" time="<<std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count()<< '\n';
+    else
+      std::cout << ',';     
   }
 } 
 
@@ -182,7 +188,6 @@ void SimplePeerList::PrintPassive() {
     std::cerr << "None\n";
     return;
   }
-
   for (int i=0; i<passive_view.size(); i++) {
     if (i == passive_view.size()-1)
       std::cerr << passive_view[i].peername << '\n';

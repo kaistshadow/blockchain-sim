@@ -1,6 +1,8 @@
 #include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
+
+#include <chrono>
 #include <time.h>
 
 #include "p2p/simplepeerlist.h"
@@ -71,6 +73,7 @@ void NodeInit(int argc, char *argv[]) {
 }
 
 void NodeLoop() {
+  /*
     utility::UINT128_t a(0,0x10);
     utility::UINT128_t b(0,17);
     utility::UINT128_t c = a * b;
@@ -110,6 +113,11 @@ void NodeLoop() {
 
     utility::UINT256_t temp = utility::UINT256_t(hash_out2, 32);
     cout << "temp:" << hash_out2_int << "\n";
+  */
+    time_t start = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().\
+									 time_since_epoch()).count();//time(0);
+    cout << "start time="<< start <<"\n";    
+    unsigned int cnt = 0;
 
     while (true) {
         usleep(1000);
@@ -129,7 +137,7 @@ void NodeLoop() {
         SocketInterface::GetInstance()->ProcessQueue();          
         SocketInterface::GetInstance()->ProcessNetworkEvent();
 
-        
+	//if (time(0)%1 == 0) SimpleGossipProtocol::GetInstance()->SendShuffleMessage();
             
         // consensus protocol
         POWConsensus::GetInstance()->Run();

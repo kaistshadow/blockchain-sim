@@ -37,6 +37,14 @@ add_test(NAME BLEEP-pow-emulated-mining
   COMMAND python test-pow-consensus-emulated-mining.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
+add_test(NAME BLEEP-asio
+  COMMAND python test-asio.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_test(NAME BLEEP-libev
+  COMMAND python test-libev.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
 # add_test(NAME BLEEP-plumtree-broadcast
 #   COMMAND python test-plumtree-broadcast.py
 #   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

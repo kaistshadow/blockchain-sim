@@ -15,6 +15,7 @@ class NodeInfo {
 
     void SetHostId(std::string nodeid) { myNodeId = nodeid; }
     std::string GetHostId() { return myNodeId; }
+    int GetHostNumber();
 };
 
 

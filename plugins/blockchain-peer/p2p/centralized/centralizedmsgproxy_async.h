@@ -1,18 +1,18 @@
-#ifndef CENTRALIZED_MSG_PROXY_H
-#define CENTRALIZED_MSG_PROXY_H
+#ifndef CENTRALIZED_MSG_PROXY_ASYNC_H
+#define CENTRALIZED_MSG_PROXY_ASYNC_H
 
 #include <queue>
 
-#include "peerlistmanager.h"
+#include "peerlistmanager_combined.h"
 #include "broadcastrequestmessage.h"
 #include "unicastrequestmessage.h"
 #include "proxygeneratedmessage.h"
 
 
-class CentralizedMessageProxy {
+class CentralizedMessageProxyAsync {
  private:
-    CentralizedMessageProxy() {}; //singleton pattern
-    static CentralizedMessageProxy* instance; // singleton pattern
+    CentralizedMessageProxyAsync() {}; //singleton pattern
+    static CentralizedMessageProxyAsync* instance; // singleton pattern
 
     std::queue<BroadcastRequestMessage> broadcastMsgQueue;
     std::queue<UnicastRequestMessage> unicastMsgQueue;
@@ -20,7 +20,7 @@ class CentralizedMessageProxy {
     void SendOverP2PNetwork(ProxyGeneratedMessage& msg);
 
  public:
-    static CentralizedMessageProxy* GetInstance(); // singleton pattern
+    static CentralizedMessageProxyAsync* GetInstance(); // singleton pattern
 
     /* /\** */
     /*  * Initiate centralized broadcast. */
@@ -41,14 +41,4 @@ class CentralizedMessageProxy {
 
 
 
-
-
-
-
-
-
-
-
-
-
-#endif // CENTRALIZED_GOSSIPPROTOCOL_H
+#endif // CENTRALIZED_MSG_PROXY_ASYNC_H

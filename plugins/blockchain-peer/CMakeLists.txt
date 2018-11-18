@@ -161,6 +161,11 @@ add_shadow_plugin(DUMP_POWBLOCKCHAIN dump_powblockchain.cpp ${SRCS} ${POW_SRCS})
 install(TARGETS DUMP_POWBLOCKCHAIN DESTINATION plugins)
 target_link_libraries(DUMP_POWBLOCKCHAIN ${Boost_LIBRARIES})
 
+## POW with emulated mining
+add_shadow_plugin(PEER_POWCONSENSUS_EMULATED_MINING node_powconsensus_emulated_mining.cpp ${SRCS} ${POW_SRCS})
+install(TARGETS PEER_POWCONSENSUS_EMULATED_MINING DESTINATION plugins)
+target_link_libraries(PEER_POWCONSENSUS_EMULATED_MINING ${Boost_LIBRARIES})
+
 ##
 add_shadow_plugin(PEER_PLUMTREE node_membershiptest.cpp ${SRCS})
 install(TARGETS PEER_PLUMTREE DESTINATION plugins)
@@ -197,3 +202,46 @@ target_link_libraries(INJECTOR_CENTRALIZED_POWCONSENSUS ${Boost_LIBRARIES})
 add_shadow_plugin(PROXY_CENTRALIZED_POWCONSENSUS proxy_centralized_powconsensus.cpp ${CENTRALIZED_POW_SRCS})
 install(TARGETS PROXY_CENTRALIZED_POWCONSENSUS DESTINATION plugins)
 target_link_libraries(PROXY_CENTRALIZED_POWCONSENSUS ${Boost_LIBRARIES})
+
+## POW with centralized p2p and async i/o
+set(CENTRALIZED_ASYNC_POW_SRCS
+  p2p/centralized/asyncsocketinterface.cpp
+  p2p/centralized/peerlistmanager_combined.cpp
+  p2p/centralized/centralizedmsgproxy_async.cpp
+  blockchain/block.cpp
+  blockchain/transaction.cpp
+  blockchain/txpool.cpp
+  blockchain/powledgermanager.cpp
+  blockchain/powblock.cpp
+  consensus/powconsensus_centralized_async.cpp
+  crypto/sha256.cpp
+  util/eventqueue.cpp
+  util/globalclock.cpp
+  util/types.cpp
+  util/jsonserializer.cpp
+  util/nodeinfo.cpp
+  util/hexstring.cpp
+  util/logmanager.cpp
+)
+  
+add_shadow_plugin(PEER_CENTRALIZED_POWCONSENSUS_ASYNC node_centralized_powconsensus_async.cpp ${CENTRALIZED_ASYNC_POW_SRCS})
+install(TARGETS PEER_CENTRALIZED_POWCONSENSUS_ASYNC DESTINATION plugins)
+target_link_libraries(PEER_CENTRALIZED_POWCONSENSUS_ASYNC ${Boost_LIBRARIES} -lev)
+
+add_shadow_plugin(PROXY_CENTRALIZED_POWCONSENSUS_ASYNC proxy_centralized_powconsensus_async.cpp ${CENTRALIZED_ASYNC_POW_SRCS})
+install(TARGETS PROXY_CENTRALIZED_POWCONSENSUS_ASYNC DESTINATION plugins)
+target_link_libraries(PROXY_CENTRALIZED_POWCONSENSUS_ASYNC ${Boost_LIBRARIES} -lev)
+
+## Asio test
+add_shadow_plugin(PEER_ASIO node_asio.cpp)
+install(TARGETS PEER_ASIO DESTINATION plugins)
+target_link_libraries(PEER_ASIO ${Boost_LIBRARIES})
+
+## libev test
+add_shadow_plugin(PEER_LIBEV_SERV node_libev_server.cpp )
+install(TARGETS PEER_LIBEV_SERV DESTINATION plugins)
+target_link_libraries(PEER_LIBEV_SERV -lev)
+
+add_shadow_plugin(PEER_LIBEV_CLIENT node_libev_client.cpp )
+install(TARGETS PEER_LIBEV_CLIENT DESTINATION plugins)
+target_link_libraries(PEER_LIBEV_CLIENT -lev)

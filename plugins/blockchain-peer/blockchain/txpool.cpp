@@ -13,7 +13,10 @@ TxPool* TxPool::GetInstance() {
     return instance;
 }
 
-void TxPool::ProcessQueue() {
+bool TxPool::ProcessQueue() {
+    if (msgQueue.empty())
+        return false;
+
     while (!msgQueue.empty()) {
         Transaction tx = msgQueue.front();
         items.push_back(tx);
@@ -21,6 +24,7 @@ void TxPool::ProcessQueue() {
         cout << tx << "\n";
         msgQueue.pop();
     }
+    return true;
 }
 
 std::list<Transaction> TxPool::GetTxs(int num) {

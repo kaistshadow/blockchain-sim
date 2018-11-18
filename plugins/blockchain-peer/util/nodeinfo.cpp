@@ -8,3 +8,11 @@ NodeInfo* NodeInfo::GetInstance() {
     }
     return instance;
 }
+
+int NodeInfo::GetHostNumber() {
+    if (myNodeId.find("bleep") == 0) {
+        return std::stoi(myNodeId.substr(5, myNodeId.size()));
+    }
+    else
+        return -1;
+}

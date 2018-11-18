@@ -11,7 +11,7 @@
 #include "blockchain/ledgermanager.h"
 #include "blockchain/powledgermanager.h"
 
-#include "consensus/powconsensus.h"
+#include "consensus/powconsensus_centralized.h"
 
 #include "util/eventqueue.h"
 #include "util/globalclock.h"

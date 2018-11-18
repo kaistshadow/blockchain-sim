@@ -25,7 +25,7 @@ class POWLedgerManager : public ListLedgerManager<POWBlock> {
     static void SetInstance(std::string filename); // singleton pattern
 
     
-    void UpdateLedgerAsLongestChain(POWBlocks *blks);
+    bool UpdateLedgerAsLongestChain(POWBlocks *blks);
 
     utility::UINT256_t CalculateCurrentDifficulty();
 

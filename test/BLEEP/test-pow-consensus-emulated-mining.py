@@ -4,8 +4,8 @@ import argparse
 import sys
 
 if __name__ == '__main__':
-    datadir = "pow-consensus-large-datadir"
-    shadow_configfile = "pow-consensus-large.xml"
+    datadir = "pow-consensus-emulated-mining-datadir"
+    shadow_configfile = "pow-consensus-emulated-mining.xml"
     shadow_plugin = "PEER_POWCONSENSUS"
     # shadow_inject_plugin = "INJECTOR_STELLARCONSENSUS"
 
@@ -17,16 +17,27 @@ if __name__ == '__main__':
     #     print "test failed"
     #     sys.exit(-1)
     shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-d", datadir, shadow_configfile], stdout=PIPE)
-    shadow_stdout = shadow.communicate()[0]
+
+    shadow_stdout_filename = "shadow.output"
+    shadow_stdout_file = open(shadow_stdout_filename, 'w')
+    while shadow.poll() is None:
+        l = shadow.stdout.readline()
+        print l.strip()
+        shadow_stdout_file.write(l)
+    shadow_stdout_file.close()
+    
+    os.system("mv %s ./%s/%s" % (shadow_stdout_filename, datadir, shadow_stdout_filename))
+    shadow_stdout_file = open("./%s/%s" % (datadir, shadow_stdout_filename),'r')
+
     shadow_returnCode = shadow.returncode
-    for line in shadow_stdout:
-        if "critical" in shadow_stdout:
+    for line in shadow_stdout_file:
+        if "critical" in line:
             print "critical error is occurred during shadow simulation"
             sys.exit(-1)
+
     if shadow_returnCode != 0:
         print "test failed"
         sys.exit(-1)
-
 
     ## check Block idx and Block nonce (consensus over p2p network)
     outputfile1 = "./%s/hosts/bleep1/stdout-bleep1.%s.1000.log" % (datadir, shadow_plugin)

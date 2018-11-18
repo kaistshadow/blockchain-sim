@@ -26,13 +26,17 @@ add_test(NAME BLEEP-pow-consensus
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_test(NAME BLEEP-pow-consensus-large
-  COMMAND python test-pow-consensus-large.py
+  COMMAND python test-pow-consensus.py --nodenum 10
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_test(NAME BLEEP-centralized-broadcast
   COMMAND python test-centralized-broadcast.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   
+add_test(NAME BLEEP-pow-emulated-mining
+  COMMAND python test-pow-consensus-emulated-mining.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
 # add_test(NAME BLEEP-plumtree-broadcast
 #   COMMAND python test-plumtree-broadcast.py
 #   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

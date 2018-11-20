@@ -60,6 +60,7 @@ class SimplePeerList {
   int  ExistInPassive(int fd);
   void AddToPassive(Peer node);
 
+  void ShutdownPeerList();
   void PrintActive();
   void PrintPassive();
 };

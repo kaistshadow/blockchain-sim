@@ -532,7 +532,7 @@ void SimpleGossipProtocol::RunGossipInterface(SocketMessage msg) {
 
 void SimpleGossipProtocol::ProcessQueue() {
   if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().\
-							    time_since_epoch()).count() % 50== 0) 
+							    time_since_epoch()).count() % 500 == 0) 
     SendShuffleMessage();
  
   while (!msgQueue.empty()) {

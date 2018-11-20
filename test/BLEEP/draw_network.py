@@ -115,18 +115,21 @@ if __name__ == '__main__':
                 start_time = int(lineList[2].split('\n')[0][11:])
 
             # To find the latest gossip overlay info about edges and their states
+            # active view log format: "##bleep1(1),bleep2(0) time=1234\n" or "## time=1234\n"
             idx  = -1
             flag = 0
             while True:
-                while lineList[idx] == '\n' or lineList[idx][0:5] != 'bleep':
+                #while lineList[idx] == '\n' or lineList[idx][0:5] != 'bleep':
+                while lineList[idx][0:2] != "##":
                     idx = idx -1
                     if len(lineList)+idx < 0:
                         flag = 1
                         break               
-                if flag:
-                    break
+            
+                if flag: break
                 if stop_time != -1:
-                    time = int(lineList[idx].split(' ')[1].split('\n')[0][5:])
+                    #time = int(lineList[idx].split(' ')[1].split('\n')[0][5:])
+                    time = int(lineList[idx].split("##")[1].split(' ')[1].split('\n')[0][5:])
                     if time <= start_time+stop_time: 
                         break
                     else:
@@ -138,10 +141,12 @@ if __name__ == '__main__':
                 continue
 
             # reflect edges state to gossip overlay
-            nodes = lineList[idx].split(' ')[0].split(',')
+            #nodes = lineList[idx].split(' ')[0].split(',')
+            nodes = lineList[idx].split("##")[1].split(' ')[0].split(',')
             if nodes[0] == "":
                 continue
-            time = int(lineList[idx].split(' ')[1].split('\n')[0][5:])
+            #time = int(lineList[idx].split(' ')[1].split('\n')[0][5:])
+            time = int(lineList[idx].split("##")[1].split(' ')[1].split('\n')[0][5:])
             end_time = max(end_time,time)
 
             for dst in nodes:

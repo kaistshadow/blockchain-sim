@@ -81,11 +81,13 @@ class SocketInterface {
   void PushToQueue(SocketMessage msg) {msgQueue.push(msg);}
   void ProcessQueue();
   void ProcessNetworkEvent();
+
+  void ShutdownInterface();
   void PrintSocketList();
-
+ 
+  // DEPRECATED (temporarily used for testing PoW consensus)
   void SendUnicastMsg(UnicastMessage msg, std::string dest);
-
-  void UnicastP2PMsg(P2PMessage msg, const char *hostname); // DEPRECATED (temporarily used for testing PoW consensus)
+  void UnicastP2PMsg(P2PMessage msg, const char *hostname); 
 };
 
 std::string GetSerializedString(NetworkMessage msg);

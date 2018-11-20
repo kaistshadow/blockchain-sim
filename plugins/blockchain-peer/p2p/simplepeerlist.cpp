@@ -21,6 +21,11 @@ SimplePeerList* SimplePeerList::GetInstance() {
 
 void SimplePeerList::InitPeerList(int argc, char* argv[]) {
   for (int i=2; i<argc; i++) {    
+    // for shutdown
+    if (i == argc-1) {
+      if (argv[i][0] != 'b') continue;
+    }
+
     MembershipMessage msg = MembershipMessage(P_JOIN, 1, 1, std::string(argv[1]));
     P2PMessage       pmsg = P2PMessage(P2PMessage_MEMBERSHIP, msg);
     SocketMessage    smsg = SocketMessage();
@@ -166,7 +171,14 @@ void SimplePeerList::AddToPassive(Peer node) {
   PrintPassive();
 }
 
+void SimplePeerList::ShutdownPeerList() {
+  std::cout <<"##";
+  std::cout <<" time="<<std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count()<< '\n';
+  return;
+}
+
 void SimplePeerList::PrintActive() {
+  std::cout <<"##";
   if (active_view.size() == 0) {
     std::cout <<" time="<<std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count()<< '\n';
     return;

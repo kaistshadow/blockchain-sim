@@ -15,7 +15,9 @@
 #define CentralizedNetworkMessage_BROADCASTREQMSG 1
 #define CentralizedNetworkMessage_UNICASTREQMSG 2
 #define CentralizedNetworkMessage_PROXYGENERATEDMSG 3
+#define CentralizedNetworkMessage_DOMAINNOTIFYMSG 4
 
+typedef std::string Domain;
 
 class CentralizedNetworkMessage {
  public:
@@ -23,10 +25,10 @@ class CentralizedNetworkMessage {
   CentralizedNetworkMessage(int t, BroadcastRequestMessage msg) { type = t; data = msg; };
   CentralizedNetworkMessage(int t, UnicastRequestMessage msg) { type = t; data = msg; };
   CentralizedNetworkMessage(int t, ProxyGeneratedMessage msg) { type = t; data = msg; };
-
+  CentralizedNetworkMessage(int t, Domain msg) { type = t; data = msg; };
 
   int type;
-boost::variant<BroadcastRequestMessage, UnicastRequestMessage, ProxyGeneratedMessage> data;
+boost::variant<BroadcastRequestMessage, UnicastRequestMessage, ProxyGeneratedMessage, Domain> data;
 
  private:
   friend class boost::serialization::access;

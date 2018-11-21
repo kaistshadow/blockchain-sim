@@ -1,6 +1,6 @@
-#include "centralizedmsgproxy.h"
-#include "peerlistmanager.h"
-#include "simplesocketinterface.h"
+#include "centralizedmsgproxy_async.h"
+#include "peerlistmanager_combined.h"
+#include "asyncsocketinterface.h"
 #include "centralizednetworkmessage.h"
 #include "../../blockchain/txpool.h"
 #include "../../consensus/simpleconsensus.h"
@@ -10,11 +10,11 @@
 
 #include <boost/variant.hpp>
 
-CentralizedMessageProxy* CentralizedMessageProxy::instance = 0;
+CentralizedMessageProxyAsync* CentralizedMessageProxyAsync::instance = 0;
 
-CentralizedMessageProxy* CentralizedMessageProxy::GetInstance() {
+CentralizedMessageProxyAsync* CentralizedMessageProxyAsync::GetInstance() {
     if (instance == 0) {
-        instance = new CentralizedMessageProxy();
+        instance = new CentralizedMessageProxyAsync();
     }
     return instance;
 }
@@ -36,26 +36,20 @@ CentralizedMessageProxy* CentralizedMessageProxy::GetInstance() {
 
 
 // This function is called by centralized node.
-void CentralizedMessageProxy::SendOverP2PNetwork(ProxyGeneratedMessage& msg) {
+void CentralizedMessageProxyAsync::SendOverP2PNetwork(ProxyGeneratedMessage& msg) {
     CentralizedNetworkMessage cmsg(CentralizedNetworkMessage_PROXYGENERATEDMSG, msg);    
 
-    PeerList& outPeerList = SimplePeerListManager::GetInstance()->GetOutPeerList();
-    
-    for (Peer* outPeer : outPeerList) {
-        if (outPeer->conn_status == CONNECTED) {
-            std::cout << "SendOverP2PNetwork: send to " << outPeer->hostname << "\n"; 
-            SimpleSocketInterface::GetInstance()->SendNetworkMsg(cmsg, outPeer->hostname);
-        }
-        else {
-            std::cout << "Not connected outPeer" << "\n";
-        }
+    PeerList& peerList = PeerListManagerCombined::GetInstance()->GetPeerList();
+    for (PeerCombined* peer : peerList) {
+        std::cout << "SendOverP2PNetwork: try to send to " << peer->hostname << "\n"; 
+        AsyncSocketInterface::GetInstance()->SendNetworkMsg(cmsg, peer->hostname);
     }
 }
 
 // void CentralizedMessageProxy::ProcessQueue() : handles request for broadcasting or unicast
 // Only the centralized node utilizes this proxy class and its queue.
 // Decapsulate the message, and send them over p2p networks.
-bool CentralizedMessageProxy::ProcessQueue() {
+bool CentralizedMessageProxyAsync::ProcessQueue() {
     if (broadcastMsgQueue.empty() && unicastMsgQueue.empty() )
         return false;
 
@@ -158,12 +152,13 @@ bool CentralizedMessageProxy::ProcessQueue() {
                 if (utility::GetLoggerOption() == LOGGER_ON) {
                     std::string rawhash = blks.back().GetBlockHash().str().substr(0,6);
                     std::string hashval = utility::HexStr(rawhash);
-                    std::cout << utility::GetGlobalClock() << ":CentralizedMessageProxy: send blockresp to " << msg.dest << ": last block hash=" << hashval << "\n"; 
+                    std::cout << utility::GetGlobalClock() << ":CentralizedMessageProxyAsync: send blockresp to " << msg.dest << ": last block hash=" << hashval << "\n"; 
                 }
             }
         }
-        std::cout << "CentralizedMessageProxy: send to " << msg.dest << "\n"; 
-        SimpleSocketInterface::GetInstance()->SendNetworkMsg(cmsg, msg.dest);
+        std::cout << "CentralizedMessageProxyAsync: send to " << msg.dest << "\n"; 
+        // SimpleSocketInterface::GetInstance()->SendNetworkMsg(cmsg, msg.dest);
+        AsyncSocketInterface::GetInstance()->SendNetworkMsg(cmsg, msg.dest);
         
         unicastMsgQueue.pop();
     }

@@ -33,7 +33,7 @@ POWConsensus* POWConsensus::GetInstance() {
 
 // Choose random nonce & calculate hash (i.e., proof of work)
 //  to construct a valid block.
-unsigned long POWConsensus::RunProofOfWork(POWBlock *pendingBlk, int trial) {
+bool POWConsensus::RunProofOfWork(POWBlock *pendingBlk, int trial) {
 
     // Calculate hash (i.e., proof of work) for the pending block
     for (int i = 0; i < trial; i++) {
@@ -64,11 +64,61 @@ unsigned long POWConsensus::RunProofOfWork(POWBlock *pendingBlk, int trial) {
             pendingBlk->SetTimestamp(timestamp);
             pendingBlk->SetDifficulty(threshold);
             std::cout << "valid block found : Difficulty =" << threshold << "\n";
-            return nonce;
+            return true;
         }
     }
 
-    return 0; // no valid nonce is found.
+    return false; // no valid nonce is found.
+}
+
+bool POWConsensus::RunEmulatedMining(POWBlock* pendingBlk) {
+
+    switch (emulated_mining_state) {
+    case POW_STATE_IDLE:
+        {
+            // calculate next emulated mining time
+            unsigned int random_num = time(0) * NodeInfo::GetInstance()->GetHostNumber();
+            std::default_random_engine generator(random_num)
+;            std::normal_distribution<double> distribution(10.0, 2.0);
+            double waiting_time = distribution(generator);
+            if (waiting_time > 0) {
+                emulated_mining_time = utility::GetGlobalClock() + waiting_time;
+                std::cout << utility::GetGlobalClock() << ":Set next emulated mining time:" << emulated_mining_time << "\n";
+                emulated_mining_state = POW_STATE_WAIT;
+            }
+        }
+        break;
+    case POW_STATE_WAIT:
+        {
+            if (emulated_mining_time < utility::GetGlobalClock()) {
+                // 1. calculate random block.
+                srand((unsigned int)time(0));
+                unsigned long nonce = rand() * rand() * rand();
+                unsigned char hash_out[32];
+
+                SHA256_CTX ctx;
+                sha256_init(&ctx);
+                sha256_update(&ctx, (const unsigned char*)&nonce, sizeof(unsigned long));
+                sha256_update(&ctx, (const unsigned char*)pendingBlk->GetTxHash().str().c_str(), pendingBlk->GetTxHash().str().size());
+                unsigned long blockidx = pendingBlk->GetBlockIdx();
+                sha256_update(&ctx, (const unsigned char*)&blockidx, sizeof(unsigned long));
+                sha256_update(&ctx, (const unsigned char*)pendingBlk->GetPrevBlockHash().str().c_str(), pendingBlk->GetPrevBlockHash().str().size());
+                double timestamp = utility::GetGlobalClock();
+                sha256_update(&ctx, (const unsigned char*)&timestamp, sizeof(double));
+                sha256_final(&ctx, hash_out);
+
+                utility::UINT256_t hash_out_256(hash_out, 32);
+                pendingBlk->SetNonce(nonce);
+                pendingBlk->SetBlockHash(hash_out_256);
+                pendingBlk->SetTimestamp(timestamp);
+                
+                emulated_mining_state = POW_STATE_IDLE;
+                return true; // new random block is ready. 
+            }
+        }
+        break;
+    }
+    return false;
 }
 
 POWBlock *POWConsensus::Prepare() {
@@ -112,6 +162,23 @@ void POWConsensus::InjectValidBlockToP2PNetwork(POWBlock* pendingBlk) {
     std::cout << "POWConsensus: newblock broadcasting is requested" << "\n";
 }
 
+void POWConsensus::AppendBlockToLedgerAndPropagate(POWBlock *pendingBlk) {
+    TxPool::GetInstance()->RemoveTxs(pendingBlk->GetTransactions());
+    if (utility::GetLoggerOption() == LOGGER_ON) {
+        std::string rawhash = pendingBlk->GetBlockHash().str().substr(0,6);
+        std::string hashval = utility::HexStr(rawhash);
+        std::cout << utility::GetGlobalClock() << ":valid block found and appended : " << hashval << "\n";
+        std::cout << *pendingBlk << "\n";
+    }
+    else {
+        std::cout << utility::GetGlobalClock() << ":valid block found and appended" << "\n";
+        std::cout << *pendingBlk << "\n";
+    }
+    POWLedgerManager::GetInstance()->AppendBlock(*pendingBlk);
+    POWLedgerManager::GetInstance()->DumpLedgerToJSONFile("ledger.json");
+    InjectValidBlockToP2PNetwork(pendingBlk);
+}
+
 void POWConsensus::Run() {
     // main logic (state machine) for PoW Consensus protocol
     
@@ -135,27 +202,18 @@ void POWConsensus::Run() {
     // 1. authorization
     // calculate hash 1 time. 
     // (maybe  inefficient but to avoid fork)
-    unsigned long nonce = RunProofOfWork(pendingBlk, 10); 
-    if (!nonce) {
+    bool findBlock = false;
+    if (mining_option == POW_HASH_MINING) {
+        findBlock = RunProofOfWork(pendingBlk, 10); 
+    } else if (mining_option == POW_EMULATED_MINING) {
+        findBlock = RunEmulatedMining(pendingBlk);
+    }
+    if (!findBlock) {
         return;
     }
 
     // 2. append a new valid block to a ledger. and propagate to network
-    TxPool::GetInstance()->RemoveTxs(pendingBlk->GetTransactions());
-    if (utility::GetLoggerOption() == LOGGER_ON) {
-        std::string rawhash = pendingBlk->GetBlockHash().str().substr(0,6);
-        std::string hashval = utility::HexStr(rawhash);
-        std::cout << utility::GetGlobalClock() << ":valid block found and appended : " << hashval << "\n";
-        std::cout << *pendingBlk << "\n";
-    }
-    else {
-        std::cout << utility::GetGlobalClock() << ":valid block found and appended" << "\n";
-        std::cout << *pendingBlk << "\n";
-    }
-    POWLedgerManager::GetInstance()->AppendBlock(*pendingBlk);
-    POWLedgerManager::GetInstance()->DumpLedgerToJSONFile("ledger.json");
-    InjectValidBlockToP2PNetwork(pendingBlk);
-
+    AppendBlockToLedgerAndPropagate(pendingBlk);
     delete pendingBlk;
 
     // 3. Longest chain rule is implemented by PoW-specific consensus message (REQBLOCKS & RESPBLOCKS)
@@ -189,6 +247,8 @@ void POWConsensus::ProcessQueue() {
                             std::cout << utility::GetGlobalClock() << ":Block is received and appended" << "\n";
                             std::cout << *blk << "\n";
                         }
+                        if (mining_option == POW_EMULATED_MINING) 
+                            emulated_mining_state = POW_STATE_IDLE;
                     }
                     else if (lastblk->GetBlockHash() == blk->GetPrevBlockHash() && nextblkidx == blk->GetBlockIdx()) {
                         TxPool::GetInstance()->RemoveTxs(blk->GetTransactions());
@@ -205,6 +265,8 @@ void POWConsensus::ProcessQueue() {
                             std::cout << utility::GetGlobalClock() << ":Block is received and appended" << "\n";
                             std::cout << *blk << "\n";
                         }
+                        if (mining_option == POW_EMULATED_MINING) 
+                            emulated_mining_state = POW_STATE_IDLE;
                     }
                     else if (nextblkidx <= blk->GetBlockIdx()) {
                         std::cout << "Block (sented by " << msg.msg_sender << ") is received and longer than mine" << "\n";
@@ -258,7 +320,8 @@ void POWConsensus::ProcessQueue() {
                 else
                     std::cout << utility::GetGlobalClock() << ":RESPBLOCKS message is received from " << msg.msg_sender << "\n";
 
-                POWLedgerManager::GetInstance()->UpdateLedgerAsLongestChain(blks);
+                if (POWLedgerManager::GetInstance()->UpdateLedgerAsLongestChain(blks) && mining_option == POW_EMULATED_MINING)
+                    emulated_mining_state = POW_STATE_IDLE;
             }
             break;
         }

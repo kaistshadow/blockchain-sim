@@ -20,7 +20,7 @@ class TxPool {
     std::list<Transaction> items;
 
     void PushTxToQueue(Transaction tx) { msgQueue.push(tx); }
-    void ProcessQueue();
+    bool ProcessQueue();
 
     int GetPendingTxNum() { return items.size(); }
     std::list<Transaction> GetTxs(int num);

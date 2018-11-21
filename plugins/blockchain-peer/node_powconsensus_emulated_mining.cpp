@@ -3,20 +3,20 @@
 #include <unistd.h>
 #include <time.h>
 
-#include "p2p/centralized/peerlistmanager.h"
-#include "p2p/centralized/simplesocketinterface.h"
-#include "p2p/centralized/centralizedmsgproxy.h"
-
+#include "p2p/simplepeerlist.h"
+#include "p2p/gossipprotocol.h"
+#include "p2p/socket.h"
+#include "p2p/plumtree.h"
 #include "blockchain/txpool.h"
 #include "blockchain/ledgermanager.h"
 #include "blockchain/powledgermanager.h"
 
-#include "consensus/powconsensus_centralized.h"
+#include "consensus/powconsensus.h"
 
 #include "util/eventqueue.h"
 #include "util/globalclock.h"
 #include "util/types.h"
-#include "util/logmanager.h"
+#include "util/nodeinfo.h"
 
 #include "crypto/sha256.h"
 
@@ -37,13 +37,25 @@ int main(int argc, char *argv[]) {
 // assume that command arguments are given as follows
 // ./command <my_node_id> <node_id_of_neighboring_p2p_node> ...
 void NodeInit(int argc, char *argv[]) {
-    // 1. Initialize the list of out peers 
-    SimplePeerListManager::GetInstance()->InitializeOutPeerList(argc-2, &argv[2]);
-    SimplePeerListManager::GetInstance()->InitializeMyPeer(argv[1]);
+    // 1. Initialize Socket Interface
+    SocketInterface::GetInstance()->InitSocketInterface();
  
-    // 2. Initialize network socket
-    PeerList& outPeerList = SimplePeerListManager::GetInstance()->GetOutPeerList();
-    SimpleSocketInterface::GetInstance()->InitializeSocket(outPeerList);
+    // 2. Initialize Protocol Interface
+    SimpleGossipProtocol::GetInstance()->InitProtocolInterface(argv[1]);
+ 
+    // 3. Initailisze Peerlist
+    SimplePeerList::GetInstance()->InitPeerList(argc, argv); 
+
+
+    // for (int i = 1; i < argc; i++) {
+    //     // add neighbor node 
+    //     SimplePeerList::GetInstance()->AddPeerList(argv[i]);
+    // }
+    
+    // // initialize network socket
+    // PeerList outPeerList = SimplePeerList::GetInstance()->GetOutPeerList();    
+    // SocketInterface::GetInstance()->InitializeSocket(outPeerList);
+
 
     // initialize blockchain (currently from file.) 
     // TODO: initialize blockchain by retrieving live blockchain from network
@@ -51,11 +63,14 @@ void NodeInit(int argc, char *argv[]) {
     POWLedgerManager::GetInstance()->LoadLedgerFromFile();
     
 
+    // utility::globalclock_start = time(0);
     utility::globalclock_start = std::chrono::high_resolution_clock::now();
-    utility::logger_opt = LOGGER_OFF;
 
     // Set Node host id
     NodeInfo::GetInstance()->SetHostId(std::string(argv[1]));
+
+    // consensus protocol
+    POWConsensus::GetInstance()->SetMiningOption(POW_EMULATED_MINING);
 }
 
 void NodeLoop() {
@@ -99,8 +114,9 @@ void NodeLoop() {
     utility::UINT256_t temp = utility::UINT256_t(hash_out2, 32);
     cout << "temp:" << hash_out2_int << "\n";
 
+    int step = 0;
     while (true) {
-        usleep(100000);
+        usleep(1000);
         // cout << "globalclock:" << utility::GetGlobalClock() << "\n";
 
         // process synchronous event queue
@@ -109,22 +125,33 @@ void NodeLoop() {
 
         // process non-blocking network socket events
         // process non-blocking accept and non-blocking recv
-        PeerList& inPeerList = SimplePeerListManager::GetInstance()->GetInPeerList();
-        PeerList& outPeerList = SimplePeerListManager::GetInstance()->GetOutPeerList();
-        SimpleSocketInterface::GetInstance()->ProcessNonblockSocket(inPeerList, outPeerList);
+        // PeerList inPeerList = SimplePeerList::GetInstance()->GetInPeerList();
+        // PeerList outPeerList = SimplePeerList::GetInstance()->GetOutPeerList();
+        // SocketInterface::GetInstance()->ProcessNonblockSocket(inPeerList, outPeerList);
 
+        // Socket Layer
+        SocketInterface::GetInstance()->ProcessQueue();          
+        SocketInterface::GetInstance()->ProcessNetworkEvent();
 
+        
         // consensus protocol
         POWConsensus::GetInstance()->Run();
         // RunConsensusProtocol(GetLocalNodeId());  # TODO 2
         // SimpleConsensus::GetInstance()->RunConsensusProtocol();
-
-
-        // Process pending messages in messageQueues for each module
+        
         TxPool::GetInstance()->ProcessQueue();
-        CentralizedMessageProxy::GetInstance()->ProcessQueue();
         POWConsensus::GetInstance()->ProcessQueue();
 
+        // Process pending messages in messageQueues for each module
+
+        SimpleGossipProtocol::GetInstance()->ProcessQueue();
+        SocketInterface::GetInstance()->ProcessQueue();
+
+        // Gossip Layer:
+        // process Upper queue of Gossip Layer which store p2pmsgs from Consensus Layer
+        GossipProtocol::GetInstance()->ProcessQueue();
+        step++;
+        step = step % 100000;
     }
     return;
 }

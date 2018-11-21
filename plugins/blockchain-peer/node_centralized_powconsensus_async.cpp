@@ -3,15 +3,15 @@
 #include <unistd.h>
 #include <time.h>
 
-#include "p2p/centralized/peerlistmanager.h"
-#include "p2p/centralized/simplesocketinterface.h"
-#include "p2p/centralized/centralizedmsgproxy.h"
+#include "p2p/centralized/peerlistmanager_combined.h"
+#include "p2p/centralized/asyncsocketinterface.h"
+#include "p2p/centralized/centralizedmsgproxy_async.h"
 
 #include "blockchain/txpool.h"
 #include "blockchain/ledgermanager.h"
 #include "blockchain/powledgermanager.h"
 
-#include "consensus/powconsensus_centralized.h"
+#include "consensus/powconsensus_centralized_async.h"
 
 #include "util/eventqueue.h"
 #include "util/globalclock.h"
@@ -24,26 +24,26 @@ using namespace std;
 
 void NodeInit(int argc, char *argv[]);
 
-void NodeLoop();
+void NodeLoop(int argc, char *argv[]);
 
 int main(int argc, char *argv[]) {
     // int nodeid = atoi(argv[1]);
     cout << "Blockchain peer for PoW consensus" << " started!" << "\n";
 
     NodeInit(argc, argv);
-    NodeLoop();
+    NodeLoop(argc, argv);
 }
 
 // assume that command arguments are given as follows
 // ./command <my_node_id> <node_id_of_neighboring_p2p_node> ...
 void NodeInit(int argc, char *argv[]) {
     // 1. Initialize the list of out peers 
-    SimplePeerListManager::GetInstance()->InitializeOutPeerList(argc-2, &argv[2]);
-    SimplePeerListManager::GetInstance()->InitializeMyPeer(argv[1]);
+    // PeerListManagerCombined::GetInstance()->InitializeOutPeerList(argc-2, &argv[2]);
+    PeerListManagerCombined::GetInstance()->InitializeMyPeer(argv[1]);
  
     // 2. Initialize network socket
-    PeerList& outPeerList = SimplePeerListManager::GetInstance()->GetOutPeerList();
-    SimpleSocketInterface::GetInstance()->InitializeSocket(outPeerList);
+    AsyncSocketInterface::GetInstance()->InitializeListenSocket();
+
 
     // initialize blockchain (currently from file.) 
     // TODO: initialize blockchain by retrieving live blockchain from network
@@ -56,9 +56,10 @@ void NodeInit(int argc, char *argv[]) {
 
     // Set Node host id
     NodeInfo::GetInstance()->SetHostId(std::string(argv[1]));
+
 }
 
-void NodeLoop() {
+void NodeLoop(int argc, char *argv[]) {
     utility::UINT128_t a(0,0x10);
     utility::UINT128_t b(0,17);
     utility::UINT128_t c = a * b;
@@ -99,32 +100,44 @@ void NodeLoop() {
     utility::UINT256_t temp = utility::UINT256_t(hash_out2, 32);
     cout << "temp:" << hash_out2_int << "\n";
 
-    while (true) {
-        usleep(100000);
+    AsyncSocketInterface::GetInstance()->SetProcessingQueueType(PROCESSINGQUEUETYPE_NODE);
+
+    struct ev_loop *loop = ev_default_loop(0);
+    AsyncSocketInterface::GetInstance()->SetEvLoop(loop);    
+    POWConsensus::GetInstance()->SetEvLoop(loop);
+
+    AsyncSocketInterface::GetInstance()->RegisterServerWatcher();
+    AsyncSocketInterface::GetInstance()->RegisterPeriodicConnectWatcher(argc-2, &argv[2]);
+
+    ev_loop(EV_A_ 0); // start event loop
+
+
+    // while (true) {
+    //     usleep(100000);
         // cout << "globalclock:" << utility::GetGlobalClock() << "\n";
 
         // process synchronous event queue
-        EventQueueManager::GetInstance()->ProcessQueue();
+        // EventQueueManager::GetInstance()->ProcessQueue();
 
 
         // process non-blocking network socket events
         // process non-blocking accept and non-blocking recv
-        PeerList& inPeerList = SimplePeerListManager::GetInstance()->GetInPeerList();
-        PeerList& outPeerList = SimplePeerListManager::GetInstance()->GetOutPeerList();
-        SimpleSocketInterface::GetInstance()->ProcessNonblockSocket(inPeerList, outPeerList);
+        // PeerList& inPeerList = SimplePeerListManager::GetInstance()->GetInPeerList();
+        // PeerList& outPeerList = SimplePeerListManager::GetInstance()->GetOutPeerList();
+        // SimpleSocketInterface::GetInstance()->ProcessNonblockSocket(inPeerList, outPeerList);
 
 
         // consensus protocol
-        POWConsensus::GetInstance()->Run();
+        // POWConsensus::GetInstance()->Run();
         // RunConsensusProtocol(GetLocalNodeId());  # TODO 2
         // SimpleConsensus::GetInstance()->RunConsensusProtocol();
 
 
         // Process pending messages in messageQueues for each module
-        TxPool::GetInstance()->ProcessQueue();
-        CentralizedMessageProxy::GetInstance()->ProcessQueue();
-        POWConsensus::GetInstance()->ProcessQueue();
+        // TxPool::GetInstance()->ProcessQueue();
+        // CentralizedMessageProxy::GetInstance()->ProcessQueue();
+        // POWConsensus::GetInstance()->ProcessQueue();
 
-    }
+    // }
     return;
 }

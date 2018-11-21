@@ -1,24 +1,24 @@
-#ifndef CONSENSUS_POWCONSENSUS_CENTRALIZED_H
-#define CONSENSUS_POWCONSENSUS_CENTRALIZED_H
+#ifndef CONSENSUS_POWCONSENSUS_CENTRALIZED_ASYNC_H
+#define CONSENSUS_POWCONSENSUS_CENTRALIZED_ASYNC_H
 
 #include <vector>
 #include <queue>
 #include <map>
+#include <ev.h>
 
 #include "powconsensusmessage.h"
 #include "../blockchain/powblock.h"
 
 #define POW_BLOCK_TX_NUM 5
 
-#define POW_HASH_MINING 0
 #define POW_EMULATED_MINING 1
 
 #define POW_STATE_IDLE 0
-#define POW_STATE_WAIT 1 // wait async event for block generation
+#define POW_STATE_WAIT 1 // wait timer event for block generation
 
 class POWConsensus {
  private:
-    POWConsensus(){} // singleton pattern
+    POWConsensus(){ ev_init (&mining_watcher, MiningCompleteCallback); } // singleton pattern
     static POWConsensus* instance; // singleton pattern
 
     std::queue<POWConsensusMessage> msgQueue;
@@ -26,31 +26,27 @@ class POWConsensus {
     void InjectValidBlockToP2PNetwork(POWBlock *pendingBlk);
     void AppendBlockToLedgerAndPropagate(POWBlock *pendingBlk);
 
-    bool RunProofOfWork(POWBlock *pendingBlk, int trial);
-    bool RunEmulatedMining(POWBlock *pendingBlk);
 
-    
-
-    POWBlock* Prepare();
-    POWBlock* pendingBlk = nullptr;
-    unsigned long numTrial = 0;
-
-    int mining_option = 0;
+    /* int mining_option = 0; */
     int emulated_mining_state = 0;
-    double emulated_mining_time = 0;
+    /* double emulated_mining_time = 0; */
+
+    struct ev_loop *loop;
+    ev_timer mining_watcher;
+    static void MiningCompleteCallback(EV_P_ ev_timer *w, int revents);
 
  public:
     static POWConsensus* GetInstance(); // singleton pattern
-
-    void Run();
+    void SetEvLoop(struct ev_loop *l) { loop = l; }
+    void SetMiningState(int state) { emulated_mining_state = state; }
 
     /**
      * Push message into message queue.
      */
     void PushToQueue(POWConsensusMessage msg) { msgQueue.push(msg); }
-    void ProcessQueue();
+    bool ProcessQueue();
+    void TriggerMiningEmulation();
 
-    void SetMiningOption(int opt) { mining_option = opt; }
 };
 
 

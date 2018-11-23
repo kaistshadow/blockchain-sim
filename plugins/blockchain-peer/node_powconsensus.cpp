@@ -1,6 +1,8 @@
 #include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
+
+#include <chrono>
 #include <time.h>
 
 #include "p2p/simplepeerlist.h"
@@ -23,15 +25,21 @@
 using namespace std;
 
 void NodeInit(int argc, char *argv[]);
-
-void NodeLoop();
+void NodeLoop(int duration);
 
 int main(int argc, char *argv[]) {
     // int nodeid = atoi(argv[1]);
     cout << "Blockchain peer for PoW consensus" << " started!" << "\n";
 
     NodeInit(argc, argv);
-    NodeLoop();
+    
+    int interval = -1;
+    if (argc > 2) {
+      if (argv[argc-1][0] != 'b') {
+	interval = atoi(argv[argc-1]);
+      }
+    }
+    NodeLoop(interval);
 }
 
 // assume that command arguments are given as follows
@@ -70,7 +78,8 @@ void NodeInit(int argc, char *argv[]) {
     NodeInfo::GetInstance()->SetHostId(std::string(argv[1]));
 }
 
-void NodeLoop() {
+void NodeLoop(int duration) {
+  /*
     utility::UINT128_t a(0,0x10);
     utility::UINT128_t b(0,17);
     utility::UINT128_t c = a * b;
@@ -110,14 +119,29 @@ void NodeLoop() {
 
     utility::UINT256_t temp = utility::UINT256_t(hash_out2, 32);
     cout << "temp:" << hash_out2_int << "\n";
+  */
+    time_t start = chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now().\
+							       time_since_epoch()).count();
+    cout << "start time="<< start <<'\n';    
+    cout << "duration  ="<< duration<<'\n';
 
     while (true) {
         usleep(1000);
+	
+	if (duration != -1) {
+	  time_t time = chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now().\
+								     time_since_epoch()).count();
+	  if ((time - start) >= duration*1000) {
+	    SocketInterface::GetInstance()->ShutdownInterface();
+	    SimplePeerList::GetInstance()->ShutdownPeerList();
+	    cout << "--shutdown--\n";
+	    return;
+	  }
+	}
+	
         // cout << "globalclock:" << utility::GetGlobalClock() << "\n";
-
         // process synchronous event queue
         EventQueueManager::GetInstance()->ProcessQueue();
-
 
         // process non-blocking network socket events
         // process non-blocking accept and non-blocking recv
@@ -129,13 +153,10 @@ void NodeLoop() {
         SocketInterface::GetInstance()->ProcessQueue();          
         SocketInterface::GetInstance()->ProcessNetworkEvent();
 
-        
-            
         // consensus protocol
         POWConsensus::GetInstance()->Run();
         // RunConsensusProtocol(GetLocalNodeId());  # TODO 2
         // SimpleConsensus::GetInstance()->RunConsensusProtocol();
-
 
         // Process pending messages in messageQueues for each module
         TxPool::GetInstance()->ProcessQueue();

@@ -1,6 +1,9 @@
 #ifndef P2P_SIMPLEPEERLIST_H
 #define P2P_SIMPLEPEERLIST_H
 
+#include <chrono>
+#include <time.h>
+
 #include <vector>
 #include <string>
 #include "socketmessage.h"
@@ -57,6 +60,7 @@ class SimplePeerList {
   int  ExistInPassive(int fd);
   void AddToPassive(Peer node);
 
+  void ShutdownPeerList();
   void PrintActive();
   void PrintPassive();
 };

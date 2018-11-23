@@ -584,6 +584,15 @@ void SocketInterface::ProcessNetworkEvent() {
   }
 }
 
+void SocketInterface::ShutdownInterface() {
+  while(!socket_view.empty()) {
+    int sfd = socket_view.front().sfd;
+    socket_view.erase(socket_view.begin());
+    close(sfd); 
+    PrintSocketList();
+  }
+}
+
 void SocketInterface::PrintSocketList() {
   return;
   for (int i=0; i<socket_view.size(); i++){

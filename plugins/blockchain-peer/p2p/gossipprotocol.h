@@ -13,7 +13,7 @@
 #define Kp 4
 
 #define TEST 0
-#define SHUFFLE_OP 0
+#define SHUFFLE_OP 1
 
 class SimpleGossipProtocol {
  private:

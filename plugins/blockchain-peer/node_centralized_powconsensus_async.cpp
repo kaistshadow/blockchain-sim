@@ -59,6 +59,11 @@ void NodeInit(int argc, char *argv[]) {
 
 }
 
+static void PeriodicCallback(EV_P_ ev_periodic *w, int revents) {
+    std::cout << "Time:" << utility::GetGlobalClock() << "\n";
+    std::flush(std::cout);
+}
+
 void NodeLoop(int argc, char *argv[]) {
     utility::UINT128_t a(0,0x10);
     utility::UINT128_t b(0,17);
@@ -108,6 +113,10 @@ void NodeLoop(int argc, char *argv[]) {
 
     AsyncSocketInterface::GetInstance()->RegisterServerWatcher();
     AsyncSocketInterface::GetInstance()->RegisterPeriodicConnectWatcher(argc-2, &argv[2]);
+
+    ev_periodic periodic;
+    ev_periodic_init(&periodic, PeriodicCallback, 0, 1, 0);
+    ev_periodic_start(EV_A_ &periodic);
 
     ev_loop(EV_A_ 0); // start event loop
 

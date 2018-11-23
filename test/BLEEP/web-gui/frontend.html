@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>BLEEP - Blockchain Emulation and Evaluation Platform</title>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.js"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <!-- <script src="http://visjs.org/dist/vis.js"></script>
+             <link href="http://visjs.org/dist/vis.css" rel="stylesheet" type="text/css" /> -->
+
+        <style>
+         body{
+             font: 12px verdana, sans-serif; 
+             margin: 0px;
+         }
+         .header{
+             padding: 10px 0;
+             background-color: #679BB7; 
+         }
+         .header h1{
+             font-size: 30px; 
+             margin: 10px;
+         }
+         .container{
+             width: 80%;
+         }
+         .content {
+             width: 100%;   
+         }
+         .leftcontent{
+             float: left; 
+             width: 50%; 
+             min-height: 170px;
+             background-color: #bbd2df;
+         }
+
+         .rightcontent{
+             float: left;
+             width: 50%;
+             min-height: 170px;
+         }
+         .clearfix{
+             clear: both;
+         }
+         .wrapper{
+             margin-top:10px;
+         }
+         .footer{
+             background-color: #679BB7; 
+             padding: 10px 0;
+         }
+
+         /* * { font-family:tahoma; font-size:12px; padding:0px; margin:0px; } */
+         p { line-height:18px; }
+         .commandbox { width:500px; margin-left:auto; margin-right:auto;}
+         #content { padding:5px; background:#ddd; border-radius:5px; overflow-y: scroll;
+             border:1px solid #CCC; height: 200px; }
+         #input { border-radius:2px; border:1px solid #ccc;
+             margin-top:10px; padding:5px; width:400px;  }
+         #status { width:88px; display:block; float:left; margin-top:15px; }
+         #network{
+             /* width: 1500px;
+                height: 1000px; */
+             width:80vw;
+             height:90vh;
+             border: 1px solid lightgray;
+         }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>BLEEP Web Interface</h1>
+            </div>
+            <div class="content">
+                <p>You can execute the blockchain experiment by typing 'run' on command box.</p>
+                <p>The experiment will be automatically executed on back-end server.  </p>
+            </div>
+            <div class="wrapper">
+                <div class="leftcontent">
+                    <div class="nav">
+                        <h2> Command list </h2>
+                        <ul>
+                            <li>run : run blockchain experiment. Following additional option is possible.</li>
+                            <p> --nodenum "value" : specify the number of blockchain peer node. It should be larger than 2.</p>
+                            <p> e.g. run --nodenum 100</p>
+                            <li> stop : stop the blockchain experiment. </li>
+                        </ul>
+                        <h2> Simulation Parameters </h2>
+                        <ul>
+                            <li>Node num : 500 (default)</li> 
+                            <li>Virtual simulation time : 150 seconds</li>
+                            <li>Network module : asynchronous centralized proxy</li>
+                        </ul>
+                        <h2> Simulation Info </h2>
+                        <ul>
+                            <li>message transferred?</li>
+                            <li>any valid infos? </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="rightcontent">
+                    <p> Command history </p>
+                    <div id="content"></div>
+                    <div>
+                        <span id="status">Connecting...</span>
+                        <input type="text" id="input" disabled="disabled" />
+                    </div>
+                    
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="content">
+                <h1> Blockchain Plot</h1>
+            </div>
+            <div id="network">Network Graph</div>
+            <div class="footer">
+                <p>link: github.com/kaistshadow/blockchain-sim</p>
+            </div>
+        </div>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="./chat-frontend.js"></script>
+    </body>
+</html>

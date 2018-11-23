@@ -15,9 +15,12 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
     message(FATAL_ERROR "Shadow requires an out-of-source build. Please create a separate build directory and run 'cmake path/to/shadow [options]' there.")
 endif(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 
+set(CMAKE_ROOT_SOURCE_DIR ${CMAKE_SOURCE_DIR})
+set(CMAKE_ROOT_BINARY_DIR ${CMAKE_BINARY_DIR})
+
 ## add shadow project
-set(CMAKE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/shadow")
-set(CMAKE_BINARY_DIR "${CMAKE_BINARY_DIR}/shadow")
+set(CMAKE_SOURCE_DIR "${CMAKE_ROOT_SOURCE_DIR}/shadow")
+set(CMAKE_BINARY_DIR "${CMAKE_ROOT_BINARY_DIR}/shadow")
 set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.shadow")
 set(CMAKE_EXTRA_INCLUDES "$ENV{HOME}/.shadow/include") # for glib-2.42
 set(CMAKE_EXTRA_LIBRARIES "$ENV{HOME}/.shadow/lib") # for glib-2.42
@@ -28,9 +31,9 @@ set(CMAKE_EXTRA_LIBRARIES "$ENV{HOME}/.shadow/lib") # for glib-2.42
 add_subdirectory(shadow)
 
 ## add shadow-plugin-bitcoin
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-set(CMAKE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/../plugins/shadow-plugin-bitcoin")
-set(CMAKE_BINARY_DIR "${CMAKE_BINARY_DIR}/../")
+set(CMAKE_MODULE_PATH "${CMAKE_ROOT_SOURCE_DIR}/shadow/cmake" ${CMAKE_MODULE_PATH})
+set(CMAKE_SOURCE_DIR "${CMAKE_ROOT_SOURCE_DIR}/plugins/shadow-plugin-bitcoin")
+set(CMAKE_BINARY_DIR "${CMAKE_ROOT_BINARY_DIR}")
 set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.shadow")
 add_subdirectory(plugins/shadow-plugin-bitcoin)
 
@@ -43,3 +46,14 @@ add_subdirectory(plugins/blockchain-peer)
 set(SHADOW_ROOT "${CMAKE_INSTALL_PREFIX}")
 enable_testing()
 add_subdirectory(test)
+
+## add command for lauching BLEEP web interface
+add_custom_target(run-web-gui
+  COMMAND echo " "
+  COMMAND echo "Direct launch of the server using make is not possible"
+  COMMAND echo "due to the unresolved problem during relaunching process of shadow."
+  COMMAND echo "Move to ${CMAKE_ROOT_SOURCE_DIR}/test/BLEEP/web-gui and type following command"
+  COMMAND echo " $$ node chat-server.js"
+  COMMAND echo " "
+  WORKING_DIRECTORY ${CMAKE_ROOT_SOURCE_DIR}/test/BLEEP/web-gui
+  )

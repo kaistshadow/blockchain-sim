@@ -41,6 +41,14 @@ def prepare_bitcoin_plugin():
     # install dependencies
     os.system("sudo apt-get install -y autoconf libtool libboost-all-dev libssl-dev libevent-dev")    
 
+def prepare_nodejs():
+    nodejs_serv_path = "./test/BLEEP/web-gui"    
+
+    os.system("curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -")
+    os.system("sudo apt-get update")
+    os.system("sudo apt-get install -y nodejs")
+    os.system("cd %s; npm install websocket finalhandler serve-static vis" % nodejs_serv_path)
+
 
 def setup_multiple_node_xml(node_num):
     baseline_xml = "plugins/shadow-plugin-bitcoin/resource/example.xml"
@@ -108,6 +116,7 @@ if __name__ == '__main__':
     if OPT_INSTALL:
         prepare_shadow()
         prepare_bitcoin_plugin()
+        prepare_nodejs()
         os.system("mkdir build; cd build; cmake %s ../; make; make install" % cmake_debug_opt)
         os.system("echo 'export PATH=$PATH:%s' >> ~/.bashrc && . ~/.bashrc" % os.path.expanduser("~/.shadow/bin"))
         print "After installing the shadow, execute following commands on your bash. (type without dollor sign)"

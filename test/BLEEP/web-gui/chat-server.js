@@ -26,6 +26,10 @@ var globalClientId = 0;
 var finalhandler = require('finalhandler');
 var serveStatic = require('serve-static');
 
+// blockchain infos
+var blockchainBlocks = [];
+var blockchainEdges = [];
+
 var serve = serveStatic("./");
 /**
  * Helper function for escaping input strings
@@ -69,14 +73,22 @@ function sendSnapshot(connection, nodenum) {
     var rePattern = new RegExp(/.*Block idx=([0-9]+),.*,Block hash=\[\[([0-9a-fA-F]{14}).+\]\[.+\]\],Prev Block hash=\[\[([0-9a-fA-F]{14}).+\]\[.+\]\],Timestamp=\[(.+)\],Difficulty=.+/);
 
     var vis = require('vis');
-    var nodes = new vis.DataSet();
-    var edges = new vis.DataSet();
+    // var nodes = new vis.DataSet();
+    // var edges = new vis.DataSet();
     var nodesArray = [];
     var edgesArray = [];
     var timestampsDict = {};
-    var curTime = (new Date()).getTime();
+    var curDate = new Date();
+    var curTime = (curDate).getTime();
+    var snapshottime = (curDate.getHours() < 10 ? '0' + curDate.getHours() : curDate.getHours()) + ':'
+            + (curDate.getMinutes() < 10 ? '0' + curDate.getMinutes() : curDate.getMinutes()) + ':'
+            + (curDate.getSeconds() < 10 ? '0' + curDate.getSeconds() : curDate.getSeconds());
 
-    nodes.update([{id:"00000000000000", label:"genesis"}]);
+
+    var genesisBlk = {id:"00000000000000", label:"genesis" + ", " + snapshottime};
+    if (!blockchainBlocks.find( x => {return x.id === "00000000000000";}))
+        blockchainBlocks.push(genesisBlk);
+    // nodes.update([{id:"00000000000000", label:"genesis"}]);
     for (let i = 0; i < nodenum; i++) {
         var logfile = `../${datadir}/hosts/bleep${i}/stdout-bleep${i}.${shadowPlugin}.1000.log`;
         if (!fs.existsSync(logfile))
@@ -104,21 +116,26 @@ function sendSnapshot(connection, nodenum) {
             var block_hash = blocks[idx][0];
             var prev_block_hash = blocks[idx][1];
             var timestamp = blocks[idx][2];
-            nodes.update([{id:block_hash,label:timestamp}]);
-            edges.update([{id:prev_block_hash+block_hash,from:prev_block_hash, to:block_hash}]);
+
+            if (!blockchainBlocks.find( x => {return x.id === block_hash;}))
+                blockchainBlocks.push({id:block_hash,label:timestamp + ", " + snapshottime});
+            if (!blockchainEdges.find( x => {return x.id === prev_block_hash+block_hash;}))
+                blockchainEdges.push({id:prev_block_hash+block_hash,from:prev_block_hash, to:block_hash});
         }
         
         // var lastblockhash = blocks[keys.pop()][0];
         // nodes.update([{id:`bleep${i}`, label:`bleep${i}`}]);
         // edges.update([{id:lastblockhash+`bleep${i}`, from:lastblockhash, to:`bleep${i}`}]);
     }
-    nodesArray = nodes.get();
-    edgesArray = edges.get();
+    // nodesArray = nodes.get();
+    // edgesArray = edges.get();
 
     var graphObj = {
         time: curTime,
-        nodes: nodesArray,
-        edges: edgesArray,
+        nodes: blockchainBlocks,
+        edges: blockchainEdges,
+        // nodes: nodesArray,
+        // edges: edgesArray,
         timestamps: timestampsDict
     };
     // broadcast message to requested connection
@@ -211,6 +228,8 @@ wsServer.on('request', function(request) {
                     proc = null;
                     clearInterval(snapshotIntervalId);
                     sendSnapshot(connection, nodenum);
+                    blockchainBlocks = [];
+                    blockchainEdges = [];
                 });
 
                 proc.stdout.on("data", function(chunk) {

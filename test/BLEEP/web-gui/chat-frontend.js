@@ -29,7 +29,8 @@ $(function () {
             hierarchical: {
                 direction: "UD",
                 sortMethod: "directed",
-                levelSeparation: 30
+                levelSeparation: 30,
+                nodeSpacing : 150
             }
         },
         interaction: {dragNodes :false},
@@ -44,8 +45,8 @@ $(function () {
             length: 1
         }
     };
-    var container = document.getElementById('network');
-    var network = new vis.Network(container, data, options);
+    var container = document.getElementById('blockchain');
+    var blockchain = new vis.Network(container, data, options);
 
 
 
@@ -130,7 +131,7 @@ $(function () {
                        "red", new Date(json.data.time));
             nodes = new vis.DataSet(json.data.nodes);
             edges = new vis.DataSet(json.data.edges);
-            network.setData({nodes:nodes, edges: edges});
+            blockchain.setData({nodes:nodes, edges: edges});
             for (const [key, value] of Object.entries(json.data.timestamps)) {
                 addMessage("simul-timelog", `Node ${key}'s current virtualTime=${value}`, "blue", new Date(json.data.time));
                 if (key >= 10)

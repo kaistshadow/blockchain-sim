@@ -1,7 +1,5 @@
-#ifndef TEST_MESSAGE_H
-#define TEST_MESSAGE_H
-
-#include "Message.h"
+#ifndef MESSAGE_H
+#define MESSAGE_H
 
 #include <iostream>
 #include <string>
@@ -10,27 +8,23 @@
 #include <boost/serialization/set.hpp>
 #include <string>
 
-class TestMessage: public Message {
+class Message {
  public:
-    TestMessage() {}
-    TestMessage(std::string name) {test_str = name;}
-    virtual int GetType() {return TEST_MESSAGE;}
-
-    virtual ~TestMessage() {}
-
-    std::string test_str;
+    virtual ~Message() {};
+    virtual int GetType() = 0;
+    static const int TEST_MESSAGE = 1;
+    static const int TX_MESSAGE = 2;
 
  private:
+
     friend class boost::serialization::access;
     // When the class Archive corresponds to an output archive, the
     // & operator is defined similar to <<.  Likewise, when the class Archive
     // is a type of input archive the & operator is defined similar to >>
     template<class Archive>
         void serialize(Archive & ar, const unsigned int version) {
-        boost::serialization::base_object<Message>(*this);
-        boost::serialization::void_cast_register<Message,TestMessage>();
-        ar & test_str;
     }
 };
+
 
 #endif

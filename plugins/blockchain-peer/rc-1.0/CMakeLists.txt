@@ -25,7 +25,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 set(SRCS
   p2pnetwork/HandleNetwork.cpp
-  p2pnetwork/HandleNetworkTest.cpp
+  p2pnetwork/HandleNetwork_ProxyModel.cpp
   datamodules/Peer.cpp
   event/GlobalEvent.cpp
 )
@@ -61,7 +61,11 @@ include(ShadowTools)
 
 # add_executable(HELLO hello.cpp ${SRCS})
 
-add_shadow_plugin(SHADOW_TEST node_test.cpp ${SRCS})
-install(TARGETS SHADOW_TEST DESTINATION plugins)
-target_link_libraries(SHADOW_TEST -lev)
-target_link_libraries(SHADOW_TEST ${Boost_LIBRARIES})
+add_shadow_plugin(NODE_PROXYMODEL node_proxymodel.cpp ${SRCS})
+install(TARGETS NODE_PROXYMODEL DESTINATION plugins)
+target_link_libraries(NODE_PROXYMODEL -lev)
+target_link_libraries(NODE_PROXYMODEL ${Boost_LIBRARIES})
+
+add_executable(LOCAL_NODE_PROXYMODEL node_proxymodel.cpp ${SRCS})
+target_link_libraries(LOCAL_NODE_PROXYMODEL -lev)
+target_link_libraries(LOCAL_NODE_PROXYMODEL ${Boost_LIBRARIES})

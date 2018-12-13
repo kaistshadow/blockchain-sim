@@ -1,4 +1,4 @@
-#include "HandleNetworkTest.h"
+#include "HandleNetwork_ProxyModel.h"
 #include "../event/GlobalEvent.h"
 #include "../Configuration.h" 
 
@@ -13,8 +13,13 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/serialization/export.hpp>
 
-int HandleNetworkTest::InitializeListenSocket() {
+
+#include "TestMessage.h"
+BOOST_CLASS_EXPORT(TestMessage);
+
+int HandleNetwork_ProxyModel::InitializeListenSocket() {
     int 			sockfd;     /* listen on sock_fd */
     struct 	sockaddr_in 	my_addr;    /* my address information */
     int 			sin_size;
@@ -45,21 +50,21 @@ int HandleNetworkTest::InitializeListenSocket() {
     return sockfd;
 }
 
-void HandleNetworkTest::RegisterServerWatcher(int listenfd) {
+void HandleNetwork_ProxyModel::RegisterServerWatcher(int listenfd) {
     SocketEventWatcher *watcher = new SocketEventWatcher(listenfd);
     watcher->InitEventWatcher(GlobalEvent::onAcceptSocketIO, EV_READ);
     watcher->StartEventWatcher();
     GlobalEvent::socketWatcherMap.insert( std::pair<int, SocketEventWatcher*>(listenfd, watcher));
 }
 
-void HandleNetworkTest::RegisterSocketWatcher(int sfd) {
+void HandleNetwork_ProxyModel::RegisterSocketWatcher(int sfd) {
     SocketEventWatcher *watcher = new SocketEventWatcher(sfd);
     watcher->InitEventWatcher(GlobalEvent::onSendRecvSocketIO, EV_READ);
     watcher->StartEventWatcher();
     GlobalEvent::socketWatcherMap.insert( std::pair<int, SocketEventWatcher*>(sfd, watcher));
 }
 
-int HandleNetworkTest::ConnectToNode(std::string domain) {
+int HandleNetwork_ProxyModel::ConnectToNode(std::string domain) {
     // if membershipPeerList already contains the peer for given domain, 
     // then we dont need to do anything here, so return 0.
     if (membershipPeerList.GetPeerByDomain(domain)) {
@@ -105,8 +110,10 @@ int HandleNetworkTest::ConnectToNode(std::string domain) {
         gossipPeerList.AppendPeer(peer);     
         RegisterSocketWatcher(sfd);
 
-        TestMessage msg("I don't know my domain name.");
+        Message* msg = new TestMessage("I don't know my domain name.");
+        std::cout << "allocated" << "\n";
         UnicastMsg(peer->GetIP(), msg);
+        delete msg;
     }
     else { 
         // Now in progress of connection.
@@ -140,8 +147,10 @@ int HandleNetworkTest::ConnectToNode(std::string domain) {
                     gossipPeerList.AppendPeer(peer);     
                     RegisterSocketWatcher(sfd);
 
-                    TestMessage msg("I don't know my domain name.");
+                    Message *msg = new TestMessage("I don't know my domain name.");
+                    std::cout << "allocated" << "\n";
                     UnicastMsg(peer->GetIP(), msg);
+                    delete msg;
                 }
             }
         }
@@ -154,7 +163,7 @@ int HandleNetworkTest::ConnectToNode(std::string domain) {
     return 0;
 }
 
-int HandleNetworkTest::JoinNetwork() {
+int HandleNetwork_ProxyModel::JoinNetwork() {
     // Initialize a listening socket
     int listenfd = InitializeListenSocket();
     // Register a watcher which monitors the new connection requested from outside 
@@ -169,7 +178,7 @@ int HandleNetworkTest::JoinNetwork() {
     return result;
 }
 
-void HandleNetworkTest::HandleRecvSocketIO(int fd) {
+void HandleNetwork_ProxyModel::HandleRecvSocketIO(int fd) {
     auto it = peerMap.find(fd);
     if (it == peerMap.end()) {
         std::cout << "No valid peer exists" << "\n";
@@ -257,11 +266,25 @@ void HandleNetworkTest::HandleRecvSocketIO(int fd) {
             }
             status.recv_status = RECV_IDLE;
 
-            TestMessage msg = GetDeserializedMsg(status.recv_str);
-            std::cout << "Deserialization of the received message complete!" << "\n";
-            std::cout << "msg nodename:" << msg.nodename << "\n";
+            Message *msg = GetDeserializedMsg(status.recv_str);
+            switch (msg->GetType()) {
+            case Message::TEST_MESSAGE: 
+                {
+                    std::cout << "Deserialization of the received message complete!" << "\n";
+                    std::cout << "MESSAGE TYPE = TEST MESSAGE" << "\n";
+                    delete msg;
+                    break;
+                }
+            case Message::TX_MESSAGE:
+                {
+                    std::cout << "Deserialization of the received message complete!" << "\n";
+                    std::cout << "MESSAGE TYPE = TX MESSAGE" << "\n";
+                    delete msg;
+                    break;
+                }
+            }
 
-            // fill here with parsing code
+            // fill here with parsing logic
             // ...
             // ...
             // CentralizedNetworkMessage nmsg = GetDeserializedMsg(p->recv_str);
@@ -272,7 +295,7 @@ void HandleNetworkTest::HandleRecvSocketIO(int fd) {
     return;
 }
 
-void HandleNetworkTest::HandleSendSocketIO(int fd) {
+void HandleNetwork_ProxyModel::HandleSendSocketIO(int fd) {
     auto it = peerMap.find(fd);
     if (it == peerMap.end()) {
         std::cout << "No valid peer exists" << "\n";
@@ -304,7 +327,7 @@ void HandleNetworkTest::HandleSendSocketIO(int fd) {
     }
 }
 
-void HandleNetworkTest::HandleAcceptSocketIO(int fd) {
+void HandleNetwork_ProxyModel::HandleAcceptSocketIO(int fd) {
     struct 	sockaddr_in 	their_addr; /* connector's address information */
     int sock_fd;
     socklen_t 			sin_size;
@@ -339,7 +362,7 @@ void HandleNetworkTest::HandleAcceptSocketIO(int fd) {
     return;
 }
 
-std::string HandleNetworkTest::GetSerializedString(TestMessage& msg) {
+std::string HandleNetwork_ProxyModel::GetSerializedString(Message* msg) {
   std::string serial_str;
   // serialize obj into an std::string payload
   boost::iostreams::back_insert_device<std::string> inserter(serial_str);
@@ -350,8 +373,8 @@ std::string HandleNetworkTest::GetSerializedString(TestMessage& msg) {
   return serial_str;
 }
 
-TestMessage HandleNetworkTest::GetDeserializedMsg(std::string str) {
-  TestMessage msg;
+Message* HandleNetwork_ProxyModel::GetDeserializedMsg(std::string str) {
+  Message* msg;
   // wrap buffer inside a stream and deserialize string_read into obj
   boost::iostreams::basic_array_source<char> device(str.c_str(), str.size());
   boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
@@ -360,12 +383,11 @@ TestMessage HandleNetworkTest::GetDeserializedMsg(std::string str) {
   return msg;
 }
 
-void HandleNetworkTest::UnicastMsg(std::string destip, TestMessage& msg) {
+void HandleNetwork_ProxyModel::UnicastMsg(std::string destip, Message* msg) {
     Peer* p = membershipPeerList.GetPeerByIP(destip);
     if (p) {
         std::string payload = GetSerializedString(msg);
         int payload_len = payload.size();
-        std::cout << "TestMessage nodename:" << msg.nodename << "\n";
         std::cout << "UnicastMsg:" << "send to " << destip << ", payload size=" << payload_len << "\n";
         
         SocketEventStatus &status = p->GetSocketEventStatus();

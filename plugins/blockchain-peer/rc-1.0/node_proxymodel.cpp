@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Testing node up" << "\n";
 
     // Allocate handlers for each state
-    handleNetwork = HandleNetwork::create(HANDLE_NETWORK_TEST);
+    handleNetwork = HandleNetwork::create(HANDLE_NETWORK_PROXYMODEL);
 
 
     // Allocate event loop handler

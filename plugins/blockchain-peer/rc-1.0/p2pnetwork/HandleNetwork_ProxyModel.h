@@ -2,7 +2,7 @@
 #define HANDLE_NETWORK_TEST_H
 
 #include "HandleNetwork.h"
-#include "TestMessage.h"
+#include "Message.h"
 #include "../datamodules/Peer.h"
 
 #include <ev.h>
@@ -17,7 +17,7 @@ struct sock_ev {
   int fd;
 };
 
-class HandleNetworkTest: public HandleNetwork {
+class HandleNetwork_ProxyModel: public HandleNetwork {
  private:
     PeerList membershipPeerList;
     PeerList gossipPeerList;
@@ -32,19 +32,19 @@ class HandleNetworkTest: public HandleNetwork {
     void RegisterServerWatcher(int listenfd);
     void RegisterSocketWatcher(int sfd); 
 
-    std::string GetSerializedString(TestMessage& msg);
-    TestMessage GetDeserializedMsg(std::string str);
+    std::string GetSerializedString(Message* msg);
+    Message *GetDeserializedMsg(std::string str);
 
  public:
-    HandleNetworkTest() {}
-    virtual ~HandleNetworkTest() {}
+    HandleNetwork_ProxyModel() {}
+    virtual ~HandleNetwork_ProxyModel() {}
 
     int JoinNetwork();
     void HandleRecvSocketIO(int fd);
     void HandleSendSocketIO(int fd);
     void HandleAcceptSocketIO(int fd);
 
-    void UnicastMsg(std::string destip, TestMessage& msg);
+    void UnicastMsg(std::string destip, Message* msg);
 };
 
 

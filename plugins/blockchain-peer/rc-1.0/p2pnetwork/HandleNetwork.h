@@ -3,9 +3,9 @@
 
 #include <ev.h>
 #include <memory>
-#include "TestMessage.h"
+#include "Message.h"
 
-#define HANDLE_NETWORK_TEST 0
+#define HANDLE_NETWORK_PROXYMODEL 0
 
 class HandleNetwork {
 
@@ -18,7 +18,7 @@ class HandleNetwork {
     virtual void HandleSendSocketIO(int fd) = 0;
     virtual void HandleAcceptSocketIO(int fd) = 0;
 
-    virtual void UnicastMsg(std::string destip, TestMessage& msg) = 0;
+    virtual void UnicastMsg(std::string destip, Message* msg) = 0;
 };
 
 

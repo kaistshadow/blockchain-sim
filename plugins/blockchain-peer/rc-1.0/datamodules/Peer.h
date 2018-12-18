@@ -5,6 +5,7 @@
 #include <string>
 #include <string.h>
 
+class MessageHeader;
 
 struct WriteMsg {
     char       *data;
@@ -33,17 +34,19 @@ struct WriteMsg {
 
 enum RECV_STATUS {
     RECV_IDLE = 0,
-    RECV_LENGTH = 1,
-    RECV_NONE = 2,
+    RECV_HEADER = 1,
+    RECV_MSG = 2,
+    RECV_NONE = 3,
 };
 
 // SocketEventStatus : data structure that contains any status for socket communication
 class SocketEventStatus {
  public:
     RECV_STATUS recv_status = RECV_IDLE;
-    int payload_len;
+    int message_len;
     int received_len;
     std::string recv_str;
+    MessageHeader* header;   //  TODO: make MessageHeader a general interface class.
 
     std::list<WriteMsg *> sendMsgQueue;
 };

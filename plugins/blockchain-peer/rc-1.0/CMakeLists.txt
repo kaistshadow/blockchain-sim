@@ -27,7 +27,13 @@ set(SRCS
   p2pnetwork/HandleNetwork.cpp
   p2pnetwork/HandleNetwork_ProxyModel.cpp
   datamodules/Peer.cpp
+  datamodules/TxPool.cpp
+  datamodules/Transaction.cpp
   event/GlobalEvent.cpp
+  utility/GlobalClock.cpp
+  utility/NodeInfo.cpp
+  transaction/HandleTransaction.cpp
+  transaction/HandleTransaction_BasicModel.cpp
 )
   
 ## we need to know where shadow is installed

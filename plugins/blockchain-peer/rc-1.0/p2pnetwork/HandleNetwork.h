@@ -8,7 +8,6 @@
 #define HANDLE_NETWORK_PROXYMODEL 0
 
 class HandleNetwork {
-
  public:
     virtual ~HandleNetwork() {};
     static std::shared_ptr<HandleNetwork> create(const int type);
@@ -19,6 +18,7 @@ class HandleNetwork {
     virtual void HandleAcceptSocketIO(int fd) = 0;
 
     virtual void UnicastMsg(std::string destip, Message* msg) = 0;
+    virtual void BroadcastMsg(Message* msg) = 0;
 };
 
 

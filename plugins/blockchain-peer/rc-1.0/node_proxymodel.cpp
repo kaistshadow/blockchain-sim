@@ -2,8 +2,10 @@
 #include <memory>
 #include "Configuration.h"
 #include "event/GlobalEvent.h"
+#include "utility/NodeInfo.h"
 
 std::shared_ptr<HandleNetwork> handleNetwork;
+std::shared_ptr<HandleTransaction> handleTransaction;
 bool amIProxyNode = false;
 
 int main(int argc, char *argv[]) {
@@ -13,9 +15,13 @@ int main(int argc, char *argv[]) {
             amIProxyNode = true;
     }
     std::cout << "Testing node up" << "\n";
+    
+    // init NodeInfo : host ip address
+    NodeInfo::GetInstance()->SetHostIP();
 
     // Allocate handlers for each state
     handleNetwork = HandleNetwork::create(HANDLE_NETWORK_PROXYMODEL);
+    handleTransaction = HandleTransaction::create(HANDLE_TRANSACTION_BASICMODEL);
 
 
     // Allocate event loop handler

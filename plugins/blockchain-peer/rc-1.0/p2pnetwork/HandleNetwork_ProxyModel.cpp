@@ -1,6 +1,7 @@
 #include "HandleNetwork_ProxyModel.h"
 #include "../event/GlobalEvent.h"
 #include "../Configuration.h" 
+#include "../utility/NodeInfo.h"
 
 #include <fcntl.h> /* Added for the nonblocking socket */
 #include <arpa/inet.h>
@@ -18,6 +19,9 @@
 
 #include "TestMessage.h"
 BOOST_CLASS_EXPORT(TestMessage);
+
+#include "../datamodules/Transaction.h"
+BOOST_CLASS_EXPORT(Transaction);
 
 int HandleNetwork_ProxyModel::InitializeListenSocket() {
     int 			sockfd;     /* listen on sock_fd */
@@ -110,10 +114,11 @@ int HandleNetwork_ProxyModel::ConnectToNode(std::string domain) {
         gossipPeerList.AppendPeer(peer);     
         RegisterSocketWatcher(sfd);
 
-        Message* msg = new TestMessage("I don't know my domain name.");
-        std::cout << "allocated" << "\n";
-        UnicastMsg(peer->GetIP(), msg);
-        delete msg;
+        // Message* msg = new TestMessage("I don't know my domain name.");
+        // Transaction* msg = new Transaction(10,15,1.2);
+        // std::cout << "allocated tx" << "\n";
+        // UnicastMsg(peer->GetIP(), msg);
+        // delete msg;
     }
     else { 
         // Now in progress of connection.
@@ -147,9 +152,14 @@ int HandleNetwork_ProxyModel::ConnectToNode(std::string domain) {
                     gossipPeerList.AppendPeer(peer);     
                     RegisterSocketWatcher(sfd);
 
-                    Message *msg = new TestMessage("I don't know my domain name.");
-                    std::cout << "allocated" << "\n";
-                    UnicastMsg(peer->GetIP(), msg);
+                    // Message* msg = new TestMessage("I don't know my domain name.");
+                    Transaction* msg = new Transaction(10,15,1.2);
+                    std::cout << "allocated tx" << "\n";
+                    if (NodeInfo::GetInstance()->GetHostIP() == "11.0.0.4")
+                        BroadcastMsg(msg);
+                    //     UnicastMsg("11.0.0.3", msg);
+                    // else
+                    //     UnicastMsg(peer->GetIP(), msg);
                     delete msg;
                 }
             }
@@ -217,23 +227,24 @@ void HandleNetwork_ProxyModel::HandleRecvSocketIO(int fd) {
                 close(fd);
             }
             else if (n > 0) {
-                status.payload_len = length;
-                status.recv_status = RECV_LENGTH;
+                status.message_len = length;
+                status.recv_status = RECV_HEADER;
                 status.received_len = 0;
                 status.recv_str = "";
-                std::cout << "receive from " << peer->GetIP() << ", network packet length:" << length << "\n";
+                std::cout << "receive from " << peer->GetIP() << ", header length:" << length << "\n";
                 // string_read[n] = '\0';
                 // cout << "The string is: " << string_read << "\n";
             }
             break;
         }
-    case RECV_LENGTH:
+    case RECV_HEADER:
+    case RECV_MSG:
         {
             int total_recv_size = status.received_len;
             int numbytes = 0;
 
             while(1) {
-                int recv_size = std::min(2000, status.payload_len - total_recv_size);
+                int recv_size = std::min(2000, status.message_len - total_recv_size);
                 numbytes = recv(fd, string_read, recv_size, 0);              
                 if (numbytes > 0) {
                     total_recv_size += numbytes;
@@ -244,50 +255,93 @@ void HandleNetwork_ProxyModel::HandleRecvSocketIO(int fd) {
                     break;
                 }
                 else if (numbytes < 0) {
-                    std::cerr << "recv event: recv payload fail\n";
+                    std::cerr << "recv event: recv message fail\n";
                     break;
                 }
                 // std::cout << "recv:length=[" << numbytes << "],data=[" << recv_str << "]\n";
-                if (total_recv_size == status.payload_len)
+                if (total_recv_size == status.message_len)
                     break;
                 else {
-                    std::cout << "recv: total_recv_size=" << total_recv_size << ", payload_len=" << status.payload_len << "\n";
+                    std::cout << "recv: total_recv_size=" << total_recv_size << ", message_len=" << status.message_len << "\n";
                 }
                 memset(string_read, 0, 2000);
             }
 
-            if (status.payload_len != total_recv_size) {
+            if (status.message_len != total_recv_size) {
                 status.received_len = total_recv_size;
-                std::cout << "error: received only part of payload (maybe recv buffer is full)" << "received_len:" << status.received_len << ", payload_len:" << status.payload_len << ", from:" << peer->GetIP() << "\n";
+                std::cout << "error: received only part of message (maybe recv buffer is full)" << "received_len:" << status.received_len << ", message_len:" << status.message_len << ", from:" << peer->GetIP() << "\n";
                 break;
             }
             else {
-                std::cout << "fully received payload. size:" << total_recv_size << ", from:" << peer->GetIP() << "\n";
+                std::cout << "fully received. size:" << total_recv_size << ", from:" << peer->GetIP() << "\n";
             }
-            status.recv_status = RECV_IDLE;
+
+            if (status.recv_status == RECV_HEADER) {
+                status.header = GetDeserializedMsgHeader(status.recv_str);
+                status.message_len = status.header->GetMessageLength();                
+                status.recv_status = RECV_MSG;
+                status.received_len = 0;
+                status.recv_str = "";
+                break;
+            }
+            else if (status.recv_status == RECV_MSG) {
+                status.recv_status = RECV_IDLE;
+            }
 
             Message *msg = GetDeserializedMsg(status.recv_str);
-            switch (msg->GetType()) {
-            case Message::TEST_MESSAGE: 
-                {
-                    std::cout << "Deserialization of the received message complete!" << "\n";
-                    std::cout << "MESSAGE TYPE = TEST MESSAGE" << "\n";
-                    delete msg;
-                    break;
-                }
-            case Message::TX_MESSAGE:
-                {
-                    std::cout << "Deserialization of the received message complete!" << "\n";
-                    std::cout << "MESSAGE TYPE = TX MESSAGE" << "\n";
-                    delete msg;
-                    break;
-                }
+
+            // Now handler received entire header & msg
+            if (status.header->GetBroadcastType() == BROADCASTTYPE_UNICAST &&
+                status.header->GetDestIP() != NodeInfo::GetInstance()->GetHostIP() ) {
+                // When msg is unicast message, and current node is not the destination.
+                // So, relay the received unicast msg.
+                RelayUnicastMsg(status.header, msg);
+                delete status.header;
+                delete msg;
+                break;
+            }
+            else if (status.header->GetBroadcastType() == BROADCASTTYPE_BROADCAST &&
+                     status.header->IsVisitedIP(NodeInfo::GetInstance()->GetHostIP())) {
+                // When msg is broadcast message, and current node already received the msg before.
+                // So, drop the received msg.
+                delete status.header;
+                delete msg;
+                break;
+            }
+            else if (status.header->GetBroadcastType() == BROADCASTTYPE_BROADCAST) {
+                // When msg is broadcast message, and current node does not received the msg before.
+                // So, relay the received broadcast msg.
+                RelayBroadcastMsg(status.header, msg);
             }
 
-            // fill here with parsing logic
-            // ...
-            // ...
-            // CentralizedNetworkMessage nmsg = GetDeserializedMsg(p->recv_str);
+            // When msg is unicast message and current node is the destination
+            // Or, when msg is broadcast message, and the msg is received for the first time, i.e., not dropped.
+            // So, forward the received msg to proper module if it is not proxy.
+            if (!amIProxyNode) {
+                switch (msg->GetType()) {
+                case Message::TEST_MESSAGE: 
+                    {
+                        std::cout << "Deserialization of the received message complete!" << "\n";
+                        std::cout << "MESSAGE TYPE = TEST MESSAGE" << "\n";
+                        break;
+                    }
+                case Message::TX_MESSAGE:
+                    {
+                        std::cout << "Deserialization of the received message complete!" << "\n";
+                        std::cout << "MESSAGE TYPE = TX MESSAGE" << "\n";
+                        Transaction *tx = dynamic_cast<Transaction*>(msg);
+                        handleTransaction->HandleArrivedTx(tx);
+                        break;
+                    }
+                }
+
+                // fill here with parsing logic
+                // ...
+                // ...
+                // CentralizedNetworkMessage nmsg = GetDeserializedMsg(p->recv_str);
+            }
+            delete status.header;
+            delete msg;
             break;
         }
     }
@@ -364,7 +418,7 @@ void HandleNetwork_ProxyModel::HandleAcceptSocketIO(int fd) {
 
 std::string HandleNetwork_ProxyModel::GetSerializedString(Message* msg) {
   std::string serial_str;
-  // serialize obj into an std::string payload
+  // serialize obj into an std::string message
   boost::iostreams::back_insert_device<std::string> inserter(serial_str);
   boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
   boost::archive::binary_oarchive oa(s);
@@ -383,24 +437,152 @@ Message* HandleNetwork_ProxyModel::GetDeserializedMsg(std::string str) {
   return msg;
 }
 
+std::string HandleNetwork_ProxyModel::GetSerializedString(MessageHeader* msg) {
+  std::string serial_str;
+  // serialize obj into an std::string message
+  boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+  boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
+  boost::archive::binary_oarchive oa(s);
+  oa << msg;
+  s.flush();
+  return serial_str;
+}
+
+MessageHeader* HandleNetwork_ProxyModel::GetDeserializedMsgHeader(std::string str) {
+  MessageHeader* msg;
+  // wrap buffer inside a stream and deserialize string_read into obj
+  boost::iostreams::basic_array_source<char> device(str.c_str(), str.size());
+  boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
+  boost::archive::binary_iarchive ia(s);
+  ia >> msg;
+  return msg;
+}
+
+// message format
+// | header_length || type || destip || visit_ip_list || message_length || message |
+// | header_length ||                h   e  a   d   e  r                || message |
 void HandleNetwork_ProxyModel::UnicastMsg(std::string destip, Message* msg) {
     Peer* p = membershipPeerList.GetPeerByIP(destip);
-    if (p) {
-        std::string payload = GetSerializedString(msg);
-        int payload_len = payload.size();
-        std::cout << "UnicastMsg:" << "send to " << destip << ", payload size=" << payload_len << "\n";
+    if (!p) {
+        // no valid peer or outgoing socket exists for destination
+        // in proxy model, we leverage hardcoded proxy whose domain is bleep0
+        p = gossipPeerList.GetPeerByDomain("bleep0");
+        if (!p) {
+            std::cout << "no valid peer or outgoing socket exists for " << destip << "\n";
+            exit(-1);
+        }
+    }
+
+    std::string message = GetSerializedString(msg);
+    int message_len = message.size();
+
+    MessageHeader header;
+    header.SetBroadcastType(BROADCASTTYPE_UNICAST);
+    header.SetDestIP(destip);
+    header.SetMessageLength(message_len);
+
+    std::string message_header = GetSerializedString(&header);
+    int header_len = message_header.size();
+
+    std::cout << "UnicastMsg:" << "send to " << destip << ", header size=" << header_len << ", message_size=" << message_len << "\n";
+        
+    SocketEventStatus &status = p->GetSocketEventStatus();
+    status.sendMsgQueue.push_back(new WriteMsg((char*)&header_len, sizeof(int)));
+    status.sendMsgQueue.push_back(new WriteMsg(message_header.c_str(), header_len));
+    status.sendMsgQueue.push_back(new WriteMsg(message.c_str(), message_len));
+
+    SocketEventWatcher *watcher = GlobalEvent::socketWatcherMap[p->GetSocketFD()];        
+    watcher->StopEventWatcher();
+    watcher->SetEventWatcher(EV_READ | EV_WRITE); // turn on write event 
+    watcher->StartEventWatcher();
+
+    return;
+}
+
+void HandleNetwork_ProxyModel::BroadcastMsg(Message* msg) {
+    std::list<Peer*>& peerlist = gossipPeerList.GetPeerList();
+    for (Peer* p : peerlist) {
+        std::string message = GetSerializedString(msg);
+        int message_len = message.size();
+
+        MessageHeader header;
+        header.SetBroadcastType(BROADCASTTYPE_BROADCAST);
+        header.AppendVisitedIP(NodeInfo::GetInstance()->GetHostIP());
+        header.SetMessageLength(message_len);
+
+        std::string message_header = GetSerializedString(&header);
+        int header_len = message_header.size();
+
+        std::cout << "BroadcastMsg:" << "send to " << p->GetIP() << ", header size=" << header_len << ", message size=" << message_len << "\n";
         
         SocketEventStatus &status = p->GetSocketEventStatus();
-        status.sendMsgQueue.push_back(new WriteMsg((char*)&payload_len, sizeof(int)));
-        status.sendMsgQueue.push_back(new WriteMsg(payload.c_str(), payload_len));
+        status.sendMsgQueue.push_back(new WriteMsg((char*)&header_len, sizeof(int)));
+        status.sendMsgQueue.push_back(new WriteMsg(message_header.c_str(), header_len));
+        status.sendMsgQueue.push_back(new WriteMsg(message.c_str(), message_len));
 
         SocketEventWatcher *watcher = GlobalEvent::socketWatcherMap[p->GetSocketFD()];        
         watcher->StopEventWatcher();
         watcher->SetEventWatcher(EV_READ | EV_WRITE); // turn on write event 
         watcher->StartEventWatcher();
     }
-    else {
-        std::cout << "no valid peer or outgoing socket exists for " << destip << "\n";
+}
+
+void HandleNetwork_ProxyModel::RelayUnicastMsg(MessageHeader* header, Message* msg) {
+    Peer* p = membershipPeerList.GetPeerByIP(header->GetDestIP());
+    if (!p) {
+        // no valid peer or outgoing socket exists for destination
+        // in proxy model, we leverage hardcoded proxy whose domain is bleep0
+        p = gossipPeerList.GetPeerByDomain("bleep0");
+        if (!p) {
+            std::cout << "no valid peer or outgoing socket exists for " << header->GetDestIP() << "\n";
+            exit(-1);
+        }
     }
+
+    std::string message = GetSerializedString(msg);
+    int message_len = message.size();
+
+    std::string message_header = GetSerializedString(header);
+    int header_len = message_header.size();
+
+    std::cout << "UnicastMsg:" << "relay to " << p->GetIP() << ", header size=" << header_len << ", message size=" << message_len << "\n";
+        
+    SocketEventStatus &status = p->GetSocketEventStatus();
+    status.sendMsgQueue.push_back(new WriteMsg((char*)&header_len, sizeof(int)));
+    status.sendMsgQueue.push_back(new WriteMsg(message_header.c_str(), header_len));
+    status.sendMsgQueue.push_back(new WriteMsg(message.c_str(), message_len));
+
+    SocketEventWatcher *watcher = GlobalEvent::socketWatcherMap[p->GetSocketFD()];        
+    watcher->StopEventWatcher();
+    watcher->SetEventWatcher(EV_READ | EV_WRITE); // turn on write event 
+    watcher->StartEventWatcher();
     return;
+}
+
+void HandleNetwork_ProxyModel::RelayBroadcastMsg(MessageHeader* header, Message* msg) {
+    std::list<Peer*>& peerlist = gossipPeerList.GetPeerList();
+    for (Peer* p : peerlist) {
+        if (header->IsVisitedIP(p->GetIP()))
+            continue;
+
+        std::string message = GetSerializedString(msg);
+        int message_len = message.size();
+
+        header->AppendVisitedIP(NodeInfo::GetInstance()->GetHostIP());
+
+        std::string message_header = GetSerializedString(header);
+        int header_len = message_header.size();
+
+        std::cout << "BroadcastMsg:" << "relay to " << p->GetIP() << ", header size=" << header_len << ", message size=" << message_len << "\n";
+        
+        SocketEventStatus &status = p->GetSocketEventStatus();
+        status.sendMsgQueue.push_back(new WriteMsg((char*)&header_len, sizeof(int)));
+        status.sendMsgQueue.push_back(new WriteMsg(message_header.c_str(), header_len));
+        status.sendMsgQueue.push_back(new WriteMsg(message.c_str(), message_len));
+
+        SocketEventWatcher *watcher = GlobalEvent::socketWatcherMap[p->GetSocketFD()];        
+        watcher->StopEventWatcher();
+        watcher->SetEventWatcher(EV_READ | EV_WRITE); // turn on write event 
+        watcher->StartEventWatcher();
+    }
 }

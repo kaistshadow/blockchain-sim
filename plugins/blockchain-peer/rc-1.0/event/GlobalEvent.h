@@ -30,8 +30,13 @@ namespace GlobalEvent {
     // map socketfd to socket event watcher
     extern std::map< int, SocketEventWatcher*> socketWatcherMap;
 
+    // periodic watcher for tx generator
+    extern ev_periodic txgenWatcher;
+
     void onSendRecvSocketIO(EV_P_ ev_io *w, int revents);
     void onAcceptSocketIO(EV_P_ ev_io *w, int revents);
+
+    void onPeriodicTxInjection(EV_P_ ev_periodic *w, int revents);
 };
 
 

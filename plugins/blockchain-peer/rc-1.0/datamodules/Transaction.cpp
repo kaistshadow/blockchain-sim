@@ -1,5 +1,11 @@
 #include "Transaction.h"
 
+std::ostream& operator<<(std::ostream& os, const Transaction& tx) {
+    os << tx.sender_id << " sends " << tx.amount << " to " << tx.receiver_id ;
+
+    return os;
+}
+
 bool operator<(Transaction const & lhs, Transaction const & rhs){
     if (lhs.sender_id == rhs.sender_id &&
              lhs.receiver_id == rhs.receiver_id)

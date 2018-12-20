@@ -13,7 +13,7 @@ class HandleTransaction {
     static std::shared_ptr<HandleTransaction> create(const int type);
 
     virtual void HandleArrivedTx(Transaction *tx) = 0;
-
+    virtual Transaction MakeRandomValidTransaction() = 0;
 };
 
 

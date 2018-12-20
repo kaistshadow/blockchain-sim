@@ -32,6 +32,7 @@ set(SRCS
   event/GlobalEvent.cpp
   utility/GlobalClock.cpp
   utility/NodeInfo.cpp
+  utility/ArgsManager.cpp
   transaction/HandleTransaction.cpp
   transaction/HandleTransaction_BasicModel.cpp
 )
@@ -67,11 +68,11 @@ include(ShadowTools)
 
 # add_executable(HELLO hello.cpp ${SRCS})
 
-add_shadow_plugin(NODE_PROXYMODEL node_proxymodel.cpp ${SRCS})
-install(TARGETS NODE_PROXYMODEL DESTINATION plugins)
-target_link_libraries(NODE_PROXYMODEL -lev)
-target_link_libraries(NODE_PROXYMODEL ${Boost_LIBRARIES})
+add_shadow_plugin(NODE node.cpp ${SRCS})
+install(TARGETS NODE DESTINATION plugins)
+target_link_libraries(NODE -lev)
+target_link_libraries(NODE ${Boost_LIBRARIES})
 
-add_executable(LOCAL_NODE_PROXYMODEL node_proxymodel.cpp ${SRCS})
-target_link_libraries(LOCAL_NODE_PROXYMODEL -lev)
-target_link_libraries(LOCAL_NODE_PROXYMODEL ${Boost_LIBRARIES})
+add_executable(LOCAL_NODE node.cpp ${SRCS})
+target_link_libraries(LOCAL_NODE -lev)
+target_link_libraries(LOCAL_NODE ${Boost_LIBRARIES})

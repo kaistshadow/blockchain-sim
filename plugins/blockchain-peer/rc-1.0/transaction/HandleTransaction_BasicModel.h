@@ -6,11 +6,15 @@
 #include "../datamodules/TxPool.h"
 
 class HandleTransaction_BasicModel: public HandleTransaction {
+ private:
     TxPool txpool;
+    void PrintTransactions();
 
  public:
     HandleTransaction_BasicModel() {}
     virtual ~HandleTransaction_BasicModel() {}
+
+    Transaction MakeRandomValidTransaction();
 
     void HandleArrivedTx(Transaction *tx);
 };

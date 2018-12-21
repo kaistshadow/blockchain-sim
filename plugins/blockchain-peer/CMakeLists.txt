@@ -245,3 +245,6 @@ target_link_libraries(PEER_LIBEV_SERV -lev)
 add_shadow_plugin(PEER_LIBEV_CLIENT node_libev_client.cpp )
 install(TARGETS PEER_LIBEV_CLIENT DESTINATION plugins)
 target_link_libraries(PEER_LIBEV_CLIENT -lev)
+
+
+add_subdirectory(rc-1.0)

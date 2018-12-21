@@ -14,6 +14,7 @@ class Message {
     virtual int GetType() = 0;
     static const int TEST_MESSAGE = 1;
     static const int TX_MESSAGE = 2;
+    static const int CONSENSUS_MESSAGE = 3;
 
  private:
 

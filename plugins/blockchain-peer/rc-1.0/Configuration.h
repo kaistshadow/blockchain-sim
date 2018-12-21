@@ -3,12 +3,14 @@
 
 #include "p2pnetwork/HandleNetwork.h"
 #include "transaction/HandleTransaction.h"
+#include "consensus/HandleConsensus.h"
 
 // =================  Blockchain Node Configuration Start ===================
 
 // general configuration
 extern std::shared_ptr<HandleNetwork> handleNetworkClass;
 extern std::shared_ptr<HandleTransaction> handleTransactionClass;
+extern std::shared_ptr<HandleConsensus> handleConsensusClass;
 extern bool amIFullNode;
 extern bool amINetworkParticipantNode;
 
@@ -26,6 +28,7 @@ extern bool amIProxyNode;
 
 
 // Blockchain Consensus Configuration
+extern int block_tx_num;
 
 
 #endif

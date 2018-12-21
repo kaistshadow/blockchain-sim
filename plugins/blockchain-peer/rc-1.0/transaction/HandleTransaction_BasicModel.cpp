@@ -1,15 +1,26 @@
 #include "../datamodules/Transaction.h"
 #include "HandleTransaction_BasicModel.h"
+#include "../Configuration.h"
 
 #include <iostream>
 #include <stdlib.h>
 
 void HandleTransaction_BasicModel::PrintTransactions() {
     int i = 1;
-    for (Transaction t : txpool.GetTxs(txpool.GetPendingTxNum())) {
+    for (Transaction t : TxPool::GetInstance()->GetTxs(TxPool::GetInstance()->GetPendingTxNum())) {
         std::cout << t << "\n";
         // std::cout << "Tx " << i << ":" << t << "\n";
         i++;
+    }
+}
+
+void HandleTransaction_BasicModel::HandleArrivedTx(Transaction *tx) {
+    std::cout << "inject a arrived transaction to TXPOOL" << "\n";
+    TxPool::GetInstance()->AddTx(tx);
+    
+    if (TxPool::GetInstance()->GetPendingTxNum() >= block_tx_num) {
+        // PrintTransactions();
+        handleConsensusClass->RequestConsensus(TxPool::GetInstance()->GetTxs(block_tx_num));
     }
 }
 
@@ -24,11 +35,3 @@ Transaction HandleTransaction_BasicModel::MakeRandomValidTransaction() {
     return Transaction(from, to, value);
 }
 
-void HandleTransaction_BasicModel::HandleArrivedTx(Transaction *tx) {
-    std::cout << "inject a arrived transaction to TXPOOL" << "\n";
-    txpool.AddTx(tx);
-    
-    if (txpool.GetPendingTxNum() == 100) {
-        PrintTransactions();
-    }
-}

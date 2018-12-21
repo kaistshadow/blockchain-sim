@@ -33,10 +33,14 @@ namespace GlobalEvent {
     // periodic watcher for tx generator
     extern ev_periodic txgenWatcher;
 
+    // periodic watcher for fast log print
+    extern ev_periodic printAndFlush;
+
     void onSendRecvSocketIO(EV_P_ ev_io *w, int revents);
     void onAcceptSocketIO(EV_P_ ev_io *w, int revents);
 
     void onPeriodicTxInjection(EV_P_ ev_periodic *w, int revents);
+    void onPeriodicPrintAndFlush(EV_P_ ev_periodic *w, int revents);
 };
 
 

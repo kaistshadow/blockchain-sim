@@ -7,15 +7,18 @@
 
 class TxPool {
  private:
+    TxPool() {}; // singleton pattern
+    static TxPool* instance; // singleton pattern
+
     std::list<Transaction> items;
 
  public:
-    TxPool() {}
+    static TxPool* GetInstance(); // sigleton pattern
     
     int GetPendingTxNum() { return items.size(); }
 
     std::list<Transaction> GetTxs(int num);
-    void RemoveTxs(std::list<Transaction> txs);
+    void RemoveTxs(const std::list<Transaction>& txs);
     void AddTx(Transaction *tx);
     void AddTxs(std::list<Transaction> txs);
         

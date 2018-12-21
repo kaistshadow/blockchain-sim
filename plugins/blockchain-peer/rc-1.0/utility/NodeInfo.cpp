@@ -17,9 +17,15 @@ NodeInfo* NodeInfo::GetInstance() {
 
 int NodeInfo::GetHostNumber() {
     if (myNodeId.find("bleep") == 0) {
+        std::cout << "gethostnumber, nodeid find bleep" << "\n";
         return std::stoi(myNodeId.substr(5, myNodeId.size()));
     }
-    else
+    else if (myIp != "") {
+        unsigned int ips[4];
+        sscanf(myIp.c_str(), "%u.%u.%u.%u", &ips[3], &ips[2], &ips[1], &ips[0]);
+        unsigned int val = ips[0] + ips[1]*256 + ips[2]*256*256 + ips[3]*256*256*256;
+        return val;
+    } else
         return -1;
 }
 

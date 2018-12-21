@@ -35,7 +35,7 @@
   <plugin id="PEER" path="libNODE.so" />
 
   <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="30" />
+  <kill time="150" />
   <!-- our nodes -->
 
   <node id="bleep0">
@@ -47,12 +47,41 @@
   </node>
 
   <node id="bleep2">
-    <application plugin="PEER" time="13" arguments="-networkparticipant -generatetx=100 -timegeneratetx=10" />
+    <application plugin="PEER" time="13" arguments="" />
   </node>
 
   <node id="bleep3">
     <application plugin="PEER" time="13" arguments="" />
   </node>
+
+  <node id="bleep4">
+    <application plugin="PEER" time="13" arguments="" />
+  </node>
+
+  <node id="bleep5">
+    <application plugin="PEER" time="13" arguments="" />
+  </node>
+
+  <node id="bleep6">
+    <application plugin="PEER" time="13" arguments="" />
+  </node>
+
+  <node id="bleep7">
+    <application plugin="PEER" time="13" arguments="" />
+  </node>
+
+  <node id="bleep8">
+    <application plugin="PEER" time="13" arguments="" />
+  </node>
+
+  <node id="bleep9">
+    <application plugin="PEER" time="13" arguments="" />
+  </node>
+
+  <node id="bleep10">
+    <application plugin="PEER" time="13" arguments="-networkparticipant -generatetx=100 -timegeneratetx=10" />
+  </node>
+
 
 
   <!-- <node id="bleep1"> -->

@@ -1,7 +1,7 @@
-#ifndef TEST_MESSAGE_H
-#define TEST_MESSAGE_H
+#ifndef CONSENSUS_MESSAGE_H
+#define CONSENSUS_MESSAGE_H
 
-#include "Message.h"
+#include "../p2pnetwork/Message.h"
 
 #include <iostream>
 #include <string>
@@ -10,15 +10,12 @@
 #include <boost/serialization/set.hpp>
 #include <string>
 
-class TestMessage: public Message {
+class ConsensusMessage: public Message {
  public:
-    TestMessage() {}
-    TestMessage(std::string name) {test_str = name;}
-    virtual int GetType() {return TEST_MESSAGE;}
+    ConsensusMessage() {}
+    virtual int GetType() {return CONSENSUS_MESSAGE;}
 
-    virtual ~TestMessage() {}
-
-    std::string test_str;
+    virtual ~ConsensusMessage() {}
 
  private:
     friend class boost::serialization::access;
@@ -28,8 +25,7 @@ class TestMessage: public Message {
     template<class Archive>
         void serialize(Archive & ar, const unsigned int version) {
         ar & boost::serialization::base_object<Message>(*this);
-        boost::serialization::void_cast_register<Message,TestMessage>();
-        ar & test_str;
+        boost::serialization::void_cast_register<Message,ConsensusMessage>();
     }
 };
 

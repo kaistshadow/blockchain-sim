@@ -1,5 +1,14 @@
 #include "TxPool.h"
 
+TxPool* TxPool::instance = 0;
+
+TxPool* TxPool::GetInstance() {
+    if (instance == 0) {
+        instance = new TxPool();
+    }
+    return instance;
+}
+
 std::list<Transaction> TxPool::GetTxs(int num) {
     if (GetPendingTxNum() < num) {
         std::cout << "Warning : Not enough pending transaction pool. Too many requests" << "\n";
@@ -17,7 +26,7 @@ std::list<Transaction> TxPool::GetTxs(int num) {
     return txs;
 }
 
-void TxPool::RemoveTxs(std::list<Transaction> txs) {
+void TxPool::RemoveTxs(const std::list<Transaction>& txs) {
     std::list<Transaction>::iterator i = items.begin();
     while (i != items.end()) {
         bool found = (std::find(txs.begin(), txs.end(), *i) != txs.end());

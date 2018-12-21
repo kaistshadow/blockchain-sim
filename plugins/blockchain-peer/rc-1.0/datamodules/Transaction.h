@@ -25,7 +25,7 @@ class Transaction: public Message {
     // is a type of input archive the & operator is defined similar to >>
     template<class Archive>
         void serialize(Archive & ar, const unsigned int version) {
-        boost::serialization::base_object<Message>(*this);
+        ar & boost::serialization::base_object<Message>(*this);
         boost::serialization::void_cast_register<Message,Transaction>();
         ar & sender_id;
         ar & receiver_id;

@@ -23,6 +23,9 @@ BOOST_CLASS_EXPORT(TestMessage);
 #include "../datamodules/Transaction.h"
 BOOST_CLASS_EXPORT(Transaction);
 
+#include "../consensus/POWConsensusMessage.h"
+BOOST_CLASS_EXPORT(POWConsensusMessage);
+
 int HandleNetwork_ProxyModel::InitializeListenSocket() {
     int 			sockfd;     /* listen on sock_fd */
     struct 	sockaddr_in 	my_addr;    /* my address information */
@@ -213,8 +216,6 @@ void HandleNetwork_ProxyModel::RelayBroadcastMsg(MessageHeader* header, Message*
 
         std::string message = GetSerializedString(msg);
         int message_len = message.size();
-
-        header->AppendVisitedIP(NodeInfo::GetInstance()->GetHostIP());
 
         std::string message_header = GetSerializedString(header);
         int header_len = message_header.size();
@@ -413,6 +414,7 @@ void HandleNetwork_ProxyModel::HandleRecvSocketIO(int fd) {
             else if (status.header->GetBroadcastType() == BROADCASTTYPE_BROADCAST) {
                 // When msg is broadcast message, and current node does not received the msg before.
                 // So, relay the received broadcast msg.
+                status.header->AppendVisitedIP(NodeInfo::GetInstance()->GetHostIP());
                 RelayBroadcastMsg(status.header, msg);
             }
 
@@ -434,6 +436,14 @@ void HandleNetwork_ProxyModel::HandleRecvSocketIO(int fd) {
                         std::cout << "MESSAGE TYPE = TX MESSAGE" << "\n";
                         Transaction *tx = dynamic_cast<Transaction*>(msg);
                         handleTransactionClass->HandleArrivedTx(tx);
+                        break;
+                    }
+                case Message::CONSENSUS_MESSAGE:
+                    {
+                        std::cout << "Deserialization of the received message complete!" << "\n";
+                        std::cout << "MESSAGE TYPE = CONSENSUS MESSAGE" << "\n";
+                        ConsensusMessage *conmsg = dynamic_cast<ConsensusMessage*>(msg);
+                        handleConsensusClass->HandleArrivedConsensusMsg(conmsg);
                         break;
                     }
                 }

@@ -29,12 +29,19 @@ set(SRCS
   datamodules/Peer.cpp
   datamodules/TxPool.cpp
   datamodules/Transaction.cpp
+  datamodules/Block.cpp
+  datamodules/POWBlock.cpp
+  datamodules/POWLedgerManager.cpp
   event/GlobalEvent.cpp
   utility/GlobalClock.cpp
   utility/NodeInfo.cpp
   utility/ArgsManager.cpp
+  utility/UInt256.cpp
+  crypto/SHA256.cpp
   transaction/HandleTransaction.cpp
   transaction/HandleTransaction_BasicModel.cpp
+  consensus/HandleConsensus.cpp
+  consensus/HandleConsensus_POW.cpp
 )
   
 ## we need to know where shadow is installed

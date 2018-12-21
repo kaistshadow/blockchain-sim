@@ -9,6 +9,8 @@ std::map<int, SocketEventWatcher *> GlobalEvent::socketWatcherMap;
 
 ev_periodic GlobalEvent::txgenWatcher;
 
+ev_periodic GlobalEvent::printAndFlush;
+
 void GlobalEvent::onAcceptSocketIO(EV_P_ ev_io *w, int revents) {
     puts("inet stream socket has become readable");
 
@@ -43,6 +45,12 @@ void GlobalEvent::onPeriodicTxInjection(EV_P_ ev_periodic *w, int revents) {
 
     return;
 } 
+
+void GlobalEvent::onPeriodicPrintAndFlush(EV_P_ ev_periodic *w, int revents) {
+    std::cout << "Time:" << utility::GetGlobalClock() << "\n";
+    std::flush(std::cout);
+}
+
 
 
 void SocketEventWatcher::InitEventWatcher(void (*Callback)(struct ev_loop*, ev_io*, int), int events) {

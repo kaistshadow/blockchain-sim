@@ -85,6 +85,7 @@ std::string ArgsManager::HelpMessage() {
     strUsage += HelpMessageGroup("Blockchain Node General Options:");
     strUsage += HelpMessageOpt("-handlenetwork=<class>", "Specify the implementation class for handleNetwork. (\"proxy\", \"plumtree\"(not implemented yet), default:\"proxy\")");
     strUsage += HelpMessageOpt("-handletransaction=<class>", "Specify the implementation class for handleTransaction. (default:\"basic\")");
+    strUsage += HelpMessageOpt("-handleconsensus=<class>", "Specify the implementation class for handleConsensus. (default:\"pow\")");
     strUsage += HelpMessageOpt("-networkparticipant", "Specify the node as a network participant that only participant as a relay node. No processing for transaction && consensus.");
     strUsage += HelpMessageOpt("-generatetx=<n>", "Make a node to inject transactions (<n> in total) into the network.");
     strUsage += HelpMessageOpt("-timegeneratetx=<n>", "Make a node to inject a transactions for <n> seconds. Transactions are injected uniformly for <n> seconds.");

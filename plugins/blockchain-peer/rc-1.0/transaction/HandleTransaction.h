@@ -14,6 +14,7 @@ class HandleTransaction {
 
     virtual void HandleArrivedTx(Transaction *tx) = 0;
     virtual Transaction MakeRandomValidTransaction() = 0;
+
 };
 
 

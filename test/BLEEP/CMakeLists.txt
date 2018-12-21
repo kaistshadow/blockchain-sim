@@ -54,3 +54,6 @@ add_test(NAME BLEEP-centralized-async
 #   COMMAND python test-plumtree-broadcast.py
 #   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
+add_test(NAME BLEEP-rc1-test
+  COMMAND python test-rc1.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

@@ -23,6 +23,8 @@ bool amIProxyNode = false;
 
 // Blockchain Consensus Configuration
 int block_tx_num = 5;
+int mining_time = 10;
+std::string mining_time_dev = "2.0";
 
 int main(int argc, char *argv[]) {
     gArgs.ParseParameters(argc, argv);
@@ -79,6 +81,10 @@ int main(int argc, char *argv[]) {
 
     generateTxNum = gArgs.GetArg("-generatetx", 0);
     generateTxTime = gArgs.GetArg("-timegeneratetx", 0);
+    
+    block_tx_num = gArgs.GetArg("-blocktxnum", 5);
+    mining_time = gArgs.GetArg("-miningtime", 10);
+    mining_time_dev = gArgs.GetArg("-miningtimedev", "2.0");
     
 
     std::cout << "Testing node up" << "\n";

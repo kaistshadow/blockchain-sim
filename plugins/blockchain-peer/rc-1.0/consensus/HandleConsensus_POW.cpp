@@ -86,7 +86,7 @@ void HandleConsensus_POW::RequestConsensus(std::list<Transaction> txs) {
     // by calculating the emulated mining time
     unsigned int random_num = time(0) * NodeInfo::GetInstance()->GetHostNumber();
     std::default_random_engine generator(random_num);
-    std::normal_distribution<double> distribution(10.0, 2.0);
+    std::normal_distribution<double> distribution(mining_time, std::stof(mining_time_dev));
     double waiting_time = distribution(generator);
     if (waiting_time > 0) {
         double emulated_mining_time = utility::GetGlobalClock() + waiting_time;

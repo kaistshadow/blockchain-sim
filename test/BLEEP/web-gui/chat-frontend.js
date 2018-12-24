@@ -161,8 +161,24 @@ $(function () {
             if (!msg) {
                 return;
             }
+            
+            var confs = {};
+            console.log("aaa");
+            if (msg.startsWith('run')) {
+                var inputs = document.getElementsByTagName('input');
+                for (var i = 0; i < inputs.length; i++) {
+                    var inputElement = inputs[i];
+                    if (inputElement.id !== "input")
+                        confs[inputElement.id] = inputElement.value;
+                }
+            }
+            console.log(confs["txnum"]);
+            console.log("bbb");
+
             // send the message as an ordinary text
-            connection.send(msg);
+            // connection.sendUTF(JSON.stringify( {msg: msg, conf : confs}));
+            // connection.send(msg);
+            connection.send(JSON.stringify( {message: msg, configure : confs }));
             $(this).val('');
             // disable the input field to make the user wait until server
             // sends back response

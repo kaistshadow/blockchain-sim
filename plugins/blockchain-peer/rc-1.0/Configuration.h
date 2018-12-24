@@ -29,6 +29,7 @@ extern bool amIProxyNode;
 
 // Blockchain Consensus Configuration
 extern int block_tx_num;
-
+extern int mining_time;
+extern std::string mining_time_dev;
 
 #endif

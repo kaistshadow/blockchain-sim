@@ -93,6 +93,11 @@ std::string ArgsManager::HelpMessage() {
     strUsage += HelpMessageGroup("Blockchain Node Options for proxy network:");
     strUsage += HelpMessageOpt("-proxynode", "Specify the node as a proxy node.");    
 
+    strUsage += HelpMessageGroup("Blockchain Consensus Options:");
+    strUsage += HelpMessageOpt("-blocktxnum=<n>", "Number of transactions in one block. default:5");
+    strUsage += HelpMessageOpt("-miningtime=<n>", "Emulated mean time for mining a block. default:10");    
+    strUsage += HelpMessageOpt("-miningtimedev=<n>", "Standard deviation time for mining a block. default:2");    
+
     return strUsage;
 }
 

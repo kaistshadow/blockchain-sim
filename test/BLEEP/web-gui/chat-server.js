@@ -189,7 +189,19 @@ wsServer.on('request', function(request) {
     // user sent some message
     connection.on('message', function(message) {
         if (message.type === 'utf8') { // accept only text
-            if ((message.utf8Data === 'run' || message.utf8Data.startsWith('run ')) && operatorIndex != -1) {
+            try {
+                console.log("received:" + message.utf8Data);
+                var json = JSON.parse(message.utf8Data);
+            } catch (e) {
+                console.log('This doesn\'t look like a valid JSON: ', message.data);
+                return;
+            }
+            var msg = json.message;
+            console.log("msg:" + msg);
+            var confs = json.configure;
+            console.log(confs["txnum"]);
+
+            if ((msg === 'run' || msg.startsWith('run ')) && operatorIndex != -1) {
                 var obj = {
                     time: (new Date()).getTime(),
                     text: "Unable to run : Now processing another user's request",
@@ -200,13 +212,13 @@ wsServer.on('request', function(request) {
                 connection.sendUTF(json);
                 return;
             }
-            else if ((message.utf8Data === 'run' || message.utf8Data.startsWith('run ')) && operatorIndex == -1) {
+            else if ((msg === 'run' || msg.startsWith('run ')) && operatorIndex == -1) {
                 const child_process = require('child_process');
                 var nodenum = 500;
 
-                console.log((new Date()) + ' Received Message : ' + message.utf8Data);
+                console.log((new Date()) + ' Received Message : ' + msg);
 
-                var cmd_tokens = message.utf8Data.split(" ");
+                var cmd_tokens = msg.split(" ");
                 for (var cmd_idx in cmd_tokens) {
                     if ("--nodenum" === cmd_tokens[cmd_idx]) {
                         nodenum = parseInt(cmd_tokens[parseInt(cmd_idx)+1]);
@@ -215,9 +227,15 @@ wsServer.on('request', function(request) {
                 
                 // var testPythonFile = "test-centralized-broadcast-async.py";
                 var testPythonFile = "test-rc1.py";
-                console.log((new Date()) + ' subprocess with command : ' + 'python '+testPythonFile+ ' --nodenum ' + nodenum);                
+                var pythonArgs = [testPythonFile];
+                for (var key in confs) {
+                    pythonArgs.push("--"+key);
+                    pythonArgs.push(confs[key]);
+                }
+
+                console.log((new Date()) + ' subprocess with command : ' + 'python '+pythonArgs.join(" "));                
                 console.log('current directory: ' + process.cwd());
-                proc = child_process.spawn('python', [testPythonFile, "--nodenum", nodenum], {cwd:"../"});
+                proc = child_process.spawn('python', pythonArgs, {cwd:"../"});
 
                 proc.on("exit", function(exitCode) {
                     console.log((new Date()) + ' process exited with code ' + exitCode);
@@ -261,7 +279,7 @@ wsServer.on('request', function(request) {
                     clients[i].conn.sendUTF(json);
                 }
             }
-            else if (message.utf8Data === 'stop') {
+            else if (msg === 'stop') {
                 if (proc) {
                     proc.kill();
                     clearInterval(snapshotIntervalId);
@@ -287,7 +305,7 @@ wsServer.on('request', function(request) {
             // } else { // log and broadcast the message
             //     console.log((new Date()) + ' Received Message from '
             //                 + userName + ': ' + message.utf8Data);
-                
+            
             //     // we want to keep history of all sent messages
             //     var obj = {
             //         time: (new Date()).getTime(),
@@ -311,7 +329,7 @@ wsServer.on('request', function(request) {
             // we want to keep history of all sent messages
             var obj = {
                 time: (new Date()).getTime(),
-                text: htmlEntities(message.utf8Data),
+                text: htmlEntities(msg),
                 author: "user"+index,
                 color: 'red'
             };

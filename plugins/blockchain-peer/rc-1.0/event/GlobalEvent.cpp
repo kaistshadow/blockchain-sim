@@ -35,8 +35,8 @@ void GlobalEvent::onSendRecvSocketIO(EV_P_ ev_io *w, int revents) {
 void GlobalEvent::onPeriodicTxInjection(EV_P_ ev_periodic *w, int revents) {
     int numTx = ((float)generateTxNum)/generateTxTime;
     while (numTx-- > 0) {
-        Transaction tx = handleTransactionClass->MakeRandomValidTransaction();
-        handleNetworkClass->BroadcastMsg(&tx);
+        boost::shared_ptr<Transaction> tx = handleTransactionClass->MakeRandomValidTransaction();
+        handleNetworkClass->BroadcastMsg(tx.get());
         injectedTxNum++;
     }
 

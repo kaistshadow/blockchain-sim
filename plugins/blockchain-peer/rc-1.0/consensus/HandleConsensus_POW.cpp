@@ -64,7 +64,7 @@ void HandleConsensus_POW::AppendBlockToLedger(std::shared_ptr<POWBlock> blk) {
     ledger.AppendBlock(*blk);
 }
 
-void HandleConsensus_POW::RequestConsensus(std::list<Transaction> txs) {
+void HandleConsensus_POW::RequestConsensus(std::list<boost::shared_ptr<Transaction> > txs) {
 
     if (state != Idle)
         return;

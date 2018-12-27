@@ -21,7 +21,9 @@
 BOOST_CLASS_EXPORT(TestMessage);
 
 #include "../datamodules/Transaction.h"
-BOOST_CLASS_EXPORT(Transaction);
+// BOOST_CLASS_EXPORT(Transaction);
+BOOST_CLASS_EXPORT(SimpleTransaction);
+BOOST_CLASS_EXPORT(UselessTransaction);
 
 #include "../consensus/POWConsensusMessage.h"
 BOOST_CLASS_EXPORT(POWConsensusMessage);
@@ -428,6 +430,8 @@ void HandleNetwork_ProxyModel::HandleRecvSocketIO(int fd) {
                     {
                         std::cout << "Deserialization of the received message complete!" << "\n";
                         std::cout << "MESSAGE TYPE = TEST MESSAGE" << "\n";
+                        delete status.header;
+                        delete msg;
                         break;
                     }
                 case Message::TX_MESSAGE:
@@ -435,7 +439,10 @@ void HandleNetwork_ProxyModel::HandleRecvSocketIO(int fd) {
                         std::cout << "Deserialization of the received message complete!" << "\n";
                         std::cout << "MESSAGE TYPE = TX MESSAGE" << "\n";
                         Transaction *tx = dynamic_cast<Transaction*>(msg);
-                        handleTransactionClass->HandleArrivedTx(tx);
+                        boost::shared_ptr<Transaction> shared_tx(tx);
+                        handleTransactionClass->HandleArrivedTx(shared_tx);
+                        delete status.header;
+                        // do not delete msg since it will be automatically managed as smart pointer
                         break;
                     }
                 case Message::CONSENSUS_MESSAGE:
@@ -444,6 +451,8 @@ void HandleNetwork_ProxyModel::HandleRecvSocketIO(int fd) {
                         std::cout << "MESSAGE TYPE = CONSENSUS MESSAGE" << "\n";
                         ConsensusMessage *conmsg = dynamic_cast<ConsensusMessage*>(msg);
                         handleConsensusClass->HandleArrivedConsensusMsg(conmsg);
+                        delete status.header;
+                        delete msg;
                         break;
                     }
                 }
@@ -453,8 +462,6 @@ void HandleNetwork_ProxyModel::HandleRecvSocketIO(int fd) {
                 // ...
                 // CentralizedNetworkMessage nmsg = GetDeserializedMsg(p->recv_str);
             }
-            delete status.header;
-            delete msg;
             break;
         }
     }

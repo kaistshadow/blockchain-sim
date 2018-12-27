@@ -9,14 +9,14 @@ TxPool* TxPool::GetInstance() {
     return instance;
 }
 
-std::list<Transaction> TxPool::GetTxs(int num) {
+std::list<boost::shared_ptr<Transaction> > TxPool::GetTxs(int num) {
     if (GetPendingTxNum() < num) {
         std::cout << "Warning : Not enough pending transaction pool. Too many requests" << "\n";
         return {};
     }
 
-    std::list<Transaction> txs;
-    std::list<Transaction>::iterator it = items.begin();
+    std::list<boost::shared_ptr<Transaction> > txs;
+    std::list<boost::shared_ptr<Transaction> >::iterator it = items.begin();
     while (num-- > 0) {
         txs.push_back(*it);
         it++;
@@ -26,23 +26,32 @@ std::list<Transaction> TxPool::GetTxs(int num) {
     return txs;
 }
 
-void TxPool::RemoveTxs(const std::list<Transaction>& txs) {
-    std::list<Transaction>::iterator i = items.begin();
+void TxPool::RemoveTxs(const std::list<boost::shared_ptr<Transaction> >& txs) {
+    std::list<boost::shared_ptr<Transaction> >::iterator i = items.begin();
+
     while (i != items.end()) {
-        bool found = (std::find(txs.begin(), txs.end(), *i) != txs.end());
-        if (found)
+        // bool found = (std::find(txs.begin(), txs.end(), *i) != txs.end());
+        // if (found)
+        //     items.erase(i++);
+
+        boost::shared_ptr<Transaction> pool_tx = (*i);
+        auto it = std::find_if(txs.begin(), txs.end(), [pool_tx](boost::shared_ptr<Transaction> const& t){
+                    return *pool_tx == *t;
+                });
+        if (it != txs.end()) {
             items.erase(i++);
+        }
         else
             ++i;
     }
 }
 
-void TxPool::AddTxs(std::list<Transaction> txs) {
+void TxPool::AddTxs(std::list<boost::shared_ptr<Transaction> > txs) {
     for (auto tx : txs)
         items.push_back(tx);
 }
 
-void TxPool::AddTx(Transaction *tx) {
-    items.push_back(*tx);
+void TxPool::AddTx(boost::shared_ptr<Transaction> tx) {
+    items.push_back(tx);
     return;
 }

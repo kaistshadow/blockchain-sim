@@ -27,7 +27,6 @@ set(SRCS
   p2pnetwork/HandleNetwork.cpp
   p2pnetwork/HandleNetwork_ProxyModel.cpp
   datamodules/Peer.cpp
-  datamodules/Transaction.cpp
   datamodules/Block.cpp
   datamodules/POWBlock.cpp
   datamanagermodules/POWLedgerManager.cpp

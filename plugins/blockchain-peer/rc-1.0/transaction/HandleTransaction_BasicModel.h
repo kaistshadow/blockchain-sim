@@ -14,8 +14,8 @@ class HandleTransaction_BasicModel: public HandleTransaction {
     HandleTransaction_BasicModel() {}
     virtual ~HandleTransaction_BasicModel() {}
 
-    void HandleArrivedTx(Transaction *tx);
-    Transaction MakeRandomValidTransaction();
+    void HandleArrivedTx(boost::shared_ptr<Transaction> tx);
+    boost::shared_ptr<Transaction> MakeRandomValidTransaction();
 };
 
 

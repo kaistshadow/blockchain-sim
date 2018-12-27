@@ -98,6 +98,9 @@ std::string ArgsManager::HelpMessage() {
     strUsage += HelpMessageOpt("-miningtime=<n>", "Emulated mean time for mining a block. default:10");    
     strUsage += HelpMessageOpt("-miningtimedev=<n>", "Standard deviation time for mining a block. default:2");    
 
+    strUsage += HelpMessageGroup("Blockchain Transaction Options:");
+    strUsage += HelpMessageOpt("-txtype=<class>", "Specify the implementation class for Transaction. (\"simple\", \"useless\", default:\"simple\")");
+
     return strUsage;
 }
 

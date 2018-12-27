@@ -1,26 +1,28 @@
 #ifndef TXPOOL_H
 #define TXPOOL_H
 
-#include "../datamodules/Transaction.h"
 #include <list>
 #include <algorithm>
+#include <boost/shared_ptr.hpp>
+
+#include "../datamodules/Transaction.h"
 
 class TxPool {
  private:
     TxPool() {}; // singleton pattern
     static TxPool* instance; // singleton pattern
 
-    std::list<Transaction> items;
+    std::list<boost::shared_ptr<Transaction> > items;
 
  public:
     static TxPool* GetInstance(); // sigleton pattern
     
     int GetPendingTxNum() { return items.size(); }
 
-    std::list<Transaction> GetTxs(int num);
-    void RemoveTxs(const std::list<Transaction>& txs);
-    void AddTx(Transaction *tx);
-    void AddTxs(std::list<Transaction> txs);
+    std::list<boost::shared_ptr<Transaction> > GetTxs(int num);
+    void RemoveTxs(const std::list<boost::shared_ptr<Transaction> >& txs);
+    void AddTx(boost::shared_ptr<Transaction> tx);
+    void AddTxs(std::list<boost::shared_ptr<Transaction> > txs);
         
 };
 

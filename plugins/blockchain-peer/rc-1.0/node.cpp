@@ -26,6 +26,9 @@ int block_tx_num = 5;
 int mining_time = 10;
 std::string mining_time_dev = "2.0";
 
+// Blockchain Transaction Configuration
+TransactionType txType = EnumSimpleTransaction;
+
 int main(int argc, char *argv[]) {
     gArgs.ParseParameters(argc, argv);
 
@@ -48,8 +51,8 @@ int main(int argc, char *argv[]) {
     }
 
     if (gArgs.IsArgSet("-handletransaction")) {
-        std::string transactiontype = gArgs.GetArg("-handletransaction","");
-        if (transactiontype == "basic") {
+        std::string handletransactiontype = gArgs.GetArg("-handletransaction","");
+        if (handletransactiontype == "basic") {
             handleTransactionClass = HandleTransaction::create(HANDLE_TRANSACTION_BASICMODEL);
         }
         else // default is basic model
@@ -68,6 +71,19 @@ int main(int argc, char *argv[]) {
     } else { // default is POW model
         handleConsensusClass = HandleConsensus::create(HANDLE_CONSENSUS_POW);
     }
+
+    if (gArgs.IsArgSet("-txtype")) {
+        std::string transactiontype = gArgs.GetArg("-txtype","");
+        if (transactiontype == "simple") {
+            txType = EnumSimpleTransaction;
+        }
+        else if (transactiontype == "useless") {
+            txType = EnumUselessTransaction;
+        }
+        else // default is 'SimpleTransaction'
+            txType = EnumSimpleTransaction;
+    } 
+
 
     if (gArgs.GetBoolArg("-networkparticipant", false)) {
         amIFullNode = false;

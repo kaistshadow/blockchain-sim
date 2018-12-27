@@ -35,10 +35,10 @@ void POWBlock::SetTxHash() {
 
 std::ostream& operator<<(std::ostream& os, const POWBlock& blk) {
     os << blk.GetId() << ":" << "Block has following transactions" << "\n";
-    const std::list<Transaction>& tx_list = blk.GetTransactions();
-    for (std::list<Transaction>::const_iterator it=tx_list.begin();
+    const std::list<boost::shared_ptr<Transaction> >& tx_list = blk.GetTransactions();
+    for (std::list<boost::shared_ptr<Transaction> >::const_iterator it=tx_list.begin();
          it!=tx_list.end(); it++) {
-        os << blk.GetId() << ":" << *it << "\n";
+        os << blk.GetId() << ":" << *(*it) << "\n";
     }
     os << blk.GetId() << ":" << "Block idx=" << blk.GetBlockIdx() << ",";
     os << "Block nonce=" << blk.GetNonce() << ",";    

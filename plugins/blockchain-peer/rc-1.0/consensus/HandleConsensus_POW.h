@@ -29,7 +29,7 @@ class HandleConsensus_POW: public HandleConsensus {
     HandleConsensus_POW();
     virtual ~HandleConsensus_POW() {}
 
-    void RequestConsensus(std::list<Transaction> txs);
+    void RequestConsensus(std::list<boost::shared_ptr<Transaction> > txs);
     void HandleArrivedConsensusMsg(ConsensusMessage* msg);
     
     void onMiningCompletion(EV_P_ ev_timer *w, int revents);

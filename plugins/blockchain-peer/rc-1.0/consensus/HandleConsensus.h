@@ -14,7 +14,7 @@ class HandleConsensus {
     virtual ~HandleConsensus() {};
     static std::shared_ptr<HandleConsensus> create(const int type);
 
-    virtual void RequestConsensus(std::list<Transaction> txs) = 0;
+    virtual void RequestConsensus(std::list<boost::shared_ptr<Transaction> > txs) = 0;
     virtual void HandleArrivedConsensusMsg(ConsensusMessage* msg) = 0;
     
 };

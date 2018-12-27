@@ -11,13 +11,14 @@
 #include <boost/property_tree/ptree.hpp>
 
 #include "Block.h"
-#include "Transaction.h"
+
+//
 #include "../utility/UInt256.h"
 
 class POWBlock : public Block {
  public:
     POWBlock() : Block() {};
-    POWBlock(std::string id, std::list<Transaction> input_tx_list) : Block(id, input_tx_list) {
+    POWBlock(std::string id, std::list<boost::shared_ptr<Transaction> > input_tx_list) : Block(id, input_tx_list) {
         SetTxHash();
     };
     

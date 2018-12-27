@@ -4,6 +4,7 @@
 #include "p2pnetwork/HandleNetwork.h"
 #include "transaction/HandleTransaction.h"
 #include "consensus/HandleConsensus.h"
+#include "datamodules/Transaction.h"
 
 // =================  Blockchain Node Configuration Start ===================
 
@@ -31,5 +32,9 @@ extern bool amIProxyNode;
 extern int block_tx_num;
 extern int mining_time;
 extern std::string mining_time_dev;
+
+
+// Blockchain Transaction Configuration
+extern TransactionType txType;
 
 #endif

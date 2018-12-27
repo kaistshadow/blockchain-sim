@@ -2,6 +2,7 @@
 #define HANDLE_TRANSACTION_H
 
 #include <memory>
+#include <boost/shared_ptr.hpp>
 
 #include "../datamodules/Transaction.h"
 
@@ -12,8 +13,8 @@ class HandleTransaction {
     virtual ~HandleTransaction() {};
     static std::shared_ptr<HandleTransaction> create(const int type);
 
-    virtual void HandleArrivedTx(Transaction *tx) = 0;
-    virtual Transaction MakeRandomValidTransaction() = 0;
+    virtual void HandleArrivedTx(boost::shared_ptr<Transaction> tx) = 0;
+    virtual boost::shared_ptr<Transaction> MakeRandomValidTransaction() = 0;
 
 };
 

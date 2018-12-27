@@ -7,7 +7,7 @@
 #include <list>
 #include <type_traits>
 
-#include "Block.h"
+#include "../datamodules/Block.h"
 #include "TxPool.h"
 
 #include <boost/filesystem.hpp>

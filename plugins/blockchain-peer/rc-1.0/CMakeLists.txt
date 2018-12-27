@@ -27,11 +27,11 @@ set(SRCS
   p2pnetwork/HandleNetwork.cpp
   p2pnetwork/HandleNetwork_ProxyModel.cpp
   datamodules/Peer.cpp
-  datamodules/TxPool.cpp
   datamodules/Transaction.cpp
   datamodules/Block.cpp
   datamodules/POWBlock.cpp
-  datamodules/POWLedgerManager.cpp
+  datamanagermodules/POWLedgerManager.cpp
+  datamanagermodules/TxPool.cpp
   event/GlobalEvent.cpp
   utility/GlobalClock.cpp
   utility/NodeInfo.cpp

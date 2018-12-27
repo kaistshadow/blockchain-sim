@@ -1,7 +1,7 @@
 #ifndef TXPOOL_H
 #define TXPOOL_H
 
-#include "Transaction.h"
+#include "../datamodules/Transaction.h"
 #include <list>
 #include <algorithm>
 

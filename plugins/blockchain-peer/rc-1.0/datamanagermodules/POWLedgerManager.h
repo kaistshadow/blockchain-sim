@@ -7,7 +7,7 @@
 #include <list>
 
 #include "ListLedgerManager.h"
-#include "POWBlock.h"
+#include "../datamodules/POWBlock.h"
 #include "../utility/UInt256.h"
 
 // POW ledger manager inherits following class

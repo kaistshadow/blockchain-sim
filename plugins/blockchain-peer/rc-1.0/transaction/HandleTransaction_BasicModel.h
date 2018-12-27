@@ -2,8 +2,9 @@
 #define HANDLE_TRANSACTION_BASIC_H
 
 #include "HandleTransaction.h"
-#include "../datamodules/Transaction.h"
-#include "../datamodules/TxPool.h"
+
+//
+#include "../datamanagermodules/TxPool.h"
 
 class HandleTransaction_BasicModel: public HandleTransaction {
  private:

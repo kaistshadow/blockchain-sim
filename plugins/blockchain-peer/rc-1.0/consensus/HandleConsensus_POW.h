@@ -3,8 +3,8 @@
 
 #include <ev.h>
 #include "HandleConsensus.h"
-#include "../datamodules/Transaction.h"
-#include "../datamodules/POWLedgerManager.h"
+
+#include "../datamanagermodules/POWLedgerManager.h"
 
 enum MiningState {
     Uninitialized,

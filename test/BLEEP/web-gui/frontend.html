@@ -89,16 +89,23 @@
                     <div class="nav">
                         <h2> Command list </h2>
                         <ul>
-                            <li>run : run blockchain experiment. Following additional option is possible.</li>
-                            <p> --nodenum "value" : specify the number of blockchain peer node. It should be larger than 2.</p>
-                            <p> e.g. run --nodenum 100</p>
+                            <li>run : run blockchain experiment. You can configure the simulation parameters in below.</li>
+                            <!-- <p> --nodenum "value" : specify the number of blockchain peer node. It should be larger than 2.</p> -->
+                            <!-- <p> e.g. run --nodenum 100</p> -->
                             <li> stop : stop the blockchain experiment. </li>
                         </ul>
                         <h2> Simulation Parameters </h2>
                         <ul>
-                            <li>Node num : 500 (default)</li> 
-                            <li>Virtual simulation time : 150 seconds</li>
-                            <li>Network module : asynchronous centralized proxy</li>
+                            <li>Node num: <input type="text"  id="nodenum" value="500" > </li>
+                            <li>Virtual simul time (s): <input type="text"  id="simultime" value="180" > </li>                            
+                            <li>Total number of injected tx : <input type="text"  id="txnum" value="150" > </li>                            
+                            <li>Block mining time avg (s): <input type="text"  id="miningtime" value="10" > </li>                            
+                            <li>Block mining time std.dev (s): <input type="text"  id="miningtimedev" value="2.0" > </li>                            
+                            
+                            
+                            <!-- <li>Node num : 500 (default)</li> 
+                                 <li>Virtual simulation time : 150 seconds</li>
+                                 <li>Network module : asynchronous centralized proxy</li> -->
                         </ul>
                         <h2> Simulation Info </h2>
                         <ul>

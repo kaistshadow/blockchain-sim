@@ -68,8 +68,10 @@ var wsServer = new webSocketServer({
 function sendSnapshot(connection, nodenum) {
     // send log file content
     var fs = require('fs');
-    var datadir = "centralized-broadcast-async-datadir";
-    var shadowPlugin = "PEER_POWCONSENSUS";
+    // var datadir = "centralized-broadcast-async-datadir";
+    // var shadowPlugin = "PEER_POWCONSENSUS";
+    var datadir = "rc1-datadir";
+    var shadowPlugin = "PEER";
     var rePattern = new RegExp(/.*Block idx=([0-9]+),.*,Block hash=\[\[([0-9a-fA-F]{14}).+\]\[.+\]\],Prev Block hash=\[\[([0-9a-fA-F]{14}).+\]\[.+\]\],Timestamp=\[(.+)\],Difficulty=.+/);
 
     var vis = require('vis');
@@ -102,7 +104,11 @@ function sendSnapshot(connection, nodenum) {
                 var block_hash = matches[2];
                 var prev_block_hash = matches[3];
                 var timestamp = matches[4];
-                blocks[block_idx] = [block_hash, prev_block_hash, timestamp];
+
+                if (block_idx in blocks)
+                    blocks[block_idx].push([block_hash, prev_block_hash, timestamp]);
+                else
+                    blocks[block_idx] = [[block_hash, prev_block_hash, timestamp]];
             }
             else if (line.startsWith("Time:")) {
                 // timestampsArray.push({virtualtime:line, node:i});
@@ -113,14 +119,16 @@ function sendSnapshot(connection, nodenum) {
         var keys = Object.keys(blocks);
         keys.sort((a,b) => a-b);
         for (var idx of keys) {
-            var block_hash = blocks[idx][0];
-            var prev_block_hash = blocks[idx][1];
-            var timestamp = blocks[idx][2];
+            for (var block of blocks[idx]) {
+                var block_hash = block[0];
+                var prev_block_hash = block[1];
+                var timestamp = block[2];
 
-            if (!blockchainBlocks.find( x => {return x.id === block_hash;}))
-                blockchainBlocks.push({id:block_hash,label:timestamp + ", " + snapshottime});
-            if (!blockchainEdges.find( x => {return x.id === prev_block_hash+block_hash;}))
-                blockchainEdges.push({id:prev_block_hash+block_hash,from:prev_block_hash, to:block_hash});
+                if (!blockchainBlocks.find( x => {return x.id === block_hash;}))
+                    blockchainBlocks.push({id:block_hash,label:timestamp + ", " + snapshottime});
+                if (!blockchainEdges.find( x => {return x.id === prev_block_hash+block_hash;}))
+                    blockchainEdges.push({id:prev_block_hash+block_hash,from:prev_block_hash, to:block_hash});
+            }
         }
         
         // var lastblockhash = blocks[keys.pop()][0];
@@ -181,7 +189,19 @@ wsServer.on('request', function(request) {
     // user sent some message
     connection.on('message', function(message) {
         if (message.type === 'utf8') { // accept only text
-            if ((message.utf8Data === 'run' || message.utf8Data.startsWith('run ')) && operatorIndex != -1) {
+            try {
+                console.log("received:" + message.utf8Data);
+                var json = JSON.parse(message.utf8Data);
+            } catch (e) {
+                console.log('This doesn\'t look like a valid JSON: ', message.data);
+                return;
+            }
+            var msg = json.message;
+            console.log("msg:" + msg);
+            var confs = json.configure;
+            console.log(confs["txnum"]);
+
+            if ((msg === 'run' || msg.startsWith('run ')) && operatorIndex != -1) {
                 var obj = {
                     time: (new Date()).getTime(),
                     text: "Unable to run : Now processing another user's request",
@@ -192,21 +212,30 @@ wsServer.on('request', function(request) {
                 connection.sendUTF(json);
                 return;
             }
-            else if ((message.utf8Data === 'run' || message.utf8Data.startsWith('run ')) && operatorIndex == -1) {
+            else if ((msg === 'run' || msg.startsWith('run ')) && operatorIndex == -1) {
                 const child_process = require('child_process');
                 var nodenum = 500;
 
-                console.log((new Date()) + ' Received Message : ' + message.utf8Data);
+                console.log((new Date()) + ' Received Message : ' + msg);
 
-                var cmd_tokens = message.utf8Data.split(" ");
+                var cmd_tokens = msg.split(" ");
                 for (var cmd_idx in cmd_tokens) {
                     if ("--nodenum" === cmd_tokens[cmd_idx]) {
                         nodenum = parseInt(cmd_tokens[parseInt(cmd_idx)+1]);
                     }
                 }
-                console.log((new Date()) + ' subprocess with command : ' + 'python test-centralized-broadcast-async.py --nodenum ' + nodenum);                
+                
+                // var testPythonFile = "test-centralized-broadcast-async.py";
+                var testPythonFile = "test-rc1.py";
+                var pythonArgs = [testPythonFile];
+                for (var key in confs) {
+                    pythonArgs.push("--"+key);
+                    pythonArgs.push(confs[key]);
+                }
+
+                console.log((new Date()) + ' subprocess with command : ' + 'python '+pythonArgs.join(" "));                
                 console.log('current directory: ' + process.cwd());
-                proc = child_process.spawn('python', ['test-centralized-broadcast-async.py', "--nodenum", nodenum], {cwd:"../"});
+                proc = child_process.spawn('python', pythonArgs, {cwd:"../"});
 
                 proc.on("exit", function(exitCode) {
                     console.log((new Date()) + ' process exited with code ' + exitCode);
@@ -250,7 +279,7 @@ wsServer.on('request', function(request) {
                     clients[i].conn.sendUTF(json);
                 }
             }
-            else if (message.utf8Data === 'stop') {
+            else if (msg === 'stop') {
                 if (proc) {
                     proc.kill();
                     clearInterval(snapshotIntervalId);
@@ -276,7 +305,7 @@ wsServer.on('request', function(request) {
             // } else { // log and broadcast the message
             //     console.log((new Date()) + ' Received Message from '
             //                 + userName + ': ' + message.utf8Data);
-                
+            
             //     // we want to keep history of all sent messages
             //     var obj = {
             //         time: (new Date()).getTime(),
@@ -300,7 +329,7 @@ wsServer.on('request', function(request) {
             // we want to keep history of all sent messages
             var obj = {
                 time: (new Date()).getTime(),
-                text: htmlEntities(message.utf8Data),
+                text: htmlEntities(msg),
                 author: "user"+index,
                 color: 'red'
             };

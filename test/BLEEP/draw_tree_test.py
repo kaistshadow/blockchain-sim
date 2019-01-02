@@ -47,6 +47,7 @@ if __name__ == '__main__':
     # datadir = "centralized-broadcast-datadir"
     # datadir = "pow-consensus-large-datadir"
     shadow_plugin = "PEER_POWCONSENSUS"
+    # shadow_plugin = "PEER"
 
     labeldict = {}
 
@@ -95,11 +96,12 @@ if __name__ == '__main__':
 
         # print blocks
         # print sorted(blocks.keys())
-        (block_hash, prev_block_hash, timestamp) = blocks[sorted(blocks.keys())[-1]]
-        bleep_id = "bleep%d" % i
-        Graph.add_node(bleep_id)
-        labeldict[bleep_id] = bleep_id
-        Graph.add_edge(block_hash, bleep_id)
+        if len(blocks) > 0:
+            (block_hash, prev_block_hash, timestamp) = blocks[sorted(blocks.keys())[-1]]
+            bleep_id = "bleep%d" % i
+            Graph.add_node(bleep_id)
+            labeldict[bleep_id] = bleep_id
+            Graph.add_edge(block_hash, bleep_id)
 
 
     # pos = hierarchy_pos(Graph, "genesis")

@@ -32,6 +32,8 @@ set(SRCS
   datamanagermodules/POWLedgerManager.cpp
   datamanagermodules/TxPool.cpp
   event/GlobalEvent.cpp
+  event/EventCoordinator.cpp
+  event/Publisher.cpp
   utility/GlobalClock.cpp
   utility/NodeInfo.cpp
   utility/ArgsManager.cpp

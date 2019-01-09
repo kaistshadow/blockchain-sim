@@ -5,28 +5,30 @@
 #include "../Configuration.h"
 #include "../utility/GlobalClock.h"
 #include "../utility/NodeInfo.h"
-#include "../event/GlobalEvent.h"
 #include "../crypto/SHA256.h"
 
-static void onMiningCompletionCallback(EV_P_ ev_timer *w, int revents) {
-    dynamic_cast<HandleConsensus_POW*>(handleConsensusClass.get())->onMiningCompletion(EV_A_ w, revents);
-}
-
-HandleConsensus_POW::HandleConsensus_POW() {
-    InitMiningTimer();
-}
-
-void HandleConsensus_POW::InitMiningTimer() {
-    ev_init(&mining_timer, onMiningCompletionCallback);
+HandleConsensus_POW::HandleConsensus_POW() : 
+    miningEventEmulator(EventCoordinator::GetInstance(), mining_time, std::stof(mining_time_dev)),
+    miningCompleteEventSubscriber(EventCoordinator::GetInstance(), 
+                                  [this](std::shared_ptr<EventInfo> i){ onMiningCompleteEvent(i); },
+                                  EventType::miningCompleteEvent)
+    // refer to https://stackoverflow.com/a/11284096 for information about using lambda in constructor.
+                                  
+{
     state = Idle;
 }
 
-void HandleConsensus_POW::onMiningCompletion(EV_P_ ev_timer *w, int revents) {
+void HandleConsensus_POW::onMiningCompleteEvent(std::shared_ptr<EventInfo> info) {
+    state = Idle;
+    miningEventEmulator.StopMiningTimer(); // there will be a case where the event does not come from emulator
+
+    std::shared_ptr<MiningCompleteEventInfo> derivedInfo = std::static_pointer_cast<MiningCompleteEventInfo>(info);
+    
     // 1. calculate random block.
     srand((unsigned int)time(0));
-    unsigned long nonce = rand() * rand() * rand();
+    unsigned long nonce = derivedInfo->GetNonce();
     unsigned char hash_out[32];
-
+    
     unsigned long blockidx = waitingBlk->GetBlockIdx();
     SHA256_CTX ctx;
     sha256_init(&ctx);
@@ -51,7 +53,6 @@ void HandleConsensus_POW::onMiningCompletion(EV_P_ ev_timer *w, int revents) {
     // handleNetworkClass->BroadcastMsg(waitingBlk.get());
     std::cout << "after broadcast" << "\n";
 
-    state = Idle;
     if (TxPool::GetInstance()->GetPendingTxNum() >= block_tx_num) {
         RequestConsensus(TxPool::GetInstance()->GetTxs(block_tx_num));
     }
@@ -83,22 +84,8 @@ void HandleConsensus_POW::RequestConsensus(std::list<boost::shared_ptr<Transacti
     }
 
     // trigger a new mining timer
-    // by calculating the emulated mining time
-    unsigned int random_num = time(0) * NodeInfo::GetInstance()->GetHostNumber();
-    std::default_random_engine generator(random_num);
-    std::normal_distribution<double> distribution(mining_time, std::stof(mining_time_dev));
-    double waiting_time = distribution(generator);
-    if (waiting_time > 0) {
-        double emulated_mining_time = utility::GetGlobalClock() + waiting_time;
-        std::cout << utility::GetGlobalClock() << ":Set next emulated mining time:" << emulated_mining_time << "\n";
-        state = MiningEventWaiting;
-
-        // register mining timer
-        // mining_watcher.repeat = waiting_time;
-        // ev_timer_again(loop, &mining_watcher);
-        ev_timer_set (&mining_timer, waiting_time, 0.);
-        ev_timer_start (GlobalEvent::loop, &mining_timer);
-    }
+    miningEventEmulator.StartMiningTimer();
+    state = MiningEventWaiting;
 }
 
 void HandleConsensus_POW::HandleArrivedConsensusMsg(ConsensusMessage* conmsg) {
@@ -121,7 +108,7 @@ void HandleConsensus_POW::HandleArrivedConsensusMsg(ConsensusMessage* conmsg) {
                     std::cout << *blk << "\n";
 
                     state = Idle;
-                    ev_timer_stop(GlobalEvent::loop, &mining_timer);
+                    miningEventEmulator.StopMiningTimer();
                     if (TxPool::GetInstance()->GetPendingTxNum() >= block_tx_num) {
                         RequestConsensus(TxPool::GetInstance()->GetTxs(block_tx_num));
                     }
@@ -162,7 +149,7 @@ void HandleConsensus_POW::HandleArrivedConsensusMsg(ConsensusMessage* conmsg) {
 
             if (ledger.UpdateLedgerAsLongestChain(blks)) {
                 state = Idle;
-                ev_timer_stop(GlobalEvent::loop, &mining_timer);
+                miningEventEmulator.StopMiningTimer();
                 if (TxPool::GetInstance()->GetPendingTxNum() >= block_tx_num) {
                     RequestConsensus(TxPool::GetInstance()->GetTxs(block_tx_num));
                 }

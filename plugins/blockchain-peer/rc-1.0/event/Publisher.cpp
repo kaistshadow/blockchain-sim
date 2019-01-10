@@ -2,7 +2,7 @@
 #include "../utility/GlobalClock.h"
 #include "../utility/NodeInfo.h"
 
-void MiningEventEmulator::onTimerEvent(ev::timer &w, int revents) {
+void MiningEventEmulator::timerCallback(ev::timer &w, int revents) {
     std::shared_ptr<EventInfo> info = std::shared_ptr<EventInfo>(new MiningCompleteEventInfo(0)); // since this is an emulator, we use arbitrary nonce value.
 
     PublishEvent(info);
@@ -34,4 +34,55 @@ void MiningEventEmulator::StartMiningTimer() {
 void MiningEventEmulator::StopMiningTimer() {
     mining_timer.stop();
     // ev_timer_stop(GlobalEvent::loop, &mining_timer);
+}
+
+void SocketEventPublisher::listenSocketIOCallback(ev::io &w, int revents) {
+    std::shared_ptr<EventInfo> info = std::shared_ptr<EventInfo>(new RecvSocketConnectionEventInfo(w.fd)); 
+
+    PublishEvent(info);
+}
+
+void SocketEventPublisher::dataSocketIOCallback(ev::io &w, int revents) {
+    if (revents & EV_READ) {
+        std::shared_ptr<EventInfo> info = std::shared_ptr<EventInfo>(new RecvSocketDataEventInfo(w.fd)); 
+        PublishEvent(info);
+    } 
+    if (revents & EV_WRITE) {
+        std::shared_ptr<EventInfo> info = std::shared_ptr<EventInfo>(new SendSocketReadyEventInfo(w.fd)); 
+        PublishEvent(info);
+    }
+}
+
+void SocketEventPublisher::RegisterSocketAsServerSocket(int fd) {
+    listenSocketWatchers.emplace_back();
+    ev::io& io_watcher = listenSocketWatchers.back();
+    io_watcher.set<SocketEventPublisher, &SocketEventPublisher::listenSocketIOCallback> (this);
+    io_watcher.set(fd, ev::READ);
+    io_watcher.start();
+}
+
+void SocketEventPublisher::RegisterSocketAsDataSocket(int fd) {
+    dataSocketWatchers.emplace_back();
+    ev::io& io_watcher = dataSocketWatchers.back();
+    io_watcher.set<SocketEventPublisher, &SocketEventPublisher::dataSocketIOCallback> (this);
+    io_watcher.set(fd, ev::READ);
+    io_watcher.start();
+    dataSocketMap[fd] = &io_watcher;
+}
+
+void SocketEventPublisher::UnregisterDataSocket(int fd) {
+    dataSocketWatchers.remove_if([fd](ev::io& w) { return fd == w.fd; });
+    dataSocketMap.erase(fd);
+}
+
+void SocketEventPublisher::SetSocketWrite(int fd) {
+    ev::io* io_watcher = dataSocketMap[fd];
+    io_watcher->set(fd, ev::READ | ev::WRITE);  
+    std::cout << "SetSocketWrite for fd " << fd << "\n";
+    // Unlike the C counterpart of libev, an active watcher gets automatically stopped and restarted when reconfiguring it with the set method. check http://pod.tst.eu/http://cvs.schmorp.de/libev/ev.pod#C_API-2
+}
+
+void SocketEventPublisher::UnsetSocketWrite(int fd) {
+    ev::io* io_watcher = dataSocketMap[fd];
+    io_watcher->set(fd, ev::READ);
 }

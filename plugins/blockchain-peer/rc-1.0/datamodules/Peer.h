@@ -5,59 +5,12 @@
 #include <string>
 #include <string.h>
 
-class MessageHeader;
-
-struct WriteMsg {
-    char       *data;
-    ssize_t len;
-    ssize_t pos;
-  
-    WriteMsg (const char *bytes, ssize_t nbytes) {
-        pos = 0;
-        len = nbytes;
-        data = new char[nbytes];
-        memcpy(data, bytes, nbytes);
-    }
-  
-    virtual ~WriteMsg () {
-        delete [] data;
-    }
-  
-    char *dpos() {
-        return data + pos;
-    }
-  
-    ssize_t nbytes() {
-        return len - pos;
-    }
-};
-
-enum RECV_STATUS {
-    RECV_IDLE = 0,
-    RECV_HEADER = 1,
-    RECV_MSG = 2,
-    RECV_NONE = 3,
-};
-
-// SocketEventStatus : data structure that contains any status for socket communication
-class SocketEventStatus {
- public:
-    RECV_STATUS recv_status = RECV_IDLE;
-    int message_len;
-    int received_len;
-    std::string recv_str;
-    MessageHeader* header;   //  TODO: make MessageHeader a general interface class.
-
-    std::list<WriteMsg *> sendMsgQueue;
-};
-
 class Peer{ 
  private:
     std::string hostname;
     std::string ipaddr;
     int socketfd = -1;
     
-    SocketEventStatus status;
 
  public:
     Peer() {}
@@ -66,8 +19,6 @@ class Peer{
     std::string GetHostname() { return hostname; }
     std::string GetIP() { return ipaddr; }
     int GetSocketFD() { return socketfd; }
-    SocketEventStatus& GetSocketEventStatus() { return status; }
-
 };
 
 

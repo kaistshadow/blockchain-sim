@@ -12,7 +12,8 @@ HandleConsensus_POW::HandleConsensus_POW() :
     miningCompleteEventSubscriber(EventCoordinator::GetInstance(), 
                                   [this](std::shared_ptr<EventInfo> i){ onMiningCompleteEvent(i); },
                                   EventType::miningCompleteEvent)
-    // refer to https://stackoverflow.com/a/11284096 for information about using lambda in constructor.
+    // refer to https://stackoverflow.com/a/402385 for understanding why i used lambda.
+    // refer to https://stackoverflow.com/a/11284096 for understanding the way of using lambda in constructor.
                                   
 {
     state = Idle;

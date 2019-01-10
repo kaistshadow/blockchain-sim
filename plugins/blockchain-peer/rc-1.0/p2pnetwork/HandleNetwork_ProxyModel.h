@@ -55,6 +55,54 @@ class MessageHeader {
     int GetMessageLength() { return message_len; }
 };
 
+enum RECV_STATUS {
+    RECV_IDLE = 0,
+    RECV_HEADER = 1,
+    RECV_MSG = 2,
+    RECV_NONE = 3,
+};
+
+
+struct WriteMsg {
+    char       *data;
+    ssize_t len;
+    ssize_t pos;
+  
+    WriteMsg (const char *bytes, ssize_t nbytes) {
+        pos = 0;
+        len = nbytes;
+        data = new char[nbytes];
+        memcpy(data, bytes, nbytes);
+    }
+  
+    virtual ~WriteMsg () {
+        delete [] data;
+    }
+  
+    char *dpos() {
+        return data + pos;
+    }
+  
+    ssize_t nbytes() {
+        return len - pos;
+    }
+};
+
+class SocketSendBuffer {
+ public:
+    std::list<std::shared_ptr<WriteMsg> > sendMsgQueue;
+};
+
+class SocketRecvBuffer {
+ public:
+    RECV_STATUS recv_status = RECV_IDLE;
+    int message_len;
+    int received_len;
+    std::string recv_str;
+    MessageHeader* header;   //  TODO: make MessageHeader a general interface class.
+};
+
+
 class HandleNetwork_ProxyModel: public HandleNetwork {
  private:
     PeerList membershipPeerList;
@@ -63,12 +111,16 @@ class HandleNetwork_ProxyModel: public HandleNetwork {
     // Map structure which maps socketfd into pointer of the Peer.
     // For a convenient access of the peer object.
     std::map< int, Peer* > peerMap;
+
+    // Map structure which maps socketfd into the SocketSendBuffer
+    std::map< int, SocketSendBuffer > sendBuffMap;
+    // Map structure which maps socketfd into the SocketRecvBuffer
+    std::map< int, SocketRecvBuffer > recvBuffMap;
+
     
     /* int serverListenSocket = -1; */
     int InitializeListenSocket();
     int ConnectToNode(std::string nodename);
-    void RegisterServerWatcher(int listenfd);
-    void RegisterSocketWatcher(int sfd); 
 
     void RelayUnicastMsg(MessageHeader* header, Message* msg);
     void RelayBroadcastMsg(MessageHeader* header, Message* msg);
@@ -81,15 +133,20 @@ class HandleNetwork_ProxyModel: public HandleNetwork {
 
  public:
     HandleNetwork_ProxyModel() {}
-    virtual ~HandleNetwork_ProxyModel() {}
+    ~HandleNetwork_ProxyModel() {}
 
     int JoinNetwork();
-    void HandleRecvSocketIO(int fd);
-    void HandleSendSocketIO(int fd);
-    void HandleAcceptSocketIO(int fd);
 
     void UnicastMsg(std::string destip, Message* msg);
     void BroadcastMsg(Message* msg);
+
+    // Event subscriber callback 1. for recvSocketConnectionEvent
+    void onRecvSocketConnectionEvent(std::shared_ptr<EventInfo>);
+    // Event subscriber callback 2. for recvSocketDataEvent
+    void onRecvSocketDataEvent(std::shared_ptr<EventInfo>);
+    // Event subscriber callback 3. for sendSocketReadyEvent
+    void onSendSocketReadyEvent(std::shared_ptr<EventInfo>);
+
 };
 
 

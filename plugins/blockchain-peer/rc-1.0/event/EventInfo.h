@@ -20,4 +20,28 @@ class MiningCompleteEventInfo : public EventInfo {
     int GetNonce() { return nonce; }
 };
 
+class RecvSocketConnectionEventInfo : public EventInfo {
+ private:
+    int listenfd;
+ public:
+    RecvSocketConnectionEventInfo(int fd) : EventInfo(EventType::recvSocketConnectionEvent), listenfd(fd) { }
+    int GetListenFD() { return listenfd; }
+};
+
+class RecvSocketDataEventInfo : public EventInfo {
+ private:
+    int socketfd;
+ public:
+    RecvSocketDataEventInfo(int fd) : EventInfo(EventType::recvSocketDataEvent), socketfd(fd) { }
+    int GetSocketFD() { return socketfd; }
+};
+
+class SendSocketReadyEventInfo : public EventInfo {
+ private:
+    int socketfd;
+ public:
+    SendSocketReadyEventInfo(int fd) : EventInfo(EventType::sendSocketReadyEvent), socketfd(fd) { }
+    int GetSocketFD() { return socketfd; }
+};
+
 #endif

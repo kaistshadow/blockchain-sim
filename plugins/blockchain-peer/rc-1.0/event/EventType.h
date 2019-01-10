@@ -5,8 +5,11 @@
 enum class EventType {
     nullEvent,
         miningCompleteEvent,
+        recvSocketConnectionEvent,
+        recvSocketDataEvent,
+        sendSocketReadyEvent,
         First=miningCompleteEvent,
-        Last=miningCompleteEvent
+        Last=sendSocketReadyEvent
 };
 
 

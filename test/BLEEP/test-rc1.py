@@ -38,7 +38,7 @@ def setup_multiple_node_xml_centralized(node_num, simultime, txnum, miningtime, 
 
     node_id = "bleep%d" % (node_num)
     node = ET.SubElement(shadow, "node", id=node_id)
-    ET.SubElement(node, "application", plugin="PEER", time="10", arguments="-networkparticipant -generatetx=%d -timegeneratetx=1" % txnum)
+    ET.SubElement(node, "application", plugin="PEER", time="10", arguments="-networkparticipant -generatetx=%d -timegeneratetx=%d" % (txnum, txnum/100))
 
     tree.write(new_xml, pretty_print=True)
 

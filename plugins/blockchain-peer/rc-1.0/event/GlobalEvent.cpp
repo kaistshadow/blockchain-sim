@@ -15,10 +15,12 @@ void GlobalEvent::onPeriodicTxInjection(EV_P_ ev_periodic *w, int revents) {
         boost::shared_ptr<Transaction> tx = handleTransactionClass->MakeRandomValidTransaction();
         handleNetworkClass->BroadcastMsg(tx.get());
         injectedTxNum++;
-    }
 
-    if (injectedTxNum == generateTxNum)
-        ev_periodic_stop(EV_A_ w);
+        if (injectedTxNum == generateTxNum) {
+            ev_periodic_stop(EV_A_ w);
+            break;
+        }
+    }
 
     return;
 } 

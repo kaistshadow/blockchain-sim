@@ -18,7 +18,7 @@ void HandleTransaction_BasicModel::HandleArrivedTx(boost::shared_ptr<Transaction
     TxPool::GetInstance()->AddTx(tx);
     
     if (TxPool::GetInstance()->GetPendingTxNum() >= block_tx_num) {
-        PrintTransactions();
+        // PrintTransactions();
         handleConsensusClass->RequestConsensus(TxPool::GetInstance()->GetTxs(block_tx_num));
     }
 }

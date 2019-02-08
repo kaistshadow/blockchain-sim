@@ -4,7 +4,7 @@ import argparse
 import sys
 import lxml.etree as ET
 
-def setup_multiple_node_xml(node_num, injector_op):
+def setup_multiple_node_xml(node_num, injector_op, simultime, txnum, miningtime, miningtime_dev):
     baseline_xml = "rc1.xml"
     new_xml = "rc1-gossip-auto.xml"
 
@@ -16,40 +16,54 @@ def setup_multiple_node_xml(node_num, injector_op):
         shadow.remove(node)
     for node in shadow.findall('kill'):
         shadow.remove(node)
-    ET.SubElement(shadow, "kill", time=str(node_num+200))
+    ET.SubElement(shadow, "kill", time=str(node_num+300))
 
     for i in range(0, node_num):
         node_id = "bleep%d" % (i)
         node = ET.SubElement(shadow, "node", id=node_id)
         time = str(i)
         if i == 0:
-            argument = "-handlenetwork=gossip -contactnode"
+            argument = "-handlenetwork=gossip -contactnode -miningtime=%d -miningtimedev=%s" % (miningtime, miningtime_dev)
         else:
-            argument = "-handlenetwork=gossip"
+            argument = "-handlenetwork=gossip -miningtime=%d -miningtimedev=%s" % (miningtime, miningtime_dev)
         ET.SubElement(node,"application", plugin="PEER", time=time, arguments=argument)
 
-    if injector_op:
+    if injector_op and txnum > 0:
         node_id = "bleep%d" % node_num
         node = ET.SubElement(shadow, "node", id=node_id)
-        ET.SubElement(node, "application", plugin="PEER", time=str(node_num+100), arguments="-handlenetwork=gossip -networkparticipant -generatetx=4 -timegeneratetx=1")
-
+        ET.SubElement(node, "application", plugin="PEER", time=str(node_num+100),\
+                    arguments="-handlenetwork=gossip -networkparticipant -generatetx=%d -timegeneratetx=1" %txnum)
     tree.write(new_xml, pretty_print=True)
 
 if __name__ == '__main__':
-    nodenum = 0
-    injector_op = False
-    for i, arg in enumerate(sys.argv):
-        if "--nodenum" == arg:
-            nodenum = int(sys.argv[i+1])
-        if "-injector" == arg:
-            injector_op = True
-
-    setup_multiple_node_xml(nodenum, injector_op)
-    datadir = "rc1-gossip-datadir"
+    datadir = "rc1-datadir"
     shadow_configfile = "rc1-gossip-auto.xml"
+    os.system("rm -rf %s" % datadir)
 
-    shadow = Popen([os.path.expanduser("shadow"), "-d", datadir, "-l", "message", "--cpu-threshold=-1", shadow_configfile], stdout=PIPE)
+    injector_op = False
+    nodenum     = 100
+    simultime   = 150
+    txnum       = 1
+    miningtime  = 15
+    miningtimedev = "4.0"
+    if len(sys.argv) > 1:
+        for i, arg in enumerate(sys.argv):
+            if "-injector" == arg:
+                injector_op = True
+            elif "--nodenum" == arg:
+                nodenum = int(sys.argv[i+1])
+            elif "--simultime" == arg:
+                simultime = int(sys.argv[i+1])
+            elif "--txnum" == arg:
+                txnum = int(sys.argv[i+1])
+            elif "--miningtime" == arg:
+                miningtime = int(sys.argv[i+1])
+            elif "--miningtimedev" == arg:
+                miningtimedev = sys.argv[i+1]
 
+    setup_multiple_node_xml(nodenum, injector_op, simultime, txnum, miningtime, miningtimedev)
+    #shadow = Popen([os.path.expanduser("shadow"), "-d", datadir, shadow_configfile], stdout=PIPE)
+    shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-d", datadir, shadow_configfile], stdout=PIPE)
     shadow_stdout = []
     while shadow.poll() is None:
         l = shadow.stdout.readline()

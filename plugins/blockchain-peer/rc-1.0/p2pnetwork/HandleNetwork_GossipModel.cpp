@@ -286,7 +286,7 @@ void HandleNetwork_GossipModel::Membership_HandleShutdownCallback(EV_P_ ev_timer
         for (Neighbor* p : passive) {
             delete p;
         }
-        std::cout << "[ActiveView] "<< utility::GetCurrentTime() << " \n";
+        std::cout << "[NetworkGraph] "<< utility::GetCurrentTime() << " \n";
 
         std::map<int, Peer*>& pmap = *instance->GetPeerMap();
         for (auto& entry : pmap) {
@@ -1161,7 +1161,7 @@ std::vector<std::string> PartialView::GetRandomPassiveMemberList(int n) {
 }
 
 void PartialView::PrintActiveView() {
-    std::cout << "[ActiveView] "<< utility::GetCurrentTime() << " ";
+    std::cout << "[NetworkGraph] "<< utility::GetCurrentTime() << " ";
     if (active.size() == 0) {
         std::cout << '\n';
         return;

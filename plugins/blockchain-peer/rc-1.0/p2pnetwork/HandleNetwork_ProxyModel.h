@@ -29,7 +29,7 @@ class MessageHeader {
     std::string destIP;
     std::list<std::string> visitedIPList;
     int message_len;
-    
+
     friend class boost::serialization::access;
     // When the class Archive corresponds to an output archive, the
     // & operator is defined similar to <<.  Likewise, when the class Archive
@@ -67,22 +67,22 @@ struct WriteMsg {
     char       *data;
     ssize_t len;
     ssize_t pos;
-  
+
     WriteMsg (const char *bytes, ssize_t nbytes) {
         pos = 0;
         len = nbytes;
         data = new char[nbytes];
         memcpy(data, bytes, nbytes);
     }
-  
+
     virtual ~WriteMsg () {
         delete [] data;
     }
-  
+
     char *dpos() {
         return data + pos;
     }
-  
+
     ssize_t nbytes() {
         return len - pos;
     }
@@ -117,7 +117,7 @@ class HandleNetwork_ProxyModel: public HandleNetwork {
     // Map structure which maps socketfd into the SocketRecvBuffer
     std::map< int, SocketRecvBuffer > recvBuffMap;
 
-    
+
     /* int serverListenSocket = -1; */
     int InitializeListenSocket();
     int ConnectToNode(std::string nodename);
@@ -130,6 +130,9 @@ class HandleNetwork_ProxyModel: public HandleNetwork {
 
     std::string GetSerializedString(MessageHeader* header);
     MessageHeader *GetDeserializedMsgHeader(std::string str);
+
+    // for testing
+    void PrintGossipPeerList();
 
  public:
     HandleNetwork_ProxyModel() {}

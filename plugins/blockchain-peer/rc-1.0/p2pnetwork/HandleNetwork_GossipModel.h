@@ -33,12 +33,12 @@
 #define Kp   3
 #define SHUFFLE_OP 1
 #define SHUFFLE_PERIOD 5
-#define CONNECTION_TIMEOUT 12000
+#define CONNECTION_TIMEOUT 180
 #define TEST_OP 0
 
 // [Gossip Protocol Parameters]
-#define STORAGE_SIZE     100
-#define RECOVERY_TIMEOUT 20
+#define STORAGE_SIZE     500
+#define RECOVERY_TIMEOUT 60
 
 // [type_cast of GossipModuleHeader]
 #define CASTTYPE_UNICAST   1

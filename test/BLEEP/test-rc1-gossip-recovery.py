@@ -47,7 +47,7 @@ if __name__ == '__main__':
             nodenum = int(sys.argv[i+1])
 
     setup_multiple_node_xml(nodenum, True)
-    datadir = "rc1-gossip-datadir"
+    datadir = "rc1-datadir"
     shadow_configfile = "rc1-gossip-auto.xml"
 
     shadow = Popen([os.path.expanduser("shadow"), "-d", datadir, "-l", "message", "--cpu-threshold=-1", shadow_configfile], stdout=PIPE)

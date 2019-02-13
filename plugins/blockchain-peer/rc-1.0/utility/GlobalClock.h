@@ -6,7 +6,8 @@
 namespace utility {
     /* extern time_t globalclock_start; */
     extern std::chrono::high_resolution_clock::time_point globalclock_start;
-    double GetGlobalClock(); 
+    double GetGlobalClock();
+    unsigned long GetCurrentTime();
 }
 
 

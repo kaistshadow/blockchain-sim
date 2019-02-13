@@ -23,7 +23,7 @@ $(function () {
     var data = {
         nodes: nodes,
         edges: edges
-    };    
+    };
     var options = {
         layout: {
             hierarchical: {
@@ -48,7 +48,19 @@ $(function () {
     var container = document.getElementById('blockchain');
     var blockchain = new vis.Network(container, data, options);
 
-
+    // ----------------network grpah----------------------
+    var network_nodes = new vis.DataSet(nodesArray);
+    var network_edges = new vis.DataSet(edgesArray);
+    var network_data  = {
+        nodes: network_nodes,
+        edges: network_edges
+    };
+    var network_options = {
+        physics: {stabilization: true}
+    };
+    var network_container = document.getElementById('network');
+    var network = new vis.Network(network_container, network_data, network_options);
+    // ---------------------------------------------------
 
     // for better performance - to avoid searching in DOM
     var content = $('#content');
@@ -57,7 +69,6 @@ $(function () {
 
     // my connection index
     var myIndex = -1;
-    
 
     // if user is running mozilla then use it's built-in WebSocket
     window.WebSocket = window.WebSocket || window.MozWebSocket;
@@ -113,14 +124,14 @@ $(function () {
         //     status.text(myName + ': ').css('color', myColor);
         //     input.removeAttr('disabled').focus();
         //     // from now user can start sending messages
-        // } 
+        // }
         if (json.type === 'history') { // entire message history
             // insert every single message to the chat window
             for (var i=0; i < json.data.length; i++) {
                 addMessage(json.data[i].author, json.data[i].text,
                            json.data[i].color, new Date(json.data[i].time));
             }
-        } 
+        }
         else if (json.type === 'message') { // it's a single message
             input.removeAttr('disabled'); // let the user write another message
             addMessage(json.data.author, json.data.text,
@@ -129,9 +140,17 @@ $(function () {
         } else if (json.type === 'graph') {
             addMessage("Notice", "Snapshot of the blockchain graph is received",
                        "red", new Date(json.data.time));
+
             nodes = new vis.DataSet(json.data.nodes);
             edges = new vis.DataSet(json.data.edges);
             blockchain.setData({nodes:nodes, edges: edges});
+
+            //------------------network graph---------------------
+            network_nodes = new vis.DataSet(json.data.network_nodes);
+            network_edges = new vis.DataSet(json.data.network_edges);
+            network.setData({nodes:network_nodes, edges:network_edges});
+            //----------------------------------------------------
+
             for (const [key, value] of Object.entries(json.data.timestamps)) {
                 addMessage("simul-timelog", `Node ${key}'s current virtualTime=${value}`, "blue", new Date(json.data.time));
                 if (key >= 10)
@@ -161,7 +180,7 @@ $(function () {
             if (!msg) {
                 return;
             }
-            
+
             var confs = {};
             console.log("aaa");
             if (msg.startsWith('run')) {

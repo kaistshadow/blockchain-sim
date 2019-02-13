@@ -7,19 +7,19 @@
 #include "../event/Publisher.h"
 
 #define HANDLE_NETWORK_PROXYMODEL 0
+#define HANDLE_NETWORK_GOSSIPMODEL 1
 
 class HandleNetwork {
- protected:
+ public:
+    HandleNetwork();
+
     //Event Publisher
     SocketEventPublisher socketEventPublisher;
-
     //Event Subscribers
     Subscriber recvSocketConnectionEventSubscriber;
     Subscriber recvSocketDataEventSubscriber;
     Subscriber sendSocketReadyEventSubscriber;
-    
- public:
-    HandleNetwork();
+
     virtual ~HandleNetwork();
     static std::shared_ptr<HandleNetwork> create(const int type);
 

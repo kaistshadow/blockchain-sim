@@ -19,7 +19,12 @@ int injectedTxNum = 0;
 int generateTxTime = 0;
 
 // configurations for proxy-based network
-bool amIProxyNode = false;  
+bool amIProxyNode = false;
+
+// configurations for gossip-based network
+bool amIContactNode = false;
+bool isGossipShutdown = false;
+int shutdownTime = -1;
 
 // Blockchain Consensus Configuration
 int block_tx_num = 5;
@@ -37,15 +42,20 @@ int main(int argc, char *argv[]) {
         std::cout << strUsage << "\n";
         return 0;
     }
-    
+
     if (gArgs.IsArgSet("-handlenetwork")) {
         std::string networktype = gArgs.GetArg("-handlenetwork","");
         if (networktype == "proxy") {
             std::cout << "networktype is given as proxy!" << "\n";
             handleNetworkClass = HandleNetwork::create(HANDLE_NETWORK_PROXYMODEL);
         }
-        else // default is proxy
+        else if (networktype == "gossip") {
+            std::cout << "networktype is given as gossip!" << "\n";
+            handleNetworkClass = HandleNetwork::create(HANDLE_NETWORK_GOSSIPMODEL);
+        }
+        else { // default is proxy
             handleNetworkClass = HandleNetwork::create(HANDLE_NETWORK_PROXYMODEL);
+        }
     } else { // default is proxy
         handleNetworkClass = HandleNetwork::create(HANDLE_NETWORK_PROXYMODEL);
     }
@@ -82,7 +92,7 @@ int main(int argc, char *argv[]) {
         }
         else // default is 'SimpleTransaction'
             txType = EnumSimpleTransaction;
-    } 
+    }
 
 
     if (gArgs.GetBoolArg("-networkparticipant", false)) {
@@ -95,16 +105,20 @@ int main(int argc, char *argv[]) {
 
     amIProxyNode = gArgs.GetBoolArg("-proxynode", false);
 
+    amIContactNode = gArgs.GetBoolArg("-contactnode", false);
+    isGossipShutdown = gArgs.GetBoolArg("-gossipshutdown", false);
+    shutdownTime = gArgs.GetArg("-shutdownTime", -1);
+
     generateTxNum = gArgs.GetArg("-generatetx", 0);
     generateTxTime = gArgs.GetArg("-timegeneratetx", 0);
-    
+
     block_tx_num = gArgs.GetArg("-blocktxnum", 5);
     mining_time = gArgs.GetArg("-miningtime", 10);
     mining_time_dev = gArgs.GetArg("-miningtimedev", "2.0");
-    
+
 
     std::cout << "Testing node up" << "\n";
-    
+
     // init NodeInfo : host ip address
     NodeInfo::GetInstance()->SetHostIP();
 
@@ -136,4 +150,3 @@ int main(int argc, char *argv[]) {
     std::cout << "before ev_loop" << "\n";
     ev_loop(GlobalEvent::loop, 0);
 }
-

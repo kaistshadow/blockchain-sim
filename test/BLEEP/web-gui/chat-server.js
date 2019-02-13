@@ -16,6 +16,8 @@ var http = require('http');
  */
 // current operator id
 var operatorIndex = -1;
+// network graph option
+var draw_network = false;
 
 // latest 100 messages
 var history = [ ];
@@ -86,6 +88,10 @@ function sendSnapshot(connection, nodenum) {
             + (curDate.getMinutes() < 10 ? '0' + curDate.getMinutes() : curDate.getMinutes()) + ':'
             + (curDate.getSeconds() < 10 ? '0' + curDate.getSeconds() : curDate.getSeconds());
 
+    //--------------------network graph--------------------
+    var network_nodes = [];
+    var network_edges = [];
+    //-----------------------------------------------------
 
     var genesisBlk = {id:"00000000000000", label:"genesis" + ", " + snapshottime};
     if (!blockchainBlocks.find( x => {return x.id === "00000000000000";}))
@@ -96,6 +102,11 @@ function sendSnapshot(connection, nodenum) {
         if (!fs.existsSync(logfile))
             continue;
         var lines = fs.readFileSync(logfile).toString().split('\n');
+
+        //--------------------network graph--------------------
+        var network_ip = "";
+        //-----------------------------------------------------
+
         var blocks = {};
         for (let line of lines) {
             var matches = line.match(rePattern);
@@ -114,8 +125,34 @@ function sendSnapshot(connection, nodenum) {
                 // timestampsArray.push({virtualtime:line, node:i});
                 timestampsDict[i] = line;
             }
+            //--------------------network graph--------------------
+            else if (line.startsWith("SetHost")) {
+                if (draw_network) {
+                    var network_info = line.split(' ');
+                    network_ip = network_info[2];
+                    network_nodes.push({id:network_ip, label:String(i)});
+                }
+            }
+            //-----------------------------------------------------
         }
-        
+
+        //--------------------network graph------------------------
+        if (draw_network) {
+            for (var k=lines.length-1; k>=0; k--) {
+                if (lines[k].startsWith("[NetworkGraph]")) {
+                    var dst_nodes = lines[k].split(' ')[2].split(',');
+                    for (let dst of dst_nodes) {
+                        if (parseInt(dst[dst.length-2]) == 1) {
+                            var dst_ip   = dst.substring(0, dst.length-3);
+                            network_edges.push({from:network_ip, to:dst_ip});
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        //---------------------------------------------------------
+
         var keys = Object.keys(blocks);
         keys.sort((a,b) => a-b);
         for (var idx of keys) {
@@ -126,11 +163,12 @@ function sendSnapshot(connection, nodenum) {
 
                 if (!blockchainBlocks.find( x => {return x.id === block_hash;}))
                     blockchainBlocks.push({id:block_hash,label:timestamp + ", " + snapshottime});
+                    //blockchainBlocks.push({id:block_hash,label:snapshottime});
                 if (!blockchainEdges.find( x => {return x.id === prev_block_hash+block_hash;}))
                     blockchainEdges.push({id:prev_block_hash+block_hash,from:prev_block_hash, to:block_hash});
             }
         }
-        
+
         // var lastblockhash = blocks[keys.pop()][0];
         // nodes.update([{id:`bleep${i}`, label:`bleep${i}`}]);
         // edges.update([{id:lastblockhash+`bleep${i}`, from:lastblockhash, to:`bleep${i}`}]);
@@ -142,8 +180,8 @@ function sendSnapshot(connection, nodenum) {
         time: curTime,
         nodes: blockchainBlocks,
         edges: blockchainEdges,
-        // nodes: nodesArray,
-        // edges: edgesArray,
+        network_nodes: network_nodes,
+        network_edges: network_edges,
         timestamps: timestampsDict
     };
     // broadcast message to requested connection
@@ -159,17 +197,17 @@ wsServer.on('request', function(request) {
     // accept connection - you should check 'request.origin' to make sure that
     // client is connecting from your website
     // (http://en.wikipedia.org/wiki/Same_origin_policy)
-    var connection = request.accept(null, request.origin); 
+    var connection = request.accept(null, request.origin);
     // we need to know client index to remove them on 'close' event
     // var index = clients.push(connection) - 1;   // PROBLEM : this variable is not well-updated
     // connectionIndex.set(connection, clients.push(connection) - 1);   // PROBLEM : this variable is not well-updated
     if (globalClientId == Number.MAX_SAFE_INTEGER) {
-        // 
+        //
         consol.log((new Date()) + ' Connection rejected. globalCounter is approached to maximum value. Need server reboot.');
         return;
     }
     var index = globalClientId++;
-    
+
     clients.push({id:index, conn : connection});
     // var userName = false;
 
@@ -184,7 +222,7 @@ wsServer.on('request', function(request) {
     }
     connection.sendUTF(JSON.stringify( {type: 'userindex', data: index}));
     connection.sendUTF(JSON.stringify( {type:'status', data: {operator:operatorIndex }  } ));
-    
+
 
     // user sent some message
     connection.on('message', function(message) {
@@ -214,7 +252,8 @@ wsServer.on('request', function(request) {
             }
             else if ((msg === 'run' || msg.startsWith('run ')) && operatorIndex == -1) {
                 const child_process = require('child_process');
-                var nodenum = 500;
+                var nodenum   = 500;
+                var is_gossip = false;
 
                 console.log((new Date()) + ' Received Message : ' + msg);
 
@@ -223,17 +262,30 @@ wsServer.on('request', function(request) {
                     if ("--nodenum" === cmd_tokens[cmd_idx]) {
                         nodenum = parseInt(cmd_tokens[parseInt(cmd_idx)+1]);
                     }
+                    if ("-gossip" === cmd_tokens[cmd_idx]) {
+                        is_gossip = true;
+                    }
+                    if ("-network" === cmd_tokens[cmd_idx]) {
+                        draw_network = true;
+                    }
                 }
-                
+
                 // var testPythonFile = "test-centralized-broadcast-async.py";
                 var testPythonFile = "test-rc1.py";
+                if (is_gossip) {
+                    testPythonFile = "test-rc1-network.py";
+                }
+
                 var pythonArgs = [testPythonFile];
+                if (is_gossip) {
+                    pythonArgs.push("-injector");
+                }
                 for (var key in confs) {
                     pythonArgs.push("--"+key);
                     pythonArgs.push(confs[key]);
                 }
 
-                console.log((new Date()) + ' subprocess with command : ' + 'python '+pythonArgs.join(" "));                
+                console.log((new Date()) + ' subprocess with command : ' + 'python '+pythonArgs.join(" "));
                 console.log('current directory: ' + process.cwd());
                 proc = child_process.spawn('python', pythonArgs, {cwd:"../"});
 
@@ -284,7 +336,7 @@ wsServer.on('request', function(request) {
                     proc.kill();
                     clearInterval(snapshotIntervalId);
                 }
-                else 
+                else
                     return;
                 // set operator as none
                 // operatorIndex = -1;
@@ -305,7 +357,7 @@ wsServer.on('request', function(request) {
             // } else { // log and broadcast the message
             //     console.log((new Date()) + ' Received Message from '
             //                 + userName + ': ' + message.utf8Data);
-            
+
             //     // we want to keep history of all sent messages
             //     var obj = {
             //         time: (new Date()).getTime(),
@@ -325,7 +377,7 @@ wsServer.on('request', function(request) {
             // log and broadcast the message
             // console.log((new Date()) + ' Received Message from '
             //             + userName + ': ' + message.utf8Data);
-            
+
             // we want to keep history of all sent messages
             var obj = {
                 time: (new Date()).getTime(),
@@ -352,7 +404,7 @@ wsServer.on('request', function(request) {
         // clients.splice(connectionIndex.get(connection), 1);
         clients.filter( x => {return x.id !== index;});
         // update overall connection index
-        // for (var index in clients) 
+        // for (var index in clients)
         //     connectionIndex.set(clients[index], index);
         // push back user's color to be reused by another user
         // colors.push(userColor);

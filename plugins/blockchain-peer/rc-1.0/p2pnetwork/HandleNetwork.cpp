@@ -1,5 +1,6 @@
 #include "HandleNetwork.h"
 #include "HandleNetwork_ProxyModel.h"
+#include "HandleNetwork_GossipModel.h"
 
 HandleNetwork::HandleNetwork() :
     recvSocketConnectionEventSubscriber(EventCoordinator::GetInstance(),
@@ -22,6 +23,9 @@ HandleNetwork::~HandleNetwork() {
 std::shared_ptr<HandleNetwork>  HandleNetwork::create(const int type) {
     if (type == HANDLE_NETWORK_PROXYMODEL) {
         return std::shared_ptr<HandleNetwork>(new HandleNetwork_ProxyModel());
+    }
+    else if (type == HANDLE_NETWORK_GOSSIPMODEL) {
+        return std::shared_ptr<HandleNetwork>(HandleNetwork_GossipModel::GetInstance());
     }
     else {
         exit(-1);

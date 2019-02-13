@@ -1,7 +1,8 @@
 #include "HandleNetwork_ProxyModel.h"
 #include "../event/GlobalEvent.h"
-#include "../Configuration.h" 
+#include "../Configuration.h"
 #include "../utility/NodeInfo.h"
+#include "../utility/GlobalClock.h"
 
 #include <fcntl.h> /* Added for the nonblocking socket */
 #include <arpa/inet.h>
@@ -60,7 +61,7 @@ int HandleNetwork_ProxyModel::InitializeListenSocket() {
 }
 
 int HandleNetwork_ProxyModel::ConnectToNode(std::string domain) {
-    // if membershipPeerList already contains the peer for given domain, 
+    // if membershipPeerList already contains the peer for given domain,
     // then we dont need to do anything here, so return 0.
     if (membershipPeerList.GetPeerByDomain(domain)) {
         return 0;
@@ -70,10 +71,10 @@ int HandleNetwork_ProxyModel::ConnectToNode(std::string domain) {
     if ((sfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("client socket");
         return -1;
-    }        
+    }
     int flags = fcntl(sfd, F_GETFL, 0);
     fcntl(sfd, F_SETFL, flags | O_NONBLOCK); /* Change the socket into non-blocking state	*/
-    
+
     struct addrinfo* servinfo;
     int n = getaddrinfo(domain.c_str(), NULL, NULL, &servinfo);
     if (n != 0) {
@@ -102,8 +103,10 @@ int HandleNetwork_ProxyModel::ConnectToNode(std::string domain) {
         std::cout << "Connected to (" << peer->GetIP() << "," << peer->GetHostname() << ")" << "\n";
         // This simple module maintains the same membership & gossip peerlist.
         membershipPeerList.AppendPeer(peer);
-        gossipPeerList.AppendPeer(peer);     
+        gossipPeerList.AppendPeer(peer);
         socketEventPublisher.RegisterSocketAsDataSocket(sfd);
+
+        PrintGossipPeerList();//test
 
         // Message* msg = new TestMessage("I don't know my domain name.");
         // Transaction* msg = new Transaction(10,15,1.2);
@@ -111,10 +114,10 @@ int HandleNetwork_ProxyModel::ConnectToNode(std::string domain) {
         // UnicastMsg(peer->GetIP(), msg);
         // delete msg;
     }
-    else { 
+    else {
         // Now in progress of connection.
         // So wait for completion.
-        fd_set rset, wset;        
+        fd_set rset, wset;
         FD_ZERO(&rset);
         FD_SET(sfd, &rset);
         wset = rset;
@@ -140,7 +143,9 @@ int HandleNetwork_ProxyModel::ConnectToNode(std::string domain) {
                     std::cout << "Connected to (" << peer->GetIP() << "," << peer->GetHostname() << ")" << "\n";
                     // This simple module maintains the same membership & gossip peerlist.
                     membershipPeerList.AppendPeer(peer);
-                    gossipPeerList.AppendPeer(peer);     
+                    gossipPeerList.AppendPeer(peer);
+
+                    PrintGossipPeerList();//test
 
                     socketEventPublisher.RegisterSocketAsDataSocket(sfd);
                     // Message* msg = new TestMessage("I don't know my domain name.");
@@ -183,7 +188,7 @@ void HandleNetwork_ProxyModel::RelayUnicastMsg(MessageHeader* header, Message* m
     int header_len = message_header.size();
 
     std::cout << "UnicastMsg:" << "relay to " << p->GetIP() << ", header size=" << header_len << ", message size=" << message_len << "\n";
-        
+
     SocketSendBuffer& buff = sendBuffMap[p->GetSocketFD()];
     buff.sendMsgQueue.push_back(std::shared_ptr<WriteMsg>(new WriteMsg((char*)&header_len, sizeof(int))));
     buff.sendMsgQueue.push_back(std::shared_ptr<WriteMsg>(new WriteMsg(message_header.c_str(), header_len)));
@@ -206,7 +211,7 @@ void HandleNetwork_ProxyModel::RelayBroadcastMsg(MessageHeader* header, Message*
         int header_len = message_header.size();
 
         std::cout << "BroadcastMsg:" << "relay to " << p->GetIP() << ", header size=" << header_len << ", message size=" << message_len << "\n";
-        
+
         SocketSendBuffer& buff = sendBuffMap[p->GetSocketFD()];
         buff.sendMsgQueue.push_back(std::shared_ptr<WriteMsg>(new WriteMsg((char*)&header_len, sizeof(int))));
         buff.sendMsgQueue.push_back(std::shared_ptr<WriteMsg>(new WriteMsg(message_header.c_str(), header_len)));
@@ -261,7 +266,7 @@ MessageHeader* HandleNetwork_ProxyModel::GetDeserializedMsgHeader(std::string st
 int HandleNetwork_ProxyModel::JoinNetwork() {
     // Initialize a listening socket
     int listenfd = InitializeListenSocket();
-    // Register a watcher which monitors the new connection requested from outside 
+    // Register a watcher which monitors the new connection requested from outside
     // RegisterServerWatcher(listenfd);
     socketEventPublisher.RegisterSocketAsServerSocket(listenfd);
 
@@ -302,7 +307,7 @@ void HandleNetwork_ProxyModel::UnicastMsg(std::string destip, Message* msg) {
     int header_len = message_header.size();
 
     std::cout << "UnicastMsg:" << "send to " << destip << ", header size=" << header_len << ", message_size=" << message_len << "\n";
-        
+
     SocketSendBuffer& buff = sendBuffMap[p->GetSocketFD()];
     buff.sendMsgQueue.push_back(std::shared_ptr<WriteMsg>(new WriteMsg((char*)&header_len, sizeof(int))));
     buff.sendMsgQueue.push_back(std::shared_ptr<WriteMsg>(new WriteMsg(message_header.c_str(), header_len)));
@@ -329,7 +334,7 @@ void HandleNetwork_ProxyModel::BroadcastMsg(Message* msg) {
         int header_len = message_header.size();
 
         std::cout << "BroadcastMsg:" << "send to " << p->GetIP() << ", header size=" << header_len << ", message size=" << message_len << "\n";
-        
+
         SocketSendBuffer& buff = sendBuffMap[p->GetSocketFD()];
         buff.sendMsgQueue.push_back(std::shared_ptr<WriteMsg>(new WriteMsg((char*)&header_len, sizeof(int))));
         buff.sendMsgQueue.push_back(std::shared_ptr<WriteMsg>(new WriteMsg(message_header.c_str(), header_len)));
@@ -360,7 +365,7 @@ void HandleNetwork_ProxyModel::onRecvSocketConnectionEvent(std::shared_ptr<Event
                 }
                 break;
             }
-            std::cout << "server: got connection from " << inet_ntoa(their_addr.sin_addr) << "\n"; 
+            std::cout << "server: got connection from " << inet_ntoa(their_addr.sin_addr) << "\n";
 
             fcntl(sock_fd, F_SETFL, O_NONBLOCK);
 
@@ -370,8 +375,9 @@ void HandleNetwork_ProxyModel::onRecvSocketConnectionEvent(std::shared_ptr<Event
 
             // This simple module maintains the same membership & gossip peerlist.
             membershipPeerList.AppendPeer(peer);
-            gossipPeerList.AppendPeer(peer);     
+            gossipPeerList.AppendPeer(peer);
 
+            PrintGossipPeerList();//test
             // Register a watcher which monitors any (recv || send) for given socket
             // RegisterSocketWatcher(sock_fd);
             socketEventPublisher.RegisterSocketAsDataSocket(sock_fd);
@@ -390,7 +396,7 @@ void HandleNetwork_ProxyModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo> 
         std::cout << "No valid peer exists" << "\n";
         exit(-1);
     }
-    
+
     std::cout << "handle recv" << "\n";
 
     Peer* peer = it->second;
@@ -403,7 +409,7 @@ void HandleNetwork_ProxyModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo> 
         {
             int length = 0;
             n = recv(fd,&length,sizeof(int),0);
-            if (n == -1 && errno != EAGAIN){ 
+            if (n == -1 && errno != EAGAIN){
                 perror("recv - non blocking \n");
                 std::cout << "errno=" << errno << "\n";
                 exit(-1);
@@ -439,7 +445,7 @@ void HandleNetwork_ProxyModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo> 
 
             while(1) {
                 int recv_size = std::min(2000, buff.message_len - total_recv_size);
-                numbytes = recv(fd, string_read, recv_size, 0);              
+                numbytes = recv(fd, string_read, recv_size, 0);
                 if (numbytes > 0) {
                     total_recv_size += numbytes;
                     buff.recv_str.append(string_read, numbytes);
@@ -472,7 +478,7 @@ void HandleNetwork_ProxyModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo> 
 
             if (buff.recv_status == RECV_HEADER) {
                 buff.header = GetDeserializedMsgHeader(buff.recv_str);
-                buff.message_len = buff.header->GetMessageLength();                
+                buff.message_len = buff.header->GetMessageLength();
                 buff.recv_status = RECV_MSG;
                 buff.received_len = 0;
                 buff.recv_str = "";
@@ -515,7 +521,7 @@ void HandleNetwork_ProxyModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo> 
             // Also, if the current node is network participant node, do not forward.
             if (!amIProxyNode && !amINetworkParticipantNode) {
                 switch (msg->GetType()) {
-                case Message::TEST_MESSAGE: 
+                case Message::TEST_MESSAGE:
                     {
                         std::cout << "Deserialization of the received message complete!" << "\n";
                         std::cout << "MESSAGE TYPE = TEST MESSAGE" << "\n";
@@ -568,7 +574,7 @@ void HandleNetwork_ProxyModel::onSendSocketReadyEvent(std::shared_ptr<EventInfo>
         std::cout << "No valid peer exists" << "\n";
         exit(-1);
     }
-    
+
     Peer* peer = it->second;
 
     SocketSendBuffer &buff = sendBuffMap[peer->GetSocketFD()];
@@ -576,15 +582,15 @@ void HandleNetwork_ProxyModel::onSendSocketReadyEvent(std::shared_ptr<EventInfo>
     if (buff.sendMsgQueue.empty()) {
         socketEventPublisher.UnsetSocketWrite(fd);
         return;
-    } 
-        
+    }
+
     std::shared_ptr<WriteMsg> msg = buff.sendMsgQueue.front();
     int numbytes = send(fd, msg->dpos(), msg->nbytes(), 0);
     if (numbytes < 0) {
         perror("write error");
         exit(-1);
     }
-        
+
     msg->pos += numbytes;
     if (msg->nbytes() == 0) {
         buff.sendMsgQueue.pop_front();
@@ -592,3 +598,19 @@ void HandleNetwork_ProxyModel::onSendSocketReadyEvent(std::shared_ptr<EventInfo>
     }
 }
 
+void HandleNetwork_ProxyModel::PrintGossipPeerList() {
+    std::cout << "[NetworkGraph] "<< utility::GetCurrentTime() << " ";
+    std::list<Peer*>& glist = gossipPeerList.GetPeerList();
+    size_t size = glist.size();
+    if (size == 0) {
+        std::cout << '\n';
+        return;
+    }
+    int cnt = 1;
+    for (auto& entry : glist) {
+        std::cout << entry->GetIP() <<"(1)";
+        if (cnt == size) std::cout << '\n';
+        else std::cout << ',';
+        cnt = cnt+1;
+    }
+}

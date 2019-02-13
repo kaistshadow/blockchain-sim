@@ -20,12 +20,16 @@ extern int generateTxTime; // total seconds for transaction injection.
 extern int injectedTxNum;
 
 // configurations for proxy-based network
-extern bool amIProxyNode;  
+extern bool amIProxyNode;
 
+// configurations for gossip-based network
+extern bool amIContactNode;
+extern bool isGossipShutdown;
+extern int shutdownTime;
 
 // =================  Blockchain Node Configuration End =====================
 
-// Blockchain Block Configuration 
+// Blockchain Block Configuration
 
 
 // Blockchain Consensus Configuration

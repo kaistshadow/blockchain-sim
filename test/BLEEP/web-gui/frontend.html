@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <!-- <script src="http://visjs.org/dist/vis.js"></script>
              <link href="http://visjs.org/dist/vis.css" rel="stylesheet" type="text/css" /> -->
+        <script src="plotly-latest.min.js"></script>
 
         <style>
          body{
@@ -50,6 +51,27 @@
              background-color: #679BB7; 
              padding: 10px 0;
          }
+         .button {
+             width: 100px;
+             height: 30px;
+             display: inline-block;
+             background-color: black;
+             margin: 0 10px 10px 0;
+             color: #fff;
+             text-align: center;
+             line-height: 30px;
+             cursor: pointer;
+         }
+         .button.active {
+             background: #ea0000;
+             color: #fff;
+         }
+         .button:hover {
+             background-color: red;
+         }
+         .hide {
+             display: none;
+         }
 
          /* * { font-family:tahoma; font-size:12px; padding:0px; margin:0px; } */
          p { line-height:18px; }
@@ -66,6 +88,21 @@
              height:90vh;
              border: 1px solid lightgray;
          }
+         #topology_internet{
+             /* width: 1500px;
+                height: 1000px; */
+             width:80vw;
+             height:90vh;
+             border: 1px solid lightgray;
+         }
+         #topology_host{
+             /* width: 1500px;
+                height: 1000px; */
+             width:80vw;
+             height:90vh;
+             border: 1px solid lightgray;
+         }
+
          #network{
              /* width: 1500px;
                 height: 1000px; */
@@ -101,6 +138,7 @@
                             <li>Total number of injected tx : <input type="text"  id="txnum" value="150" > </li>                            
                             <li>Block mining time avg (s): <input type="text"  id="miningtime" value="10" > </li>                            
                             <li>Block mining time std.dev (s): <input type="text"  id="miningtimedev" value="2.0" > </li>                            
+                            <li>Internet topology <input type="text" id="internettopology" value="basic" > </li>
                             
                             
                             <!-- <li>Node num : 500 (default)</li> 
@@ -129,6 +167,21 @@
                 <h1> Blockchain Plot</h1>
             </div>
             <div id="blockchain">Blockchain Graph</div>
+            <div class="content">
+                <h1> Blockchain Topology </h1>
+            </div>
+            <div class="button active" id="button_internet" onclick="switch_div('internet');">
+                Internet Topology
+            </div>
+            <div class="button " id="button_host" onclick="switch_div('host');">
+                Host (Overlay) Topology
+            </div>
+            <div id="topology_internet">
+            </div>
+            <div class="hide" id="topology_host">
+                Show this div when button 2 is clicked
+            </div>
+
             <div class="content">
                 <h1> Blockchain Network Graph</h1>
             </div>

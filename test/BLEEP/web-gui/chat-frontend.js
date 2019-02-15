@@ -1,3 +1,21 @@
+// ----------------topology--------------------
+function switch_div(show) {  
+    if (show == 'internet') {
+        document.getElementById("topology_internet").style.display = "block";
+        document.getElementById("button_internet").classList.add('active');
+        document.getElementById("topology_host").style.display = "none";
+        if (document.getElementById("button_host").classList.contains('active'))
+            document.getElementById("button_host").classList.remove('active');
+    }
+    else if (show == 'host') {
+        document.getElementById("topology_internet").style.display = "none";
+        if (document.getElementById("button_internet").classList.contains('active'))
+            document.getElementById("button_internet").classList.remove('active');
+        document.getElementById("topology_host").style.display = "block";
+        document.getElementById("button_host").classList.add('active');
+    }
+} 
+
 $(function () {
     "use strict";
 
@@ -47,6 +65,56 @@ $(function () {
     };
     var container = document.getElementById('blockchain');
     var blockchain = new vis.Network(container, data, options);
+    // ----------------internet topology------------------
+    var internet_data = [{
+        type: 'scattergeo',
+        mode: 'markers',
+        marker: {
+            size: 7,
+            color: '#fb8072',
+            line: {
+                width: 1
+            }
+        },
+        name: 'Internet ASes',
+        textposition: [
+            'top right'
+        ],
+    }];
+
+    var internet_layout = {
+        title: 'Internet AS Locations',
+        font: {
+            color: 'white'
+        },
+        dragmode: 'zoom', 
+        mapbox: {
+            center: {
+                lat: 38.03697222, 
+                lon: -150.70916722
+            }, 
+            domain: {
+                x: [0, 1], 
+                y: [0, 1]
+            }, 
+            style: 'basic', 
+            zoom: 1
+        }, 
+        margin: {
+            r: 20, 
+            t: 40, 
+            b: 20, 
+            l: 20, 
+            pad: 0
+        }, 
+        paper_bgcolor: '#bbd2df', 
+        plot_bgcolor: '#bbd2df', 
+        // paper_bgcolor: '#191A1A', 
+        // plot_bgcolor: '#191A1A', 
+        showlegend: true,
+    };
+    Plotly.newPlot('topology_internet', internet_data, internet_layout, {showSendToCloud: true});         
+    // ---------------------------------------------------
 
     // ----------------network grpah----------------------
     var network_nodes = new vis.DataSet(nodesArray);
@@ -137,6 +205,23 @@ $(function () {
             addMessage(json.data.author, json.data.text,
                        json.data.color, new Date(json.data.time));
 
+        } else if (json.type === 'topology') { // internet topology data
+            addMessage("Notice", "Internet Topology data is received",
+                       "red", new Date(json.data.time));
+            // receive and dynamically update the topology
+            var update_data = {
+                // 'lon' : [[
+                //     -73.57, -79.24, -123.06, -114.1, -113.28,
+                //     -75.43, -63.57, -123.21, -97.13, -104.6
+                // ]],
+                // 'lat' : [[
+                //     45.5, 43.4, 49.13, 51.1, 53.34, 45.24,
+                //     44.64, 48.25, 49.89, 50.45
+                // ]]
+                'lon' : [json.data.longitude],
+                'lat' : [json.data.latitude]
+            };
+            Plotly.update('topology_internet', update_data, {});
         } else if (json.type === 'graph') {
             addMessage("Notice", "Snapshot of the blockchain graph is received",
                        "red", new Date(json.data.time));

@@ -5,18 +5,18 @@ import sys
 import lxml.etree as ET
 
 def setup_multiple_node_xml(node_num, injector_op, simultime, txnum, miningtime, miningtime_dev):
-    baseline_xml = "rc1.xml"
-    new_xml = "rc1-gossip-auto.xml"
+    base_xml = "rc1.xml"
+    new_xml  = "rc1-gossip-auto.xml"
 
     parser = ET.XMLParser(remove_blank_text=True, strip_cdata=False)
-    tree = ET.parse(baseline_xml, parser)
+    tree   = ET.parse(base_xml, parser)
     shadow = tree.getroot()
 
     for node in shadow.findall('node'):
         shadow.remove(node)
     for node in shadow.findall('kill'):
         shadow.remove(node)
-    ET.SubElement(shadow, "kill", time=str(node_num+300))
+    ET.SubElement(shadow, "kill", time=str(simultime))
 
     for i in range(0, node_num):
         node_id = "bleep%d" % (i)
@@ -31,9 +31,11 @@ def setup_multiple_node_xml(node_num, injector_op, simultime, txnum, miningtime,
     if injector_op and txnum > 0:
         node_id = "bleep%d" % node_num
         node = ET.SubElement(shadow, "node", id=node_id)
-        ET.SubElement(node, "application", plugin="PEER", time=str(node_num+100),\
+        ET.SubElement(node, "application", plugin="PEER", time=str(nodenum+150),\
                     arguments="-handlenetwork=gossip -networkparticipant -generatetx=%d -timegeneratetx=1" %txnum)
+
     tree.write(new_xml, pretty_print=True)
+
 
 if __name__ == '__main__':
     datadir = "rc1-datadir"
@@ -42,10 +44,10 @@ if __name__ == '__main__':
 
     injector_op = False
     nodenum     = 100
-    simultime   = 150
-    txnum       = 1
-    miningtime  = 15
-    miningtimedev = "4.0"
+    simultime   = nodenum+400
+    txnum       = 150
+    miningtime  = 10
+    miningtimedev = "3.0"
     if len(sys.argv) > 1:
         for i, arg in enumerate(sys.argv):
             if "-injector" == arg:
@@ -62,22 +64,25 @@ if __name__ == '__main__':
                 miningtimedev = sys.argv[i+1]
 
     setup_multiple_node_xml(nodenum, injector_op, simultime, txnum, miningtime, miningtimedev)
-    #shadow = Popen([os.path.expanduser("shadow"), "-d", datadir, shadow_configfile], stdout=PIPE)
-    shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-d", datadir, shadow_configfile], stdout=PIPE)
+
+    shadow = Popen([os.path.expanduser("shadow"), "-d", datadir, shadow_configfile], stdout=PIPE)
+
     shadow_stdout = []
     while shadow.poll() is None:
         l = shadow.stdout.readline()
         print l.strip()
-        shadow_stdout.append(l.strip())
+        #log = l.strip()
+        #print log
+        #shadow_stdout.append(log)
 
     shadow_returnCode = shadow.returncode
+    '''
     for line in shadow_stdout:
-        if "critical" in shadow_stdout:
+        if "critical" in line:
+            print line
             print "critical error is occurred during shadow simulation"
             sys.exit(-1)
-
+    '''
     if shadow_returnCode != 0:
         print "test failed"
         sys.exit(-1)
-
-    test_pass = True

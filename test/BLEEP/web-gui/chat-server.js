@@ -11,6 +11,8 @@ var webSocketsServerPort = 1337;
 var webSocketServer = require('websocket').server;
 var http = require('http');
 
+var fs        = require('fs');
+
 /**
  * Global variables
  */
@@ -69,7 +71,6 @@ var wsServer = new webSocketServer({
 
 function sendSnapshot(connection, nodenum) {
     // send log file content
-    var fs = require('fs');
     // var datadir = "centralized-broadcast-async-datadir";
     // var shadowPlugin = "PEER_POWCONSENSUS";
     var datadir = "rc1-datadir";
@@ -256,6 +257,48 @@ wsServer.on('request', function(request) {
                 var is_gossip = false;
 
                 console.log((new Date()) + ' Received Message : ' + msg);
+
+                /****************** internet topology *******************/
+                var topologytype = confs["internettopology"];
+                console.log(confs["internettopology"]);
+                var topologyfile = '../internet_topology/'+topologytype+'.xml';
+                if (topologytype === "basic" || !fs.existsSync(topologyfile)) {
+                    var topology_json = JSON.stringify({ type:'topology', data: {time: (new Date()).getTime(),
+                                                                                 longitude:[], 
+                                                                                 latitude:[]}});
+                    connection.sendUTF(topology_json);
+                }
+                else {
+                    var iplist = [];
+                    var XmlStream = require('xml-stream') ;
+                    var jp = require('jsonpath');
+                    var stream=fs.createReadStream(topologyfile);
+                    var xml = new XmlStream(stream);
+                    xml.collect('data');
+                    xml.on('endElement: node', function(node) {
+                        var ret = jp.query(node, "$.data[1]['$text']");
+                        if (ret) {
+                            iplist.push(ret[0]);
+                        }
+                    });
+
+                    const Reader = require('@maxmind/geoip2-node').Reader;
+                    Reader.open('./GeoLite2-City.mmdb').then(reader => {
+                        var longitudeList = [];
+                        var latitudeList = [];
+                        for (let ip of iplist) {
+                            ip = ip.trim();
+                            const response = reader.city(ip);
+                            longitudeList.push(response.location.longitude);
+                            latitudeList.push(response.location.latitude);
+                        }
+                        var topology_json = JSON.stringify({ type:'topology', data: {time: (new Date()).getTime(),
+                                                                                     longitude:longitudeList, 
+                                                                                     latitude:latitudeList}});
+                        connection.sendUTF(topology_json);
+                    });
+                }
+                /********************************************************/
 
                 var cmd_tokens = msg.split(" ");
                 for (var cmd_idx in cmd_tokens) {

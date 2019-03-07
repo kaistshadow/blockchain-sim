@@ -14,7 +14,7 @@ void HandleTransaction_BasicModel::PrintTransactions() {
 }
 
 void HandleTransaction_BasicModel::HandleArrivedTx(boost::shared_ptr<Transaction> tx) {
-    std::cout << "inject a arrived transaction to TXPOOL" << "\n";
+    // std::cout << "inject a arrived transaction to TXPOOL" << "\n";
     TxPool::GetInstance()->AddTx(tx);
     
     if (TxPool::GetInstance()->GetPendingTxNum() >= block_tx_num) {

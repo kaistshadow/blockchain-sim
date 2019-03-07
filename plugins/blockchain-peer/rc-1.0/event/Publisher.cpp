@@ -78,7 +78,7 @@ void SocketEventPublisher::UnregisterDataSocket(int fd) {
 void SocketEventPublisher::SetSocketWrite(int fd) {
     ev::io* io_watcher = dataSocketMap[fd];
     io_watcher->set(fd, ev::READ | ev::WRITE);  
-    std::cout << "SetSocketWrite for fd " << fd << "\n";
+    // std::cout << "SetSocketWrite for fd " << fd << "\n";
     // Unlike the C counterpart of libev, an active watcher gets automatically stopped and restarted when reconfiguring it with the set method. check http://pod.tst.eu/http://cvs.schmorp.de/libev/ev.pod#C_API-2
 }
 

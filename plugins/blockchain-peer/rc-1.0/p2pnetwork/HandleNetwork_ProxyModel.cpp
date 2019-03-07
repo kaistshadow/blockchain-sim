@@ -106,7 +106,7 @@ int HandleNetwork_ProxyModel::ConnectToNode(std::string domain) {
         gossipPeerList.AppendPeer(peer);
         socketEventPublisher.RegisterSocketAsDataSocket(sfd);
 
-        PrintGossipPeerList();//test
+        // PrintGossipPeerList();//test
 
         // Message* msg = new TestMessage("I don't know my domain name.");
         // Transaction* msg = new Transaction(10,15,1.2);
@@ -145,7 +145,7 @@ int HandleNetwork_ProxyModel::ConnectToNode(std::string domain) {
                     membershipPeerList.AppendPeer(peer);
                     gossipPeerList.AppendPeer(peer);
 
-                    PrintGossipPeerList();//test
+                    // PrintGossipPeerList();//test
 
                     socketEventPublisher.RegisterSocketAsDataSocket(sfd);
                     // Message* msg = new TestMessage("I don't know my domain name.");
@@ -210,7 +210,7 @@ void HandleNetwork_ProxyModel::RelayBroadcastMsg(MessageHeader* header, Message*
         std::string message_header = GetSerializedString(header);
         int header_len = message_header.size();
 
-        std::cout << "BroadcastMsg:" << "relay to " << p->GetIP() << ", header size=" << header_len << ", message size=" << message_len << "\n";
+        // std::cout << "BroadcastMsg:" << "relay to " << p->GetIP() << ", header size=" << header_len << ", message size=" << message_len << "\n";
 
         SocketSendBuffer& buff = sendBuffMap[p->GetSocketFD()];
         buff.sendMsgQueue.push_back(std::shared_ptr<WriteMsg>(new WriteMsg((char*)&header_len, sizeof(int))));
@@ -333,7 +333,7 @@ void HandleNetwork_ProxyModel::BroadcastMsg(Message* msg) {
         std::string message_header = GetSerializedString(&header);
         int header_len = message_header.size();
 
-        std::cout << "BroadcastMsg:" << "send to " << p->GetIP() << ", header size=" << header_len << ", message size=" << message_len << "\n";
+        // std::cout << "BroadcastMsg:" << "send to " << p->GetIP() << ", header size=" << header_len << ", message size=" << message_len << "\n";
 
         SocketSendBuffer& buff = sendBuffMap[p->GetSocketFD()];
         buff.sendMsgQueue.push_back(std::shared_ptr<WriteMsg>(new WriteMsg((char*)&header_len, sizeof(int))));
@@ -377,7 +377,7 @@ void HandleNetwork_ProxyModel::onRecvSocketConnectionEvent(std::shared_ptr<Event
             membershipPeerList.AppendPeer(peer);
             gossipPeerList.AppendPeer(peer);
 
-            PrintGossipPeerList();//test
+            // PrintGossipPeerList();//test
             // Register a watcher which monitors any (recv || send) for given socket
             // RegisterSocketWatcher(sock_fd);
             socketEventPublisher.RegisterSocketAsDataSocket(sock_fd);
@@ -397,7 +397,7 @@ void HandleNetwork_ProxyModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo> 
         exit(-1);
     }
 
-    std::cout << "handle recv" << "\n";
+    // std::cout << "handle recv" << "\n";
 
     Peer* peer = it->second;
     SocketRecvBuffer& buff = recvBuffMap[peer->GetSocketFD()];
@@ -431,7 +431,7 @@ void HandleNetwork_ProxyModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo> 
                 buff.recv_status = RECV_HEADER;
                 buff.received_len = 0;
                 buff.recv_str = "";
-                std::cout << "receive from " << peer->GetIP() << ", header length:" << length << "\n";
+                // std::cout << "receive from " << peer->GetIP() << ", header length:" << length << "\n";
                 // string_read[n] = '\0';
                 // cout << "The string is: " << string_read << "\n";
             }
@@ -473,7 +473,7 @@ void HandleNetwork_ProxyModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo> 
                 break;
             }
             else {
-                std::cout << "fully received. size:" << total_recv_size << ", from:" << peer->GetIP() << "\n";
+                // std::cout << "fully received. size:" << total_recv_size << ", from:" << peer->GetIP() << "\n";
             }
 
             if (buff.recv_status == RECV_HEADER) {
@@ -523,16 +523,16 @@ void HandleNetwork_ProxyModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo> 
                 switch (msg->GetType()) {
                 case Message::TEST_MESSAGE:
                     {
-                        std::cout << "Deserialization of the received message complete!" << "\n";
-                        std::cout << "MESSAGE TYPE = TEST MESSAGE" << "\n";
+                        // std::cout << "Deserialization of the received message complete!" << "\n";
+                        // std::cout << "MESSAGE TYPE = TEST MESSAGE" << "\n";
                         delete buff.header;
                         delete msg;
                         break;
                     }
                 case Message::TX_MESSAGE:
                     {
-                        std::cout << "Deserialization of the received message complete!" << "\n";
-                        std::cout << "MESSAGE TYPE = TX MESSAGE" << "\n";
+                        // std::cout << "Deserialization of the received message complete!" << "\n";
+                        // std::cout << "MESSAGE TYPE = TX MESSAGE" << "\n";
                         Transaction *tx = dynamic_cast<Transaction*>(msg);
                         boost::shared_ptr<Transaction> shared_tx(tx);
                         handleTransactionClass->HandleArrivedTx(shared_tx);
@@ -542,8 +542,8 @@ void HandleNetwork_ProxyModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo> 
                     }
                 case Message::CONSENSUS_MESSAGE:
                     {
-                        std::cout << "Deserialization of the received message complete!" << "\n";
-                        std::cout << "MESSAGE TYPE = CONSENSUS MESSAGE" << "\n";
+                        // std::cout << "Deserialization of the received message complete!" << "\n";
+                        // std::cout << "MESSAGE TYPE = CONSENSUS MESSAGE" << "\n";
                         ConsensusMessage *conmsg = dynamic_cast<ConsensusMessage*>(msg);
                         handleConsensusClass->HandleArrivedConsensusMsg(conmsg);
                         delete buff.header;

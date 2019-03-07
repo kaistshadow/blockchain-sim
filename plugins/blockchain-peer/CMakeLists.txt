@@ -75,5 +75,13 @@ add_shadow_plugin(PEER_LIBEV_CLIENT node_libev_client.cpp )
 install(TARGETS PEER_LIBEV_CLIENT DESTINATION plugins)
 target_link_libraries(PEER_LIBEV_CLIENT -lev)
 
+## pipe test
+add_shadow_plugin(PEER_PIPE node_test_pipe.cpp)
+install(TARGETS PEER_PIPE DESTINATION plugins)
+target_link_libraries(PEER_PIPE -lpthread -lev SHADOW_INTERFACE)
+add_executable(PEER_PIPE_LOCAL node_test_pipe.cpp)
+target_link_libraries(PEER_PIPE_LOCAL -lpthread -lev SHADOW_INTERFACE)
 
 add_subdirectory(rc-1.0)
+
+add_subdirectory(shadow_interface)

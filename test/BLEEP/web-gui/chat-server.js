@@ -19,7 +19,7 @@ var fs        = require('fs');
 // current operator id
 var operatorIndex = -1;
 // network graph option
-var draw_network = false;
+var draw_network = true;
 
 // latest 100 messages
 var history = [ ];

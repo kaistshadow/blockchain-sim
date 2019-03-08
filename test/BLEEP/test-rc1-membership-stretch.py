@@ -34,6 +34,11 @@ def setup_multiple_node_xml(node_num, injector_op):
     tree.write(new_xml, pretty_print=True)
 
 if __name__ == '__main__':
+
+    datadir = "rc1-datadir"
+    shadow_configfile = "rc1-gossip-auto.xml"
+    os.system("rm -rf %s" % datadir)
+
     nodenum = 0
     injector_op = False
     for i, arg in enumerate(sys.argv):
@@ -41,10 +46,8 @@ if __name__ == '__main__':
             nodenum = int(sys.argv[i+1])
         if "-injector" == arg:
             injector_op = True
-    setup_multiple_node_xml(nodenum, injector_op)
 
-    datadir = "rc1-datadir"
-    shadow_configfile = "rc1-gossip-auto.xml"
+    setup_multiple_node_xml(nodenum, injector_op)
 
     shadow = Popen([os.path.expanduser("shadow"), "-d", datadir, "-l", "message", "--cpu-threshold=-1", shadow_configfile], stdout=PIPE)
 

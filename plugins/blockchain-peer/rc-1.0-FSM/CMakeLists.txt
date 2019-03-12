@@ -9,7 +9,14 @@ if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
 endif("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
 
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+if(BLEEP_DEBUG STREQUAL ON)
+  message(STATUS "Debug enabled.")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -std=c++11 -Wall -Werror")
+else(BLEEP_DEBUG STREQUAL ON)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror")
+endif(BLEEP_DEBUG STREQUAL ON)
+
 
 # should we use our own math functions?
 option (SHADOW
@@ -22,9 +29,26 @@ find_package(Boost REQUIRED serialization filesystem system)
 message(STATUS "Boost_LIBRARIES:" ${Boost_LIBRARIES})
 
 include_directories(${Boost_INCLUDE_DIRS})
-include_directories(./shadow_interface)
 
-
+set(SRCS
+  datamodules/Block.cpp
+  datamanagermodules/TxPool.cpp
+  utility/GlobalClock.cpp
+  utility/NodeInfo.cpp
+  utility/ArgsManager.cpp
+  utility/UInt256.cpp
+  crypto/SHA256.cpp
+  statemachine/examples/simple-idle-exit-machine/State.cpp
+  statemachine/examples/simple-idle-exit-machine/StateHandler.cpp
+  # statemachine/examples/singlenode-blockchain-machine/State.cpp
+  # statemachine/examples/singlenode-blockchain-machine/StateHandler.cpp
+  statemachine/StateMachine.cpp
+  datamanagermodules/ShadowPipeManager.cpp
+  datamanagermodules/PipeManager.cpp
+  datamodules/ShadowPipe.cpp
+  datamodules/Pipe.cpp
+)
+  
 ## we need to know where shadow is installed
 if("${SHADOW_ROOT}" STREQUAL "")
   set(SHADOW_ROOT "$ENV{HOME}/.shadow")
@@ -54,37 +78,17 @@ endif()
 include(ShadowTools)
 
 
-##
-# add_executable(PEER_NONBLOCK_IO_LOCAL node_nonblock_io.cpp ${SRCS})
-add_shadow_plugin(PEER_NONBLOCK_IO node_nonblock_io.cpp)
-install(TARGETS PEER_NONBLOCK_IO DESTINATION plugins)
-# target_link_libraries(PEER_NONBLOCK_IO_LOCAL ${Boost_LIBRARIES})
-target_link_libraries(PEER_NONBLOCK_IO ${Boost_LIBRARIES})
+# add_executable(HELLO hello.cpp ${SRCS})
 
+add_shadow_plugin(NODE_FSM node.cpp ${SRCS})
+install(TARGETS NODE_FSM DESTINATION plugins)
+target_link_libraries(NODE_FSM -lev)
+target_link_libraries(NODE_FSM -lpthread)
+target_link_libraries(NODE_FSM ${Boost_LIBRARIES})
+target_link_libraries(NODE_FSM SHADOW_INTERFACE)
 
-## Asio test
-add_shadow_plugin(PEER_ASIO node_asio.cpp)
-install(TARGETS PEER_ASIO DESTINATION plugins)
-target_link_libraries(PEER_ASIO ${Boost_LIBRARIES})
-
-## libev test
-add_shadow_plugin(PEER_LIBEV_SERV node_libev_server.cpp )
-install(TARGETS PEER_LIBEV_SERV DESTINATION plugins)
-target_link_libraries(PEER_LIBEV_SERV -lev)
-
-add_shadow_plugin(PEER_LIBEV_CLIENT node_libev_client.cpp )
-install(TARGETS PEER_LIBEV_CLIENT DESTINATION plugins)
-target_link_libraries(PEER_LIBEV_CLIENT -lev)
-
-## pipe test
-add_shadow_plugin(PEER_PIPE node_test_pipe.cpp)
-install(TARGETS PEER_PIPE DESTINATION plugins)
-target_link_libraries(PEER_PIPE -lpthread -lev SHADOW_INTERFACE)
-add_executable(PEER_PIPE_LOCAL node_test_pipe.cpp)
-target_link_libraries(PEER_PIPE_LOCAL -lpthread -lev SHADOW_INTERFACE)
-
-add_subdirectory(rc-1.0)
-
-add_subdirectory(rc-1.0-FSM)
-
-add_subdirectory(shadow_interface)
+add_executable(LOCAL_NODE_FSM node.cpp ${SRCS})
+target_link_libraries(LOCAL_NODE_FSM -lev)
+target_link_libraries(LOCAL_NODE_FSM -lpthread)
+target_link_libraries(LOCAL_NODE_FSM ${Boost_LIBRARIES})
+target_link_libraries(LOCAL_NODE_FSM SHADOW_INTERFACE)

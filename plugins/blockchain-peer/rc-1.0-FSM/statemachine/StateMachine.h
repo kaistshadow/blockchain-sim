@@ -6,19 +6,18 @@
 #include <iostream>
 
 
-#include "./examples/simple-idle-exit-machine/State.h"
-#include "./examples/simple-idle-exit-machine/StateHandler.h"
-using namespace simple_idle_exit_machine;
+/* #include "./examples/simple-idle-exit-machine/State.h" */
+/* #include "./examples/simple-idle-exit-machine/StateHandler.h" */
+/* using namespace simple_idle_exit_machine; */
 
-/* #include "./examples/singlenode-blockchain-machine/State.h" */
-/* #include "./examples/singlenode-blockchain-machine/StateHandler.h" */
-/* using namespace singlenode_blockchain_machine; */
+#include "./examples/singlenode-blockchain-machine/State.h"
+#include "./examples/singlenode-blockchain-machine/StateHandler.h"
+using namespace singlenode_blockchain_machine;
 
-#include "../event/FileDescriptorEventNotifier.h"
-#include "../datamanagermodules/ShadowPipeManager.h"
-#include "../datamanagermodules/PipeManager.h"
-#include "../datamanagermodules/TxPool.h"
-#include "../datamanagermodules/LedgerManager.h"
+#include "datamanagermodules/ShadowPipeManager.h"
+#include "datamanagermodules/PipeManager.h"
+#include "datamanagermodules/TxPool.h"
+#include "datamanagermodules/LedgerManager.h"
 
 
 
@@ -26,20 +25,19 @@ typedef boost::signals2::signal<StateEnum () > StateSignal;
 
 class StateMachine {
  public:
-    // for libev event notification
-    FileDescriptorEventNotifier fdEventNotifier;
-
     // for shadow pipe structures
-    ShadowPipeManager shadowPipeManager;
+    libBLEEP::ShadowPipeManager shadowPipeManager;
 
     // for normal pipe structures
-    PipeManager pipeManager;
+    libBLEEP::PipeManager pipeManager;
+    // for pipe test
+    libBLEEP::PipeID testPipeID;
 
     // for pending-transaction management
-    TxPool txPool;
+    libBLEEP::TxPool txPool;
 
     // for ledger management
-    LedgerManager ledgerManager;
+    libBLEEP::LedgerManager ledgerManager;
 
  private:
     // for logic 

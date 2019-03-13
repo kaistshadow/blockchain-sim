@@ -30,23 +30,20 @@ message(STATUS "Boost_LIBRARIES:" ${Boost_LIBRARIES})
 
 include_directories(${Boost_INCLUDE_DIRS})
 
+set(LIBBLEEP_INCLUDE_DIR "${BLEEP_SRC_ROOT}/libBLEEP-1.0")
+message(STATUS "LIBBLEEP_INCLUDE_DIR = ${LIBBLEEP_INCLUDE_DIR}")
+include_directories(${LIBBLEEP_INCLUDE_DIR})
+
 set(SRCS
-  datamodules/Block.cpp
-  datamanagermodules/TxPool.cpp
   utility/GlobalClock.cpp
   utility/NodeInfo.cpp
   utility/ArgsManager.cpp
-  utility/UInt256.cpp
   crypto/SHA256.cpp
-  statemachine/examples/simple-idle-exit-machine/State.cpp
-  statemachine/examples/simple-idle-exit-machine/StateHandler.cpp
-  # statemachine/examples/singlenode-blockchain-machine/State.cpp
-  # statemachine/examples/singlenode-blockchain-machine/StateHandler.cpp
+  # statemachine/examples/simple-idle-exit-machine/State.cpp
+  # statemachine/examples/simple-idle-exit-machine/StateHandler.cpp
+  statemachine/examples/singlenode-blockchain-machine/State.cpp
+  statemachine/examples/singlenode-blockchain-machine/StateHandler.cpp
   statemachine/StateMachine.cpp
-  datamanagermodules/ShadowPipeManager.cpp
-  datamanagermodules/PipeManager.cpp
-  datamodules/ShadowPipe.cpp
-  datamodules/Pipe.cpp
 )
   
 ## we need to know where shadow is installed
@@ -86,9 +83,11 @@ target_link_libraries(NODE_FSM -lev)
 target_link_libraries(NODE_FSM -lpthread)
 target_link_libraries(NODE_FSM ${Boost_LIBRARIES})
 target_link_libraries(NODE_FSM SHADOW_INTERFACE)
+target_link_libraries(NODE_FSM BLEEP-1.0)
 
 add_executable(LOCAL_NODE_FSM node.cpp ${SRCS})
 target_link_libraries(LOCAL_NODE_FSM -lev)
 target_link_libraries(LOCAL_NODE_FSM -lpthread)
 target_link_libraries(LOCAL_NODE_FSM ${Boost_LIBRARIES})
 target_link_libraries(LOCAL_NODE_FSM SHADOW_INTERFACE)
+target_link_libraries(LOCAL_NODE_FSM BLEEP-1.0)

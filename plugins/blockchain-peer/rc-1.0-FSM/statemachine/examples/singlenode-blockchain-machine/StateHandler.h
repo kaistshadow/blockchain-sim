@@ -8,6 +8,7 @@ namespace singlenode_blockchain_machine {
     void RegisterStateHandlers();
 
     StateEnum idleStateHandler();
+    StateEnum libevEventTriggeredStateHandler();
     StateEnum shadowPipeEventNotifiedStateHandler();
     StateEnum appendBlockStateHandler();
     StateEnum exitStateHandler();

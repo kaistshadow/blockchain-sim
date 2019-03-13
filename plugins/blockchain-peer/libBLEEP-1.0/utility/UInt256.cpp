@@ -3,9 +3,9 @@
 #include <string.h>
 #include "UInt256.h"
 
-using namespace utility;
+using namespace libBLEEP;
 
-std::string UINT128_t::str() {
+std::string libBLEEP::UINT128_t::str() {
     unsigned char char_lower[8];
     memcpy(char_lower, &LOWER, 8);
     std::string str_lower((const char *)char_lower, 8);
@@ -20,11 +20,11 @@ std::string UINT128_t::str() {
     return str;
 }
 
-UINT128_t::UINT128_t() 
+libBLEEP::UINT128_t::UINT128_t() 
     : UPPER(0), LOWER(0)
 {}
 
-UINT128_t::UINT128_t(const UINT128_t & rhs) 
+libBLEEP::UINT128_t::UINT128_t(const UINT128_t & rhs) 
     : UPPER(rhs.UPPER), LOWER(rhs.LOWER)
 {}
 
@@ -33,7 +33,7 @@ UINT128_t::UINT128_t(const UINT128_t & rhs)
 // LOWER == 0x8899aabbccddeeff
 // UPPER == 0x0011223344556677
 // thus, resulting UINT128_t == 0x00112233445566778899aabbccddeeff
-UINT128_t::UINT128_t(const unsigned char rhs[], int len) {
+libBLEEP::UINT128_t::UINT128_t(const unsigned char rhs[], int len) {
     if (len <= 8) {
         UPPER = 0;
         LOWER = 0;
@@ -59,13 +59,13 @@ UINT128_t::UINT128_t(const unsigned char rhs[], int len) {
 }
 
 
-UINT128_t & UINT128_t::operator=(const UINT128_t & rhs){
+UINT128_t & libBLEEP::UINT128_t::operator=(const UINT128_t & rhs){
     UPPER = rhs.UPPER;
     LOWER = rhs.LOWER;
     return *this;
 }
 
-UINT128_t & UINT128_t::operator=(UINT128_t && rhs){
+UINT128_t & libBLEEP::UINT128_t::operator=(UINT128_t && rhs){
     if (this != &rhs){
         UPPER = std::move(rhs.UPPER);
         LOWER = std::move(rhs.LOWER);
@@ -75,25 +75,25 @@ UINT128_t & UINT128_t::operator=(UINT128_t && rhs){
     return *this;
 }
 
-UINT128_t UINT128_t::operator&(const UINT128_t & rhs) const{
+UINT128_t libBLEEP::UINT128_t::operator&(const UINT128_t & rhs) const{
     return UINT128_t(UPPER & rhs.UPPER, LOWER & rhs.LOWER);
 }
 
-UINT128_t UINT128_t::operator|(const UINT128_t & rhs) const{
+UINT128_t libBLEEP::UINT128_t::operator|(const UINT128_t & rhs) const{
     return UINT128_t(UPPER | rhs.UPPER, LOWER | rhs.LOWER);
 }
 
-UINT128_t UINT128_t::operator^(const UINT128_t & rhs) const{
+UINT128_t libBLEEP::UINT128_t::operator^(const UINT128_t & rhs) const{
     return UINT128_t(UPPER ^ rhs.UPPER, LOWER ^ rhs.LOWER);
 }
 
-UINT128_t UINT128_t::operator~() const{
+UINT128_t libBLEEP::UINT128_t::operator~() const{
     return UINT128_t(~UPPER, ~LOWER);
 }
 
 // Bit Shift Operators
 
-UINT128_t UINT128_t::operator<<(const UINT128_t & rhs) const{
+UINT128_t libBLEEP::UINT128_t::operator<<(const UINT128_t & rhs) const{
     const uint64_t shift = rhs.LOWER;
     if (((bool) rhs.UPPER) || (shift >= 128)){
         return UINT128_t(0,0);
@@ -115,7 +115,7 @@ UINT128_t UINT128_t::operator<<(const UINT128_t & rhs) const{
     }
 }
 
-UINT128_t UINT128_t::operator>>(const UINT128_t & rhs) const{
+UINT128_t libBLEEP::UINT128_t::operator>>(const UINT128_t & rhs) const{
     const uint64_t shift = rhs.LOWER;
     if (((bool) rhs.UPPER) || (shift >= 128)){
         return UINT128_t(0, 0);
@@ -138,46 +138,46 @@ UINT128_t UINT128_t::operator>>(const UINT128_t & rhs) const{
 }
 
 // Comparison operator
-bool UINT128_t::operator==(const UINT128_t & rhs) const{
+bool libBLEEP::UINT128_t::operator==(const UINT128_t & rhs) const{
     return ((UPPER == rhs.UPPER) && (LOWER == rhs.LOWER));
 }
 
-bool UINT128_t::operator!=(const UINT128_t & rhs) const{
+bool libBLEEP::UINT128_t::operator!=(const UINT128_t & rhs) const{
     return ((UPPER != rhs.UPPER) | (LOWER != rhs.LOWER));
 }
 
-bool UINT128_t::operator>(const UINT128_t & rhs) const{
+bool libBLEEP::UINT128_t::operator>(const UINT128_t & rhs) const{
     if (UPPER == rhs.UPPER){
         return (LOWER > rhs.LOWER);
     }
     return (UPPER > rhs.UPPER);
 }
 
-bool UINT128_t::operator<(const UINT128_t & rhs) const{
+bool libBLEEP::UINT128_t::operator<(const UINT128_t & rhs) const{
     if (UPPER == rhs.UPPER){
         return (LOWER < rhs.LOWER);
     }
     return (UPPER < rhs.UPPER);
 }
 
-bool UINT128_t::operator>=(const UINT128_t & rhs) const{
+bool libBLEEP::UINT128_t::operator>=(const UINT128_t & rhs) const{
     return ((*this > rhs) | (*this == rhs));
 }
 
-bool UINT128_t::operator<=(const UINT128_t & rhs) const{
+bool libBLEEP::UINT128_t::operator<=(const UINT128_t & rhs) const{
     return ((*this < rhs) | (*this == rhs));
 }
 
 // Arithmetic Operators
-UINT128_t UINT128_t::operator+(const UINT128_t & rhs) const{
+UINT128_t libBLEEP::UINT128_t::operator+(const UINT128_t & rhs) const{
     return UINT128_t(UPPER + rhs.UPPER + ((LOWER + rhs.LOWER) < LOWER), LOWER + rhs.LOWER);
 }
 
-UINT128_t UINT128_t::operator-(const UINT128_t & rhs) const{
+UINT128_t libBLEEP::UINT128_t::operator-(const UINT128_t & rhs) const{
     return UINT128_t(UPPER - rhs.UPPER - ((LOWER - rhs.LOWER) > LOWER), LOWER - rhs.LOWER);
 }
 
-UINT128_t UINT128_t::operator*(const UINT128_t & rhs) const{
+UINT128_t libBLEEP::UINT128_t::operator*(const UINT128_t & rhs) const{
     // split values into 4 32-bit parts
     uint64_t top[4] = {UPPER >> 32, UPPER & 0xffffffff, LOWER >> 32, LOWER & 0xffffffff};
     uint64_t bottom[4] = {rhs.UPPER >> 32, rhs.UPPER & 0xffffffff, rhs.LOWER >> 32, rhs.LOWER & 0xffffffff};
@@ -223,21 +223,21 @@ UINT128_t UINT128_t::operator*(const UINT128_t & rhs) const{
     return UINT128_t((first32 << 32) | second32, (third32 << 32) | fourth32);
 }
 
-std::string UINT256_t::str() {
+std::string libBLEEP::UINT256_t::str() {
     std::string str = UPPER.str() + LOWER.str();
     return str;
 }
 
-UINT256_t::UINT256_t() 
+libBLEEP::UINT256_t::UINT256_t() 
     : UPPER(0), LOWER(0)
 {}
 
-UINT256_t::UINT256_t(const UINT256_t & rhs) 
+libBLEEP::UINT256_t::UINT256_t(const UINT256_t & rhs) 
     : UPPER(rhs.UPPER), LOWER(rhs.LOWER)
 {}
 
 // hash-friendly conversion. similar to UINT128_t
-UINT256_t::UINT256_t(const unsigned char rhs[], int len) {
+libBLEEP::UINT256_t::UINT256_t(const unsigned char rhs[], int len) {
     if (len > 16) {
         int lower_start = len - 16;
         LOWER = UINT128_t(rhs + lower_start, 16);
@@ -249,39 +249,39 @@ UINT256_t::UINT256_t(const unsigned char rhs[], int len) {
     }
 }
 
-UINT256_t UINT256_t::operator&(const UINT128_t & rhs) const{
+UINT256_t libBLEEP::UINT256_t::operator&(const UINT128_t & rhs) const{
     return UINT256_t(UINT128_t(0), LOWER & rhs);
 }
 
-UINT256_t UINT256_t::operator&(const UINT256_t & rhs) const{
+UINT256_t libBLEEP::UINT256_t::operator&(const UINT256_t & rhs) const{
     return UINT256_t(UPPER & rhs.UPPER, LOWER & rhs.LOWER);
 }
 
-UINT256_t UINT256_t::operator|(const UINT128_t & rhs) const{
+UINT256_t libBLEEP::UINT256_t::operator|(const UINT128_t & rhs) const{
     return UINT256_t(UPPER , LOWER | rhs);
 }
 
-UINT256_t UINT256_t::operator|(const UINT256_t & rhs) const{
+UINT256_t libBLEEP::UINT256_t::operator|(const UINT256_t & rhs) const{
     return UINT256_t(UPPER | rhs.UPPER, LOWER | rhs.LOWER);
 }
 
-UINT256_t UINT256_t::operator^(const UINT128_t & rhs) const{
+UINT256_t libBLEEP::UINT256_t::operator^(const UINT128_t & rhs) const{
     return UINT256_t(UPPER, LOWER ^ rhs);
 }
 
-UINT256_t UINT256_t::operator^(const UINT256_t & rhs) const{
+UINT256_t libBLEEP::UINT256_t::operator^(const UINT256_t & rhs) const{
     return UINT256_t(UPPER ^ rhs.UPPER, LOWER ^ rhs.LOWER);
 }
 
-UINT256_t UINT256_t::operator~() const{
+UINT256_t libBLEEP::UINT256_t::operator~() const{
     return UINT256_t(~UPPER, ~LOWER);
 }
 
-UINT256_t UINT256_t::operator<<(const UINT128_t & rhs) const{
+UINT256_t libBLEEP::UINT256_t::operator<<(const UINT128_t & rhs) const{
     return *this << UINT256_t(rhs);
 }
 
-UINT256_t UINT256_t::operator<<(const UINT256_t & rhs) const{
+UINT256_t libBLEEP::UINT256_t::operator<<(const UINT256_t & rhs) const{
     const UINT128_t shift = rhs.LOWER;
     if ((rhs.UPPER > 0) || (shift >= UINT128_t(256))){
         return UINT256_t(0);
@@ -304,11 +304,11 @@ UINT256_t UINT256_t::operator<<(const UINT256_t & rhs) const{
 }
 
 
-UINT256_t UINT256_t::operator>>(const UINT128_t & rhs) const{
+UINT256_t libBLEEP::UINT256_t::operator>>(const UINT128_t & rhs) const{
     return *this >> UINT256_t(rhs);
 }
 
-UINT256_t UINT256_t::operator>>(const UINT256_t & rhs) const{
+UINT256_t libBLEEP::UINT256_t::operator>>(const UINT256_t & rhs) const{
     const UINT128_t shift = rhs.LOWER;
     if ((rhs.UPPER > 0) || (shift >= UINT128_t(256))){
         return UINT256_t(0);
@@ -330,28 +330,28 @@ UINT256_t UINT256_t::operator>>(const UINT256_t & rhs) const{
     }
 }
 
-bool UINT256_t::operator==(const UINT128_t & rhs) const{
+bool libBLEEP::UINT256_t::operator==(const UINT128_t & rhs) const{
     return (*this == UINT256_t(rhs));
 }
 
-bool UINT256_t::operator==(const UINT256_t & rhs) const{
+bool libBLEEP::UINT256_t::operator==(const UINT256_t & rhs) const{
     return ((UPPER == rhs.UPPER) && (LOWER == rhs.LOWER));
 }
 
 
-bool UINT256_t::operator!=(const UINT128_t & rhs) const{
+bool libBLEEP::UINT256_t::operator!=(const UINT128_t & rhs) const{
     return (*this != UINT256_t(rhs));
 }
 
-bool UINT256_t::operator!=(const UINT256_t & rhs) const{
+bool libBLEEP::UINT256_t::operator!=(const UINT256_t & rhs) const{
     return ((UPPER != rhs.UPPER) | (LOWER != rhs.LOWER));
 }
 
-bool UINT256_t::operator>(const UINT128_t & rhs) const{
+bool libBLEEP::UINT256_t::operator>(const UINT128_t & rhs) const{
     return (*this > UINT256_t(rhs));
 }
 
-bool UINT256_t::operator>(const UINT256_t & rhs) const{
+bool libBLEEP::UINT256_t::operator>(const UINT256_t & rhs) const{
     if (UPPER == rhs.UPPER){
         return (LOWER > rhs.LOWER);
     }
@@ -361,11 +361,11 @@ bool UINT256_t::operator>(const UINT256_t & rhs) const{
     return false;
 }
 
-bool UINT256_t::operator<(const UINT128_t & rhs) const{
+bool libBLEEP::UINT256_t::operator<(const UINT128_t & rhs) const{
     return (*this < UINT256_t(rhs));
 }
 
-bool UINT256_t::operator<(const UINT256_t & rhs) const{
+bool libBLEEP::UINT256_t::operator<(const UINT256_t & rhs) const{
     if (UPPER == rhs.UPPER){
         return (LOWER < rhs.LOWER);
     }
@@ -375,43 +375,43 @@ bool UINT256_t::operator<(const UINT256_t & rhs) const{
     return false;
 }
 
-bool UINT256_t::operator>=(const UINT128_t & rhs) const{
+bool libBLEEP::UINT256_t::operator>=(const UINT128_t & rhs) const{
     return (*this >= UINT256_t(rhs));
 }
 
-bool UINT256_t::operator>=(const UINT256_t & rhs) const{
+bool libBLEEP::UINT256_t::operator>=(const UINT256_t & rhs) const{
     return ((*this > rhs) | (*this == rhs));
 }
 
-bool UINT256_t::operator<=(const UINT128_t & rhs) const{
+bool libBLEEP::UINT256_t::operator<=(const UINT128_t & rhs) const{
     return (*this <= UINT256_t(rhs));
 }
 
-bool UINT256_t::operator<=(const UINT256_t & rhs) const{
+bool libBLEEP::UINT256_t::operator<=(const UINT256_t & rhs) const{
     return ((*this < rhs) | (*this == rhs));
 }
 
-UINT256_t UINT256_t::operator+(const UINT128_t & rhs) const{
+UINT256_t libBLEEP::UINT256_t::operator+(const UINT128_t & rhs) const{
     return *this + UINT256_t(rhs);
 }
 
-UINT256_t UINT256_t::operator+(const UINT256_t & rhs) const{
+UINT256_t libBLEEP::UINT256_t::operator+(const UINT256_t & rhs) const{
     return UINT256_t(UPPER + rhs.UPPER + (((LOWER + rhs.LOWER) < LOWER)?UINT128_t(1):UINT128_t(0)), LOWER + rhs.LOWER);
 }
 
-UINT256_t UINT256_t::operator-(const UINT128_t & rhs) const{
+UINT256_t libBLEEP::UINT256_t::operator-(const UINT128_t & rhs) const{
     return *this - UINT256_t(rhs);
 }
 
-UINT256_t UINT256_t::operator-(const UINT256_t & rhs) const{
+UINT256_t libBLEEP::UINT256_t::operator-(const UINT256_t & rhs) const{
     return UINT256_t(UPPER - rhs.UPPER - ((LOWER - rhs.LOWER) > LOWER), LOWER - rhs.LOWER);
 }
 
-UINT256_t UINT256_t::operator*(const UINT128_t & rhs) const{
+UINT256_t libBLEEP::UINT256_t::operator*(const UINT128_t & rhs) const{
     return *this * UINT256_t(rhs);
 }
 
-UINT256_t UINT256_t::operator*(const UINT256_t & rhs) const{
+UINT256_t libBLEEP::UINT256_t::operator*(const UINT256_t & rhs) const{
     // split values into 4 64-bit parts
     UINT128_t top[4] = {UPPER.upper(), UPPER.lower(), LOWER.upper(), LOWER.lower()};
     UINT128_t bottom[4] = {rhs.upper().upper(), rhs.upper().lower(), rhs.lower().upper(), rhs.lower().lower()};
@@ -449,7 +449,7 @@ UINT256_t UINT256_t::operator*(const UINT256_t & rhs) const{
            UINT256_t(fourth64);
 }
 
-std::ostream & operator<<(std::ostream & stream, const UINT128_t & rhs){
+std::ostream & libBLEEP::operator<<(std::ostream & stream, const UINT128_t & rhs){
     std::ios oldState(nullptr);
     oldState.copyfmt(stream);
     
@@ -462,7 +462,7 @@ std::ostream & operator<<(std::ostream & stream, const UINT128_t & rhs){
     return stream;
 }
 
-std::ostream & operator<<(std::ostream & stream, const UINT256_t & rhs){
+std::ostream & libBLEEP::operator<<(std::ostream & stream, const UINT256_t & rhs){
     std::ios oldState(nullptr);
     oldState.copyfmt(stream);
 

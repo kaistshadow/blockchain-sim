@@ -13,15 +13,17 @@
 // ledger manager inherits following class
 // 1) std::list based ledger management class (ListLedgerManager)
 
-class LedgerManager : public ListLedgerManager<Block> {
- private:
+namespace libBLEEP {
+
+    class LedgerManager : public ListLedgerManager<Block> {
+    private:
     
- public:
-    LedgerManager() {};
+    public:
+        LedgerManager() {};
     
-};
+    };
 
 
-
+}
 
 #endif

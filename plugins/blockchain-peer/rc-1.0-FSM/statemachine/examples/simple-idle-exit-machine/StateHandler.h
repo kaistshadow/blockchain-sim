@@ -8,6 +8,7 @@ namespace simple_idle_exit_machine {
     void RegisterStateHandlers();
 
     StateEnum idleStateHandler();
+    StateEnum libevEventTriggeredStateHandler();
     StateEnum exitStateHandler();
 
 }

@@ -11,6 +11,7 @@ namespace simple_idle_exit_machine {
     enum class StateEnum {
         uninitialized,
             idle,
+            libevEventTriggered,
             exit
             };
 

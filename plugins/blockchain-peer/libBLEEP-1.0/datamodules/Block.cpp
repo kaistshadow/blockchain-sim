@@ -1,6 +1,8 @@
 #include "Block.h"
 
-std::ostream& operator<<(std::ostream& os, const Block& blk) {
+using namespace libBLEEP;
+
+std::ostream& libBLEEP::operator<<(std::ostream& os, const Block& blk) {
     os << blk.GetId() << ":" << "Block has following transactions" << "\n";
     const std::list<std::shared_ptr<Transaction> >& tx_list = blk.GetTransactions();
     for (std::list<std::shared_ptr<Transaction> >::const_iterator it=tx_list.begin();

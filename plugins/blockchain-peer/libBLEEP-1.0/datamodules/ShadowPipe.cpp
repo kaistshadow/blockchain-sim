@@ -3,7 +3,7 @@
 
 #include "shadow_interface.h"
 
-ShadowPipe::ShadowPipe() {
+libBLEEP::ShadowPipe::ShadowPipe() {
     int result = shadow_pipe2(_shadowpipeFD, 0);
     if (result < 0) {
         perror("pipe ");

@@ -1,9 +1,9 @@
 #include "../../../Configuration.h"
 #include "StateHandler.h"
 #include "../../StateMachine.h"
-#include "../../../utility/Assert.h"
 #include "../../../utility/GlobalClock.h"
 
+#include "utility/Assert.h"
 #include <ev.h>
 #include <iostream>
 #include <memory>
@@ -13,6 +13,7 @@
 #include <unistd.h>
 
 using namespace singlenode_blockchain_machine;
+using namespace libBLEEP;
 
 static size_t split(const std::string &txt, std::vector<std::string> &strs, char ch)
 {
@@ -37,6 +38,7 @@ static size_t split(const std::string &txt, std::vector<std::string> &strs, char
 void singlenode_blockchain_machine::RegisterStateHandlers() {
     /* register proper handler(callback func) for each state) */
     gStateMachine.stateToSignalMap[StateEnum::idle].connect(&idleStateHandler);
+    gStateMachine.stateToSignalMap[StateEnum::libevEventTriggered].connect(&libevEventTriggeredStateHandler);
     gStateMachine.stateToSignalMap[StateEnum::shadowPipeEventNotified].connect(&shadowPipeEventNotifiedStateHandler);
     gStateMachine.stateToSignalMap[StateEnum::appendBlock].connect(&appendBlockStateHandler);
     gStateMachine.stateToSignalMap[StateEnum::exit].connect(&exitStateHandler);
@@ -57,27 +59,51 @@ StateEnum singlenode_blockchain_machine::idleStateHandler() {
     // blocking by epoll_wait. returned after handling io-callback function.
     ev_run (loop, EVRUN_ONCE);
 
+    StateEnum nextState = StateEnum::libevEventTriggered;
+    return nextState;
+}
 
-    StateEnum nextState;
-
+StateEnum singlenode_blockchain_machine::libevEventTriggeredStateHandler() {
+    StateEnum nextState = StateEnum::idle;
 
     // check whether any valid FD event is triggered
-    FileDescriptorEventNotifier& fdEventNotifier = gStateMachine.fdEventNotifier;
-    if (fdEventNotifier.IsEventTriggered()) {
-        switch (fdEventNotifier.GetEventType()) {
-        case FileDescriptorEventEnum::none:
-            std::cout << "Error! not initialized fd event is triggered!" << "\n";
-            nextState = StateEnum::exit;
-            break;
-        case FileDescriptorEventEnum::shadowPipeReadEvent:
-            nextState = StateEnum::shadowPipeEventNotified;
-            fdEventNotifier.SetEventTriggered(false); // clear 
-            break;
-        case FileDescriptorEventEnum::pipeReadEvent:
-            break;
-        }        
-    } else {
-        nextState = StateEnum::idle;
+    ShadowPipeManager& shadowPipeManager = gStateMachine.shadowPipeManager;
+    PipeManager& pipeManager = gStateMachine.pipeManager;
+    if (!shadowPipeManager.IsEventTriggered() && !pipeManager.IsEventTriggered()) {
+        printf("No event triggered but ev_run is returned!\n");
+        return nextState;
+    }
+
+    // check shadow pipe event
+    if (shadowPipeManager.IsEventTriggered()) {
+        switch (shadowPipeManager.GetEventType()) {
+        case ShadowPipeEventEnum::readEvent:
+            {
+                nextState = StateEnum::shadowPipeEventNotified;
+                break;
+            }
+        case ShadowPipeEventEnum::none:
+        case ShadowPipeEventEnum::writeEvent: 
+            {
+                std::cout << "Error! no valid shadow pipe event is triggered!" << "\n";
+                nextState = StateEnum::exit;
+                break;
+            }
+        }
+    }
+
+    // check pipe event
+    if (pipeManager.IsEventTriggered()) {
+        switch (pipeManager.GetEventType()) {
+        case PipeEventEnum::readEvent:
+        case PipeEventEnum::none:
+        case PipeEventEnum::writeEvent:
+            {
+                std::cout << "pipe event is triggered! we don't handle this." << "\n";
+                nextState = StateEnum::idle;
+                break;
+            }
+        }
     }
 
     return nextState;
@@ -86,8 +112,13 @@ StateEnum singlenode_blockchain_machine::idleStateHandler() {
 
 StateEnum singlenode_blockchain_machine::shadowPipeEventNotifiedStateHandler() {
     StateEnum nextState = StateEnum::idle;
-    int fd = gStateMachine.fdEventNotifier.GetEventTriggeredFD();
-    ShadowPipeRecvBuffer& recvBuff = gStateMachine.shadowPipeManager.GetRecvBuff();
+    ShadowPipeManager& shadowPipeManager = gStateMachine.shadowPipeManager;
+    M_Assert(shadowPipeManager.IsEventTriggered(), "shadow pipe event is lost");
+
+
+    int fd = shadowPipeManager.GetEventTriggeredFD();
+    ShadowPipeRecvBuffer& recvBuff = shadowPipeManager.GetRecvBuff();
+    shadowPipeManager.SetEventTriggered(false); // clear 
 
     char string_read[2000];  
     memset(string_read, 0, 2000);
@@ -110,7 +141,6 @@ StateEnum singlenode_blockchain_machine::shadowPipeEventNotifiedStateHandler() {
         recvBuff.received_len = 0;
         recvBuff.recv_str = "";
     }
-
 
     // receive command
     int total_recv_size = recvBuff.received_len;

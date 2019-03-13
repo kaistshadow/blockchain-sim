@@ -2,7 +2,7 @@
 #include <fcntl.h>
 #include "Pipe.h"
 
-Pipe::Pipe() {
+libBLEEP::Pipe::Pipe() {
     int result = pipe2(_pipeFD, 0);
     if (result < 0) {
         perror("pipe ");

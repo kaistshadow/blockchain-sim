@@ -82,24 +82,8 @@ std::string ArgsManager::HelpMessage() {
     std::string strUsage = HelpMessageGroup("General Options:");
     strUsage += HelpMessageOpt("-?", "Print this help message and exit");
 
-    strUsage += HelpMessageGroup("Blockchain Node General Options:");
-    strUsage += HelpMessageOpt("-handlenetwork=<class>", "Specify the implementation class for handleNetwork. (\"proxy\", \"plumtree\"(not implemented yet), default:\"proxy\")");
-    strUsage += HelpMessageOpt("-handletransaction=<class>", "Specify the implementation class for handleTransaction. (default:\"basic\")");
-    strUsage += HelpMessageOpt("-handleconsensus=<class>", "Specify the implementation class for handleConsensus. (default:\"pow\")");
-    strUsage += HelpMessageOpt("-networkparticipant", "Specify the node as a network participant that only participant as a relay node. No processing for transaction && consensus.");
-    strUsage += HelpMessageOpt("-generatetx=<n>", "Make a node to inject transactions (<n> in total) into the network.");
-    strUsage += HelpMessageOpt("-timegeneratetx=<n>", "Make a node to inject a transactions for <n> seconds. Transactions are injected uniformly for <n> seconds.");
-
-    strUsage += HelpMessageGroup("Blockchain Node Options for proxy network:");
-    strUsage += HelpMessageOpt("-proxynode", "Specify the node as a proxy node.");    
-
     strUsage += HelpMessageGroup("Blockchain Consensus Options:");
     strUsage += HelpMessageOpt("-blocktxnum=<n>", "Number of transactions in one block. default:5");
-    strUsage += HelpMessageOpt("-miningtime=<n>", "Emulated mean time for mining a block. default:10");    
-    strUsage += HelpMessageOpt("-miningtimedev=<n>", "Standard deviation time for mining a block. default:2");    
-
-    strUsage += HelpMessageGroup("Blockchain Transaction Options:");
-    strUsage += HelpMessageOpt("-txtype=<class>", "Specify the implementation class for Transaction. (\"simple\", \"useless\", default:\"simple\")");
 
     return strUsage;
 }

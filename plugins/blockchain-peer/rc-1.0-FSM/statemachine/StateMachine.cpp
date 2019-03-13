@@ -15,7 +15,7 @@ void StateMachine::InitStateMachine() {
 
     /* initialize state-machine data classes */
     shadowPipeManager.Init();
-    pipeManager.Init();
+    testPipeID = pipeManager.CreateNewPipe();
 }
 
 void StateMachine::StartStateMachine() {

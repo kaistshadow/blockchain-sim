@@ -1,7 +1,8 @@
 #include "TxPool.h"
 
+using namespace libBLEEP;
 
-std::list<std::shared_ptr<Transaction> > TxPool::GetTxs(int num) {
+std::list<std::shared_ptr<Transaction> > libBLEEP::TxPool::GetTxs(int num) {
     if (GetPendingTxNum() < num) {
         std::cout << "Warning : Not enough pending transaction pool. Too many requests" << "\n";
         return {};
@@ -18,7 +19,7 @@ std::list<std::shared_ptr<Transaction> > TxPool::GetTxs(int num) {
     return txs;
 }
 
-void TxPool::RemoveTxs(const std::list<std::shared_ptr<Transaction> >& txs) {
+void libBLEEP::TxPool::RemoveTxs(const std::list<std::shared_ptr<Transaction> >& txs) {
     std::list<std::shared_ptr<Transaction> >::iterator i = items.begin();
 
     while (i != items.end()) {
@@ -38,12 +39,12 @@ void TxPool::RemoveTxs(const std::list<std::shared_ptr<Transaction> >& txs) {
     }
 }
 
-void TxPool::AddTxs(std::list<std::shared_ptr<Transaction> > txs) {
+void libBLEEP::TxPool::AddTxs(std::list<std::shared_ptr<Transaction> > txs) {
     for (auto tx : txs)
         items.push_back(tx);
 }
 
-void TxPool::AddTx(std::shared_ptr<Transaction> tx) {
+void libBLEEP::TxPool::AddTx(std::shared_ptr<Transaction> tx) {
     items.push_back(tx);
     return;
 }

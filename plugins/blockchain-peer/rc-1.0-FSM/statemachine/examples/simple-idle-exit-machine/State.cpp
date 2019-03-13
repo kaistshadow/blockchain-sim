@@ -10,6 +10,8 @@ std::ostream& simple_idle_exit_machine::operator << (std::ostream& os, const Sta
         os << "UninitializedState";
     else if (obj == StateEnum::idle)
         os << "idleState";
+    else if (obj == StateEnum::libevEventTriggered)
+        os << "libevEventTriggeredState";
     else if (obj == StateEnum::exit)
         os << "exitState";
     else

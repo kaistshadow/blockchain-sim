@@ -11,6 +11,7 @@ namespace singlenode_blockchain_machine {
     enum class StateEnum {
         uninitialized,
             idle,
+            libevEventTriggered,
             shadowPipeEventNotified,
             appendBlock,
             exit

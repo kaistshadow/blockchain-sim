@@ -13,6 +13,8 @@ std::ostream& singlenode_blockchain_machine::operator << (std::ostream& os, cons
         os << "uninitializedState";
     else if (obj == StateEnum::idle)
         os << "idleState";
+    else if (obj == StateEnum::libevEventTriggered)
+        os << "libevEventTriggeredState";
     else if (obj == StateEnum::shadowPipeEventNotified)
         os << "shadowPipeEventNotifiedState";
     else if (obj == StateEnum::appendBlock)

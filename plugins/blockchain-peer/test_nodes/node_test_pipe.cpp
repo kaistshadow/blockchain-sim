@@ -5,7 +5,7 @@
 #include <ev++.h>
 #include <fcntl.h>
 #include <string.h>
-#include "shadow_interface/shadow_interface.h"
+#include "shadow_interface.h"
 
 int fd[2];//File descriptor for creating a pipe
 int shadow_fd[2]; // descriptor for creating a shadow_pipe

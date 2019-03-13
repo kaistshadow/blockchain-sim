@@ -10,7 +10,7 @@
 
 // Almost code in this file are from https://github.com/calccrypto/UINT256_t 
 
-namespace utility {
+namespace libBLEEP {
     class UINT128_t{
     private:
         uint64_t UPPER, LOWER;
@@ -335,9 +335,11 @@ namespace utility {
             return *this * UINT256_t(rhs);
         }
     };
+
+
+    // IO Operator
+    std::ostream & operator<<(std::ostream & stream, const UINT128_t & rhs);
+    std::ostream & operator<<(std::ostream & stream, const UINT256_t & rhs);
 }
 
-// IO Operator
-std::ostream & operator<<(std::ostream & stream, const utility::UINT128_t & rhs);
-std::ostream & operator<<(std::ostream & stream, const utility::UINT256_t & rhs);
 #endif

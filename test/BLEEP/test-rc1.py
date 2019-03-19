@@ -4,7 +4,7 @@ import argparse
 import sys
 import lxml.etree as ET
 
-def setup_multiple_node_xml_centralized(node_num, simultime, txnum, miningtime, miningtime_dev, internettopology):
+def setup_multiple_node_xml_centralized(node_num, simultime, txnum, miningtime, miningtime_dev):
     baseline_xml = "rc1.xml"
     new_xml = "rc1-large.xml"
 
@@ -13,16 +13,6 @@ def setup_multiple_node_xml_centralized(node_num, simultime, txnum, miningtime, 
     tree = ET.parse(baseline_xml, parser)
 
     shadow = tree.getroot()
-
-    if internettopology == "basic":
-        pass
-    else:
-        filepath = "./internet_topology/%s.xml" % internettopology
-        if os.path.exists(filepath):
-            topology = shadow.find('topology')
-            shadow.remove(topology)
-            newtopology = ET.Element("topology", path=filepath)
-            shadow.insert(0, newtopology)
 
     for node in shadow.findall('node'):
         shadow.remove(node)
@@ -48,7 +38,7 @@ def setup_multiple_node_xml_centralized(node_num, simultime, txnum, miningtime, 
 
     node_id = "bleep%d" % (node_num)
     node = ET.SubElement(shadow, "node", id=node_id)
-    ET.SubElement(node, "application", plugin="PEER", time="10", arguments="-networkparticipant -generatetx=%d -timegeneratetx=%d" % (txnum, txnum/100))
+    ET.SubElement(node, "application", plugin="PEER", time="10", arguments="-networkparticipant -generatetx=%d -timegeneratetx=1" % txnum)
 
     tree.write(new_xml, pretty_print=True)
 
@@ -67,7 +57,6 @@ if __name__ == '__main__':
         txnum = 150
         miningtime = 10
         miningtimedev = "2.0"
-        internettopology = "basic"
         for i, arg in enumerate(sys.argv):
             if "--nodenum" == arg:
                 nodenum = int(sys.argv[i+1])
@@ -79,10 +68,8 @@ if __name__ == '__main__':
                 miningtime = int(sys.argv[i+1])
             elif "--miningtimedev" == arg:
                 miningtimedev = sys.argv[i+1]
-            elif "--internettopology" == arg:
-                internettopology = sys.argv[i+1]
 
-        setup_multiple_node_xml_centralized(nodenum, simultime, txnum, miningtime, miningtimedev, internettopology)
+        setup_multiple_node_xml_centralized(nodenum, simultime, txnum, miningtime, miningtimedev)
         shadow_configfile = "rc1-large.xml"
     
     shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-d", datadir, shadow_configfile], stdout=PIPE)

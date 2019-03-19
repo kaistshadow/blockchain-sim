@@ -47,8 +47,7 @@ def prepare_nodejs():
     os.system("curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -")
     os.system("sudo apt-get update")
     os.system("sudo apt-get install -y nodejs")
-    os.system("cd %s; npm install websocket finalhandler serve-static vis jsonpath" % nodejs_serv_path)
-    os.system("cd %s; npm install @maxmind/geoip2-node" % nodejs_serv_path)
+    os.system("cd %s; npm install websocket finalhandler serve-static vis" % nodejs_serv_path)
 
 
 def setup_multiple_node_xml(node_num):
@@ -110,7 +109,7 @@ if __name__ == '__main__':
     OPT_TEST = args.test
     OPT_DEBUG = args.debug
     
-    cmake_debug_opt = "-DSHADOW_DEBUG=ON"
+    cmake_debug_opt = ""
     if OPT_DEBUG:
         cmake_debug_opt = "-DSHADOW_DEBUG=ON"
     

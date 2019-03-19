@@ -26,15 +26,12 @@ include_directories(${Boost_INCLUDE_DIRS})
 set(SRCS
   p2pnetwork/HandleNetwork.cpp
   p2pnetwork/HandleNetwork_ProxyModel.cpp
-  p2pnetwork/HandleNetwork_GossipModel.cpp
   datamodules/Peer.cpp
   datamodules/Block.cpp
   datamodules/POWBlock.cpp
   datamanagermodules/POWLedgerManager.cpp
   datamanagermodules/TxPool.cpp
   event/GlobalEvent.cpp
-  event/EventCoordinator.cpp
-  event/Publisher.cpp
   utility/GlobalClock.cpp
   utility/NodeInfo.cpp
   utility/ArgsManager.cpp

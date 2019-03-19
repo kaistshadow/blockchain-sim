@@ -6,9 +6,6 @@
 
 #include "../datamanagermodules/POWLedgerManager.h"
 
-#include "../event/Publisher.h"
-#include "../event/Subscriber.h"
-
 enum MiningState {
     Uninitialized,
     Idle,
@@ -17,13 +14,10 @@ enum MiningState {
 
 class HandleConsensus_POW: public HandleConsensus {
  private:
-    // Event Publisher for mining emulation
-    MiningEventEmulator miningEventEmulator;
 
-    // Event Subscriber for miningCompleteEvent
-    Subscriber miningCompleteEventSubscriber;
-
-    // for mining status
+    // for mining emulation
+    void InitMiningTimer();
+    ev_timer mining_timer;
     MiningState state;
     std::shared_ptr<POWBlock> waitingBlk;
     
@@ -38,8 +32,7 @@ class HandleConsensus_POW: public HandleConsensus {
     void RequestConsensus(std::list<boost::shared_ptr<Transaction> > txs);
     void HandleArrivedConsensusMsg(ConsensusMessage* msg);
     
-    // callback function for subscribed event (miningCompleteEvent)
-    void onMiningCompleteEvent(std::shared_ptr<EventInfo>);
+    void onMiningCompletion(EV_P_ ev_timer *w, int revents);
 };
 
 

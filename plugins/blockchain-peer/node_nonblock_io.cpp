@@ -16,7 +16,7 @@
 #include <vector>
 
 // #include "p2p/simplepeerlist.h"
-#include "p2p/nodeinfos.h"
+// #include "p2p/nodeinfos.h"
 
 #define MYPORT 3456    /* the port users will be connecting to */
 #define BACKLOG 10     /* how many pending connections queue will hold */

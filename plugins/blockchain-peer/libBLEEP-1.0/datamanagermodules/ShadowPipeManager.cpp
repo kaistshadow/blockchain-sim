@@ -17,7 +17,7 @@ void libBLEEP::ShadowPipeManager::Init() {
 void libBLEEP::ShadowPipeManager::_ShadowPipeIOCallback(ev::io &w, int revents) {
     std::cout << "shadowpipe iocallback called!" << "\n";
 
-    SetEventTriggered(true);
-    SetEventTriggeredFD(w.fd);
-    SetEventType(ShadowPipeEventEnum::readEvent);
+    _SetEventTriggered(true);
+    _SetEventTriggeredFD(w.fd);
+    _SetEventType(ShadowPipeEventEnum::readEvent);
 }

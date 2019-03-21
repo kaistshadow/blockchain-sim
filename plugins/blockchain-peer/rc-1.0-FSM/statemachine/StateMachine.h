@@ -14,10 +14,15 @@
 #include "./examples/singlenode-blockchain-machine/StateHandler.h"
 using namespace singlenode_blockchain_machine;
 
+/* #include "./examples/doublenode-blockchain-machine/State.h" */
+/* #include "./examples/doublenode-blockchain-machine/StateHandler.h" */
+/* using namespace doublenode_blockchain_machine; */
+
 #include "datamanagermodules/ShadowPipeManager.h"
 #include "datamanagermodules/PipeManager.h"
 #include "datamanagermodules/TxPool.h"
 #include "datamanagermodules/LedgerManager.h"
+#include "datamanagermodules/SocketManager.h"
 
 
 
@@ -39,10 +44,23 @@ class StateMachine {
     // for ledger management
     libBLEEP::LedgerManager ledgerManager;
 
+    // for listening socket management
+    libBLEEP::ListenSocketManager listenSocketManager;
+
+    // for connecting socket management
+    libBLEEP::ConnectSocketManager connectSocketManager;
+
+    // for data socket management
+    libBLEEP::DataSocketManager dataSocketManager;
+
  private:
     // for logic 
     StateEnum curState;
     StateEnum nextState;
+
+    // pointer for intermediate values (arguments passing between states)
+    // std::shared_ptr<Block> receivedBlk;
+    // std::shared_ptr<ConsensusMsg> receivedMsg;
 
  public:
     StateMachine();

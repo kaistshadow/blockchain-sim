@@ -99,7 +99,7 @@ StateEnum singlenode_blockchain_machine::libevEventTriggeredStateHandler() {
         case PipeEventEnum::none:
         case PipeEventEnum::writeEvent:
             {
-                std::cout << "pipe event is triggered! we don't handle this." << "\n";
+                std::cout << "pipe event is triggered! However, we don't handle normal pipe event in this state machine. So ignore." << "\n";
                 nextState = StateEnum::idle;
                 break;
             }
@@ -118,7 +118,7 @@ StateEnum singlenode_blockchain_machine::shadowPipeEventNotifiedStateHandler() {
 
     int fd = shadowPipeManager.GetEventTriggeredFD();
     ShadowPipeRecvBuffer& recvBuff = shadowPipeManager.GetRecvBuff();
-    shadowPipeManager.SetEventTriggered(false); // clear 
+    shadowPipeManager.ClearEventTriggered(); // clear
 
     char string_read[2000];  
     memset(string_read, 0, 2000);

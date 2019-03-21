@@ -25,21 +25,24 @@ namespace libBLEEP {
         int _eventTriggeredFD;
         ShadowPipeEventEnum _eventType;
 
+        /* event set method */
+        void _SetEventTriggered(bool triggered) { _eventTriggered = triggered; }
+        void _SetEventTriggeredFD(int fd) { _eventTriggeredFD = fd; }
+        void _SetEventType(ShadowPipeEventEnum type) { _eventType = type; }
+    
     public:
         bool IsInitialized() { return _initialized; }
         void Init();
 
         ShadowPipeRecvBuffer& GetRecvBuff() { return _recvBuff; }
 
-        /* event set method */
-        void SetEventTriggered(bool triggered) { _eventTriggered = triggered; }
-        void SetEventTriggeredFD(int fd) { _eventTriggeredFD = fd; }
-        void SetEventType(ShadowPipeEventEnum type) { _eventType = type; }
-    
         /* event get method */
         bool IsEventTriggered() { return _eventTriggered; }
         int GetEventTriggeredFD() { return _eventTriggeredFD; }
         ShadowPipeEventEnum GetEventType() { return _eventType; }
+
+        /* event clear method */
+        void ClearEventTriggered() { _eventTriggered = false; }
     };
 
 

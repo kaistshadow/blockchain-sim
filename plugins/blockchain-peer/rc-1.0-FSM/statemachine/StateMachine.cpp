@@ -1,5 +1,12 @@
 #include "StateMachine.h"
 
+#include <fcntl.h> /* Added for the nonblocking socket */
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <strings.h>
+#include <stdio.h>
+#include <iostream>
+
 
 StateMachine gStateMachine;
 
@@ -14,13 +21,20 @@ void StateMachine::InitStateMachine() {
     RegisterStateHandlers();
 
     /* initialize state-machine data classes */
-    shadowPipeManager.Init();
-    testPipeID = pipeManager.CreateNewPipe();
+    shadowPipeManager.Init();  // open shadow-pipe interface to receive any commands from shadow
+    testPipeID = pipeManager.CreateNewPipe(); // open new pipe for local test
+
+
+    // /* for debugging infinite loop */
+    // struct ev_loop *loop = EV_DEFAULT;
+    // ev_set_io_collect_interval(loop, 1);
+
 }
 
 void StateMachine::StartStateMachine() {
     curState = StateEnum::idle;
     std::cout << "[StateMachineLog::Start blockchain statemachine] initial state is " << curState << "\n";
+
     while (true) {
         
         /* Execute the handler (callback function) assigned for current state */

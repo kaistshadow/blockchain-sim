@@ -11,10 +11,13 @@ set(SRCS
   datamodules/Block.cpp
   datamodules/ShadowPipe.cpp
   datamodules/Pipe.cpp
+  datamodules/Socket.cpp
   datamanagermodules/TxPool.cpp
   datamanagermodules/ShadowPipeManager.cpp
   datamanagermodules/PipeManager.cpp
+  datamanagermodules/SocketManager.cpp
   utility/UInt256.cpp
+  utility/Assert.cpp
 )
 
 

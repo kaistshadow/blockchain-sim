@@ -26,8 +26,8 @@ void StateMachine::InitStateMachine() {
 
 
     // /* for debugging infinite loop */
-    // struct ev_loop *loop = EV_DEFAULT;
-    // ev_set_io_collect_interval(loop, 1);
+    struct ev_loop *loop = EV_DEFAULT;
+    ev_set_io_collect_interval(loop, 1);
 
 }
 

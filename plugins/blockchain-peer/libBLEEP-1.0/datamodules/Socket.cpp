@@ -1,4 +1,5 @@
 #include "Socket.h"
+#include "../datamanagermodules/SocketManager.h"
 #include "../utility/Assert.h"
 
 #include <fcntl.h> /* Added for the nonblocking socket */
@@ -7,13 +8,22 @@
 #include <strings.h>
 #include <unistd.h>
 #include <string.h>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/iostreams/stream.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/serialization/export.hpp>
 
 #include <iostream>
 
+#include "Message.h"
+// BOOST_CLASS_EXPORT(libBLEEP::Message);
 
 using namespace libBLEEP;
 
-libBLEEP::ListenSocket::ListenSocket(int port) {
+libBLEEP::ListenSocket::ListenSocket(int port, ListenSocketManager* m) {
+    _manager = m;
+
     int 			listenfd;     /* listen on sock_fd */
     struct 	sockaddr_in 	my_addr;    /* my address information */
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -70,7 +80,9 @@ libBLEEP::ListenSocket::~ListenSocket() {
 }
 
 
-libBLEEP::ConnectSocket::ConnectSocket(std::string domain) {
+libBLEEP::ConnectSocket::ConnectSocket(std::string domain, ConnectSocketManager* m) {
+    _manager = m;
+
     int remote_fd;
     if ( (remote_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("socket");
@@ -111,6 +123,128 @@ libBLEEP::ConnectSocket::ConnectSocket(std::string domain) {
     }
 
     _fd = remote_fd;
+}
+
+std::shared_ptr<Message> libBLEEP::DataSocket::DoRecv() {
+    char string_read[2000];
+    int n;
+    switch (_recvBuff.recv_status) {
+    case RECV_NONE:
+        {
+            std::cout << "invalid recv state" << "\n";
+            exit(-1);
+        }
+    case RECV_IDLE:
+        {
+            int length = 0;
+            n = recv(_fd, &length, sizeof(int),0);
+            if (n == -1 && errno != EAGAIN){
+                perror("recv - non blocking \n");
+                std::cout << "errno=" << errno << "\n";
+                exit(-1);
+            }
+            else if (n == 0) {
+                std::cout << "socket disconnected" << "\n";
+                _manager->RemoveDataSocket(_fd); // remove myself(DataSocket) from manager
+            }
+            else if (n > 0) {
+                _recvBuff.message_len = length;
+                _recvBuff.recv_status = RECV_MSG;
+                _recvBuff.received_len = 0;
+                _recvBuff.recv_str = "";
+            }
+            break;
+        }
+    case RECV_MSG:
+        {
+            int total_recv_size = _recvBuff.received_len;
+            int numbytes = 0;
+            // Handle all pending 'recv'  
+            while(1) {
+                int recv_size = std::min(2000, _recvBuff.message_len - total_recv_size);
+                numbytes = recv(_fd, string_read, recv_size, 0);
+                if (numbytes > 0) {
+                    total_recv_size += numbytes;
+                    _recvBuff.recv_str.append(string_read, numbytes);
+                }
+                else if (numbytes == 0) {
+                    std::cout << "connection closed while recv\n";
+                    _manager->RemoveDataSocket(_fd); // remove myself(DataSocket) from manager
+                    break;
+                }
+                else if (numbytes < 0) {
+                    if (errno != EAGAIN && errno != EWOULDBLOCK) {
+                        std::cout << "recv failed errno=" << errno << strerror(errno) << "\n";
+                        exit(-1);
+                    }
+                    break;
+                }
+
+                if (total_recv_size == _recvBuff.message_len)
+                    break;
+                else {
+                    std::cout << "recv: total_recv_size=" << total_recv_size << ", message_len=" << _recvBuff.message_len << "\n";
+                }
+                memset(string_read, 0, 2000);
+            }
+            if (_recvBuff.message_len != total_recv_size) {
+                _recvBuff.received_len = total_recv_size;
+                std::cout << "received only part of message (maybe recv buffer is full)" << "received_len:" << _recvBuff.received_len << ", message_len:" << _recvBuff.message_len << "\n";
+                break;
+            }
+            else {
+                std::cout << "fully received. size:" << total_recv_size << "\n";
+                _recvBuff.recv_status = RECV_IDLE;
+
+                // deserialization process //
+                Message *msg;
+                boost::iostreams::basic_array_source<char> device(_recvBuff.recv_str.c_str(), _recvBuff.recv_str.size());
+                boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
+                boost::archive::binary_iarchive ia(s);
+                ia >> msg;
+
+                return std::shared_ptr<Message>(msg);
+            }
+        }
+    }
+    return nullptr;
+}
+
+void libBLEEP::DataSocket::DoSend() {
+    if (_sendBuff.empty()) {
+        _manager->UnsetWritable(_fd);
+        return;
+    }
+    
+    std::shared_ptr<WriteMsg> msg = _sendBuff.front();
+    int numbytes = send(_fd, msg->dpos(), msg->nbytes(), 0);
+    if (numbytes < 0) {
+        perror("write error");
+        exit(-1);
+    }
+
+    msg->pos += numbytes;
+    if (msg->nbytes() == 0) {
+        _sendBuff.pop_front();
+    }
+}
+
+void libBLEEP::DataSocket::AppendMessageToSendBuff(std::shared_ptr<Message> message) {
+    Message* msg = message.get();
+
+    std::string serial_str;
+    // serialize message obj into an std::string message
+    boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+    boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
+    boost::archive::binary_oarchive oa(s);
+    oa << msg;
+    s.flush();
+
+    int message_len = serial_str.size();
+
+    _sendBuff.push_back(std::make_shared<WriteMsg>((char*)&message_len, sizeof(int)));
+    _sendBuff.push_back(std::make_shared<WriteMsg>(serial_str.c_str(), message_len));
+    _manager->SetWritable(_fd);
 }
 
 libBLEEP::DataSocket::~DataSocket() {

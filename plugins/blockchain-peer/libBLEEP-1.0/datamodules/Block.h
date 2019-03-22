@@ -18,14 +18,14 @@ namespace libBLEEP {
     class Block {
     public:
         Block() {};
-        Block(std::string id, std::list<std::shared_ptr<Transaction> > input_tx_list) { block_id = id; tx_list = input_tx_list; }
+        Block(std::string id, std::list<boost::shared_ptr<Transaction> > input_tx_list) { block_id = id; tx_list = input_tx_list; }
 
-        const std::list<std::shared_ptr<Transaction> >& GetTransactions() const { return tx_list; }
+        const std::list<boost::shared_ptr<Transaction> >& GetTransactions() const { return tx_list; }
         std::string GetId() const {return block_id; }
 
     protected:
         std::string block_id;
-        std::list<std::shared_ptr<Transaction> > tx_list;
+        std::list<boost::shared_ptr<Transaction> > tx_list;
 
     private:
         friend class boost::serialization::access;

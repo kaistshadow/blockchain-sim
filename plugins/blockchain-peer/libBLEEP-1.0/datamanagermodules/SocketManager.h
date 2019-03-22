@@ -5,6 +5,7 @@
 
 #include <map>
 #include <memory>
+#include <vector>
 
 namespace libBLEEP {
     /* By giving multiple managers for each socket type, i.e., listenSocketManager, connectSocketManager,
@@ -113,8 +114,17 @@ namespace libBLEEP {
         // when socketConnected event is triggered : replace connect socket as data socket
         void CreateDataSocket(int sfd);
 
+        // remove data socket from container and remove related IO watcher
+        void RemoveDataSocket(int fd);
+
         /* get DataSocket method */
         std::shared_ptr<DataSocket> GetDataSocket(int fd);
+        std::vector<std::shared_ptr<DataSocket> > GetAllDataSockets();
+
+        /* set/unset writable */
+        void SetWritable(int sfd);
+        void UnsetWritable(int sfd);
+
 
         /* event get method */
         bool IsEventTriggered() { return _eventTriggered; }
@@ -123,6 +133,7 @@ namespace libBLEEP {
         
         /* event clear method */
         void ClearEventTriggered() { _eventTriggered = false; }
+
     };
 
 }

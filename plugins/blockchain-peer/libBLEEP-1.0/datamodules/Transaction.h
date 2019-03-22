@@ -5,7 +5,6 @@
 #include <boost/serialization/variant.hpp>
 #include <boost/serialization/set.hpp>
 
-
 namespace libBLEEP {
     enum TransactionType {
         EnumSimpleTransaction,

@@ -24,6 +24,7 @@ using namespace singlenode_blockchain_machine;
 #include "datamanagermodules/LedgerManager.h"
 #include "datamanagermodules/SocketManager.h"
 
+#include "datamodules/Block.h"
 
 
 typedef boost::signals2::signal<StateEnum () > StateSignal;
@@ -53,14 +54,16 @@ class StateMachine {
     // for data socket management
     libBLEEP::DataSocketManager dataSocketManager;
 
+ public:
+    // pointer for intermediate values (arguments passing between states)
+    std::shared_ptr<libBLEEP::Block> newBlock = nullptr;
+    // std::shared_ptr<Block> receivedBlk;
+    // std::shared_ptr<ConsensusMsg> receivedMsg;
+
  private:
     // for logic 
     StateEnum curState;
     StateEnum nextState;
-
-    // pointer for intermediate values (arguments passing between states)
-    // std::shared_ptr<Block> receivedBlk;
-    // std::shared_ptr<ConsensusMsg> receivedMsg;
 
  public:
     StateMachine();

@@ -194,7 +194,7 @@ StateEnum singlenode_blockchain_machine::shadowPipeEventNotifiedStateHandler() {
     // 'State transition' will occur as follows.
     // 1. if a shadow command called 'generateTx' is received, move to 'generateTx' state.
     if (cmd_id == "generateTx") {
-        std::shared_ptr<Transaction> generatedTx(new SimpleTransaction(atoi(cmd_args[0].c_str()), atoi(cmd_args[1].c_str()), atof(cmd_args[2].c_str())));
+        boost::shared_ptr<Transaction> generatedTx(new SimpleTransaction(atoi(cmd_args[0].c_str()), atoi(cmd_args[1].c_str()), atof(cmd_args[2].c_str())));
 
         gStateMachine.txPool.AddTx(generatedTx);
         if (gStateMachine.txPool.GetPendingTxNum() >= block_tx_num)

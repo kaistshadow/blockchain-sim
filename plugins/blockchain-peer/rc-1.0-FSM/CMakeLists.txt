@@ -43,6 +43,8 @@ set(SRCS
   # statemachine/examples/simple-idle-exit-machine/StateHandler.cpp
   statemachine/examples/singlenode-blockchain-machine/State.cpp
   statemachine/examples/singlenode-blockchain-machine/StateHandler.cpp
+  # statemachine/examples/doublenode-blockchain-machine/State.cpp
+  # statemachine/examples/doublenode-blockchain-machine/StateHandler.cpp
   statemachine/StateMachine.cpp
 )
   

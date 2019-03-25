@@ -11,25 +11,20 @@
 #include "Transaction.h"
 
 namespace libBLEEP {
-    enum class MessageTypeEnum {
-        none,
-        String,
-        newBlock
-    };
-
+    typedef std::string MessageType;
 
     class Message {
     private:
         // TODO : should include type, payload, and src, dest informations
-        MessageTypeEnum _type;
+        MessageType _type;
         std::string _payload;
 
     public:
 
         Message() {}
-        Message(std::string s) { _payload = s; _type = MessageTypeEnum::String; }
-        Message(std::string payload, MessageTypeEnum type) { _payload = payload; _type = type; }
-        MessageTypeEnum GetType() const { return _type; }
+        Message(std::string s) { _payload = s; _type = "StringMessage"; }
+        Message(MessageType type, std::string payload) { _type = type; _payload = payload; }
+        MessageType GetType() const { return _type; }
         std::string GetPayload() const { return _payload; }
 
     private: // boost serialization

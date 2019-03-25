@@ -17,7 +17,7 @@ BOOST_CLASS_EXPORT(SimpleTransaction);
 BOOST_CLASS_EXPORT(Block);
 
 std::ostream& libBLEEP::operator<<(std::ostream& os, const Message& msg) {
-    if (msg.GetType() == MessageTypeEnum::String) 
+    if (msg.GetType() == "StringMessage") 
         os << msg.GetPayload();
     return os;
 }

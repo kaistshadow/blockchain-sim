@@ -10,13 +10,13 @@
 /* #include "./examples/simple-idle-exit-machine/StateHandler.h" */
 /* using namespace simple_idle_exit_machine; */
 
-#include "./examples/singlenode-blockchain-machine/State.h"
-#include "./examples/singlenode-blockchain-machine/StateHandler.h"
-using namespace singlenode_blockchain_machine;
+/* #include "./examples/singlenode-blockchain-machine/State.h" */
+/* #include "./examples/singlenode-blockchain-machine/StateHandler.h" */
+/* using namespace singlenode_blockchain_machine; */
 
-/* #include "./examples/doublenode-blockchain-machine/State.h" */
-/* #include "./examples/doublenode-blockchain-machine/StateHandler.h" */
-/* using namespace doublenode_blockchain_machine; */
+#include "./examples/doublenode-blockchain-machine/State.h"
+#include "./examples/doublenode-blockchain-machine/StateHandler.h"
+using namespace doublenode_blockchain_machine;
 
 #include "datamanagermodules/ShadowPipeManager.h"
 #include "datamanagermodules/PipeManager.h"

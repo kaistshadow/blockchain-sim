@@ -367,16 +367,12 @@ StateEnum doublenode_blockchain_machine::readableSocketStateHandler() {
 
     std::shared_ptr<Message> message = dataSocket->DoRecv();
     if (message) {
-        switch (message->GetType()) {
-        case MessageTypeEnum::String:
+        std::cout << "read message in readableSocket state handler!" << "\n";
+        MessageType messageType = message->GetType();
+        if (messageType == "StringMessage")
             std::cout << "receive string message:" << *message << "\n";
-            break;
-        case MessageTypeEnum::newBlock:
+        else if (messageType == "newBlock")
             std::cout << "receive newBlock" << "\n";
-            break;
-        default:
-            break;
-        }
     }
 
     
@@ -433,7 +429,7 @@ StateEnum doublenode_blockchain_machine::unicastConsensusMsgStateHandler() {
     M_Assert(gStateMachine.newBlock != nullptr, "newBlock exists");
 
     std::string payload = GetSerializedString(gStateMachine.newBlock);
-    std::shared_ptr<Message> msg = std::make_shared<Message>(payload, MessageTypeEnum::newBlock);
+    std::shared_ptr<Message> msg = std::make_shared<Message>("newBlock", payload);
     for (std::shared_ptr<DataSocket> sock : gStateMachine.dataSocketManager.GetAllDataSockets()) {
         sock->AppendMessageToSendBuff(msg);
     }

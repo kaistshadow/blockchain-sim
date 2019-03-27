@@ -1,7 +1,3 @@
-/**************************************/
-/* This is template for state machine */
-/**************************************/
-
 #include "StateMachine.h"
 
 #include <fcntl.h> /* Added for the nonblocking socket */
@@ -12,7 +8,9 @@
 #include <iostream>
 
 
-StateMachine gStateMachine;
+using namespace singlenode_blockchain_machine;
+
+StateMachine singlenode_blockchain_machine::gStateMachine;
 
 StateMachine::StateMachine() : curState(StateEnum::uninitialized), 
                                nextState(StateEnum::uninitialized)

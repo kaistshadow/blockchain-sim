@@ -35,10 +35,10 @@ std::ostream& doublenode_blockchain_machine::operator << (std::ostream& os, cons
     /* consensus handling */
     else if (obj == StateEnum::appendBlock)
         os << "appendBlockState";
-    else if (obj == StateEnum::unicastConsensusMsg)
-        os << "unicastConsensusMsgState";
-    else if (obj == StateEnum::receiveConsensusMsg)
-        os << "receiveConsensusMsgState";
+    else if (obj == StateEnum::sendBlock)
+        os << "sendBlockState";
+    else if (obj == StateEnum::receiveBlock)
+        os << "receiveBlockState";
     else if (obj == StateEnum::resolveFork)
         os << "resolveForkState";
     

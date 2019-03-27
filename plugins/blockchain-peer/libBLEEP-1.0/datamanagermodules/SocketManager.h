@@ -89,6 +89,7 @@ namespace libBLEEP {
     };
 
     class DataSocketManager {
+        friend class DataSocket;
     private:
         std::map<int, std::shared_ptr<DataSocket> > _sockets;  // map fd -> ConnectSocket structure
 

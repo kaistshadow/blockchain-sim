@@ -22,7 +22,9 @@ namespace doublenode_blockchain_machine {
 
     /* consensus handling */
     StateEnum appendBlockStateHandler();
-    StateEnum unicastConsensusMsgStateHandler();
+    StateEnum sendBlockStateHandler();
+    StateEnum receiveBlockStateHandler();
+    StateEnum resolveForkStateHandler();
 
     /* termination */
     StateEnum exitStateHandler();

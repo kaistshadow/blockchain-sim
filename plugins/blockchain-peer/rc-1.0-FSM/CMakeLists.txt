@@ -39,13 +39,16 @@ set(SRCS
   utility/NodeInfo.cpp
   utility/ArgsManager.cpp
   crypto/SHA256.cpp
-  # statemachine/examples/simple-idle-exit-machine/State.cpp
-  # statemachine/examples/simple-idle-exit-machine/StateHandler.cpp
-  # statemachine/examples/singlenode-blockchain-machine/State.cpp
-  # statemachine/examples/singlenode-blockchain-machine/StateHandler.cpp
+  statemachine/examples/simple-idle-exit-machine/State.cpp
+  statemachine/examples/simple-idle-exit-machine/StateHandler.cpp
+  statemachine/examples/simple-idle-exit-machine/StateMachine.cpp
+  statemachine/examples/singlenode-blockchain-machine/State.cpp
+  statemachine/examples/singlenode-blockchain-machine/StateHandler.cpp
+  statemachine/examples/singlenode-blockchain-machine/StateMachine.cpp
   statemachine/examples/doublenode-blockchain-machine/State.cpp
   statemachine/examples/doublenode-blockchain-machine/StateHandler.cpp
-  statemachine/StateMachine.cpp
+  statemachine/examples/doublenode-blockchain-machine/StateMachine.cpp
+  # statemachine/StateMachine.cpp
 )
   
 ## we need to know where shadow is installed

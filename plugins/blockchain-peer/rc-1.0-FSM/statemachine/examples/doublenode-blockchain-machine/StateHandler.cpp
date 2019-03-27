@@ -1,5 +1,5 @@
 #include "StateHandler.h"
-#include "../../StateMachine.h"
+#include "StateMachine.h"
 #include "../../../Configuration.h"
 #include "../../../utility/GlobalClock.h"
 
@@ -66,7 +66,9 @@ void doublenode_blockchain_machine::RegisterStateHandlers() {
 
     /* consensus handling */
     gStateMachine.stateToSignalMap[StateEnum::appendBlock].connect(&appendBlockStateHandler);
-    gStateMachine.stateToSignalMap[StateEnum::unicastConsensusMsg].connect(&unicastConsensusMsgStateHandler);
+    gStateMachine.stateToSignalMap[StateEnum::sendBlock].connect(&sendBlockStateHandler);
+    gStateMachine.stateToSignalMap[StateEnum::receiveBlock].connect(&receiveBlockStateHandler);
+    gStateMachine.stateToSignalMap[StateEnum::resolveFork].connect(&resolveForkStateHandler);
 
     /* termination */
     // gStateMachine.stateToSignalMap[StateEnum::exit].connect(&exitStateHandler);
@@ -149,6 +151,7 @@ StateEnum doublenode_blockchain_machine::libevEventTriggeredStateHandler() {
             }
         case SocketEventEnum::none:
         case SocketEventEnum::writeEvent:
+        case SocketEventEnum::closeEvent:
             {
                 std::cout << "invalid event is triggered. " << "\n";
                 nextState = StateEnum::exit;
@@ -161,6 +164,7 @@ StateEnum doublenode_blockchain_machine::libevEventTriggeredStateHandler() {
         switch (connectSocketManager.GetEventType()) {
         case SocketEventEnum::readEvent:
         case SocketEventEnum::none:
+        case SocketEventEnum::closeEvent:
             {
                 std::cout << "invalid event is triggered. " << "\n";
                 nextState = StateEnum::exit;
@@ -187,6 +191,7 @@ StateEnum doublenode_blockchain_machine::libevEventTriggeredStateHandler() {
                 break;
             }
         case SocketEventEnum::none:
+        case SocketEventEnum::closeEvent:
             {
                 std::cout << "invalid event is triggered. " << "\n";
                 nextState = StateEnum::exit;
@@ -297,11 +302,8 @@ StateEnum doublenode_blockchain_machine::shadowPipeEventNotifiedStateHandler() {
         // Initialize a connecting socket
         int fd = gStateMachine.connectSocketManager.CreateNonblockConnectSocket(cmd_args[0]);
         std::cout << "new connecting socket is established : " << fd << "\n";
-    } else if (cmd_id == "broadcastMsg") {
-        for (std::shared_ptr<DataSocket> sock : gStateMachine.dataSocketManager.GetAllDataSockets()) {
-            std::shared_ptr<Message> msg = std::make_shared<Message>(cmd_args_str);
-            sock->AppendMessageToSendBuff(msg);
-        }
+    } else if (cmd_id == "setAsLeader") {
+        gStateMachine.leaderMachine = true;
     }
 
     return nextState;
@@ -346,7 +348,6 @@ StateEnum doublenode_blockchain_machine::socketConnectedStateHandler() {
     connectSocketManager.RemoveConnectSocket(fd); /* remove connect socket structure */
     dataSocketManager.CreateDataSocket(fd); /* create data socket structure */
 
-
     return nextState;
 }
 
@@ -371,11 +372,35 @@ StateEnum doublenode_blockchain_machine::readableSocketStateHandler() {
         MessageType messageType = message->GetType();
         if (messageType == "StringMessage")
             std::cout << "receive string message:" << *message << "\n";
-        else if (messageType == "newBlock")
+        else if (messageType == "newBlock") {
             std::cout << "receive newBlock" << "\n";
+            nextState = StateEnum::receiveBlock;
+            std::shared_ptr<MyBlock> receivedBlk = GetDeserializedMyBlock(message->GetPayload());
+            gStateMachine.receivedBlock = receivedBlk;
+        }
+    } else {
+        // check whether the close event is triggered
+        // check listenSocket event
+        if (dataSocketManager.IsEventTriggered()) {
+            switch (dataSocketManager.GetEventType()) {
+            case SocketEventEnum::none:
+            case SocketEventEnum::readEvent:
+            case SocketEventEnum::writeEvent:
+                {
+                    std::cout << "invalid event is triggered. " << "\n";
+                    nextState = StateEnum::exit;
+                    break;
+                }
+            case SocketEventEnum::closeEvent:
+                {
+                    int socketFD = dataSocketManager.GetEventTriggeredFD();
+                    dataSocketManager.RemoveDataSocket(socketFD);
+                    break;
+                }
+            }
+        }
     }
 
-    
 
     return nextState;
 }
@@ -392,7 +417,6 @@ StateEnum doublenode_blockchain_machine::writableSocketStateHandler() {
     // write data to dataSocket
     dataSocket->DoSend();
     
-
     // overall process of sending data
     // 1. serialize data as payload, to make generic Message containing the payload
     // 2. serialize Message, and push it to sendBuffer
@@ -408,31 +432,79 @@ StateEnum doublenode_blockchain_machine::appendBlockStateHandler() {
     std::cout << "appendBlock state handler executed!" << "\n";    
     M_Assert(gStateMachine.txPool.GetPendingTxNum() >= block_tx_num, "requires enough txs");
     
-    std::shared_ptr<Block> newBlock(new Block("", gStateMachine.txPool.GetTxs(block_tx_num)));
+    // std::shared_ptr<MyBlock> newBlock(new MyBlock("", gStateMachine.txPool.GetTxs(block_tx_num)));
+    std::shared_ptr<MyBlock> newBlock = std::make_shared<MyBlock>("", gStateMachine.txPool.GetTxs(block_tx_num));
+    newBlock->SetBlockIdx(gStateMachine.ledgerManager.GetNextBlockIdx());
     gStateMachine.ledgerManager.AppendBlock(newBlock);
     gStateMachine.txPool.RemoveTxs(newBlock->GetTransactions());
 
     std::cout << utility::GetGlobalClock() << ":Block is appended" << "\n";
-    std::cout << *newBlock << "\n";
+    std::cout << "blockIdx:" << newBlock->GetBlockIdx() << "," << *newBlock << "\n";
 
 
-    // set next state as unicastConsensusMsg
+    // set next state as broadcastConsensusMsg
     gStateMachine.newBlock = newBlock;
-    nextState = StateEnum::unicastConsensusMsg;
+    nextState = StateEnum::sendBlock;
 
     return nextState;
 }
 
-StateEnum doublenode_blockchain_machine::unicastConsensusMsgStateHandler() {
+StateEnum doublenode_blockchain_machine::sendBlockStateHandler() {
     StateEnum nextState = StateEnum::idle;
     // check invariants for this state
     M_Assert(gStateMachine.newBlock != nullptr, "newBlock exists");
 
     std::string payload = GetSerializedString(gStateMachine.newBlock);
-    std::shared_ptr<Message> msg = std::make_shared<Message>("newBlock", payload);
     for (std::shared_ptr<DataSocket> sock : gStateMachine.dataSocketManager.GetAllDataSockets()) {
+        std::shared_ptr<Message> msg = std::make_shared<Message>(PeerId("none"), 
+                                                                 PeerId("none"),
+                                                                 "newBlock", payload);
+
         sock->AppendMessageToSendBuff(msg);
     }
     
     return nextState;
+}
+
+StateEnum doublenode_blockchain_machine::receiveBlockStateHandler() {
+    StateEnum nextState = StateEnum::idle;
+    MyLedgerManager& ledgerManager = gStateMachine.ledgerManager;
+    TxPool& txPool = gStateMachine.txPool;
+    // check invariants for this state
+    M_Assert(gStateMachine.receivedBlock != nullptr, "receivedBlock exists");
+
+    std::shared_ptr<MyBlock> receivedBlock = gStateMachine.receivedBlock;
+
+    std::cout << "receivedBlkIdx:" << receivedBlock->GetBlockIdx() << ", nextBlkIdx:" << ledgerManager.GetNextBlockIdx() << "\n";
+    if ( receivedBlock->GetBlockIdx() == ledgerManager.GetNextBlockIdx()) {
+        ledgerManager.AppendBlock(receivedBlock);
+        txPool.RemoveTxs(receivedBlock->GetTransactions());
+        std::cout << utility::GetGlobalClock() << ":Block is received and appended" << "\n";
+        std::cout << "blockIdx:" << receivedBlock->GetBlockIdx() << "," << *receivedBlock << "\n";
+    }
+    else if (receivedBlock->GetBlockIdx() == ledgerManager.GetNextBlockIdx()-1 ) {
+        // fork!
+        nextState = StateEnum::resolveFork;
+    }
+    
+    return nextState;
+}
+
+StateEnum doublenode_blockchain_machine::resolveForkStateHandler() {
+    StateEnum nextState = StateEnum::idle;
+    MyLedgerManager& ledgerManager = gStateMachine.ledgerManager;
+    // check invariants for this state
+    M_Assert(gStateMachine.receivedBlock != nullptr, "receivedBlock exists");
+    M_Assert(gStateMachine.receivedBlock->GetBlockIdx() == ledgerManager.GetLastBlock()->GetBlockIdx(), "fork exists");
+
+    if (gStateMachine.leaderMachine) // if i'm leader machine, my last block is valid block.
+        ;
+    else if (!gStateMachine.leaderMachine) { // if i'm NOT leader machine, received block is valid block(from leader).
+        ledgerManager.ReplaceLastBlock(gStateMachine.receivedBlock);
+        std::cout << utility::GetGlobalClock() << ":Block is replaced" << "\n";
+        std::cout << *ledgerManager.GetLastBlock() << "\n";
+    }
+
+    return nextState;
+
 }

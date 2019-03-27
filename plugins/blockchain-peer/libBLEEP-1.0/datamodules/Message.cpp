@@ -57,3 +57,14 @@ std::string libBLEEP::GetSerializedString(std::shared_ptr<Block> block) {
     s.flush();
     return serial_str;
 }
+
+std::shared_ptr<Block> GetDeserializedBlock(std::string str) {
+    Block* block;
+    // wrap buffer inside a stream and deserialize string_read into obj
+    boost::iostreams::basic_array_source<char> device(str.c_str(), str.size());
+    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
+    boost::archive::binary_iarchive ia(s);
+    ia >> block;
+
+    return std::shared_ptr<Block>(block);
+}

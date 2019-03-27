@@ -24,7 +24,7 @@ namespace libBLEEP {
         std::string ledger_filename;
     
     public:
-        ListLedgerManager() {};
+        ListLedgerManager() {}
         ListLedgerManager(std::string filename) { ledger_filename = filename; }
 
         /**

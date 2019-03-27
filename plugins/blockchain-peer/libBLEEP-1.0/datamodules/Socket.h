@@ -20,7 +20,8 @@ namespace libBLEEP {
     enum class SocketEventEnum {
         none,
         readEvent,
-        writeEvent
+        writeEvent,
+        closeEvent
     };
 
     enum class SocketTypeEnum {

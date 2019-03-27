@@ -1,8 +1,5 @@
-/**************************************/
-/* This is template for state machine */
-/**************************************/
-
 #include "StateMachine.h"
+#include "../../../utility/GlobalClock.h"
 
 #include <fcntl.h> /* Added for the nonblocking socket */
 #include <arpa/inet.h>
@@ -11,8 +8,33 @@
 #include <stdio.h>
 #include <iostream>
 
+using namespace doublenode_blockchain_machine;
 
-StateMachine gStateMachine;
+std::string doublenode_blockchain_machine::GetSerializedString(std::shared_ptr<MyBlock> blk) {
+    std::string serial_str;
+    MyBlock* block_ptr = blk.get();
+    // serialize obj into an std::string
+    boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+    boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
+    boost::archive::binary_oarchive oa(s);
+    oa << block_ptr;
+    s.flush();
+    return serial_str;
+}
+
+std::shared_ptr<MyBlock> doublenode_blockchain_machine::GetDeserializedMyBlock(std::string str) {
+    MyBlock* block;
+    // wrap buffer inside a stream and deserialize string_read into obj
+    boost::iostreams::basic_array_source<char> device(str.c_str(), str.size());
+    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
+    boost::archive::binary_iarchive ia(s);
+    ia >> block;
+
+    return std::shared_ptr<MyBlock>(block);
+}
+
+
+StateMachine doublenode_blockchain_machine::gStateMachine;
 
 StateMachine::StateMachine() : curState(StateEnum::uninitialized), 
                                nextState(StateEnum::uninitialized)
@@ -30,8 +52,8 @@ void StateMachine::InitStateMachine() {
 
 
     // /* for debugging infinite loop */
-    struct ev_loop *loop = EV_DEFAULT;
-    ev_set_io_collect_interval(loop, 1);
+    // struct ev_loop *loop = EV_DEFAULT;
+    // ev_set_io_collect_interval(loop, 1);
 
 }
 
@@ -59,7 +81,7 @@ void StateMachine::StartStateMachine() {
             break;
         /* otherwise make a transition to nextState */
         else {
-            std::cout << "[StateMachineLog::State transition]: " << curState << " to " << nextState << "\n";
+            std::cout << utility::GetGlobalClock() << ":[StateMachineLog::State transition]: " << curState << " to " << nextState << "\n";
             curState = nextState;
         }
     }

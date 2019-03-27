@@ -1,6 +1,6 @@
 #include "../../../Configuration.h"
 #include "StateHandler.h"
-#include "../../StateMachine.h"
+#include "StateMachine.h"
 #include "../../../utility/GlobalClock.h"
 
 #include "utility/Assert.h"

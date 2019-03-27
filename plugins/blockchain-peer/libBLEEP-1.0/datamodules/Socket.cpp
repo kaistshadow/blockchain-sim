@@ -145,7 +145,11 @@ std::shared_ptr<Message> libBLEEP::DataSocket::DoRecv() {
             }
             else if (n == 0) {
                 std::cout << "socket disconnected" << "\n";
-                _manager->RemoveDataSocket(_fd); // remove myself(DataSocket) from manager
+                _manager->_SetEventTriggered(true);
+                _manager->_SetEventTriggeredFD(_fd);
+                _manager->_SetEventType(SocketEventEnum::closeEvent);
+                // notify manager as closeEvent
+                // _manager->RemoveDataSocket(_fd); // remove myself(DataSocket) from manager
             }
             else if (n > 0) {
                 _recvBuff.message_len = length;
@@ -169,7 +173,10 @@ std::shared_ptr<Message> libBLEEP::DataSocket::DoRecv() {
                 }
                 else if (numbytes == 0) {
                     std::cout << "connection closed while recv\n";
-                    _manager->RemoveDataSocket(_fd); // remove myself(DataSocket) from manager
+                    _manager->_SetEventTriggered(true);
+                    _manager->_SetEventTriggeredFD(_fd);
+                    _manager->_SetEventType(SocketEventEnum::closeEvent);
+                    // notify manager as closeEvent
                     break;
                 }
                 else if (numbytes < 0) {
@@ -223,9 +230,14 @@ void libBLEEP::DataSocket::DoSend() {
         exit(-1);
     }
 
+    std::cout << "DoSend: write " << numbytes << " bytes" << "\n";
+
     msg->pos += numbytes;
     if (msg->nbytes() == 0) {
         _sendBuff.pop_front();
+        if (_sendBuff.empty()) {
+            _manager->UnsetWritable(_fd);
+        }
     }
 }
 

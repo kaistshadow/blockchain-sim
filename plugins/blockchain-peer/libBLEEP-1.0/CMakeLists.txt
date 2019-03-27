@@ -17,6 +17,7 @@ set(SRCS
   datamanagermodules/ShadowPipeManager.cpp
   datamanagermodules/PipeManager.cpp
   datamanagermodules/SocketManager.cpp
+  datamanagermodules/PeerManager.cpp
   utility/UInt256.cpp
   utility/Assert.cpp
 )

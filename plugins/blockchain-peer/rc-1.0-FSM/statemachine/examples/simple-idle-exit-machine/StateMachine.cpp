@@ -1,7 +1,3 @@
-/**************************************/
-/* This is template for state machine */
-/**************************************/
-
 #include "StateMachine.h"
 
 #include <fcntl.h> /* Added for the nonblocking socket */
@@ -11,8 +7,9 @@
 #include <stdio.h>
 #include <iostream>
 
+using namespace simple_idle_exit_machine;
 
-StateMachine gStateMachine;
+StateMachine simple_idle_exit_machine::gStateMachine;
 
 StateMachine::StateMachine() : curState(StateEnum::uninitialized), 
                                nextState(StateEnum::uninitialized)

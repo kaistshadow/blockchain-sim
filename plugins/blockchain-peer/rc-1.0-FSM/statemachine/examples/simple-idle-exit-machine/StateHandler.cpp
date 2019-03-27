@@ -1,5 +1,5 @@
 #include "StateHandler.h"
-#include "../../StateMachine.h"
+#include "StateMachine.h"
 
 #include <ev.h>
 #include <iostream>
@@ -68,7 +68,7 @@ StateEnum simple_idle_exit_machine::libevEventTriggeredStateHandler() {
                     perror("read error");
                     exit(-1);
                 }
-                shadowPipeManager.SetEventTriggered(false); // clear 
+                shadowPipeManager.ClearEventTriggered(); // clear 
                 break;
             }
         case ShadowPipeEventEnum::none:

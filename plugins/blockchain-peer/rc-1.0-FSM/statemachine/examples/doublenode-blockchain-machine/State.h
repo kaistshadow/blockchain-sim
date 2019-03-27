@@ -25,8 +25,8 @@ namespace doublenode_blockchain_machine {
 
             /* consensus handling */
             appendBlock,
-            unicastConsensusMsg,
-            receiveConsensusMsg,
+            sendBlock,
+            receiveBlock,
             resolveFork,
 
             exit

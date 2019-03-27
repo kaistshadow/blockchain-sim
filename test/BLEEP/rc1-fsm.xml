@@ -35,65 +35,66 @@
   <plugin id="PEER" path="libNODE_FSM.so" />
 
   <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="60" />
+  <kill time="80" />
   <!-- our nodes -->
 
   <node id="bleep0">
-    <application plugin="PEER" time="5" arguments="-proxynode" />
+    <application plugin="PEER" time="5" arguments="" />
+    <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
+    <command id="registerListenSocket" starttime="5" arguments="" />
+    <command id="setAsLeader" starttime="5" arguments="" />
+    <!-- <command id="broadcastMsg" starttime="22" arguments="hello world!" /> -->
+    <command id="generateTx" starttime="50" arguments="2 2 30" />
+    <command id="generateTx" starttime="50" arguments="2 2 30" />
+    <command id="generateTx" starttime="51" arguments="3 2 30" />
+    <command id="generateTx" starttime="52" arguments="4 2 30" />
+    <command id="generateTx" starttime="52" arguments="3 2 30" />
+
+
+    <command id="generateTx" starttime="55" arguments="2 2 31" />
+    <command id="generateTx" starttime="55" arguments="2 2 31" />
+    <command id="generateTx" starttime="55" arguments="3 2 31" />
+    <command id="generateTx" starttime="55" arguments="4 2 31" />
+    <command id="generateTx" starttime="55" arguments="3 2 31" />
+
+    <command id="generateTx" starttime="55" arguments="2 2 32" />
+    <command id="generateTx" starttime="55" arguments="2 2 32" />
+    <command id="generateTx" starttime="55" arguments="3 2 32" />
+    <command id="generateTx" starttime="56" arguments="4 2 32" />
+    <command id="generateTx" starttime="57" arguments="3 2 32" />
+
+    <command id="generateTx" starttime="60" arguments="2 2 34" />
+    <command id="generateTx" starttime="60" arguments="2 2 34" />
+    <command id="generateTx" starttime="60" arguments="3 2 34" />
+    <command id="generateTx" starttime="60" arguments="4 2 34" />
+    <command id="generateTx" starttime="60" arguments="3 2 34" />
+
   </node>
 
   <node id="bleep1">
     <application plugin="PEER" time="13" arguments="" />
-    <command id="generateTx" starttime="30" arguments="1 2 30" />
-    <command id="generateTx" starttime="30" arguments="1 2 30" />
-    <command id="generateTx" starttime="30" arguments="1 2 30" />
-    <command id="generateTx" starttime="30" arguments="1 2 30" />
-    <command id="generateTx" starttime="30" arguments="1 2 30" />
-
+    <!-- <command id="setMyId" starttime="13" arguments="bleep1" /> -->
+    <command id="registerConnectSocket" starttime="13" arguments="bleep0" />
     <command id="generateTx" starttime="50" arguments="1 2 30" />
     <command id="generateTx" starttime="50" arguments="1 2 30" />
     <command id="generateTx" starttime="51" arguments="1 2 30" />
     <command id="generateTx" starttime="52" arguments="1 2 30" />
     <command id="generateTx" starttime="52" arguments="1 2 30" />
 
-  </node>
+    <command id="generateTx" starttime="58" arguments="2 2 33" />
+    <command id="generateTx" starttime="58" arguments="2 2 33" />
+    <command id="generateTx" starttime="58" arguments="3 2 33" />
+    <command id="generateTx" starttime="58" arguments="4 2 33" />
+    <command id="generateTx" starttime="58" arguments="3 2 33" />
 
-  <node id="bleep2">
-    <application plugin="PEER" time="13" arguments="" />
-  </node>
 
-  <node id="bleep3">
-    <application plugin="PEER" time="13" arguments="" />
-  </node>
+    <command id="generateTx" starttime="60" arguments="2 2 35" />
+    <command id="generateTx" starttime="60" arguments="2 2 35" />
+    <command id="generateTx" starttime="60" arguments="3 2 35" />
+    <command id="generateTx" starttime="60" arguments="4 2 35" />
+    <command id="generateTx" starttime="60" arguments="3 2 35" />
 
-  <node id="bleep4">
-    <application plugin="PEER" time="13" arguments="" />
   </node>
-
-  <node id="bleep5">
-    <application plugin="PEER" time="13" arguments="" />
-  </node>
-
-  <node id="bleep6">
-    <application plugin="PEER" time="13" arguments="" />
-  </node>
-
-  <node id="bleep7">
-    <application plugin="PEER" time="13" arguments="" />
-  </node>
-
-  <node id="bleep8">
-    <application plugin="PEER" time="13" arguments="" />
-  </node>
-
-  <node id="bleep9">
-    <application plugin="PEER" time="13" arguments="" />
-  </node>
-
-  <node id="bleep10">
-    <application plugin="PEER" time="13" arguments="-networkparticipant -generatetx=100 -timegeneratetx=10" />
-  </node>
-
 
 
   <!-- <node id="bleep1"> -->

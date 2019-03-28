@@ -1,3 +1,8 @@
+/**********************************************/
+/* This is standard implementation of node    */
+/* that are using statemachine implementation */
+/**********************************************/
+
 #include <iostream>
 #include <memory>
 #include "Configuration.h"
@@ -12,7 +17,13 @@
 // using namespace singlenode_blockchain_machine;
 using namespace doublenode_blockchain_machine;
 
-// =================  Blockchain Node Configuration Start ===================
+/* Define global variable for statemachine */
+// StateMachine simple_idle_exit_machine::gStateMachine;
+// StateMachine singlenode_blockchain_machine::gStateMachine;
+StateMachine doublenode_blockchain_machine::gStateMachine;
+
+
+// =================  Blockchain Configuration Start ===================
 
 // general configuration
 
@@ -24,6 +35,8 @@ using namespace doublenode_blockchain_machine;
 int block_tx_num = 5;
 
 // Blockchain Transaction Configuration
+
+// =================  Blockchain Configuration End ===================
 
 //This function continously writes Capital Alphabet into fd[1]
 //Waits if no more space is available
@@ -67,9 +80,6 @@ int main(int argc, char *argv[]) {
         return 0;
     }
     block_tx_num = gArgs.GetArg("-blocktxnum", 5);
-
-
-
 
 
     std::cout << "Testing node up" << "\n";

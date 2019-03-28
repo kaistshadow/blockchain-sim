@@ -10,15 +10,15 @@
 
 using namespace singlenode_blockchain_machine;
 
-StateMachine singlenode_blockchain_machine::gStateMachine;
+// StateMachine singlenode_blockchain_machine::gStateMachine;
 
-StateMachine::StateMachine() : curState(StateEnum::uninitialized), 
+singlenode_blockchain_machine::StateMachine::StateMachine() : curState(StateEnum::uninitialized), 
                                nextState(StateEnum::uninitialized)
 {
     
 }
 
-void StateMachine::InitStateMachine() {
+void singlenode_blockchain_machine::StateMachine::InitStateMachine() {
     /* register proper handler(callback func) for each state) */
     RegisterStateHandlers();
 
@@ -28,12 +28,12 @@ void StateMachine::InitStateMachine() {
 
 
     // /* for debugging infinite loop */
-    struct ev_loop *loop = EV_DEFAULT;
-    ev_set_io_collect_interval(loop, 1);
+    // struct ev_loop *loop = EV_DEFAULT;
+    // ev_set_io_collect_interval(loop, 1);
 
 }
 
-void StateMachine::StartStateMachine() {
+void singlenode_blockchain_machine::StateMachine::StartStateMachine() {
     curState = StateEnum::idle;
     std::cout << "[StateMachineLog::Start blockchain statemachine] initial state is " << curState << "\n";
 

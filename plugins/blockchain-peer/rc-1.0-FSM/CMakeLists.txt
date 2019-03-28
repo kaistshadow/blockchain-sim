@@ -34,21 +34,20 @@ set(LIBBLEEP_INCLUDE_DIR "${BLEEP_SRC_ROOT}/libBLEEP-1.0")
 message(STATUS "LIBBLEEP_INCLUDE_DIR = ${LIBBLEEP_INCLUDE_DIR}")
 include_directories(${LIBBLEEP_INCLUDE_DIR})
 
-set(SRCS
+set(FSM_SRCS
   utility/GlobalClock.cpp
   utility/NodeInfo.cpp
   utility/ArgsManager.cpp
   crypto/SHA256.cpp
-  statemachine/examples/simple-idle-exit-machine/State.cpp
-  statemachine/examples/simple-idle-exit-machine/StateHandler.cpp
-  statemachine/examples/simple-idle-exit-machine/StateMachine.cpp
-  statemachine/examples/singlenode-blockchain-machine/State.cpp
-  statemachine/examples/singlenode-blockchain-machine/StateHandler.cpp
-  statemachine/examples/singlenode-blockchain-machine/StateMachine.cpp
+  # statemachine/examples/simple-idle-exit-machine/State.cpp
+  # statemachine/examples/simple-idle-exit-machine/StateHandler.cpp
+  # statemachine/examples/simple-idle-exit-machine/StateMachine.cpp
+  # statemachine/examples/singlenode-blockchain-machine/State.cpp
+  # statemachine/examples/singlenode-blockchain-machine/StateHandler.cpp
+  # statemachine/examples/singlenode-blockchain-machine/StateMachine.cpp
   statemachine/examples/doublenode-blockchain-machine/State.cpp
   statemachine/examples/doublenode-blockchain-machine/StateHandler.cpp
   statemachine/examples/doublenode-blockchain-machine/StateMachine.cpp
-  # statemachine/StateMachine.cpp
 )
   
 ## we need to know where shadow is installed
@@ -82,7 +81,7 @@ include(ShadowTools)
 
 # add_executable(HELLO hello.cpp ${SRCS})
 
-add_shadow_plugin(NODE_FSM node.cpp ${SRCS})
+add_shadow_plugin(NODE_FSM node.cpp ${FSM_SRCS})
 install(TARGETS NODE_FSM DESTINATION plugins)
 target_link_libraries(NODE_FSM -lev)
 target_link_libraries(NODE_FSM -lpthread)
@@ -90,9 +89,19 @@ target_link_libraries(NODE_FSM ${Boost_LIBRARIES})
 target_link_libraries(NODE_FSM SHADOW_INTERFACE)
 target_link_libraries(NODE_FSM BLEEP-1.0)
 
-add_executable(LOCAL_NODE_FSM node.cpp ${SRCS})
+add_executable(LOCAL_NODE_FSM node.cpp ${FSM_SRCS})
 target_link_libraries(LOCAL_NODE_FSM -lev)
 target_link_libraries(LOCAL_NODE_FSM -lpthread)
 target_link_libraries(LOCAL_NODE_FSM ${Boost_LIBRARIES})
 target_link_libraries(LOCAL_NODE_FSM SHADOW_INTERFACE)
 target_link_libraries(LOCAL_NODE_FSM BLEEP-1.0)
+
+
+## compile for example
+add_shadow_plugin(NODE_bleep0 node_examples/doublenode-consensus/node_bleep0.cpp)
+install(TARGETS NODE_bleep0 DESTINATION plugins)
+target_link_libraries(NODE_bleep0 BLEEP-1.0)
+
+add_shadow_plugin(NODE_bleep1 node_examples/doublenode-consensus/node_bleep1.cpp)
+install(TARGETS NODE_bleep1 DESTINATION plugins)
+target_link_libraries(NODE_bleep1 BLEEP-1.0)

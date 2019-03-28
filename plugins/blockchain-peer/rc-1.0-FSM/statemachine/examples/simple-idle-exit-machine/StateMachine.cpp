@@ -9,15 +9,15 @@
 
 using namespace simple_idle_exit_machine;
 
-StateMachine simple_idle_exit_machine::gStateMachine;
+// StateMachine simple_idle_exit_machine::gStateMachine;
 
-StateMachine::StateMachine() : curState(StateEnum::uninitialized), 
+simple_idle_exit_machine::StateMachine::StateMachine() : curState(StateEnum::uninitialized), 
                                nextState(StateEnum::uninitialized)
 {
     
 }
 
-void StateMachine::InitStateMachine() {
+void simple_idle_exit_machine::StateMachine::InitStateMachine() {
     /* register proper handler(callback func) for each state) */
     RegisterStateHandlers();
 
@@ -32,7 +32,7 @@ void StateMachine::InitStateMachine() {
 
 }
 
-void StateMachine::StartStateMachine() {
+void simple_idle_exit_machine::StateMachine::StartStateMachine() {
     curState = StateEnum::idle;
     std::cout << "[StateMachineLog::Start blockchain statemachine] initial state is " << curState << "\n";
 

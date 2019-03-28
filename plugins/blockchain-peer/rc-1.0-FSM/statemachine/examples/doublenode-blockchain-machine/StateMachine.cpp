@@ -34,7 +34,7 @@ std::shared_ptr<MyBlock> doublenode_blockchain_machine::GetDeserializedMyBlock(s
 }
 
 
-StateMachine doublenode_blockchain_machine::gStateMachine;
+// StateMachine doublenode_blockchain_machine::gStateMachine;
 
 StateMachine::StateMachine() : curState(StateEnum::uninitialized), 
                                nextState(StateEnum::uninitialized)

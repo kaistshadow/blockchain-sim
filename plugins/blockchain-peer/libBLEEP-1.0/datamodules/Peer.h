@@ -42,32 +42,6 @@ namespace libBLEEP {
         }
     };
 
-    enum class SocketStatus {
-        none,
-        SocketDisconnected,
-        SocketConnected,
-    };
-
-    class PeerInfo {
-    private:
-        int _socketfd; // currently, we only support single data socket per peer
-        SocketStatus _socketStatus;
-        std::string _ipaddr = "";
-
-    public:
-        PeerInfo() {} 
-
-        /* get methods */
-        int GetSocketFD() const { return _socketfd; }
-        std::string GetIP() const { return _ipaddr; }
-        SocketStatus GetSocketStatus() const { return _socketStatus; }
-        
-        /* set methods */
-        void SetSocketFD(int socketfd) { _socketfd = socketfd; }
-        void SetIP(std::string ip) { _ipaddr = ip; }
-        void SetSocketStatus(SocketStatus status) { _socketStatus = status; }
-    };
-
 
 }
 

@@ -18,6 +18,7 @@ set(SRCS
   datamanagermodules/PipeManager.cpp
   datamanagermodules/SocketManager.cpp
   datamanagermodules/PeerManager.cpp
+  mainmodules/MainEventManager.cpp
   utility/UInt256.cpp
   utility/Assert.cpp
 )
@@ -25,5 +26,6 @@ set(SRCS
 
 add_library(BLEEP-1.0 SHARED ${SRCS})
 install(TARGETS BLEEP-1.0 DESTINATION lib)
+target_link_libraries(BLEEP-1.0 -lev)
 target_link_libraries(BLEEP-1.0 SHADOW_INTERFACE)
 target_link_libraries(BLEEP-1.0 ${Boost_LIBRARIES})

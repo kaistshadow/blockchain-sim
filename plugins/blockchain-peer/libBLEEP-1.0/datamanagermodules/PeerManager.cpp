@@ -50,6 +50,27 @@ std::shared_ptr<PeerInfo> libBLEEP::PeerManager::AppendNewNeighborPeer(PeerId pe
     return _neighborPeers[peer];
 }
 
+std::shared_ptr<PeerInfo> libBLEEP::PeerManager::AppendConnectedNeighborPeer(PeerId peer, int socketfd) {
+    std::shared_ptr<PeerInfo> peerPtr = GetPeerInfo(peer);
+    if (peerPtr) {
+        std::cout << "Peer already exists" << "\n";
+        
+        // update socket information
+        peerPtr->SetSocketFD(socketfd);
+        peerPtr->SetSocketStatus(SocketStatus::SocketConnected);
+        return peerPtr;
+    }
+
+    // allocate new peer 
+    // and append it into the map structure (_neighborPeers)
+    peerPtr = std::make_shared<PeerInfo>();
+    peerPtr->SetSocketFD(socketfd);
+    peerPtr->SetSocketStatus(SocketStatus::SocketConnected);
+    _neighborPeers[peer] = peerPtr;
+    return peerPtr;
+}
+
+
 // void libBLEEP::PeerManager::UpdateNeighborSocketConnection(PeerId peer, int socketfd) {
 //     PeerInfo& info = _neighborPeers[peer];
 //     info._socketfd = socketfd;

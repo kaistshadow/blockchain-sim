@@ -6,6 +6,33 @@
 
 namespace libBLEEP {
 
+    enum class SocketStatus {
+        none,
+        SocketDisconnected,
+        SocketConnected,
+    };
+
+    class PeerInfo {
+    private:
+        int _socketfd; // currently, we only support single data socket per peer
+        SocketStatus _socketStatus;
+        std::string _ipaddr = "";
+
+    public:
+        PeerInfo() {} 
+
+        /* get methods */
+        int GetSocketFD() const { return _socketfd; }
+        std::string GetIP() const { return _ipaddr; }
+        SocketStatus GetSocketStatus() const { return _socketStatus; }
+        
+        /* set methods */
+        void SetSocketFD(int socketfd) { _socketfd = socketfd; }
+        void SetIP(std::string ip) { _ipaddr = ip; }
+        void SetSocketStatus(SocketStatus status) { _socketStatus = status; }
+    };
+
+
     /* This class manages peer informations (including my own peerId).
        It maintains table which contains PeerInfo objects for all known neighbor peers. 
        For each PeerInfo, only single copy should exist.
@@ -32,6 +59,11 @@ namespace libBLEEP {
         /* Try to allocate new neighbor peer, and return the pointer for allocated PeerInfo.
            If the PeerInfo already exists for given PeerId, return the pointer for it. */
         std::shared_ptr<PeerInfo> AppendNewNeighborPeer(PeerId peer);
+
+        /* Try to allocate new *connected* neighbor peer, and return the pointer for allocated PeerInfo.
+           If the PeerInfo already exists for given PeerId, update the status of the PeerInfo 
+           and return the pointer for it. */
+        std::shared_ptr<PeerInfo> AppendConnectedNeighborPeer(PeerId peer, int socketfd);
 
     };
 

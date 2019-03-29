@@ -13,8 +13,10 @@ def prepare_shadow():
         
         # install dependencies
         os.system("sudo apt-get install libc-dbg")
-        os.system("sudo apt-get install -y python python-matplotlib python-numpy python-scipy python-networkx python-lxml")
+        os.system("sudo apt-get install -y python python-pip python-matplotlib python-numpy python-scipy python-networkx python-lxml")
         os.system("sudo apt-get install -y git dstat screen htop libffi-dev libev-dev")
+        os.system("sudo pip install lxml")
+
         if "Ubuntu 14.04" in check_output(["bash", "-c", "cat /etc/lsb-release | grep DESCRIPTION"]):
             os.system("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0 libigraph0-dev cmake make xz-utils")
             print "Installing glib manually..."
@@ -23,7 +25,7 @@ def prepare_shadow():
             os.system("cd glib-2.42.1; ./configure --prefix=%s; make; make install" % os.path.expanduser("~/.shadow"))
         elif "Ubuntu 16.04" in check_output(["bash", "-c", "cat /etc/lsb-release | grep DESCRIPTION"]): 
             # currently, 16.04 also needs glib installation
-            os.system("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0 libigraph0-dev cmake make xz-utils")
+            os.system("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0v5 libigraph0-dev cmake make xz-utils")
             print "Installing glib manually..."
             os.system("wget http://ftp.gnome.org/pub/gnome/sources/glib/2.42/glib-2.42.1.tar.xz")
             os.system("tar xaf glib-2.42.1.tar.xz")

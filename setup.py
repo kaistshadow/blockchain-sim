@@ -7,14 +7,22 @@ def prepare_shadow():
     if os.path.exists(os.path.expanduser("~/.shadow/bin")):
         print "Shadow simulator is already installed"
         print "If you want to force re-installation, remove the installed shadow by erasing ~/.shadow directory"
+        exit(0);
     else:
         print "Installing..."
         
         # install dependencies
         os.system("sudo apt-get install libc-dbg")
         os.system("sudo apt-get install -y python python-matplotlib python-numpy python-scipy python-networkx python-lxml")
-        os.system("sudo apt-get install -y git dstat screen htop libffi-dev")
+        os.system("sudo apt-get install -y git dstat screen htop libffi-dev libev-dev")
         if "Ubuntu 14.04" in check_output(["bash", "-c", "cat /etc/lsb-release | grep DESCRIPTION"]):
+            os.system("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0 libigraph0-dev cmake make xz-utils")
+            print "Installing glib manually..."
+            os.system("wget http://ftp.gnome.org/pub/gnome/sources/glib/2.42/glib-2.42.1.tar.xz")
+            os.system("tar xaf glib-2.42.1.tar.xz")
+            os.system("cd glib-2.42.1; ./configure --prefix=%s; make; make install" % os.path.expanduser("~/.shadow"))
+        elif "Ubuntu 16.04" in check_output(["bash", "-c", "cat /etc/lsb-release | grep DESCRIPTION"]): 
+            # currently, 16.04 also needs glib installation
             os.system("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0 libigraph0-dev cmake make xz-utils")
             print "Installing glib manually..."
             os.system("wget http://ftp.gnome.org/pub/gnome/sources/glib/2.42/glib-2.42.1.tar.xz")
@@ -26,6 +34,7 @@ def prepare_shadow():
         # cloning shadow repository (submodule)
         os.system("git submodule init shadow")
         os.system("git submodule update shadow")
+        os.system("mkdir ~/.shadow")
 
 def prepare_bitcoin_plugin():
     bitcoin_plugin_path = "./plugins/shadow-plugin-bitcoin"

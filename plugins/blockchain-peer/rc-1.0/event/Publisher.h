@@ -5,6 +5,7 @@
 #include <memory>
 #include <map>
 #include <list> 
+#include <iostream> 
 
 #include "EventCoordinator.h"
 #include "EventInfo.h"

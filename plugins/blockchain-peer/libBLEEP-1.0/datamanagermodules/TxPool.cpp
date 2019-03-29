@@ -1,4 +1,5 @@
 #include "TxPool.h"
+#include <iostream>
 
 using namespace libBLEEP;
 

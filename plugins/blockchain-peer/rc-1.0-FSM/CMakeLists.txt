@@ -42,12 +42,12 @@ set(FSM_SRCS
   # statemachine/examples/simple-idle-exit-machine/State.cpp
   # statemachine/examples/simple-idle-exit-machine/StateHandler.cpp
   # statemachine/examples/simple-idle-exit-machine/StateMachine.cpp
-  # statemachine/examples/singlenode-blockchain-machine/State.cpp
-  # statemachine/examples/singlenode-blockchain-machine/StateHandler.cpp
-  # statemachine/examples/singlenode-blockchain-machine/StateMachine.cpp
-  statemachine/examples/doublenode-blockchain-machine/State.cpp
-  statemachine/examples/doublenode-blockchain-machine/StateHandler.cpp
-  statemachine/examples/doublenode-blockchain-machine/StateMachine.cpp
+  statemachine/examples/singlenode-blockchain-machine/State.cpp
+  statemachine/examples/singlenode-blockchain-machine/StateHandler.cpp
+  statemachine/examples/singlenode-blockchain-machine/StateMachine.cpp
+  # statemachine/examples/doublenode-blockchain-machine/State.cpp
+  # statemachine/examples/doublenode-blockchain-machine/StateHandler.cpp
+  # statemachine/examples/doublenode-blockchain-machine/StateMachine.cpp
 )
   
 ## we need to know where shadow is installed
@@ -97,7 +97,7 @@ target_link_libraries(LOCAL_NODE_FSM SHADOW_INTERFACE)
 target_link_libraries(LOCAL_NODE_FSM BLEEP-1.0)
 
 
-## compile for example
+## compile for shadow example
 add_shadow_plugin(NODE_bleep0 node_examples/doublenode-consensus/node_bleep0.cpp)
 install(TARGETS NODE_bleep0 DESTINATION plugins)
 target_link_libraries(NODE_bleep0 BLEEP-1.0)
@@ -105,3 +105,11 @@ target_link_libraries(NODE_bleep0 BLEEP-1.0)
 add_shadow_plugin(NODE_bleep1 node_examples/doublenode-consensus/node_bleep1.cpp)
 install(TARGETS NODE_bleep1 DESTINATION plugins)
 target_link_libraries(NODE_bleep1 BLEEP-1.0)
+
+## compile for local executable
+add_executable(LOCAL_NODE_bleep0 node_examples/doublenode-consensus/node_bleep0.cpp)
+target_link_libraries(LOCAL_NODE_bleep0 BLEEP-1.0)
+
+add_executable(LOCAL_NODE_bleep1 node_examples/doublenode-consensus/node_bleep1.cpp)
+target_link_libraries(LOCAL_NODE_bleep1 BLEEP-1.0)
+

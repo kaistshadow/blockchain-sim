@@ -23,6 +23,9 @@ int main() {
     /* allocate mainEventManager */
     MainEventManager mainEventManager("bleep1");
 
+    /* connect to peer */
+    mainEventManager.AsyncConnectPeer(PeerId("bleep0"));
+
 
     while(true) {
         mainEventManager.Wait(); // main event loop (wait for next event)

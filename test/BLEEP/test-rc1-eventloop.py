@@ -21,7 +21,11 @@ if __name__ == '__main__':
         l = shadow.stdout.readline()
         print l.strip()
         shadow_stdout_file.write(l)
+    for l in shadow.stdout:
+        print l.strip()
+        shadow_stdout_file.write(l)
     shadow_stdout_file.close()
+
     
     os.system("mv %s ./%s/%s" % (shadow_stdout_filename, datadir, shadow_stdout_filename))
     shadow_stdout_file = open("./%s/%s" % (datadir, shadow_stdout_filename),'r')

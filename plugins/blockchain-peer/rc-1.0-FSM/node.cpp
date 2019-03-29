@@ -10,17 +10,17 @@
 #include "utility/ArgsManager.h"
 #include "utility/GlobalClock.h"
 // #include "statemachine/examples/simple-idle-exit-machine/StateMachine.h"
-// #include "statemachine/examples/singlenode-blockchain-machine/StateMachine.h"
-#include "statemachine/examples/doublenode-blockchain-machine/StateMachine.h"
+#include "statemachine/examples/singlenode-blockchain-machine/StateMachine.h"
+// #include "statemachine/examples/doublenode-blockchain-machine/StateMachine.h"
 
 // using namespace simple_idle_exit_machine;
-// using namespace singlenode_blockchain_machine;
-using namespace doublenode_blockchain_machine;
+using namespace singlenode_blockchain_machine;
+// using namespace doublenode_blockchain_machine;
 
 /* Define global variable for statemachine */
 // StateMachine simple_idle_exit_machine::gStateMachine;
-// StateMachine singlenode_blockchain_machine::gStateMachine;
-StateMachine doublenode_blockchain_machine::gStateMachine;
+StateMachine singlenode_blockchain_machine::gStateMachine;
+// StateMachine doublenode_blockchain_machine::gStateMachine;
 
 
 // =================  Blockchain Configuration Start ===================

@@ -15,7 +15,7 @@ namespace libBLEEP {
     enum class AsyncEventEnum {
         none,
         CompleteAsyncConnectPeer,
-
+        ErrorAsyncConnectPeer,
     };
 
     class AsyncEventDataManager {
@@ -23,6 +23,10 @@ namespace libBLEEP {
         // data for CompleteAsyncConnectPeer event
         PeerId _connectedPeerId;
         int _connectedSocketFD;
+
+        // data for ErrorAsyncConnectPeer event
+        PeerId _refusedPeerId;
+        int _error;
         
     public:
         // data set function for CompleteAsyncConnectPeer
@@ -31,9 +35,39 @@ namespace libBLEEP {
         // data access function for CompleteAsyncConnectPeer
         PeerId GetConnectedPeerId() { return _connectedPeerId; }
         int GetConnectedSocketFD() { return _connectedSocketFD; }
+
+        // data set function for ErrorAsyncConnectPeer
+        void SetRefusedPeerId(PeerId id) { _refusedPeerId = id; }
+        void SetError(int err) { _error = err; }
+        // data access function for ErrorAsyncConnectPeer
+        PeerId GetRefusedPeerId() { return _refusedPeerId; }
+        int GetError() { return _error; }
+
     };
 
     class MainEventManager {
+    private:
+        class AsyncConnectTimer {
+        private:
+            ev::timer _timer; // destructor automatically stops the watcher
+            PeerId _id;
+            MainEventManager* _eventManager;
+            void _timerCallback(ev::timer &w, int revents) {
+                std::cout << "AsyncConnect timer callback executes!" << "\n";
+                _eventManager->AsyncConnectPeer(_id);
+                delete this;
+            }
+        public:
+            AsyncConnectTimer(PeerId id, double time, MainEventManager* manager) {
+                _id = id;
+                _eventManager = manager;
+                _timer.set<AsyncConnectTimer, &AsyncConnectTimer::_timerCallback> (this);
+                _timer.set(time, 0.);
+                _timer.start();
+                std::cout << "timer started!" << "\n";
+            }
+        };
+
     private:
         /* internal event loop variable */
         struct ev_loop *_libev_loop;
@@ -78,7 +112,9 @@ namespace libBLEEP {
         /* 'complete event' offers connected socket fd and requested PeerId */
         /* If the valid socket connection exists for given PeerId, 
            the function immediately returns false, and 'complete event' will not be triggered */
-        bool AsyncConnectPeer(PeerId id);
+        /* If the 'time' is given, the API tries connection
+           after the given 'time' is passed. */
+        bool AsyncConnectPeer(PeerId id, double time = 0);
 
         /* asynchronous API that sends a given message to proper peer(s) */
         void SendMessage(Message message);
@@ -98,7 +134,7 @@ namespace libBLEEP {
            for managing the asynchronous function call data.
            Current list of supported asynchronous function calls : 
              1) AsyncConnectPeer (supported at 20190328)
-             2) AsyncGenerateRandomTransaction (supported at 20190328) */
+             2) AsyncGenerateRandomTransaction (supported at ??) */
         /*********************************************************/
         
         // for managing AsyncConnectPeer's requested data

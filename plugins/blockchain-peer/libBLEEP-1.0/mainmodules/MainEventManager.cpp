@@ -1,6 +1,9 @@
 #include "MainEventManager.h"
 #include "../utility/Assert.h"
 
+// #include <sys/types.h>
+#include <sys/socket.h>
+
 using namespace libBLEEP;
 
 
@@ -28,7 +31,7 @@ void MainEventManager::Wait() {
     return;
 }
 
-bool MainEventManager::AsyncConnectPeer(PeerId id) {
+bool MainEventManager::AsyncConnectPeer(PeerId id, double time) {
     // check whether the socket connection already exists for given peerId
     std::shared_ptr<PeerInfo> peerInfo = peerManager.GetPeerInfo(id);
     if (peerInfo && peerInfo->GetSocketStatus() == SocketStatus::SocketConnected) {
@@ -36,9 +39,14 @@ bool MainEventManager::AsyncConnectPeer(PeerId id) {
         return false;
     }
    
-    int connecting_fd = connectSocketManager.CreateNonblockConnectSocket(id.GetId());    
-    _asyncConnectPeerRequests.push_back(std::make_pair(id, connecting_fd));
-    return true;
+    if (time > 0) {
+        new AsyncConnectTimer(id, time, this); //timer automatically started
+        return true;
+    } else {
+        int connecting_fd = connectSocketManager.CreateNonblockConnectSocket(id.GetId());    
+        _asyncConnectPeerRequests.push_back(std::make_pair(id, connecting_fd));
+        return true;
+    }     
 }
 
 void MainEventManager::_HandleShadowEvents() {
@@ -124,6 +132,42 @@ void MainEventManager::_HandleNetworkEvents() {
                 int fd = connectSocketManager.GetEventTriggeredFD();
                 connectSocketManager.ClearEventTriggered(); // clear 
 
+                // check status of socket
+                int err = 0;
+                socklen_t len = sizeof(err);
+                if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &err, &len) < 0 ) {
+                    perror("getsockopt"); // Solaris pending error?
+                    exit(-1); 
+                }
+                if (err) {
+                    if( ECONNREFUSED == err ) {
+                        // connection is refused 
+                        // M_Assert(0, "Connection is refused");
+                    } else if( ETIMEDOUT == err ) {
+                        // connection timeout
+                        M_Assert(0, "Connection is timeout");
+                    }
+
+                    connectSocketManager.RemoveConnectSocket(fd);
+
+                    // Get requested information (peerId)
+                    auto it = std::find_if( _asyncConnectPeerRequests.begin(), _asyncConnectPeerRequests.end(),
+                                            [fd](const std::pair<PeerId, int>& element) { 
+                                                return element.second == fd; } );
+                    M_Assert(it != _asyncConnectPeerRequests.end(), "connecting event must have matching request"); 
+                    PeerId refusedPeerId = it->first;
+                    _asyncConnectPeerRequests.erase(it);
+
+                    // set asynchronous event 
+                    _asyncEventTriggered = true;
+                    _nextAsyncEvent = AsyncEventEnum::ErrorAsyncConnectPeer;
+                    _dataManager.SetRefusedPeerId(refusedPeerId);
+                    _dataManager.SetError(err);
+
+                    return;
+                }
+
+
                 // Convert connectSocket to dataSocket
                 connectSocketManager.RemoveConnectSocket(fd); /* remove connect socket structure */
                 dataSocketManager.CreateDataSocket(fd); /* create data socket structure */
@@ -155,7 +199,7 @@ void MainEventManager::_HandleNetworkEvents() {
 }
 
 void MainEventManager::_HandleTimerEvents() {
-
+    // nothing to do
 }
 
 

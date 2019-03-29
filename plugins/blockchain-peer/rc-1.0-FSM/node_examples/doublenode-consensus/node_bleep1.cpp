@@ -17,13 +17,14 @@ using namespace libBLEEP;
 
 // TODO : shadow(client) interface + visualization
 
-
 int main() {
 
     /* allocate mainEventManager */
+    // MainEventManager mainEventManager("143.248.38.37");
     MainEventManager mainEventManager("bleep1");
 
     /* connect to peer */
+    // mainEventManager.AsyncConnectPeer(PeerId("143.248.38.189"));
     mainEventManager.AsyncConnectPeer(PeerId("bleep0"));
 
 
@@ -44,6 +45,15 @@ int main() {
                 std::cout << "connected peerId : " << peerId.GetId() << "\n";
                 break;
             }
+        case AsyncEventEnum::ErrorAsyncConnectPeer:
+            {
+                std::cout << "AsyncConnectPeer got error(" << mainEventManager.GetAsyncEventDataManager().GetError() << ")" << "\n";
+                // try again with timer
+                PeerId peerId = mainEventManager.GetAsyncEventDataManager().GetRefusedPeerId();                
+                mainEventManager.AsyncConnectPeer(peerId, 10);
+                break;
+            }
+
         }
     }
 }

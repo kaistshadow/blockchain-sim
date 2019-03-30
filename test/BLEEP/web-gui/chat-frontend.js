@@ -222,6 +222,29 @@ $(function () {
                 'lat' : [json.data.latitude]
             };
             Plotly.update('topology_internet', update_data, {});
+        } else if (json.type === 'eventlog') {
+            addMessage("Notice", "Received eventlog",
+                       "red", new Date(json.data.time));
+            
+            var ul = document.getElementById("ss_elem_list");
+            ul.innerHTML = '';
+            for (var i = 0, l = json.data.eventlogs.length; i < l; i++) {
+                var eventlog = json.data.eventlogs[i];
+                addMessage("eventlog", `time : ${eventlog.time}, type : ${eventlog.type}, args : ${eventlog.args}`, "blue", new Date(json.data.time));
+                var li = document.createElement("li");
+                li.appendChild(document.createTextNode(`${eventlog.time},${eventlog.type},${eventlog.args}`));
+                li.setAttribute("id", `event_${i}`); 
+                li.setAttribute("role", "option"); 
+                ul.appendChild(li);
+
+                if (eventlog.type === "InitPeerId")
+                    addNode(eventlog.args);
+                else if (eventlog.type === "ConnectPeer") {
+                    var from = eventlog.args.split(",")[0];
+                    var to = eventlog.args.split(",")[1];
+                    addEdge(from, to);
+                }
+            }
         } else if (json.type === 'graph') {
             addMessage("Notice", "Snapshot of the blockchain graph is received",
                        "red", new Date(json.data.time));

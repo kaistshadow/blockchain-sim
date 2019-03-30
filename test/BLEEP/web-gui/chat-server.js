@@ -69,6 +69,40 @@ var wsServer = new webSocketServer({
     httpServer: server
 });
 
+function sendEventlogs(connection, shadowoutputfile) {
+    console.log('sendEventlogs for' + shadowoutputfile);
+    if (!fs.existsSync(shadowoutputfile))
+        return;
+
+    var lines = fs.readFileSync(shadowoutputfile).toString().split('\n');
+    
+    var curDate = new Date();
+    var curTime = (curDate).getTime();
+    var eventlogs = [];
+
+    var rePattern = new RegExp(/.*shadow_push_eventlog:([0-9]+),(.+?),(.*)$/);
+
+    console.log('start eventlog parsing ');
+    for (let line of lines) {
+        var matches = line.match(rePattern);
+        if (matches) {
+            console.log('line matches : ' + line);
+            var eventtime = matches[1];
+            var eventtype = matches[2];
+            var eventargs = matches[3];
+            eventlogs.push({time:eventtime,type:eventtype, args:eventargs});
+        }
+    }
+    console.log('eventlogs length:'  + eventlogs.length);
+    var eventlogObj = {
+        time: curTime,
+        eventlogs: eventlogs
+    };
+    // broadcast message to requested connection
+    var json = JSON.stringify({ type:'eventlog', data: eventlogObj });
+    connection.sendUTF(json);
+}
+
 function sendSnapshot(connection, nodenum) {
     // send log file content
     // var datadir = "centralized-broadcast-async-datadir";
@@ -240,7 +274,62 @@ wsServer.on('request', function(request) {
             var confs = json.configure;
             console.log(confs["txnum"]);
 
-            if ((msg === 'run' || msg.startsWith('run ')) && operatorIndex != -1) {
+            if (msg === 'visualize' && operatorIndex == -1) {
+                const child_process = require('child_process');
+                console.log((new Date()) + ' Received Message : ' + msg);
+
+                var pythonFile = "test-rc1-eventloop.py";
+                var pythonArgs = [pythonFile];
+
+                for (var key in confs) {
+                    pythonArgs.push("--"+key);
+                    pythonArgs.push(confs[key]);
+                }
+
+                console.log((new Date()) + ' subprocess with command : ' + 'python '+pythonArgs.join(" "));
+                console.log('current directory: ' + process.cwd());
+                proc = child_process.spawn('python', pythonArgs, {cwd:"../"});
+
+                proc.on("exit", function(exitCode) {
+                    console.log((new Date()) + ' process exited with code ' + exitCode);
+                    var obj = {
+                        time: (new Date()).getTime(),
+                        text: `run command operated by user${operatorIndex} is terminated`,
+                        author: "Notice",
+                        color: 'red'
+                    };
+                    for (var i=0; i < clients.length; i++) {
+                        clients[i].conn.sendUTF(JSON.stringify({ type:'message', data: obj }));
+                    }
+
+                    // set operator as none
+                    operatorIndex = -1;
+                    for (var i=0; i < clients.length; i++) {
+                        clients[i].conn.sendUTF(JSON.stringify({ type:'status', data: {operator:operatorIndex} }));
+                    }
+                    proc = null;
+
+                    sendEventlogs(connection, "../rc1-eventloop-datadir/shadow.output");
+                });
+
+                proc.stdout.on("data", function(chunk) {
+                    // console.log('received chunk ' + chunk);
+                });
+
+                proc.stdout.on("end", function() {
+                    console.log((new Date()) + " finished collecting data chunks from stdout");
+                });
+
+                // set user as operator
+                operatorIndex = index;
+                var json = JSON.stringify({ type:'status', data: {operator:operatorIndex } });
+                console.log((new Date()) + ' Operator is selected as: ' + operatorIndex);
+                for (var i=0; i < clients.length; i++) {
+                    clients[i].conn.sendUTF(json);
+                }
+
+                return;
+            } else if ((msg === 'visualize' || msg === 'run' || msg.startsWith('run ')) && operatorIndex != -1) {
                 var obj = {
                     time: (new Date()).getTime(),
                     text: "Unable to run : Now processing another user's request",

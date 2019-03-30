@@ -1,13 +1,18 @@
 #include "PeerManager.h"
 #include "../utility/Assert.h"
+#include "shadow_interface.h"
 
 #include <algorithm>
+#include <stdio.h>
 
 using namespace libBLEEP;
 
 
 void libBLEEP::PeerManager::InitMyPeerId(std::string id) {
     _myPeerId = std::make_shared<PeerId>(id);
+    char buf[256];
+    sprintf(buf, "InitPeerId,%s", id.c_str());
+    shadow_push_eventlog(buf);
 }
 
 std::shared_ptr<PeerId> libBLEEP::PeerManager::GetMyPeerId() {
@@ -60,6 +65,10 @@ std::shared_ptr<PeerInfo> libBLEEP::PeerManager::AppendConnectedNeighborPeer(Pee
         peerPtr->SetSocketStatus(SocketStatus::SocketConnected);
         return peerPtr;
     }
+
+    char buf[256];
+    sprintf(buf, "ConnectPeer,%s,%s", _myPeerId->GetId().c_str(), peer.GetId().c_str());
+    shadow_push_eventlog(buf);
 
     // allocate new peer 
     // and append it into the map structure (_neighborPeers)

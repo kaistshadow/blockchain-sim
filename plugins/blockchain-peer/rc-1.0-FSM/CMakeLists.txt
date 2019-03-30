@@ -98,18 +98,16 @@ target_link_libraries(LOCAL_NODE_FSM BLEEP-1.0)
 
 
 ## compile for shadow example
-add_shadow_plugin(NODE_bleep0 node_examples/doublenode-consensus/node_bleep0.cpp)
-install(TARGETS NODE_bleep0 DESTINATION plugins)
-target_link_libraries(NODE_bleep0 BLEEP-1.0)
+add_shadow_plugin(NODE_bleep node_examples/node.cpp)
+install(TARGETS NODE_bleep DESTINATION plugins)
+target_link_libraries(NODE_bleep BLEEP-1.0)
 
-add_shadow_plugin(NODE_bleep1 node_examples/doublenode-consensus/node_bleep1.cpp)
-install(TARGETS NODE_bleep1 DESTINATION plugins)
-target_link_libraries(NODE_bleep1 BLEEP-1.0)
+add_shadow_plugin(NODE_client node_examples/client.cpp)
+install(TARGETS NODE_client DESTINATION plugins)
+target_link_libraries(NODE_client BLEEP-1.0)
 
 ## compile for local executable
-add_executable(LOCAL_NODE_bleep0 node_examples/doublenode-consensus/node_bleep0.cpp)
-target_link_libraries(LOCAL_NODE_bleep0 BLEEP-1.0)
+add_executable(LOCAL_NODE_bleep node_examples/node.cpp)
+target_link_libraries(LOCAL_NODE_bleep BLEEP-1.0)
 
-add_executable(LOCAL_NODE_bleep1 node_examples/doublenode-consensus/node_bleep1.cpp)
-target_link_libraries(LOCAL_NODE_bleep1 BLEEP-1.0)
 

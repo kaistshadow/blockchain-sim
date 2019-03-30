@@ -32,21 +32,31 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="BLEEP0" path="libNODE_bleep0.so" />
+  <plugin id="NODE" path="libNODE_bleep.so" />
+  <plugin id="CLIENT" path="libNODE_client.so" />
 
-  <plugin id="BLEEP1" path="libNODE_bleep1.so" />
 
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="80" />
   <!-- our nodes -->
 
   <node id="bleep0">
-    <application plugin="BLEEP0" time="5" arguments="" />
+    <application plugin="NODE" time="5" arguments="-id=bleep0 -connect=bleep1" />
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>
 
   <node id="bleep1">
-    <application plugin="BLEEP1" time="13" arguments="" />
+    <application plugin="NODE" time="13" arguments="-id=bleep1 -connect=bleep0" />
+  </node>
+
+  <node id="client0">
+    <application plugin="CLIENT" time="15" arguments="-id=client0 -connect=bleep0" />
+  </node>
+  <node id="client1">
+    <application plugin="CLIENT" time="15" arguments="-id=client1 -connect=bleep0" />
+  </node>
+  <node id="client2">
+    <application plugin="CLIENT" time="15" arguments="-id=client2 -connect=bleep1" />
   </node>
 
 

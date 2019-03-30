@@ -21,6 +21,7 @@ set(SRCS
   mainmodules/MainEventManager.cpp
   utility/UInt256.cpp
   utility/Assert.cpp
+  utility/ArgsManager.cpp
 )
 
 

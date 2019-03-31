@@ -3,6 +3,40 @@ var linksTable = null;
 var network = null;
 var ImgDIR = 'link_network/examples/img/soft-scraps-icons/';
 
+var startButton = document.getElementById('ex1-start');
+startButton.addEventListener('click', drawVisualization);
+
+
+var muObserver = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        if (mutation.type == "attributes" && mutation.target.tagName == "LI"
+            && mutation.attributeName=="aria-selected"
+            && mutation.target.getAttribute(mutation.attributeName) == "true") {
+
+            var eventlog = mutation.target.textContent;
+            var rePattern = new RegExp(/([0-9]+),(.+?),(.*)$/);
+            var matches = eventlog.match(rePattern);
+            if (matches) {
+                var eventtime = matches[1];
+                var eventtype = matches[2];
+                var eventargs = matches[3];
+                console.log(eventtype);
+
+                if (eventtype === "InitPeerId")
+                    addNode(eventargs);
+                else if (eventtype === "ConnectPeer") {
+                    var from = eventargs.split(",")[0];
+                    var to = eventargs.split(",")[1];
+                    addEdge(from, to);
+                }
+            }
+        }
+            
+    });
+});
+
+muObserver.observe(document.getElementById("ss_elem_list"), {attributes:true, subtree:true});
+
 google.load("visualization", "1");
 
 // Set callback to run when API is loaded

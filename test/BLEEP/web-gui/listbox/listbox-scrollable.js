@@ -13,10 +13,11 @@ window.addEventListener('load', function () {
 
   exListbox.enableStart(document.getElementById('ex1-start'));
 
-  exListbox.enableMoveUpDown(
-    document.getElementById('ex1-up'),
-    document.getElementById('ex1-down')
-  );
+  exListbox.enableFocusNext( document.getElementById('ex1-down'));
 
+  // exListbox.enableMoveUpDown(
+  //   document.getElementById('ex1-up'),
+  //   document.getElementById('ex1-down')
+  // );
 
 });

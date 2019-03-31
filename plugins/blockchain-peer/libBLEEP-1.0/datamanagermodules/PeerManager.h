@@ -65,6 +65,10 @@ namespace libBLEEP {
            and return the pointer for it. */
         std::shared_ptr<PeerInfo> AppendConnectedNeighborPeer(PeerId peer, int socketfd);
 
+        /* Update disconnected socket information for the peer */
+        void UpdateNeighborSocketDisconnection(PeerId closedPeer);
+        void UpdateNeighborSocketDisconnection(int closedSocketfd);
+
     };
 
 

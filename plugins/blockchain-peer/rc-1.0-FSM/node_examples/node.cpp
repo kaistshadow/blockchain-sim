@@ -1,7 +1,9 @@
 #include "mainmodules/MainEventManager.h"
 #include "datamodules/Peer.h"
+#include "datamodules/Message.h"
 
 #include "utility/ArgsManager.h"
+
 
 using namespace libBLEEP;
 
@@ -12,6 +14,7 @@ using namespace libBLEEP;
 // implement event loop's appendNewNeighborPeer, GenerateTx
 
 // TODO(0331) : step-by-step visualization, implement asyncGenerateTx
+// TODO(0401) : Refactoring for socket closeEvent handling (use recvMsg?)
 // TODO : SendMessage, recvMessage
 
 int main(int argc, char *argv[]) {
@@ -61,6 +64,16 @@ int main(int argc, char *argv[]) {
                 std::cout << "random transaction generated" << "\n";
                 boost::shared_ptr<Transaction> generatedTx = mainEventManager.GetAsyncEventDataManager().GetGeneratedTx();
                 std::cout << *generatedTx << "\n";
+            }
+        case AsyncEventEnum::RecvMessage:
+            {
+                std::cout << "RecvMessage" << "\n";
+                std::shared_ptr<Message> msg = mainEventManager.GetAsyncEventDataManager().GetReceivedMsg();
+                MessageType messageType = msg->GetType();
+                if (messageType == "newTx") {
+                    boost::shared_ptr<Transaction> receivedTx = GetDeserializedTransaction(msg->GetPayload());
+                    std::cout << *receivedTx << "\n";
+                }
             }
         }
     }

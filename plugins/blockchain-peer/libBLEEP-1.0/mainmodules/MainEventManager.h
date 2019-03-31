@@ -18,6 +18,7 @@ namespace libBLEEP {
         CompleteAsyncConnectPeer,
         ErrorAsyncConnectPeer,
         CompleteAsyncGenerateRandomTransaction,
+        RecvMessage,
     };
 
     class AsyncEventDataManager {
@@ -32,6 +33,9 @@ namespace libBLEEP {
 
         // data for CompleteAsyncGenerateRandomTransaction
         boost::shared_ptr<Transaction> _generatedTx;
+
+        // data for RecvMessage
+        std::shared_ptr<Message> _receivedMsg;
         
     public:
         // data set function for CompleteAsyncConnectPeer
@@ -53,6 +57,10 @@ namespace libBLEEP {
         // data access function for CompleteAsyncGenerateRandomTransaction
         boost::shared_ptr<Transaction> GetGeneratedTx() { return _generatedTx; }
 
+        // data set function for CompleteAsyncGenerateRandomTransaction
+        void SetReceivedMsg(std::shared_ptr<Message> msg) { _receivedMsg = msg; }
+        // data access function for CompleteAsyncGenerateRandomTransaction
+        std::shared_ptr<Message> GetReceivedMsg() { return _receivedMsg; }
     };
 
     class MainEventManager {
@@ -154,7 +162,10 @@ namespace libBLEEP {
         bool AsyncConnectPeer(PeerId id, double time = 0);
 
         /* asynchronous API that sends a given message to proper peer(s) */
-        void SendMessage(Message message);
+        /* If the valid socket connection exists for given PeerId, 
+           the function immediately returns false */
+        /* There's no separate complete event for this API */
+        bool UnicastMessage(PeerId dest, std::shared_ptr<Message> message);
 
         /* asynchronous API that requests a random generated transaction 
            Argument 'time' specifies the waiting time. 
@@ -171,7 +182,7 @@ namespace libBLEEP {
            for managing the asynchronous function call data.
            Current list of supported asynchronous function calls : 
              1) AsyncConnectPeer (supported at 20190328)
-             2) AsyncGenerateRandomTransaction (supported at ??) */
+             2) AsyncGenerateRandomTransaction (supported at 20190331) */
         /*********************************************************/
         
         // for managing AsyncConnectPeer's requested data

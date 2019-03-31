@@ -49,6 +49,21 @@ bool MainEventManager::AsyncConnectPeer(PeerId id, double time) {
     }     
 }
 
+bool MainEventManager::UnicastMessage(PeerId dest, std::shared_ptr<Message> message) {
+    // check whether there exists a data socket for the destination peer
+    std::shared_ptr<PeerInfo> peerInfo = peerManager.GetPeerInfo(dest);
+    if (!peerInfo || peerInfo->GetSocketStatus() != SocketStatus::SocketConnected)
+        return false;
+    
+    // get datasocket
+    int socketFD = peerInfo->GetSocketFD();
+    std::shared_ptr<DataSocket> dataSocket = dataSocketManager.GetDataSocket(socketFD);
+    
+    // append a message to socket
+    dataSocket->AppendMessageToSendBuff(message);
+    return true;
+}
+
 void MainEventManager::AsyncGenerateRandomTransaction(double time) {
     new AsyncGenerateRandomTransactionTimer(time, this);
 }
@@ -196,6 +211,84 @@ void MainEventManager::_HandleNetworkEvents() {
                 _dataManager.SetConnectedSocketFD(connectedSocketFD);
 
                 return;
+            }
+        }
+    }
+
+    // check dataSocket event
+    if (dataSocketManager.IsEventTriggered()) {
+        switch (dataSocketManager.GetEventType()) {
+        case SocketEventEnum::readEvent:
+            {
+                int fd = dataSocketManager.GetEventTriggeredFD();
+                dataSocketManager.ClearEventTriggered(); // clear 
+
+                std::shared_ptr<DataSocket> dataSocket = dataSocketManager.GetDataSocket(fd);
+
+                // overall process of receiving data
+                // retrieve raw stream data from socket and append them into recvBuffer
+                // retrieve Message from recvBuffer if possible
+                // return Message as asynchronous event
+
+                std::shared_ptr<Message> message = dataSocket->DoRecv();
+                if (message) {  
+                    // set asynchronous event
+                    _asyncEventTriggered = true;
+                    _nextAsyncEvent = AsyncEventEnum::RecvMessage;
+                    _dataManager.SetReceivedMsg(message);
+                } else {
+                    // check whether the close event is triggered during DoRecv
+                    if (dataSocketManager.IsEventTriggered()) {
+                        switch (dataSocketManager.GetEventType()) {
+                        case SocketEventEnum::none:
+                        case SocketEventEnum::readEvent:
+                        case SocketEventEnum::writeEvent:
+                            {
+                                std::cout << "invalid event is triggered. " << "\n";
+                                exit(-1);
+                            }
+                        case SocketEventEnum::closeEvent:
+                            {
+                                int socketFD = dataSocketManager.GetEventTriggeredFD();
+                                dataSocketManager.ClearEventTriggered(); // clear 
+                                dataSocketManager.RemoveDataSocket(socketFD);
+
+                                // update peermanager for closed socket
+                                peerManager.UpdateNeighborSocketDisconnection(socketFD);
+                            }
+                        }
+                    }
+                    
+                }
+                return;
+            }
+        case SocketEventEnum::writeEvent:
+            {
+                int fd = dataSocketManager.GetEventTriggeredFD();
+                dataSocketManager.ClearEventTriggered(); // clear 
+
+                std::shared_ptr<DataSocket> dataSocket = dataSocketManager.GetDataSocket(fd);
+
+                // overall process of sending data
+                // 1. serialize data as payload, to make generic Message containing the payload
+                // 2. serialize Message, and push it to sendBuffer
+                // 3. retrieve raw data from sendBuffer and send them into socket.
+                
+                // write data to dataSocket
+                dataSocket->DoSend();
+    
+                return;
+            }
+        case SocketEventEnum::none:
+            {
+                std::cout << "invalid event is triggered. " << "\n";
+                exit(-1);
+            }
+        case SocketEventEnum::closeEvent:
+            {
+                std::cout << "invalid event is triggered. " << "\n";
+                std::cout << "currently not support close socket. " << "\n";
+                exit(-1);
             }
         }
     }

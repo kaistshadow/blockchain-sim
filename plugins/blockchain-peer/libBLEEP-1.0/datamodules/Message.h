@@ -52,8 +52,12 @@ namespace libBLEEP {
     // functions for serialization
     std::string GetSerializedString(std::shared_ptr<Transaction> tx);
     std::string GetSerializedString(std::shared_ptr<SimpleTransaction> tx);
+    std::string GetSerializedString(boost::shared_ptr<Transaction> tx);
+    std::string GetSerializedString(boost::shared_ptr<SimpleTransaction> tx);
     std::string GetSerializedString(std::shared_ptr<Block> msg);
 
+    boost::shared_ptr<Transaction> GetDeserializedTransaction(std::string str);
+    std::shared_ptr<Block> GetDeserializedBlock(std::string str);
     std::shared_ptr<Block> GetDeserializedPayload(std::string str);
 
 }

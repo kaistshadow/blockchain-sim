@@ -1,7 +1,9 @@
 #include "mainmodules/MainEventManager.h"
 #include "datamodules/Peer.h"
+#include "datamodules/Message.h"
 
 #include "utility/ArgsManager.h"
+#include "utility/Assert.h"
 
 using namespace libBLEEP;
 
@@ -56,8 +58,27 @@ int main(int argc, char *argv[]) {
             {
                 std::cout << "random transaction generated" << "\n";
                 boost::shared_ptr<Transaction> generatedTx = mainEventManager.GetAsyncEventDataManager().GetGeneratedTx();
+
                 std::cout << *generatedTx << "\n";
+
+                PeerId myPeerId(gArgs.GetArg("-id", "noid"));
+                std::string payload = GetSerializedString(generatedTx);
+                for (auto neighborId : gArgs.GetArgs("-connect")) {
+                    PeerId destPeerId(neighborId);
+                    std::shared_ptr<Message> msg = std::make_shared<Message>(myPeerId, destPeerId, 
+                                                                             "newTx", payload);
+                    mainEventManager.UnicastMessage(destPeerId, msg);
+                }
+
+                // Call another request, i.e., periodically generate transaction
                 mainEventManager.AsyncGenerateRandomTransaction(gArgs.GetArg("-txgeninterval", 0));
+                break;
+            }
+        case AsyncEventEnum::RecvMessage:
+            {
+                std::cout << "RecvMessage" << "\n";
+                M_Assert(0, "why client received message?");
+                break;
             }
         }
     }

@@ -24,15 +24,6 @@ namespace libBLEEP {
         void AddTxs(std::list<boost::shared_ptr<Transaction> > txs);
 
 
-
-        // functions for argument passing between states
-    private:
-        std::shared_ptr<Transaction> _newly_received_tx;
-
-    public:
-        void SetNewlyReceivedTx(std::shared_ptr<Transaction> tx) { _newly_received_tx = tx; }
-        void ClearNewlyReceivedTx() { _newly_received_tx = nullptr; }
-        
     };
 
 }

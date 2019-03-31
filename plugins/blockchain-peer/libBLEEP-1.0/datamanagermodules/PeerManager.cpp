@@ -79,6 +79,27 @@ std::shared_ptr<PeerInfo> libBLEEP::PeerManager::AppendConnectedNeighborPeer(Pee
     return peerPtr;
 }
 
+void libBLEEP::PeerManager::UpdateNeighborSocketDisconnection(PeerId peer) {
+    auto it = _neighborPeers.find(peer);
+    M_Assert(it != _neighborPeers.end(), "Not existed peer is disconnected?!");
+
+    std::shared_ptr<PeerInfo> peerInfo = it->second;
+    peerInfo->SetSocketFD(-1);
+    peerInfo->SetSocketStatus(SocketStatus::SocketDisconnected);
+}
+
+void libBLEEP::PeerManager::UpdateNeighborSocketDisconnection(int socketfd) {
+    auto it = std::find_if(_neighborPeers.begin(), _neighborPeers.end(),
+                           [socketfd](const std::pair<PeerId, std::shared_ptr<PeerInfo> > & t) -> bool {
+                               return t.second->GetSocketFD() == socketfd;
+                          } );
+    M_Assert(it != _neighborPeers.end(), "Not existed peer is disconnected!");
+
+    std::shared_ptr<PeerInfo> peerInfo = it->second;
+    peerInfo->SetSocketFD(-1);
+    peerInfo->SetSocketStatus(SocketStatus::SocketDisconnected);
+}
+
 
 // void libBLEEP::PeerManager::UpdateNeighborSocketConnection(PeerId peer, int socketfd) {
 //     PeerInfo& info = _neighborPeers[peer];

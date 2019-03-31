@@ -394,6 +394,7 @@ StateEnum doublenode_blockchain_machine::readableSocketStateHandler() {
             case SocketEventEnum::closeEvent:
                 {
                     int socketFD = dataSocketManager.GetEventTriggeredFD();
+                    dataSocketManager.ClearEventTriggered(); // clear 
                     dataSocketManager.RemoveDataSocket(socketFD);
                     break;
                 }

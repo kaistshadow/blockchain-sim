@@ -53,10 +53,10 @@
     <application plugin="CLIENT" time="15" arguments="-id=client0 -connect=bleep0 -txgeninterval=5" />
   </node>
   <node id="client1">
-    <application plugin="CLIENT" time="15" arguments="-id=client1 -connect=bleep0" />
+    <application plugin="CLIENT" time="15" arguments="-id=client1 -connect=bleep0 -txgeninterval=11" />
   </node>
   <node id="client2">
-    <application plugin="CLIENT" time="15" arguments="-id=client2 -connect=bleep1" />
+    <application plugin="CLIENT" time="15" arguments="-id=client2 -connect=bleep1 -txgeninterval=10" />
   </node>
 
 

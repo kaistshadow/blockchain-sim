@@ -1,5 +1,7 @@
 #include "MainEventManager.h"
+#include "../datamodules/Message.h"
 #include "../utility/Assert.h"
+#include "shadow_interface.h"
 
 // #include <sys/types.h>
 #include <sys/socket.h>
@@ -61,6 +63,15 @@ bool MainEventManager::UnicastMessage(PeerId dest, std::shared_ptr<Message> mess
     
     // append a message to socket
     dataSocket->AppendMessageToSendBuff(message);
+
+    // append shadow log
+    char buf[256];
+    sprintf(buf, "UnicastMessage,%s,%s,%s", 
+            message->GetSource().GetId().c_str(), 
+            message->GetDest().GetId().c_str(),
+            message->GetType().c_str());
+    shadow_push_eventlog(buf);
+
     return true;
 }
 
@@ -236,6 +247,15 @@ void MainEventManager::_HandleNetworkEvents() {
                     _asyncEventTriggered = true;
                     _nextAsyncEvent = AsyncEventEnum::RecvMessage;
                     _dataManager.SetReceivedMsg(message);
+
+                    // append shadow log
+                    char buf[256];
+                    sprintf(buf, "RecvMessage,%s,%s,%s", 
+                            message->GetSource().GetId().c_str(), 
+                            message->GetDest().GetId().c_str(),
+                            message->GetType().c_str());
+                    shadow_push_eventlog(buf);
+
                 } else {
                     // check whether the close event is triggered during DoRecv
                     if (dataSocketManager.IsEventTriggered()) {

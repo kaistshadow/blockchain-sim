@@ -14,8 +14,11 @@ using namespace libBLEEP;
 // implement event loop's appendNewNeighborPeer, GenerateTx
 
 // TODO(0331) : step-by-step visualization, implement asyncGenerateTx
-// TODO(0401) : Refactoring for socket closeEvent handling (use recvMsg?)
-// TODO : SendMessage, recvMessage
+// TODO(0331) : SendMessage, recvMessage
+// TODO(0401) : Change PeerManager to PeerConnManager. Support disconnect API
+// TODO(0401) : Refactoring for socket closeEvent handling (use recvMsg instead of recv?)
+
+
 
 int main(int argc, char *argv[]) {
 

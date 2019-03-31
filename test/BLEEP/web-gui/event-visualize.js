@@ -1,7 +1,7 @@
 var nodesTable = null;
 var linksTable = null;
 var network = null;
-var ImgDIR = 'link_network/examples/img/soft-scraps-icons/';
+var ImgDIR = 'link_network/img/';
 
 var startButton = document.getElementById('ex1-start');
 startButton.addEventListener('click', drawVisualization);
@@ -28,7 +28,16 @@ var muObserver = new MutationObserver(function(mutations) {
                     var from = eventargs.split(",")[0];
                     var to = eventargs.split(",")[1];
                     addEdge(from, to);
+                } else if (eventtype === "UnicastMessage") {
+                    var from = eventargs.split(",")[0];
+                    var to = eventargs.split(",")[1];
+                    sendMessage(from, to);
+                } else if (eventtype === "RecvMessage") {
+                    var from = eventargs.split(",")[0];
+                    var to = eventargs.split(",")[1];
+                    recvMessage(from, to);
                 }
+                
             }
         }
             
@@ -111,6 +120,44 @@ function sendTransaction(from, to) {
         alert(err);
     }
 }      
+
+function recvMessage(from, to) {
+    try {
+        var packagesTable = new google.visualization.DataTable();
+        packagesTable.addColumn('string', 'id');
+        packagesTable.addColumn('string', 'from');
+        packagesTable.addColumn('string', 'to');        
+        packagesTable.addColumn('number', 'progress');        
+        packagesTable.addColumn('number', 'duration');        
+        packagesTable.addColumn('string', 'action');        
+        packagesTable.addRow([from+to, undefined, undefined, undefined, undefined, 'delete']);
+        network.addPackages(packagesTable);
+
+        packagesTable.removeRow(0);
+        packagesTable.addRow([from+to, from, to, undefined, 1, 'create']);
+        network.addPackages(packagesTable);
+    }
+    catch(err) {
+        alert(err);
+    }
+}
+
+function sendMessage(from, to) {
+    try {
+        var packagesTable = new google.visualization.DataTable();
+        packagesTable.addColumn('string', 'id');
+        packagesTable.addColumn('string', 'from');
+        packagesTable.addColumn('string', 'to');        
+        packagesTable.addColumn('number', 'progress');        
+        packagesTable.addColumn('number', 'duration');      
+        packagesTable.addColumn('string', 'action');          
+        packagesTable.addRow([from+to, from, to, 0.001 ,undefined, 'create']);
+        network.addPackages(packagesTable);
+    }
+    catch(err) {
+        alert(err);
+    }
+}
 
 function addNode(nodeid) {
     // Create and populate a data table.

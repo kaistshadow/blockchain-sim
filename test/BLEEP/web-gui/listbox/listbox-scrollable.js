@@ -11,6 +11,8 @@
 window.addEventListener('load', function () {
   var exListbox = new aria.Listbox(document.getElementById('ss_elem_list'));
 
+  exListbox.enableStart(document.getElementById('ex1-start'));
+
   exListbox.enableMoveUpDown(
     document.getElementById('ex1-up'),
     document.getElementById('ex1-down')

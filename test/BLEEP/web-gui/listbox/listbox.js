@@ -50,7 +50,7 @@ aria.Listbox.prototype.setupFocus = function () {
     return;
   }
 
-  this.focusFirstItem();
+  // this.focusFirstItem();
 };
 
 /**
@@ -260,10 +260,10 @@ aria.Listbox.prototype.findMatchInRange = function (list, startIndex, endIndex) 
  *  The click event object
  */
 aria.Listbox.prototype.checkClickItem = function (evt) {
-  if (evt.target.getAttribute('role') === 'option') {
-    this.focusItem(evt.target);
-    this.toggleSelectItem(evt.target);
-  }
+  // if (evt.target.getAttribute('role') === 'option') {
+  //   this.focusItem(evt.target);
+  //   this.toggleSelectItem(evt.target);
+  // }
 };
 
 /**
@@ -454,13 +454,15 @@ aria.Listbox.prototype.clearActiveDescendant = function () {
 aria.Listbox.prototype.focusNextItem = function () {
     var currentItem = document.getElementById(this.activeDescendant);
     var nextItem = currentItem.nextElementSibling;
-    this.focusItem(nextItem);
+    if (nextItem)
+        this.focusItem(nextItem);
 };
 
 aria.Listbox.prototype.focusPrevItem = function () {
     var currentItem = document.getElementById(this.activeDescendant);
-    var nextItem = currentItem.previousElementSibling;
-    this.focusItem(nextItem);
+    var prevItem = currentItem.previousElementSibling;
+    if (prevItem)
+        this.focusItem(prevItem);
 };
 
 /**
@@ -541,6 +543,14 @@ aria.Listbox.prototype.enableMoveUpDown = function (upButton, downButton) {
   // upButton.addEventListener('click', this.moveUpItems.bind(this));
   // downButton.addEventListener('click', this.moveDownItems.bind(this));
 };
+
+/* Enable startfromBeginning control*/
+aria.Listbox.prototype.enableStart = function (startButton) {
+  startButton.addEventListener('click', this.focusFirstItem.bind(this));
+  // upButton.addEventListener('click', this.moveUpItems.bind(this));
+  // downButton.addEventListener('click', this.moveDownItems.bind(this));
+};
+
 
 /**
  * @desc

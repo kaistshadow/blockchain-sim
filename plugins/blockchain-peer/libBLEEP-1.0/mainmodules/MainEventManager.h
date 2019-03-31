@@ -162,13 +162,13 @@ namespace libBLEEP {
         bool AsyncConnectPeer(PeerId id, double time = 0);
 
         /* asynchronous API that sends a given message to proper peer(s) */
-        /* If the valid socket connection exists for given PeerId, 
+        /* If the valid socket connection does not exist for given PeerId, 
            the function immediately returns false */
         /* There's no separate complete event for this API */
         bool UnicastMessage(PeerId dest, std::shared_ptr<Message> message);
 
-        /* asynchronous API that requests a random generated transaction 
-           Argument 'time' specifies the waiting time. 
+        /* asynchronous API that requests a random generated transaction */
+        /* Argument 'time' specifies the waiting time. 
            If the 'time' is greater than 0, the transaction will be generated 
            after the given 'time' is passed. */
         /* When the task is complete, 'complete event' will be triggered. */

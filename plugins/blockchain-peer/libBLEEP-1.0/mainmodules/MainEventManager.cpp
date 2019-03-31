@@ -49,6 +49,10 @@ bool MainEventManager::AsyncConnectPeer(PeerId id, double time) {
     }     
 }
 
+void MainEventManager::AsyncGenerateRandomTransaction(double time) {
+    new AsyncGenerateRandomTransactionTimer(time, this);
+}
+
 void MainEventManager::_HandleShadowEvents() {
     if (!shadowPipeManager.IsEventTriggered()) {
         printf("No event triggered for user(shadow)-io!\n");

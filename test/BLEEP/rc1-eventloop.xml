@@ -50,7 +50,7 @@
   </node>
 
   <node id="client0">
-    <application plugin="CLIENT" time="15" arguments="-id=client0 -connect=bleep0" />
+    <application plugin="CLIENT" time="15" arguments="-id=client0 -connect=bleep0 -txgeninterval=5" />
   </node>
   <node id="client1">
     <application plugin="CLIENT" time="15" arguments="-id=client1 -connect=bleep0" />

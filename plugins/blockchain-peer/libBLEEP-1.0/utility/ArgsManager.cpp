@@ -90,6 +90,9 @@ std::string ArgsManager::HelpMessage() {
     strUsage += HelpMessageGroup("Node Network Options:");
     strUsage += HelpMessageOpt("-connect=<id>", "Specify the neighbor id (ex. domain or ip) for connection. ");
 
+    strUsage += HelpMessageGroup("Injector Options:");
+    strUsage += HelpMessageOpt("-txgeninterval=<time>", "Specify the interval for randomly generated tx. ");
+
     return strUsage;
 }
 

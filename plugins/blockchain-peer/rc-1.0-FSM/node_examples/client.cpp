@@ -25,6 +25,10 @@ int main(int argc, char *argv[]) {
     for (auto neighborPeerId : gArgs.GetArgs("-connect"))
         mainEventManager.AsyncConnectPeer(PeerId(neighborPeerId));
 
+    if (gArgs.IsArgSet("-txgeninterval")) {
+        mainEventManager.AsyncGenerateRandomTransaction(gArgs.GetArg("-txgeninterval", 0));
+    }
+
     while(true) {
         mainEventManager.Wait(); // main event loop (wait for next event)
         
@@ -47,6 +51,13 @@ int main(int argc, char *argv[]) {
                 PeerId peerId = mainEventManager.GetAsyncEventDataManager().GetRefusedPeerId();                
                 mainEventManager.AsyncConnectPeer(peerId, 10);
                 break;
+            }
+        case AsyncEventEnum::CompleteAsyncGenerateRandomTransaction:
+            {
+                std::cout << "random transaction generated" << "\n";
+                boost::shared_ptr<Transaction> generatedTx = mainEventManager.GetAsyncEventDataManager().GetGeneratedTx();
+                std::cout << *generatedTx << "\n";
+                mainEventManager.AsyncGenerateRandomTransaction(gArgs.GetArg("-txgeninterval", 0));
             }
         }
     }

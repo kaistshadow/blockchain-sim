@@ -9,6 +9,7 @@
 #include "../datamanagermodules/PeerManager.h"
 
 #include "../datamodules/Peer.h"
+#include "../datamodules/Transaction.h"
 
 namespace libBLEEP {
 
@@ -16,6 +17,7 @@ namespace libBLEEP {
         none,
         CompleteAsyncConnectPeer,
         ErrorAsyncConnectPeer,
+        CompleteAsyncGenerateRandomTransaction,
     };
 
     class AsyncEventDataManager {
@@ -27,6 +29,9 @@ namespace libBLEEP {
         // data for ErrorAsyncConnectPeer event
         PeerId _refusedPeerId;
         int _error;
+
+        // data for CompleteAsyncGenerateRandomTransaction
+        boost::shared_ptr<Transaction> _generatedTx;
         
     public:
         // data set function for CompleteAsyncConnectPeer
@@ -42,6 +47,11 @@ namespace libBLEEP {
         // data access function for ErrorAsyncConnectPeer
         PeerId GetRefusedPeerId() { return _refusedPeerId; }
         int GetError() { return _error; }
+
+        // data set function for CompleteAsyncGenerateRandomTransaction
+        void SetGeneratedTx(boost::shared_ptr<Transaction> tx) { _generatedTx = tx; }
+        // data access function for CompleteAsyncGenerateRandomTransaction
+        boost::shared_ptr<Transaction> GetGeneratedTx() { return _generatedTx; }
 
     };
 
@@ -62,6 +72,33 @@ namespace libBLEEP {
                 _id = id;
                 _eventManager = manager;
                 _timer.set<AsyncConnectTimer, &AsyncConnectTimer::_timerCallback> (this);
+                _timer.set(time, 0.);
+                _timer.start();
+                std::cout << "timer started!" << "\n";
+            }
+        };
+
+        friend class AsyncGenerateRandomTransactionTimer;
+        class AsyncGenerateRandomTransactionTimer {
+        private:
+            ev::timer _timer; // destructor automatically stops the watcher
+            MainEventManager* _eventManager;
+            void _timerCallback(ev::timer &w, int revents) {
+                std::cout << "AsyncGenerateRandomTransaction timer callback executes!" << "\n";
+                srand((unsigned int)time(0));
+                int sender_id = rand() % 100;
+                int receiver_id = rand() % 100;
+                float amount = (float) (rand() % 10000);
+                boost::shared_ptr<Transaction> generatedTx(new SimpleTransaction(sender_id, receiver_id, amount));
+                _eventManager->_asyncEventTriggered = true;
+                _eventManager->_nextAsyncEvent = AsyncEventEnum::CompleteAsyncGenerateRandomTransaction;
+                _eventManager->_dataManager.SetGeneratedTx(generatedTx);
+                delete this;
+            }
+        public:
+            AsyncGenerateRandomTransactionTimer(double time, MainEventManager* manager) {
+                _eventManager = manager;
+                _timer.set<AsyncGenerateRandomTransactionTimer, &AsyncGenerateRandomTransactionTimer::_timerCallback> (this);
                 _timer.set(time, 0.);
                 _timer.start();
                 std::cout << "timer started!" << "\n";

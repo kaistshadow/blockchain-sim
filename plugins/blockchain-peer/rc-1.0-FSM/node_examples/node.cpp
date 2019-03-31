@@ -11,6 +11,9 @@ using namespace libBLEEP;
 
 // implement event loop's appendNewNeighborPeer, GenerateTx
 
+// TODO(0331) : step-by-step visualization, implement asyncGenerateTx
+// TODO : SendMessage, recvMessage
+
 int main(int argc, char *argv[]) {
 
     gArgs.ParseParameters(argc, argv);
@@ -52,6 +55,12 @@ int main(int argc, char *argv[]) {
                 PeerId peerId = mainEventManager.GetAsyncEventDataManager().GetRefusedPeerId();                
                 mainEventManager.AsyncConnectPeer(peerId, 10);
                 break;
+            }
+        case AsyncEventEnum::CompleteAsyncGenerateRandomTransaction:
+            {
+                std::cout << "random transaction generated" << "\n";
+                boost::shared_ptr<Transaction> generatedTx = mainEventManager.GetAsyncEventDataManager().GetGeneratedTx();
+                std::cout << *generatedTx << "\n";
             }
         }
     }

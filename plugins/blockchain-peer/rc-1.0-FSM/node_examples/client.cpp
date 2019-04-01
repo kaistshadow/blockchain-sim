@@ -86,6 +86,13 @@ int main(int argc, char *argv[]) {
                 std::cout << "NewPeerConnected requested from " << newConnectedNeighbor->GetId() << "\n";
                 break;
             }
+        case AsyncEventEnum::PeerDisconnected:
+            {
+                std::shared_ptr<PeerId> disconnectedNeighbor = mainEventManager.GetAsyncEventDataManager().GetDisconnectedPeerId();
+                std::cout << "Disconnection requested from " << disconnectedNeighbor->GetId() << "\n";
+
+                break;
+            }
         }
     }
 }

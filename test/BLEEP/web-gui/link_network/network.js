@@ -1739,6 +1739,7 @@ links.Network.prototype._createLink = function(properties) {
         index = this._findLink(id);
         if (index !== undefined) {
             oldLink = this.links[id];
+            link = this.links[index];
             link.from.detachLink(oldLink);
             link.to.detachLink(oldLink);
             this.links.splice(index, 1);

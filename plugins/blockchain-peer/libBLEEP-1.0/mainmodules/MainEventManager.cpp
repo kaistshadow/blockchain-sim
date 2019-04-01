@@ -79,6 +79,31 @@ void MainEventManager::AsyncGenerateRandomTransaction(double time) {
     new AsyncGenerateRandomTransactionTimer(time, this);
 }
 
+bool MainEventManager::DisconnectPeer(PeerId id) {
+    // check whether the socket connection exists for given peerId
+    std::shared_ptr<PeerInfo> peerInfo = peerManager.GetPeerInfo(id);
+    if (peerInfo == nullptr || peerInfo->GetSocketStatus() != SocketStatus::SocketConnected) {
+        // there's no valid socket connection for given peerId
+        return false;
+    }
+
+    int socketFD = peerInfo->GetSocketFD();
+
+    // remove dataSocket 
+    // it will automatically call destructor of DataSocket, thus automatically call close()
+    dataSocketManager.RemoveDataSocket(socketFD);
+
+    // update peermanager for closed socket
+    peerManager.UpdateNeighborSocketDisconnection(socketFD);
+
+    // append shadow log for connection establishment
+    char buf[256];
+    sprintf(buf, "DisconnectPeer,%s,%s", peerManager.GetMyPeerId()->GetId().c_str(), id.GetId().c_str());
+    shadow_push_eventlog(buf);
+
+    return true;
+}
+
 void MainEventManager::_HandleShadowEvents() {
     if (!shadowPipeManager.IsEventTriggered()) {
         printf("No event triggered for user(shadow)-io!\n");
@@ -322,6 +347,20 @@ void MainEventManager::_HandleNetworkEvents() {
                                 M_Assert(socketFD == fd, "closeEvent handling for different socket");
                                 dataSocketManager.ClearEventTriggered(); // clear 
                                 dataSocketManager.RemoveDataSocket(socketFD);
+
+                                std::shared_ptr<PeerId> disconnectedPeerId = peerManager.GetPeerIdBySocket(fd);
+
+                                if (disconnectedPeerId != nullptr) {
+                                    // set asynchronous event 
+                                    _asyncEventTriggered = true;
+                                    _nextAsyncEvent = AsyncEventEnum::PeerDisconnected;
+                                    _dataManager.SetDisconnectedPeer(disconnectedPeerId);
+                                }
+                                else {
+                                    // this case is possible
+                                    // when redundant connection is closed by remote peer 
+                                    std::cout << "Not existed peer's socket is closed" << "\n";
+                                }
 
                                 // update peermanager for closed socket
                                 peerManager.UpdateNeighborSocketDisconnection(socketFD);

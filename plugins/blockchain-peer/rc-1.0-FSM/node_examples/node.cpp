@@ -32,6 +32,8 @@ using namespace libBLEEP;
 
 
 int main(int argc, char *argv[]) {
+    // for testing DisconnectPeer API
+    int receivedMessageCount = 0;
 
     gArgs.ParseParameters(argc, argv);
 
@@ -89,12 +91,26 @@ int main(int argc, char *argv[]) {
                     boost::shared_ptr<Transaction> receivedTx = GetDeserializedTransaction(msg->GetPayload());
                     std::cout << *receivedTx << "\n";
                 }
+
+                // for testing DisconnectPeer API
+                receivedMessageCount++;
+                if (receivedMessageCount >= 5) {
+                    for (auto neighborPeerId : gArgs.GetArgs("-connect"))
+                        mainEventManager.DisconnectPeer(PeerId(neighborPeerId));
+                }
                 break;
             }
         case AsyncEventEnum::NewPeerConnected:
             {
                 std::shared_ptr<PeerId> newConnectedNeighbor = mainEventManager.GetAsyncEventDataManager().GetNewlyConnectedPeer();
                 std::cout << "NewPeerConnected requested from " << newConnectedNeighbor->GetId() << "\n";
+
+                break;
+            }
+        case AsyncEventEnum::PeerDisconnected:
+            {
+                std::shared_ptr<PeerId> disconnectedNeighbor = mainEventManager.GetAsyncEventDataManager().GetDisconnectedPeerId();
+                std::cout << "Disconnection requested from " << disconnectedNeighbor->GetId() << "\n";
 
                 break;
             }

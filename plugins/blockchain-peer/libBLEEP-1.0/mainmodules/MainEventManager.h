@@ -20,6 +20,7 @@ namespace libBLEEP {
         CompleteAsyncGenerateRandomTransaction,
         RecvMessage,
         NewPeerConnected,  /* connection estabilished by non-requested neighbor peer */
+        PeerDisconnected,  /* connection disconnected by remote peer */
     };
 
     class AsyncEventDataManager {
@@ -41,6 +42,9 @@ namespace libBLEEP {
 
         // data for NewPeerConnected 
         std::shared_ptr<PeerId> _newConnectedPeerId;
+
+        // data for PeerDisconnected
+        std::shared_ptr<PeerId> _disconnectedPeerId;
         
     public:
         // data set function for CompleteAsyncConnectPeer
@@ -64,15 +68,21 @@ namespace libBLEEP {
         // data access function for CompleteAsyncGenerateRandomTransaction
         boost::shared_ptr<Transaction> GetGeneratedTx() { return _generatedTx; }
 
-        // data set function for CompleteAsyncGenerateRandomTransaction
+        // data set function for RecvMessage
         void SetReceivedMsg(std::shared_ptr<Message> msg) { _receivedMsg = msg; }
-        // data access function for CompleteAsyncGenerateRandomTransaction
+        // data access function for RecvMessage
         std::shared_ptr<Message> GetReceivedMsg() { return _receivedMsg; }
 
-        // data set function for CompleteAsyncGenerateRandomTransaction
+        // data set function for NewPeerConnected
         void SetNewlyConnectedPeer(std::shared_ptr<PeerId> id) { _newConnectedPeerId = id; }
-        // data access function for CompleteAsyncGenerateRandomTransaction
+        // data access function for NewPeerConnected
         std::shared_ptr<PeerId> GetNewlyConnectedPeer() { return _newConnectedPeerId; }
+
+        // data set function for PeerDisconnected
+        void SetDisconnectedPeer(std::shared_ptr<PeerId> id) { _disconnectedPeerId = id; }
+        // data access function for PeerDisconnected
+        std::shared_ptr<PeerId> GetDisconnectedPeerId() { return _disconnectedPeerId; }
+
     };
 
     class MainEventManager {
@@ -187,6 +197,12 @@ namespace libBLEEP {
         /* 'complete event' offers randomly generate Transaction. */
         void AsyncGenerateRandomTransaction(double time);
 
+        /* synchronous API that requests a disconnection for given peer */
+        /* Since it's synchronous API, 
+           there's no separate complete event for this API */ 
+        /* If the valid socket connection does not exist for given PeerId, 
+           the function immediately returns false */
+        bool DisconnectPeer(PeerId id);
 
     private:
         /*********************************************************/

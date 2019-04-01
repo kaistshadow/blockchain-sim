@@ -28,6 +28,13 @@ var muObserver = new MutationObserver(function(mutations) {
                     var from = eventargs.split(",")[0];
                     var to = eventargs.split(",")[1];
                     addEdge(from, to);
+                }
+                else if (eventtype === "DisconnectPeer") {
+                    var from = eventargs.split(",")[0];
+                    var to = eventargs.split(",")[1];
+
+                    removeEdge(from, to);
+                    removeEdge(to, from);
                 } else if (eventtype === "UnicastMessage") {
                     var from = eventargs.split(",")[0];
                     var to = eventargs.split(",")[1];
@@ -68,11 +75,13 @@ function drawVisualization() {
 
 
     linksTable = new google.visualization.DataTable();
+    linksTable.addColumn('string', 'id');
     linksTable.addColumn('string', 'from');
     linksTable.addColumn('string', 'to');
     linksTable.addColumn('string', 'style');
     linksTable.addColumn('string', 'color');
     linksTable.addColumn('number', 'width');
+    linksTable.addColumn('string', 'action');
     // linksTable.addRow([3, 1, 'arrow', undefined, 1]);
     // linksTable.addRow([1, 4, 'moving-dot', undefined, 1]);
     // linksTable.addRow([1, 2, 'moving-arrows', undefined, 2]);
@@ -192,16 +201,43 @@ function addNode(nodeid) {
 
 function addEdge(from, to) {
     linksTable = new google.visualization.DataTable();
+    linksTable.addColumn('string', 'id');
     linksTable.addColumn('string', 'from');
     linksTable.addColumn('string', 'to');
     linksTable.addColumn('string', 'style');
     linksTable.addColumn('string', 'color');
     linksTable.addColumn('number', 'width');
+    linksTable.addColumn('string', 'action');
  
     if (from.startsWith("client"))
-        linksTable.addRow([from, to, 'line', "red", 1]); // undirected graph
+        linksTable.addRow([from+to, from, to, 'line', "red", 1, 'create']); // undirected graph
     else
-        linksTable.addRow([from, to, 'line', "black", 1]); // undirected graph
+        linksTable.addRow([from+to, from, to, 'line', "black", 1, 'create']); // undirected graph
 
     network.addLinks(linksTable);
+}
+
+function removeEdge(from, to) {
+    linksTable = new google.visualization.DataTable();
+    linksTable.addColumn('string', 'id');
+    linksTable.addColumn('string', 'from');
+    linksTable.addColumn('string', 'to');
+    linksTable.addColumn('string', 'style');
+    linksTable.addColumn('string', 'color');
+    linksTable.addColumn('number', 'width');
+    linksTable.addColumn('string', 'action');
+ 
+    // First, update edge for bi-direction
+    // linksTable.addRow([from+to, from, to, 'line', undefined, 1, 'create']); // undirected graph
+    // linksTable.addRow([to+from, to, from, 'line', undefined, 1, 'create']); // undirected graph
+
+
+    linksTable.addRow([from+to, from, to, 'line', undefined, 1, 'delete']); // undirected graph
+
+    // (catch err because linksTable returns error when we try to remove non-existed edge)
+    try {
+        network.addLinks(linksTable);
+    } catch(err) {
+
+    }
 }

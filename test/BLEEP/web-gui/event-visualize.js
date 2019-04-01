@@ -199,9 +199,9 @@ function addEdge(from, to) {
     linksTable.addColumn('number', 'width');
  
     if (from.startsWith("client"))
-        linksTable.addRow([from, to, 'arrow', "red", 1]);
+        linksTable.addRow([from, to, 'line', "red", 1]); // undirected graph
     else
-        linksTable.addRow([from, to, 'arrow', "black", 1]);
+        linksTable.addRow([from, to, 'line', "black", 1]); // undirected graph
 
     network.addLinks(linksTable);
 }

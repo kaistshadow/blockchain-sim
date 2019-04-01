@@ -80,6 +80,12 @@ int main(int argc, char *argv[]) {
                 M_Assert(0, "why client received message?");
                 break;
             }
+        case AsyncEventEnum::NewPeerConnected:
+            {
+                std::shared_ptr<PeerId> newConnectedNeighbor = mainEventManager.GetAsyncEventDataManager().GetNewlyConnectedPeer();
+                std::cout << "NewPeerConnected requested from " << newConnectedNeighbor->GetId() << "\n";
+                break;
+            }
         }
     }
 }

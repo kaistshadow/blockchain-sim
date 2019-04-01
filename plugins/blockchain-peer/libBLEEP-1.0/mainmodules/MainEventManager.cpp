@@ -67,8 +67,8 @@ bool MainEventManager::UnicastMessage(PeerId dest, std::shared_ptr<Message> mess
     // append shadow log
     char buf[256];
     sprintf(buf, "UnicastMessage,%s,%s,%s", 
-            message->GetSource().GetId().c_str(), 
-            message->GetDest().GetId().c_str(),
+            peerManager.GetMyPeerId()->GetId().c_str(),
+            dest.GetId().c_str(),
             message->GetType().c_str());
     shadow_push_eventlog(buf);
 
@@ -170,14 +170,6 @@ void MainEventManager::_HandleNetworkEvents() {
                     exit(-1); 
                 }
                 if (err) {
-                    if( ECONNREFUSED == err ) {
-                        // connection is refused 
-                        // M_Assert(0, "Connection is refused");
-                    } else if( ETIMEDOUT == err ) {
-                        // connection timeout
-                        M_Assert(0, "Connection is timeout");
-                    }
-
                     connectSocketManager.RemoveConnectSocket(fd);
 
                     // Get requested information (peerId)
@@ -193,6 +185,14 @@ void MainEventManager::_HandleNetworkEvents() {
                     _nextAsyncEvent = AsyncEventEnum::ErrorAsyncConnectPeer;
                     _dataManager.SetRefusedPeerId(refusedPeerId);
                     _dataManager.SetError(err);
+                    if ( ECONNREFUSED == err ) {
+                        _dataManager.SetErrorMsg("connection refused");
+                    } else if ( ETIMEDOUT == err) {
+                        _dataManager.SetErrorMsg("connection timeout");
+                    } else {
+                        M_Assert(0, "unknown connection error");       
+                    }
+
 
                     return;
                 }
@@ -201,7 +201,6 @@ void MainEventManager::_HandleNetworkEvents() {
                 // Convert connectSocket to dataSocket
                 connectSocketManager.RemoveConnectSocket(fd); /* remove connect socket structure */
                 dataSocketManager.CreateDataSocket(fd); /* create data socket structure */
-
 
                 // Get requested information (peerId)
                 auto it = std::find_if( _asyncConnectPeerRequests.begin(), _asyncConnectPeerRequests.end(),
@@ -212,14 +211,45 @@ void MainEventManager::_HandleNetworkEvents() {
                 int connectedSocketFD = it->second;
                 _asyncConnectPeerRequests.erase(it);
 
+                std::shared_ptr<PeerInfo> connPeer = peerManager.GetPeerInfo(connectedPeerId);
+                if (connPeer && connPeer->GetSocketStatus() == SocketStatus::SocketConnected) {
+                    // there already exists a connected neighbor peer. 
+                    // Thus remove newly generate dataSocket(since it's redundant)
+                    dataSocketManager.RemoveDataSocket(fd);
+
+                    // return ErrorAsyncConnectPeer (redundant connection)
+                    // set asynchronous event 
+                    _asyncEventTriggered = true;
+                    _nextAsyncEvent = AsyncEventEnum::ErrorAsyncConnectPeer;
+                    _dataManager.SetRefusedPeerId(connectedPeerId);
+                    _dataManager.SetError(-1); // since it's our customized error, there's no specific errno
+                    _dataManager.SetErrorMsg("redundant connection");
+
+                    return;
+                }
+
                 // Append connected peer information in peerManager
                 peerManager.AppendConnectedNeighborPeer(connectedPeerId, connectedSocketFD);
+                
+                /** send id notify message (First message after socket establishment)   **/
+                /** Of course, we use socket for sending this message.                  **/
+                /** However, this message is not visible to user of MainEventManager.   **/
+                std::shared_ptr<Message> firstMsg = std::make_shared<Message>(*peerManager.GetMyPeerId(),
+                                                                              connectedPeerId,
+                                                                              "notifyPeerId", "");
+                std::shared_ptr<DataSocket> dataSocket = dataSocketManager.GetDataSocket(fd);
+                dataSocket->AppendMessageToSendBuff(firstMsg);
 
                 // set asynchronous event 
                 _asyncEventTriggered = true;
                 _nextAsyncEvent = AsyncEventEnum::CompleteAsyncConnectPeer;
                 _dataManager.SetConnectedPeerId(connectedPeerId);
                 _dataManager.SetConnectedSocketFD(connectedSocketFD);
+
+                // append shadow log for connection establishment
+                char buf[256];
+                sprintf(buf, "ConnectPeer,%s,%s", peerManager.GetMyPeerId()->GetId().c_str(), connectedPeerId.GetId().c_str());
+                shadow_push_eventlog(buf);
 
                 return;
             }
@@ -242,17 +272,36 @@ void MainEventManager::_HandleNetworkEvents() {
                 // return Message as asynchronous event
 
                 std::shared_ptr<Message> message = dataSocket->DoRecv();
-                if (message) {  
+                if (message && message->GetType() == "notifyPeerId") {
+                    /** received id notify message (First message after socket establishment)   **/
+                    /** This message is intended to be not visible to user of MainEventManager. **/
+                    /** Thus, we don't set recvMessage asynchronous event.                      **/
+                    /** Instead, we only set newPeerConnected event.                            **/
+
+                    // append a peer information
+                    peerManager.AppendConnectedNeighborPeer(message->GetSource().GetId(), fd);
+
+                    // set asynchronous event 
+                    _asyncEventTriggered = true;
+                    _nextAsyncEvent = AsyncEventEnum::NewPeerConnected;
+                    std::shared_ptr<PeerId> newlyConnectedNeighborPeer = std::make_shared<PeerId>(message->GetSource());
+                    _dataManager.SetNewlyConnectedPeer(newlyConnectedNeighborPeer);
+                    return;
+                }
+                else if (message) {  
                     // set asynchronous event
                     _asyncEventTriggered = true;
                     _nextAsyncEvent = AsyncEventEnum::RecvMessage;
                     _dataManager.SetReceivedMsg(message);
 
                     // append shadow log
+                    std::shared_ptr<PeerId> neighborPeerId = peerManager.GetPeerIdBySocket(fd);
+                    M_Assert(neighborPeerId != nullptr, "no neighbor peer exists for given socket");
+
                     char buf[256];
                     sprintf(buf, "RecvMessage,%s,%s,%s", 
-                            message->GetSource().GetId().c_str(), 
-                            message->GetDest().GetId().c_str(),
+                            neighborPeerId->GetId().c_str(),
+                            peerManager.GetMyPeerId()->GetId().c_str(),
                             message->GetType().c_str());
                     shadow_push_eventlog(buf);
 
@@ -270,6 +319,7 @@ void MainEventManager::_HandleNetworkEvents() {
                         case SocketEventEnum::closeEvent:
                             {
                                 int socketFD = dataSocketManager.GetEventTriggeredFD();
+                                M_Assert(socketFD == fd, "closeEvent handling for different socket");
                                 dataSocketManager.ClearEventTriggered(); // clear 
                                 dataSocketManager.RemoveDataSocket(socketFD);
 

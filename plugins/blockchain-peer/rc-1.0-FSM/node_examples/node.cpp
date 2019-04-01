@@ -15,9 +15,20 @@ using namespace libBLEEP;
 
 // TODO(0331) : step-by-step visualization, implement asyncGenerateTx
 // TODO(0331) : SendMessage, recvMessage
-// TODO(0401) : Change PeerManager to PeerConnManager. Support disconnect API
-// TODO(0401) : Refactoring for socket closeEvent handling (use recvMsg instead of recv?)
+// TODO(0401) : Change PeerManager to PeerConnManager. Add NewPeerConnected event.
+// TODO(0402) : Support disconnect API
+// TODO(0402) : Refactoring for socket closeEvent handling (use recvMsg instead of recv?)
 
+// v1.0
+// TODO : Seperate API src,dest & msg src,dest (for broadcasting portability)
+// TODO : statmachine regtest
+// TODO : documentation for (Transaction, TxPool), (Block,LedgerManager), (PeerId, Message)
+//        (MainEventManager_v1), utility ArgsManager
+
+// TODO : connected neighbor peer already exists handling. -> remove redundent datasocket
+// TODO : NewPeerConnected event
+
+// 
 
 
 int main(int argc, char *argv[]) {
@@ -67,6 +78,7 @@ int main(int argc, char *argv[]) {
                 std::cout << "random transaction generated" << "\n";
                 boost::shared_ptr<Transaction> generatedTx = mainEventManager.GetAsyncEventDataManager().GetGeneratedTx();
                 std::cout << *generatedTx << "\n";
+                break;
             }
         case AsyncEventEnum::RecvMessage:
             {
@@ -77,6 +89,14 @@ int main(int argc, char *argv[]) {
                     boost::shared_ptr<Transaction> receivedTx = GetDeserializedTransaction(msg->GetPayload());
                     std::cout << *receivedTx << "\n";
                 }
+                break;
+            }
+        case AsyncEventEnum::NewPeerConnected:
+            {
+                std::shared_ptr<PeerId> newConnectedNeighbor = mainEventManager.GetAsyncEventDataManager().GetNewlyConnectedPeer();
+                std::cout << "NewPeerConnected requested from " << newConnectedNeighbor->GetId() << "\n";
+
+                break;
             }
         }
     }

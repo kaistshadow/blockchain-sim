@@ -19,6 +19,7 @@ namespace libBLEEP {
         ErrorAsyncConnectPeer,
         CompleteAsyncGenerateRandomTransaction,
         RecvMessage,
+        NewPeerConnected,  /* connection estabilished by non-requested neighbor peer */
     };
 
     class AsyncEventDataManager {
@@ -30,12 +31,16 @@ namespace libBLEEP {
         // data for ErrorAsyncConnectPeer event
         PeerId _refusedPeerId;
         int _error;
+        std::string _errorMsg;
 
         // data for CompleteAsyncGenerateRandomTransaction
         boost::shared_ptr<Transaction> _generatedTx;
 
         // data for RecvMessage
         std::shared_ptr<Message> _receivedMsg;
+
+        // data for NewPeerConnected 
+        std::shared_ptr<PeerId> _newConnectedPeerId;
         
     public:
         // data set function for CompleteAsyncConnectPeer
@@ -48,9 +53,11 @@ namespace libBLEEP {
         // data set function for ErrorAsyncConnectPeer
         void SetRefusedPeerId(PeerId id) { _refusedPeerId = id; }
         void SetError(int err) { _error = err; }
+        void SetErrorMsg(std::string errMsg) { _errorMsg = errMsg; }
         // data access function for ErrorAsyncConnectPeer
         PeerId GetRefusedPeerId() { return _refusedPeerId; }
         int GetError() { return _error; }
+        std::string GetErrorMsg() { return _errorMsg; }
 
         // data set function for CompleteAsyncGenerateRandomTransaction
         void SetGeneratedTx(boost::shared_ptr<Transaction> tx) { _generatedTx = tx; }
@@ -61,6 +68,11 @@ namespace libBLEEP {
         void SetReceivedMsg(std::shared_ptr<Message> msg) { _receivedMsg = msg; }
         // data access function for CompleteAsyncGenerateRandomTransaction
         std::shared_ptr<Message> GetReceivedMsg() { return _receivedMsg; }
+
+        // data set function for CompleteAsyncGenerateRandomTransaction
+        void SetNewlyConnectedPeer(std::shared_ptr<PeerId> id) { _newConnectedPeerId = id; }
+        // data access function for CompleteAsyncGenerateRandomTransaction
+        std::shared_ptr<PeerId> GetNewlyConnectedPeer() { return _newConnectedPeerId; }
     };
 
     class MainEventManager {

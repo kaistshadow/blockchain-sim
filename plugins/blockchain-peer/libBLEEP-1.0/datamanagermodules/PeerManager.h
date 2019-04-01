@@ -52,6 +52,9 @@ namespace libBLEEP {
         void InitMyPeerId(std::string id);
         std::shared_ptr<PeerId> GetMyPeerId();
 
+        /* get neighbor PeerId */
+        std::shared_ptr<PeerId> GetPeerIdBySocket(int socketfd);
+
         /* get method for neighbor Peer */
         std::shared_ptr<PeerInfo> GetPeerInfo(PeerId peer);
         std::shared_ptr<PeerInfo> GetPeerInfoBySocket(int socketfd);

@@ -6,7 +6,6 @@
 #include <iostream>
 #include <memory>
 #include "Configuration.h"
-#include "utility/NodeInfo.h"
 #include "utility/ArgsManager.h"
 #include "utility/GlobalClock.h"
 // #include "statemachine/examples/simple-idle-exit-machine/StateMachine.h"

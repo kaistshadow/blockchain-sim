@@ -67,6 +67,7 @@ void *writer_ABC(void*)
 
         ch++;
     }
+    return 0;
 }
 
 //This function continously writes small Alphabet into fd[1]
@@ -90,11 +91,13 @@ void *writer_abc(void*)
 
         ch++;
     }
+    return 0;
 }
 
 int main()
 {
-    pthread_t       tid1,tid2,tid3;
+    // pthread_t       tid1;
+    pthread_t       tid2,tid3;
     int             result;
 
     result = pipe2 (fd, 0);

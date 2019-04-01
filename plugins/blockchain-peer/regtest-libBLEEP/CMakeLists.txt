@@ -36,9 +36,7 @@ include_directories(${LIBBLEEP_INCLUDE_DIR})
 
 set(FSM_SRCS
   utility/GlobalClock.cpp
-  utility/NodeInfo.cpp
   utility/ArgsManager.cpp
-  crypto/SHA256.cpp
   # statemachine/examples/simple-idle-exit-machine/State.cpp
   # statemachine/examples/simple-idle-exit-machine/StateHandler.cpp
   # statemachine/examples/simple-idle-exit-machine/StateMachine.cpp
@@ -95,22 +93,5 @@ target_link_libraries(LOCAL_NODE_FSM -lpthread)
 target_link_libraries(LOCAL_NODE_FSM ${Boost_LIBRARIES})
 target_link_libraries(LOCAL_NODE_FSM SHADOW_INTERFACE)
 target_link_libraries(LOCAL_NODE_FSM BLEEP-1.0)
-
-
-## compile for shadow example
-add_shadow_plugin(NODE_bleep node_examples/node.cpp)
-install(TARGETS NODE_bleep DESTINATION plugins)
-target_link_libraries(NODE_bleep BLEEP-1.0)
-
-add_shadow_plugin(NODE_client node_examples/client.cpp)
-install(TARGETS NODE_client DESTINATION plugins)
-target_link_libraries(NODE_client BLEEP-1.0)
-
-## compile for local executable
-add_executable(LOCAL_NODE_bleep node_examples/node.cpp)
-target_link_libraries(LOCAL_NODE_bleep BLEEP-1.0)
-
-add_executable(LOCAL_NODE_client node_examples/client.cpp)
-target_link_libraries(LOCAL_NODE_client BLEEP-1.0)
 
 

@@ -64,12 +64,40 @@ else()
 endif()
 
 
-add_subdirectory(rc-1.0)
+if(BLEEP_DEBUG STREQUAL ON)
+  message(STATUS "Debug enabled.")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -std=c++11 -Wall -Werror")
+else(BLEEP_DEBUG STREQUAL ON)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror")
+endif(BLEEP_DEBUG STREQUAL ON)
 
-add_subdirectory(rc-1.0-FSM)
+
+## include libBLEEP
+set(LIBBLEEP_INCLUDE_DIR "${BLEEP_SRC_ROOT}/libBLEEP-1.0")
+message(STATUS "LIBBLEEP_INCLUDE_DIR = ${LIBBLEEP_INCLUDE_DIR}")
+include_directories(${LIBBLEEP_INCLUDE_DIR})
+
+## compile for shadow example
+add_shadow_plugin(NODE_bleep node.cpp)
+install(TARGETS NODE_bleep DESTINATION plugins)
+target_link_libraries(NODE_bleep BLEEP-1.0)
+
+add_shadow_plugin(NODE_client client.cpp)
+install(TARGETS NODE_client DESTINATION plugins)
+target_link_libraries(NODE_client BLEEP-1.0)
+
+## compile for local executable
+add_executable(LOCAL_NODE_bleep node.cpp)
+target_link_libraries(LOCAL_NODE_bleep BLEEP-1.0)
+
+add_executable(LOCAL_NODE_client client.cpp)
+target_link_libraries(LOCAL_NODE_client BLEEP-1.0)
+
 
 add_subdirectory(shadow_interface)
 
 add_subdirectory(libBLEEP-1.0)
+
+add_subdirectory(regtest-libBLEEP)
 
 add_subdirectory(test_nodes)

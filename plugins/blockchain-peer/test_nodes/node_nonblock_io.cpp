@@ -50,7 +50,7 @@ void NodeInit() {
 
     int 			sockfd;     /* listen on sock_fd */
     struct 	sockaddr_in 	my_addr;    /* my address information */
-    int 			sin_size;
+    // int 			sin_size;
 
     if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("socket");
@@ -100,7 +100,7 @@ void NodeLoop(char *servhostname) {
     struct 	sockaddr_in 	their_addr; /* connector's address information */
     int                         new_fd; /* new connection on new_fd */
     socklen_t 			sin_size;
-    int				last_fd;	/* Thelast sockfd that is connected	*/
+    // int				last_fd;	/* Thelast sockfd that is connected	*/
     char			string_read[255];
     int n;
     CONNECT_STATUS conn_status = IDLE;

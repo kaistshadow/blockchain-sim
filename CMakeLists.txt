@@ -19,8 +19,9 @@ set(CMAKE_ROOT_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 set(CMAKE_ROOT_BINARY_DIR ${CMAKE_BINARY_DIR})
 
 ## add shadow project
-set(CMAKE_SOURCE_DIR "${CMAKE_ROOT_SOURCE_DIR}/shadow")
-set(CMAKE_BINARY_DIR "${CMAKE_ROOT_BINARY_DIR}/shadow")
+# should not modify CMAKE_SOURCE_DIR, CMAKE_BINARY_DIR (https://stackoverflow.com/a/22220680)
+# set(CMAKE_SOURCE_DIR "${CMAKE_ROOT_SOURCE_DIR}/shadow")
+# set(CMAKE_BINARY_DIR "${CMAKE_ROOT_BINARY_DIR}/shadow")
 set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.shadow")
 set(CMAKE_EXTRA_INCLUDES "$ENV{HOME}/.shadow/include") # for glib-2.42
 set(CMAKE_EXTRA_LIBRARIES "$ENV{HOME}/.shadow/lib") # for glib-2.42
@@ -32,8 +33,8 @@ add_subdirectory(shadow)
 
 ## add shadow-plugin-bitcoin
 set(CMAKE_MODULE_PATH "${CMAKE_ROOT_SOURCE_DIR}/shadow/cmake" ${CMAKE_MODULE_PATH})
-set(CMAKE_SOURCE_DIR "${CMAKE_ROOT_SOURCE_DIR}/plugins/shadow-plugin-bitcoin")
-set(CMAKE_BINARY_DIR "${CMAKE_ROOT_BINARY_DIR}")
+# set(CMAKE_SOURCE_DIR "${CMAKE_ROOT_SOURCE_DIR}/plugins/shadow-plugin-bitcoin")
+# set(CMAKE_BINARY_DIR "${CMAKE_ROOT_BINARY_DIR}")
 set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.shadow")
 add_subdirectory(plugins/shadow-plugin-bitcoin)
 

@@ -110,4 +110,7 @@ target_link_libraries(NODE_client BLEEP-1.0)
 add_executable(LOCAL_NODE_bleep node_examples/node.cpp)
 target_link_libraries(LOCAL_NODE_bleep BLEEP-1.0)
 
+add_executable(LOCAL_NODE_client node_examples/client.cpp)
+target_link_libraries(LOCAL_NODE_client BLEEP-1.0)
+
 

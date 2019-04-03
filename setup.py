@@ -30,6 +30,7 @@ def prepare_shadow():
             os.system("wget http://ftp.gnome.org/pub/gnome/sources/glib/2.42/glib-2.42.1.tar.xz")
             os.system("tar xaf glib-2.42.1.tar.xz")
             os.system("cd glib-2.42.1; ./configure --prefix=%s; make; make install" % os.path.expanduser("~/.shadow"))
+            os.system("rm -rf glib-*")
         else:
             os.system("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0v5 libigraph0-dev cmake make xz-utils")
 

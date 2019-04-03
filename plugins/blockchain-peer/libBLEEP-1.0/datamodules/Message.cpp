@@ -22,45 +22,9 @@ std::ostream& libBLEEP::operator<<(std::ostream& os, const Message& msg) {
     return os;
 }
 
-std::string libBLEEP::GetSerializedString(std::shared_ptr<Transaction> tx) {
-    std::string serial_str;
-    Transaction* tx_ptr = tx.get();
-    // serialize obj into an std::string
-    boost::iostreams::back_insert_device<std::string> inserter(serial_str);
-    boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
-    boost::archive::binary_oarchive oa(s);
-    oa << tx_ptr;
-    s.flush();
-    return serial_str;
-}
-
-std::string libBLEEP::GetSerializedString(std::shared_ptr<SimpleTransaction> tx) {
-    std::string serial_str;
-    SimpleTransaction* tx_ptr = tx.get();
-    // serialize obj into an std::string
-    boost::iostreams::back_insert_device<std::string> inserter(serial_str);
-    boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
-    boost::archive::binary_oarchive oa(s);
-    oa << tx_ptr;
-    s.flush();
-    return serial_str;
-}
-
 std::string libBLEEP::GetSerializedString(boost::shared_ptr<Transaction> tx) {
     std::string serial_str;
     Transaction* tx_ptr = tx.get();
-    // serialize obj into an std::string
-    boost::iostreams::back_insert_device<std::string> inserter(serial_str);
-    boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
-    boost::archive::binary_oarchive oa(s);
-    oa << tx_ptr;
-    s.flush();
-    return serial_str;
-}
-
-std::string libBLEEP::GetSerializedString(boost::shared_ptr<SimpleTransaction> tx) {
-    std::string serial_str;
-    SimpleTransaction* tx_ptr = tx.get();
     // serialize obj into an std::string
     boost::iostreams::back_insert_device<std::string> inserter(serial_str);
     boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);

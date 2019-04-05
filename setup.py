@@ -38,20 +38,6 @@ def prepare_shadow():
         os.system("git submodule update shadow")
         os.system("mkdir ~/.shadow")
 
-def prepare_bitcoin_plugin():
-    bitcoin_plugin_path = "./plugins/shadow-plugin-bitcoin"
-
-    # cloning plugin repository (submodule)
-    os.system("git submodule init plugins/shadow-plugin-bitcoin")
-    os.system("git submodule update plugins/shadow-plugin-bitcoin")
-
-    # cloning bitcoin repository (submodule)
-    os.system("git -C %s submodule init" % bitcoin_plugin_path)
-    os.system("git -C %s submodule update" % bitcoin_plugin_path)
-    
-    # install dependencies
-    os.system("sudo apt-get install -y autoconf libtool libboost-all-dev libssl-dev libevent-dev")    
-
 def prepare_nodejs():
     nodejs_serv_path = "./test/BLEEP/web-gui"    
 
@@ -127,7 +113,6 @@ if __name__ == '__main__':
     
     if OPT_INSTALL:
         prepare_shadow()
-        prepare_bitcoin_plugin()
         prepare_nodejs()
         os.system("mkdir build; cd build; cmake %s ../; make; make install" % cmake_debug_opt)
         os.system("echo 'export PATH=$PATH:%s' >> ~/.bashrc && . ~/.bashrc" % os.path.expanduser("~/.shadow/bin"))

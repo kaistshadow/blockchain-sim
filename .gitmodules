@@ -1,6 +1,6 @@
 [submodule "shadow"]
 	path = shadow
 	url = https://github.com/kaistshadow/shadow
-[submodule "plugins/shadow-plugin-bitcoin"]
-	path = plugins/shadow-plugin-bitcoin
+[submodule "shadow-bitcoin/shadow-plugin-bitcoin"]
+	path = shadow-bitcoin/shadow-plugin-bitcoin
 	url = https://github.com/kaistshadow/shadow-plugin-bitcoin

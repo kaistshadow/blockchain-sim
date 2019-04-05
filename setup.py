@@ -10,7 +10,7 @@ def prepare_shadow():
         exit(0);
     else:
         print "Installing..."
-        
+
         # install dependencies
         os.system("sudo apt-get install libc-dbg")
         os.system("sudo apt-get install -y python python-pip python-matplotlib python-numpy python-scipy python-networkx python-lxml")
@@ -23,13 +23,14 @@ def prepare_shadow():
             os.system("wget http://ftp.gnome.org/pub/gnome/sources/glib/2.42/glib-2.42.1.tar.xz")
             os.system("tar xaf glib-2.42.1.tar.xz")
             os.system("cd glib-2.42.1; ./configure --prefix=%s; make; make install" % os.path.expanduser("~/.shadow"))
-        elif "Ubuntu 16.04" in check_output(["bash", "-c", "cat /etc/lsb-release | grep DESCRIPTION"]): 
+        elif "Ubuntu 16.04" in check_output(["bash", "-c", "cat /etc/lsb-release | grep DESCRIPTION"]):
             # currently, 16.04 also needs glib installation
             os.system("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0v5 libigraph0-dev cmake make xz-utils")
             print "Installing glib manually..."
             os.system("wget http://ftp.gnome.org/pub/gnome/sources/glib/2.42/glib-2.42.1.tar.xz")
             os.system("tar xaf glib-2.42.1.tar.xz")
             os.system("cd glib-2.42.1; ./configure --prefix=%s; make; make install" % os.path.expanduser("~/.shadow"))
+            os.system("rm -rf glib-*")
         else:
             os.system("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0v5 libigraph0-dev cmake make xz-utils")
 
@@ -48,12 +49,12 @@ def prepare_bitcoin_plugin():
     # cloning bitcoin repository (submodule)
     os.system("git -C %s submodule init" % bitcoin_plugin_path)
     os.system("git -C %s submodule update" % bitcoin_plugin_path)
-    
+
     # install dependencies
-    os.system("sudo apt-get install -y autoconf libtool libboost-all-dev libssl-dev libevent-dev")    
+    os.system("sudo apt-get install -y autoconf libtool libboost-all-dev libssl-dev libevent-dev")
 
 def prepare_nodejs():
-    nodejs_serv_path = "./test/BLEEP/web-gui"    
+    nodejs_serv_path = "./test/BLEEP/web-gui"
 
     os.system("curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -")
     os.system("sudo apt-get update")
@@ -81,7 +82,7 @@ def setup_multiple_node_xml(node_num):
     for i in range(node_num):
         node_id = "bcdnode%d" % (i)
 
-        node = ET.SubElement(shadow, "node", id=node_id)            
+        node = ET.SubElement(shadow, "node", id=node_id)
         time = str(5 + i/100)
         if i % 2 == 0:
             ET.SubElement(node, "application", plugin="bitcoind", time=time, arguments="-datadir=./data/bcdnode%d -debug -printtoconsole -listen -connect=bcdnode%d -disablewallet=1 -server=0"%(i, i+1))
@@ -89,17 +90,17 @@ def setup_multiple_node_xml(node_num):
             ET.SubElement(node, "application", plugin="bitcoind", time=time, arguments="-datadir=./data/bcdnode%d -debug -printtoconsole -listen -connect=bcdnode%d -disablewallet=1 -server=0"%(i, i-1))
 
     tree.write(new_xml, pretty_print=True)
-    
+
 def setup_injector_plugin():
     injector_plugin_path = "./injectors/shadow-injector-bitcoin"
     os.system("cd %s; mkdir build; cd build; cmake ../ -DSHADOW=ON; make; make install" % injector_plugin_path)
-    
+
 def run_shadow_bitcoin_injector_example():
     run_path = "plugins/shadow-plugin-bitcoin/run"
     os.system("mkdir -p %s" % run_path)
     os.system("mkdir -p %s/data/bcdnode1; mkdir -p %s/data/bcdnode2;" % (run_path, run_path))
     os.system("cd %s; shadow ../resource/example_injector.xml" % run_path)
-    
+
 def run_shadow_bitcoin_multiple_node(node_num, worker_num):
     run_path = "plugins/shadow-plugin-bitcoin/run"
     os.system("rm -rf %s/data/bcdnode*" % run_path)
@@ -120,17 +121,31 @@ if __name__ == '__main__':
     OPT_INJECTOR = args.injector
     OPT_TEST = args.test
     OPT_DEBUG = args.debug
-    
+
     cmake_debug_opt = "-DSHADOW_DEBUG=ON"
     if OPT_DEBUG:
         cmake_debug_opt = "-DSHADOW_DEBUG=ON"
-    
+
     if OPT_INSTALL:
         prepare_shadow()
         prepare_bitcoin_plugin()
         prepare_nodejs()
         os.system("mkdir build; cd build; cmake %s ../; make; make install" % cmake_debug_opt)
-        os.system("echo 'export PATH=$PATH:%s' >> ~/.bashrc && . ~/.bashrc" % os.path.expanduser("~/.shadow/bin"))
+
+        rcFile = os.path.expanduser("~/.bashrc")
+        f = open(rcFile, 'r')
+        shadowPath = "export PATH=$PATH:%s" % os.path.expanduser("~/.shadow/bin" )
+        needWrite = True
+        while True:
+	    line = f.readline()
+            if shadowPath in line:
+                needWrite = False
+                break
+            if not line:
+                break
+        if needWrite:
+            os.system("echo '%s' >> ~/.bashrc && . ~/.bashrc" % shadowPath)
+
         print "After installing the shadow, execute following commands on your bash. (type without dollor sign)"
         print "$ source ~/.bashrc"
 
@@ -146,4 +161,4 @@ if __name__ == '__main__':
     # setup_multiple_node_xml(100)
     # run_shadow_bitcoin_multiple_node(100, 1)
 
-    
+

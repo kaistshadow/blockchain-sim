@@ -1,0 +1,16 @@
+
+*.swp
+
+tags
+
+build/
+test/BLEEP/*-datadir/
+
+test/BLEEP/rc1-large.xml
+test/BLEEP/shadow.output
+test/BLEEP/web-gui/node_modules/
+test/BLEEP/web-gui/package-lock.json
+test/plugin-bitcoin/data/
+test/plugin-bitcoin/shadow.data/
+
+

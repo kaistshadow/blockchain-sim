@@ -32,7 +32,7 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="PEER" path="libNODE_FSM.so" />
+  <plugin id="PEER" path="/home/csrc/.bleep/plugins/libNODE_FSM.so" />
 
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="80" />
@@ -41,8 +41,6 @@
   <node id="bleep0">
     <application plugin="PEER" time="5" arguments="" />
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
-    <command id="registerListenSocket" starttime="5" arguments="" />
-    <command id="setAsLeader" starttime="5" arguments="" />
     <!-- <command id="broadcastMsg" starttime="22" arguments="hello world!" /> -->
     <command id="generateTx" starttime="50" arguments="2 2 30" />
     <command id="generateTx" starttime="50" arguments="2 2 30" />
@@ -70,32 +68,6 @@
     <command id="generateTx" starttime="60" arguments="3 2 34" />
 
   </node>
-
-  <node id="bleep1">
-    <application plugin="PEER" time="13" arguments="" />
-    <!-- <command id="setMyId" starttime="13" arguments="bleep1" /> -->
-    <command id="registerConnectSocket" starttime="13" arguments="bleep0" />
-    <command id="generateTx" starttime="50" arguments="1 2 30" />
-    <command id="generateTx" starttime="50" arguments="1 2 30" />
-    <command id="generateTx" starttime="51" arguments="1 2 30" />
-    <command id="generateTx" starttime="52" arguments="1 2 30" />
-    <command id="generateTx" starttime="52" arguments="1 2 30" />
-
-    <command id="generateTx" starttime="58" arguments="2 2 33" />
-    <command id="generateTx" starttime="58" arguments="2 2 33" />
-    <command id="generateTx" starttime="58" arguments="3 2 33" />
-    <command id="generateTx" starttime="58" arguments="4 2 33" />
-    <command id="generateTx" starttime="58" arguments="3 2 33" />
-
-
-    <command id="generateTx" starttime="60" arguments="2 2 35" />
-    <command id="generateTx" starttime="60" arguments="2 2 35" />
-    <command id="generateTx" starttime="60" arguments="3 2 35" />
-    <command id="generateTx" starttime="60" arguments="4 2 35" />
-    <command id="generateTx" starttime="60" arguments="3 2 35" />
-
-  </node>
-
 
   <!-- <node id="bleep1"> -->
   <!--   <application plugin="PEER_NONBLOCK_IO" time="13" arguments="bleep0"/> -->

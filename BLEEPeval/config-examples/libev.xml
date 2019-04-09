@@ -32,14 +32,19 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="PEER_PIPE" path="libPEER_PIPE.so" />
+  <plugin id="PEER_LIBEV_SERV" path="/home/csrc/.bleep/plugins/libPEER_LIBEV_SERV.so" />
+  <plugin id="PEER_LIBEV_CLIENT" path="/home/csrc/.bleep/plugins/libPEER_LIBEV_CLIENT.so" />
 
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="20" />
   <!-- our nodes -->
 
   <node id="bleep0">
-    <application plugin="PEER_PIPE" time="13" arguments="hello!" />
+    <application plugin="PEER_LIBEV_SERV" time="10" arguments="" />
+  </node>
+
+  <node id="bleep1">
+    <application plugin="PEER_LIBEV_CLIENT" time="13" arguments="bleep0" />
   </node>
 
 

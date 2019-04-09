@@ -5,7 +5,7 @@ import sys
 
 if __name__ == '__main__':
     datadir = "nonblock-io-datadir"
-    shadow_configfile = "nonblock-io.xml"
+    shadow_configfile = "config-examples/nonblock-io.xml"
     shadow_plugin = "PEER_NONBLOCK_IO"
 
     os.system("rm -rf %s" % datadir)

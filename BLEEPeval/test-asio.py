@@ -5,8 +5,8 @@ import sys
 
 
 if __name__ == '__main__':
-    datadir = "libev-datadir"
-    shadow_configfile = "libev.xml"
+    datadir = "asio-datadir"
+    shadow_configfile = "./config-examples/asio.xml"
 
     shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-d", datadir, shadow_configfile], stdout=PIPE)
 

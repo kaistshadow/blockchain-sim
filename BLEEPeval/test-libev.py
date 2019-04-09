@@ -5,9 +5,8 @@ import sys
 
 
 if __name__ == '__main__':
-    datadir = "pipe-datadir"
-    shadow_configfile = "pipe.xml"
-    shadow_plugin = "PEER_PIPE"
+    datadir = "libev-datadir"
+    shadow_configfile = "./config-examples/libev.xml"
 
     shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-d", datadir, shadow_configfile], stdout=PIPE)
 

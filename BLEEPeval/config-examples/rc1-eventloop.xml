@@ -32,19 +32,36 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="PEER_NONBLOCK_IO" path="libPEER_NONBLOCK_IO.so" />
+  <plugin id="NODE" path="/home/csrc/.bleep/plugins/libNODE_bleep.so" />
+  <plugin id="CLIENT" path="/home/csrc/.bleep/plugins/libNODE_client.so" />
+
 
   <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="20" />
+  <kill time="80" />
   <!-- our nodes -->
 
   <node id="bleep0">
-    <application plugin="PEER_NONBLOCK_IO" time="13" arguments="bleep1" />
+    <application plugin="NODE" time="5" arguments="-id=bleep0 -connect=bleep1" />
+    <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>
-
 
   <node id="bleep1">
-    <application plugin="PEER_NONBLOCK_IO" time="13" arguments="bleep0"/>
+    <application plugin="NODE" time="13" arguments="-id=bleep1 -connect=bleep0" />
   </node>
+
+  <node id="client0">
+    <application plugin="CLIENT" time="15" arguments="-id=client0 -connect=bleep0 -txgeninterval=5" />
+  </node>
+  <node id="client1">
+    <application plugin="CLIENT" time="15" arguments="-id=client1 -connect=bleep0 -txgeninterval=11" />
+  </node>
+  <node id="client2">
+    <application plugin="CLIENT" time="15" arguments="-id=client2 -connect=bleep1 -txgeninterval=10" />
+  </node>
+
+
+  <!-- <node id="bleep1"> -->
+  <!--   <application plugin="PEER_NONBLOCK_IO" time="13" arguments="bleep0"/> -->
+  <!-- </node> -->
 
 </shadow>

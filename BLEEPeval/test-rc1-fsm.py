@@ -5,9 +5,8 @@ import sys
 import lxml.etree as ET
 
 if __name__ == '__main__':
-    datadir = "rc1-eventloop-datadir"
-    shadow_configfile = "rc1-eventloop.xml"
-    shadow_plugin = "PEER"
+    datadir = "rc1-fsm-datadir"
+    shadow_configfile = "config-examples/rc1-fsm-singlenode.xml"
 
     os.system("rm -rf %s" % datadir)
 
@@ -25,7 +24,6 @@ if __name__ == '__main__':
         print l.strip()
         shadow_stdout_file.write(l)
     shadow_stdout_file.close()
-
     
     os.system("mv %s ./%s/%s" % (shadow_stdout_filename, datadir, shadow_stdout_filename))
     shadow_stdout_file = open("./%s/%s" % (datadir, shadow_stdout_filename),'r')

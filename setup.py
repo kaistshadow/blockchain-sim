@@ -36,7 +36,6 @@ def prepare_shadow():
         # cloning shadow repository (submodule)
         os.system("git submodule init shadow")
         os.system("git submodule update shadow")
-        os.system("mkdir ~/.shadow")
 
 def prepare_nodejs():
     nodejs_serv_path = "./test/BLEEP/web-gui"    
@@ -113,7 +112,7 @@ if __name__ == '__main__':
     
     if OPT_INSTALL:
         prepare_shadow()
-        prepare_nodejs()
+        # prepare_nodejs()
         os.system("mkdir build; cd build; cmake %s ../; make; make install" % cmake_debug_opt)
         os.system("echo 'export PATH=$PATH:%s' >> ~/.bashrc && . ~/.bashrc" % os.path.expanduser("~/.shadow/bin"))
         print "After installing the shadow, execute following commands on your bash. (type without dollor sign)"

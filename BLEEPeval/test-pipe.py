@@ -5,9 +5,8 @@ import sys
 
 
 if __name__ == '__main__':
-    datadir = "asio-datadir"
-    shadow_configfile = "asio.xml"
-    shadow_plugin = "PEER_ASIO"
+    datadir = "pipe-datadir"
+    shadow_configfile = "config-examples/pipe.xml"
 
     shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-d", datadir, shadow_configfile], stdout=PIPE)
 

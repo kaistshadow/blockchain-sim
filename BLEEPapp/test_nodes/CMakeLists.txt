@@ -24,6 +24,6 @@ target_link_libraries(PEER_LIBEV_CLIENT -lev)
 ## pipe test
 add_shadow_plugin(PEER_PIPE node_test_pipe.cpp)
 install(TARGETS PEER_PIPE DESTINATION plugins)
-target_link_libraries(PEER_PIPE -lpthread -lev SHADOW_INTERFACE)
+target_link_libraries(PEER_PIPE -lpthread -lev BLEEP::SHADOW_INTERFACE)
 add_executable(PEER_PIPE_LOCAL node_test_pipe.cpp)
-target_link_libraries(PEER_PIPE_LOCAL -lpthread -lev SHADOW_INTERFACE)
+target_link_libraries(PEER_PIPE_LOCAL -lpthread -lev BLEEP::SHADOW_INTERFACE)

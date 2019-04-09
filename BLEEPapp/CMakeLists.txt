@@ -62,4 +62,6 @@ add_executable(LOCAL_NODE_client client.cpp)
 target_link_libraries(LOCAL_NODE_client BLEEP::BLEEP)
 
 
+# add tests
+enable_testing()
 add_subdirectory(test_nodes)

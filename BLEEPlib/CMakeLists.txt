@@ -100,4 +100,6 @@ target_link_libraries(BLEEP ${Boost_LIBRARIES})
 
 add_subdirectory(shadow_interface)
 
+# add tests
+enable_testing()
 add_subdirectory(libtest)

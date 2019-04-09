@@ -6,11 +6,20 @@ install(TARGETS PEER_NONBLOCK_IO DESTINATION plugins)
 # target_link_libraries(PEER_NONBLOCK_IO_LOCAL ${Boost_LIBRARIES})
 target_link_libraries(PEER_NONBLOCK_IO ${Boost_LIBRARIES})
 
+add_test(NAME BLEEP-nonblock-io
+  COMMAND python test-nonblock-io.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../BLEEPeval)
+
 
 ## Asio test
 add_shadow_plugin(PEER_ASIO node_asio.cpp)
 install(TARGETS PEER_ASIO DESTINATION plugins)
 target_link_libraries(PEER_ASIO ${Boost_LIBRARIES})
+
+add_test(NAME BLEEP-asio
+  COMMAND python test-asio.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../BLEEPeval)
+
 
 ## libev test
 add_shadow_plugin(PEER_LIBEV_SERV node_libev_server.cpp )
@@ -20,6 +29,10 @@ target_link_libraries(PEER_LIBEV_SERV -lev)
 add_shadow_plugin(PEER_LIBEV_CLIENT node_libev_client.cpp )
 install(TARGETS PEER_LIBEV_CLIENT DESTINATION plugins)
 target_link_libraries(PEER_LIBEV_CLIENT -lev)
+
+add_test(NAME BLEEP-libev
+  COMMAND python test-libev.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../BLEEPeval)
 
 ## pipe test
 add_shadow_plugin(PEER_PIPE node_test_pipe.cpp)

@@ -81,3 +81,6 @@ target_link_libraries(LOCAL_NODE_FSM SHADOW_INTERFACE)
 target_link_libraries(LOCAL_NODE_FSM BLEEP)
 
 
+add_test(NAME BLEEP-FSM-singlenode
+  COMMAND python test-rc1-fsm.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../BLEEPeval)

@@ -41,6 +41,7 @@ ExternalProject_Add(shadow
 
 ## add BLEEP
 set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.bleep")
+enable_testing()
 
 add_subdirectory(BLEEPlib)
 add_subdirectory(BLEEPapp)

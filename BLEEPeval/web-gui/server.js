@@ -4,6 +4,14 @@
 // Optional. You will see this name in eg. 'ps' or 'top' command
 process.title = 'node-chat';
 
+var shadowoutputfile = '';
+
+process.argv.forEach(function (val, index, array) {
+    if (index == 2) {
+        shadowoutputfile = val;
+    }
+});
+
 // Port where we'll run the websocket server
 var webSocketsServerPort = 1337;
 
@@ -258,6 +266,9 @@ wsServer.on('request', function(request) {
     connection.sendUTF(JSON.stringify( {type: 'userindex', data: index}));
     connection.sendUTF(JSON.stringify( {type:'status', data: {operator:operatorIndex }  } ));
 
+    // send experiment's event logs
+    if (shadowoutputfile != '')
+        sendEventlogs(connection, shadowoutputfile);
 
     // user sent some message
     connection.on('message', function(message) {

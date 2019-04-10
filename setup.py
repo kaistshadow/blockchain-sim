@@ -38,7 +38,7 @@ def prepare_shadow():
         os.system("git submodule update shadow")
 
 def prepare_nodejs():
-    nodejs_serv_path = "./test/BLEEP/web-gui"    
+    nodejs_serv_path = "./BLEEPeval/web-gui"    
 
     os.system("curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -")
     os.system("sudo apt-get update")

@@ -209,10 +209,14 @@ function addEdge(from, to) {
     linksTable.addColumn('number', 'width');
     linksTable.addColumn('string', 'action');
  
-    if (from.startsWith("client"))
-        linksTable.addRow([from+to, from, to, 'line', "red", 1, 'create']); // undirected graph
-    else
-        linksTable.addRow([from+to, from, to, 'line', "black", 1, 'create']); // undirected graph
+    if (from.startsWith("client")) {
+        linksTable.addRow([from+to, from, to, 'arrow', "red", 1, 'create']); // undirected graph, but use arrow for fancy visualization
+        linksTable.addRow([to+from, to, from, 'arrow', "red", 1, 'create']); // undirected graph, but use arrow for fancy visualization
+    }
+    else {
+        linksTable.addRow([from+to, from, to, 'arrow', "black", 1, 'create']); // undirected graph, but use arrow for fancy visualization
+        linksTable.addRow([to+from, to, from, 'arrow', "black", 1, 'create']); // undirected graph, but use arrow for fancy visualization
+    }
 
     network.addLinks(linksTable);
 }

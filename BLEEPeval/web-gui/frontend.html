@@ -48,7 +48,6 @@
              min-height: 170px;
              background-color: #bbd2df;
          }
-
          .rightcontent{
              float: left;
              width: 50%;
@@ -131,40 +130,40 @@
                 <h1>BLEEP Web Interface</h1>
             </div>
             <div class="content">
-                <p>You can execute the blockchain experiment by typing 'run' on command box.</p>
+                <p>You can re-run the blockchain experiment by typing 'visualize' on command box.</p>
                 <p>The experiment will be automatically executed on back-end server.  </p>
             </div>
             <div class="wrapper">
                 <div class="leftcontent">
-                    <div class="nav">
-                        <h2> Command list </h2>
-                        <ul>
-                            <li>run : run blockchain experiment. You can configure the simulation parameters in below.</li>
-                            <!-- <p> --nodenum "value" : specify the number of blockchain peer node. It should be larger than 2.</p> -->
-                            <!-- <p> e.g. run --nodenum 100</p> -->
-                            <li> stop : stop the blockchain experiment. </li>
-                        </ul>
-                        <h2> Simulation Parameters </h2>
-                        <ul>
-                            <li>Node num: <input type="text"  id="nodenum" value="500" > </li>
-                            <li>Virtual simul time (s): <input type="text"  id="simultime" value="180" > </li>                            
-                            <li>Total number of injected tx : <input type="text"  id="txnum" value="150" > </li>                            
-                            <li>Block mining time avg (s): <input type="text"  id="miningtime" value="10" > </li>                            
-                            <li>Block mining time std.dev (s): <input type="text"  id="miningtimedev" value="2.0" > </li>                            
-                            <li>Internet topology <input type="text" id="internettopology" value="basic" > </li>
-                            
-                            
-                            <!-- <li>Node num : 500 (default)</li> 
-                                 <li>Virtual simulation time : 150 seconds</li>
-                                 <li>Network module : asynchronous centralized proxy</li> -->
-                        </ul>
-                        <h2> Simulation Info </h2>
-                        <ul>
-                            <li>message transferred?</li>
-                            <li>any valid infos? </li>
-                        </ul>
+                    <div class="listbox-area">
+                        <div class="left-area">
+                            <span id="ss_elem">
+                                Event logs:
+                            </span>
+                            <ul id="ss_elem_list"
+                                tabindex="0"
+                                role="listbox"
+                                aria-labelledby="ss_elem">
+                                <li id="ss_elem_Np" role="option">
+                                    InitMyPeerId
+                                </li>
+                                <li id="ss_elem_Pu" role="option">
+                                    ShadowPipe
+                                </li>
+                                <li id="ss_elem_Am" role="option">
+                                    generateTx
+                                </li>
+                            </ul>
+                        </div>
+                        <div role="toolbar" aria-label="Actions" class="toolbar">
+                            <button id="ex1-start" class="toolbar-item" aria-disabled="false" >StartFromBeginning</button>
+                            <!-- <button id="ex1-up" class="toolbar-item selected" aria-keyshortcuts="Alt+ArrowUp" aria-disabled="true">Prev</button> -->
+                            <button id="ex1-down" class="toolbar-item" tabindex="-1" aria-keyshortcuts="Alt+ArrowDown" aria-disabled="true">Next</button>
+                            <!-- <button id="ex1-delete" class="toolbar-item move-right-btn" tabindex="-1" aria-keyshortcuts="Alt+ArrowRight Delete" aria-disabled="true">Not Important</button> -->
+                        </div>
                     </div>
                 </div>
+
                 <div class="rightcontent">
                     <p> Command history </p>
                     <div id="content"></div>
@@ -172,39 +171,10 @@
                         <span id="status">Connecting...</span>
                         <input type="text" id="input" disabled="disabled" />
                     </div>
-                    
                 </div>
                 <div class="clearfix"></div>
             </div>
 
-            <div class="listbox-area">
-                <div class="left-area">
-                    <span id="ss_elem">
-                        Event logs:
-                    </span>
-                    <ul id="ss_elem_list"
-                        tabindex="0"
-                        role="listbox"
-                        aria-labelledby="ss_elem">
-                        <li id="ss_elem_Np" role="option">
-                            InitMyPeerId
-                        </li>
-                        <li id="ss_elem_Pu" role="option">
-                            ShadowPipe
-                        </li>
-                        <li id="ss_elem_Am" role="option">
-                            generateTx
-                        </li>
-                    </ul>
-                </div>
-                <div role="toolbar" aria-label="Actions" class="toolbar">
-                    <button id="ex1-start" class="toolbar-item" aria-disabled="false" >StartFromBeginning</button>
-                    <!-- <button id="ex1-up" class="toolbar-item selected" aria-keyshortcuts="Alt+ArrowUp" aria-disabled="true">Prev</button> -->
-                    <button id="ex1-down" class="toolbar-item" tabindex="-1" aria-keyshortcuts="Alt+ArrowDown" aria-disabled="true">Next</button>
-                    <!-- <button id="ex1-delete" class="toolbar-item move-right-btn" tabindex="-1" aria-keyshortcuts="Alt+ArrowRight Delete" aria-disabled="true">Not Important</button> -->
-                </div>
-            </div>
-            
             <script src="./event-visualize.js"></script>
             <div class="content">
                 <h1> Event Visualization</h1>
@@ -239,6 +209,6 @@
         </div>
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <script src="./chat-frontend.js"></script>
+        <script src="./frontend.js"></script>
     </body>
 </html>

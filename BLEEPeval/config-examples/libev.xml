@@ -32,8 +32,8 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="PEER_LIBEV_SERV" path="/home/csrc/.bleep/plugins/libPEER_LIBEV_SERV.so" />
-  <plugin id="PEER_LIBEV_CLIENT" path="/home/csrc/.bleep/plugins/libPEER_LIBEV_CLIENT.so" />
+  <plugin id="PEER_LIBEV_SERV" path="~/.bleep/plugins/libPEER_LIBEV_SERV.so" />
+  <plugin id="PEER_LIBEV_CLIENT" path="~/.bleep/plugins/libPEER_LIBEV_CLIENT.so" />
 
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="20" />

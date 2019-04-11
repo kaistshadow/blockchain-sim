@@ -32,8 +32,8 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="NODE" path="/home/csrc/.bleep/plugins/libNODE_bleep.so" />
-  <plugin id="CLIENT" path="/home/csrc/.bleep/plugins/libNODE_client.so" />
+  <plugin id="NODE" path="~/.bleep/plugins/libNODE_bleep.so" />
+  <plugin id="CLIENT" path="~/.bleep/plugins/libNODE_client.so" />
 
 
   <!-- the length of our experiment in seconds  1404101800-->

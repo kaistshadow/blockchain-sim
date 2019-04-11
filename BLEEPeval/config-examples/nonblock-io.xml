@@ -32,7 +32,7 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="PEER_NONBLOCK_IO" path="/home/csrc/.bleep/plugins/libPEER_NONBLOCK_IO.so" />
+  <plugin id="PEER_NONBLOCK_IO" path="~/.bleep/plugins/libPEER_NONBLOCK_IO.so" />
 
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="20" />

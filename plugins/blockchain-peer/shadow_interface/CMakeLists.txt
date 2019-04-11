@@ -1,2 +1,0 @@
-add_library(SHADOW_INTERFACE SHARED shadow_interface.c)
-install(TARGETS SHADOW_INTERFACE DESTINATION lib)

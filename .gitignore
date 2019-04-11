@@ -13,4 +13,8 @@ test/BLEEP/web-gui/package-lock.json
 test/plugin-bitcoin/data/
 test/plugin-bitcoin/shadow.data/
 
+BLEEPeval/*-datadir/
+BLEEPeval/web-gui/node_modules/
+BLEEPeval/web-gui/package-lock.json
+
 

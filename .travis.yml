@@ -1,23 +1,31 @@
 language: cpp
-compiler: gcc
-dist: trusty
 
-install:
-# installing dependencies for BLEEPlib, BLEEPapp
-- sudo apt-get install -y gcc g++ cmake make libboost-all-dev libev-dev    
-
-# installing dependencies for shadow
-- sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0 libigraph0-dev cmake make xz-utils libc6-dbg libffi-dev  
-
-# download glib 2.42
-- wget http://ftp.gnome.org/pub/gnome/sources/glib/2.42/glib-2.42.1.tar.xz
-- tar xaf glib-2.42.1.tar.xz
-# install glib Manually
-- cd glib-2.42.1
-- ./configure --prefix=/home/${USER}/.shadow
-- make
-- make install
-- cd ..
+matrix:
+  - os: linux
+    # Ubuntu 16.04
+    dist: xenial
+    install: 
+      # installing dependencies for BLEEPlib, BLEEPapp
+      - sudo apt-get install -y gcc g++ cmake make libboost-all-dev libev-dev    
+      # installing dependencies for shadow
+      - sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0v5 libigraph0-dev cmake make xz-utils libc6-dbg libffi-dev  
+  - os: linux
+    # Ubuntu 14.04
+    dist: trusty
+    install:
+      # installing dependencies for BLEEPlib, BLEEPapp
+      - sudo apt-get install -y gcc g++ cmake make libboost-all-dev libev-dev    
+      # installing dependencies for shadow
+      - sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0 libigraph0-dev cmake make xz-utils libc6-dbg libffi-dev  
+      # download glib 2.42
+      - wget http://ftp.gnome.org/pub/gnome/sources/glib/2.42/glib-2.42.1.tar.xz
+      - tar xaf glib-2.42.1.tar.xz
+      # install glib Manually
+      - cd glib-2.42.1
+      - ./configure --prefix=/home/${USER}/.shadow
+      - make
+      - make install
+      - cd ..
 
 
 script: 

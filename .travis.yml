@@ -2,5 +2,5 @@ language: cpp
 compiler: gcc
 
 script: 
-- g++ main.cp -o travis_gcc_cpp98
+- g++ main.cpp -o travis_gcc_cpp98
 - ./travis_gcc_cpp98

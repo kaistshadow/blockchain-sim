@@ -18,7 +18,7 @@ def prepare_shadow():
         print "Installing..."
 
         # install dependencies
-        exec_shell_cmd("sudo apt-get install libc-dbg")
+        exec_shell_cmd("sudo apt-get install libc6-dbg")
         exec_shell_cmd("sudo apt-get install -y python python-pip python-matplotlib python-numpy python-scipy python-networkx python-lxml")
         exec_shell_cmd("sudo apt-get install -y git dstat screen htop libffi-dev libev-dev")
         exec_shell_cmd("sudo pip install lxml")

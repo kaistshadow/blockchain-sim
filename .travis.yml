@@ -1,6 +1,23 @@
 language: cpp
 compiler: gcc
+dist: trusty
+
+install:
+- sudo apt-get install -y gcc g++ cmake make libboost-all-dev libev-dev      
 
 script: 
 - g++ main.cpp -o travis_gcc_cpp98
 - ./travis_gcc_cpp98
+- mkdir BLEEPlib/build
+- cd BLEEPlib/build
+- cmake ..
+- make 
+- make install
+
+- cd ../../BLEEPapp
+- mkdir build
+- cd build
+- cmake ..
+- make
+- ./LOCAL_NODE_bleep -h
+- ./LOCAL_NODE_client -h

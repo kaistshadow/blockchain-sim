@@ -36,9 +36,9 @@ def prepare_shadow():
         else:
             exec_shell_cmd("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0v5 libigraph0-dev cmake make xz-utils")
 
-        # cloning shadow repository (submodule)
-        exec_shell_cmd("git submodule init shadow")
-        exec_shell_cmd("git submodule update shadow")
+    # cloning shadow repository (submodule)
+    exec_shell_cmd("git submodule init shadow")
+    exec_shell_cmd("git submodule update shadow")
 
 def prepare_nodejs():
     nodejs_serv_path = "./BLEEPeval/web-gui"    
@@ -68,7 +68,15 @@ if __name__ == '__main__':
     if OPT_INSTALL:
         prepare_shadow()
         prepare_nodejs()
-        exec_shell_cmd("mkdir build; cd build; cmake %s ../; make; make install" % cmake_debug_opt)
+
+        ## install BLEEPlib
+        exec_shell_cmd("mkdir build; cd build; cmake %s ../BLEEPlib/; make; make install; cd ..; rm -rf build" % cmake_debug_opt)
+
+        ## install BLEEPapp
+        exec_shell_cmd("mkdir build; cd build; cmake %s ../BLEEPapp/; make; make install; cd ..; rm -rf build" % cmake_debug_opt)
+
+        ## install shadow
+        exec_shell_cmd("mkdir build; cd build; cmake %s ../shadow; make; make install" % cmake_debug_opt)
 
         rcFile = os.path.expanduser("~/.bashrc")
         f = open(rcFile, 'r')
@@ -88,6 +96,6 @@ if __name__ == '__main__':
         print "$ source ~/.bashrc"
 
     if OPT_TEST:
-        exec_shell_cmd("cd build; make test")
+        exec_shell_cmd("mkdir build; cd build; cmake ../; make test")
 
 

@@ -38,8 +38,11 @@ def run_experiment(configfile):
     return "./%s/%s" % (datadir, shadow_stdout_filename)
     
 
-def run_visualization_server(shadowoutput, configfile):
-    web_server = Popen(["node", "server.js", "../"+shadowoutput], cwd="./web-gui")
+def run_visualization_server(shadowoutput, configfile, background=False):
+    if background:
+        web_server = Popen(["node", "server.js", "../"+shadowoutput], cwd="./web-gui", close_fds=True)
+    else:
+        web_server = Popen(["node", "server.js", "../"+shadowoutput], cwd="./web-gui")
 
  
     time.sleep(1)
@@ -53,22 +56,27 @@ def run_visualization_server(shadowoutput, configfile):
     print ""
     print ""
     print ""
-    print "Type Ctrl-C to terminate the NodeJS web server."
     
-
-    web_server.wait()
+    if not background:
+        print "Type Ctrl-C to terminate the NodeJS web server."
+        web_server.wait()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
     parser.add_argument("configfile", help="filepath for blockchain network configuration file (shadow xml configuration)")
+    parser.add_argument("--background", action="store_true", help="Run server as background daemon.")
 
     args = parser.parse_args()
     configfile = args.configfile
+    OPT_BACKGROUND = args.background
 
     print "Execute shadow experiment"
     output = run_experiment(configfile)
 
-    run_visualization_server(output, configfile)
+    if OPT_BACKGROUND:
+        run_visualization_server(output, configfile, background=True)
+    else:
+        run_visualization_server(output, configfile)
 
     

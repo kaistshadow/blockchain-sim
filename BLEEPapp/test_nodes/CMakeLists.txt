@@ -16,9 +16,9 @@ add_shadow_plugin(PEER_ASIO node_asio.cpp)
 install(TARGETS PEER_ASIO DESTINATION plugins)
 target_link_libraries(PEER_ASIO ${Boost_LIBRARIES})
 
-add_test(NAME BLEEP-asio
-  COMMAND python test-asio.py
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../BLEEPeval)
+# add_test(NAME BLEEP-asio
+#   COMMAND python test-asio.py
+#   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../BLEEPeval)
 
 
 ## libev test

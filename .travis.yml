@@ -3,21 +3,72 @@ compiler: gcc
 dist: trusty
 
 install:
-- sudo apt-get install -y gcc g++ cmake make libboost-all-dev libev-dev      
+# installing dependencies for BLEEPlib, BLEEPapp
+- sudo apt-get install -y gcc g++ cmake make libboost-all-dev libev-dev    
+
+# installing dependencies for shadow
+- sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0v5 libigraph0-dev cmake make xz-utils libc-dbg libffi-dev  
+
+# download glib 2.42
+- wget http://ftp.gnome.org/pub/gnome/sources/glib/2.42/glib-2.42.1.tar.xz
+- tar xaf glib-2.42.1.tar.xz
+# install glib Manually
+- cd glib-2.42.1; ./configure --prefix=/home/${USER}/.shadow; make; make install
+
+
 
 script: 
-- g++ main.cpp -o travis_gcc_cpp98
-- ./travis_gcc_cpp98
+# build BLEEP library
 - mkdir BLEEPlib/build
 - cd BLEEPlib/build
 - cmake ..
 - make 
 - make install
 
+# build & install BLEEP application (example)
 - cd ../../BLEEPapp
 - mkdir build
 - cd build
 - cmake ..
 - make
+- make install
+
+# run BLEEP application (example)
 - ./LOCAL_NODE_bleep -h
 - ./LOCAL_NODE_client -h
+
+# run BLEEP application (example)
+- ./LOCAL_NODE_bleep -h
+- ./LOCAL_NODE_client -h
+
+
+# build shadow
+- cd ../../
+- mkdir shadow/build
+- cd shadow/build
+- cmake ..
+- make
+- make install
+
+# run shadow
+- echo "export PATH=$PATH:/home/${USER}/.shadow/bin" >> /home/${USER}/.bashrc
+- source /home/${USER}/.bashrc
+- shadow --version
+
+# run shadow with example
+- cd ../../BLEEPeval
+- shadow -d rc1-eventloop-datadir config-examples/rc1-eventloop.xml
+
+# installing dependencies for BLEEPeval
+- curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+- sudo apt-get update
+- sudo apt-get install -y nodejs
+- sudo apt-get install -y python python-pip
+- cd web-gui
+- npm install websocket finalhandler serve-static vis jsonpath @maxmind/geoip2-node
+
+# run visualizer
+- cd ../
+- python visualize-events.py config-examples/rc1-eventloop.xml
+
+

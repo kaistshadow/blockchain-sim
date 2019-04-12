@@ -76,7 +76,7 @@ if __name__ == '__main__':
         exec_shell_cmd("mkdir build; cd build; cmake %s ../BLEEPapp/; make; make install; cd ..; rm -rf build" % cmake_debug_opt)
 
         ## install shadow
-        exec_shell_cmd("mkdir build; cd build; cmake %s ../shadow; make; make install" % cmake_debug_opt)
+        exec_shell_cmd("mkdir build; cd build; cmake %s ../shadow; make; make install; cd ..; rm -rf build" % cmake_debug_opt)
 
         rcFile = os.path.expanduser("~/.bashrc")
         f = open(rcFile, 'r')

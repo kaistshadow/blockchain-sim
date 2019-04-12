@@ -2,7 +2,6 @@ import os
 from subprocess import check_output, Popen, PIPE
 import argparse
 import sys
-import lxml.etree as ET
 
 if __name__ == '__main__':
     datadir = "rc1-eventloop-datadir"

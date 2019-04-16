@@ -50,43 +50,6 @@ namespace libBLEEP {
 
     };
 
-    class ConnectSocketManager_v2 {
-    private:
-        std::map<int, std::shared_ptr<ConnectSocket> > _sockets;  // map fd -> ConnectSocket structure
-
-        /* event io callback */
-        void _connectSocketIOCallback (ev::io &w, int revents);
-    
-        /* event watcher */ 
-        std::map<int, ev::io> _connectSocketWatchers;
-
-        /* libev event management */
-        bool _eventTriggered = false;
-        int _eventTriggeredFD;
-        SocketEventEnum _eventType;
-    
-        /* event set method */
-        void _SetEventTriggered(bool triggered) { _eventTriggered = triggered; }
-        void _SetEventTriggeredFD(int fd) { _eventTriggeredFD = fd; }
-        void _SetEventType(SocketEventEnum type) { _eventType = type; }
-
-    public:
-        // create connecting socket + create IO watcher for it
-        int CreateNonblockConnectSocket(std::string destination);
-
-        // remove connecting socket and related IO watcher
-        void RemoveConnectSocket(int fd);
-        
-
-        /* event get method */
-        bool IsEventTriggered() { return _eventTriggered; }
-        int GetEventTriggeredFD() { return _eventTriggeredFD; }
-        SocketEventEnum GetEventType() { return _eventType; }
-
-        /* event clear method */
-        void ClearEventTriggered() { _eventTriggered = false; }
-    };
-
 }
 
 

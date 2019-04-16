@@ -1,4 +1,5 @@
 #include "mainmodules/MainEventManager.h"
+#include "networkmodules/BasicNetworkModule.h"
 #include "datamodules/Peer.h"
 #include "datamodules/Message.h"
 
@@ -21,14 +22,17 @@ int main(int argc, char *argv[]) {
 
     /* allocate mainEventManager */
     // MainEventManager mainEventManager("143.248.38.189");
-    MainEventManager mainEventManager(gArgs.GetArg("-id", "noid"));
+    // MainEventManager mainEventManager(gArgs.GetArg("-id", "noid"));
+    MainEventManager mainEventManager;
+    BasicNetworkModule basicNetworkModule(gArgs.GetArg("-id", "noid"), &mainEventManager);
+
 
     /* connect to peer */
     for (auto neighborPeerId : gArgs.GetArgs("-connect"))
-        mainEventManager.AsyncConnectPeer(PeerId(neighborPeerId));
+        basicNetworkModule.AsyncConnectPeer(PeerId(neighborPeerId));
 
     if (gArgs.IsArgSet("-txgeninterval")) {
-        mainEventManager.AsyncGenerateRandomTransaction(gArgs.GetArg("-txgeninterval", 0));
+        basicNetworkModule.AsyncGenerateRandomTransaction(gArgs.GetArg("-txgeninterval", 0));
     }
 
     while(true) {
@@ -51,7 +55,7 @@ int main(int argc, char *argv[]) {
                 std::cout << "AsyncConnectPeer got error(" << mainEventManager.GetAsyncEventDataManager().GetError() << ")" << "\n";
                 // try again with timer
                 PeerId peerId = mainEventManager.GetAsyncEventDataManager().GetRefusedPeerId();                
-                mainEventManager.AsyncConnectPeer(peerId, 10);
+                basicNetworkModule.AsyncConnectPeer(peerId, 10);
                 break;
             }
         case AsyncEventEnum::CompleteAsyncGenerateRandomTransaction:
@@ -67,11 +71,11 @@ int main(int argc, char *argv[]) {
                     PeerId destPeerId(neighborId);
                     std::shared_ptr<Message> msg = std::make_shared<Message>(myPeerId, destPeerId, 
                                                                              "newTx", payload);
-                    mainEventManager.UnicastMessage(destPeerId, msg);
+                    basicNetworkModule.UnicastMessage(destPeerId, msg);
                 }
 
                 // Call another request, i.e., periodically generate transaction
-                mainEventManager.AsyncGenerateRandomTransaction(gArgs.GetArg("-txgeninterval", 0));
+                basicNetworkModule.AsyncGenerateRandomTransaction(gArgs.GetArg("-txgeninterval", 0));
                 break;
             }
         case AsyncEventEnum::RecvMessage:

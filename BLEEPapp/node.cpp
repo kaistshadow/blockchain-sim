@@ -1,4 +1,5 @@
 #include "mainmodules/MainEventManager.h"
+#include "networkmodules/BasicNetworkModule.h"
 #include "datamodules/Peer.h"
 #include "datamodules/Message.h"
 
@@ -44,13 +45,14 @@ int main(int argc, char *argv[]) {
     }
 
     /* allocate mainEventManager */
-    // MainEventManager mainEventManager("143.248.38.189");
-    MainEventManager mainEventManager(gArgs.GetArg("-id", "noid"));
+    MainEventManager mainEventManager;
+    // MainEventManager mainEventManager(gArgs.GetArg("-id", "noid"));
+    BasicNetworkModule basicNetworkModule(gArgs.GetArg("-id", "noid"), &mainEventManager);
 
     /* connect to peer */
     // mainEventManager.AsyncConnectPeer(PeerId("143.248.38.37"));
     for (auto neighborPeerId : gArgs.GetArgs("-connect"))
-        mainEventManager.AsyncConnectPeer(PeerId(neighborPeerId));
+        basicNetworkModule.AsyncConnectPeer(PeerId(neighborPeerId));
 
     while(true) {
         mainEventManager.Wait(); // main event loop (wait for next event)
@@ -72,7 +74,7 @@ int main(int argc, char *argv[]) {
                 std::cout << "AsyncConnectPeer got error(" << mainEventManager.GetAsyncEventDataManager().GetError() << ")" << "\n";
                 // try again with timer
                 PeerId peerId = mainEventManager.GetAsyncEventDataManager().GetRefusedPeerId();                
-                mainEventManager.AsyncConnectPeer(peerId, 10);
+                basicNetworkModule.AsyncConnectPeer(peerId, 10);
                 break;
             }
         case AsyncEventEnum::CompleteAsyncGenerateRandomTransaction:
@@ -96,7 +98,7 @@ int main(int argc, char *argv[]) {
                 receivedMessageCount++;
                 if (receivedMessageCount >= 5) {
                     for (auto neighborPeerId : gArgs.GetArgs("-connect"))
-                        mainEventManager.DisconnectPeer(PeerId(neighborPeerId));
+                        basicNetworkModule.DisconnectPeer(PeerId(neighborPeerId));
                 }
                 break;
             }

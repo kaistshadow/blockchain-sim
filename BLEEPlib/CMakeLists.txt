@@ -45,6 +45,9 @@ set(SRCS
   src/utility/UInt256.cpp
   src/utility/Assert.cpp
   src/utility/ArgsManager.cpp
+  src/networkmodules/BasicNetworkModule.cpp
+  src/datamodules/Socket_v2.cpp
+  src/datamanagermodules/SocketManager_v2.cpp
 )
 
 include(GNUInstallDirs)
@@ -79,6 +82,11 @@ install(DIRECTORY "src/datamanagermodules"
   PATTERN
   "*.h")
 install(DIRECTORY "src/datamodules"
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  FILES_MATCHING
+  PATTERN
+  "*.h")
+install(DIRECTORY "src/networkmodules"
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   FILES_MATCHING
   PATTERN

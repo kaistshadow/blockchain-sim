@@ -6,6 +6,7 @@
 #include "../datamodules/Transaction.h"
 #include "../datamodules/Peer.h"
 #include "../datamodules/Message.h"
+#include "../datamodules/POWBlock.h"
 
 namespace libBLEEP {
 
@@ -17,6 +18,7 @@ namespace libBLEEP {
         RecvMessage,
         NewPeerConnected,  /* connection estabilished by non-requested neighbor peer */
         PeerDisconnected,  /* connection disconnected by remote peer */
+        EmuBlockMiningComplete, /* emulated mining for user-requested block is complete */
     };
 
     class AsyncEventDataManager {
@@ -41,6 +43,9 @@ namespace libBLEEP {
 
         // data for PeerDisconnected
         std::shared_ptr<PeerId> _disconnectedPeerId;
+
+        // data for EmuBlockMiningComplete
+        std::shared_ptr<POWBlock> _minedBlk;
         
     public:
         // data set function for CompleteAsyncConnectPeer
@@ -79,6 +84,11 @@ namespace libBLEEP {
         // data access function for PeerDisconnected
         std::shared_ptr<PeerId> GetDisconnectedPeerId() { return _disconnectedPeerId; }
 
+        // data set function for EmuBlockMiningComplete
+        void SetMinedBlock(std::shared_ptr<POWBlock> block) { _minedBlk = block; }
+        // data access function for EmuBlockMiningComplete
+        std::shared_ptr<POWBlock> GetMinedBlock() { return _minedBlk; }
+
     };
 
     class MainEventManager {
@@ -87,6 +97,7 @@ namespace libBLEEP {
         struct ev_loop *_libev_loop;
     private:
         friend class BasicNetworkModule;
+        friend class POWModule;
         /*********************************************************/
         /* Internal data structures
            for managing the triggered asynchronous event */

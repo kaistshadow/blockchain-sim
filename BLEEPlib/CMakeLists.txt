@@ -48,6 +48,10 @@ set(SRCS
   src/networkmodules/BasicNetworkModule.cpp
   src/datamodules/Socket_v2.cpp
   src/datamanagermodules/SocketManager_v2.cpp
+  src/datamodules/POWBlock.cpp
+  src/consensusmodules/POWModule.cpp
+  src/crypto/SHA256.cpp
+  src/utility/GlobalClock.cpp
 )
 
 include(GNUInstallDirs)
@@ -91,12 +95,22 @@ install(DIRECTORY "src/networkmodules"
   FILES_MATCHING
   PATTERN
   "*.h")
+install(DIRECTORY "src/consensusmodules"
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  FILES_MATCHING
+  PATTERN
+  "*.h")
 install(DIRECTORY "src/mainmodules"
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   FILES_MATCHING
   PATTERN
   "*.h")
 install(DIRECTORY "src/utility"
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  FILES_MATCHING
+  PATTERN
+  "*.h")
+install(DIRECTORY "src/crypto"
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   FILES_MATCHING
   PATTERN

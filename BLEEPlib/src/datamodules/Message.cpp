@@ -13,8 +13,8 @@ using namespace libBLEEP;
 BOOST_CLASS_EXPORT(SimpleTransaction);
 
 // to avoid unregisterd class error
-#include "Block.h"
-BOOST_CLASS_EXPORT(Block);
+#include "POWBlock.h"
+BOOST_CLASS_EXPORT(POWBlock);
 
 std::ostream& libBLEEP::operator<<(std::ostream& os, const Message& msg) {
     if (msg.GetType() == "StringMessage") 

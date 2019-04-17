@@ -54,6 +54,11 @@ add_shadow_plugin(NODE_client client.cpp)
 install(TARGETS NODE_client DESTINATION plugins)
 target_link_libraries(NODE_client BLEEP::BLEEP)
 
+add_shadow_plugin(NODE_POW node_pow.cpp)
+install(TARGETS NODE_POW DESTINATION plugins)
+target_link_libraries(NODE_POW BLEEP::BLEEP)
+
+
 ## compile for local executable
 add_executable(LOCAL_NODE_bleep node.cpp)
 target_link_libraries(LOCAL_NODE_bleep BLEEP::BLEEP)
@@ -61,6 +66,8 @@ target_link_libraries(LOCAL_NODE_bleep BLEEP::BLEEP)
 add_executable(LOCAL_NODE_client client.cpp)
 target_link_libraries(LOCAL_NODE_client BLEEP::BLEEP)
 
+add_executable(LOCAL_NODE_POW node_pow.cpp)
+target_link_libraries(LOCAL_NODE_POW BLEEP::BLEEP)
 
 # add tests
 enable_testing()

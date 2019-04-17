@@ -32,7 +32,7 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="PEER" path="~/.bleep/plugins/libNODE_FSM.so" />
+  <plugin id="PEER" path="~/.bleep/plugins/libNODE_FSM_DOUBLE.so" />
 
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="80" />

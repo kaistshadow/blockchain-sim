@@ -2,15 +2,16 @@
 #include "mainmodules/BasicNetworkModule.h"
 #include "mainmodules/POWModule.h"
 
-
 #include "datamodules/Peer.h"
 #include "datamodules/Message.h"
+#include "datamodules/POWBlock.h"
+
+#include "datamanagermodules/TxPool.h"
+#include "datamanagermodules/ListLedgerManager.h"
 
 #include "utility/ArgsManager.h"
 
-#include "datamanagermodules/TxPool.h"
-#include "datamodules/POWBlock.h"
-#include "datamanagermodules/ListLedgerManager.h"
+using namespace libBLEEP;
 
 #include <chrono>
 #include <ctime>
@@ -18,7 +19,7 @@
 #include <math.h>
 #include <sys/time.h>
 
-using namespace libBLEEP;
+
 
 // Need to implement event loop library
 
@@ -134,7 +135,7 @@ int main(int argc, char *argv[]) {
     TxPool txPool;
 
     // ListLedgerManager
-    ListLedgerManager<POWBlock> ledger(gArgs.GetArg("-id", "noid"));
+    ListLedgerManager<POWBlock> ledger(PeerId(gArgs.GetArg("-id", "noid")));
 
     /* connect to peer */
     // mainEventManager.AsyncConnectPeer(PeerId("143.248.38.37"));

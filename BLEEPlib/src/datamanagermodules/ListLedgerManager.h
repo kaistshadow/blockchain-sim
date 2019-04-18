@@ -10,6 +10,7 @@
 
 #include "../datamodules/Block.h"
 #include "../datamodules/POWBlock.h"
+#include "../datamodules/Peer.h"
 #include "TxPool.h"
 
 #include <boost/filesystem.hpp>
@@ -26,11 +27,12 @@ namespace libBLEEP {
     protected:
         std::list<T> list_ledger;
         std::string ledger_filename;
-        std::string _myPeerId; // for shadow visualization & debugging
+        PeerId _myPeerId; // for shadow visualization & debugging
     public:
         ListLedgerManager() {}
-        ListLedgerManager(std::string myPeerId) { _myPeerId = myPeerId; }
-        /* ListLedgerManager(std::string filename) { ledger_filename = filename; } */
+        ListLedgerManager(PeerId myPeerId) { _myPeerId = myPeerId; }
+        ListLedgerManager(std::string filename) { ledger_filename = filename; }
+        ListLedgerManager(PeerId myPeerId, std::string filename) { ledger_filename = filename; _myPeerId = myPeerId; }
 
         /**
          * Set and Get a ledger

@@ -93,9 +93,11 @@ namespace libBLEEP {
                 int receiver_id = rand() % 100;
                 float amount = (float) (rand() % 10000);
                 boost::shared_ptr<Transaction> generatedTx(new SimpleTransaction(sender_id, receiver_id, amount));
-                _mainEventModule->_asyncEventTriggered = true;
-                _mainEventModule->_nextAsyncEvent = AsyncEventEnum::CompleteAsyncGenerateRandomTransaction;
-                _mainEventModule->_dataManager.SetGeneratedTx(generatedTx);
+
+                // push asynchronous event
+                AsyncEvent event(AsyncEventEnum::CompleteAsyncGenerateRandomTransaction);
+                event.GetData().SetGeneratedTx(generatedTx);
+                _mainEventModule->PushAsyncEvent(event);
                 delete this;
             }
         public:
@@ -168,20 +170,19 @@ namespace libBLEEP {
                     if (!recvResult.first) {
                         // socket closed by remote while doRecv
 
+                        std::shared_ptr<PeerId> disconnectedPeerId = _networkModule->peerManager.GetPeerIdBySocket(fd);
                         // update peermanager for closed socket
                         _networkModule->peerManager.UpdateNeighborSocketDisconnection(fd);
 
-                        std::shared_ptr<PeerId> disconnectedPeerId = _networkModule->peerManager.GetPeerIdBySocket(fd);
                         if (disconnectedPeerId != nullptr) {
                             // set asynchronous event 
-                            _mainEventModule->_asyncEventTriggered = true;
-                            _mainEventModule->_nextAsyncEvent = AsyncEventEnum::PeerDisconnected;
-                            _mainEventModule->_dataManager.SetDisconnectedPeer(disconnectedPeerId);
+                            AsyncEvent event(AsyncEventEnum::PeerDisconnected);
+                            event.GetData().SetDisconnectedPeer(disconnectedPeerId);
+                            _mainEventModule->PushAsyncEvent(event);
                         }
                         else {
                             // this case is possible
                             // when redundant connection is closed by remote peer 
-                            std::cout << "Not existed peer's socket is closed" << "\n";
                         }
 
                         _networkModule->socketManager.RemoveDataSocket(fd);
@@ -198,23 +199,22 @@ namespace libBLEEP {
                             /** Instead, we only set newPeerConnected event.                             **/
 
                             // append a peer information
-                            _networkModule->peerManager.AppendConnectedNeighborPeer(message->GetSource().GetId(), fd);
-
-                            // set asynchronous event 
-                            _mainEventModule->_asyncEventTriggered = true;
-                            _mainEventModule->_nextAsyncEvent = AsyncEventEnum::NewPeerConnected;
+                            _networkModule->peerManager.AppendNeighborPeerConnectedByRemote(message->GetSource().GetId(), fd);
+                            
                             std::shared_ptr<PeerId> newlyConnectedNeighborPeer = std::make_shared<PeerId>(message->GetSource());
-                            _mainEventModule->_dataManager.SetNewlyConnectedPeer(newlyConnectedNeighborPeer);
-                            return;
+                            AsyncEvent event(AsyncEventEnum::NewPeerConnected);
+                            event.GetData().SetNewlyConnectedPeer(newlyConnectedNeighborPeer);
+                            _mainEventModule->PushAsyncEvent(event);
                         }
                         else if (message) {  
                             // set asynchronous event
-                            _mainEventModule->_asyncEventTriggered = true;
-                            _mainEventModule->_nextAsyncEvent = AsyncEventEnum::RecvMessage;
-                            _mainEventModule->_dataManager.SetReceivedMsg(message);
+                            AsyncEvent event(AsyncEventEnum::RecvMessage);
+                            event.GetData().SetReceivedMsg(message);
+                            _mainEventModule->PushAsyncEvent(event);
 
                             // append shadow log
                             std::shared_ptr<PeerId> neighborPeerId = _networkModule->peerManager.GetPeerIdBySocket(fd);
+                            std::cout << "message source:" << message->GetSource().GetId() << "\n";
                             M_Assert(neighborPeerId != nullptr, "no neighbor peer exists for given socket");
 
                             char buf[256];
@@ -296,17 +296,17 @@ namespace libBLEEP {
                         _networkModule->_asyncConnectPeerRequests.erase(it);
 
                         // set asynchronous event 
-                        _mainEventModule->_asyncEventTriggered = true;
-                        _mainEventModule->_nextAsyncEvent = AsyncEventEnum::ErrorAsyncConnectPeer;
-                        _mainEventModule->_dataManager.SetRefusedPeerId(refusedPeerId);
-                        _mainEventModule->_dataManager.SetError(err);
+                        AsyncEvent event(AsyncEventEnum::ErrorAsyncConnectPeer);
+                        event.GetData().SetRefusedPeerId(refusedPeerId);
+                        event.GetData().SetError(err);
                         if ( ECONNREFUSED == err ) {
-                            _mainEventModule->_dataManager.SetErrorMsg("connection refused");
+                            event.GetData().SetErrorMsg("connection refused");
                         } else if ( ETIMEDOUT == err) {
-                            _mainEventModule->_dataManager.SetErrorMsg("connection timeout");
+                            event.GetData().SetErrorMsg("connection timeout");
                         } else {
-                            M_Assert(0, "unknown connection error");       
+                            M_Assert(0, "unknown connection error");
                         }
+                        _mainEventModule->PushAsyncEvent(event);
 
 
                         _networkModule->socketManager.RemoveConnectSocket(fd);
@@ -334,11 +334,11 @@ namespace libBLEEP {
 
                         // return ErrorAsyncConnectPeer (redundant connection)
                         // set asynchronous event 
-                        _mainEventModule->_asyncEventTriggered = true;
-                        _mainEventModule->_nextAsyncEvent = AsyncEventEnum::ErrorAsyncConnectPeer;
-                        _mainEventModule->_dataManager.SetRefusedPeerId(connectedPeerId);
-                        _mainEventModule->_dataManager.SetError(-1); // since it's our customized error, there's no specific errno
-                        _mainEventModule->_dataManager.SetErrorMsg("redundant connection");
+                        AsyncEvent event(AsyncEventEnum::ErrorAsyncConnectPeer);
+                        event.GetData().SetRefusedPeerId(connectedPeerId);
+                        event.GetData().SetError(-1);
+                        event.GetData().SetErrorMsg("redundant connection");
+                        _mainEventModule->PushAsyncEvent(event);
 
                         // remove connect socket & socket watcher
                         _networkModule->socketManager.RemoveConnectSocket(fd); /* remove connect socket structure */
@@ -352,7 +352,7 @@ namespace libBLEEP {
                     _networkModule->watcherManager.CreateDataSocketWatcher(fd);
 
                     // Append connected peer information in peerManager
-                    _networkModule->peerManager.AppendConnectedNeighborPeer(connectedPeerId, connectedSocketFD);
+                    _networkModule->peerManager.AppendNeighborPeerConnectedByMyself(connectedPeerId, connectedSocketFD);
                 
                     /** send id notify message (First message after socket establishment)   **/
                     /** Of course, we use socket for sending this message.                  **/
@@ -368,11 +368,11 @@ namespace libBLEEP {
                         dataSocketWatcher->SetWritable();
 
 
-                    // set asynchronous event 
-                    _mainEventModule->_asyncEventTriggered = true;
-                    _mainEventModule->_nextAsyncEvent = AsyncEventEnum::CompleteAsyncConnectPeer;
-                    _mainEventModule->_dataManager.SetConnectedPeerId(connectedPeerId);
-                    _mainEventModule->_dataManager.SetConnectedSocketFD(connectedSocketFD);
+                    // push asynchronous event 
+                    AsyncEvent event(AsyncEventEnum::CompleteAsyncConnectPeer);
+                    event.GetData().SetConnectedPeerId(connectedPeerId);
+                    event.GetData().SetConnectedSocketFD(connectedSocketFD);
+                    _mainEventModule->PushAsyncEvent(event);
 
                     // append shadow log for connection establishment
                     char buf[256];

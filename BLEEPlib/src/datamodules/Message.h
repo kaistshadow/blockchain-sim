@@ -2,14 +2,13 @@
 #define MESSAGE_H
 
 #include <string>
-#include <boost/variant.hpp>
-#include <boost/serialization/variant.hpp>
 
 #include <memory>
 
 #include "Block.h"
 #include "Transaction.h"
 #include "Peer.h"
+#include "../consensusmodules/POWConsensusMessage.h"
 
 namespace libBLEEP {
     typedef std::string MessageType;
@@ -53,9 +52,11 @@ namespace libBLEEP {
     /* std::string GetSerializedString(std::shared_ptr<Transaction> tx); */
     std::string GetSerializedString(boost::shared_ptr<Transaction> tx);
     std::string GetSerializedString(std::shared_ptr<Block> msg);
+    std::string GetSerializedString(POWConsensusMessage msg);
 
     boost::shared_ptr<Transaction> GetDeserializedTransaction(std::string str);
     std::shared_ptr<Block> GetDeserializedBlock(std::string str);
+    POWConsensusMessage GetDeserializedPOWConsensusMessage(std::string str);
 
 }
 

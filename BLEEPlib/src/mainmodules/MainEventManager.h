@@ -2,6 +2,7 @@
 #define MAIN_EVENT_MANAGER_H
 
 #include <ev++.h>
+#include <queue>
 
 #include "../datamodules/Transaction.h"
 #include "../datamodules/Peer.h"
@@ -21,6 +22,8 @@ namespace libBLEEP {
         EmuBlockMiningComplete, /* emulated mining for user-requested block is complete */
     };
 
+    /* class for data */
+    /* It needs a refactoring! Use polymorphism to reduce data overhead! */
     class AsyncEventDataManager {
     private:
         // data for CompleteAsyncConnectPeer event
@@ -46,7 +49,7 @@ namespace libBLEEP {
 
         // data for EmuBlockMiningComplete
         std::shared_ptr<POWBlock> _minedBlk;
-        
+
     public:
         // data set function for CompleteAsyncConnectPeer
         void SetConnectedPeerId(PeerId id) { _connectedPeerId = id; }
@@ -88,7 +91,19 @@ namespace libBLEEP {
         void SetMinedBlock(std::shared_ptr<POWBlock> block) { _minedBlk = block; }
         // data access function for EmuBlockMiningComplete
         std::shared_ptr<POWBlock> GetMinedBlock() { return _minedBlk; }
+    };
 
+    class AsyncEvent {
+    private:
+        AsyncEventEnum _eventType;
+        AsyncEventDataManager _eventData;
+        
+    public:
+        AsyncEvent(AsyncEventEnum type)
+            : _eventType(type) {}
+
+        AsyncEventEnum GetType() { return _eventType; }
+        AsyncEventDataManager& GetData() { return _eventData; }
     };
 
     class MainEventManager {
@@ -103,12 +118,14 @@ namespace libBLEEP {
            for managing the triggered asynchronous event */
         /*********************************************************/
 
-        /* Event trigger status */
-        bool _asyncEventTriggered = false;
-        /* Type of triggered asynchronous event */
-        AsyncEventEnum _nextAsyncEvent;
-        /* Data manager for the triggered asynchronous event  */
-        AsyncEventDataManager _dataManager;
+        /* /\* Event trigger status *\/ */
+        /* bool _asyncEventTriggered = false; */
+        /* /\* Type of triggered asynchronous event *\/ */
+        /* AsyncEventEnum _nextAsyncEvent; */
+        /* /\* Data manager for the triggered asynchronous event  *\/ */
+        /* AsyncEventDataManager _dataManager; */
+
+        std::queue<AsyncEvent> _eventQueue;
 
     public:
         /*********************************************************/
@@ -119,11 +136,16 @@ namespace libBLEEP {
         /* blocking API that awaits for next asynchronous event */
         void Wait();
 
-        /* returning asynchronous event type */
-        AsyncEventEnum GetEventType() { return _nextAsyncEvent; }
+        void PushAsyncEvent(AsyncEvent event);
+
+        bool ExistAsyncEvent() { return !_eventQueue.empty(); }
+        AsyncEvent PopAsyncEvent();
+
+        /* /\* returning asynchronous event type *\/ */
+        /* AsyncEventEnum GetEventType() { return _nextAsyncEvent; } */
         
-        /* returning helper module for asynchronous event data management */
-        AsyncEventDataManager& GetAsyncEventDataManager() { return _dataManager; }        
+        /* /\* returning helper module for asynchronous event data management *\/ */
+        /* AsyncEventDataManager& GetAsyncEventDataManager() { return _dataManager; }         */
 
     };
 

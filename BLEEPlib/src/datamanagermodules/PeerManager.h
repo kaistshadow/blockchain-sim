@@ -16,20 +16,25 @@ namespace libBLEEP {
     private:
         int _socketfd; // currently, we only support single data socket per peer
         SocketStatus _socketStatus;
-        std::string _ipaddr = "";
+
+        int _socketfd_remote;  // we also support additional data socket requested by remote
+        SocketStatus _socketStatus_remote;
 
     public:
         PeerInfo() {} 
 
         /* get methods */
         int GetSocketFD() const { return _socketfd; }
-        std::string GetIP() const { return _ipaddr; }
         SocketStatus GetSocketStatus() const { return _socketStatus; }
+        int GetSocketFDRemote() const { return _socketfd_remote; }
+        SocketStatus GetSocketStatusRemote() const { return _socketStatus_remote; }
         
         /* set methods */
         void SetSocketFD(int socketfd) { _socketfd = socketfd; }
-        void SetIP(std::string ip) { _ipaddr = ip; }
         void SetSocketStatus(SocketStatus status) { _socketStatus = status; }
+        void SetSocketFDRemote(int socketfd) { _socketfd_remote = socketfd; }
+        void SetSocketStatusRemote(SocketStatus status) { _socketStatus_remote = status; }
+
     };
 
 
@@ -61,17 +66,24 @@ namespace libBLEEP {
         
         /* Try to allocate new neighbor peer, and return the pointer for allocated PeerInfo.
            If the PeerInfo already exists for given PeerId, return the pointer for it. */
-        std::shared_ptr<PeerInfo> AppendNewNeighborPeer(PeerId peer);
+        /* std::shared_ptr<PeerInfo> AppendNewNeighborPeer(PeerId peer); */
 
         /* Try to allocate new *connected* neighbor peer, and return the pointer for allocated PeerInfo.
            If the PeerInfo already exists for given PeerId, update the status of the PeerInfo 
            and return the pointer for it. */
-        std::shared_ptr<PeerInfo> AppendConnectedNeighborPeer(PeerId peer, int socketfd);
+        std::shared_ptr<PeerInfo> AppendNeighborPeerConnectedByMyself(PeerId peer, int socketfd);
+
+        /* Try to allocate new connected neighbor peer, where the connection is requested by remote peer. 
+           If the PeerInfo already exists for given PeerId, update the status of the PeerInfo
+           and return the pointer for it */
+        std::shared_ptr<PeerInfo> AppendNeighborPeerConnectedByRemote(PeerId peer, int socketfd);
 
         /* Update disconnected socket information for the peer */
-        void UpdateNeighborSocketDisconnection(PeerId closedPeer);
         void UpdateNeighborSocketDisconnection(int closedSocketfd);
 
+        /* state of the peer */
+        bool HasEstablishedDataSocket(PeerId peer);
+        int GetConnectedSocketFD(PeerId peer);
     };
 
 

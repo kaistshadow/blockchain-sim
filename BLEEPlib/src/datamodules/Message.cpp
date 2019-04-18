@@ -46,6 +46,17 @@ std::string libBLEEP::GetSerializedString(std::shared_ptr<Block> block) {
     return serial_str;
 }
 
+std::string libBLEEP::GetSerializedString(POWConsensusMessage msg) {
+    std::string serial_str;
+    // serialize msg into an std::string
+    boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+    boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
+    boost::archive::binary_oarchive oa(s);
+    oa << msg;
+    s.flush();
+    return serial_str;
+}
+
 boost::shared_ptr<Transaction> libBLEEP::GetDeserializedTransaction(std::string str) {
     Transaction* tx;
     // wrap buffer inside a stream and deserialize string_read into obj
@@ -66,4 +77,15 @@ std::shared_ptr<Block> libBLEEP::GetDeserializedBlock(std::string str) {
     ia >> block;
 
     return std::shared_ptr<Block>(block);
+}
+
+POWConsensusMessage libBLEEP::GetDeserializedPOWConsensusMessage(std::string str) {
+    POWConsensusMessage msg;
+    // wrap buffer inside a stream and deserialize string_read into obj
+    boost::iostreams::basic_array_source<char> device(str.c_str(), str.size());
+    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
+    boost::archive::binary_iarchive ia(s);
+    ia >> msg;
+
+    return msg;
 }

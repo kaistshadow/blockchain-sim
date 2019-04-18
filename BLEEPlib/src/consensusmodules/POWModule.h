@@ -73,9 +73,11 @@ namespace libBLEEP {
                 validBlk->SetBlockHash(hash_out_256);
                 validBlk->SetTimestamp(timestamp);
 
-                _mainEventModule->_asyncEventTriggered = true;
-                _mainEventModule->_nextAsyncEvent = AsyncEventEnum::EmuBlockMiningComplete;
-                _mainEventModule->_dataManager.SetMinedBlock(validBlk);
+                // push asynchronous event
+                AsyncEvent event(AsyncEventEnum::EmuBlockMiningComplete);
+                event.GetData().SetMinedBlock(validBlk);
+                _mainEventModule->PushAsyncEvent(event);
+
 
                 _powModule->_isMining = false;
                 _powModule->watcherManager.RemoveMiningEmulationTimer();

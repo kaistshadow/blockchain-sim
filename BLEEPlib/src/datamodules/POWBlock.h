@@ -45,6 +45,12 @@ namespace libBLEEP {
         void SetDifficulty(UINT256_t d) {difficulty = d; }
         UINT256_t GetDifficulty() const { return difficulty; }
 
+        // This overloaded operator<< 
+        // Defines a non-member function, and makes it a friend of this class at the same time. 
+        friend std::ostream& operator<<(std::ostream &out, const POWBlock &t) 
+        {
+            return t.print(out);
+        }
         virtual std::ostream& print(std::ostream& out) const override; 
     private:
         friend class boost::serialization::access;

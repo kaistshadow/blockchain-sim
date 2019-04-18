@@ -14,12 +14,9 @@ BasicNetworkModule::BasicNetworkModule(std::string myPeerId, MainEventManager* m
 }
 
 bool BasicNetworkModule::AsyncConnectPeer(PeerId id, double time) {
-    // check whether the socket connection already exists for given peerId
-    std::shared_ptr<PeerInfo> peerInfo = peerManager.GetPeerInfo(id);
-    if (peerInfo && peerInfo->GetSocketStatus() == SocketStatus::SocketConnected) {
-        // already exists a valid socket connection
+    // check whether the valid socket connection already exists for given peerId
+    if (peerManager.HasEstablishedDataSocket(id))
         return false;
-    }
    
     if (time > 0) {
         new AsyncConnectTimer(id, time, this, _mainEventManager); //timer automatically started
@@ -37,12 +34,11 @@ bool BasicNetworkModule::AsyncConnectPeer(PeerId id, double time) {
 
 bool BasicNetworkModule::UnicastMessage(PeerId dest, std::shared_ptr<Message> message) {
     // check whether there exists a data socket for the destination peer
-    std::shared_ptr<PeerInfo> peerInfo = peerManager.GetPeerInfo(dest);
-    if (!peerInfo || peerInfo->GetSocketStatus() != SocketStatus::SocketConnected)
+    if (!peerManager.HasEstablishedDataSocket(dest))
         return false;
     
     // get datasocket
-    int socketFD = peerInfo->GetSocketFD();
+    int socketFD = peerManager.GetConnectedSocketFD(dest);
     std::shared_ptr<DataSocket_v2> dataSocket = socketManager.GetDataSocket(socketFD);
     
     // append a message to socket
@@ -70,24 +66,45 @@ void BasicNetworkModule::AsyncGenerateRandomTransaction(double time) {
 }
 
 bool BasicNetworkModule::DisconnectPeer(PeerId id) {
+    // this API disconnects all existing socket connection for given PeerId.
+    // Thus, it will not only disconnect the connection requested by myself,
+    // but also disconnect the connection requested by remote.
+
     // check whether the socket connection exists for given peerId
     std::shared_ptr<PeerInfo> peerInfo = peerManager.GetPeerInfo(id);
-    if (peerInfo == nullptr || peerInfo->GetSocketStatus() != SocketStatus::SocketConnected) {
+    if (peerInfo == nullptr || 
+        (peerInfo->GetSocketStatus() != SocketStatus::SocketConnected &&
+         peerInfo->GetSocketStatusRemote() != SocketStatus::SocketConnected)) {
         // there's no valid socket connection for given peerId
         return false;
     }
 
-    int socketFD = peerInfo->GetSocketFD();
+    if (peerInfo->GetSocketStatus() == SocketStatus::SocketConnected) {
+        int socketFD = peerInfo->GetSocketFD();
+        // remove dataSocket 
+        // it will automatically call destructor of DataSocket, thus automatically call close()
+        socketManager.RemoveDataSocket(socketFD);
+        // remove dataSocketWatcher
+        // it will automatically call destructor of DataSocketWatcher (benefit of smart pointer)
+        watcherManager.RemoveDataSocketWatcher(socketFD);
 
-    // remove dataSocket 
-    // it will automatically call destructor of DataSocket, thus automatically call close()
-    socketManager.RemoveDataSocket(socketFD);
-    // remove dataSocketWatcher
-    // it will automatically call destructor of DataSocketWatcher (benefit of smart pointer)
-    watcherManager.RemoveDataSocketWatcher(socketFD);
+        // update peermanager for closed socket
+        peerManager.UpdateNeighborSocketDisconnection(socketFD); 
+    }
 
-    // update peermanager for closed socket
-    peerManager.UpdateNeighborSocketDisconnection(socketFD);
+    if (peerInfo->GetSocketStatusRemote() == SocketStatus::SocketConnected) {
+        int socketFD = peerInfo->GetSocketFDRemote();
+        // remove dataSocket 
+        // it will automatically call destructor of DataSocket, thus automatically call close()
+        socketManager.RemoveDataSocket(socketFD);
+        // remove dataSocketWatcher
+        // it will automatically call destructor of DataSocketWatcher (benefit of smart pointer)
+        watcherManager.RemoveDataSocketWatcher(socketFD);
+
+        // update peermanager for closed socket
+        peerManager.UpdateNeighborSocketDisconnection(socketFD); 
+    }
+
 
     // append shadow log for connection establishment
     char buf[256];

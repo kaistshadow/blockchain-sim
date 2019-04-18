@@ -56,65 +56,69 @@ int main(int argc, char *argv[]) {
 
     while(true) {
         mainEventManager.Wait(); // main event loop (wait for next event)
+
+        while (mainEventManager.ExistAsyncEvent()) {
+            AsyncEvent event = mainEventManager.PopAsyncEvent();
         
-        switch (mainEventManager.GetEventType()) {
-        case AsyncEventEnum::none:
-            std::cout << "invalid event is triggered. " << "\n";
-            exit(-1);
-        case AsyncEventEnum::CompleteAsyncConnectPeer:
-            {
-                std::cout << "event for connection complete for peer. " << "\n";
-                PeerId peerId = mainEventManager.GetAsyncEventDataManager().GetConnectedPeerId();
-                std::cout << "connected peerId : " << peerId.GetId() << "\n";
-                // mainEventManager.SendMessage(message);
-                break;
-            }
-        case AsyncEventEnum::ErrorAsyncConnectPeer:
-            {
-                std::cout << "AsyncConnectPeer got error(" << mainEventManager.GetAsyncEventDataManager().GetError() << ")" << "\n";
-                // try again with timer
-                PeerId peerId = mainEventManager.GetAsyncEventDataManager().GetRefusedPeerId();                
-                basicNetworkModule.AsyncConnectPeer(peerId, 10);
-                break;
-            }
-        case AsyncEventEnum::CompleteAsyncGenerateRandomTransaction:
-            {
-                std::cout << "random transaction generated" << "\n";
-                boost::shared_ptr<Transaction> generatedTx = mainEventManager.GetAsyncEventDataManager().GetGeneratedTx();
-                std::cout << *generatedTx << "\n";
-                break;
-            }
-        case AsyncEventEnum::RecvMessage:
-            {
-                std::cout << "RecvMessage" << "\n";
-                std::shared_ptr<Message> msg = mainEventManager.GetAsyncEventDataManager().GetReceivedMsg();
-                MessageType messageType = msg->GetType();
-                if (messageType == "newTx") {
-                    boost::shared_ptr<Transaction> receivedTx = GetDeserializedTransaction(msg->GetPayload());
-                    std::cout << *receivedTx << "\n";
+            switch (event.GetType()) {
+            case AsyncEventEnum::none:
+                std::cout << "invalid event is triggered. " << "\n";
+                exit(-1);
+            case AsyncEventEnum::CompleteAsyncConnectPeer:
+                {
+                    std::cout << "event for connection complete for peer. " << "\n";
+                    PeerId peerId = event.GetData().GetConnectedPeerId();
+                    std::cout << "connected peerId : " << peerId.GetId() << "\n";
+                    // mainEventManager.SendMessage(message);
+                    break;
                 }
-
-                // for testing DisconnectPeer API
-                receivedMessageCount++;
-                if (receivedMessageCount >= 5) {
-                    for (auto neighborPeerId : gArgs.GetArgs("-connect"))
-                        basicNetworkModule.DisconnectPeer(PeerId(neighborPeerId));
+            case AsyncEventEnum::ErrorAsyncConnectPeer:
+                {
+                    std::cout << "AsyncConnectPeer got error(" << event.GetData().GetError() << ")" << "\n";
+                    // try again with timer
+                    PeerId peerId = event.GetData().GetRefusedPeerId();                
+                    basicNetworkModule.AsyncConnectPeer(peerId, 10);
+                    break;
                 }
-                break;
-            }
-        case AsyncEventEnum::NewPeerConnected:
-            {
-                std::shared_ptr<PeerId> newConnectedNeighbor = mainEventManager.GetAsyncEventDataManager().GetNewlyConnectedPeer();
-                std::cout << "NewPeerConnected requested from " << newConnectedNeighbor->GetId() << "\n";
+            case AsyncEventEnum::CompleteAsyncGenerateRandomTransaction:
+                {
+                    std::cout << "random transaction generated" << "\n";
+                    boost::shared_ptr<Transaction> generatedTx = event.GetData().GetGeneratedTx();
+                    std::cout << *generatedTx << "\n";
+                    break;
+                }
+            case AsyncEventEnum::RecvMessage:
+                {
+                    std::cout << "RecvMessage" << "\n";
+                    std::shared_ptr<Message> msg = event.GetData().GetReceivedMsg();
+                    MessageType messageType = msg->GetType();
+                    if (messageType == "newTx") {
+                        boost::shared_ptr<Transaction> receivedTx = GetDeserializedTransaction(msg->GetPayload());
+                        std::cout << *receivedTx << "\n";
+                    }
 
-                break;
-            }
-        case AsyncEventEnum::PeerDisconnected:
-            {
-                std::shared_ptr<PeerId> disconnectedNeighbor = mainEventManager.GetAsyncEventDataManager().GetDisconnectedPeerId();
-                std::cout << "Disconnection requested from " << disconnectedNeighbor->GetId() << "\n";
+                    // for testing DisconnectPeer API
+                    receivedMessageCount++;
+                    if (receivedMessageCount >= 5) {
+                        for (auto neighborPeerId : gArgs.GetArgs("-connect"))
+                            basicNetworkModule.DisconnectPeer(PeerId(neighborPeerId));
+                    }
+                    break;
+                }
+            case AsyncEventEnum::NewPeerConnected:
+                {
+                    std::shared_ptr<PeerId> newConnectedNeighbor = event.GetData().GetNewlyConnectedPeer();
+                    std::cout << "NewPeerConnected requested from " << newConnectedNeighbor->GetId() << "\n";
 
-                break;
+                    break;
+                }
+            case AsyncEventEnum::PeerDisconnected:
+                {
+                    std::shared_ptr<PeerId> disconnectedNeighbor = event.GetData().GetDisconnectedPeerId();
+                    std::cout << "Disconnection requested from " << disconnectedNeighbor->GetId() << "\n";
+
+                    break;
+                }
             }
         }
     }

@@ -467,7 +467,7 @@ std::ostream & libBLEEP::operator<<(std::ostream & stream, const UINT256_t & rhs
     oldState.copyfmt(stream);
 
     stream << "[";
-    stream << std::setfill('0') << std::setw(16) << std::hex << rhs.upper() << std::setfill('0') << std::setw(16) << rhs.lower();
+    stream << rhs.upper() << rhs.lower();
     stream << "]";
 
     stream.copyfmt(oldState);

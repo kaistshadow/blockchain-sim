@@ -37,6 +37,13 @@ set(FSM_SRCS
   # statemachine/examples/doublenode-blockchain-machine/StateHandler.cpp
   # statemachine/examples/doublenode-blockchain-machine/StateMachine.cpp
 )
+set(FSM_SRCS_DOUBLE
+  utility/GlobalClock.cpp
+  utility/ArgsManager.cpp
+  statemachine/examples/doublenode-blockchain-machine/State.cpp
+  statemachine/examples/doublenode-blockchain-machine/StateHandler.cpp
+  statemachine/examples/doublenode-blockchain-machine/StateMachine.cpp
+)
   
 # if(EXISTS "${CMAKE_INSTALL_PREFIX}")
 #   message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
@@ -84,3 +91,17 @@ target_link_libraries(LOCAL_NODE_FSM BLEEP)
 add_test(NAME BLEEP-FSM-singlenode
   COMMAND python test-rc1-fsm.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../BLEEPeval)
+
+## doublenode-blockchain
+add_shadow_plugin(NODE_FSM_DOUBLE node_doublenode_blockchain_machine.cpp ${FSM_SRCS_DOUBLE})
+install(TARGETS NODE_FSM_DOUBLE DESTINATION plugins)
+target_link_libraries(NODE_FSM_DOUBLE -lev)
+target_link_libraries(NODE_FSM_DOUBLE -lpthread)
+target_link_libraries(NODE_FSM_DOUBLE ${Boost_LIBRARIES})
+target_link_libraries(NODE_FSM_DOUBLE SHADOW_INTERFACE)
+target_link_libraries(NODE_FSM_DOUBLE BLEEP)
+
+add_test(NAME BLEEP-FSM-doublenode
+  COMMAND python test-rc1-fsm-doublenode.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../BLEEPeval)
+  

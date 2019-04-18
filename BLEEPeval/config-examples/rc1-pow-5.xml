@@ -32,22 +32,35 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="NODE" path="~/.bleep/plugins/libNODE_bleep.so" />
+  <plugin id="NODE" path="~/.bleep/plugins/libNODE_POW.so" />
   <plugin id="CLIENT" path="~/.bleep/plugins/libNODE_client.so" />
 
 
   <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="100" />
+  <kill time="300" />
   <!-- our nodes -->
 
   <node id="bleep0">
-    <application plugin="NODE" time="5" arguments="-id=bleep0 -connect=bleep1" />
+    <application plugin="NODE" time="5" arguments="-id=bleep0 -connect=bleep1 -connect=bleep2 -connect=bleep3 -connect=bleep4" />
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>
 
   <node id="bleep1">
-    <application plugin="NODE" time="13" arguments="-id=bleep1 -connect=bleep0" />
+    <application plugin="NODE" time="13" arguments="-id=bleep1 -connect=bleep0 -connect=bleep2 -connect=bleep3 -connect=bleep4" />
   </node>
+
+  <node id="bleep2">
+    <application plugin="NODE" time="13" arguments="-id=bleep2 -connect=bleep0 -connect=bleep1 -connect=bleep3 -connect=bleep4" />
+  </node>
+
+  <node id="bleep3">
+    <application plugin="NODE" time="13" arguments="-id=bleep3 -connect=bleep0 -connect=bleep1 -connect=bleep2 -connect=bleep4" />
+  </node>
+
+  <node id="bleep4">
+    <application plugin="NODE" time="13" arguments="-id=bleep4 -connect=bleep0 -connect=bleep1 -connect=bleep2 -connect=bleep3" />
+  </node>
+
 
   <node id="client0">
     <application plugin="CLIENT" time="15" arguments="-id=client0 -connect=bleep0 -txgeninterval=5" />
@@ -56,8 +69,12 @@
     <application plugin="CLIENT" time="15" arguments="-id=client1 -connect=bleep0 -txgeninterval=11" />
   </node>
   <node id="client2">
-    <application plugin="CLIENT" time="15" arguments="-id=client2 -connect=bleep1 -txgeninterval=10" />
+    <application plugin="CLIENT" time="15" arguments="-id=client2 -connect=bleep1 -connect=bleep2 -connect=bleep3 -connect=bleep4 -txgeninterval=10" />
   </node>
+  <node id="client3">
+    <application plugin="CLIENT" time="15" arguments="-id=client3 -connect=bleep2 -connect=bleep3 -connect=bleep4 -txgeninterval=10" />
+  </node>
+
 
 
   <!-- <node id="bleep1"> -->

@@ -1,4 +1,5 @@
 #include "ArgsManager.h"
+#include "Assert.h"
 #include <sstream>
 
 using namespace libBLEEP;
@@ -93,6 +94,11 @@ std::string ArgsManager::HelpMessage() {
     strUsage += HelpMessageGroup("Injector Options:");
     strUsage += HelpMessageOpt("-txgeninterval=<time>", "Specify the interval for randomly generated tx. ");
 
+    strUsage += HelpMessageGroup("Blockchain Consensus Options (POW):");
+    strUsage += HelpMessageOpt("-blocktxnum=<n>", "Number of transactions in one block. default:5");
+    strUsage += HelpMessageOpt("-miningtime=<n>", "Emulated mean time for mining a block. default:10");    
+    strUsage += HelpMessageOpt("-miningtimedev=<n>", "Standard deviation time for mining a block. default:2");    
+
     return strUsage;
 }
 
@@ -131,6 +137,27 @@ std::vector<std::string> ArgsManager::GetArgs(const std::string& strArg) const
     auto it = mapMultiArgs.find(strArg);
     if (it != mapMultiArgs.end()) return it->second;
     return {};
+}
+
+std::string ArgsManager::GetArg(const std::string& strArg) const 
+{
+    auto it = mapArgs.find(strArg);
+    if (it != mapArgs.end()) return it->second;
+    
+    // return default
+    if (strArg == "-id") {
+        return "noid";
+    } else if (strArg == "-blocktxnum") {
+        return "5";
+    } else if (strArg == "-miningtime") {
+        return "10";
+    } else if (strArg == "-miningtimedev") {
+        return "2";
+    } else {
+        M_Assert(0, "Invalid request for not existed argument. (Also, default value of the argument is not existed)");
+    }
+
+    return "";
 }
 
 bool ArgsManager::IsArgSet(const std::string& strArg) const

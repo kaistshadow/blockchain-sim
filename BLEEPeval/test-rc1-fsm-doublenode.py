@@ -5,8 +5,8 @@ import sys
 import lxml.etree as ET
 
 if __name__ == '__main__':
-    datadir = "rc1-fsm-singlenode-datadir"
-    shadow_configfile = "config-examples/rc1-fsm-singlenode.xml"
+    datadir = "rc1-fsm-doublenode-datadir"
+    shadow_configfile = "config-examples/rc1-fsm.xml"
 
     os.system("rm -rf %s" % datadir)
 

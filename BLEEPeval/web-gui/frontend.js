@@ -243,6 +243,17 @@ $(function () {
                     var from = eventlog.args.split(",")[0];
                     var to = eventlog.args.split(",")[1];
                     addEdge(from, to);
+                } else if (eventlog.type === "DisconnectPeer") {
+                    var from = eventlog.args.split(",")[0];
+                    var to = eventlog.args.split(",")[1];
+                    removeEdge(from, to);
+                    removeEdge(to, from);
+                } else if (eventlog.type === "BlockAppend") {
+                    var peerId = eventlog.args.split(",")[0];
+                    var hash = eventlog.args.split(",")[2];
+                    var prevHash = eventlog.args.split(",")[3];
+                    var timestamp = eventlog.args.split(",")[4];
+                    appendBlock(peerId, hash, prevHash, timestamp);
                 }
             }
         } else if (json.type === 'graph') {

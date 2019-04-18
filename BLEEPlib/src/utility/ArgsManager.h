@@ -27,6 +27,15 @@ namespace libBLEEP {
         std::vector<std::string> GetArgs(const std::string& strArg) const;
 
         /**
+         * Return argument or default value
+         * The argument should have been set as command-line argument or have a default value.
+         *
+         * @param Argument to get (e.g. "-foo")
+         * @return command-line argument or default value
+         */
+        std::string GetArg(const std::string& strArg) const;
+
+        /**
          * Return string argument or default value
          *
          * @param strArg Argument to get (e.g. "-foo")

@@ -23,6 +23,16 @@ namespace libBLEEP {
         const std::list<boost::shared_ptr<Transaction> >& GetTransactions() const { return tx_list; }
         std::string GetId() const {return block_id; }
 
+        // This overloaded operator<< 
+        // Defines a non-member function, and makes it a friend of this class at the same time. 
+        friend std::ostream& operator<<(std::ostream &out, const Block &t) 
+        {
+            return t.print(out);
+        }
+        // We'll rely on member function print() to do the actual printing
+        // Because print is a normal member function, it can be virtualized
+        virtual std::ostream& print(std::ostream&out) const ;
+
     protected:
         std::string block_id;
         std::list<boost::shared_ptr<Transaction> > tx_list;
@@ -40,7 +50,7 @@ namespace libBLEEP {
         }
     };
 
-    std::ostream& operator<<(std::ostream&, const Block&); // in order to overload the << operator
+    /* std::ostream& operator<<(std::ostream&, const Block&); // in order to overload the << operator */
 
 }
 #endif

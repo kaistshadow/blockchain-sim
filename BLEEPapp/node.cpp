@@ -1,5 +1,6 @@
 #include "mainmodules/MainEventManager.h"
-#include "networkmodules/BasicNetworkModule.h"
+#include "mainmodules/BasicNetworkModule.h"
+
 #include "datamodules/Peer.h"
 #include "datamodules/Message.h"
 

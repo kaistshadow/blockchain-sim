@@ -61,10 +61,6 @@ bool BasicNetworkModule::UnicastMessage(PeerId dest, std::shared_ptr<Message> me
     return true;
 }
 
-void BasicNetworkModule::AsyncGenerateRandomTransaction(double time) {
-    new AsyncGenerateRandomTransactionTimer(time, this, _mainEventManager);
-}
-
 bool BasicNetworkModule::DisconnectPeer(PeerId id) {
     // this API disconnects all existing socket connection for given PeerId.
     // Thus, it will not only disconnect the connection requested by myself,

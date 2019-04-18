@@ -1,5 +1,7 @@
 #include "mainmodules/MainEventManager.h"
-#include "networkmodules/BasicNetworkModule.h"
+#include "mainmodules/BasicNetworkModule.h"
+#include "mainmodules/TxGeneratorModule.h"
+
 #include "datamodules/Peer.h"
 #include "datamodules/Message.h"
 
@@ -25,6 +27,7 @@ int main(int argc, char *argv[]) {
     // MainEventManager mainEventManager(gArgs.GetArg("-id", "noid"));
     MainEventManager mainEventManager;
     BasicNetworkModule basicNetworkModule(gArgs.GetArg("-id", "noid"), &mainEventManager);
+    TxGeneratorModule txGeneratorModule(&mainEventManager);
 
 
     /* connect to peer */
@@ -32,7 +35,7 @@ int main(int argc, char *argv[]) {
         basicNetworkModule.AsyncConnectPeer(PeerId(neighborPeerId));
 
     if (gArgs.IsArgSet("-txgeninterval")) {
-        basicNetworkModule.AsyncGenerateRandomTransaction(gArgs.GetArg("-txgeninterval", 0));
+        txGeneratorModule.AsyncGenerateRandomTransaction(gArgs.GetArg("-txgeninterval", 0));
     }
 
     while(true) {
@@ -78,7 +81,7 @@ int main(int argc, char *argv[]) {
                     }
 
                     // Call another request, i.e., periodically generate transaction
-                    basicNetworkModule.AsyncGenerateRandomTransaction(gArgs.GetArg("-txgeninterval", 0));
+                    txGeneratorModule.AsyncGenerateRandomTransaction(gArgs.GetArg("-txgeninterval", 0));
                     break;
                 }
             case AsyncEventEnum::RecvMessage:

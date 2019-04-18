@@ -1,5 +1,8 @@
 #include "mainmodules/MainEventManager.h"
-#include "networkmodules/BasicNetworkModule.h"
+#include "mainmodules/BasicNetworkModule.h"
+#include "mainmodules/POWModule.h"
+
+
 #include "datamodules/Peer.h"
 #include "datamodules/Message.h"
 
@@ -7,7 +10,6 @@
 
 #include "datamanagermodules/TxPool.h"
 #include "datamodules/POWBlock.h"
-#include "consensusmodules/POWModule.h"
 #include "datamanagermodules/ListLedgerManager.h"
 
 #include <chrono>
@@ -101,19 +103,6 @@ bool UpdateLedgerAsLongestChain(std::vector<POWBlock>& received_blks, TxPool& tx
 
         // // replace ledger
         ledger.ReplaceLedger(ledger_it, ledger_blks.end(), received_blks_it, received_blks.end());
-
-        // while (ledger_it != ledger_blks.end()) {
-        //     // txPool.AddTxs(ledger_it->GetTransactions());
-        //     ledger_it = ledger_blks.erase(ledger_it);
-        // }
-
-        // while (received_blks_it != received_blks.end()) {
-        //     // txPool.RemoveTxs(received_blks_it->GetTransactions());
-        //     ledger_blks.push_back(*received_blks_it);
-        //     std::cout << "Longest chain block is appended" << "\n";
-        //     std::cout << *received_blks_it << "\n";
-        //     received_blks_it++;
-        // }
 
         return true;
     }

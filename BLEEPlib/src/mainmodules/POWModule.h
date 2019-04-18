@@ -1,7 +1,7 @@
 #ifndef POW_MODULE_H
 #define POW_MODULE_H
 
-#include "../mainmodules/MainEventManager.h"
+#include "MainEventManager.h"
 #include "../datamodules/POWBlock.h"
 #include "../crypto/SHA256.h"
 #include "../utility/GlobalClock.h"

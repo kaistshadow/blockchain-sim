@@ -8,7 +8,7 @@
 #include "Block.h"
 #include "Transaction.h"
 #include "Peer.h"
-#include "../consensusmodules/POWConsensusMessage.h"
+#include "POWConsensusMessage.h"
 
 namespace libBLEEP {
     typedef std::string MessageType;

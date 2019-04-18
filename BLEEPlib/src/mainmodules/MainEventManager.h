@@ -118,13 +118,6 @@ namespace libBLEEP {
            for managing the triggered asynchronous event */
         /*********************************************************/
 
-        /* /\* Event trigger status *\/ */
-        /* bool _asyncEventTriggered = false; */
-        /* /\* Type of triggered asynchronous event *\/ */
-        /* AsyncEventEnum _nextAsyncEvent; */
-        /* /\* Data manager for the triggered asynchronous event  *\/ */
-        /* AsyncEventDataManager _dataManager; */
-
         std::queue<AsyncEvent> _eventQueue;
 
     public:

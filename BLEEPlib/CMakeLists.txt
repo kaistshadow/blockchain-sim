@@ -42,14 +42,15 @@ set(SRCS
   src/datamanagermodules/SocketManager.cpp
   src/datamanagermodules/PeerManager.cpp
   src/mainmodules/MainEventManager.cpp
+  src/mainmodules/BasicNetworkModule.cpp
+  src/mainmodules/TxGeneratorModule.cpp
+  src/mainmodules/POWModule.cpp
   src/utility/UInt256.cpp
   src/utility/Assert.cpp
   src/utility/ArgsManager.cpp
-  src/networkmodules/BasicNetworkModule.cpp
   src/datamodules/Socket_v2.cpp
   src/datamanagermodules/SocketManager_v2.cpp
   src/datamodules/POWBlock.cpp
-  src/consensusmodules/POWModule.cpp
   src/crypto/SHA256.cpp
   src/utility/GlobalClock.cpp
 )
@@ -86,16 +87,6 @@ install(DIRECTORY "src/datamanagermodules"
   PATTERN
   "*.h")
 install(DIRECTORY "src/datamodules"
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-  FILES_MATCHING
-  PATTERN
-  "*.h")
-install(DIRECTORY "src/networkmodules"
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-  FILES_MATCHING
-  PATTERN
-  "*.h")
-install(DIRECTORY "src/consensusmodules"
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   FILES_MATCHING
   PATTERN

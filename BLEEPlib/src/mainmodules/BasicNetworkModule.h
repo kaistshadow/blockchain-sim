@@ -4,7 +4,7 @@
 #include "../datamanagermodules/SocketManager_v2.h"
 #include "../datamanagermodules/PeerManager.h"
 
-#include "../mainmodules/MainEventManager.h"
+#include "MainEventManager.h"
 #include "../datamodules/Message.h"
 #include "../datamodules/Peer.h"
 #include "../utility/Assert.h"
@@ -77,33 +77,6 @@ namespace libBLEEP {
                 : WatcherWrapper (netModule, eventModule) {
                 _id = id;
                 _timer.set<AsyncConnectTimer, &AsyncConnectTimer::_timerCallback> (this);
-                _timer.set(time, 0.);
-                _timer.start();
-                std::cout << "timer started!" << "\n";
-            }
-        };
-
-        class AsyncGenerateRandomTransactionTimer : public WatcherWrapper {
-        private:
-            ev::timer _timer; // destructor automatically stops the watcher
-            void _timerCallback(ev::timer &w, int revents) {
-                std::cout << "AsyncGenerateRandomTransaction timer callback executes!" << "\n";
-                srand((unsigned int)time(0));
-                int sender_id = rand() % 100;
-                int receiver_id = rand() % 100;
-                float amount = (float) (rand() % 10000);
-                boost::shared_ptr<Transaction> generatedTx(new SimpleTransaction(sender_id, receiver_id, amount));
-
-                // push asynchronous event
-                AsyncEvent event(AsyncEventEnum::CompleteAsyncGenerateRandomTransaction);
-                event.GetData().SetGeneratedTx(generatedTx);
-                _mainEventModule->PushAsyncEvent(event);
-                delete this;
-            }
-        public:
-            AsyncGenerateRandomTransactionTimer(double time, BasicNetworkModule* netModule, MainEventManager* eventModule)
-                : WatcherWrapper(netModule, eventModule) {
-                _timer.set<AsyncGenerateRandomTransactionTimer, &AsyncGenerateRandomTransactionTimer::_timerCallback> (this);
                 _timer.set(time, 0.);
                 _timer.start();
                 std::cout << "timer started!" << "\n";
@@ -420,14 +393,6 @@ namespace libBLEEP {
         /* There's no separate complete event for this API */
         bool UnicastMessage(PeerId dest, std::shared_ptr<Message> message);
 
-        /* asynchronous API that requests a random generated transaction */
-        /* Argument 'time' specifies the waiting time. 
-           If the 'time' is greater than 0, the transaction will be generated 
-           after the given 'time' is passed. */
-        /* When the task is complete, 'complete event' will be triggered. */
-        /* 'complete event' offers randomly generate Transaction. */
-        void AsyncGenerateRandomTransaction(double time);
-
         /* synchronous API that requests a disconnection for given peer */
         /* Since it's synchronous API, 
            there's no separate complete event for this API */ 
@@ -440,8 +405,7 @@ namespace libBLEEP {
         /* Internal data structures
            for managing the asynchronous function call data.
            Current list of supported asynchronous function calls : 
-             1) AsyncConnectPeer (supported at 20190328)
-             2) AsyncGenerateRandomTransaction (supported at 20190331) */
+           1) AsyncConnectPeer (supported at 20190328)           */
         /*********************************************************/
         
         // for managing AsyncConnectPeer's requested data
@@ -463,17 +427,7 @@ namespace libBLEEP {
         
         /*************** for socket-IO event handling ******************/
         SocketManager_v2 socketManager;
-        /* // for listening socket management */
-        /* ListenSocketManager_v2 listenSocketManager; */
-        /* // for connecting socket management */
-        /* ConnectSocketManager_v2 connectSocketManager; */
-        /* // for data socket management */
-        /* DataSocketManager_v2 dataSocketManager; */
 
-    /* private: */
-    /*     void _HandleShadowEvents(); */
-    /*     void _HandleNetworkEvents(); */
-    /*     void _HandleTimerEvents(); */
     };
 
 }

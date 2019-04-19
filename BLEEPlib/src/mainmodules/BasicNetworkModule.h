@@ -393,6 +393,8 @@ namespace libBLEEP {
         /* There's no separate complete event for this API */
         bool UnicastMessage(PeerId dest, std::shared_ptr<Message> message);
 
+        bool MulticastMessage(std::vector<PeerId> dests, std::shared_ptr<Message> message);
+
         /* synchronous API that requests a disconnection for given peer */
         /* Since it's synchronous API, 
            there's no separate complete event for this API */ 
@@ -400,6 +402,7 @@ namespace libBLEEP {
            the function immediately returns false */
         bool DisconnectPeer(PeerId id);
 
+        std::vector<PeerId> GetNeighborPeerIds();
     private:
         /*********************************************************/
         /* Internal data structures

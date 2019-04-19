@@ -30,8 +30,7 @@ using namespace libBLEEP;
 // TODO : connected neighbor peer already exists handling. -> remove redundent datasocket
 // TODO : NewPeerConnected event
 
-// 
-
+//
 
 int main(int argc, char *argv[]) {
     // for testing DisconnectPeer API
@@ -60,7 +59,7 @@ int main(int argc, char *argv[]) {
 
         while (mainEventManager.ExistAsyncEvent()) {
             AsyncEvent event = mainEventManager.PopAsyncEvent();
-        
+
             switch (event.GetType()) {
             case AsyncEventEnum::none:
                 std::cout << "invalid event is triggered. " << "\n";
@@ -77,7 +76,7 @@ int main(int argc, char *argv[]) {
                 {
                     std::cout << "AsyncConnectPeer got error(" << event.GetData().GetError() << ")" << "\n";
                     // try again with timer
-                    PeerId peerId = event.GetData().GetRefusedPeerId();                
+                    PeerId peerId = event.GetData().GetRefusedPeerId();
                     basicNetworkModule.AsyncConnectPeer(peerId, 10);
                     break;
                 }
@@ -95,6 +94,8 @@ int main(int argc, char *argv[]) {
                     MessageType messageType = msg->GetType();
                     if (messageType == "newTx") {
                         boost::shared_ptr<Transaction> receivedTx = GetDeserializedTransaction(msg->GetPayload());
+                        std::vector<PeerId> dests = basicNetworkModule.GetNeighborPeerIds();
+                        basicNetworkModule.MulticastMessage(dests, msg);
                         std::cout << *receivedTx << "\n";
                     }
 

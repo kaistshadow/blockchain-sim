@@ -55,6 +55,17 @@ std::shared_ptr<PeerInfo> libBLEEP::PeerManager::GetPeerInfoBySocket(int socketf
     return it->second;
 }
 
+
+std::vector<PeerId> libBLEEP::PeerManager::GetNeighborPeerIds(){
+    std::vector<PeerId> id;
+    std::map <PeerId, std::shared_ptr<PeerInfo>, PeerIdCompare>::iterator i = _neighborPeers.begin();
+    while (i != _neighborPeers.end()){
+        id.push_back(i->first);
+        i++;
+    }
+    return id;
+}
+
 // std::shared_ptr<PeerInfo> libBLEEP::PeerManager::AppendNewNeighborPeer(PeerId peer) {
 //     std::shared_ptr<PeerInfo> peerPtr = GetPeerInfo(peer);
 //     if (peerPtr) {

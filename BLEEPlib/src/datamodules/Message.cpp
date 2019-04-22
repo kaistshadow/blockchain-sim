@@ -6,6 +6,8 @@
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/serialization/export.hpp>
 
+#include "crypto/SHA256.h"
+
 using namespace libBLEEP;
 
 // to avoid unregisterd class error
@@ -88,4 +90,16 @@ POWConsensusMessage libBLEEP::GetDeserializedPOWConsensusMessage(std::string str
     ia >> msg;
 
     return msg;
+}
+
+std::string libBLEEP::GenMessageHash(std::string msg){
+    unsigned char digest[SHA256_BLOCK_SIZE];
+    SHA256_CTX ctx;
+    sha256_init(&ctx);
+    sha256_update(&ctx, msg.c_str(), msg.size());
+    sha256_final(&ctx, digest);
+    char mdString[SHA256_BLOCK_SIZE*2+1];
+    for (int i = 0; i < SHA256_BLOCK_SIZE; i++)
+        sprintf(&mdString[i*2], "%02x", (unsigned int)digest[i]);
+    return mdString;
 }

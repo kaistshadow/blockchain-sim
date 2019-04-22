@@ -20,13 +20,16 @@ namespace libBLEEP {
         PeerId _dest;
         MessageType _type;
         std::string _payload;
+        std::string _messageId;
 
     public:
         Message() {}
         Message(PeerId src, PeerId dest, MessageType type) { _src = src; _dest = dest; _type = type; }
         Message(PeerId src, PeerId dest, MessageType type, std::string payload) { _src = src; _dest = dest; _type = type; _payload = payload; }
+        Message(PeerId src, PeerId dest, MessageType type, std::string payload, std::string msgId) { _src = src; _dest = dest; _type = type; _payload = payload; _messageId = msgId; }
         MessageType GetType() const { return _type; }
         std::string GetPayload() const { return _payload; }
+        std::string GetMessageId() const { return _messageId; }
         PeerId GetSource() const { return _src; }
         PeerId GetDest() const { return _dest; }
 
@@ -41,6 +44,7 @@ namespace libBLEEP {
             ar & _dest;
             ar & _type;
             ar & _payload;
+            ar & _messageId;
         }
     };
 
@@ -57,6 +61,7 @@ namespace libBLEEP {
     boost::shared_ptr<Transaction> GetDeserializedTransaction(std::string str);
     std::shared_ptr<Block> GetDeserializedBlock(std::string str);
     POWConsensusMessage GetDeserializedPOWConsensusMessage(std::string str);
+    std::string GenMessageHash(std::string msg);
 
 }
 

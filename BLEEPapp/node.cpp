@@ -35,6 +35,7 @@ using namespace libBLEEP;
 int main(int argc, char *argv[]) {
     // for testing DisconnectPeer API
     int receivedMessageCount = 0;
+    std::set<std::string> messageSet;
 
     gArgs.ParseParameters(argc, argv);
 
@@ -91,19 +92,12 @@ int main(int argc, char *argv[]) {
                 {
                     std::cout << "RecvMessage" << "\n";
                     std::shared_ptr<Message> msg = event.GetData().GetReceivedMsg();
-                    MessageType messageType = msg->GetType();
-                    if (messageType == "newTx") {
-                        boost::shared_ptr<Transaction> receivedTx = GetDeserializedTransaction(msg->GetPayload());
+                    if(true == messageSet.insert(msg->GetMessageId()).second){
+                        boost::shared_ptr<Transaction> receivedTx =
+                            GetDeserializedTransaction(msg->GetPayload());
                         std::vector<PeerId> dests = basicNetworkModule.GetNeighborPeerIds();
                         basicNetworkModule.MulticastMessage(dests, msg);
-                        std::cout << *receivedTx << "\n";
-                    }
-
-                    // for testing DisconnectPeer API
-                    receivedMessageCount++;
-                    if (receivedMessageCount >= 5) {
-                        for (auto neighborPeerId : gArgs.GetArgs("-connect"))
-                            basicNetworkModule.DisconnectPeer(PeerId(neighborPeerId));
+                        std::cout << "Multicasting message :" << *receivedTx << "\n";
                     }
                     break;
                 }

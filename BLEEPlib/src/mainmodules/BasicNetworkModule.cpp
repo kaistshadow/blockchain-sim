@@ -52,19 +52,22 @@ bool BasicNetworkModule::UnicastMessage(PeerId dest, std::shared_ptr<Message> me
 
     // append shadow log
     char buf[256];
-    sprintf(buf, "UnicastMessage,%s,%s,%s",
+    sprintf(buf, "UnicastMessage,%s,%s,%s,%s",
             peerManager.GetMyPeerId()->GetId().c_str(),
             dest.GetId().c_str(),
-            message->GetType().c_str());
+            message->GetType().c_str(),
+            message->GetMessageId().c_str());
     shadow_push_eventlog(buf);
 
     return true;
 }
 
 bool BasicNetworkModule::MulticastMessage(std::vector<PeerId> dests, std::shared_ptr<Message> message){
-    for(std::vector<PeerId>::size_type i = 0; i < dests.size(); ++i){
-        if (message->GetSource().GetId() != dests[i].GetId()){
-            bool result = UnicastMessage(dests[i], message);
+    std::cout << "Multicasting peerId : " << "\n";
+    for(auto dest : dests){
+        std::cout << dest.GetId() << "\n";
+        if (message->GetSource().GetId() != dest.GetId()){
+            bool result = UnicastMessage(dest, message);
             if(result == false)
             return false;
         }

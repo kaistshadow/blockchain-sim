@@ -20,6 +20,7 @@ namespace libBLEEP {
         NewPeerConnected,  /* connection estabilished by non-requested neighbor peer */
         PeerDisconnected,  /* connection disconnected by remote peer */
         EmuBlockMiningComplete, /* emulated mining for user-requested block is complete */
+        BlockMiningComplete, /* mining for user-requested block is complete */
     };
 
     /* class for data */
@@ -47,7 +48,7 @@ namespace libBLEEP {
         // data for PeerDisconnected
         std::shared_ptr<PeerId> _disconnectedPeerId;
 
-        // data for EmuBlockMiningComplete
+        // data for EmuBlockMiningComplete, BlockMiningComplete
         std::shared_ptr<POWBlock> _minedBlk;
 
     public:
@@ -87,9 +88,9 @@ namespace libBLEEP {
         // data access function for PeerDisconnected
         std::shared_ptr<PeerId> GetDisconnectedPeerId() { return _disconnectedPeerId; }
 
-        // data set function for EmuBlockMiningComplete
+        // data set function for EmuBlockMiningComplete, BlockMiningComplete
         void SetMinedBlock(std::shared_ptr<POWBlock> block) { _minedBlk = block; }
-        // data access function for EmuBlockMiningComplete
+        // data access function for EmuBlockMiningComplete, BlockMiningComplete
         std::shared_ptr<POWBlock> GetMinedBlock() { return _minedBlk; }
     };
 

@@ -10,9 +10,6 @@ using namespace libBLEEP;
 
 void libBLEEP::PeerManager::InitMyPeerId(std::string id) {
     _myPeerId = std::make_shared<PeerId>(id);
-    char buf[256];
-    sprintf(buf, "InitPeerId,%s", id.c_str());
-    shadow_push_eventlog(buf);
 }
 
 std::shared_ptr<PeerId> libBLEEP::PeerManager::GetMyPeerId() {

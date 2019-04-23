@@ -60,7 +60,7 @@ aria.Listbox.prototype.setupFocus = function () {
 aria.Listbox.prototype.focusFirstItem = function () {
   var firstItem;
 
-  firstItem = this.listboxNode.querySelector('[role="option"]');
+  firstItem = this.listboxNode.querySelector('[role="option"]:not([style="display:none;"])');
 
   if (firstItem) {
     this.focusItem(firstItem);
@@ -454,6 +454,9 @@ aria.Listbox.prototype.clearActiveDescendant = function () {
 aria.Listbox.prototype.focusNextItem = function () {
     var currentItem = document.getElementById(this.activeDescendant);
     var nextItem = currentItem.nextElementSibling;
+    while (nextItem && nextItem.getAttribute("style") === "display:none;")
+        nextItem = nextItem.nextElementSibling;
+
     if (nextItem)
         this.focusItem(nextItem);
 };

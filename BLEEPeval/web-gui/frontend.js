@@ -230,11 +230,13 @@ $(function () {
             ul.innerHTML = '';
             for (var i = 0, l = json.data.eventlogs.length; i < l; i++) {
                 var eventlog = json.data.eventlogs[i];
-                addMessage("eventlog", `time : ${eventlog.time}, type : ${eventlog.type}, args : ${eventlog.args}`, "blue", new Date(json.data.time));
+                addMessage("eventlog", `host : ${eventlog.host}, time : ${eventlog.time}, type : ${eventlog.type}, args : ${eventlog.args}`, "blue", new Date(json.data.time));
                 var li = document.createElement("li");
-                li.appendChild(document.createTextNode(`${eventlog.time},${eventlog.type},${eventlog.args}`));
+                li.appendChild(document.createTextNode(`${eventlog.host},${eventlog.time},${eventlog.type},${eventlog.args}`));
                 li.setAttribute("id", `event_${i}`); 
                 li.setAttribute("role", "option"); 
+                if (eventlog.type === "API")
+                    li.setAttribute("style", "display:none;");
                 ul.appendChild(li);
 
                 if (eventlog.type === "InitPeerId")
@@ -249,10 +251,10 @@ $(function () {
                     removeEdge(from, to);
                     removeEdge(to, from);
                 } else if (eventlog.type === "BlockAppend") {
-                    var peerId = eventlog.args.split(",")[0];
-                    var hash = eventlog.args.split(",")[2];
-                    var prevHash = eventlog.args.split(",")[3];
-                    var timestamp = eventlog.args.split(",")[4];
+                    var peerId = eventlog.host;
+                    var hash = eventlog.args.split(",")[1];
+                    var prevHash = eventlog.args.split(",")[2];
+                    var timestamp = eventlog.args.split(",")[3];
                     appendBlock(peerId, hash, prevHash, timestamp);
                 }
             }

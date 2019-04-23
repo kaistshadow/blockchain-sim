@@ -93,6 +93,11 @@
          #input { border-radius:2px; border:1px solid #ccc;
              margin-top:10px; padding:5px; width:400px;  }
          #status { width:88px; display:block; float:left; margin-top:15px; }
+         #node_API_event_list {
+             max-height: 18em;
+             overflow-y: auto;
+             position: relative;
+         }
          #ledgereventvisualize{
              width:80vw;
              height:90vh;
@@ -182,13 +187,34 @@
 
             <script src="./event-visualize.js"></script>
             <div class="content">
-                <h1> Event Visualization</h1>
+                <h1> Network Event Visualization</h1>
             </div>
-            <div id="eventvisualize">Test Graph</div>
+            <!-- <div id="eventvisualize">Test Graph</div> -->
+            <table>
+                <tr>
+                    <td>
+                        <div id="eventvisualize">Test Graph</div>
+                    </td>
+                    <td>
+                        <div id="eventinfo">
+                            <span id="node_API_event">
+                                API call history:
+                            </span>
+                            <ul id="node_API_event_list"
+                                tabindex="0"
+                                role="listbox">
+                                <!-- aria-labelledby="node_API_event"> -->
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            
             <div class="content">
                 <h1> Ledger Event Visualization</h1>
             </div>
             <div id="ledgereventvisualize">Ledger Graph</div>
+
             <div class="content">
                 <h1> Blockchain Plot</h1>
             </div>

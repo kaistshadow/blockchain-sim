@@ -88,17 +88,18 @@ function sendEventlogs(connection, shadowoutputfile) {
     var curTime = (curDate).getTime();
     var eventlogs = [];
 
-    var rePattern = new RegExp(/.*shadow_push_eventlog:([0-9]+),(.+?),(.*)$/);
+    var rePattern = new RegExp(/.*shadow_push_eventlog:(.+?),([0-9]+),(.+?),(.*)$/);
 
     console.log('start eventlog parsing ');
     for (let line of lines) {
         var matches = line.match(rePattern);
         if (matches) {
             console.log('line matches : ' + line);
-            var eventtime = matches[1];
-            var eventtype = matches[2];
-            var eventargs = matches[3];
-            eventlogs.push({time:eventtime,type:eventtype, args:eventargs});
+            var eventhost = matches[1];
+            var eventtime = matches[2];
+            var eventtype = matches[3];
+            var eventargs = matches[4];
+            eventlogs.push({host:eventhost, time:eventtime,type:eventtype, args:eventargs});
         }
     }
     console.log('eventlogs length:'  + eventlogs.length);

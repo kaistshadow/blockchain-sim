@@ -8,9 +8,19 @@ BasicNetworkModule::BasicNetworkModule(std::string myPeerId, MainEventManager* m
     : watcherManager(this, mainEventManager) {
     _mainEventManager = mainEventManager;
 
+    // append shadow api log
+    char buf2[256];
+    sprintf(buf2, "API,BasicNetworkModuleConstructor,%s", myPeerId.c_str());
+    shadow_push_eventlog(buf2);
+
     int listenSocketFD = socketManager.CreateListenSocket();
     peerManager.InitMyPeerId(myPeerId);
     new ListenSocketWatcher(listenSocketFD, this, _mainEventManager);
+
+    // append shadow log
+    char buf[256];
+    sprintf(buf, "InitPeerId,%s", myPeerId.c_str());
+    shadow_push_eventlog(buf);
 }
 
 bool BasicNetworkModule::AsyncConnectPeer(PeerId id, double time) {
@@ -18,6 +28,11 @@ bool BasicNetworkModule::AsyncConnectPeer(PeerId id, double time) {
     if (peerManager.HasEstablishedDataSocket(id))
         return false;
    
+    // append shadow api log
+    char buf[256];
+    sprintf(buf, "API,AsyncConnectPeer,%s,%f", id.GetId().c_str(), time);
+    shadow_push_eventlog(buf);
+
     if (time > 0) {
         new AsyncConnectTimer(id, time, this, _mainEventManager); //timer automatically started
         return true;
@@ -37,6 +52,13 @@ bool BasicNetworkModule::UnicastMessage(PeerId dest, std::shared_ptr<Message> me
     if (!peerManager.HasEstablishedDataSocket(dest))
         return false;
     
+    // append shadow api log
+    char buf2[256];
+    sprintf(buf2, "API,UnicastMessage,%s,%s", 
+            dest.GetId().c_str(),
+            message->GetType().c_str());
+    shadow_push_eventlog(buf2);
+
     // get datasocket
     int socketFD = peerManager.GetConnectedSocketFD(dest);
     std::shared_ptr<DataSocket_v2> dataSocket = socketManager.GetDataSocket(socketFD);
@@ -74,6 +96,11 @@ bool BasicNetworkModule::DisconnectPeer(PeerId id) {
         // there's no valid socket connection for given peerId
         return false;
     }
+
+    // append shadow api log
+    char buf2[256];
+    sprintf(buf2, "API,DisconnectPeer,%s", id.GetId().c_str());
+    shadow_push_eventlog(buf2);
 
     if (peerInfo->GetSocketStatus() == SocketStatus::SocketConnected) {
         int socketFD = peerInfo->GetSocketFD();

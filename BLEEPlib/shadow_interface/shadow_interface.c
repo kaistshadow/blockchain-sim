@@ -15,6 +15,6 @@ int shadow_pipe2(int pipefds[2], int flags) {
 
 int shadow_push_eventlog(const char *str) {
     // do nothing
-    printf("shadow_push_eventlog is not properly executed for event:%s\n", str);
+    printf("shadow_push_eventlog is not ignored for event:%s\n", str);
     return 0;
 }

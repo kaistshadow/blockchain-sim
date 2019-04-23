@@ -33,10 +33,10 @@ namespace libBLEEP {
             BasicNetworkModule* _networkModule;
             MainEventManager* _mainEventModule;
 
-        public:
             /* event watcher */
             std::map<int, std::shared_ptr<DataSocketWatcher> > _dataSocketWatchers;
 
+        public:
             WatcherManager(BasicNetworkModule* netModule, MainEventManager* eventModule)
                 : _networkModule(netModule), _mainEventModule(eventModule) {};
             void CreateDataSocketWatcher(int fd) {

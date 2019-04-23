@@ -27,8 +27,7 @@ void ListLedgerManager<T>::AppendBlock(typename std::shared_ptr<T> blk) {
         str2 << pow_blk->GetPrevBlockHash();
         ss2 << str2.rdbuf();
         std::string prevBlockHash = ss2.str();
-        sprintf(buf, "BlockAppend,%s,%lu,%s,%s,%f", 
-                _myPeerId.GetId().c_str(),
+        sprintf(buf, "BlockAppend,%lu,%s,%s,%f", 
                 pow_blk->GetBlockIdx(), 
                 blockHash.substr(2, 10).c_str(),
                 prevBlockHash.substr(2,10).c_str(),
@@ -61,8 +60,7 @@ void ListLedgerManager<T>::ReplaceLedger(typename std::list<T>::iterator orig_st
             str2 << pow_blk->GetPrevBlockHash();
             ss2 << str2.rdbuf();
             std::string prevBlockHash = ss2.str();
-            sprintf(buf, "BlockAppend,%s,%lu,%s,%s,%f", 
-                    _myPeerId.GetId().c_str(),
+            sprintf(buf, "BlockAppend,%lu,%s,%s,%f", 
                     pow_blk->GetBlockIdx(), 
                     blockHash.substr(2, 10).c_str(),
                     prevBlockHash.substr(2,10).c_str(),

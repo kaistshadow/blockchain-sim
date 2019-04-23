@@ -21,28 +21,15 @@ using namespace libBLEEP;
 
 
 
-// Need to implement event loop library
-
-// implement event loop's wait
-
-// implement event loop's appendNewNeighborPeer, GenerateTx
-
-// TODO(0331) : step-by-step visualization, implement asyncGenerateTx
-// TODO(0331) : SendMessage, recvMessage
-// TODO(0401) : Change PeerManager to PeerConnManager. Add NewPeerConnected event.
-// TODO(0402) : Support disconnect API
-// TODO(0402) : Refactoring for socket closeEvent handling (use recvMsg instead of recv?)
-
-// v1.0
 // TODO : Seperate API src,dest & msg src,dest (for broadcasting portability)
-// TODO : statmachine regtest
-// TODO : documentation for (Transaction, TxPool), (Block,LedgerManager), (PeerId, Message)
+// TODO [DONE] : statmachine regtest
+// TODO [DONE] : documentation for (Transaction, TxPool), (Block,LedgerManager), (PeerId, Message)
 //        (MainEventManager_v1), utility ArgsManager
 
-// TODO : connected neighbor peer already exists handling. -> remove redundent datasocket
-// TODO : NewPeerConnected event
+// TODO [DONE] : connected neighbor peer already exists handling. -> remove redundent datasocket
+// TODO [DONE]: NewPeerConnected event
 
-// 
+
 
 std::shared_ptr<POWBlock> MakeCandidateBlock(TxPool& txPool, ListLedgerManager<POWBlock>& ledger) {
     int txNumPerBlock = std::stoi(gArgs.GetArg("-blocktxnum"));
@@ -60,6 +47,7 @@ std::shared_ptr<POWBlock> MakeCandidateBlock(TxPool& txPool, ListLedgerManager<P
     else {
         candidateBlk->SetPrevBlockHash(UINT256_t(0xffffff)); // no valid prev block hash since it's genesis block
     }
+
     return candidateBlk;
 }
 
@@ -135,7 +123,7 @@ int main(int argc, char *argv[]) {
     TxPool txPool;
 
     // ListLedgerManager
-    ListLedgerManager<POWBlock> ledger(PeerId(gArgs.GetArg("-id", "noid")));
+    ListLedgerManager<POWBlock> ledger;
 
     /* connect to peer */
     // mainEventManager.AsyncConnectPeer(PeerId("143.248.38.37"));

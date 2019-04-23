@@ -27,12 +27,10 @@ namespace libBLEEP {
     protected:
         std::list<T> list_ledger;
         std::string ledger_filename;
-        PeerId _myPeerId; // for shadow visualization & debugging
+
     public:
         ListLedgerManager() {}
-        ListLedgerManager(PeerId myPeerId) { _myPeerId = myPeerId; }
         ListLedgerManager(std::string filename) { ledger_filename = filename; }
-        ListLedgerManager(PeerId myPeerId, std::string filename) { ledger_filename = filename; _myPeerId = myPeerId; }
 
         /**
          * Set and Get a ledger

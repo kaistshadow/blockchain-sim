@@ -58,6 +58,10 @@ add_shadow_plugin(NODE_POW node_pow.cpp)
 install(TARGETS NODE_POW DESTINATION plugins)
 target_link_libraries(NODE_POW BLEEP::BLEEP)
 
+add_shadow_plugin(NODE_MINING node_mining.cpp)
+install(TARGETS NODE_MINING DESTINATION plugins)
+target_link_libraries(NODE_MINING BLEEP::BLEEP)
+
 
 ## compile for local executable
 add_executable(LOCAL_NODE_bleep node.cpp)
@@ -68,6 +72,9 @@ target_link_libraries(LOCAL_NODE_client BLEEP::BLEEP)
 
 add_executable(LOCAL_NODE_POW node_pow.cpp)
 target_link_libraries(LOCAL_NODE_POW BLEEP::BLEEP)
+
+add_executable(LOCAL_NODE_MINING node_mining.cpp)
+target_link_libraries(LOCAL_NODE_MINING BLEEP::BLEEP)
 
 # add tests
 enable_testing()

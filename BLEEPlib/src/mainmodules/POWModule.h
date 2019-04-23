@@ -8,6 +8,8 @@
 #include "../utility/Assert.h"
 #include <thread>
 
+#include "shadow_interface.h"
+
 namespace libBLEEP {
 
     class POWModule {
@@ -172,7 +174,7 @@ namespace libBLEEP {
                     /* approximate time(in us) for executing above loop one time
                        The value '5850' is obtained from above PrintTimeDiff in my local machine
                        ,i.e., i7-6700 3.4GHz machine with 16GM mem. */
-                    usleep(5850);  
+                    shadow_usleep(5850);  
 
 
                 } // run forever until finding valid block

@@ -553,6 +553,12 @@ aria.Listbox.prototype.enableFocusNext = function (nextButton) {
   nextButton.addEventListener('click', this.focusNextItem.bind(this));
 };
 
+aria.Listbox.prototype.enableFocusPrev = function (prevButton) {
+  this.moveUpDownEnabled = true;
+  this.upButton = prevButton;
+  prevButton.addEventListener('click', this.focusPrevItem.bind(this));
+};
+
 /* Enable startfromBeginning control*/
 aria.Listbox.prototype.enableStart = function (startButton) {
   startButton.addEventListener('click', this.focusFirstItem.bind(this));

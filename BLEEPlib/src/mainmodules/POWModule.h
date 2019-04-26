@@ -7,6 +7,7 @@
 #include "../utility/GlobalClock.h"
 #include "../utility/Assert.h"
 #include <thread>
+#include <atomic>
 
 #include "shadow_interface.h"
 
@@ -51,11 +52,16 @@ namespace libBLEEP {
             }
 
             void CreateMiningThread(std::shared_ptr<POWBlock> candidateBlk, UINT256_t difficulty) {
-                M_Assert(_miningThreadWatcher == nullptr, "there exists minintThreadWatcher already");
+                M_Assert(_miningThreadWatcher == nullptr, "there exists miningThreadWatcher already");
                 // allocate new MiningEmulationTimer 
                 _miningThreadWatcher = std::make_shared<BlockMiningThread>(candidateBlk, difficulty, _powModule, _mainEventModule);
             }
 
+            void StopMiningThread() {
+                if (_miningThreadWatcher) {
+                    _miningThreadWatcher->Stop();
+                }
+            }
             void RemoveMiningThread() {
                 _miningThreadWatcher = nullptr; // it will automatically destroy BlockMiningThread object
             }
@@ -127,6 +133,7 @@ namespace libBLEEP {
             int _trial = 1000; // number of trials before cooperatively yield the thread
 
             std::thread _thread;
+            std::atomic<bool> _thread_exit;
 
             // for printing time
             struct timespec start, end;
@@ -135,7 +142,7 @@ namespace libBLEEP {
                 // thread for mining
                 srand((unsigned int)time(0));                    
                 while (true) {
-                    clock_gettime(CLOCK_MONOTONIC, &start);
+                    /* clock_gettime(CLOCK_MONOTONIC, &start); */
                     for (int i = 0; i < _trial; i++) {
                         unsigned long nonce = rand() * rand();
                         unsigned char hash_out[32];
@@ -167,7 +174,7 @@ namespace libBLEEP {
                             return;
                         }
                     }
-                    clock_gettime(CLOCK_MONOTONIC, &end);
+                    /* clock_gettime(CLOCK_MONOTONIC, &end); */
                     /* PrintTimeDiff("time for executing thread loop.", start, end); */
                     // The value printed above will be leveraged for approximate sleep time in below.
 
@@ -175,7 +182,11 @@ namespace libBLEEP {
                        The value '5850' is obtained from above PrintTimeDiff in my local machine
                        ,i.e., i7-6700 3.4GHz machine with 16GM mem. */
                     shadow_usleep(5850);  
-
+                    if (_thread_exit) {
+                        // Check the atomic flag, and if it's set, terminate current thread.
+                        std::cout << "thread exits!" << "\n";
+                        return;
+                    }
 
                 } // run forever until finding valid block
             }
@@ -205,6 +216,7 @@ namespace libBLEEP {
                 _async_watcher.set<BlockMiningThread, &BlockMiningThread::_asyncCallback>(this);
                 _async_watcher.start();
 
+                _thread_exit = false;
                 std::cout << "block mining thread before!" << "\n";                
                 _thread = std::thread (&BlockMiningThread::_run, this);
                 std::cout << "block mining thread started!" << "\n";
@@ -212,6 +224,15 @@ namespace libBLEEP {
             }
             ~BlockMiningThread() {
                 std::cout << "BlockMiningThread destroyed" << "\n";
+            }
+
+            void Stop() {
+                _powModule->_isMining = false;
+
+                _thread_exit = true;
+                _thread.join(); // wait until the child thread terminates 
+                _powModule->watcherManager.RemoveMiningThread();
+                // it will eventually remove myself (BlockMiningThread object)
             }
         };
 

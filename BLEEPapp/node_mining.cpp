@@ -26,7 +26,6 @@ using namespace libBLEEP;
 
 int main(int argc, char *argv[]) {
     // for testing DisconnectPeer API
-    int receivedMessageCount = 0;
 
     gArgs.ParseParameters(argc, argv);
 
@@ -87,6 +86,8 @@ int main(int argc, char *argv[]) {
                     if (messageType == "newTx") {
                         boost::shared_ptr<Transaction> receivedTx = GetDeserializedTransaction(msg->GetPayload());
                         std::cout << *receivedTx << "\n";
+
+                        powModule.StopMining(); // stop mining for test!
                     }
 
                     break;

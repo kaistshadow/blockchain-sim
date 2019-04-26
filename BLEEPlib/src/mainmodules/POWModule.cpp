@@ -37,7 +37,7 @@ void POWModule::AsyncBlockMining(std::shared_ptr<POWBlock> candidateBlk, UINT256
 
 
 void POWModule::StopMining() {
-    watcherManager.RemoveMiningThread();
+    watcherManager.StopMiningThread();
     watcherManager.RemoveMiningEmulationTimer();    
     _isMining = false;
 

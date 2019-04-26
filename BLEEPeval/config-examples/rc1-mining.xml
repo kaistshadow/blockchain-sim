@@ -38,7 +38,7 @@
 
 
   <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="1000" />
+  <kill time="500" />
   <!-- our nodes -->
 
   <node id="miner0">
@@ -59,7 +59,7 @@
   </node>
 
   <node id="client0">
-    <application plugin="CLIENT" time="13" arguments="-id=client0 -connect=miner1 -txgeninterval=5" />
+    <application plugin="CLIENT" time="12" arguments="-id=client0 -connect=miner2 -txgeninterval=3" />
   </node>
 
 

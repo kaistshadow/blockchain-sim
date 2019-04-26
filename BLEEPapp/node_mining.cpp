@@ -86,6 +86,8 @@ int main(int argc, char *argv[]) {
                     if (messageType == "newTx") {
                         boost::shared_ptr<Transaction> receivedTx = GetDeserializedTransaction(msg->GetPayload());
                         std::cout << *receivedTx << "\n";
+
+                        powModule.StopMining(); // stop mining for test!
                     }
 
                     break;

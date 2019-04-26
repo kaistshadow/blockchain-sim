@@ -8,8 +8,14 @@ if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
     message(FATAL_ERROR "An out-of-source build is required. Please see the README.")
 endif("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
 
-# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+# debug option
+if(BLEEP_DEBUG STREQUAL ON)
+  message(STATUS "Debug enabled.")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -std=c++11 -Wall -Werror -Wno-switch")
+else(BLEEP_DEBUG STREQUAL ON)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-switch")
+endif(BLEEP_DEBUG STREQUAL ON)
+
 
 find_package(Boost REQUIRED serialization filesystem system)
 

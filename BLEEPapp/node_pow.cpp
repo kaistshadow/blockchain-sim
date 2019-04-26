@@ -101,7 +101,6 @@ bool UpdateLedgerAsLongestChain(std::vector<POWBlock>& received_blks, TxPool& tx
 
 int main(int argc, char *argv[]) {
     // for testing DisconnectPeer API
-    int receivedMessageCount = 0;
 
     gArgs.ParseParameters(argc, argv);
 

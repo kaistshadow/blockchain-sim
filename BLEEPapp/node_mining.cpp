@@ -26,7 +26,6 @@ using namespace libBLEEP;
 
 int main(int argc, char *argv[]) {
     // for testing DisconnectPeer API
-    int receivedMessageCount = 0;
 
     gArgs.ParseParameters(argc, argv);
 

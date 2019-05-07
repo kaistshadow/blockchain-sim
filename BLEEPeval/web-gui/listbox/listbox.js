@@ -260,10 +260,10 @@ aria.Listbox.prototype.findMatchInRange = function (list, startIndex, endIndex) 
  *  The click event object
  */
 aria.Listbox.prototype.checkClickItem = function (evt) {
-  // if (evt.target.getAttribute('role') === 'option') {
-  //   this.focusItem(evt.target);
-  //   this.toggleSelectItem(evt.target);
-  // }
+  if (evt.target.getAttribute('role') === 'option') {
+    this.focusItem(evt.target);
+    this.toggleSelectItem(evt.target);
+  }
 };
 
 /**
@@ -464,6 +464,9 @@ aria.Listbox.prototype.focusNextItem = function () {
 aria.Listbox.prototype.focusPrevItem = function () {
     var currentItem = document.getElementById(this.activeDescendant);
     var prevItem = currentItem.previousElementSibling;
+    while (prevItem && prevItem.getAttribute("style") === "display:none;")
+        prevItem = prevItem.previousElementSibling;
+    
     if (prevItem)
         this.focusItem(prevItem);
 };

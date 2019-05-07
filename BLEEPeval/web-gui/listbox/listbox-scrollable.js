@@ -13,9 +13,9 @@ window.addEventListener('load', function () {
 
   exListbox.enableStart(document.getElementById('ex1-start'));
 
-  exListbox.enableFocusNext( document.getElementById('ex1-down'));
+  exListbox.enableFocusNext(document.getElementById('ex1-down'));
 
-  exListbox.enableFocusPrev( document.getElementById('ex1-up'));
+  exListbox.enableFocusPrev(document.getElementById('ex1-up'));
   
   // exListbox.enableMoveUpDown(
   //   document.getElementById('ex1-up'),

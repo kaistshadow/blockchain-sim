@@ -11,58 +11,140 @@ startButton.addEventListener('click', drawVisualization);
 
 
 var muObserver = new MutationObserver(function(mutations) {
+    
     mutations.forEach(function(mutation) {
+
         if (mutation.type == "attributes" && mutation.target.tagName == "LI"
             && mutation.attributeName=="aria-selected"
             && mutation.target.getAttribute(mutation.attributeName) == "true") {
+            //the current mutation is the newly active element
 
-            var eventlog = mutation.target.textContent;
-            var rePattern = new RegExp(/(.+?),([0-9]+),(.+?),(.*)$/);
-            var matches = eventlog.match(rePattern);
-            if (matches) {
-                var eventhost = matches[1];
-                var eventtime = matches[2];
-                var eventtype = matches[3];
-                var eventargs = matches[4];
-                console.log(eventtype);
+            var siblings = { previous : mutation.target.previousElementSibling,
+                next : mutation.target.nextElementSibling };
+            var previousActiveSibling = { previous : false, next : false };
 
-                if (eventtype === "InitPeerId")
-                    addNode(eventargs);
-                else if (eventtype === "ConnectPeer") {
-                    var from = eventargs.split(",")[0];
-                    var to = eventargs.split(",")[1];
-                    addEdge(from, to);
+            //Find the previous and next visible siblings
+            while (siblings.previous && siblings.previous.getAttribute("style") === "display:none;")
+                siblings.previous = siblings.previous.previousElementSibling;
+            while (siblings.next && siblings.next.getAttribute("style") === "display:none;")
+                siblings.next = siblings.next.nextElementSibling;
+
+            ["previous", "next"].forEach(function(sibKey) {
+                sibling = siblings[sibKey];
+        
+                //Checks if the previous or next sibling has mutated too
+                if (sibling && mutations.map(a => a.target).indexOf(sibling) >= 0) {
+                    indOfSib = mutations.map(a => a.target).indexOf(sibling);
+
+                    //Check if the sibling Node changed from state "selected" to "not selected"
+                    if ( mutations[indOfSib].type == "attributes" 
+                    && mutations[indOfSib].target.tagName == "LI"
+                    && mutations[indOfSib].attributeName == "aria-selected"
+                    && mutations[indOfSib].oldValue == "true" )
+                    {
+                        //If the previous active sibling is the next sibling, it means that the "Prev" button was clicked
+                        previousActiveSibling[sibKey] = true;
+                    }
                 }
-                else if (eventtype === "DisconnectPeer") {
-                    var from = eventargs.split(",")[0];
-                    var to = eventargs.split(",")[1];
+                
+            })
+            //if the user clicked "start from beginning"
+            if (!previousActiveSibling.next && !previousActiveSibling.previous)
+                previousActiveSibling.previous = true;
+            
+            //if the user clicked "start from beginning" after one event
+            if (!siblings.previous && previousActiveSibling.next)
+                previousActiveSibling.previous = true;
+            
 
-                    removeEdge(from, to);
-                    removeEdge(to, from);
-                } else if (eventtype === "UnicastMessage") {
-                    var from = eventargs.split(",")[0];
-                    var to = eventargs.split(",")[1];
-                    sendMessage(from, to);
-                } else if (eventtype === "RecvMessage") {
-                    var from = eventargs.split(",")[0];
-                    var to = eventargs.split(",")[1];
-                    recvMessage(from, to);
-                } else if (eventtype === "BlockAppend") {
-                    var peerId = eventhost;
-                    var hash = eventargs.split(",")[1];
-                    var prevHash = eventargs.split(",")[2];
-                    var timestamp = eventargs.split(",")[3];
-                    appendBlock(peerId, hash, prevHash, timestamp);
+            if (previousActiveSibling.previous) {
+                var eventlog = mutation.target.textContent;
+                var rePattern = new RegExp(/(.+?),([0-9]+),(.+?),(.*)$/);
+                var matches = eventlog.match(rePattern);
+                if (matches) {
+                    var eventhost = matches[1];
+                    var eventtime = matches[2];
+                    var eventtype = matches[3];
+                    var eventargs = matches[4];
+                    console.log("Performing " + eventtype);
+
+                    if (eventtype === "InitPeerId")
+                        addNode(eventargs);
+                    else if (eventtype === "ConnectPeer") {
+                        var from = eventargs.split(",")[0];
+                        var to = eventargs.split(",")[1];
+                        addEdge(from, to);
+                    }
+                    else if (eventtype === "DisconnectPeer") {
+                        var from = eventargs.split(",")[0];
+                        var to = eventargs.split(",")[1];
+
+                        removeEdge(from, to);
+                        removeEdge(to, from);
+                    } else if (eventtype === "UnicastMessage") {
+                        var from = eventargs.split(",")[0];
+                        var to = eventargs.split(",")[1];
+                        sendMessage(from, to);
+                    } else if (eventtype === "RecvMessage") {
+                        var from = eventargs.split(",")[0];
+                        var to = eventargs.split(",")[1];
+                        recvMessage(from, to);
+                    } else if (eventtype === "BlockAppend") {
+                        var peerId = eventhost;
+                        var hash = eventargs.split(",")[1];
+                        var prevHash = eventargs.split(",")[2];
+                        var timestamp = eventargs.split(",")[3];
+                        appendBlock(peerId, hash, prevHash, timestamp);
+                    }
                 }
+                
+                onNodeSelect(); // update event list for selected node
             }
-            
-            onNodeSelect(); // update event list for selected node
+            else if (previousActiveSibling.next) {
+                var eventlog = siblings.next.textContent;
+                var rePattern = new RegExp(/(.+?),([0-9]+),(.+?),(.*)$/);
+                var matches = eventlog.match(rePattern);
+                if (matches) {
+                    var eventhost = matches[1];
+                    var eventtime = matches[2];
+                    var eventtype = matches[3];
+                    var eventargs = matches[4];
+                    console.log("Reverting " + eventtype);
+
+                    if (eventtype === "InitPeerId")                     //done
+                        removeNode(eventargs);
+                    else if (eventtype === "ConnectPeer") {             //done
+                        var from = eventargs.split(",")[0];
+                        var to = eventargs.split(",")[1];
+                        removeEdge(from, to);
+                        removeEdge(to, from);
+                    } else if (eventtype === "DisconnectPeer") {        //done
+                        var from = eventargs.split(",")[0];
+                        var to = eventargs.split(",")[1];
+                        addEdge(from, to);
+                    } else if (eventtype === "UnicastMessage") {        //done
+                        var from = eventargs.split(",")[0];
+                        var to = eventargs.split(",")[1];
+                        unsendMessage(from, to);
+                    } else if (eventtype === "RecvMessage") {           //done
+                        var from = eventargs.split(",")[0];
+                        var to = eventargs.split(",")[1];
+                        unrecvMessage(from, to);
+                    } else if (eventtype === "BlockAppend") {
+                        var peerId = eventhost;
+                        var hash = eventargs.split(",")[1];
+                        var prevHash = eventargs.split(",")[2];
+                        var timestamp = eventargs.split(",")[3];
+                        removeBlock(peerId, hash, prevHash, timestamp);
+                    }
+                }
+                onNodeSelect(); // update event list for selected node
+            }
         }
-            
     });
 });
 
-muObserver.observe(document.getElementById("ss_elem_list"), {attributes:true, subtree:true});
+muObserver.observe(document.getElementById("ss_elem_list"), {attributes:true, subtree:true, attributeOldValue:true});
 
 google.load("visualization", "1");
 
@@ -206,6 +288,23 @@ function recvMessage(from, to) {
     }
 }
 
+function unrecvMessage(from, to) {
+    try {
+        var packagesTable = new google.visualization.DataTable();
+        packagesTable.addColumn('string', 'id');
+        packagesTable.addColumn('string', 'from');
+        packagesTable.addColumn('string', 'to');        
+        packagesTable.addColumn('number', 'progress');        
+        packagesTable.addColumn('number', 'duration');        
+        packagesTable.addColumn('string', 'action');        
+        packagesTable.addRow([from+to, from, to, 0.001, undefined, 'create']);
+        network.addPackages(packagesTable);
+    }
+    catch(err) {
+        alert(err);
+    }
+}
+
 function sendMessage(from, to) {
     try {
         var packagesTable = new google.visualization.DataTable();
@@ -216,6 +315,23 @@ function sendMessage(from, to) {
         packagesTable.addColumn('number', 'duration');      
         packagesTable.addColumn('string', 'action');          
         packagesTable.addRow([from+to, from, to, 0.001 ,undefined, 'create']);
+        network.addPackages(packagesTable);
+    }
+    catch(err) {
+        alert(err);
+    }
+}
+
+function unsendMessage(from, to) {
+    try {
+        var packagesTable = new google.visualization.DataTable();
+        packagesTable.addColumn('string', 'id');
+        packagesTable.addColumn('string', 'from');
+        packagesTable.addColumn('string', 'to');
+        packagesTable.addColumn('number', 'progress');
+        packagesTable.addColumn('number', 'duration');
+        packagesTable.addColumn('string', 'action');
+        packagesTable.addRow([from+to, from, to, undefined ,undefined, 'delete']);
         network.addPackages(packagesTable);
     }
     catch(err) {
@@ -253,6 +369,26 @@ function addNode(nodeid) {
 
     network.redraw();
 }
+
+function removeNode(nodeid) {
+    try {
+        nodesTable = new google.visualization.DataTable();
+        nodesTable.addColumn('string', 'id');
+        nodesTable.addColumn('number', 'value');
+        nodesTable.addColumn('string', 'text');
+        nodesTable.addColumn('string', 'style');
+        nodesTable.addColumn('string', 'group');
+        nodesTable.addColumn('string', 'image');
+        nodesTable.addColumn('string', 'action');
+        nodesTable.addRow([nodeid, undefined, nodeid, 'rect', 'group_node', undefined, "delete"]);
+        network.addNodes(nodesTable);
+    }
+    catch(err) {
+        alert(err);
+    }
+
+    network.redraw();
+};
 
 function addEdge(from, to) {
     linksTable = new google.visualization.DataTable();
@@ -344,6 +480,31 @@ function appendBlock(peerId, hash, prevHash, timestamp) {
     // edges.update({id:peerId, from:hash, to:peerId});
     // nodes.add({id:peerId, label:peerId});
 
+
+}
+
+function removeBlock(peerId, hash, prevHash, timestamp) {
+    
+    edges.remove(peerId);
+    try {
+        edges.add({id:peerId, from:prevHash, to:peerId});
+    } catch(err) {
+    }
+    try {
+        nodes.update({id:peerId, label:peerId});
+    } catch(err) {}
+
+    if ( edges.distinct("from").find(from => from == hash) == undefined ) {
+        //if no edge start from node "hash", delete node "hash"
+        nodes.remove(hash);
+        edges.remove(prevHash+hash);
+
+        if ( edges.get({filter: edge => edge.to == prevHash}).length == 0
+        && edges.get({filter: edge => edge.from == prevHash}).length == 1 ) {
+            //if prevHash is the first block and has no child
+            nodes.remove([prevHash, peerId]);
+        }
+    }
 
 }
 

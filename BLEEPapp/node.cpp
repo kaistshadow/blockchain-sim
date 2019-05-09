@@ -1,10 +1,12 @@
 #include "mainmodules/MainEventManager.h"
 #include "mainmodules/BasicNetworkModule.h"
+#include "mainmodules/RandomGossipNetworkModule.h"
 
 #include "datamodules/Peer.h"
 #include "datamodules/Message.h"
 
 #include "utility/ArgsManager.h"
+#include "utility/Random.h"
 
 
 using namespace libBLEEP;
@@ -32,9 +34,24 @@ using namespace libBLEEP;
 
 //
 
+std::vector<PeerId> genPeerList(std::string myId, int maxPeerNum){
+    std::vector<PeerId> lst;
+    for(int i = 0; i < maxPeerNum; i++){
+        char name[10];
+        sprintf(name, "bleep%d", i);
+        if(myId != name){
+            lst.push_back(PeerId(name));
+        }else{
+            return lst;
+        }
+    }
+    return lst;
+}
+
 int main(int argc, char *argv[]) {
-    // for testing DisconnectPeer API
-    int receivedMessageCount = 0;
+    int maxPeerNum = 500;
+    int connectPeerNum = 20;
+    int fanout = 7;
     std::set<std::string> messageSet;
 
     gArgs.ParseParameters(argc, argv);
@@ -47,25 +64,22 @@ int main(int argc, char *argv[]) {
 
     /* allocate mainEventManager */
     MainEventManager mainEventManager;
-    // MainEventManager mainEventManager(gArgs.GetArg("-id", "noid"));
-    BasicNetworkModule basicNetworkModule(gArgs.GetArg("-id", "noid"), &mainEventManager);
 
-    std::vector<PeerId> peerList = basicNetworkModule.GenPeerList();
-//    for(auto peer: peerList)
-//        std::cout << "peer: " << peer.GetId() << "\n";
-    auto neighborPeerIdSet = basicNetworkModule.GenNeighborPeerSet(peerList);
+    RandomGossipNetworkModule randomNetworkModule(gArgs.GetArg("-id", "noid"), &mainEventManager);
+
+    std::vector<PeerId> peerList = genPeerList(gArgs.GetArg("-id", "noid"), maxPeerNum);
+    auto neighborPeerIdSet = randomNetworkModule.GenNeighborPeerSet(peerList);
     int i = 0;
     for(const Distance& dest : neighborPeerIdSet){
-        if (i >= 40) break;
-        std::cout << "destPeerId : " << dest.GetPeerId().GetId() << "\n";
-        basicNetworkModule.AsyncConnectPeer(dest.GetPeerId());
+        if (i >= connectPeerNum) break;
+        randomNetworkModule.AsyncConnectPeer(dest.GetPeerId());
         i++;
     }
 
 //    /* connect to peer */
 //    // mainEventManager.AsyncConnectPeer(PeerId("143.248.38.37"));
 //    for (auto neighborPeerId : gArgs.GetArgs("-connect"))
-//        basicNetworkModule.AsyncConnectPeer(PeerId(neighborPeerId));
+//        randomNetworkModule.AsyncConnectPeer(PeerId(neighborPeerId));
 
     while(true) {
         mainEventManager.Wait(); // main event loop (wait for next event)
@@ -90,7 +104,7 @@ int main(int argc, char *argv[]) {
                     std::cout << "AsyncConnectPeer got error(" << event.GetData().GetError() << ")" << "\n";
                     // try again with timer
                     PeerId peerId = event.GetData().GetRefusedPeerId();
-                    basicNetworkModule.AsyncConnectPeer(peerId, 10);
+                    randomNetworkModule.AsyncConnectPeer(peerId, 10);
                     break;
                 }
             case AsyncEventEnum::CompleteAsyncGenerateRandomTransaction:
@@ -111,8 +125,9 @@ int main(int argc, char *argv[]) {
                         shadow_push_eventlog(buf);
                         boost::shared_ptr<Transaction> receivedTx =
                             GetDeserializedTransaction(msg->GetPayload());
-                        std::vector<PeerId> dests = basicNetworkModule.GetNeighborPeerIds();
-                        basicNetworkModule.MulticastMessage(dests, msg);
+                        std::vector<PeerId> dests = randomNetworkModule.GetNeighborPeerIds();
+                        auto idxs = GenRandomNumSet(dests.size(), fanout);
+                        randomNetworkModule.MulticastMessage(dests, msg, idxs);
                     }
                     break;
                 }

@@ -43,10 +43,12 @@ set(SRCS
   src/datamanagermodules/PeerManager.cpp
   src/mainmodules/MainEventManager.cpp
   src/mainmodules/BasicNetworkModule.cpp
+  src/mainmodules/RandomGossipNetworkModule.cpp
   src/mainmodules/TxGeneratorModule.cpp
   src/mainmodules/POWModule.cpp
   src/utility/UInt256.cpp
   src/utility/Assert.cpp
+  src/utility/Random.cpp
   src/utility/ArgsManager.cpp
   src/datamodules/Socket_v2.cpp
   src/datamanagermodules/SocketManager_v2.cpp

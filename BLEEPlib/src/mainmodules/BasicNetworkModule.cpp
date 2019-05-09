@@ -1,26 +1,6 @@
 #include "BasicNetworkModule.h"
-#include "../utility/UInt256.h"
-#include <cstdlib>
-#include <ctime>
 
 using namespace libBLEEP;
-
-static int maxMulticastNum = 7;
-
-std::vector<PeerId> BasicNetworkModule::GenPeerList(){
-    PeerId myId = *peerManager.GetMyPeerId();
-    std::vector<PeerId> lst;
-    for(int i = 0; i < 500; i++){
-        char name[10];
-        sprintf(name, "bleep%d", i);
-        if(myId.GetId() != name){
-            lst.push_back(PeerId(name));
-        }else{
-            return lst;
-        }
-    }
-    return lst;
-}
 
 BasicNetworkModule::BasicNetworkModule(std::string myPeerId, MainEventManager* mainEventManager)
     : watcherManager(this, mainEventManager) {
@@ -78,75 +58,6 @@ bool BasicNetworkModule::UnicastMessage(PeerId dest, std::shared_ptr<Message> me
     shadow_push_eventlog(buf);
 
     return true;
-}
-
-std::set<Distance, DistanceCmp> BasicNetworkModule::GenNeighborPeerSet(std::vector<PeerId> neighborPeerIds){
-    PeerId myId = *peerManager.GetMyPeerId();
-    std::set<Distance, DistanceCmp> neighborPeerIdSet;
-    UINT256_t myHashId = myId.GetIdHash();
-    for(auto peer : neighborPeerIds){
-        UINT256_t peerHashId = peer.GetIdHash();
-        UINT256_t distance = myHashId ^ peerHashId;
-        neighborPeerIdSet.insert(Distance(distance, peer));
-    }
-    return neighborPeerIdSet;
-}
-
-std::set<int> genRandomNumSet(int maxNum){
-    srand(time(NULL));
-    std::set<int> numSet;
-    int maxSize = (maxNum < maxMulticastNum) ? maxNum : maxMulticastNum;
-    if (maxNum == maxMulticastNum){
-        for(int i = 0; i < maxSize; i++) numSet.insert(i);
-    }else{
-        while(1){
-            int num = rand() % maxNum;
-            numSet.insert(num);
-            if(int(numSet.size()) == maxSize) break;
-        }
-    }
-    return numSet;
-}
-
-bool checkSourcePeer(std::shared_ptr<Message> msg, PeerId peerId){
-    return (msg->GetSource().GetId() != peerId.GetId());
-}
-
-bool BasicNetworkModule::MulticastMessage(std::vector<PeerId> dests, std::shared_ptr<Message> message){
-    auto idxs = genRandomNumSet(dests.size());
-    for(std::vector<PeerId>::size_type i = 0 ; i < dests.size(); i++){
-        if (idxs.find(i) != idxs.end()){
-            if (checkSourcePeer(message, dests[i])){
-              if(UnicastMessage(dests[i], message) == false)
-                  return false;
-            }
-        }
-    }
-    return true;
-}
-
-// use distance
-//bool BasicNetworkModule::MulticastMessage(std::vector<PeerId> dests, std::shared_ptr<Message> message){
-//    auto neighbors = genNeighborPeerSet(*peerManager.GetMyPeerId(), dests);
-//    int i = 0;
-//    for(const Distance& dest : neighbors){
-//        if (i >= 2) break;
-//        if (message->GetSource().GetId() != dest.GetPeerId().GetId()){
-//            bool result = UnicastMessage(dest.GetPeerId(), message);
-//            if(result == false)
-//            return false;
-//        }
-//        i++;
-//    }
-//    return true;
-//}
-
-std::vector<PeerId> BasicNetworkModule::GetNeighborPeerIds(){
-    return peerManager.GetNeighborPeerIds();
-}
-
-PeerId BasicNetworkModule::GetMyPeerId(){
-    return *peerManager.GetMyPeerId();
 }
 
 bool BasicNetworkModule::DisconnectPeer(PeerId id) {

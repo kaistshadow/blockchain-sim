@@ -14,6 +14,27 @@
 
 namespace libBLEEP {
 
+    class Distance{
+        UINT256_t distance;
+        PeerId peerId;
+
+        public:
+            Distance(UINT256_t distance, PeerId peerId)
+                : distance(distance), peerId(peerId){}
+            PeerId GetPeerId() const { return peerId; }
+            UINT256_t GetPeerDistance() const { return distance; }
+
+        friend struct DistanceCmp;
+
+    };
+
+    struct DistanceCmp{
+        bool operator()(const Distance& d1, const Distance& d2) const{
+            return d1.distance > d2.distance;
+        }
+    };
+
+
     class BasicNetworkModule {
     private:
         class ListenSocketWatcher;
@@ -403,7 +424,10 @@ namespace libBLEEP {
            the function immediately returns false */
         bool DisconnectPeer(PeerId id);
 
+        std::set<Distance, DistanceCmp> GenNeighborPeerSet(std::vector<PeerId> neighborPeerIds);
         std::vector<PeerId> GetNeighborPeerIds();
+        std::vector<PeerId> GenPeerList();
+        PeerId GetMyPeerId();
     private:
         /*********************************************************/
         /* Internal data structures

@@ -5,6 +5,22 @@
 
 using namespace libBLEEP;
 
+static int maxMulticastNum = 7;
+
+std::vector<PeerId> BasicNetworkModule::GenPeerList(){
+    PeerId myId = *peerManager.GetMyPeerId();
+    std::vector<PeerId> lst;
+    for(int i = 0; i < 500; i++){
+        char name[10];
+        sprintf(name, "bleep%d", i);
+        if(myId.GetId() != name){
+            lst.push_back(PeerId(name));
+        }else{
+            return lst;
+        }
+    }
+    return lst;
+}
 
 BasicNetworkModule::BasicNetworkModule(std::string myPeerId, MainEventManager* mainEventManager)
     : watcherManager(this, mainEventManager) {
@@ -64,27 +80,8 @@ bool BasicNetworkModule::UnicastMessage(PeerId dest, std::shared_ptr<Message> me
     return true;
 }
 
-class Distance{
-    UINT256_t distance;
-    PeerId peerId;
-
-    public:
-        Distance(UINT256_t distance, PeerId peerId)
-            : distance(distance), peerId(peerId){}
-        PeerId GetPeerId() const { return peerId; }
-        UINT256_t GetPeerDistance() const { return distance; }
-
-    friend struct DistanceCmp;
-
-};
-
-struct DistanceCmp{
-    bool operator()(const Distance& d1, const Distance& d2) const{
-        return d1.distance > d2.distance;
-    }
-};
-
-std::set<Distance, DistanceCmp> genNeighborPeerSet(PeerId myId, std::vector<PeerId> neighborPeerIds){
+std::set<Distance, DistanceCmp> BasicNetworkModule::GenNeighborPeerSet(std::vector<PeerId> neighborPeerIds){
+    PeerId myId = *peerManager.GetMyPeerId();
     std::set<Distance, DistanceCmp> neighborPeerIdSet;
     UINT256_t myHashId = myId.GetIdHash();
     for(auto peer : neighborPeerIds){
@@ -98,12 +95,15 @@ std::set<Distance, DistanceCmp> genNeighborPeerSet(PeerId myId, std::vector<Peer
 std::set<int> genRandomNumSet(int maxNum){
     srand(time(NULL));
     std::set<int> numSet;
-    unsigned int maxSize = (maxNum < 3) ? maxNum : 3;
-    while(1){
-        int num = rand() % maxNum;
-        std::cout << num << "\n";
-        numSet.insert(num);
-        if(numSet.size() == maxSize) break;
+    int maxSize = (maxNum < maxMulticastNum) ? maxNum : maxMulticastNum;
+    if (maxNum == maxMulticastNum){
+        for(int i = 0; i < maxSize; i++) numSet.insert(i);
+    }else{
+        while(1){
+            int num = rand() % maxNum;
+            numSet.insert(num);
+            if(int(numSet.size()) == maxSize) break;
+        }
     }
     return numSet;
 }
@@ -113,14 +113,9 @@ bool checkSourcePeer(std::shared_ptr<Message> msg, PeerId peerId){
 }
 
 bool BasicNetworkModule::MulticastMessage(std::vector<PeerId> dests, std::shared_ptr<Message> message){
-    std::cout << "Multicasting peerId:" << "\n";
-    std::cout << "AllpeerId:" << "\n";
-    for(auto dest : dests)
-        std::cout << dest.GetId() << "\n";
     auto idxs = genRandomNumSet(dests.size());
     for(std::vector<PeerId>::size_type i = 0 ; i < dests.size(); i++){
         if (idxs.find(i) != idxs.end()){
-            std::cout << "DestPeer : " << dests[i].GetId() << "\n";
             if (checkSourcePeer(message, dests[i])){
               if(UnicastMessage(dests[i], message) == false)
                   return false;
@@ -148,6 +143,10 @@ bool BasicNetworkModule::MulticastMessage(std::vector<PeerId> dests, std::shared
 
 std::vector<PeerId> BasicNetworkModule::GetNeighborPeerIds(){
     return peerManager.GetNeighborPeerIds();
+}
+
+PeerId BasicNetworkModule::GetMyPeerId(){
+    return *peerManager.GetMyPeerId();
 }
 
 bool BasicNetworkModule::DisconnectPeer(PeerId id) {

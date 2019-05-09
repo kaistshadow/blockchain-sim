@@ -50,10 +50,22 @@ int main(int argc, char *argv[]) {
     // MainEventManager mainEventManager(gArgs.GetArg("-id", "noid"));
     BasicNetworkModule basicNetworkModule(gArgs.GetArg("-id", "noid"), &mainEventManager);
 
-    /* connect to peer */
-    // mainEventManager.AsyncConnectPeer(PeerId("143.248.38.37"));
-    for (auto neighborPeerId : gArgs.GetArgs("-connect"))
-        basicNetworkModule.AsyncConnectPeer(PeerId(neighborPeerId));
+    std::vector<PeerId> peerList = basicNetworkModule.GenPeerList();
+//    for(auto peer: peerList)
+//        std::cout << "peer: " << peer.GetId() << "\n";
+    auto neighborPeerIdSet = basicNetworkModule.GenNeighborPeerSet(peerList);
+    int i = 0;
+    for(const Distance& dest : neighborPeerIdSet){
+        if (i >= 40) break;
+        std::cout << "destPeerId : " << dest.GetPeerId().GetId() << "\n";
+        basicNetworkModule.AsyncConnectPeer(dest.GetPeerId());
+        i++;
+    }
+
+//    /* connect to peer */
+//    // mainEventManager.AsyncConnectPeer(PeerId("143.248.38.37"));
+//    for (auto neighborPeerId : gArgs.GetArgs("-connect"))
+//        basicNetworkModule.AsyncConnectPeer(PeerId(neighborPeerId));
 
     while(true) {
         mainEventManager.Wait(); // main event loop (wait for next event)
@@ -90,14 +102,17 @@ int main(int argc, char *argv[]) {
                 }
             case AsyncEventEnum::RecvMessage:
                 {
-                    std::cout << "RecvMessage" << "\n";
                     std::shared_ptr<Message> msg = event.GetData().GetReceivedMsg();
                     if(true == messageSet.insert(msg->GetMessageId()).second){
+                        char buf[256];
+                        sprintf(buf, " NewTx %s %s",
+                                gArgs.GetArg("-id", "noid").c_str(),
+                                msg->GetMessageId().c_str());
+                        shadow_push_eventlog(buf);
                         boost::shared_ptr<Transaction> receivedTx =
                             GetDeserializedTransaction(msg->GetPayload());
                         std::vector<PeerId> dests = basicNetworkModule.GetNeighborPeerIds();
                         basicNetworkModule.MulticastMessage(dests, msg);
-                        std::cout << "Multicasting message :" << *receivedTx << "\n";
                     }
                     break;
                 }

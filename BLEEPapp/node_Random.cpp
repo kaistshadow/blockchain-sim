@@ -1,10 +1,12 @@
 #include "mainmodules/MainEventManager.h"
 #include "mainmodules/BasicNetworkModule.h"
+#include "mainmodules/RandomGossipNetworkModule.h"
 
 #include "datamodules/Peer.h"
 #include "datamodules/Message.h"
 
 #include "utility/ArgsManager.h"
+#include "utility/Random.h"
 
 
 using namespace libBLEEP;
@@ -30,12 +32,27 @@ using namespace libBLEEP;
 // TODO : connected neighbor peer already exists handling. -> remove redundent datasocket
 // TODO : NewPeerConnected event
 
-// 
+//
 
+std::vector<PeerId> genPeerList(std::string myId, int maxPeerNum){
+    std::vector<PeerId> lst;
+    for(int i = 0; i < maxPeerNum; i++){
+        char name[10];
+        sprintf(name, "bleep%d", i);
+        if(myId != name){
+            lst.push_back(PeerId(name));
+        }else{
+            return lst;
+        }
+    }
+    return lst;
+}
 
 int main(int argc, char *argv[]) {
-    // for testing DisconnectPeer API
-    int receivedMessageCount = 0;
+    int maxPeerNum = 500;
+    int connectPeerNum = 40;
+    int maxMulticastingNum = 8;
+    std::set<std::string> messageSet;
 
     gArgs.ParseParameters(argc, argv);
 
@@ -47,20 +64,29 @@ int main(int argc, char *argv[]) {
 
     /* allocate mainEventManager */
     MainEventManager mainEventManager;
-    // MainEventManager mainEventManager(gArgs.GetArg("-id", "noid"));
-    BasicNetworkModule basicNetworkModule(gArgs.GetArg("-id", "noid"), &mainEventManager);
 
-    /* connect to peer */
-    // mainEventManager.AsyncConnectPeer(PeerId("143.248.38.37"));
-    for (auto neighborPeerId : gArgs.GetArgs("-connect"))
-        basicNetworkModule.AsyncConnectPeer(PeerId(neighborPeerId));
+    RandomGossipNetworkModule randomNetworkModule(gArgs.GetArg("-id", "noid"), &mainEventManager);
+
+    std::vector<PeerId> peerList = genPeerList(gArgs.GetArg("-id", "noid"), maxPeerNum);
+    auto neighborPeerIdSet = randomNetworkModule.GenNeighborPeerSet(peerList);
+    int i = 0;
+    for(const Distance& dest : neighborPeerIdSet){
+        if (i >= connectPeerNum) break;
+        randomNetworkModule.AsyncConnectPeer(dest.GetPeerId());
+        i++;
+    }
+
+//    /* connect to peer */
+//    // mainEventManager.AsyncConnectPeer(PeerId("143.248.38.37"));
+//    for (auto neighborPeerId : gArgs.GetArgs("-connect"))
+//        randomNetworkModule.AsyncConnectPeer(PeerId(neighborPeerId));
 
     while(true) {
         mainEventManager.Wait(); // main event loop (wait for next event)
 
         while (mainEventManager.ExistAsyncEvent()) {
             AsyncEvent event = mainEventManager.PopAsyncEvent();
-        
+
             switch (event.GetType()) {
             case AsyncEventEnum::none:
                 std::cout << "invalid event is triggered. " << "\n";
@@ -77,8 +103,8 @@ int main(int argc, char *argv[]) {
                 {
                     std::cout << "AsyncConnectPeer got error(" << event.GetData().GetError() << ")" << "\n";
                     // try again with timer
-                    PeerId peerId = event.GetData().GetRefusedPeerId();                
-                    basicNetworkModule.AsyncConnectPeer(peerId, 10);
+                    PeerId peerId = event.GetData().GetRefusedPeerId();
+                    randomNetworkModule.AsyncConnectPeer(peerId, 10);
                     break;
                 }
             case AsyncEventEnum::CompleteAsyncGenerateRandomTransaction:
@@ -90,19 +116,18 @@ int main(int argc, char *argv[]) {
                 }
             case AsyncEventEnum::RecvMessage:
                 {
-                    std::cout << "RecvMessage" << "\n";
                     std::shared_ptr<Message> msg = event.GetData().GetReceivedMsg();
-                    MessageType messageType = msg->GetType();
-                    if (messageType == "newTx") {
-                        boost::shared_ptr<Transaction> receivedTx = GetDeserializedTransaction(msg->GetPayload());
-                        std::cout << *receivedTx << "\n";
-                    }
-
-                    // for testing DisconnectPeer API
-                    receivedMessageCount++;
-                    if (receivedMessageCount >= 5) {
-                        for (auto neighborPeerId : gArgs.GetArgs("-connect"))
-                            basicNetworkModule.DisconnectPeer(PeerId(neighborPeerId));
+                    if(true == messageSet.insert(msg->GetMessageId()).second){
+                        char buf[256];
+                        sprintf(buf, " NewTx %s %s",
+                                gArgs.GetArg("-id", "noid").c_str(),
+                                msg->GetMessageId().c_str());
+                        shadow_push_eventlog(buf);
+                        boost::shared_ptr<Transaction> receivedTx =
+                            GetDeserializedTransaction(msg->GetPayload());
+                        std::vector<PeerId> dests = randomNetworkModule.GetNeighborPeerIds();
+                        auto idxs = GenRandomNumSet(dests.size(), maxMulticastingNum);
+                        randomNetworkModule.MulticastMessage(dests, msg, idxs);
                     }
                     break;
                 }

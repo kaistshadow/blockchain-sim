@@ -8,13 +8,11 @@
 #include "utility/ArgsManager.h"
 #include "utility/Assert.h"
 
-
 using namespace libBLEEP;
 
 // TODO : create randomly generate transaction, and send it to blockchain node
 
 int main(int argc, char *argv[]) {
-
 
     gArgs.ParseParameters(argc, argv);
 
@@ -42,7 +40,7 @@ int main(int argc, char *argv[]) {
 
     while(true) {
         mainEventManager.Wait(); // main event loop (wait for next event)
-
+        
         while (mainEventManager.ExistAsyncEvent()) {
             AsyncEvent event = mainEventManager.PopAsyncEvent();
 
@@ -62,7 +60,7 @@ int main(int argc, char *argv[]) {
                 {
                     std::cout << "AsyncConnectPeer got error(" << event.GetData().GetError() << ")" << "\n";
                     // try again with timer
-                    PeerId peerId = event.GetData().GetRefusedPeerId();
+                    PeerId peerId = event.GetData().GetRefusedPeerId();                
                     basicNetworkModule.AsyncConnectPeer(peerId, 10);
                     break;
                 }
@@ -72,22 +70,24 @@ int main(int argc, char *argv[]) {
                     boost::shared_ptr<Transaction> generatedTx = event.GetData().GetGeneratedTx();
 
                     std::cout << *generatedTx << "\n";
+
                     PeerId myPeerId(gArgs.GetArg("-id", "noid"));
                     std::string payload = GetSerializedString(generatedTx);
                     for (auto neighborId : gArgs.GetArgs("-connect")) {
-                        std::string m = myPeerId.GetId() + neighborId + payload;
-                        std::string msgHash = GenMessageHash(m);
                         PeerId destPeerId(neighborId);
-                        std::shared_ptr<Message> msg =
-                            std::make_shared<Message>(myPeerId, destPeerId,"newTx", payload, msgHash);
+                        std::shared_ptr<Message> msg = std::make_shared<Message>(myPeerId, destPeerId, 
+                                                                                 "newTx", payload);
                         basicNetworkModule.UnicastMessage(destPeerId, msg);
                     }
+
+                    // Call another request, i.e., periodically generate transaction
+                    txGeneratorModule.AsyncGenerateRandomTransaction(gArgs.GetArg("-txgeninterval", 0));
                     break;
                 }
             case AsyncEventEnum::RecvMessage:
                 {
                     std::cout << "RecvMessage" << "\n";
-//                    M_Assert(0, "why client received message?");
+                    M_Assert(0, "why client received message?");
                     break;
                 }
             case AsyncEventEnum::NewPeerConnected:

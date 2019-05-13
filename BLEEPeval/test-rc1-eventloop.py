@@ -5,7 +5,7 @@ import sys
 
 if __name__ == '__main__':
     datadir = "rc1-eventloop-datadir"
-    shadow_configfile = "config-examples/rc1-eventloop2.xml"
+    shadow_configfile = "config-examples/rc1-eventloop.xml"
 
     os.system("rm -rf %s" % datadir)
 

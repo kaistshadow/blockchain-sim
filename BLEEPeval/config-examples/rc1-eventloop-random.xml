@@ -32,8 +32,8 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="NODE" path="~/.bleep/plugins/libNODE_bleep.so" />
-  <plugin id="CLIENT" path="~/.bleep/plugins/libNODE_client.so" />
+  <plugin id="NODE" path="~/.bleep/plugins/libNODE_Random_bleep.so" />
+  <plugin id="CLIENT" path="~/.bleep/plugins/libNODE_Random_client.so" />
 
 
   <!-- the length of our experiment in seconds  1404101800-->
@@ -1549,7 +1549,7 @@
   </node>
 
   <node id="client0">
-    <application plugin="CLIENT" time="1000" arguments="-id=client0 -connect=bleep11 -txgeninterval=5" />
+    <application plugin="CLIENT" time="1000" arguments="-id=client0 -connect=bleep30 -txgeninterval=5" />
   </node>
 
 

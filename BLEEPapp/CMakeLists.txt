@@ -58,6 +58,16 @@ add_shadow_plugin(NODE_POW node_pow.cpp)
 install(TARGETS NODE_POW DESTINATION plugins)
 target_link_libraries(NODE_POW BLEEP::BLEEP)
 
+add_shadow_plugin(NODE_Random_bleep node_Random.cpp)
+install(TARGETS NODE_Random_bleep DESTINATION plugins)
+target_link_libraries(NODE_Random_bleep BLEEP::BLEEP)
+
+
+add_shadow_plugin(NODE_Random_client client_Random.cpp)
+install(TARGETS NODE_Random_client DESTINATION plugins)
+target_link_libraries(NODE_Random_client BLEEP::BLEEP)
+
+
 
 ## compile for local executable
 add_executable(LOCAL_NODE_bleep node.cpp)
@@ -68,6 +78,13 @@ target_link_libraries(LOCAL_NODE_client BLEEP::BLEEP)
 
 add_executable(LOCAL_NODE_POW node_pow.cpp)
 target_link_libraries(LOCAL_NODE_POW BLEEP::BLEEP)
+
+add_executable(LOCAL_NODE_Random_bleep node_Random.cpp)
+target_link_libraries(LOCAL_NODE_Random_bleep BLEEP::BLEEP)
+
+add_executable(LOCAL_NODE_Random_client client_Random.cpp)
+target_link_libraries(LOCAL_NODE_Random_client BLEEP::BLEEP)
+
 
 # add tests
 enable_testing()

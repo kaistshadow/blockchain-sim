@@ -6,7 +6,7 @@ RandomGossipNetworkModule::RandomGossipNetworkModule(std::string myPeerId, MainE
     : BasicNetworkModule::BasicNetworkModule(myPeerId, mainEventManager){
 }
 
-std::set<Distance, DistanceCmp> RandomGossipNetworkModule::GenNeighborPeerSet(std::vector<PeerId> neighborPeerIds){
+std::set<Distance, DistanceCmp> RandomGossipNetworkModule::GenNeighborPeerSet(std::vector<PeerId> &neighborPeerIds){
     PeerId myId = *peerManager.GetMyPeerId();
     std::set<Distance, DistanceCmp> neighborPeerIdSet;
     UINT256_t myHashId = myId.GetIdHash();
@@ -44,4 +44,15 @@ std::vector<PeerId> RandomGossipNetworkModule::GetNeighborPeerIds(){
 
 PeerId RandomGossipNetworkModule::GetMyPeerId(){
     return *peerManager.GetMyPeerId();
+}
+
+bool RandomGossipNetworkModule::AsyncConnectPeers(std::vector<PeerId> &peerlist, int peerNum, int time){
+    auto neighborPeerIdSet = GenNeighborPeerSet(peerlist);
+    int i = 0;
+    for(const Distance& dest : neighborPeerIdSet){
+        if (i >= peerNum) break;
+        if (AsyncConnectPeer(dest.GetPeerId(), time) == false) return false;
+        i++;
+    }
+    return true;
 }

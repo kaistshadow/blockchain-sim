@@ -31,11 +31,13 @@ namespace libBLEEP {
 
             bool MulticastMessage(std::vector<PeerId> dests, std::shared_ptr<Message> message, std::set<int>idxs);
 
-            std::set<Distance, DistanceCmp> GenNeighborPeerSet(std::vector<PeerId> neighborPeerIds);
+            std::set<Distance, DistanceCmp> GenNeighborPeerSet(std::vector<PeerId> &neighborPeerIds);
 
             std::vector<PeerId> GetNeighborPeerIds();
 
             PeerId GetMyPeerId();
+
+            bool AsyncConnectPeers(std::vector<PeerId> &peerlist, int peerNum, int time = 0);
 
     };
 

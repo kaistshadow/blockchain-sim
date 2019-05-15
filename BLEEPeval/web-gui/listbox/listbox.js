@@ -94,8 +94,18 @@ aria.Listbox.prototype.checkKeyPress = function (evt) {
   if (!nextItem) {
     return;
   }
-
   switch (key) {
+    case aria.KeyCode.UP:
+      evt.preventDefault();
+      this.focusPrevItem();
+      break;
+
+    case aria.KeyCode.DOWN:
+      evt.preventDefault();
+      this.focusNextItem();
+      break;
+  }
+  /* switch (key) {
     case aria.KeyCode.PAGE_UP:
     case aria.KeyCode.PAGE_DOWN:
       if (this.moveUpDownEnabled) {
@@ -197,7 +207,7 @@ aria.Listbox.prototype.checkKeyPress = function (evt) {
         this.focusItem(itemToFocus);
       }
       break;
-  }
+  } */
 };
 
 aria.Listbox.prototype.findItemToFocus = function (key) {

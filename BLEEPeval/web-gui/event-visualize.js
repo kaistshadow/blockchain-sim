@@ -17,14 +17,15 @@ var muObserver = new MutationObserver(function(mutations) {
     var restart;
 
     mutations.forEach(function(mutation) {
-        //Find the mutation of the target event being selected
+        //Find the mutation occuring when the target event is selected
         if (mutation.type == "attributes" && mutation.target.tagName == "LI"
-        && mutation.attributeName=="aria-selected"
-        && mutation.target.getAttribute(mutation.attributeName) == "true") {
-
+                && mutation.attributeName=="aria-selected"
+                && mutation.target.getAttribute(mutation.attributeName) == "true") {
             targetEvent = mutation.target;
+            
+            //Check if the new event is the first displayed element of the list
             if (mutation.target == 
-                document.getElementById("ss_elem_list").querySelector('[role="option"]:not([style="display:none;"])')) {
+                    document.getElementById("ss_elem_list").querySelector('[role="option"]:not([style="display:none;"])')) {
                 lastEvent = targetEvent;
                 restart = true;
             }
@@ -41,31 +42,44 @@ var muObserver = new MutationObserver(function(mutations) {
         
         var targetEventNumber = parseInt(targetEvent.getAttribute("id").split("_")[1]);
         var lastEventNumber = parseInt(lastEvent.getAttribute("id").split("_")[1]);
-        while (lastEvent.getAttribute("id") != targetEvent.getAttribute("id") || restart) {
-            if (restart) {
-                drawVisualization();
-                lastEvent = performEvent(targetEvent);
-                restart = false;
-            }
-            else if (lastEventNumber < targetEventNumber) {
+        var targetReached = false;
+        if (restart)
+            restartEvent(targetEvent);
+        
+        else if (lastEventNumber < targetEventNumber) {
+            while (!targetReached) {
                 var nextEvent = lastEvent.nextElementSibling;
                 while (nextEvent && nextEvent.getAttribute("style") === "display:none;") {
                     nextEvent = nextEvent.nextElementSibling;
                 }
                 if (nextEvent)
                     lastEvent = performEvent(nextEvent);
-            }
-            else if (lastEventNumber > targetEventNumber) {
+                targetReached = lastEvent == targetEvent;
+           }
+        }
+
+        else if (lastEventNumber > targetEventNumber) {
+            while (!targetReached) {
                 lastEvent = revertEvent(lastEvent).previousElementSibling;
                 while (lastEvent && lastEvent.getAttribute("style") === "display:none;") {
                     lastEvent = lastEvent.previousElementSibling;
                 }
+                targetReached = lastEvent == targetEvent;
             }
         }
-        return;
     }
 });
 
+function restartEvent(event) {
+    network.setSelection([], {unselectAll: true});
+    network.nodes = [];
+    network.links = [];
+    network.packages = [];
+    
+    performEvent(event);
+    network.redraw();
+    return event;
+}
 
 function performEvent(event) {
     var eventlog = event.textContent;
@@ -189,10 +203,10 @@ function drawVisualization() {
     // linksTable.addRow([1, 2, 'moving-arrows', undefined, 2]);
 
 
-    // specify options
+    // Specify options using the dimensions of the network if it has already been drawn
     var options = {
-        'width':  '800px', 
-        'height': '600px',
+        'width': network ? network.frame.style.width : '800px', 
+        'height': network ? network.frame.style.height : '600px',
         'stabilize': true,
         'packages': {
             'style': 'image',
@@ -202,7 +216,7 @@ function drawVisualization() {
 
     // Instantiate our graph object.
     network = new links.Network(document.getElementById('eventvisualize'));
-    
+
     // Add event listeners for node selection
     google.visualization.events.addListener(network, 'select', onNodeSelect);
 

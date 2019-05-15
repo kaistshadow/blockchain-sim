@@ -366,6 +366,22 @@ links.Network.prototype._create = function () {
     this.frame.className = "network-frame";
     this.frame.style.position = "relative";
     this.frame.style.overflow = "hidden";
+    //this.frame.style.resize = "both";
+    // The resize property is not supported by IE and Edge
+
+    this.frame.rsz = document.createElement("div");
+    this.frame.className = "rsz";
+    this.frame.rsz.style.position = "absolute";
+    this.frame.rsz.style.right = '0';
+    this.frame.rsz.style.bottom = '0';
+    this.frame.rsz.style.width = '0';
+    this.frame.rsz.style.height = '0';
+    this.frame.rsz.style.borderStyle = "solid";
+    this.frame.rsz.style.borderWidth = "0 0 15px 15px";
+    this.frame.rsz.style.borderColor = "transparent transparent #ff6600 transparent";
+    this.frame.rsz.style.cursor = "pointer";
+    this.frame.rsz.style.zIndex = "26";
+    this.frame.appendChild(this.frame.rsz);
 
     // create the graph canvas (HTML canvas element)
     this.frame.canvas = document.createElement( "canvas" );
@@ -380,6 +396,7 @@ links.Network.prototype._create = function () {
         this.frame.canvas.appendChild(noCanvas);
     }
 
+
     // create event listeners
     var me = this;
     var onmousedown = function (event) {me._onMouseDown(event);};
@@ -390,6 +407,39 @@ links.Network.prototype._create = function () {
     links.Network.addEventListener(this.frame.canvas, "mousemove", onmousemove);
     links.Network.addEventListener(this.frame.canvas, "mousewheel", onmousewheel);
     links.Network.addEventListener(this.frame.canvas, "touchstart", ontouchstart);
+    
+    var
+        doc = document,
+        main = this.frame,
+        ht, wd,
+        x, y, dx, dy;
+
+    var startResize = function(evt) {
+        x = evt.screenX;
+        y = evt.screenY;
+        ht = parseInt(main.style.height);
+        wd = parseInt(main.style.width);
+    };
+
+    var resize = function(evt) {
+        dx = evt.screenX - x;
+        dy = evt.screenY - y;
+        x = evt.screenX;
+        y = evt.screenY;
+        wd += dx;
+        ht += dy;
+        main.style.width = wd + "px";
+        main.style.height = ht + "px";
+    };
+
+    this.frame.rsz.addEventListener("mousedown", function(evt) {
+        startResize(evt);
+        doc.body.addEventListener("mousemove", resize);
+        doc.body.addEventListener("mouseup", function() {
+            doc.body.removeEventListener("mousemove", resize);
+            me.redraw();
+        });
+    });
 
     // add the frame to the container element
     this.containerElement.appendChild(this.frame);
@@ -2267,7 +2317,7 @@ links.Network.prototype.setAnimationAcceleration = function(acceleration) {
  * chart will be resized too.
  */
 links.Network.prototype.redraw = function() {
-    this._setSize(this.width, this.height);
+    this._setSize(this.frame.style.width, this.frame.style.height);
 
     this._redraw();
 };

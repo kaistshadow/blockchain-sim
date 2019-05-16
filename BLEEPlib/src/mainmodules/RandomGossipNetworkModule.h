@@ -33,7 +33,7 @@ namespace libBLEEP {
 
             std::set<Distance, DistanceCmp> GenNeighborPeerSet(std::vector<PeerId> &neighborPeerIds);
 
-            std::vector<PeerId> GetNeighborPeerIds();
+            std::vector<PeerId> GetNeighborPeerIds(PeerConnectMode mode = PeerConnectMode::none);
 
             PeerId GetMyPeerId();
 

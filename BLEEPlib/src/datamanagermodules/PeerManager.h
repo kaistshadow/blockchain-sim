@@ -12,6 +12,12 @@ namespace libBLEEP {
         SocketConnected,
     };
 
+    enum class PeerConnectMode {
+        none,
+        ConnectMyself,
+        ConnectByRemote
+    };
+
     class PeerInfo {
     private:
         int _socketfd; // currently, we only support single data socket per peer
@@ -63,7 +69,7 @@ namespace libBLEEP {
         /* get method for neighbor Peer */
         std::shared_ptr<PeerInfo> GetPeerInfo(PeerId peer);
         std::shared_ptr<PeerInfo> GetPeerInfoBySocket(int socketfd);
-        std::vector<PeerId> GetNeighborPeerIds();
+        std::vector<PeerId> GetNeighborPeerIds(PeerConnectMode mode = PeerConnectMode::none );
 
         /* Try to allocate new neighbor peer, and return the pointer for allocated PeerInfo.
            If the PeerInfo already exists for given PeerId, return the pointer for it. */

@@ -55,11 +55,25 @@ std::shared_ptr<PeerInfo> libBLEEP::PeerManager::GetPeerInfoBySocket(int socketf
 }
 
 
-std::vector<PeerId> libBLEEP::PeerManager::GetNeighborPeerIds(){
+std::vector<PeerId> libBLEEP::PeerManager::GetNeighborPeerIds(PeerConnectMode mode){
     std::vector<PeerId> id;
     std::map <PeerId, std::shared_ptr<PeerInfo>, PeerIdCompare>::iterator i = _neighborPeers.begin();
     while (i != _neighborPeers.end()){
-        id.push_back(i->first);
+        switch (mode){
+            case PeerConnectMode::ConnectMyself:
+                if ((i->second)->GetSocketStatus() == SocketStatus::SocketConnected){
+                    id.push_back(i->first);
+                }
+                break;
+            case PeerConnectMode::ConnectByRemote:
+                if ((i->second)->GetSocketStatusRemote() == SocketStatus::SocketConnected){
+                    id.push_back(i->first);
+                }
+                break;
+            default :
+                id.push_back(i->first);
+                break;
+        }
         i++;
     }
     return id;

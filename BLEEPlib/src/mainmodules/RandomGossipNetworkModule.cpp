@@ -38,8 +38,8 @@ bool RandomGossipNetworkModule::MulticastMessage(std::vector<PeerId> dests, std:
     return true;
 }
 
-std::vector<PeerId> RandomGossipNetworkModule::GetNeighborPeerIds(){
-    return peerManager.GetNeighborPeerIds();
+std::vector<PeerId> RandomGossipNetworkModule::GetNeighborPeerIds(PeerConnectMode mode){
+    return peerManager.GetNeighborPeerIds(mode);
 }
 
 PeerId RandomGossipNetworkModule::GetMyPeerId(){

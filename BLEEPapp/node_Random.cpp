@@ -11,29 +11,6 @@
 
 using namespace libBLEEP;
 
-// Need to implement event loop library
-
-// implement event loop's wait
-
-// implement event loop's appendNewNeighborPeer, GenerateTx
-
-// TODO(0331) : step-by-step visualization, implement asyncGenerateTx
-// TODO(0331) : SendMessage, recvMessage
-// TODO(0401) : Change PeerManager to PeerConnManager. Add NewPeerConnected event.
-// TODO(0402) : Support disconnect API
-// TODO(0402) : Refactoring for socket closeEvent handling (use recvMsg instead of recv?)
-
-// v1.0
-// TODO : Seperate API src,dest & msg src,dest (for broadcasting portability)
-// TODO : statmachine regtest
-// TODO : documentation for (Transaction, TxPool), (Block,LedgerManager), (PeerId, Message)
-//        (MainEventManager_v1), utility ArgsManager
-
-// TODO : connected neighbor peer already exists handling. -> remove redundent datasocket
-// TODO : NewPeerConnected event
-
-//
-
 void  genPeerList(std::vector<PeerId> &lst, std::string myId, int maxPeerNum){
     for(int i = 0; i < maxPeerNum; i++){
         char name[10];
@@ -77,7 +54,7 @@ int main(int argc, char *argv[]) {
                 exit(-1);
             case AsyncEventEnum::CompleteAsyncConnectPeer:
                 {
-                    std::cout << "event for connection complete for peer. " << "\n";
+                    std::cout << "event for connection complete for peer." << "\n";
                     PeerId peerId = event.GetData().GetConnectedPeerId();
                     std::cout << "connected peerId : " << peerId.GetId() << "\n";
                     break;
@@ -106,7 +83,9 @@ int main(int argc, char *argv[]) {
                                 gArgs.GetArg("-id", "noid").c_str(),
                                 msg->GetMessageId().c_str());
                         shadow_push_eventlog(buf);
-                        std::vector<PeerId> dests = randomNetworkModule.GetNeighborPeerIds();
+                        std::vector<PeerId> dests =
+                            randomNetworkModule.GetNeighborPeerIds(PeerConnectMode::ConnectMyself);
+                        if (dests.size() == 0) break;
                         auto idxs = GenRandomNumSet(dests.size(), maxMulticastingNum);
                         randomNetworkModule.MulticastMessage(dests, msg, idxs);
                     }

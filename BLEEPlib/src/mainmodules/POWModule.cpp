@@ -11,7 +11,7 @@ void POWModule::AsyncEmulateBlockMining(std::shared_ptr<POWBlock> candidateBlk, 
 
     double waiting_time = -1;
     while (waiting_time < 0) {
-        unsigned int random_num = time(0);
+        unsigned int random_num = time(0) + GetHostNumber();
         std::default_random_engine generator(random_num);
         std::normal_distribution<double> distribution(avg, stddev);
         waiting_time = distribution(generator);

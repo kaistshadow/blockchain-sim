@@ -63,6 +63,9 @@ bool BasicNetworkModule::UnicastMessage(PeerId dest, std::shared_ptr<Message> me
     int socketFD = peerManager.GetConnectedSocketFD(dest);
     std::shared_ptr<DataSocket_v2> dataSocket = socketManager.GetDataSocket(socketFD);
     
+    if (!dataSocket)
+        return false;
+
     // append a message to socket
     dataSocket->AppendMessageToSendBuff(message);
     // set writable for data socket watcher

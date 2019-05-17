@@ -141,7 +141,7 @@ void libBLEEP::PeerManager::UpdateNeighborSocketDisconnection(int socketfd) {
     if (it_remote != _neighborPeers.end()) {
         std::shared_ptr<PeerInfo> peerInfo = it_remote->second;
         peerInfo->SetSocketFD(-1);
-        peerInfo->SetSocketStatus(SocketStatus::SocketDisconnected);
+        peerInfo->SetSocketStatusRemote(SocketStatus::SocketDisconnected);
         std::cout << "PeerManager set disconnection of the (remotely requested) socket for " << it_remote->first.GetId() << "\n";
     }
 

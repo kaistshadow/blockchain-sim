@@ -2,6 +2,8 @@
 #include "../utility/Assert.h"
 #include "shadow_interface.h"
 
+#include <random>
+
 using namespace libBLEEP;
 
 void POWModule::AsyncEmulateBlockMining(std::shared_ptr<POWBlock> candidateBlk, double avg, double stddev) {

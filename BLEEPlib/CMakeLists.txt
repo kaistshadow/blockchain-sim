@@ -18,18 +18,18 @@ set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.bleep")
 # debug option
 if(BLEEP_DEBUG STREQUAL ON)
   message(STATUS "Debug enabled.")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address") # suppress error for manually installed boost (1.58)
 else(BLEEP_DEBUG STREQUAL ON)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address")
 endif(BLEEP_DEBUG STREQUAL ON)
 
 # check boost library
-# set(Boost_NO_SYSTEM_PATHS TRUE)
-# if (Boost_NO_SYSTEM_PATHS)
-#   set(BOOST_ROOT "$ENV{HOME}/opt/boost_1_58_0")
-#   set(BOOST_INCLUDE_DIRS "${BOOST_ROOT}/include")
-#   set(BOOST_LIBRARY_DIRS "${BOOST_ROOT}/lib")
-# endif (Boost_NO_SYSTEM_PATHS)
+set(Boost_NO_SYSTEM_PATHS TRUE)
+if (Boost_NO_SYSTEM_PATHS)
+  set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../boost")
+  set(BOOST_INCLUDE_DIRS "${BOOST_ROOT}/include")
+  set(BOOST_LIBRARY_DIRS "${BOOST_ROOT}/lib")
+endif (Boost_NO_SYSTEM_PATHS)
 find_package(Boost REQUIRED serialization filesystem system)
 message(STATUS "Boost_LIBRARIES:" ${Boost_LIBRARIES})
 
@@ -65,6 +65,10 @@ include(GNUInstallDirs)
 
 message(STATUS "CMAKE_INSTALL_LIBDIR:" ${CMAKE_INSTALL_LIBDIR})
 message(STATUS "CMAKE_INSTALL_INCLUDEDIR:" ${CMAKE_INSTALL_INCLUDEDIR})
+
+
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:${CMAKE_INSTALL_PREFIX}/lib")
 
 add_library(BLEEP SHARED ${SRCS})
 # target_include_directories(BLEEP

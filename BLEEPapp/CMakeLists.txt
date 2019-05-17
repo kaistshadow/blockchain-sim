@@ -17,12 +17,12 @@ else(BLEEP_DEBUG STREQUAL ON)
 endif(BLEEP_DEBUG STREQUAL ON)
 
 
-# set(Boost_NO_SYSTEM_PATHS TRUE)
-# if (Boost_NO_SYSTEM_PATHS)
-#   set(BOOST_ROOT "$ENV{HOME}/opt/boost_1_58_0")
-#   set(BOOST_INCLUDE_DIRS "${BOOST_ROOT}/include")
-#   set(BOOST_LIBRARY_DIRS "${BOOST_ROOT}/lib")
-# endif (Boost_NO_SYSTEM_PATHS)
+set(Boost_NO_SYSTEM_PATHS TRUE)
+if (Boost_NO_SYSTEM_PATHS)
+  set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../boost")
+  set(BOOST_INCLUDE_DIRS "${BOOST_ROOT}/include")
+  set(BOOST_LIBRARY_DIRS "${BOOST_ROOT}/lib")
+endif (Boost_NO_SYSTEM_PATHS)
 find_package(Boost REQUIRED serialization filesystem system)
 
 message(STATUS "Boost_LIBRARIES:" ${Boost_LIBRARIES})

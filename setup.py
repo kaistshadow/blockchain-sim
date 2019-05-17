@@ -68,14 +68,6 @@ if __name__ == '__main__':
         prepare_shadow()
         prepare_nodejs()
 
-        ## install boost
-        if not os.path.exists("./boost/lib") or not os.path.exists("./boost/include"):
-            exec_shell_cmd("mkdir boost; cd boost; wget http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.gz");
-            exec_shell_cmd("cd boost; tar axf boost_1_58_0.tar.gz")
-            exec_shell_cmd("cd boost/boost_1_58_0; ./bootstrap.sh --prefix=../ --with-libraries=system,filesystem,serialization")
-            exec_shell_cmd("cd boost/boost_1_58_0; ./b2 install")
-            exec_shell_cmd("rm -rf boost/boost_1_58_0 boost/boost_1_58_0.tar.gz")
-
         ## install BLEEPlib
         exec_shell_cmd("mkdir build; cd build; cmake %s ../BLEEPlib/; make; make install; cd ..; rm -rf build" % cmake_debug_opt)
 

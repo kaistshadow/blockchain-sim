@@ -30,18 +30,6 @@ matrix:
 
 
 script: 
-# build boost 1.58
-- mkdir boost
-- cd boost
-- wget http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.gz
-- tar axf boost_1_58_0.tar.gz
-- cd boost_1_58_0
-- ./bootstrap.sh --prefix=../ --with-libraries=system,filesystem,serialization
-- ./b2 install
-- cd ..
-- rm -rf boost_1_58_0
-- rm -rf boost_1_58_0.tar.gz
-
 # build BLEEP library
 - mkdir BLEEPlib/build
 - cd BLEEPlib/build

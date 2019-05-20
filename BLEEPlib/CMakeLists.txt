@@ -69,7 +69,7 @@ target_include_directories(BLEEP
 
 
 # use 3rd party library (boost_1_58)
-find_package(Boost 1.58.0 COMPONENTS serialization filesystem system)
+find_package(Boost 1.58.0 EXACT COMPONENTS serialization filesystem system)
 if(NOT Boost_FOUND)
   include(ExternalProject)
   ExternalProject_Add(Boost_EXTERNAL

@@ -17,11 +17,7 @@ else(BLEEP_DEBUG STREQUAL ON)
 endif(BLEEP_DEBUG STREQUAL ON)
 
 
-find_package(Boost REQUIRED serialization filesystem system)
-
-message(STATUS "Boost_LIBRARIES:" ${Boost_LIBRARIES})
-
-include_directories(${Boost_INCLUDE_DIRS})
+# link_directories($ENV{HOME}/opt/libev4/lib)   # for debuggin libev
 
 set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.bleep")
 
@@ -64,6 +60,10 @@ add_shadow_plugin(NODE_POW node_pow.cpp)
 install(TARGETS NODE_POW DESTINATION plugins)
 target_link_libraries(NODE_POW BLEEP::BLEEP)
 
+add_shadow_plugin(NODE_POW_TX node_pow_tx.cpp)
+install(TARGETS NODE_POW_TX DESTINATION plugins)
+target_link_libraries(NODE_POW_TX BLEEP::BLEEP)
+
 add_shadow_plugin(NODE_MINING node_mining.cpp)
 install(TARGETS NODE_MINING DESTINATION plugins)
 target_link_libraries(NODE_MINING BLEEP::BLEEP)
@@ -78,6 +78,9 @@ target_link_libraries(LOCAL_NODE_client BLEEP::BLEEP)
 
 add_executable(LOCAL_NODE_POW node_pow.cpp)
 target_link_libraries(LOCAL_NODE_POW BLEEP::BLEEP)
+
+add_executable(LOCAL_NODE_POW_TX node_pow_tx.cpp)
+target_link_libraries(LOCAL_NODE_POW_TX BLEEP::BLEEP)
 
 add_executable(LOCAL_NODE_MINING node_mining.cpp)
 target_link_libraries(LOCAL_NODE_MINING BLEEP::BLEEP)

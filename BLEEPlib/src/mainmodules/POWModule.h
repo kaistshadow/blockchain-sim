@@ -76,7 +76,8 @@ namespace libBLEEP {
             void _timerCallback(ev::timer &w, int revents) {
                 // 1. calculate random block.
                 srand((unsigned int)time(0));
-                unsigned long nonce = 0;  // since this is an emulator, we use arbitrary nonce value.
+                /* unsigned long nonce = 0;  // since this is an emulator, we use arbitrary nonce value. */
+                unsigned long nonce = _powModule->GetHostNumber();  // use arbitrary random value for emulation. (hardcoded )
                 unsigned char hash_out[32];
                 
                 unsigned long blockidx = _candidateBlk->GetBlockIdx();
@@ -237,6 +238,7 @@ namespace libBLEEP {
         };
 
     private:
+        std::string _myPeerId;
         MainEventManager* _mainEventManager;
 
     private:
@@ -249,6 +251,22 @@ namespace libBLEEP {
         POWModule(MainEventManager* eventManager) 
             : _mainEventManager(eventManager), watcherManager(this, eventManager) {};
 
+        /* Constructor */
+    POWModule(std::string myPeerId, MainEventManager* eventManager) 
+            : _myPeerId(myPeerId), _mainEventManager(eventManager), watcherManager(this, eventManager) {};
+
+        int GetHostNumber() {
+            if (_myPeerId.find("bleep") == 0) {
+                int result = std::stoi(_myPeerId.substr(5, _myPeerId.size()));
+                std::cout << "nodeid contains 'bleep'. hostnumber:" << result << "\n";
+
+                return result;
+            }
+            else {
+                std::cout << "nodeid does not contain 'bleep'. _myPeerId:" << _myPeerId << "\n";
+                return 0;
+            }
+        }
 
         /*********************************************************/
         /* Public API designed for high-level event requests */

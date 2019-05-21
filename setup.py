@@ -1,5 +1,4 @@
 import os
-import lxml.etree as ET
 from subprocess import check_output
 import argparse
 

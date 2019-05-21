@@ -15,22 +15,33 @@
 namespace libBLEEP {
 
     class BasicNetworkModule {
-    protected:
+    private:
+        class ListenSocketWatcher;
         class DataSocketWatcher;
+        class ConnectSocketWatcher;
+
+        class WatcherWrapper {
+        protected:
+            BasicNetworkModule* _networkModule;
+            MainEventManager* _mainEventModule;
+        public:
+            WatcherWrapper(BasicNetworkModule* netModule, MainEventManager* eventModule)
+                : _networkModule(netModule), _mainEventModule(eventModule) {};
+        };
         class WatcherManager {
         private:
             BasicNetworkModule* _networkModule;
             MainEventManager* _mainEventModule;
 
-        public:
             /* event watcher */
             std::map<int, std::shared_ptr<DataSocketWatcher> > _dataSocketWatchers;
 
+        public:
             WatcherManager(BasicNetworkModule* netModule, MainEventManager* eventModule)
                 : _networkModule(netModule), _mainEventModule(eventModule) {};
             void CreateDataSocketWatcher(int fd) {
                 M_Assert(_dataSocketWatchers.find(fd) == _dataSocketWatchers.end(), "fd must not have duplicated watchers");
-                // allocate new DataSocketWatcher
+                // allocate new DataSocketWatcher 
                 // and append it into the map structure (_dataSocketWatchers)
                 _dataSocketWatchers[fd] = std::make_shared<DataSocketWatcher>(fd, _networkModule, _mainEventModule);
             }
@@ -49,19 +60,7 @@ namespace libBLEEP {
                 if (it != _dataSocketWatchers.end())
                     _dataSocketWatchers.erase(it);
             }
-
-        };
-   private:
-        class ListenSocketWatcher;
-        class ConnectSocketWatcher;
-
-        class WatcherWrapper {
-        protected:
-            BasicNetworkModule* _networkModule;
-            MainEventManager* _mainEventModule;
-        public:
-            WatcherWrapper(BasicNetworkModule* netModule, MainEventManager* eventModule)
-                : _networkModule(netModule), _mainEventModule(eventModule) {};
+            
         };
 
         class AsyncConnectTimer : public WatcherWrapper {
@@ -74,7 +73,7 @@ namespace libBLEEP {
                 delete this;
             }
         public:
-            AsyncConnectTimer(PeerId id, double time, BasicNetworkModule* netModule, MainEventManager* eventModule)
+            AsyncConnectTimer(PeerId id, double time, BasicNetworkModule* netModule, MainEventManager* eventModule) 
                 : WatcherWrapper (netModule, eventModule) {
                 _id = id;
                 _timer.set<AsyncConnectTimer, &AsyncConnectTimer::_timerCallback> (this);
@@ -92,10 +91,10 @@ namespace libBLEEP {
             /* event io callback */
             void _listenSocketIOCallback (ev::io &w, int revents) {
                 std::cout << "listen socket IO callback called!" << "\n";
-
+    
                 if (revents & EV_READ) {
                     int fd = w.fd;
-
+    
                     std::shared_ptr<ListenSocket_v2> listenSocket = _networkModule->socketManager.GetListenSocket(fd);
 
                     // Need to execute accept on listen socket and create data socket
@@ -111,14 +110,13 @@ namespace libBLEEP {
                 }
             }
         public:
-            ListenSocketWatcher(int fd, BasicNetworkModule* netModule, MainEventManager* eventModule)
+            ListenSocketWatcher(int fd, BasicNetworkModule* netModule, MainEventManager* eventModule) 
                 : WatcherWrapper(netModule, eventModule) {
                 _watcher.set<ListenSocketWatcher, &ListenSocketWatcher::_listenSocketIOCallback> (this);
                 _watcher.start(fd, ev::READ);
             }
         };
 
-    protected:
         class DataSocketWatcher : public WatcherWrapper {
         private:
             /* socket fd */
@@ -132,9 +130,9 @@ namespace libBLEEP {
                 M_Assert(_fd == w.fd, "fd must be same");
                 int fd = w.fd;
                 std::cout << "data socket IO callback called!" << "\n";
-
+    
                 if (revents & EV_READ) {
-                    std::shared_ptr<DataSocket_v2> dataSocket = _networkModule->socketManager.GetDataSocket(fd);
+                    std::shared_ptr<DataSocket_v2> dataSocket = _networkModule->socketManager.GetDataSocket(fd); 
 
                     // overall process of receiving data
                     // retrieve raw stream data from socket and append them into recvBuffer
@@ -150,19 +148,19 @@ namespace libBLEEP {
                         _networkModule->peerManager.UpdateNeighborSocketDisconnection(fd);
 
                         if (disconnectedPeerId != nullptr) {
-                            // set asynchronous event
+                            // set asynchronous event 
                             AsyncEvent event(AsyncEventEnum::PeerDisconnected);
                             event.GetData().SetDisconnectedPeer(disconnectedPeerId);
                             _mainEventModule->PushAsyncEvent(event);
                         }
                         else {
                             // this case is possible
-                            // when redundant connection is closed by remote peer
+                            // when redundant connection is closed by remote peer 
                         }
 
                         _networkModule->socketManager.RemoveDataSocket(fd);
                         _networkModule->watcherManager.RemoveDataSocketWatcher(fd);
-                        // automatically destroyed?
+                        // automatically destroyed? 
                     }
                     else {
                         // check whether any message is received
@@ -175,13 +173,13 @@ namespace libBLEEP {
 
                             // append a peer information
                             _networkModule->peerManager.AppendNeighborPeerConnectedByRemote(message->GetSource().GetId(), fd);
-
+                            
                             std::shared_ptr<PeerId> newlyConnectedNeighborPeer = std::make_shared<PeerId>(message->GetSource());
                             AsyncEvent event(AsyncEventEnum::NewPeerConnected);
                             event.GetData().SetNewlyConnectedPeer(newlyConnectedNeighborPeer);
                             _mainEventModule->PushAsyncEvent(event);
                         }
-                        else if (message) {
+                        else if (message) {  
                             // set asynchronous event
                             AsyncEvent event(AsyncEventEnum::RecvMessage);
                             event.GetData().SetReceivedMsg(message);
@@ -193,16 +191,15 @@ namespace libBLEEP {
                             M_Assert(neighborPeerId != nullptr, "no neighbor peer exists for given socket");
 
                             char buf[256];
-                            sprintf(buf, "RecvMessage,%s,%s,%s,%s",
+                            sprintf(buf, "RecvMessage,%s,%s,%s", 
                                     neighborPeerId->GetId().c_str(),
                                     _networkModule->peerManager.GetMyPeerId()->GetId().c_str(),
-                                    message->GetType().c_str(),
-                                    message->GetMessageId().c_str());
+                                    message->GetType().c_str());
                             shadow_push_eventlog(buf);
 
                         }
-                    }
-
+                    }                    
+                   
                 } else if (revents & EV_WRITE) {
                     std::shared_ptr<DataSocket_v2> dataSocket = _networkModule->socketManager.GetDataSocket(fd);
 
@@ -210,26 +207,26 @@ namespace libBLEEP {
                     // 1. serialize data as payload, to make generic Message containing the payload
                     // 2. serialize Message, and push it to sendBuffer
                     // 3. retrieve raw data from sendBuffer and send them into socket.
-
+                
                     // write data to dataSocket
                     if (dataSocket->DoSend() == DoSendResultEnum::SendBuffEmptied)
                         UnsetWritable();
                 }
             }
         public:
-            DataSocketWatcher(int fd, BasicNetworkModule* netModule, MainEventManager* eventModule)
+            DataSocketWatcher(int fd, BasicNetworkModule* netModule, MainEventManager* eventModule) 
                 : WatcherWrapper(netModule, eventModule) {
                 _watcher.set<DataSocketWatcher, &DataSocketWatcher::_dataSocketIOCallback> (this);
                 _watcher.start(fd, ev::READ); // ev::WRITE will be set only when there exists any pending send request.
                 _fd = fd;
                 std::cout << "dataSocketWatcher created" << "\n";
             }
-            ~DataSocketWatcher() {
+            ~DataSocketWatcher() { 
                 std::cout << "destructor called for dataSocketWatcher" << "\n";
             }
 
             void SetWritable() {
-                _watcher.set(_fd, ev::READ | ev::WRITE);
+                _watcher.set(_fd, ev::READ | ev::WRITE);                
             }
 
             void UnsetWritable() {
@@ -237,7 +234,6 @@ namespace libBLEEP {
             }
         };
 
-    private:
         class ConnectSocketWatcher : public WatcherWrapper {
         private:
             int _fd;
@@ -248,7 +244,7 @@ namespace libBLEEP {
             /* event io callback */
             void _connectSocketIOCallback (ev::io &w, int revents) {
                 std::cout << "connect socket IO callback called!!!" << "\n";
-
+    
                 if (revents & EV_READ) {
                     std::cout << "invalid event is triggered. " << "\n";
                     exit(-1);
@@ -261,18 +257,18 @@ namespace libBLEEP {
                     socklen_t len = sizeof(err);
                     if (getsockopt(_fd, SOL_SOCKET, SO_ERROR, &err, &len) < 0 ) {
                         perror("getsockopt"); // Solaris pending error?
-                        exit(-1);
+                        exit(-1); 
                     }
                     if (err) {
                         // Get requested information (peerId)
                         auto it = std::find_if( _networkModule->_asyncConnectPeerRequests.begin(), _networkModule->_asyncConnectPeerRequests.end(),
-                                                [fd](const std::pair<PeerId, int>& element) {
+                                                [fd](const std::pair<PeerId, int>& element) { 
                                                     return element.second == fd; } );
-                        M_Assert(it != _networkModule->_asyncConnectPeerRequests.end(), "connecting event must have matching request");
+                        M_Assert(it != _networkModule->_asyncConnectPeerRequests.end(), "connecting event must have matching request"); 
                         PeerId refusedPeerId = it->first;
                         _networkModule->_asyncConnectPeerRequests.erase(it);
 
-                        // set asynchronous event
+                        // set asynchronous event 
                         AsyncEvent event(AsyncEventEnum::ErrorAsyncConnectPeer);
                         event.GetData().SetRefusedPeerId(refusedPeerId);
                         event.GetData().SetError(err);
@@ -295,22 +291,22 @@ namespace libBLEEP {
 
                     // Get requested information (peerId)
                     auto it = std::find_if( _networkModule->_asyncConnectPeerRequests.begin(), _networkModule->_asyncConnectPeerRequests.end(),
-                                            [fd](const std::pair<PeerId, int>& element) {
+                                            [fd](const std::pair<PeerId, int>& element) { 
                                                 return element.second == fd; } );
-                    M_Assert(it != _networkModule->_asyncConnectPeerRequests.end(), "connecting event must have matching request");
+                    M_Assert(it != _networkModule->_asyncConnectPeerRequests.end(), "connecting event must have matching request"); 
                     PeerId connectedPeerId = it->first;
                     int connectedSocketFD = it->second;
                     _networkModule->_asyncConnectPeerRequests.erase(it);
 
                     std::shared_ptr<PeerInfo> connPeer = _networkModule->peerManager.GetPeerInfo(connectedPeerId);
                     if (connPeer && connPeer->GetSocketStatus() == SocketStatus::SocketConnected) {
-                        // there already exists a connected neighbor peer.
+                        // there already exists a connected neighbor peer. 
                         // Thus remove newly generate dataSocket(since it's redundant)
                         _networkModule->socketManager.RemoveDataSocket(fd);
                         _networkModule->watcherManager.RemoveDataSocketWatcher(fd);
 
                         // return ErrorAsyncConnectPeer (redundant connection)
-                        // set asynchronous event
+                        // set asynchronous event 
                         AsyncEvent event(AsyncEventEnum::ErrorAsyncConnectPeer);
                         event.GetData().SetRefusedPeerId(connectedPeerId);
                         event.GetData().SetError(-1);
@@ -330,7 +326,7 @@ namespace libBLEEP {
 
                     // Append connected peer information in peerManager
                     _networkModule->peerManager.AppendNeighborPeerConnectedByMyself(connectedPeerId, connectedSocketFD);
-
+                
                     /** send id notify message (First message after socket establishment)   **/
                     /** Of course, we use socket for sending this message.                  **/
                     /** However, this message is not visible to user of MainEventManager.   **/
@@ -345,7 +341,7 @@ namespace libBLEEP {
                         dataSocketWatcher->SetWritable();
 
 
-                    // push asynchronous event
+                    // push asynchronous event 
                     AsyncEvent event(AsyncEventEnum::CompleteAsyncConnectPeer);
                     event.GetData().SetConnectedPeerId(connectedPeerId);
                     event.GetData().SetConnectedSocketFD(connectedSocketFD);
@@ -363,7 +359,7 @@ namespace libBLEEP {
                 }
             }
         public:
-            ConnectSocketWatcher(int fd, BasicNetworkModule* netModule, MainEventManager* eventModule)
+            ConnectSocketWatcher(int fd, BasicNetworkModule* netModule, MainEventManager* eventModule) 
                 : WatcherWrapper(netModule, eventModule) {
                 _watcher.set<ConnectSocketWatcher, &ConnectSocketWatcher::_connectSocketIOCallback> (this);
                 _watcher.start(fd, ev::WRITE);
@@ -385,22 +381,22 @@ namespace libBLEEP {
         /* asynchronous API that requests a connection for given peer */
         /* When the task is complete, 'complete event' will be triggered. */
         /* 'complete event' offers connected socket fd and requested PeerId */
-        /* If the valid socket connection exists for given PeerId,
+        /* If the valid socket connection exists for given PeerId, 
            the function immediately returns false, and 'complete event' will not be triggered */
         /* If the 'time' is given, the API tries connection
            after the given 'time' is passed. */
         bool AsyncConnectPeer(PeerId id, double time = 0);
 
         /* asynchronous API that sends a given message to proper peer(s) */
-        /* If the valid socket connection does not exist for given PeerId,
+        /* If the valid socket connection does not exist for given PeerId, 
            the function immediately returns false */
         /* There's no separate complete event for this API */
         bool UnicastMessage(PeerId dest, std::shared_ptr<Message> message);
 
         /* synchronous API that requests a disconnection for given peer */
-        /* Since it's synchronous API,
-           there's no separate complete event for this API */
-        /* If the valid socket connection does not exist for given PeerId,
+        /* Since it's synchronous API, 
+           there's no separate complete event for this API */ 
+        /* If the valid socket connection does not exist for given PeerId, 
            the function immediately returns false */
         bool DisconnectPeer(PeerId id);
 
@@ -408,25 +404,27 @@ namespace libBLEEP {
         /*********************************************************/
         /* Internal data structures
            for managing the asynchronous function call data.
-           Current list of supported asynchronous function calls :
+           Current list of supported asynchronous function calls : 
            1) AsyncConnectPeer (supported at 20190328)           */
         /*********************************************************/
-
+        
         // for managing AsyncConnectPeer's requested data
         std::list<std::pair< PeerId, int > > _asyncConnectPeerRequests;
 
 
-    protected:
+    private:
         WatcherManager watcherManager;
 
+    private:
         // Internal management module for managing peers
         // It maintains the table of the all known peers having valid socket connection
         PeerManager peerManager;
 
+    private:
         /*********************************************************/
         /* Internal management modules for managing sockets */
         /*********************************************************/
-
+        
         /*************** for socket-IO event handling ******************/
         SocketManager_v2 socketManager;
 

@@ -25,13 +25,16 @@ namespace libBLEEP {
 
 
     class RandomGossipNetworkModule : public BasicNetworkModule {
-       public:
+        private:
+            int _maxMulticastingNum;
+
+            bool SendMulticastMsg(PeerId dest, std::shared_ptr<Message> message);
+
+        public:
             /* Constructor with proper peer id */
-            RandomGossipNetworkModule(std::string myPeerId, MainEventManager* worker);
+            RandomGossipNetworkModule(std::string myPeerId, MainEventManager* worker, int maxMulticastingNum);
 
-            bool MulticastMessage(std::vector<PeerId> dests, std::shared_ptr<Message> message, std::set<int>idxs);
-
-            std::set<Distance, DistanceCmp> GenNeighborPeerSet(std::vector<PeerId> &neighborPeerIds);
+            bool MulticastMessage(std::shared_ptr<Message> message);
 
             std::vector<PeerId> GetNeighborPeerIds(PeerConnectMode mode = PeerConnectMode::none);
 

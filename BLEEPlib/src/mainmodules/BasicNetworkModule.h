@@ -15,19 +15,8 @@
 namespace libBLEEP {
 
     class BasicNetworkModule {
-    private:
-        class ListenSocketWatcher;
+    protected:
         class DataSocketWatcher;
-        class ConnectSocketWatcher;
-
-        class WatcherWrapper {
-        protected:
-            BasicNetworkModule* _networkModule;
-            MainEventManager* _mainEventModule;
-        public:
-            WatcherWrapper(BasicNetworkModule* netModule, MainEventManager* eventModule)
-                : _networkModule(netModule), _mainEventModule(eventModule) {};
-        };
         class WatcherManager {
         private:
             BasicNetworkModule* _networkModule;
@@ -61,6 +50,18 @@ namespace libBLEEP {
                     _dataSocketWatchers.erase(it);
             }
 
+        };
+   private:
+        class ListenSocketWatcher;
+        class ConnectSocketWatcher;
+
+        class WatcherWrapper {
+        protected:
+            BasicNetworkModule* _networkModule;
+            MainEventManager* _mainEventModule;
+        public:
+            WatcherWrapper(BasicNetworkModule* netModule, MainEventManager* eventModule)
+                : _networkModule(netModule), _mainEventModule(eventModule) {};
         };
 
         class AsyncConnectTimer : public WatcherWrapper {
@@ -117,6 +118,7 @@ namespace libBLEEP {
             }
         };
 
+    protected:
         class DataSocketWatcher : public WatcherWrapper {
         private:
             /* socket fd */
@@ -235,6 +237,7 @@ namespace libBLEEP {
             }
         };
 
+    private:
         class ConnectSocketWatcher : public WatcherWrapper {
         private:
             int _fd;
@@ -413,15 +416,13 @@ namespace libBLEEP {
         std::list<std::pair< PeerId, int > > _asyncConnectPeerRequests;
 
 
-    private:
+    protected:
         WatcherManager watcherManager;
 
-    protected:
         // Internal management module for managing peers
         // It maintains the table of the all known peers having valid socket connection
         PeerManager peerManager;
 
-    private:
         /*********************************************************/
         /* Internal management modules for managing sockets */
         /*********************************************************/

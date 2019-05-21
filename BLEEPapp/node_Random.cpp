@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
     std::string myId = gArgs.GetArg("-id", "noid");
 
     MainEventManager mainEventManager;
-    RandomGossipNetworkModule randomNetworkModule(myId, &mainEventManager);
+    RandomGossipNetworkModule randomNetworkModule(myId, &mainEventManager, maxMulticastingNum);
     genPeerList(peerList, myId, maxPeerNum);
     randomNetworkModule.AsyncConnectPeers(peerList, connectPeerNum);
 
@@ -83,11 +83,7 @@ int main(int argc, char *argv[]) {
                                 gArgs.GetArg("-id", "noid").c_str(),
                                 msg->GetMessageId().c_str());
                         shadow_push_eventlog(buf);
-                        std::vector<PeerId> dests =
-                            randomNetworkModule.GetNeighborPeerIds();
-                        if (dests.size() == 0) break;
-                        auto idxs = GenRandomNumSet(dests.size(), maxMulticastingNum);
-                        randomNetworkModule.MulticastMessage(dests, msg, idxs);
+                        randomNetworkModule.MulticastMessage(msg);
                     }
                     break;
                 }

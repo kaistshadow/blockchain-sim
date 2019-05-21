@@ -92,7 +92,7 @@ POWConsensusMessage libBLEEP::GetDeserializedPOWConsensusMessage(std::string str
     return msg;
 }
 
-std::string libBLEEP::GenMessageHash(std::string msg){
+std::string Message::GenMessageHash(std::string msg){
     unsigned char digest[SHA256_BLOCK_SIZE];
     SHA256_CTX ctx;
     sha256_init(&ctx);

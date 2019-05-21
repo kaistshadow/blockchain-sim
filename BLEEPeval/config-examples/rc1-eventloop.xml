@@ -41,41 +41,24 @@
   <!-- our nodes -->
 
   <node id="bleep0">
-    <application plugin="NODE" time="5" arguments="-id=bleep0" />
+    <application plugin="NODE" time="5" arguments="-id=bleep0 -connect=bleep1" />
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>
 
   <node id="bleep1">
-    <application plugin="NODE" time="13" arguments="-id=bleep1 -connect=bleep3" />
-  </node>
-
-  <node id="bleep2">
-    <application plugin="NODE" time="14" arguments="-id=bleep2 -connect=bleep0" />
-  </node>
-
-  <node id="bleep3">
-    <application plugin="NODE" time="15" arguments="-id=bleep3 -connect=bleep5" />
-  </node>
-
-  <node id="bleep4">
-    <application plugin="NODE" time="16" arguments="-id=bleep4 -connect=bleep2" />
-  </node>
-
-  <node id="bleep5">
-    <application plugin="NODE" time="17" arguments="-id=bleep5 -connect=bleep2" />
-  </node>
-
-  <node id="bleep6">
-    <application plugin="NODE" time="18" arguments="-id=bleep6 -connect=bleep5" />
+    <application plugin="NODE" time="13" arguments="-id=bleep1 -connect=bleep0" />
   </node>
 
   <node id="client0">
-    <application plugin="CLIENT" time="19" arguments="-id=client0 -connect=bleep0 -txgeninterval=5" />
+    <application plugin="CLIENT" time="15" arguments="-id=client0 -connect=bleep0 -txgeninterval=5" />
+  </node>
+  <node id="client1">
+    <application plugin="CLIENT" time="15" arguments="-id=client1 -connect=bleep0 -txgeninterval=11" />
+  </node>
+  <node id="client2">
+    <application plugin="CLIENT" time="15" arguments="-id=client2 -connect=bleep1 -txgeninterval=10" />
   </node>
 
-  <node id="client1">
-    <application plugin="CLIENT" time="20" arguments="-id=client1 -connect=bleep0 -txgeninterval=6" />
-  </node>
 
   <!-- <node id="bleep1"> -->
   <!--   <application plugin="PEER_NONBLOCK_IO" time="13" arguments="bleep0"/> -->

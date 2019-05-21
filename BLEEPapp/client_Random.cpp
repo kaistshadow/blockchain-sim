@@ -75,11 +75,9 @@ int main(int argc, char *argv[]) {
                     PeerId myPeerId(gArgs.GetArg("-id", "noid"));
                     std::string payload = GetSerializedString(generatedTx);
                     for (auto neighborId : gArgs.GetArgs("-connect")) {
-                        std::string m = myPeerId.GetId() + neighborId + payload;
-                        std::string msgHash = GenMessageHash(m);
                         PeerId destPeerId(neighborId);
                         std::shared_ptr<Message> msg =
-                            std::make_shared<Message>(myPeerId, destPeerId,"newTx", payload, msgHash);
+                            std::make_shared<Message>(myPeerId, destPeerId,"TxInject", payload);
                         basicNetworkModule.UnicastMessage(destPeerId, msg);
                     }
                     break;

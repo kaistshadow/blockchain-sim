@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
                                 msg->GetMessageId().c_str());
                         shadow_push_eventlog(buf);
                         std::vector<PeerId> dests =
-                            randomNetworkModule.GetNeighborPeerIds(PeerConnectMode::ConnectMyself);
+                            randomNetworkModule.GetNeighborPeerIds();
                         if (dests.size() == 0) break;
                         auto idxs = GenRandomNumSet(dests.size(), maxMulticastingNum);
                         randomNetworkModule.MulticastMessage(dests, msg, idxs);

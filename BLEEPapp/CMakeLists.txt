@@ -47,6 +47,18 @@ endif()
 include(ShadowTools)
 find_package(BLEEP REQUIRED)
 
+# use 3rd party library (boost_1_58)
+find_package(Boost 1.58.0 EXACT COMPONENTS serialization filesystem system)
+if(NOT Boost_FOUND)
+  set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../BLEEPlib/boost")
+  set(Boost_INCLUDE_DIRS "${BOOST_ROOT}/include")
+  set(BOOST_LIBRARY_DIRS "${BOOST_ROOT}/lib")
+  # find_package(Boost REQUIRED serialization filesystem system)
+  set(Boost_LIBRARIES "${BOOST_LIBRARY_DIRS}/libboost_system.so;${BOOST_LIBRARY_DIRS}/libboost_filesystem.so;${BOOST_LIBRARY_DIRS}/libboost_serialization.so")
+endif()
+
+include_directories(${Boost_INCLUDE_DIRS})
+
 ## compile for shadow example
 add_shadow_plugin(NODE_bleep node.cpp)
 install(TARGETS NODE_bleep DESTINATION plugins)

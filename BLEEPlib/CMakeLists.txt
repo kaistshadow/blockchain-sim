@@ -84,7 +84,7 @@ if(NOT Boost_FOUND)
     INSTALL_COMMAND <SOURCE_DIR>/b2 -d0 install)
   add_dependencies(BLEEP Boost_EXTERNAL)
   set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/boost")
-  set(BOOST_INCLUDE_DIRS "${BOOST_ROOT}/include")
+  set(Boost_INCLUDE_DIRS "${BOOST_ROOT}/include")
   set(BOOST_LIBRARY_DIRS "${BOOST_ROOT}/lib")
   # find_package(Boost REQUIRED serialization filesystem system)
   set(Boost_LIBRARIES "${BOOST_LIBRARY_DIRS}/libboost_system.so;${BOOST_LIBRARY_DIRS}/libboost_filesystem.so;${BOOST_LIBRARY_DIRS}/libboost_serialization.so")
@@ -132,7 +132,7 @@ target_link_libraries(BLEEP SHADOW_INTERFACE)
 target_link_libraries(BLEEP ${Boost_LIBRARIES})
 
 include_directories(./shadow_interface)
-include_directories(${BOOST_INCLUDE_DIRS})
+include_directories(${Boost_INCLUDE_DIRS})
 
 add_subdirectory(shadow_interface)
 

@@ -22,9 +22,8 @@ void  genPeerList(std::vector<PeerId> &lst, std::string myId, int maxPeerNum){
 
 int main(int argc, char *argv[]) {
     int maxPeerNum = 500;
-    int connectPeerNum = 10;
-    int maxMulticastingNum = 8;
-    std::set<std::string> messageSet;
+    int connectPeerNum = 20;
+    int fanOut = 7;
     std::vector<PeerId> peerList;
 
 
@@ -38,7 +37,7 @@ int main(int argc, char *argv[]) {
     std::string myId = gArgs.GetArg("-id", "noid");
 
     MainEventManager mainEventManager;
-    RandomGossipNetworkModule randomNetworkModule(myId, &mainEventManager, maxMulticastingNum);
+    RandomGossipNetworkModule randomNetworkModule(myId, &mainEventManager, fanOut);
     genPeerList(peerList, myId, maxPeerNum);
     randomNetworkModule.AsyncConnectPeers(peerList, connectPeerNum);
 
@@ -77,13 +76,18 @@ int main(int argc, char *argv[]) {
             case AsyncEventEnum::RecvMessage:
                 {
                     std::shared_ptr<Message> msg = event.GetData().GetReceivedMsg();
-                    if(true == messageSet.insert(msg->GetMessageId()).second){
+                    if (msg->GetType() == "TxInject") {
+                        PeerId src = msg->GetSource();
+                        PeerId dest = PeerId("DestAll");
+                        std::string payload = msg->GetPayload();
+                        std::shared_ptr<Message> nMsg = std::make_shared<Message>(src, dest, "newTx", payload);
+                        randomNetworkModule.MulticastMessage(nMsg);
+                        randomNetworkModule.InsertMessageSet(nMsg->GetMessageId());
                         char buf[256];
                         sprintf(buf, " NewTx %s %s",
                                 gArgs.GetArg("-id", "noid").c_str(),
-                                msg->GetMessageId().c_str());
+                                nMsg->GetMessageId().c_str());
                         shadow_push_eventlog(buf);
-                        randomNetworkModule.MulticastMessage(msg);
                     }
                     break;
                 }

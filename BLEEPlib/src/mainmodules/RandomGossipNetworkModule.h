@@ -37,7 +37,8 @@ namespace libBLEEP {
 
     class RandomGossipNetworkModule {
     private:
-        int maxMulticastingNum;
+        int fanOut;
+        std::set<std::string> messageSet;
         class ListenSocketWatcher;
         class DataSocketWatcher;
         class ConnectSockerWatcher;
@@ -176,6 +177,17 @@ namespace libBLEEP {
                                     message->GetType().c_str(),
                                     message->GetMessageId().c_str());
                             shadow_push_eventlog(buf);
+
+                            if (message->GetDest().GetId() == "DestAll") {
+                                if(true == _networkModule->InsertMessageSet(message->GetMessageId())){
+                                    sprintf(buf, " NewTx %s %s",
+                                            _networkModule->peerManager.GetMyPeerId()->GetId().c_str(),
+                                            message->GetMessageId().c_str());
+                                    shadow_push_eventlog(buf);
+                                    _networkModule->MulticastMessage(message);
+                                }
+                            }
+
                         }
 
                     }
@@ -335,9 +347,13 @@ namespace libBLEEP {
         std::vector<PeerId> GetNeighborPeerIds(PeerConnectMode mode = PeerConnectMode::none);
 
     public:
-        RandomGossipNetworkModule(std::string myPeerId, MainEventManager* worker, int maxMulticastingNum);
+        RandomGossipNetworkModule(std::string myPeerId, MainEventManager* worker, int fanOutNum);
 
         PeerId GetMyPeerId();
+
+        bool InsertMessageSet(std::string messageId);
+
+        bool ExistMessage(std::string messageId);
 
         bool AsyncConnectPeer(PeerId id, double time=0);
 

@@ -3,9 +3,9 @@
 
 using namespace libBLEEP;
 
-RandomGossipNetworkModule::RandomGossipNetworkModule(std::string myPeerId, MainEventManager* mainEventManager, int maxMultiNum)
+RandomGossipNetworkModule::RandomGossipNetworkModule(std::string myPeerId, MainEventManager* mainEventManager, int fanOutNum)
     : watcherManager(this, mainEventManager) {
-    maxMulticastingNum = maxMultiNum;
+    fanOut = fanOutNum;
     _mainEventManager = mainEventManager;
 
     char buf[256];
@@ -19,6 +19,15 @@ RandomGossipNetworkModule::RandomGossipNetworkModule(std::string myPeerId, MainE
     sprintf(buf, "InitPeerId,%s", myPeerId.c_str());
     shadow_push_eventlog(buf);
 
+}
+
+bool RandomGossipNetworkModule::InsertMessageSet(std::string messageId) {
+    return messageSet.insert(messageId).second;
+}
+
+bool RandomGossipNetworkModule::ExistMessage(std::string messageId) {
+    auto itr = messageSet.find(messageId);
+    return (itr != messageSet.end());
 }
 
 bool RandomGossipNetworkModule::AsyncConnectPeer(PeerId id, double time) {
@@ -167,7 +176,7 @@ bool RandomGossipNetworkModule::MulticastMessage(std::shared_ptr<Message> messag
     PeerId myId = *peerManager.GetMyPeerId();
     std::vector<PeerId> dests = GetNeighborPeerIds();
     if (dests.size() == 0) return true;
-    auto idxs = GenRandomNumSet(dests.size(), maxMulticastingNum);
+    auto idxs = GenRandomNumSet(dests.size(), fanOut);
     for(std::vector<PeerId>::size_type i = 0 ; i < dests.size(); i++){
         if (idxs.find(i) != idxs.end()){
             if (checkSourcePeer(message, dests[i])){

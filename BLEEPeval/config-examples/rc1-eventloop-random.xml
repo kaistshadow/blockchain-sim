@@ -1549,7 +1549,7 @@
   </node>
 
   <node id="client0">
-    <application plugin="CLIENT" time="1000" arguments="-id=client0 -connect=bleep30 -txgeninterval=5" />
+    <application plugin="CLIENT" time="1000" arguments="-id=client0 -connect=bleep40 -txgeninterval=5" />
   </node>
 
 

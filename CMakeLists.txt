@@ -2,7 +2,7 @@ project(BLEEP)
 
 ## ensure cmake version
 cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
-
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 ## ensure unix environment (CMAKE_SYSTEM_NAME == "Linux")
 if((NOT UNIX) OR (NOT (CMAKE_SYSTEM_NAME STREQUAL "Linux")))
     message(FATAL_ERROR "BLEEP requires a Unix/Linux environment.")

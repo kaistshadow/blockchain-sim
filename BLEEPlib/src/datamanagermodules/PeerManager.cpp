@@ -7,20 +7,19 @@
 
 using namespace libBLEEP;
 
-
 void libBLEEP::PeerManager::InitMyPeerId(std::string id) {
     _myPeerId = std::make_shared<PeerId>(id);
 }
 
 std::shared_ptr<PeerId> libBLEEP::PeerManager::GetMyPeerId() {
-    M_Assert(_myPeerId != nullptr, "my peerId is used without initialization");    
+    M_Assert(_myPeerId != nullptr, "my peerId is used without initialization");
     return _myPeerId;
 }
 
 std::shared_ptr<PeerId> libBLEEP::PeerManager::GetPeerIdBySocket(int socketfd) {
     auto it = std::find_if(_neighborPeers.begin(), _neighborPeers.end(),
                            [socketfd](const std::pair<PeerId, std::shared_ptr<PeerInfo> > & t) -> bool {
-                               return (t.second->GetSocketFD() == socketfd || 
+                               return (t.second->GetSocketFD() == socketfd ||
                                        t.second->GetSocketFDRemote() == socketfd);
                           } );
     if (it == _neighborPeers.end()) {
@@ -52,6 +51,31 @@ std::shared_ptr<PeerInfo> libBLEEP::PeerManager::GetPeerInfoBySocket(int socketf
     return it->second;
 }
 
+
+std::vector<PeerId> libBLEEP::PeerManager::GetNeighborPeerIds(PeerConnectMode mode){
+    std::vector<PeerId> id;
+    std::map <PeerId, std::shared_ptr<PeerInfo>, PeerIdCompare>::iterator i = _neighborPeers.begin();
+    while (i != _neighborPeers.end()){
+        switch (mode){
+            case PeerConnectMode::ConnectMyself:
+                if ((i->second)->GetSocketStatus() == SocketStatus::SocketConnected){
+                    id.push_back(i->first);
+                }
+                break;
+            case PeerConnectMode::ConnectByRemote:
+                if ((i->second)->GetSocketStatusRemote() == SocketStatus::SocketConnected){
+                    id.push_back(i->first);
+                }
+                break;
+            default :
+                id.push_back(i->first);
+                break;
+        }
+        i++;
+    }
+    return id;
+}
+
 // std::shared_ptr<PeerInfo> libBLEEP::PeerManager::AppendNewNeighborPeer(PeerId peer) {
 //     std::shared_ptr<PeerInfo> peerPtr = GetPeerInfo(peer);
 //     if (peerPtr) {
@@ -59,7 +83,7 @@ std::shared_ptr<PeerInfo> libBLEEP::PeerManager::GetPeerInfoBySocket(int socketf
 //         return peerPtr;
 //     }
 
-//     // allocate new peer 
+//     // allocate new peer
 //     // and append it into the map structure (_neighborPeers)
 //     _neighborPeers[peer] = std::make_shared<PeerInfo>();
 //     std::cout << "PeerManager appends NewNeighbor for " << peer.GetId() << "\n";
@@ -68,7 +92,7 @@ std::shared_ptr<PeerInfo> libBLEEP::PeerManager::GetPeerInfoBySocket(int socketf
 
 std::shared_ptr<PeerInfo> libBLEEP::PeerManager::AppendNeighborPeerConnectedByMyself(PeerId peer, int socketfd) {
     std::shared_ptr<PeerInfo> peerPtr = GetPeerInfo(peer);
-    M_Assert(!(peerPtr && peerPtr->GetSocketStatus() == SocketStatus::SocketConnected), 
+    M_Assert(!(peerPtr && peerPtr->GetSocketStatus() == SocketStatus::SocketConnected),
              "Why the redundant socket is requested? It should be avoided.");
 
     if (peerPtr) {
@@ -79,7 +103,7 @@ std::shared_ptr<PeerInfo> libBLEEP::PeerManager::AppendNeighborPeerConnectedByMy
         return peerPtr;
     }
 
-    // allocate new peer 
+    // allocate new peer
     // and append it into the map structure (_neighborPeers)
     peerPtr = std::make_shared<PeerInfo>();
     peerPtr->SetSocketFD(socketfd);
@@ -91,19 +115,19 @@ std::shared_ptr<PeerInfo> libBLEEP::PeerManager::AppendNeighborPeerConnectedByMy
 
 std::shared_ptr<PeerInfo> libBLEEP::PeerManager::AppendNeighborPeerConnectedByRemote(PeerId peer, int socketfd) {
     std::shared_ptr<PeerInfo> peerPtr = GetPeerInfo(peer);
-    M_Assert(!(peerPtr && peerPtr->GetSocketStatusRemote() == SocketStatus::SocketConnected), 
+    M_Assert(!(peerPtr && peerPtr->GetSocketStatusRemote() == SocketStatus::SocketConnected),
              "Why the redundant socket is requested from same peer? It should be avoided.");
 
     if (peerPtr) {
         // update socket information
         peerPtr->SetSocketFDRemote(socketfd);
         peerPtr->SetSocketStatusRemote(SocketStatus::SocketConnected);
-        std::cout << "Peer already exists. Update (remotely requested) connected socket info for " 
+        std::cout << "Peer already exists. Update (remotely requested) connected socket info for "
                   << peer.GetId() << "\n";
         return peerPtr;
     }
 
-    // allocate new peer 
+    // allocate new peer
     // and append it into the map structure (_neighborPeers)
     peerPtr = std::make_shared<PeerInfo>();
     peerPtr->SetSocketFDRemote(socketfd);
@@ -145,7 +169,7 @@ void libBLEEP::PeerManager::UpdateNeighborSocketDisconnection(int socketfd) {
         std::cout << "PeerManager set disconnection of the (remotely requested) socket for " << it_remote->first.GetId() << "\n";
     }
 
-    M_Assert( it == _neighborPeers.end() || it_remote == _neighborPeers.end(), 
+    M_Assert( it == _neighborPeers.end() || it_remote == _neighborPeers.end(),
               "There should not exists a duplicated socket fd.");
 
 }
@@ -164,11 +188,11 @@ void libBLEEP::PeerManager::UpdateNeighborSocketDisconnection(int socketfd) {
 
 bool libBLEEP::PeerManager::HasEstablishedDataSocket(PeerId peerId) {
     std::shared_ptr<PeerInfo> peerPtr = GetPeerInfo(peerId);
-    if (peerPtr && (peerPtr->GetSocketStatus() == SocketStatus::SocketConnected || 
+    if (peerPtr && (peerPtr->GetSocketStatus() == SocketStatus::SocketConnected ||
                     peerPtr->GetSocketStatusRemote() == SocketStatus::SocketConnected) ) {
         return true;
     }
-    else 
+    else
         return false;
 }
 
@@ -179,7 +203,7 @@ int libBLEEP::PeerManager::GetConnectedSocketFD(PeerId peerId) {
         return peerPtr->GetSocketFD();
     else if (peerPtr && peerPtr->GetSocketStatusRemote() == SocketStatus::SocketConnected)
         return peerPtr->GetSocketFDRemote();
-    else 
+    else
         M_Assert(0, "Check whether there exists established data socket using HasEstablishedDataSocket API");
     return -1;
 

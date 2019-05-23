@@ -9,6 +9,7 @@
 #include "Transaction.h"
 #include "Peer.h"
 #include "POWConsensusMessage.h"
+#include "../utility/GlobalClock.h"
 
 namespace libBLEEP {
     typedef std::string MessageType;
@@ -20,17 +21,24 @@ namespace libBLEEP {
         PeerId _dest;
         MessageType _type;
         std::string _payload;
+        std::string _messageId;
 
     public:
         Message() {}
         Message(PeerId src, PeerId dest, MessageType type) { _src = src; _dest = dest; _type = type; }
-        Message(PeerId src, PeerId dest, MessageType type, std::string payload) { _src = src; _dest = dest; _type = type; _payload = payload; }
+        Message(PeerId src, PeerId dest, MessageType type, std::string payload) {
+            _src = src; _dest = dest; _type = type; _payload = payload;
+            std::string timestamp = std::to_string(GetGlobalClock());
+            _messageId = GenMessageHash(src.GetId() + dest.GetId() + payload + timestamp);
+        }
         MessageType GetType() const { return _type; }
         std::string GetPayload() const { return _payload; }
+        std::string GetMessageId() const { return _messageId; }
         PeerId GetSource() const { return _src; }
         PeerId GetDest() const { return _dest; }
 
     private: // boost serialization
+        std::string GenMessageHash(std::string msg);
         friend class boost::serialization::access;
         // When the class Archive corresponds to an output archive, the
         // & operator is defined similar to <<.  Likewise, when the class Archive
@@ -41,6 +49,7 @@ namespace libBLEEP {
             ar & _dest;
             ar & _type;
             ar & _payload;
+            ar & _messageId;
         }
     };
 

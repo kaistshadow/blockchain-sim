@@ -42,11 +42,13 @@ var muObserver = new MutationObserver(function(mutations) {
                 } else if (eventtype === "UnicastMessage") {
                     var from = eventargs.split(",")[0];
                     var to = eventargs.split(",")[1];
-                    sendMessage(from, to);
+                    var hashId = eventargs.split(",")[3];
+                    sendMessage(from, to, hashId);
                 } else if (eventtype === "RecvMessage") {
                     var from = eventargs.split(",")[0];
                     var to = eventargs.split(",")[1];
-                    recvMessage(from, to);
+                    var hashId = eventargs.split(",")[3];
+                    recvMessage(from, to, hashId);
                 } else if (eventtype === "BlockAppend") {
                     var peerId = eventhost;
                     var hash = eventargs.split(",")[1];
@@ -58,7 +60,7 @@ var muObserver = new MutationObserver(function(mutations) {
             
             onNodeSelect(); // update event list for selected node
         }
-            
+
     });
 });
 
@@ -100,7 +102,7 @@ function drawVisualization() {
 
     // specify options
     var options = {
-        'width':  '800px', 
+        'width':  '800px',
         'height': '600px',
         'stabilize': true,
         'packages': {
@@ -116,7 +118,7 @@ function drawVisualization() {
     google.visualization.events.addListener(network, 'select', onNodeSelect);
 
 
-    // Draw our graph with the created data and options 
+    // Draw our graph with the created data and options
     network.draw(nodesTable, linksTable, options);
 
     // start generating random emails
@@ -125,7 +127,6 @@ function drawVisualization() {
 
     // Draw ledger event visualization
     var container = document.getElementById('ledgereventvisualize');
-
     var nodesArray = [
         {id:"0000000000", label:"genesis"}
     ];
@@ -165,7 +166,7 @@ function drawVisualization() {
 
 function timeout() {
     sendTransaction('client', 'bleep0');
-    
+
     var delay = Math.round(100 + Math.random() * 1000);
     setTimeout(timeout, delay);
 }
@@ -175,30 +176,9 @@ function sendTransaction(from, to) {
 
         var packagesTable = new google.visualization.DataTable();
         packagesTable.addColumn('string', 'from');
-        packagesTable.addColumn('string', 'to');        
-        packagesTable.addColumn('number', 'duration');        
+        packagesTable.addColumn('string', 'to');
+        packagesTable.addColumn('number', 'duration');
         packagesTable.addRow([from, to, 2]);
-        network.addPackages(packagesTable);
-    }
-    catch(err) {
-        alert(err);
-    }
-}      
-
-function recvMessage(from, to) {
-    try {
-        var packagesTable = new google.visualization.DataTable();
-        packagesTable.addColumn('string', 'id');
-        packagesTable.addColumn('string', 'from');
-        packagesTable.addColumn('string', 'to');        
-        packagesTable.addColumn('number', 'progress');        
-        packagesTable.addColumn('number', 'duration');        
-        packagesTable.addColumn('string', 'action');        
-        packagesTable.addRow([from+to, undefined, undefined, undefined, undefined, 'delete']);
-        network.addPackages(packagesTable);
-
-        packagesTable.removeRow(0);
-        packagesTable.addRow([from+to, from, to, undefined, 1, 'create']);
         network.addPackages(packagesTable);
     }
     catch(err) {
@@ -206,16 +186,37 @@ function recvMessage(from, to) {
     }
 }
 
-function sendMessage(from, to) {
+function recvMessage(from, to, hashId) {
     try {
         var packagesTable = new google.visualization.DataTable();
         packagesTable.addColumn('string', 'id');
         packagesTable.addColumn('string', 'from');
-        packagesTable.addColumn('string', 'to');        
-        packagesTable.addColumn('number', 'progress');        
-        packagesTable.addColumn('number', 'duration');      
-        packagesTable.addColumn('string', 'action');          
-        packagesTable.addRow([from+to, from, to, 0.001 ,undefined, 'create']);
+        packagesTable.addColumn('string', 'to');
+        packagesTable.addColumn('number', 'progress');
+        packagesTable.addColumn('number', 'duration');
+        packagesTable.addColumn('string', 'action');
+        packagesTable.addRow([from+to+hashId, undefined, undefined, undefined, undefined, 'delete']);
+        network.addPackages(packagesTable);
+
+        packagesTable.removeRow(0);
+        packagesTable.addRow([from+to+hashId, from, to, undefined, 1, 'create']);
+        network.addPackages(packagesTable);
+    }
+    catch(err) {
+        alert(err);
+    }
+}
+
+function sendMessage(from, to, hashId) {
+    try {
+        var packagesTable = new google.visualization.DataTable();
+        packagesTable.addColumn('string', 'id');
+        packagesTable.addColumn('string', 'from');
+        packagesTable.addColumn('string', 'to');
+        packagesTable.addColumn('number', 'progress');
+        packagesTable.addColumn('number', 'duration');
+        packagesTable.addColumn('string', 'action');
+        packagesTable.addRow([from+to+hashId, from, to, 0.001 ,undefined, 'create']);
         network.addPackages(packagesTable);
     }
     catch(err) {
@@ -242,7 +243,7 @@ function addNode(nodeid) {
 
     // specify options
     // var options = {
-    //     'width':  '800px', 
+    //     'width':  '800px',
     //     'height': '600px',
     //     'stabilize': true,
     //     'packages': {
@@ -263,7 +264,7 @@ function addEdge(from, to) {
     linksTable.addColumn('string', 'color');
     linksTable.addColumn('number', 'width');
     linksTable.addColumn('string', 'action');
- 
+
     if (from.startsWith("client")) {
         linksTable.addRow([from+to, from, to, 'arrow', "red", 1, 'create']); // connection is established for bidirectional communication, but use arrow for indicating who requests the connection. (i.e., 'from' requests a connection)
     }
@@ -283,7 +284,7 @@ function removeEdge(from, to) {
     linksTable.addColumn('string', 'color');
     linksTable.addColumn('number', 'width');
     linksTable.addColumn('string', 'action');
- 
+
     // First, update edge for bi-direction
     // linksTable.addRow([from+to, from, to, 'line', undefined, 1, 'create']); // undirected graph
     // linksTable.addRow([to+from, to, from, 'line', undefined, 1, 'create']); // undirected graph
@@ -340,7 +341,7 @@ function appendBlock(peerId, hash, prevHash, timestamp) {
         nodes.update({id:peerId, label:peerId});
     } catch(err) {}
 
-    // nodes.remove({id:peerId});    
+    // nodes.remove({id:peerId});
     // edges.update({id:peerId, from:hash, to:peerId});
     // nodes.add({id:peerId, label:peerId});
 

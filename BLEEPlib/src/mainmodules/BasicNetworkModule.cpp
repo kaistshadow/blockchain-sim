@@ -27,7 +27,7 @@ bool BasicNetworkModule::AsyncConnectPeer(PeerId id, double time) {
     // check whether the valid socket connection already exists for given peerId
     if (peerManager.HasEstablishedDataSocket(id))
         return false;
-   
+
     // append shadow api log
     char buf[256];
     sprintf(buf, "API,AsyncConnectPeer,%s,%f", id.GetId().c_str(), time);
@@ -37,13 +37,13 @@ bool BasicNetworkModule::AsyncConnectPeer(PeerId id, double time) {
         new AsyncConnectTimer(id, time, this, _mainEventManager); //timer automatically started
         return true;
     } else {
-        int connecting_fd = socketManager.CreateNonblockConnectSocket(id.GetId());    
+        int connecting_fd = socketManager.CreateNonblockConnectSocket(id.GetId());
         _asyncConnectPeerRequests.push_back(std::make_pair(id, connecting_fd));
 
-        // create event watcher (ConnectSocketWatcher) for the newly created ConnectSocket 
+        // create event watcher (ConnectSocketWatcher) for the newly created ConnectSocket
         new ConnectSocketWatcher(connecting_fd, this, _mainEventManager);
         return true;
-    }     
+    }
 }
 
 
@@ -51,10 +51,10 @@ bool BasicNetworkModule::UnicastMessage(PeerId dest, std::shared_ptr<Message> me
     // check whether there exists a data socket for the destination peer
     if (!peerManager.HasEstablishedDataSocket(dest))
         return false;
-    
+
     // append shadow api log
     char buf2[256];
-    sprintf(buf2, "API,UnicastMessage,%s,%s", 
+    sprintf(buf2, "API,UnicastMessage,%s,%s",
             dest.GetId().c_str(),
             message->GetType().c_str());
     shadow_push_eventlog(buf2);
@@ -62,7 +62,7 @@ bool BasicNetworkModule::UnicastMessage(PeerId dest, std::shared_ptr<Message> me
     // get datasocket
     int socketFD = peerManager.GetConnectedSocketFD(dest);
     std::shared_ptr<DataSocket_v2> dataSocket = socketManager.GetDataSocket(socketFD);
-    
+
     if (!dataSocket)
         return false;
 
@@ -77,10 +77,11 @@ bool BasicNetworkModule::UnicastMessage(PeerId dest, std::shared_ptr<Message> me
 
     // append shadow log
     char buf[256];
-    sprintf(buf, "UnicastMessage,%s,%s,%s", 
+    sprintf(buf, "UnicastMessage,%s,%s,%s,%s",
             peerManager.GetMyPeerId()->GetId().c_str(),
             dest.GetId().c_str(),
-            message->GetType().c_str());
+            message->GetType().c_str(),
+            message->GetMessageId().c_str());
     shadow_push_eventlog(buf);
 
     return true;
@@ -93,7 +94,7 @@ bool BasicNetworkModule::DisconnectPeer(PeerId id) {
 
     // check whether the socket connection exists for given peerId
     std::shared_ptr<PeerInfo> peerInfo = peerManager.GetPeerInfo(id);
-    if (peerInfo == nullptr || 
+    if (peerInfo == nullptr ||
         (peerInfo->GetSocketStatus() != SocketStatus::SocketConnected &&
          peerInfo->GetSocketStatusRemote() != SocketStatus::SocketConnected)) {
         // there's no valid socket connection for given peerId
@@ -107,7 +108,7 @@ bool BasicNetworkModule::DisconnectPeer(PeerId id) {
 
     if (peerInfo->GetSocketStatus() == SocketStatus::SocketConnected) {
         int socketFD = peerInfo->GetSocketFD();
-        // remove dataSocket 
+        // remove dataSocket
         // it will automatically call destructor of DataSocket, thus automatically call close()
         socketManager.RemoveDataSocket(socketFD);
         // remove dataSocketWatcher
@@ -115,12 +116,12 @@ bool BasicNetworkModule::DisconnectPeer(PeerId id) {
         watcherManager.RemoveDataSocketWatcher(socketFD);
 
         // update peermanager for closed socket
-        peerManager.UpdateNeighborSocketDisconnection(socketFD); 
+        peerManager.UpdateNeighborSocketDisconnection(socketFD);
     }
 
     if (peerInfo->GetSocketStatusRemote() == SocketStatus::SocketConnected) {
         int socketFD = peerInfo->GetSocketFDRemote();
-        // remove dataSocket 
+        // remove dataSocket
         // it will automatically call destructor of DataSocket, thus automatically call close()
         socketManager.RemoveDataSocket(socketFD);
         // remove dataSocketWatcher
@@ -128,7 +129,7 @@ bool BasicNetworkModule::DisconnectPeer(PeerId id) {
         watcherManager.RemoveDataSocketWatcher(socketFD);
 
         // update peermanager for closed socket
-        peerManager.UpdateNeighborSocketDisconnection(socketFD); 
+        peerManager.UpdateNeighborSocketDisconnection(socketFD);
     }
 
 

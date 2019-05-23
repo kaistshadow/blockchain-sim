@@ -8,6 +8,8 @@ namespace libBLEEP {
     extern long globalclock_starttime;
     double GetGlobalClock();
     unsigned long GetCurrentTime();
+
+    void PrintTimeDiff(const char* prefix, const struct timespec& start, const struct timespec& end);
 }
 
 

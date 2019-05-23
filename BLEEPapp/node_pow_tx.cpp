@@ -1,6 +1,7 @@
 #include "mainmodules/MainEventManager.h"
 #include "mainmodules/BasicNetworkModule.h"
 #include "mainmodules/POWModule.h"
+#include "mainmodules/TxGeneratorModule.h"
 
 #include "datamodules/Peer.h"
 #include "datamodules/Message.h"
@@ -19,7 +20,7 @@ using namespace libBLEEP;
 #include <math.h>
 #include <sys/time.h>
 
-
+int mined_block_num = 0;
 
 // TODO : Seperate API src,dest & msg src,dest (for broadcasting portability)
 // TODO [DONE] : statmachine regtest
@@ -115,8 +116,11 @@ int main(int argc, char *argv[]) {
     // MainEventManager mainEventManager(gArgs.GetArg("-id", "noid"));
     BasicNetworkModule basicNetworkModule(gArgs.GetArg("-id", "noid"), &mainEventManager);
 
+    // Transaction generator module
+    TxGeneratorModule txGeneratorModule(&mainEventManager);
+
     // POWModule
-    POWModule powModule(&mainEventManager);
+    POWModule powModule(gArgs.GetArg("-id", "noid"), &mainEventManager);
 
     // transaction pool
     TxPool txPool;
@@ -128,6 +132,10 @@ int main(int argc, char *argv[]) {
     // mainEventManager.AsyncConnectPeer(PeerId("143.248.38.37"));
     for (auto neighborPeerId : gArgs.GetArgs("-connect"))
         basicNetworkModule.AsyncConnectPeer(PeerId(neighborPeerId));
+
+    if (gArgs.IsArgSet("-txgeninterval")) {
+        txGeneratorModule.AsyncGenerateRandomTransaction(gArgs.GetArg("-txgeninterval", 0));
+    }
 
     while(true) {
         mainEventManager.Wait(); // main event loop (wait for next event)
@@ -160,6 +168,18 @@ int main(int argc, char *argv[]) {
                     std::cout << "random transaction generated" << "\n";
                     boost::shared_ptr<Transaction> generatedTx = event.GetData().GetGeneratedTx();
                     std::cout << *generatedTx << "\n";
+
+                    txPool.AddTx(generatedTx);
+                    int txNumPerBlock = std::stoi(gArgs.GetArg("-blocktxnum"));
+                    if (txPool.GetPendingTxNum() >= txNumPerBlock && !powModule.IsMining()) {
+                        std::shared_ptr<POWBlock> candidateBlk = MakeCandidateBlock(txPool, ledger);
+                        double mining_avg = std::stof(gArgs.GetArg("-miningtime"));
+                        double mining_dev = std::stof(gArgs.GetArg("-miningtimedev"));
+                        powModule.AsyncEmulateBlockMining(candidateBlk, mining_avg, mining_dev);
+                    }
+
+                    // Call another request, i.e., periodically generate transaction
+                    txGeneratorModule.AsyncGenerateRandomTransaction(gArgs.GetArg("-txgeninterval", 0));
                     break;
                 }
             case AsyncEventEnum::RecvMessage:
@@ -294,6 +314,7 @@ int main(int argc, char *argv[]) {
                     std::cout << "block mining complte" << "\n";
                     std::shared_ptr<POWBlock> minedBlk = event.GetData().GetMinedBlock();
                     AppendBlockToLedger(minedBlk, txPool, ledger);
+                    mined_block_num++;
 
                     // propagate to network
                     PeerId myPeerId(gArgs.GetArg("-id"));
@@ -303,6 +324,11 @@ int main(int argc, char *argv[]) {
                         std::shared_ptr<Message> msg = std::make_shared<Message>(myPeerId, destPeerId, 
                                                                                  "newBlock", payload);
                         basicNetworkModule.UnicastMessage(destPeerId, msg);
+                    }
+
+                    std::cout << "mined block num = " << mined_block_num << "\n";
+                    if (ledger.GetNextBlockIdx() == 101) {
+                        exit(0);
                     }
 
                     break;

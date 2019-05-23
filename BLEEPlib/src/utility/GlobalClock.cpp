@@ -1,4 +1,5 @@
 #include "GlobalClock.h"
+#include <iostream>
 
 using namespace libBLEEP;
 
@@ -41,4 +42,11 @@ double libBLEEP::GetGlobalClock() {
 unsigned long libBLEEP::GetCurrentTime() {
     unsigned long milliseconds_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::system_clock::now().time_since_epoch()).count();
     return milliseconds_since_epoch;
+}
+
+void libBLEEP::PrintTimeDiff(const char* prefix, const struct timespec& start, const struct timespec& end) {
+    double milliseconds = end.tv_nsec >= start.tv_nsec
+                        ? (end.tv_nsec - start.tv_nsec) / 1e6 + (end.tv_sec - start.tv_sec) * 1e3
+                        : (start.tv_nsec - end.tv_nsec) / 1e6 + (end.tv_sec - start.tv_sec - 1) * 1e3;
+    std::cout << prefix << ": " << milliseconds << "milliseconds" << "\n";
 }

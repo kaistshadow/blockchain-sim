@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <string.h>
 #include <fcntl.h>
+#include <cstdint>
 
 #include <sys/types.h>
 #include <sys/socket.h>

@@ -15,6 +15,12 @@ int shadow_pipe2(int pipefds[2], int flags) {
 
 int shadow_push_eventlog(const char *str) {
     // do nothing
-    printf("shadow_push_eventlog is not properly executed for event:%s\n", str);
+    /* printf("shadow_push_eventlog is ignored for event:%s\n", str); */
+    return 0;
+}
+
+int shadow_usleep(useconds_t usec) {
+    // do nothing
+    /* printf("shadow_usleep is ignored\n"); */
     return 0;
 }

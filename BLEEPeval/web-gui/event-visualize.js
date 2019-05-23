@@ -17,12 +17,13 @@ var muObserver = new MutationObserver(function(mutations) {
             && mutation.target.getAttribute(mutation.attributeName) == "true") {
 
             var eventlog = mutation.target.textContent;
-            var rePattern = new RegExp(/([0-9]+),(.+?),(.*)$/);
+            var rePattern = new RegExp(/(.+?),([0-9]+),(.+?),(.*)$/);
             var matches = eventlog.match(rePattern);
             if (matches) {
-                var eventtime = matches[1];
-                var eventtype = matches[2];
-                var eventargs = matches[3];
+                var eventhost = matches[1];
+                var eventtime = matches[2];
+                var eventtype = matches[3];
+                var eventargs = matches[4];
                 console.log(eventtype);
 
                 if (eventtype === "InitPeerId")
@@ -49,13 +50,15 @@ var muObserver = new MutationObserver(function(mutations) {
                     var hashId = eventargs.split(",")[3];
                     recvMessage(from, to, hashId);
                 } else if (eventtype === "BlockAppend") {
-                    var peerId = eventargs.split(",")[0];
-                    var hash = eventargs.split(",")[2];
-                    var prevHash = eventargs.split(",")[3];
-                    var timestamp = eventargs.split(",")[4];
+                    var peerId = eventhost;
+                    var hash = eventargs.split(",")[1];
+                    var prevHash = eventargs.split(",")[2];
+                    var timestamp = eventargs.split(",")[3];
                     appendBlock(peerId, hash, prevHash, timestamp);
                 }
             }
+            
+            onNodeSelect(); // update event list for selected node
         }
 
     });
@@ -110,6 +113,10 @@ function drawVisualization() {
 
     // Instantiate our graph object.
     network = new links.Network(document.getElementById('eventvisualize'));
+    
+    // Add event listeners for node selection
+    google.visualization.events.addListener(network, 'select', onNodeSelect);
+
 
     // Draw our graph with the created data and options
     network.draw(nodesTable, linksTable, options);
@@ -120,9 +127,8 @@ function drawVisualization() {
 
     // Draw ledger event visualization
     var container = document.getElementById('ledgereventvisualize');
-
-
     var nodesArray = [
+        {id:"0000000000", label:"genesis"}
     ];
     var edgesArray = [
     ];
@@ -155,6 +161,7 @@ function drawVisualization() {
     };
 
     ledger = new vis.Network(container, data, ledgerplotoptions);
+
 }
 
 function timeout() {
@@ -339,4 +346,40 @@ function appendBlock(peerId, hash, prevHash, timestamp) {
     // nodes.add({id:peerId, label:peerId});
 
 
+}
+
+function onNodeSelect() {
+    var sel = network.getSelection();
+    var nodeid;
+    if (sel[0]) {
+        nodeid = network.nodes[sel[0].row]['id'];
+    }
+    else
+        nodeid = "none. Node is not selected";
+
+    var span = document.getElementById("node_API_event");
+    span.innerHTML = `API call history for ${nodeid}<br>Format:&lt;API called hostid&gt;,&lt;API called time&gt;,API,&lt;API name&gt;,&lt;API args(in brief form)&gt;`;
+
+    var ul = document.getElementById("node_API_event_list");
+    ul.innerHTML = ''; // reset 
+
+    var items = document.getElementById("ss_elem_list").getElementsByTagName("li");
+    var node_event_count = 0;
+    for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        
+        if (item.innerHTML.includes(",API,") && item.innerHTML.startsWith(nodeid)) {
+            var li = document.createElement("li");
+            li.appendChild(document.createTextNode(item.innerHTML));
+            li.setAttribute("id", 'node_API_event_${node_event_count}');
+            li.setAttribute("role", "option"); 
+            ul.appendChild(li);
+            node_event_count++;
+        }
+        if (item.hasAttribute("aria-selected"))
+            break;
+    }
+
+    // scroll down the event list
+    $('#node_API_event_list').animate({scrollTop: $('#node_API_event_list').prop("scrollHeight")}, 0 /*duration*/);
 }

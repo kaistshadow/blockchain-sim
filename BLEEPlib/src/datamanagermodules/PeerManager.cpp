@@ -9,9 +9,6 @@ using namespace libBLEEP;
 
 void libBLEEP::PeerManager::InitMyPeerId(std::string id) {
     _myPeerId = std::make_shared<PeerId>(id);
-    char buf[256];
-    sprintf(buf, "InitPeerId,%s", id.c_str());
-    shadow_push_eventlog(buf);
 }
 
 std::shared_ptr<PeerId> libBLEEP::PeerManager::GetMyPeerId() {
@@ -168,7 +165,7 @@ void libBLEEP::PeerManager::UpdateNeighborSocketDisconnection(int socketfd) {
     if (it_remote != _neighborPeers.end()) {
         std::shared_ptr<PeerInfo> peerInfo = it_remote->second;
         peerInfo->SetSocketFD(-1);
-        peerInfo->SetSocketStatus(SocketStatus::SocketDisconnected);
+        peerInfo->SetSocketStatusRemote(SocketStatus::SocketDisconnected);
         std::cout << "PeerManager set disconnection of the (remotely requested) socket for " << it_remote->first.GetId() << "\n";
     }
 

@@ -329,7 +329,7 @@ function sendTransaction(from, to) {
     }
 }      
 
-function recvMessage(from, to) {
+function recvMessage(from, to, hashId) {
     try {
         var packagesTable = new google.visualization.DataTable();
         packagesTable.addColumn('string', 'id');
@@ -342,7 +342,7 @@ function recvMessage(from, to) {
         network.addPackages(packagesTable);
 
         packagesTable.removeRow(0);
-        packagesTable.addRow([from+to, from, to, undefined, 1, 'create']);
+        packagesTable.addRow([from+to+hashId, from, to, undefined, 1, 'create']);
         network.addPackages(packagesTable);
     }
     catch(err) {

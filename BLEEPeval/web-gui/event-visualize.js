@@ -7,7 +7,9 @@ var ledger = null;
 var ImgDIR = 'link_network/img/';
 
 var startButton = document.getElementById('ex1-start');
-startButton.addEventListener('click', drawVisualization);
+startButton.addEventListener('click', resetVisualization);
+var toggleButton;
+toggleButton = document.getElementById("toggle");
 
 
 var muObserver = new MutationObserver(function(mutations) {
@@ -108,11 +110,13 @@ function performEvent(event) {
         } else if (eventtype === "UnicastMessage") {
             var from = eventargs.split(",")[0];
             var to = eventargs.split(",")[1];
-            sendMessage(from, to);
+            var hashId = eventargs.split(",")[3];
+            sendMessage(from, to, hashId);
         } else if (eventtype === "RecvMessage") {
             var from = eventargs.split(",")[0];
             var to = eventargs.split(",")[1];
-            recvMessage(from, to);
+            var hashId = eventargs.split(",")[3];
+            recvMessage(from, to, hashId);
         } else if (eventtype === "BlockAppend") {
             var peerId = eventhost;
             var hash = eventargs.split(",")[1];
@@ -150,11 +154,13 @@ function revertEvent(event) {
         } else if (eventtype === "UnicastMessage") {
             var from = eventargs.split(",")[0];
             var to = eventargs.split(",")[1];
-            unsendMessage(from, to);
+            var hashId = eventargs.split(",")[3];
+            unsendMessage(from, to, hashId);
         } else if (eventtype === "RecvMessage") {
             var from = eventargs.split(",")[0];
             var to = eventargs.split(",")[1];
-            unrecvMessage(from, to);
+            var hashId = eventargs.split(",")[3];
+            unrecvMessage(from, to, hashId);
         } else if (eventtype === "BlockAppend") {
             var peerId = eventhost;
             var hash = eventargs.split(",")[1];
@@ -196,6 +202,7 @@ function drawVisualization() {
     linksTable.addColumn('string', 'to');
     linksTable.addColumn('string', 'style');
     linksTable.addColumn('string', 'color');
+    linksTable.addColumn('string', 'highlightColor');
     linksTable.addColumn('number', 'width');
     linksTable.addColumn('string', 'action');
     // linksTable.addRow([3, 1, 'arrow', undefined, 1]);
@@ -208,6 +215,14 @@ function drawVisualization() {
         'width': network ? network.frame.style.width : '800px', 
         'height': network ? network.frame.style.height : '600px',
         'stabilize': true,
+        'links': {
+            "length": 100,   // px
+            "color": "#cccccc",
+            "highlightColor": "#343434"
+        },
+        'nodes': {
+            'distance': 100
+        },
         'packages': {
             'style': 'image',
             'image': ImgDIR + 'transaction_32.png'
@@ -220,6 +235,8 @@ function drawVisualization() {
     // Add event listeners for node selection
     google.visualization.events.addListener(network, 'select', onNodeSelect);
 
+    // Add event listeners for toggling network animation physics
+    toggleButton.addEventListener('click', function() {network.toggle()});
 
     // Draw our graph with the created data and options 
     network.draw(nodesTable, linksTable, options);
@@ -268,6 +285,28 @@ function drawVisualization() {
 
 }
 
+function resetVisualization() {
+    // Reset network event visualization
+    network.setSelection([], {unselectAll: true});
+    network.nodes = [];
+    network.links = [];
+    network.packages = [];
+
+    // Reset ledger event visualization
+    var nodesArray = [
+        {id:"0000000000", label:"genesis"}
+    ];
+    var edgesArray = [
+    ];
+    nodes = new vis.DataSet(nodesArray);
+    edges = new vis.DataSet(edgesArray);
+    var data = {
+        nodes: nodes,
+        edges: edges
+    };
+    ledger.setData(data);
+}
+
 function timeout() {
     sendTransaction('client', 'bleep0');
     
@@ -311,7 +350,24 @@ function recvMessage(from, to) {
     }
 }
 
-function unrecvMessage(from, to) {
+function unrecvMessage(from, to, hashId) {
+    try {
+        var packagesTable = new google.visualization.DataTable();
+        packagesTable.addColumn('string', 'id');
+        packagesTable.addColumn('string', 'from');
+        packagesTable.addColumn('string', 'to');        
+        packagesTable.addColumn('number', 'progress');        
+        packagesTable.addColumn('number', 'duration');        
+        packagesTable.addColumn('string', 'action');        
+        packagesTable.addRow([from+to+hashId, from, to, 0.001, undefined, 'create']);
+        network.addPackages(packagesTable);
+    }
+    catch(err) {
+        alert(err);
+    }
+}
+
+function sendMessage(from, to, hashId) {
     try {
         var packagesTable = new google.visualization.DataTable();
         packagesTable.addColumn('string', 'id');
@@ -345,7 +401,7 @@ function sendMessage(from, to) {
     }
 }
 
-function unsendMessage(from, to) {
+function unsendMessage(from, to, hashId) {
     try {
         var packagesTable = new google.visualization.DataTable();
         packagesTable.addColumn('string', 'id');
@@ -354,7 +410,7 @@ function unsendMessage(from, to) {
         packagesTable.addColumn('number', 'progress');
         packagesTable.addColumn('number', 'duration');
         packagesTable.addColumn('string', 'action');
-        packagesTable.addRow([from+to, from, to, undefined ,undefined, 'delete']);
+        packagesTable.addRow([from+to+hashId, from, to, undefined ,undefined, 'delete']);
         network.addPackages(packagesTable);
     }
     catch(err) {
@@ -420,14 +476,15 @@ function addEdge(from, to) {
     linksTable.addColumn('string', 'to');
     linksTable.addColumn('string', 'style');
     linksTable.addColumn('string', 'color');
+    linksTable.addColumn('string', 'highlightColor');
     linksTable.addColumn('number', 'width');
     linksTable.addColumn('string', 'action');
  
     if (from.startsWith("client")) {
-        linksTable.addRow([from+to, from, to, 'arrow', "red", 1, 'create']); // connection is established for bidirectional communication, but use arrow for indicating who requests the connection. (i.e., 'from' requests a connection)
+        linksTable.addRow([from+to, from, to, 'arrow', "red", "red", 1, 'create']); // connection is established for bidirectional communication, but use arrow for indicating who requests the connection. (i.e., 'from' requests a connection)
     }
     else {
-        linksTable.addRow([from+to, from, to, 'arrow', "black", 1, 'create']); // connection is established for bidirectional communication, but use arrow for indicating who requests the connection. (i.e., 'from' requests a connection)
+        linksTable.addRow([from+to, from, to, 'arrow', undefined, undefined, 1, 'create']); // connection is established for bidirectional communication, but use arrow for indicating who requests the connection. (i.e., 'from' requests a connection)
     }
 
     network.addLinks(linksTable);
@@ -440,15 +497,16 @@ function removeEdge(from, to) {
     linksTable.addColumn('string', 'to');
     linksTable.addColumn('string', 'style');
     linksTable.addColumn('string', 'color');
+    linksTable.addColumn('string', 'hightlightColor');
     linksTable.addColumn('number', 'width');
     linksTable.addColumn('string', 'action');
  
     // First, update edge for bi-direction
-    // linksTable.addRow([from+to, from, to, 'line', undefined, 1, 'create']); // undirected graph
-    // linksTable.addRow([to+from, to, from, 'line', undefined, 1, 'create']); // undirected graph
+    // linksTable.addRow([from+to, from, to, 'line', undefined, undefined, 1, 'create']); // undirected graph
+    // linksTable.addRow([to+from, to, from, 'line', undefined, undefined, 1, 'create']); // undirected graph
 
 
-    linksTable.addRow([from+to, from, to, 'line', undefined, 1, 'delete']); // undirected graph
+    linksTable.addRow([from+to, from, to, 'line', undefined, undefined, 1, 'delete']); // undirected graph
 
     // (catch err because linksTable returns error when we try to remove non-existed edge)
     try {
@@ -529,6 +587,10 @@ function removeBlock(peerId, hash, prevHash, timestamp) {
         }
     }
 
+}
+
+function endInitialLoading() {
+    network.endFirstRun = true;
 }
 
 function onNodeSelect() {

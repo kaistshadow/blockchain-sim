@@ -151,7 +151,8 @@ links.Network = function(container) {
             "widthMax": 15,
             "width": 1,
             "style": "line",
-            "color": "#343434",
+            "color": "#cccccc",
+            "highlightColor": "#343434",
             "fontColor": "#343434",
             "fontSize": 14, // px
             "fontFace": "arial",
@@ -187,6 +188,8 @@ links.Network = function(container) {
     this.hasMovingNodes = false;    // True if any of the nodes have an undefined position
     this.hasMovingPackages = false; // True if there are one or more packages
 
+    this.physics = true;
+    this.endFirstRun = false;
     this.selection = [];
     this.timer = undefined;
 
@@ -377,7 +380,7 @@ links.Network.prototype._create = function () {
     this.frame.rsz.style.width = '0';
     this.frame.rsz.style.height = '0';
     this.frame.rsz.style.borderStyle = "solid";
-    this.frame.rsz.style.borderWidth = "0 0 15px 15px";
+    this.frame.rsz.style.borderWidth = "0 0 20px 20px";
     this.frame.rsz.style.borderColor = "transparent transparent #ff6600 transparent";
     this.frame.rsz.style.cursor = "pointer";
     this.frame.rsz.style.zIndex = "26";
@@ -2457,8 +2460,17 @@ links.Network.prototype._drawNodes = function(ctx) {
  */
 links.Network.prototype._drawLinks = function(ctx) {
     var links = this.links;
+    var selectedLinks = [];
     for (var i = 0, iMax = links.length; i < iMax; i++) {
-        links[i].draw(ctx);
+        if (links[i].from.isSelected() || links[i].to.isSelected()) {
+            selectedLinks.push(links[i]);
+        }
+        else {
+            links[i].draw(ctx);
+        }
+    }
+    for (var i = 0, iMax = selectedLinks.length; i < iMax; i++) {
+        selectedLinks[i].draw(ctx);
     }
 };
 
@@ -2628,6 +2640,7 @@ links.Network.prototype._calculateForces = function(nodeId) {
             fx = Math.cos(angle) * gravity,
             fy = Math.sin(angle) * gravity;
 
+        if (!this.physics) {fx=0; fy=0;}
         this.nodes[n]._setForce(fx, fy);
     }
 
@@ -2653,6 +2666,7 @@ links.Network.prototype._calculateForces = function(nodeId) {
                 fx = Math.cos(angle) * repulsingforce,
                 fy = Math.sin(angle) * repulsingforce;
 
+            if (!this.physics) {fx=0; fy=0;}
             this.nodes[n]._addForce(-fx, -fy);
             this.nodes[n2]._addForce(fx, fy);
         }
@@ -2699,6 +2713,7 @@ links.Network.prototype._calculateForces = function(nodeId) {
             fx = Math.cos(angle) * springforce,
             fy = Math.sin(angle) * springforce;
 
+        if (!this.physics) {fx=0; fy=0;}
         link.from._addForce(-fx, -fy);
         link.to._addForce(fx, fy);
     }
@@ -2834,6 +2849,10 @@ links.Network.prototype.start = function() {
     }
     else {
         this._redraw();
+        if (this.endFirstRun) {
+            this.endFirstRun = false;
+            this.physics = false;
+        }
     }
 };
 
@@ -2847,6 +2866,16 @@ links.Network.prototype.stop = function () {
     }
 };
 
+/**
+ * Toggle animating nodes, links, and packages.
+ */
+links.Network.prototype.toggle = function () {
+    this.physics = !this.physics;
+    if (this.physics) {
+        this.hasMovingNodes = true;
+        this.start()
+    };
+};
 
 
 /**--------------------------------------------------------------------------**/
@@ -3634,6 +3663,7 @@ links.Network.Link = function (properties, network, constants) {
     
     this.stiffness = undefined; // depends on the length of the link
     this.color  = constants.links.color;
+    this.highlightColor = constants.links.highlightColor;
     this.timestamp  = undefined;
     this.widthFixed = false;
     this.lengthFixed = false;
@@ -3678,6 +3708,7 @@ links.Network.Link.prototype.setProperties = function(properties, constants) {
     if (properties.altdashlength != undefined) {this.altdashlength = properties.altdashlength;}
     
     if (properties.color != undefined) {this.color = properties.color;}
+    if (properties.highlightColor != undefined) {this.highlightColor = properties.highlightColor;}
     if (properties.timestamp != undefined) {this.timestamp = properties.timestamp;}
 
     if (!this.from) {
@@ -3940,7 +3971,7 @@ links.Network._dist = function (x1,y1, x2,y2, x3,y3) { // x3,y3 is the point
  */
 links.Network.Link.prototype._drawLine = function(ctx) {
     // set style
-    ctx.strokeStyle = this.color;
+    ctx.strokeStyle = this._getLineColor();
     ctx.lineWidth = this._getLineWidth();
 
     var point;
@@ -3987,6 +4018,21 @@ links.Network.Link.prototype._getLineWidth = function() {
     }
     else {
         return this.width;
+    }
+};
+
+/**
+ * Get the line color of the link. Depends whether one of the
+ * connected nodes is selected.
+ * @return {Number} width
+ * @private
+ */
+links.Network.Link.prototype._getLineColor = function() {
+    if (this.from.selected || this.to.selected) {
+        return this.highlightColor;
+    }
+    else {
+        return this.color;
     }
 };
 
@@ -4210,8 +4256,8 @@ links.Network.Link.prototype._drawMovingDot = function(ctx) {
 links.Network.Link.prototype._drawArrow = function(ctx) {
     var point;
     // set style
-    ctx.strokeStyle = this.color;
-    ctx.fillStyle = this.color;
+    ctx.strokeStyle = this._getLineColor();
+    ctx.fillStyle = this._getLineColor();
     ctx.lineWidth = this._getLineWidth();
 
     if (this.from != this.to) {
@@ -4284,8 +4330,8 @@ links.Network.Link.prototype._drawArrow = function(ctx) {
  */
 links.Network.Link.prototype._drawArrowEnd = function(ctx) {
     // set style
-    ctx.strokeStyle = this.color;
-    ctx.fillStyle = this.color;
+    ctx.strokeStyle = this._getLineColor();
+    ctx.fillStyle = this._getLineColor();
     ctx.lineWidth = this._getLineWidth();
 
     // draw line

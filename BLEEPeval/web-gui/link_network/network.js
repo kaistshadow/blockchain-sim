@@ -3068,7 +3068,7 @@ links.Network.Node = function (properties, imagelist, grouplist, constants) {
     this.vx = 0.0;  // velocity x
     this.vy = 0.0;  // velocity y
     this.minForce = constants.minForce;
-    this.damping = 0.9; // damping factor
+    this.damping = 2; // damping factor
 };
 
 /**
@@ -3721,7 +3721,7 @@ links.Network.Link.prototype.setProperties = function(properties, constants) {
     this.widthFixed = this.widthFixed || (properties.width != undefined);
     this.lengthFixed = this.lengthFixed || (properties.length != undefined);
 
-    this.stiffness = 1 / this.length;
+    this.stiffness = 1 / Math.pow(this.length, 2);
 
     // initialize animation
     if (this.style === 'arrow') {

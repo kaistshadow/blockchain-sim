@@ -1,31 +1,20 @@
 #include "mainmodules/MainEventManager.h"
 #include "mainmodules/BasicNetworkModule.h"
-#include "mainmodules/POWModule.h"
+#include "mainmodules/TxGeneratorModule.h"
 
 #include "datamodules/Peer.h"
 #include "datamodules/Message.h"
-#include "datamodules/POWBlock.h"
-
-#include "datamanagermodules/TxPool.h"
-#include "datamanagermodules/ListLedgerManager.h"
 
 #include "utility/ArgsManager.h"
+#include "utility/Assert.h"
+
 
 using namespace libBLEEP;
 
-
-// TODO : Seperate API src,dest & msg src,dest (for broadcasting portability)
-// TODO [DONE] : statmachine regtest
-// TODO [DONE] : documentation for (Transaction, TxPool), (Block,LedgerManager), (PeerId, Message)
-//        (MainEventManager_v1), utility ArgsManager
-
-// TODO [DONE] : connected neighbor peer already exists handling. -> remove redundent datasocket
-// TODO [DONE]: NewPeerConnected event
-
-
+// TODO : create randomly generate transaction, and send it to blockchain node
 
 int main(int argc, char *argv[]) {
-    // for testing DisconnectPeer API
+
 
     gArgs.ParseParameters(argc, argv);
 
@@ -36,27 +25,27 @@ int main(int argc, char *argv[]) {
     }
 
     /* allocate mainEventManager */
-    MainEventManager mainEventManager;
+    // MainEventManager mainEventManager("143.248.38.189");
     // MainEventManager mainEventManager(gArgs.GetArg("-id", "noid"));
+    MainEventManager mainEventManager;
     BasicNetworkModule basicNetworkModule(gArgs.GetArg("-id", "noid"), &mainEventManager);
+    TxGeneratorModule txGeneratorModule(&mainEventManager);
 
-    // POWModule
-    POWModule powModule(&mainEventManager);
 
-    // ListLedgerManager
-    ListLedgerManager<POWBlock> ledger;
+    /* connect to peer */
+    for (auto neighborPeerId : gArgs.GetArgs("-connect"))
+        basicNetworkModule.AsyncConnectPeer(PeerId(neighborPeerId));
 
-    std::shared_ptr<POWBlock> candidateBlk = std::make_shared<POWBlock>();
-    unsigned char default_th[32] = {0x00,0x00,0x0f,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};
-    UINT256_t difficulty(default_th, 32);
-    powModule.AsyncBlockMining(candidateBlk, difficulty);    
+    if (gArgs.IsArgSet("-txgeninterval")) {
+        txGeneratorModule.AsyncGenerateRandomTransaction(gArgs.GetArg("-txgeninterval", 0));
+    }
 
     while(true) {
         mainEventManager.Wait(); // main event loop (wait for next event)
-        
+
         while (mainEventManager.ExistAsyncEvent()) {
             AsyncEvent event = mainEventManager.PopAsyncEvent();
-        
+
             switch (event.GetType()) {
             case AsyncEventEnum::none:
                 std::cout << "invalid event is triggered. " << "\n";
@@ -64,44 +53,52 @@ int main(int argc, char *argv[]) {
             case AsyncEventEnum::CompleteAsyncConnectPeer:
                 {
                     std::cout << "event for connection complete for peer. " << "\n";
+                    PeerId peerId = event.GetData().GetConnectedPeerId();
+                    std::cout << "connected peerId : " << peerId.GetId() << "\n";
+                    // mainEventManager.SendMessage(message);
                     break;
                 }
             case AsyncEventEnum::ErrorAsyncConnectPeer:
                 {
                     std::cout << "AsyncConnectPeer got error(" << event.GetData().GetError() << ")" << "\n";
+                    // try again with timer
+                    PeerId peerId = event.GetData().GetRefusedPeerId();
+                    basicNetworkModule.AsyncConnectPeer(peerId, 10);
                     break;
                 }
             case AsyncEventEnum::CompleteAsyncGenerateRandomTransaction:
                 {
                     std::cout << "random transaction generated" << "\n";
                     boost::shared_ptr<Transaction> generatedTx = event.GetData().GetGeneratedTx();
+
                     std::cout << *generatedTx << "\n";
+                    PeerId myPeerId(gArgs.GetArg("-id", "noid"));
+                    std::string payload = GetSerializedString(generatedTx);
+                    for (auto neighborId : gArgs.GetArgs("-connect")) {
+                        PeerId destPeerId(neighborId);
+                        std::shared_ptr<Message> msg =
+                            std::make_shared<Message>(myPeerId, destPeerId,"TxInject", payload);
+                        basicNetworkModule.UnicastMessage(destPeerId, msg);
+                    }
                     break;
                 }
             case AsyncEventEnum::RecvMessage:
                 {
                     std::cout << "RecvMessage" << "\n";
-                    std::shared_ptr<Message> msg = event.GetData().GetReceivedMsg();
-                    MessageType messageType = msg->GetType();
-                    if (messageType == "newTx") {
-                        boost::shared_ptr<Transaction> receivedTx = GetDeserializedTransaction(msg->GetPayload());
-                        std::cout << *receivedTx << "\n";
-
-                        powModule.StopMining(); // stop mining for test!
-                    }
-
+//                    M_Assert(0, "why client received message?");
                     break;
                 }
-            case AsyncEventEnum::EmuBlockMiningComplete:
+            case AsyncEventEnum::NewPeerConnected:
                 {
-                    std::cout << "block mining complte" << "\n";
+                    std::shared_ptr<PeerId> newConnectedNeighbor = event.GetData().GetNewlyConnectedPeer();
+                    std::cout << "NewPeerConnected requested from " << newConnectedNeighbor->GetId() << "\n";
                     break;
                 }
-            case AsyncEventEnum::BlockMiningComplete:
+            case AsyncEventEnum::PeerDisconnected:
                 {
-                    std::cout << "block mining complte" << "\n";
-                    std::shared_ptr<POWBlock> minedBlk = event.GetData().GetMinedBlock();
-                    ledger.AppendBlock(minedBlk);
+                    std::shared_ptr<PeerId> disconnectedNeighbor = event.GetData().GetDisconnectedPeerId();
+                    std::cout << "Disconnection requested from " << disconnectedNeighbor->GetId() << "\n";
+
                     break;
                 }
             }

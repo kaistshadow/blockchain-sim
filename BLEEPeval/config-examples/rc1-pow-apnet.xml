@@ -32,36 +32,32 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="NODE_MINER" path="~/.bleep/plugins/libNODE_MINING.so" />
-  <plugin id="NODE" path="~/.bleep/plugins/libNODE_bleep.so" />
-  <plugin id="CLIENT" path="~/.bleep/plugins/libNODE_client.so" />
+  <plugin id="NODE" path="~/.bleep/plugins/libNODE_POW_TX.so" />
+  <!-- <plugin id="CLIENT" path="~/.bleep/plugins/libNODE_client.so" /> -->
 
 
   <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="500" />
+  <kill time="5000" />
   <!-- our nodes -->
 
-  <node id="miner0">
-    <application plugin="NODE_MINER" time="10" arguments="-id=miner0" />
+  <node id="bleep0">
+    <application plugin="NODE" time="0" arguments="-id=bleep0 -connect=bleep1 -miningtimedev=0.001 -txgeninterval=1" />
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>
 
-  <node id="miner1">
-    <application plugin="NODE_MINER" time="11" arguments="-id=miner1" />
-  </node>
-
-  <node id="miner2">
-    <application plugin="NODE_MINER" time="12" arguments="-id=miner2" />
-  </node>
-
   <node id="bleep1">
-    <application plugin="NODE" time="11" arguments="-id=bleep1 -connect=miner0" />
+    <application plugin="NODE" time="0" arguments="-id=bleep1 -connect=bleep0 -miningtimedev=0.001 -txgeninterval=1" />
   </node>
 
-  <node id="client0">
-    <application plugin="CLIENT" time="12" arguments="-id=client0 -connect=miner2 -txgeninterval=3" />
-  </node>
-
+  <!-- <node id="client0"> -->
+  <!--   <application plugin="CLIENT" time="10" arguments="-id=client0 -connect=bleep0 -connect=bleep1 -txgeninterval=1" /> -->
+  <!-- </node> -->
+  <!-- <node id="client1"> -->
+  <!--   <application plugin="CLIENT" time="15" arguments="-id=client1 -connect=bleep0 -txgeninterval=11" /> -->
+  <!-- </node> -->
+  <!-- <node id="client2"> -->
+  <!--   <application plugin="CLIENT" time="15" arguments="-id=client2 -connect=bleep1 -txgeninterval=10" /> -->
+  <!-- </node> -->
 
 
   <!-- <node id="bleep1"> -->

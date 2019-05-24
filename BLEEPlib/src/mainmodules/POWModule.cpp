@@ -2,6 +2,8 @@
 #include "../utility/Assert.h"
 #include "shadow_interface.h"
 
+#include <random>
+
 using namespace libBLEEP;
 
 void POWModule::AsyncEmulateBlockMining(std::shared_ptr<POWBlock> candidateBlk, double avg, double stddev) {
@@ -11,7 +13,7 @@ void POWModule::AsyncEmulateBlockMining(std::shared_ptr<POWBlock> candidateBlk, 
 
     double waiting_time = -1;
     while (waiting_time < 0) {
-        unsigned int random_num = time(0);
+        unsigned int random_num = time(0) + GetHostNumber();
         std::default_random_engine generator(random_num);
         std::normal_distribution<double> distribution(avg, stddev);
         waiting_time = distribution(generator);
@@ -37,7 +39,7 @@ void POWModule::AsyncBlockMining(std::shared_ptr<POWBlock> candidateBlk, UINT256
 
 
 void POWModule::StopMining() {
-    watcherManager.RemoveMiningThread();
+    watcherManager.StopMiningThread();
     watcherManager.RemoveMiningEmulationTimer();    
     _isMining = false;
 

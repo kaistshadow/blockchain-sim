@@ -212,17 +212,9 @@ function drawVisualization() {
 
     // Specify options using the dimensions of the network if it has already been drawn
     var options = {
-        'width': network ? network.frame.style.width : '800px', 
-        'height': network ? network.frame.style.height : '600px',
+        'width':  '800px',
+        'height': '600px',
         'stabilize': true,
-        'links': {
-            "length": 100,   // px
-            "color": "#cccccc",
-            "highlightColor": "#343434"
-        },
-        'nodes': {
-            'distance': 100
-        },
         'packages': {
             'style': 'image',
             'image': ImgDIR + 'transaction_32.png'
@@ -238,7 +230,7 @@ function drawVisualization() {
     // Add event listeners for toggling network animation physics
     toggleButton.addEventListener('click', function() {network.toggle()});
 
-    // Draw our graph with the created data and options 
+    // Draw our graph with the created data and options
     network.draw(nodesTable, linksTable, options);
 
     // start generating random emails
@@ -247,7 +239,6 @@ function drawVisualization() {
 
     // Draw ledger event visualization
     var container = document.getElementById('ledgereventvisualize');
-
     var nodesArray = [
         {id:"0000000000", label:"genesis"}
     ];
@@ -309,7 +300,7 @@ function resetVisualization() {
 
 function timeout() {
     sendTransaction('client', 'bleep0');
-    
+
     var delay = Math.round(100 + Math.random() * 1000);
     setTimeout(timeout, delay);
 }
@@ -319,26 +310,26 @@ function sendTransaction(from, to) {
 
         var packagesTable = new google.visualization.DataTable();
         packagesTable.addColumn('string', 'from');
-        packagesTable.addColumn('string', 'to');        
-        packagesTable.addColumn('number', 'duration');        
+        packagesTable.addColumn('string', 'to');
+        packagesTable.addColumn('number', 'duration');
         packagesTable.addRow([from, to, 2]);
         network.addPackages(packagesTable);
     }
     catch(err) {
         alert(err);
     }
-}      
+}
 
 function recvMessage(from, to, hashId) {
     try {
         var packagesTable = new google.visualization.DataTable();
         packagesTable.addColumn('string', 'id');
         packagesTable.addColumn('string', 'from');
-        packagesTable.addColumn('string', 'to');        
-        packagesTable.addColumn('number', 'progress');        
-        packagesTable.addColumn('number', 'duration');        
-        packagesTable.addColumn('string', 'action');        
-        packagesTable.addRow([from+to, undefined, undefined, undefined, undefined, 'delete']);
+        packagesTable.addColumn('string', 'to');
+        packagesTable.addColumn('number', 'progress');
+        packagesTable.addColumn('number', 'duration');
+        packagesTable.addColumn('string', 'action');
+        packagesTable.addRow([from+to+hashId, undefined, undefined, undefined, undefined, 'delete']);
         network.addPackages(packagesTable);
 
         packagesTable.removeRow(0);
@@ -384,16 +375,16 @@ function sendMessage(from, to, hashId) {
     }
 }
 
-function sendMessage(from, to) {
+function sendMessage(from, to, hashId) {
     try {
         var packagesTable = new google.visualization.DataTable();
         packagesTable.addColumn('string', 'id');
         packagesTable.addColumn('string', 'from');
-        packagesTable.addColumn('string', 'to');        
-        packagesTable.addColumn('number', 'progress');        
-        packagesTable.addColumn('number', 'duration');      
-        packagesTable.addColumn('string', 'action');          
-        packagesTable.addRow([from+to, from, to, 0.001 ,undefined, 'create']);
+        packagesTable.addColumn('string', 'to');
+        packagesTable.addColumn('number', 'progress');
+        packagesTable.addColumn('number', 'duration');
+        packagesTable.addColumn('string', 'action');
+        packagesTable.addRow([from+to+hashId, from, to, 0.001 ,undefined, 'create']);
         network.addPackages(packagesTable);
     }
     catch(err) {
@@ -437,7 +428,7 @@ function addNode(nodeid) {
 
     // specify options
     // var options = {
-    //     'width':  '800px', 
+    //     'width':  '800px',
     //     'height': '600px',
     //     'stabilize': true,
     //     'packages': {
@@ -479,7 +470,7 @@ function addEdge(from, to) {
     linksTable.addColumn('string', 'highlightColor');
     linksTable.addColumn('number', 'width');
     linksTable.addColumn('string', 'action');
- 
+
     if (from.startsWith("client")) {
         linksTable.addRow([from+to, from, to, 'arrow', "red", "red", 1, 'create']); // connection is established for bidirectional communication, but use arrow for indicating who requests the connection. (i.e., 'from' requests a connection)
     }
@@ -500,7 +491,7 @@ function removeEdge(from, to) {
     linksTable.addColumn('string', 'hightlightColor');
     linksTable.addColumn('number', 'width');
     linksTable.addColumn('string', 'action');
- 
+
     // First, update edge for bi-direction
     // linksTable.addRow([from+to, from, to, 'line', undefined, undefined, 1, 'create']); // undirected graph
     // linksTable.addRow([to+from, to, from, 'line', undefined, undefined, 1, 'create']); // undirected graph
@@ -557,7 +548,7 @@ function appendBlock(peerId, hash, prevHash, timestamp) {
         nodes.update({id:peerId, label:peerId});
     } catch(err) {}
 
-    // nodes.remove({id:peerId});    
+    // nodes.remove({id:peerId});
     // edges.update({id:peerId, from:hash, to:peerId});
     // nodes.add({id:peerId, label:peerId});
 

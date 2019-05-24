@@ -18,17 +18,10 @@ set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.bleep")
 # debug option
 if(BLEEP_DEBUG STREQUAL ON)
   message(STATUS "Debug enabled.")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -std=c++11 -Wall -Werror")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address") # suppress error for manually installed boost (1.58)
 else(BLEEP_DEBUG STREQUAL ON)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address")
 endif(BLEEP_DEBUG STREQUAL ON)
-
-# check boost library
-find_package(Boost REQUIRED serialization filesystem system)
-message(STATUS "Boost_LIBRARIES:" ${Boost_LIBRARIES})
-
-include_directories(./shadow_interface)
-include_directories(${Boost_INCLUDE_DIRS})
 
 set(SRCS
   src/datamodules/Block.cpp
@@ -43,10 +36,12 @@ set(SRCS
   src/datamanagermodules/PeerManager.cpp
   src/mainmodules/MainEventManager.cpp
   src/mainmodules/BasicNetworkModule.cpp
+  src/mainmodules/RandomGossipNetworkModule.cpp
   src/mainmodules/TxGeneratorModule.cpp
   src/mainmodules/POWModule.cpp
   src/utility/UInt256.cpp
   src/utility/Assert.cpp
+  src/utility/Random.cpp
   src/utility/ArgsManager.cpp
   src/datamodules/Socket_v2.cpp
   src/datamanagermodules/SocketManager_v2.cpp
@@ -60,6 +55,10 @@ include(GNUInstallDirs)
 message(STATUS "CMAKE_INSTALL_LIBDIR:" ${CMAKE_INSTALL_LIBDIR})
 message(STATUS "CMAKE_INSTALL_INCLUDEDIR:" ${CMAKE_INSTALL_INCLUDEDIR})
 
+
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_CURRENT_SOURCE_DIR}/boost/lib")
+
 add_library(BLEEP SHARED ${SRCS})
 # target_include_directories(BLEEP
 #   PRIVATE src
@@ -69,6 +68,30 @@ target_include_directories(BLEEP
   $<INSTALL_INTERFACE:include> 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/shadow_interface>)
+
+
+# use 3rd party library (boost_1_58)
+find_package(Boost 1.58.0 EXACT COMPONENTS serialization filesystem system)
+if(NOT Boost_FOUND)
+  include(ExternalProject)
+  ExternalProject_Add(Boost_EXTERNAL
+    PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/boost
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/boost/src
+    STAMP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/boost/stamp
+    CONFIGURE_COMMAND ""
+    INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/boost
+    URL http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.gz
+    BUILD_COMMAND ./bootstrap.sh --prefix=<INSTALL_DIR> --with-libraries=system,filesystem,serialization
+    BUILD_IN_SOURCE TRUE
+    INSTALL_COMMAND <SOURCE_DIR>/b2 -d0 install)
+  add_dependencies(BLEEP Boost_EXTERNAL)
+  set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/boost")
+  set(Boost_INCLUDE_DIRS "${BOOST_ROOT}/include")
+  set(BOOST_LIBRARY_DIRS "${BOOST_ROOT}/lib")
+  # find_package(Boost REQUIRED serialization filesystem system)
+  set(Boost_LIBRARIES "${BOOST_LIBRARY_DIRS}/libboost_system.so;${BOOST_LIBRARY_DIRS}/libboost_filesystem.so;${BOOST_LIBRARY_DIRS}/libboost_serialization.so")
+endif()
+
 
 set_target_properties(BLEEP PROPERTIES 
   SOVERSION 1)
@@ -110,9 +133,11 @@ target_link_libraries(BLEEP -lev)
 target_link_libraries(BLEEP SHADOW_INTERFACE)
 target_link_libraries(BLEEP ${Boost_LIBRARIES})
 
+include_directories(./shadow_interface)
+include_directories(${Boost_INCLUDE_DIRS})
 
 add_subdirectory(shadow_interface)
 
 # add tests
-enable_testing()
-add_subdirectory(libtest)
+# enable_testing()
+# add_subdirectory(libtest)

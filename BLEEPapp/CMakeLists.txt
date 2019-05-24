@@ -8,14 +8,16 @@ if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
     message(FATAL_ERROR "An out-of-source build is required. Please see the README.")
 endif("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
 
-# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+# debug option
+if(BLEEP_DEBUG STREQUAL ON)
+  message(STATUS "Debug enabled.")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -std=c++11 -Wall -Werror -Wno-switch")
+else(BLEEP_DEBUG STREQUAL ON)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-switch")
+endif(BLEEP_DEBUG STREQUAL ON)
 
-find_package(Boost REQUIRED serialization filesystem system)
 
-message(STATUS "Boost_LIBRARIES:" ${Boost_LIBRARIES})
-
-include_directories(${Boost_INCLUDE_DIRS})
+# link_directories($ENV{HOME}/opt/libev4/lib)   # for debuggin libev
 
 set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.bleep")
 
@@ -45,6 +47,18 @@ endif()
 include(ShadowTools)
 find_package(BLEEP REQUIRED)
 
+# use 3rd party library (boost_1_58)
+find_package(Boost 1.58.0 EXACT COMPONENTS serialization filesystem system)
+if(NOT Boost_FOUND)
+  set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../BLEEPlib/boost")
+  set(Boost_INCLUDE_DIRS "${BOOST_ROOT}/include")
+  set(BOOST_LIBRARY_DIRS "${BOOST_ROOT}/lib")
+  # find_package(Boost REQUIRED serialization filesystem system)
+  set(Boost_LIBRARIES "${BOOST_LIBRARY_DIRS}/libboost_system.so;${BOOST_LIBRARY_DIRS}/libboost_filesystem.so;${BOOST_LIBRARY_DIRS}/libboost_serialization.so")
+endif()
+
+include_directories(${Boost_INCLUDE_DIRS})
+
 ## compile for shadow example
 add_shadow_plugin(NODE_bleep node.cpp)
 install(TARGETS NODE_bleep DESTINATION plugins)
@@ -58,10 +72,21 @@ add_shadow_plugin(NODE_POW node_pow.cpp)
 install(TARGETS NODE_POW DESTINATION plugins)
 target_link_libraries(NODE_POW BLEEP::BLEEP)
 
+add_shadow_plugin(NODE_Random_bleep node_Random.cpp)
+install(TARGETS NODE_Random_bleep DESTINATION plugins)
+target_link_libraries(NODE_Random_bleep BLEEP::BLEEP)
+
+add_shadow_plugin(NODE_Random_client client_Random.cpp)
+install(TARGETS NODE_Random_client DESTINATION plugins)
+target_link_libraries(NODE_Random_client BLEEP::BLEEP)
+
+add_shadow_plugin(NODE_POW_TX node_pow_tx.cpp)
+install(TARGETS NODE_POW_TX DESTINATION plugins)
+target_link_libraries(NODE_POW_TX BLEEP::BLEEP)
+
 add_shadow_plugin(NODE_MINING node_mining.cpp)
 install(TARGETS NODE_MINING DESTINATION plugins)
 target_link_libraries(NODE_MINING BLEEP::BLEEP)
-
 
 ## compile for local executable
 add_executable(LOCAL_NODE_bleep node.cpp)
@@ -72,6 +97,15 @@ target_link_libraries(LOCAL_NODE_client BLEEP::BLEEP)
 
 add_executable(LOCAL_NODE_POW node_pow.cpp)
 target_link_libraries(LOCAL_NODE_POW BLEEP::BLEEP)
+
+add_executable(LOCAL_NODE_Random_bleep node_Random.cpp)
+target_link_libraries(LOCAL_NODE_Random_bleep BLEEP::BLEEP)
+
+add_executable(LOCAL_NODE_Random_client client_Random.cpp)
+target_link_libraries(LOCAL_NODE_Random_client BLEEP::BLEEP)
+
+add_executable(LOCAL_NODE_POW_TX node_pow_tx.cpp)
+target_link_libraries(LOCAL_NODE_POW_TX BLEEP::BLEEP)
 
 add_executable(LOCAL_NODE_MINING node_mining.cpp)
 target_link_libraries(LOCAL_NODE_MINING BLEEP::BLEEP)

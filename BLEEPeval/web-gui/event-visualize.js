@@ -367,7 +367,7 @@ function sendMessage(from, to, hashId) {
         packagesTable.addColumn('number', 'progress');        
         packagesTable.addColumn('number', 'duration');        
         packagesTable.addColumn('string', 'action');        
-        packagesTable.addRow([from+to, from, to, 0.001, undefined, 'create']);
+        packagesTable.addRow([from+to+hashId, from, to, 0.001, undefined, 'create']);
         network.addPackages(packagesTable);
     }
     catch(err) {

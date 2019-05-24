@@ -17,4 +17,6 @@ BLEEPeval/*-datadir/
 BLEEPeval/web-gui/node_modules/
 BLEEPeval/web-gui/package-lock.json
 
-
+terraform.tfstate
+terraform.tfstate.backup
+.terraform

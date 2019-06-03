@@ -1,5 +1,7 @@
 <shadow>
     <!-- our network -->
+    <!-- topology fine source -->
+    <!-- https://tmodel-ccs2018.github.io/data/shadow/network/atlas.201801.shadow112.graphml.xml.xz -->
     <topology path="config-examples/internet_topology500.xml" />
 
   <!-- the plug-ins we will be using -->

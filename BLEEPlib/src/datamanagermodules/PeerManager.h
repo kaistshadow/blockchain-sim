@@ -20,10 +20,10 @@ namespace libBLEEP {
 
     class PeerInfo {
     private:
-        int _socketfd; // currently, we only support single data socket per peer
+        int _socketfd = -1; // currently, we only support single data socket per peer
         SocketStatus _socketStatus;
 
-        int _socketfd_remote;  // we also support additional data socket requested by remote
+        int _socketfd_remote = -1;  // we also support additional data socket requested by remote
         SocketStatus _socketStatus_remote;
 
     public:

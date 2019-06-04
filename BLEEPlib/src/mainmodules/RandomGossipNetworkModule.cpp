@@ -167,12 +167,14 @@ bool RandomGossipNetworkModule::SendMulticastMsg(PeerId dest, std::shared_ptr<Me
             message->GetType().c_str(),
             message->GetMessageId().c_str());
     shadow_push_eventlog(buf);
+    printf("sendMessage %s %s\n",
+            peerManager.GetMyPeerId()->GetId().c_str(),
+            dest.GetId().c_str());
 
     return true;
 }
 
 bool RandomGossipNetworkModule::MulticastMessage(std::shared_ptr<Message> message){
-    char buf[256];
     PeerId myId = *peerManager.GetMyPeerId();
     std::vector<PeerId> dests = GetNeighborPeerIds();
     if (dests.size() == 0) return true;
@@ -182,8 +184,6 @@ bool RandomGossipNetworkModule::MulticastMessage(std::shared_ptr<Message> messag
             if (checkSourcePeer(message, dests[i])){
               if(SendMulticastMsg(dests[i], message) == false)
                   return false;
-              sprintf(buf, "SendMessage from %s", myId.GetId().c_str());
-              shadow_push_eventlog(buf);
             }
         }
     }

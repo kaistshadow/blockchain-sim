@@ -81,13 +81,13 @@ int main(int argc, char *argv[]) {
                         PeerId dest = PeerId("DestAll");
                         std::string payload = msg->GetPayload();
                         std::shared_ptr<Message> nMsg = std::make_shared<Message>(src, dest, "newTx", payload);
-                        randomNetworkModule.MulticastMessage(nMsg);
-                        randomNetworkModule.InsertMessageSet(nMsg->GetMessageId());
                         char buf[256];
-                        sprintf(buf, " NewTx %s %s",
-                                gArgs.GetArg("-id", "noid").c_str(),
+                        sprintf(buf, " NewTx from %s %s",
+                                src.GetId().c_str(),
                                 nMsg->GetMessageId().c_str());
                         shadow_push_eventlog(buf);
+                        randomNetworkModule.MulticastMessage(nMsg);
+                        randomNetworkModule.InsertMessageSet(nMsg->GetMessageId());
                     }
                     break;
                 }

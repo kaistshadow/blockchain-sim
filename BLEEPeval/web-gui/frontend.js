@@ -258,6 +258,7 @@ $(function () {
                     appendBlock(peerId, hash, prevHash, timestamp);
                 }
             }
+            endInitialLoading();
         } else if (json.type === 'graph') {
             addMessage("Notice", "Snapshot of the blockchain graph is received",
                        "red", new Date(json.data.time));

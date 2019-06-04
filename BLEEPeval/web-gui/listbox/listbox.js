@@ -94,8 +94,18 @@ aria.Listbox.prototype.checkKeyPress = function (evt) {
   if (!nextItem) {
     return;
   }
-
   switch (key) {
+    case aria.KeyCode.UP:
+      evt.preventDefault();
+      this.focusPrevItem();
+      break;
+
+    case aria.KeyCode.DOWN:
+      evt.preventDefault();
+      this.focusNextItem();
+      break;
+  }
+  /* switch (key) {
     case aria.KeyCode.PAGE_UP:
     case aria.KeyCode.PAGE_DOWN:
       if (this.moveUpDownEnabled) {
@@ -197,7 +207,7 @@ aria.Listbox.prototype.checkKeyPress = function (evt) {
         this.focusItem(itemToFocus);
       }
       break;
-  }
+  } */
 };
 
 aria.Listbox.prototype.findItemToFocus = function (key) {
@@ -260,10 +270,10 @@ aria.Listbox.prototype.findMatchInRange = function (list, startIndex, endIndex) 
  *  The click event object
  */
 aria.Listbox.prototype.checkClickItem = function (evt) {
-  // if (evt.target.getAttribute('role') === 'option') {
-  //   this.focusItem(evt.target);
-  //   this.toggleSelectItem(evt.target);
-  // }
+  if (evt.target.getAttribute('role') === 'option') {
+    this.focusItem(evt.target);
+    this.toggleSelectItem(evt.target);
+  }
 };
 
 /**
@@ -464,6 +474,9 @@ aria.Listbox.prototype.focusNextItem = function () {
 aria.Listbox.prototype.focusPrevItem = function () {
     var currentItem = document.getElementById(this.activeDescendant);
     var prevItem = currentItem.previousElementSibling;
+    while (prevItem && prevItem.getAttribute("style") === "display:none;")
+        prevItem = prevItem.previousElementSibling;
+    
     if (prevItem)
         this.focusItem(prevItem);
 };
@@ -551,6 +564,12 @@ aria.Listbox.prototype.enableFocusNext = function (nextButton) {
   this.moveUpDownEnabled = true;
   this.downButton = nextButton;
   nextButton.addEventListener('click', this.focusNextItem.bind(this));
+};
+
+aria.Listbox.prototype.enableFocusPrev = function (prevButton) {
+  this.moveUpDownEnabled = true;
+  this.upButton = prevButton;
+  prevButton.addEventListener('click', this.focusPrevItem.bind(this));
 };
 
 /* Enable startfromBeginning control*/

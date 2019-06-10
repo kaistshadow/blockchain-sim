@@ -88,6 +88,11 @@ add_shadow_plugin(NODE_MINING node_mining.cpp)
 install(TARGETS NODE_MINING DESTINATION plugins)
 target_link_libraries(NODE_MINING BLEEP::BLEEP)
 
+add_shadow_plugin(NODE_POW_RANDOM node_pow_random.cpp)
+install(TARGETS NODE_POW_RANDOM DESTINATION plugins)
+target_link_libraries(NODE_POW_RANDOM BLEEP::BLEEP)
+
+
 ## compile for local executable
 add_executable(LOCAL_NODE_bleep node.cpp)
 target_link_libraries(LOCAL_NODE_bleep BLEEP::BLEEP)
@@ -109,6 +114,9 @@ target_link_libraries(LOCAL_NODE_POW_TX BLEEP::BLEEP)
 
 add_executable(LOCAL_NODE_MINING node_mining.cpp)
 target_link_libraries(LOCAL_NODE_MINING BLEEP::BLEEP)
+
+add_executable(LOCAL_NODE_POW_RANDOM node_pow_random.cpp)
+target_link_libraries(LOCAL_NODE_POW_RANDOM BLEEP::BLEEP)
 
 # add tests
 enable_testing()

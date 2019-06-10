@@ -162,14 +162,9 @@ namespace libBLEEP {
                             _mainEventModule->PushAsyncEvent(event);
 
                         } else if (message) {
-                            AsyncEvent event(AsyncEventEnum::RecvMessage);
-                            event.GetData().SetReceivedMsg(message);
-                            _mainEventModule->PushAsyncEvent(event);
-
                             std::shared_ptr<PeerId> neighborPeerId = _networkModule->peerManager.GetPeerIdBySocket(fd);
                             std::cout << "message source:" << message->GetSource().GetId() << "\n";
                             M_Assert(neighborPeerId != nullptr, "no neighbor peer exists for given socket");
-
 
                             char buf[256];
                             sprintf(buf, "RecvMessage,%s,%s,%s,%s",
@@ -179,12 +174,21 @@ namespace libBLEEP {
                                     message->GetMessageId().c_str());
                             shadow_push_eventlog(buf);
 
-                            if (message->GetDest().GetId() == "DestAll") {
-                                if(true == _networkModule->InsertMessageSet(message->GetMessageId())){
-                                    sprintf(buf, " NewTx from %s %s",
-                                            neighborPeerId->GetId().c_str(),
-                                            message->GetMessageId().c_str());
-                                    shadow_push_eventlog(buf);
+                            if (message->GetDest().GetId() == "DestAll" &&
+                                _networkModule->ExistMessage(message->GetMessageId())) {
+                                // if the duplicated broadcasting message is received, 
+                                // then just ignore it.
+                                return;
+                            } else {
+                                AsyncEvent event(AsyncEventEnum::RecvMessage);
+                                event.GetData().SetReceivedMsg(message);
+                                _mainEventModule->PushAsyncEvent(event);
+
+                                if (message->GetDest().GetId() == "DestAll") {
+                                    bool unique = _networkModule->InsertMessageSet(message->GetMessageId());
+                                    M_Assert(unique, "Message is unexpectedly duplicated!" ); 
+
+                                    // forward the received message for broadcasting
                                     _networkModule->MulticastMessage(message);
                                 }
                             }

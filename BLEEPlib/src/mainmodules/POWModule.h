@@ -53,7 +53,7 @@ namespace libBLEEP {
 
             void CreateMiningThread(std::shared_ptr<POWBlock> candidateBlk, UINT256_t difficulty) {
                 M_Assert(_miningThreadWatcher == nullptr, "there exists miningThreadWatcher already");
-                // allocate new MiningEmulationTimer 
+                // allocate new MiningThread
                 _miningThreadWatcher = std::make_shared<BlockMiningThread>(candidateBlk, difficulty, _powModule, _mainEventModule);
             }
 

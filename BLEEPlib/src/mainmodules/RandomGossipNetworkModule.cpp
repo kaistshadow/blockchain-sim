@@ -62,13 +62,20 @@ std::set<Distance, DistanceCmp> genNeighborPeerSet(PeerId myId, std::vector<Peer
 }
 
 bool RandomGossipNetworkModule::AsyncConnectPeers(std::vector<PeerId> &peerList, int peerNum, double time){
+    char buf[256];
+    sprintf(buf, "API,AsyncConnectPeers,%d,%d,%f",
+            (int)peerList.size(),
+            peerNum,
+            time);
+    shadow_push_eventlog(buf);
+
     PeerId myId = *peerManager.GetMyPeerId();
     auto neighborPeerIdSet = genNeighborPeerSet(myId, peerList);
     int i = 0;
     for(const Distance& dest : neighborPeerIdSet){
         if (i >= peerNum) break;
-        if (RandomGossipNetworkModule::AsyncConnectPeer(dest.GetPeerId(), time) == false) return false;
-        i++;
+        if (RandomGossipNetworkModule::AsyncConnectPeer(dest.GetPeerId(), time) == true)
+            i++;
     }
     return true;
 }
@@ -175,6 +182,10 @@ bool RandomGossipNetworkModule::SendMulticastMsg(PeerId dest, std::shared_ptr<Me
 }
 
 bool RandomGossipNetworkModule::MulticastMessage(std::shared_ptr<Message> message){
+    char buf[256];
+    sprintf(buf, "API,MulticastMessage,%s", message->GetType().c_str());
+    shadow_push_eventlog(buf);
+
     PeerId myId = *peerManager.GetMyPeerId();
     std::vector<PeerId> dests = GetNeighborPeerIds();
     if (dests.size() == 0) return true;

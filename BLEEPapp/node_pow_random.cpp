@@ -112,8 +112,8 @@ bool UpdateLedgerAsLongestChain(std::vector<POWBlock>& received_blks, TxPool& tx
 }
 
 int main(int argc, char *argv[]) {
-    int connectPeerNum = 10;
-    int fanOut = 7;
+    int connectPeerNum = std::stoi(gArgs.GetArg("-outpeernum"));;
+    int fanOut = std::stoi(gArgs.GetArg("-fanout"));
     std::vector<PeerId> peerList;
 
     // for testing DisconnectPeer API

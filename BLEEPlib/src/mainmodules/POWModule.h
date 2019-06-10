@@ -262,9 +262,14 @@ namespace libBLEEP {
 
                 return result;
             }
+            // assume ip is given as id. 
+            // TODO : support for arbitrary id.
             else {
-                std::cout << "nodeid does not contain 'bleep'. _myPeerId:" << _myPeerId << "\n";
-                return 0;
+                unsigned int ips[4];
+                sscanf(_myPeerId.c_str(), "%u.%u.%u.%u", &ips[3], &ips[2], &ips[1], &ips[0]);
+                unsigned int val = ips[0] + ips[1]*256 + ips[2]*256*256 + ips[3]*256*256*256;
+                return val;
+                /* std::cout << "nodeid does not contain 'bleep'. _myPeerId:" << _myPeerId << "\n"; */
             }
         }
 

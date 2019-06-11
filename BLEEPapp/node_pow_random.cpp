@@ -170,7 +170,7 @@ int main(int argc, char *argv[]) {
     /* connect to peer */
     // mainEventManager.AsyncConnectPeer(PeerId("143.248.38.37"));
     if (gArgs.IsArgSet("-txgeninterval")) {
-        txGeneratorModule.AsyncGenerateRandomTransaction(gArgs.GetArg("-txgeninterval", 0));
+        txGeneratorModule.AsyncGenerateRandomTransaction(std::stof(gArgs.GetArg("-txgeninterval")));
     }
 
     while(true) {
@@ -215,7 +215,7 @@ int main(int argc, char *argv[]) {
                     }
 
                     // Call another request, i.e., periodically generate transaction
-                    txGeneratorModule.AsyncGenerateRandomTransaction(gArgs.GetArg("-txgeninterval", 0));
+                    txGeneratorModule.AsyncGenerateRandomTransaction(std::stof(gArgs.GetArg("-txgeninterval")));
 
                     // double milli = next_shadow_clock_update();
                     // std::cout << "time for handling CompleteAsyncGenerateRandomTransaction:" << milli << "\n";

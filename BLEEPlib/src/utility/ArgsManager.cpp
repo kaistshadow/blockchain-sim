@@ -160,6 +160,8 @@ std::string ArgsManager::GetArg(const std::string& strArg) const
         return "7";
     } else if (strArg == "-outpeernum") {
         return "10";
+    } else if (strArg == "-txgeninterval") {
+        return "1";
     } else {
         M_Assert(0, "Invalid request for not existed argument. (Also, default value of the argument is not existed)");
     }

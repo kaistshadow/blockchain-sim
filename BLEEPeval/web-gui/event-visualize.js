@@ -8,8 +8,10 @@ var ImgDIR = 'link_network/img/';
 
 var startButton = document.getElementById('ex1-start');
 startButton.addEventListener('click', resetVisualization);
-var toggleButton;
-toggleButton = document.getElementById("toggle");
+
+// Add event listeners for toggling network animation physics
+var toggleButton = document.getElementById("toggle-btn");
+toggleButton.addEventListener('click', toggle);
 
 
 var muObserver = new MutationObserver(function(mutations) {
@@ -210,7 +212,7 @@ function drawVisualization() {
     // linksTable.addRow([1, 2, 'moving-arrows', undefined, 2]);
 
 
-    // Specify options using the dimensions of the network if it has already been drawn
+    // Specify options
     var options = {
         'width':  '800px',
         'height': '600px',
@@ -226,9 +228,6 @@ function drawVisualization() {
 
     // Add event listeners for node selection
     google.visualization.events.addListener(network, 'select', onNodeSelect);
-
-    // Add event listeners for toggling network animation physics
-    toggleButton.addEventListener('click', function() {network.toggle()});
 
     // Draw our graph with the created data and options
     network.draw(nodesTable, linksTable, options);
@@ -368,23 +367,6 @@ function sendMessage(from, to, hashId) {
         packagesTable.addColumn('number', 'duration');        
         packagesTable.addColumn('string', 'action');        
         packagesTable.addRow([from+to+hashId, from, to, 0.001, undefined, 'create']);
-        network.addPackages(packagesTable);
-    }
-    catch(err) {
-        alert(err);
-    }
-}
-
-function sendMessage(from, to, hashId) {
-    try {
-        var packagesTable = new google.visualization.DataTable();
-        packagesTable.addColumn('string', 'id');
-        packagesTable.addColumn('string', 'from');
-        packagesTable.addColumn('string', 'to');
-        packagesTable.addColumn('number', 'progress');
-        packagesTable.addColumn('number', 'duration');
-        packagesTable.addColumn('string', 'action');
-        packagesTable.addRow([from+to+hashId, from, to, 0.001 ,undefined, 'create']);
         network.addPackages(packagesTable);
     }
     catch(err) {
@@ -580,8 +562,28 @@ function removeBlock(peerId, hash, prevHash, timestamp) {
 
 }
 
+// Toggles the animation of the network based on the physics of nodes and links
+function toggle() {
+    var value = network.toggle() ? "true" : "false";
+    toggleButton.setAttribute("toggle", value);
+}
+
+// Called when starting to receive the eventlog
+function beginInitialLoading () {
+    network.beginLoading();
+}
+
+// Called after receiving the eventlog
 function endInitialLoading() {
-    network.endFirstRun = true;
+    network.endLoading();
+
+    var lastItem = document.getElementById("ss_elem_list").lastChild;
+    while (lastItem && lastItem.getAttribute("style") === "display:none;") {
+        lastItem = lastItem.previousElementSibling;
+    }
+    if (lastItem && astItem.getAttribute("style") !== "display:none;") {
+        lastItem.click();
+    }
 }
 
 function onNodeSelect() {

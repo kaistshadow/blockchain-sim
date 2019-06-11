@@ -153,8 +153,23 @@ button[aria-disabled="true"] {
   background: #ccc;
 }
 
-.toolbar-item[aria-disabled="false"]:focus {
+.toolbar-item[aria-disabled="false"]:focus:not([toggle]) {
   background-color: #eee;
+}
+
+.toolbar-item[toggle] {
+  box-sizing: border-box;
+  border-width: 2px;
+}
+
+.toolbar-item[toggle="true"] {
+  border-color: white #909090 #909090 white;
+  background-color: #ccc;
+}
+
+.toolbar-item[toggle="false"] {
+  border-color: #909090 white white #909090;
+  background-color: #aaa;
 }
 
 .offscreen {

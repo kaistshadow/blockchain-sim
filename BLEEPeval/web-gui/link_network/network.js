@@ -386,6 +386,24 @@ links.Network.prototype._create = function () {
     this.frame.rsz.style.zIndex = "26";
     this.frame.appendChild(this.frame.rsz);
 
+    this.frame.loadingStatus = document.createElement("div");
+    this.frame.loadingStatus.id = "loadingStatus";
+    this.frame.loadingStatus.style.position = "absolute";
+    this.frame.loadingStatus.style.left = '0';
+    this.frame.loadingStatus.style.top = '0';
+    this.frame.loadingStatus.style.width = 'auto';
+    this.frame.loadingStatus.style.zIndex = "10";
+    this.frame.loadingStatus.style.color = "red";
+    this.frame.loadingStatus.style.backgroundColor = "rgba(255, 255, 255, 0.5)";
+    this.frame.loadingStatus.style.pointerEvents = "none";
+    this.frame.appendChild(this.frame.loadingStatus);
+
+    this.frame.loadingStatus.loader = document.createElement("div");
+    this.frame.loadingStatus.loader.id = "loader";
+    this.frame.loadingStatus.loader.className = "loader";
+    this.frame.loadingStatus.loader.style.float = "left";
+    this.frame.loadingStatus.appendChild(this.frame.loadingStatus.loader);
+
     // create the graph canvas (HTML canvas element)
     this.frame.canvas = document.createElement( "canvas" );
     this.frame.canvas.style.position = "relative";
@@ -2631,8 +2649,8 @@ links.Network.prototype._calculateForces = function(nodeId) {
     // Also, the forces are reset to zero in this loop by using _setForce instead
     // of _addForce
     var gravity = 0.01,
-        gx = this.frame.canvas.clientWidth / 2,
-        gy = this.frame.canvas.clientHeight / 2;
+        gx = 0,
+        gy = 0;
     for (var n = 0; n < nodes.length; n++) {
         var dx = gx - nodes[n].x,
             dy = gy - nodes[n].y,
@@ -2873,10 +2891,47 @@ links.Network.prototype.toggle = function () {
     this.physics = !this.physics;
     if (this.physics) {
         this.hasMovingNodes = true;
-        this.start()
-    };
+        this.start();
+    }
+    else {
+        for (var i = 0; i < this.nodes.length; i++)  {
+            this.nodes[i].vx = 0;
+            this.nodes[i].vy = 0;
+        }
+    }
+    return this.physics;
 };
 
+
+links.Network.prototype.beginLoading = function () {
+    this.frame.style.cursor = "progress";
+    this.startLoad = new Date().getTime();
+};
+
+/**
+ * Ends the loading animation of the network after the next redraw.
+ */
+links.Network.prototype.endLoading = function () {
+    this.endFirstRun = true;
+};
+
+/**
+ * Ends the loading animation of the network after the next redraw.
+ */
+links.Network.prototype._endLoading = function () {
+    var endLoad = new Date();
+    clearInterval(this.loadingTimer);
+    this.frame.loadingStatus.style.color = "green";
+    this.frame.loadingStatus.style.border = "1px solid black";
+    this.frame.loadingStatus.innerHTML = "Loaded in " + (endLoad - this.startLoad) / 1000 + " sec";
+    console.log("Loaded in " + (endLoad - this.startLoad) / 1000 + " sec");
+    this.frame.style.cursor = "default";
+    
+    //this.frame.loadingStatus.loader.style.display = "none";
+    //this.frame.loadingStatus.loader.style.animationPlayState = "paused";
+    //this.frame.loadingStatus.loader.style.MozAnimationPlayState = "paused"; /* Firefox < 16.0 */
+    //this.frame.loadingStatus.loader.style.WebkitAnimationPlayState = "paused"; /* Chrome < 43.0 */
+};
 
 /**--------------------------------------------------------------------------**/
 
@@ -3099,6 +3154,16 @@ links.Network.Node.prototype.detachLink = function(link) {
  */
 links.Network.Node.prototype._updateMass = function() {
     this.mass = 50 + 20 * this.links.length; // kg
+};
+
+/**
+ * Update the nodes damping, which is a factor times the critical damping
+ * of a single mass-spring system.
+ * @private
+ */
+links.Network.Node.prototype._updateDamping = function() {
+    var factor = 1.2;
+    this.damping = factor * 2 * Math.sqrt(this.mass * this.links[0].stiffness); // kg
 };
 
 /**

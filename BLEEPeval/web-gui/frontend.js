@@ -228,6 +228,7 @@ $(function () {
             
             var ul = document.getElementById("ss_elem_list");
             ul.innerHTML = '';
+            beginInitialLoading();
             for (var i = 0, l = json.data.eventlogs.length; i < l; i++) {
                 var eventlog = json.data.eventlogs[i];
                 addMessage("eventlog", `host : ${eventlog.host}, time : ${eventlog.time}, type : ${eventlog.type}, args : ${eventlog.args}`, "blue", new Date(json.data.time));

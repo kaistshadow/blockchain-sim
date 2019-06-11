@@ -188,6 +188,7 @@ links.Network = function(container) {
     this.hasMovingNodes = false;    // True if any of the nodes have an undefined position
     this.hasMovingPackages = false; // True if there are one or more packages
 
+    this.startLoad = undefined;
     this.physics = true;
     this.endFirstRun = false;
     this.selection = [];
@@ -373,7 +374,6 @@ links.Network.prototype._create = function () {
     // The resize property is not supported by IE and Edge
 
     this.frame.rsz = document.createElement("div");
-    this.frame.className = "rsz";
     this.frame.rsz.style.position = "absolute";
     this.frame.rsz.style.right = '0';
     this.frame.rsz.style.bottom = '0';
@@ -383,7 +383,7 @@ links.Network.prototype._create = function () {
     this.frame.rsz.style.borderWidth = "0 0 20px 20px";
     this.frame.rsz.style.borderColor = "transparent transparent #ff6600 transparent";
     this.frame.rsz.style.cursor = "pointer";
-    this.frame.rsz.style.zIndex = "26";
+    this.frame.rsz.style.zIndex = "10";
     this.frame.appendChild(this.frame.rsz);
 
     this.frame.loadingStatus = document.createElement("div");
@@ -394,7 +394,7 @@ links.Network.prototype._create = function () {
     this.frame.loadingStatus.style.width = 'auto';
     this.frame.loadingStatus.style.zIndex = "10";
     this.frame.loadingStatus.style.color = "red";
-    this.frame.loadingStatus.style.backgroundColor = "rgba(255, 255, 255, 0.5)";
+    this.frame.loadingStatus.style.backgroundColor = "rgba(255, 255, 255, 0)";
     this.frame.loadingStatus.style.pointerEvents = "none";
     this.frame.appendChild(this.frame.loadingStatus);
 
@@ -2869,7 +2869,7 @@ links.Network.prototype.start = function() {
         this._redraw();
         if (this.endFirstRun) {
             this.endFirstRun = false;
-            this.physics = false;
+            this._endLoading();
         }
     }
 };
@@ -2923,14 +2923,13 @@ links.Network.prototype._endLoading = function () {
     clearInterval(this.loadingTimer);
     this.frame.loadingStatus.style.color = "green";
     this.frame.loadingStatus.style.border = "1px solid black";
-    this.frame.loadingStatus.innerHTML = "Loaded in " + (endLoad - this.startLoad) / 1000 + " sec";
     console.log("Loaded in " + (endLoad - this.startLoad) / 1000 + " sec");
     this.frame.style.cursor = "default";
     
-    //this.frame.loadingStatus.loader.style.display = "none";
-    //this.frame.loadingStatus.loader.style.animationPlayState = "paused";
-    //this.frame.loadingStatus.loader.style.MozAnimationPlayState = "paused"; /* Firefox < 16.0 */
-    //this.frame.loadingStatus.loader.style.WebkitAnimationPlayState = "paused"; /* Chrome < 43.0 */
+    this.frame.loadingStatus.loader.style.animationIterationCount = "0";
+    this.frame.loadingStatus.loader.style.mozAnimationIterationCount = "0";
+    this.frame.loadingStatus.loader.style.webkitAnimationIterationCount = "0";
+    this.frame.loadingStatus.style.display = "none";
 };
 
 /**--------------------------------------------------------------------------**/
@@ -3133,6 +3132,7 @@ links.Network.Node = function (properties, imagelist, grouplist, constants) {
 links.Network.Node.prototype.attachLink = function(link) {
     this.links.push(link);
     this._updateMass();
+    this._updateDamping();
 };
 
 /**
@@ -3145,6 +3145,7 @@ links.Network.Node.prototype.detachLink = function(link) {
         this.links.splice(index, 1);
     }
     this._updateMass();
+    this._updateDamping();
 };
 
 /**

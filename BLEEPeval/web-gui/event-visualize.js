@@ -26,9 +26,9 @@ var muObserver = new MutationObserver(function(mutations) {
                 && mutation.attributeName=="aria-selected"
                 && mutation.target.getAttribute(mutation.attributeName) == "true") {
             targetEvent = mutation.target;
-            
+
             //Check if the new event is the first displayed element of the list
-            if (mutation.target == 
+            if (mutation.target ==
                     document.getElementById("ss_elem_list").querySelector('[role="option"]:not([style="display:none;"])')) {
                 lastEvent = targetEvent;
                 restart = true;
@@ -43,13 +43,13 @@ var muObserver = new MutationObserver(function(mutations) {
     });
 
     if (targetEvent && lastEvent) {
-        
+
         var targetEventNumber = parseInt(targetEvent.getAttribute("id").split("_")[1]);
         var lastEventNumber = parseInt(lastEvent.getAttribute("id").split("_")[1]);
         var targetReached = false;
         if (restart)
             restartEvent(targetEvent);
-        
+
         else if (lastEventNumber < targetEventNumber) {
             while (!targetReached) {
                 var nextEvent = lastEvent.nextElementSibling;
@@ -212,11 +212,14 @@ function drawVisualization() {
     // linksTable.addRow([1, 2, 'moving-arrows', undefined, 2]);
 
 
-    // Specify options
+    // Specify options using the dimensions of the network if it has already been drawn
     var options = {
-        'width':  '800px',
+        'width': '800px',
         'height': '600px',
         'stabilize': true,
+        'nodes': {
+            'distance': 200
+        },
         'packages': {
             'style': 'image',
             'image': ImgDIR + 'transaction_32.png'
@@ -238,6 +241,7 @@ function drawVisualization() {
 
     // Draw ledger event visualization
     var container = document.getElementById('ledgereventvisualize');
+
     var nodesArray = [
         {id:"0000000000", label:"genesis"}
     ];
@@ -362,10 +366,10 @@ function sendMessage(from, to, hashId) {
         var packagesTable = new google.visualization.DataTable();
         packagesTable.addColumn('string', 'id');
         packagesTable.addColumn('string', 'from');
-        packagesTable.addColumn('string', 'to');        
-        packagesTable.addColumn('number', 'progress');        
-        packagesTable.addColumn('number', 'duration');        
-        packagesTable.addColumn('string', 'action');        
+        packagesTable.addColumn('string', 'to');
+        packagesTable.addColumn('number', 'progress');
+        packagesTable.addColumn('number', 'duration');
+        packagesTable.addColumn('string', 'action');
         packagesTable.addRow([from+to+hashId, from, to, 0.001, undefined, 'create']);
         network.addPackages(packagesTable);
     }
@@ -538,7 +542,7 @@ function appendBlock(peerId, hash, prevHash, timestamp) {
 }
 
 function removeBlock(peerId, hash, prevHash, timestamp) {
-    
+
     edges.remove(peerId);
     try {
         edges.add({id:peerId, from:prevHash, to:peerId});
@@ -581,7 +585,7 @@ function endInitialLoading() {
     while (lastItem && lastItem.getAttribute("style") === "display:none;") {
         lastItem = lastItem.previousElementSibling;
     }
-    if (lastItem && astItem.getAttribute("style") !== "display:none;") {
+    if (lastItem && lastItem.getAttribute("style") !== "display:none;") {
         lastItem.click();
     }
 }
@@ -599,18 +603,18 @@ function onNodeSelect() {
     span.innerHTML = `API call history for ${nodeid}<br>Format:&lt;API called hostid&gt;,&lt;API called time&gt;,API,&lt;API name&gt;,&lt;API args(in brief form)&gt;`;
 
     var ul = document.getElementById("node_API_event_list");
-    ul.innerHTML = ''; // reset 
+    ul.innerHTML = ''; // reset
 
     var items = document.getElementById("ss_elem_list").getElementsByTagName("li");
     var node_event_count = 0;
     for (var i = 0; i < items.length; i++) {
         var item = items[i];
-        
+
         if (item.innerHTML.includes(",API,") && item.innerHTML.startsWith(nodeid)) {
             var li = document.createElement("li");
             li.appendChild(document.createTextNode(item.innerHTML));
             li.setAttribute("id", 'node_API_event_${node_event_count}');
-            li.setAttribute("role", "option"); 
+            li.setAttribute("role", "option");
             ul.appendChild(li);
             node_event_count++;
         }

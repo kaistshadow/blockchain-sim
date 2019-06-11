@@ -84,6 +84,17 @@
          .hide {
              display: none;
          }
+         .loader {
+            border: 10px solid #b8b8b8;
+            border-radius: 50%;
+            border-top: 10px solid #3498db;
+            width: 30px;
+            height: 30px;
+            -webkit-animation: spin 2s linear infinite; /* Chrome < 43.0 */
+            -moz-animation: spin 2s linear infinite; /* Firefox < 16.0 */
+            animation: spin 2s linear infinite;
+
+         }
 
          /* * { font-family:tahoma; font-size:12px; padding:0px; margin:0px; } */
          p { line-height:18px; }
@@ -132,6 +143,23 @@
              height:90vh;
              border: 1px solid lightgray;
          }
+
+         /* Chrome < 43.0 */
+         @-webkit-keyframes spin {
+             0% { -webkit-transform: rotate(0deg); }
+             100% { -webkit-transform: rotate(360deg); }
+         }
+
+         /* Firefox < 16.0 */
+         @-moz-keyframes spin {
+             0% { -moz-transform: rotate(0deg); }
+             100% { -moz-transform: rotate(360deg); }
+         }
+
+         @keyframes spin {
+             0% { transform: rotate(0deg); }
+             100% { transform: rotate(360deg); }
+         }
         </style>
     </head>
     <body>
@@ -140,8 +168,8 @@
                 <h1>BLEEP Web Interface</h1>
             </div>
             <div class="content">
-                <!-- <p>You can re-run the blockchain experiment by typing 'visualize' on command box.</p>
-                     <p>The experiment will be automatically executed on back-end server.  </p> -->
+                <p>You can re-run the blockchain experiment by typing 'visualize' on command box.</p>
+                <p>The experiment will be automatically executed on back-end server.  </p>
             </div>
             <div class="wrapper">
                 <div class="leftcontent">

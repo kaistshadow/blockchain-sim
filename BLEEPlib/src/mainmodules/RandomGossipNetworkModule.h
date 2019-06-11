@@ -136,8 +136,10 @@ namespace libBLEEP {
             void _dataSocketIOCallback(ev::io &w, int revents) {
                 M_Assert(_fd == w.fd, "fd must be same");
                 int fd = w.fd;
-                std::cout << "data socket IO callback called!" << "\n";
-
+                /* std::cout << "data socket IO callback called!" << "\n"; */
+                init_shadow_clock_update();
+                /* next_shadow_clock_update("==== until datasocketIOCallback called"); */
+                
                 if (revents & EV_READ) {
                     std::shared_ptr<DataSocket_v2> dataSocket = _networkModule->socketManager.GetDataSocket(fd);
                     std::pair<bool, std::shared_ptr<Message>> recvResult = dataSocket->DoRecv();
@@ -178,7 +180,6 @@ namespace libBLEEP {
                                 _networkModule->ExistMessage(message->GetMessageId())) {
                                 // if the duplicated broadcasting message is received, 
                                 // then just ignore it.
-                                return;
                             } else {
                                 AsyncEvent event(AsyncEventEnum::RecvMessage);
                                 event.GetData().SetReceivedMsg(message);
@@ -202,6 +203,7 @@ namespace libBLEEP {
                     if (dataSocket->DoSend() == DoSendResultEnum::SendBuffEmptied)
                         UnsetWritable();
                 }
+                next_shadow_clock_update("==== done handling dataSocketIOCallback");
             }
         public :
             DataSocketWatcher(int fd, RandomGossipNetworkModule* netModule, MainEventManager* eventModule)

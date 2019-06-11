@@ -116,7 +116,7 @@ std::pair< bool, std::shared_ptr<Message> > libBLEEP::DataSocket_v2::DoRecv() {
                 _recvBuff.received_len = 0;
                 _recvBuff.recv_str = "";
             }
-            break;
+            // break; // directly handler RECV_MSG after RECV_IDLE
         }
     case RECV_MSG:
         {
@@ -182,21 +182,25 @@ DoSendResultEnum libBLEEP::DataSocket_v2::DoSend() {
         return DoSendResultEnum::SendBuffEmptied; 
     }
     
-    std::shared_ptr<WriteMsg> msg = _sendBuff.front();
-    int numbytes = send(_fd, msg->dpos(), msg->nbytes(), 0);
-    if (numbytes < 0) {
-        perror("write error");
-        exit(-1);
-    }
+    while (!_sendBuff.empty()) {
+        std::shared_ptr<WriteMsg> msg = _sendBuff.front();
+        int numbytes = send(_fd, msg->dpos(), msg->nbytes(), 0);
+        if (numbytes < 0) {
+            perror("write error");
+            exit(-1);
+        }
 
-    std::cout << "DoSend: write " << numbytes << " bytes" << "\n";
+        // std::cout << "DoSend: write " << numbytes << " bytes" << "\n";
 
-    msg->pos += numbytes;
-    if (msg->nbytes() == 0) {
-        _sendBuff.pop_front();
-        if (_sendBuff.empty()) {
-            // _manager->UnsetWritable(_fd);
-            return DoSendResultEnum::SendBuffEmptied; 
+        msg->pos += numbytes;
+        if (msg->nbytes() == 0) {
+            _sendBuff.pop_front();
+            if (_sendBuff.empty()) {
+                // _manager->UnsetWritable(_fd);
+                return DoSendResultEnum::SendBuffEmptied; 
+            }
+        } else {
+            return DoSendResultEnum::none;
         }
     }
     return DoSendResultEnum::none;

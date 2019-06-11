@@ -10,8 +10,8 @@ T* ListLedgerManager<T>::GetLastBlock() {
 template <typename T>
 void ListLedgerManager<T>::AppendBlock(typename std::shared_ptr<T> blk) {
     list_ledger.push_back(*blk);
-    std::cout << GetGlobalClock() << ":block appended" << "\n";
-    std::cout << *blk << "\n";
+    /* std::cout << GetGlobalClock() << ":block appended" << "\n"; */
+    /* std::cout << *blk << "\n"; */
 
     auto pow_blk = std::dynamic_pointer_cast<POWBlock>(blk);
     if (pow_blk) {

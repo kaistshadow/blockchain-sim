@@ -174,9 +174,9 @@ bool RandomGossipNetworkModule::SendMulticastMsg(PeerId dest, std::shared_ptr<Me
             message->GetType().c_str(),
             message->GetMessageId().c_str());
     shadow_push_eventlog(buf);
-    printf("sendMessage %s %s\n",
-            peerManager.GetMyPeerId()->GetId().c_str(),
-            dest.GetId().c_str());
+    // printf("sendMessage %s %s\n",
+    //         peerManager.GetMyPeerId()->GetId().c_str(),
+    //         dest.GetId().c_str());
 
     return true;
 }

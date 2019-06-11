@@ -11,6 +11,7 @@
 #include "datamanagermodules/ListLedgerManager.h"
 
 #include "utility/ArgsManager.h"
+#include "utility/GlobalClock.h"
 
 #include "shadow_interface.h"
 
@@ -116,6 +117,16 @@ int main(int argc, char *argv[]) {
     int fanOut = std::stoi(gArgs.GetArg("-fanout"));
     std::vector<PeerId> peerList;
 
+    // test for computation latency emulation
+    // init_shadow_clock_update();
+    // int a = 0;
+    // for (int i = 0; i < 100000000; i++)
+    //     a++;
+    // std::cout << a << "\n";
+    // double loopmilli = next_shadow_clock_update();
+    // std::cout << "time for executing loop:" << loopmilli << "\n";
+
+
     // for testing DisconnectPeer API
 
     gArgs.ParseParameters(argc, argv);
@@ -205,6 +216,9 @@ int main(int argc, char *argv[]) {
 
                     // Call another request, i.e., periodically generate transaction
                     txGeneratorModule.AsyncGenerateRandomTransaction(gArgs.GetArg("-txgeninterval", 0));
+
+                    // double milli = next_shadow_clock_update();
+                    // std::cout << "time for handling CompleteAsyncGenerateRandomTransaction:" << milli << "\n";
                     break;
                 }
             case AsyncEventEnum::RecvMessage:
@@ -318,6 +332,9 @@ int main(int argc, char *argv[]) {
                     //     for (auto neighborPeerId : gArgs.GetArgs("-connect"))
                     //         basicNetworkModule.DisconnectPeer(PeerId(neighborPeerId));
                     // }
+                    // double milli = next_shadow_clock_update("handling RecvMessage");
+                    // std::cout << "time for handling RecvMessage:" << milli << "\n";
+
                     break;
                 }
             case AsyncEventEnum::NewPeerConnected:
@@ -336,7 +353,9 @@ int main(int argc, char *argv[]) {
                 }
             case AsyncEventEnum::EmuBlockMiningComplete:
                 {
-                    std::cout << "block mining complte" << "\n";
+                    // init_shadow_clock_update();
+
+                    // std::cout << "block mining complte" << "\n";
                     std::shared_ptr<POWBlock> minedBlk = event.GetData().GetMinedBlock();
                     AppendBlockToLedger(minedBlk, txPool, ledger);
                     mined_block_num++;
@@ -358,7 +377,7 @@ int main(int argc, char *argv[]) {
                     //     basicNetworkModule.UnicastMessage(destPeerId, msg);
                     // }
 
-                    std::cout << "mined block num = " << mined_block_num << "\n";
+                    // std::cout << "mined block num = " << mined_block_num << "\n";
                     if (ledger.GetNextBlockIdx() == 101) {
                         std::cout << "total_mined_block_num=" << mined_block_num << "\n";
                         char buf[256];
@@ -370,6 +389,7 @@ int main(int argc, char *argv[]) {
                         exit(0);
                     }
 
+                    // double milli = next_shadow_clock_update("===== handling EmuBlockMiningComplete");
                     break;
                 }
             }

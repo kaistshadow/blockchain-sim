@@ -158,7 +158,7 @@ bool RandomGossipNetworkModule::SendMulticastMsg(PeerId dest, std::shared_ptr<Me
     std::shared_ptr<DataSocket_v2> dataSocket = socketManager.GetDataSocket(socketFD);
 
     // append a message to socket
-    dataSocket->AppendMessageToSendBuff(message);
+    dataSocket->AppendMessageToSendBuff(message, dest);
     // set writable for data socket watcher
     std::shared_ptr<DataSocketWatcher> dataSocketWatcher = watcherManager.GetDataSocketWatcher(socketFD);
     if (dataSocketWatcher)
@@ -184,6 +184,34 @@ bool RandomGossipNetworkModule::SendMulticastMsg(PeerId dest, std::shared_ptr<Me
 bool RandomGossipNetworkModule::MulticastMessage(std::shared_ptr<Message> message){
     char buf[256];
     sprintf(buf, "API,MulticastMessage,%s", message->GetType().c_str());
+    shadow_push_eventlog(buf);
+
+    PeerId myId = *peerManager.GetMyPeerId();
+    std::vector<PeerId> dests = GetNeighborPeerIds();
+    if (dests.size() == 0) return true;
+    auto idxs = GenRandomNumSet(dests.size(), fanOut);
+    for(std::vector<PeerId>::size_type i = 0 ; i < dests.size(); i++){
+        if (idxs.find(i) != idxs.end()){
+            if (checkSourcePeer(message, dests[i])){
+              if(SendMulticastMsg(dests[i], message) == false)
+                  return false;
+              else {
+                  // add timestamp
+                  struct timespec tspec;
+                  clock_gettime(CLOCK_MONOTONIC, &tspec);
+                  char name[100];
+                  sprintf(name, "AppendToSendBuf(%s)", dests[i].GetId().c_str());
+                  blocktimelogs[message->GetMessageId()][name] = tspec;
+              }
+            }
+        }
+    }
+    return true;
+}
+
+bool RandomGossipNetworkModule::ForwardMessage(std::shared_ptr<Message> message){
+    char buf[256];
+    sprintf(buf, "API,ForwardMessage,%s", message->GetType().c_str());
     shadow_push_eventlog(buf);
 
     PeerId myId = *peerManager.GetMyPeerId();

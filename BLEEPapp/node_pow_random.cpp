@@ -245,6 +245,11 @@ int main(int argc, char *argv[]) {
                         std::shared_ptr<POWBlock> receivedPOWBlk = std::dynamic_pointer_cast<POWBlock> (receivedBlk); // we know it's POWBlock
                         M_Assert(receivedPOWBlk != nullptr, "it should be POWBlock");
 
+                        // add timestamp
+                        struct timespec tspec;
+                        clock_gettime(CLOCK_MONOTONIC, &tspec);
+                        blocktimelogs[msg->GetMessageId()]["BlockReceived"] = tspec;
+
                         unsigned long nextblkidx = ledger.GetNextBlockIdx();
                         POWBlock* lastblk = ledger.GetLastBlock();
                         if (lastblk == nullptr ||
@@ -357,14 +362,23 @@ int main(int argc, char *argv[]) {
 
                     // std::cout << "block mining complte" << "\n";
                     std::shared_ptr<POWBlock> minedBlk = event.GetData().GetMinedBlock();
-                    AppendBlockToLedger(minedBlk, txPool, ledger);
-                    mined_block_num++;
 
-                    // propagate to network
+                    // create blk message
                     PeerId src(gArgs.GetArg("-id"));
                     PeerId dest = PeerId("DestAll");
                     std::string payload = GetSerializedString(minedBlk);
                     std::shared_ptr<Message> nMsg = std::make_shared<Message>(src, dest, "newBlock", payload);
+
+                    // add timestamp
+                    struct timespec tspec;
+                    clock_gettime(CLOCK_MONOTONIC, &tspec);
+                    blocktimelogs[nMsg->GetMessageId()]["BlockMined"] = tspec;
+
+                    // append block to ledger
+                    AppendBlockToLedger(minedBlk, txPool, ledger);
+                    mined_block_num++;
+
+                    // propagate to network
                     randomNetworkModule.MulticastMessage(nMsg);
                     randomNetworkModule.InsertMessageSet(nMsg->GetMessageId());
 
@@ -385,6 +399,8 @@ int main(int argc, char *argv[]) {
                                 "TotalMinedBlockNum",
                                 mined_block_num - 1, ledger.GetNextBlockIdx() - 1);
                         shadow_push_eventlog(buf);
+
+                        PrintBlockTimeLogs();
                         
                         exit(0);
                     }

@@ -6,6 +6,8 @@
 #include <string.h>
 #include <memory>
 
+#include "Peer.h"
+
 #define DEFAULT_SOCKET_PORT 3456
 #define BACKLOG 100     /* how many pending connections queue will hold */
 
@@ -41,12 +43,24 @@ namespace libBLEEP {
         char       *data;
         ssize_t len;
         ssize_t pos;
+        std::pair< PeerId, std::shared_ptr<Message>> msgInfo;
 
         WriteMsg (const char *bytes, ssize_t nbytes) {
             pos = 0;
             len = nbytes;
             data = new char[nbytes];
             memcpy(data, bytes, nbytes);
+            msgInfo.second = nullptr;
+        }
+
+        WriteMsg (const char *bytes, ssize_t nbytes, PeerId dest, std::shared_ptr<Message> msg) {
+            pos = 0;
+            len = nbytes;
+            data = new char[nbytes];
+            memcpy(data, bytes, nbytes);
+
+            msgInfo.first = dest;
+            msgInfo.second = msg;
         }
 
         virtual ~WriteMsg () {

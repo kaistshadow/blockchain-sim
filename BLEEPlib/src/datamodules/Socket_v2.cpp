@@ -149,17 +149,17 @@ std::pair< bool, std::shared_ptr<Message> > libBLEEP::DataSocket_v2::DoRecv() {
                 if (total_recv_size == _recvBuff.message_len)
                     break;
                 else {
-                    std::cout << "recv: total_recv_size=" << total_recv_size << ", message_len=" << _recvBuff.message_len << "\n";
+                    // std::cout << "recv: total_recv_size=" << total_recv_size << ", message_len=" << _recvBuff.message_len << "\n";
                 }
                 memset(string_read, 0, 2000);
             }
             if (_recvBuff.message_len != total_recv_size) {
                 _recvBuff.received_len = total_recv_size;
-                std::cout << "received only part of message (maybe recv buffer is full)" << "received_len:" << _recvBuff.received_len << ", message_len:" << _recvBuff.message_len << "\n";
+                // std::cout << "received only part of message (maybe recv buffer is full)" << "received_len:" << _recvBuff.received_len << ", message_len:" << _recvBuff.message_len << "\n";
                 break;
             }
             else {
-                std::cout << "fully received. size:" << total_recv_size << "\n";
+                // std::cout << "fully received. size:" << total_recv_size << "\n";
                 _recvBuff.recv_status = RECV_IDLE;
 
                 // deserialization process //
@@ -194,6 +194,14 @@ DoSendResultEnum libBLEEP::DataSocket_v2::DoSend() {
 
         msg->pos += numbytes;
         if (msg->nbytes() == 0) {
+            if (msg->msgInfo.second != nullptr) {
+                // add timestamp
+                struct timespec tspec;
+                clock_gettime(CLOCK_MONOTONIC, &tspec);
+                char name[100];
+                sprintf(name, "MsgSent(%s)", msg->msgInfo.first.GetId().c_str());
+                blocktimelogs[msg->msgInfo.second->GetMessageId()][name] = tspec;
+            }
             _sendBuff.pop_front();
             if (_sendBuff.empty()) {
                 // _manager->UnsetWritable(_fd);
@@ -221,6 +229,24 @@ void libBLEEP::DataSocket_v2::AppendMessageToSendBuff(std::shared_ptr<Message> m
 
     _sendBuff.push_back(std::make_shared<WriteMsg>((char*)&message_len, sizeof(int)));
     _sendBuff.push_back(std::make_shared<WriteMsg>(serial_str.c_str(), message_len));
+    // _manager->SetWritable(_fd);
+}
+
+void libBLEEP::DataSocket_v2::AppendMessageToSendBuff(std::shared_ptr<Message> message, PeerId dest) {
+    Message* msg = message.get();
+
+    std::string serial_str;
+    // serialize message obj into an std::string message
+    boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+    boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
+    boost::archive::binary_oarchive oa(s);
+    oa << msg;
+    s.flush();
+
+    int message_len = serial_str.size();
+
+    _sendBuff.push_back(std::make_shared<WriteMsg>((char*)&message_len, sizeof(int)));
+    _sendBuff.push_back(std::make_shared<WriteMsg>(serial_str.c_str(), message_len, dest, message));
     // _manager->SetWritable(_fd);
 }
 

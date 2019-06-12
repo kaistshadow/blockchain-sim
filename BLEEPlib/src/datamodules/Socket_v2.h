@@ -74,6 +74,7 @@ namespace libBLEEP {
         std::pair < bool, std::shared_ptr<Message> > DoRecv(); /* do recv and return pointer for received Message (if fully received) */
         DoSendResultEnum DoSend(); /* do actual send (by retrieving the data stream from sendBuff) */
         void AppendMessageToSendBuff(std::shared_ptr<Message> message); /* append a requested message into internal sendBuff */
+        void AppendMessageToSendBuff(std::shared_ptr<Message> message, PeerId dest); /* append a requested message into internal sendBuff */
 
         virtual ~DataSocket_v2();
         virtual SocketTypeEnum GetType() { return SocketTypeEnum::DataSocket; }

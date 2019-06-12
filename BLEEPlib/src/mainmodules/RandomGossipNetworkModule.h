@@ -181,6 +181,13 @@ namespace libBLEEP {
                                 // if the duplicated broadcasting message is received, 
                                 // then just ignore it.
                             } else {
+                                // add timestamp
+                                struct timespec tspec;
+                                clock_gettime(CLOCK_MONOTONIC, &tspec);
+                                char name[100];
+                                sprintf(name, "MsgReceived(%s->%s)", neighborPeerId->GetId().c_str(), _networkModule->peerManager.GetMyPeerId()->GetId().c_str());
+                                blocktimelogs[message->GetMessageId()][name] = tspec;
+
                                 AsyncEvent event(AsyncEventEnum::RecvMessage);
                                 event.GetData().SetReceivedMsg(message);
                                 _mainEventModule->PushAsyncEvent(event);
@@ -190,7 +197,8 @@ namespace libBLEEP {
                                     M_Assert(unique, "Message is unexpectedly duplicated!" ); 
 
                                     // forward the received message for broadcasting
-                                    _networkModule->MulticastMessage(message);
+                                    _networkModule->ForwardMessage(message);
+
                                 }
                             }
 
@@ -369,6 +377,7 @@ namespace libBLEEP {
         bool UnicastMessage(PeerId dest, std::shared_ptr<Message> message);
 
         bool MulticastMessage(std::shared_ptr<Message> message);
+        bool ForwardMessage(std::shared_ptr<Message> message); // separate from multicastMessage for debugging
 
         bool DisconnectPeer(PeerId id);
 

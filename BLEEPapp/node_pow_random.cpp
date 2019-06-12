@@ -113,8 +113,6 @@ bool UpdateLedgerAsLongestChain(std::vector<POWBlock>& received_blks, TxPool& tx
 }
 
 int main(int argc, char *argv[]) {
-    int connectPeerNum = std::stoi(gArgs.GetArg("-outpeernum"));;
-    int fanOut = std::stoi(gArgs.GetArg("-fanout"));
     std::vector<PeerId> peerList;
 
     // test for computation latency emulation
@@ -136,6 +134,9 @@ int main(int argc, char *argv[]) {
         std::cout << strUsage << "\n";
         return 0;
     }
+
+    int connectPeerNum = std::stoi(gArgs.GetArg("-outpeernum"));;
+    int fanOut = std::stoi(gArgs.GetArg("-fanout"));
 
     /* allocate mainEventManager */
     MainEventManager mainEventManager;

@@ -220,10 +220,10 @@ bool RandomGossipNetworkModule::ForwardMessage(std::shared_ptr<Message> message)
     auto idxs = GenRandomNumSet(dests.size(), fanOut);
     for(std::vector<PeerId>::size_type i = 0 ; i < dests.size(); i++){
         if (idxs.find(i) != idxs.end()){
-            if (checkSourcePeer(message, dests[i])){
-              if(SendMulticastMsg(dests[i], message) == false)
-                  return false;
-            }
+            // if (checkSourcePeer(message, dests[i])){ // send back to source for debugging
+            if(SendMulticastMsg(dests[i], message) == false)
+                return false;
+            // }
         }
     }
     return true;

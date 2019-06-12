@@ -176,7 +176,18 @@ namespace libBLEEP {
                                     message->GetMessageId().c_str());
                             shadow_push_eventlog(buf);
 
-                            if (message->GetDest().GetId() == "DestAll" &&
+                            if (message->GetDest().GetId() == "DestAll" && 
+                                message->GetSource().GetId() == _networkModule->peerManager.GetMyPeerId()->GetId()) {
+                                // for debugging
+                                // add timestamp for returned message
+                                // then just ignore it.
+                                struct timespec tspec;
+                                clock_gettime(CLOCK_MONOTONIC, &tspec);
+                                char name[100];
+                                sprintf(name, "MsgReturned(%s->%s)", neighborPeerId->GetId().c_str(), _networkModule->peerManager.GetMyPeerId()->GetId().c_str());
+                                blocktimelogs[message->GetMessageId()][name] = tspec;
+                            }
+                            else if (message->GetDest().GetId() == "DestAll" &&
                                 _networkModule->ExistMessage(message->GetMessageId())) {
                                 // if the duplicated broadcasting message is received, 
                                 // then just ignore it.

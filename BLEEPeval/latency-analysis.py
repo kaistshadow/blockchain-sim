@@ -14,7 +14,10 @@ def analysis_logs(directory):
     blk = defaultdict(list) # msghash : [ (Step, Time, at) ]
     for root, dirs, files in os.walk(directory):
         for logfile in files:
-            nodename = logfile.split("-")[1].split(".")[0]
+            if len(logfile.split("-")) == 3:
+                nodename = logfile.split("-")[2]
+            else:
+                nodename = logfile.split("-")[1].split(".")[0]
             filepath = os.path.join(root,logfile)
             for line in open(filepath, 'r'):
                 if "PrintBlockTimeLogs" in line:
@@ -35,7 +38,7 @@ def analysis_logs(directory):
         # sort for following sorted nodenames
         sorted_tuples = sorted(sorted_tuples, key=lambda x : sorted_nodenames.index(x[2]))
 
-        sorted_tuples = sorted(sorted_tuples, cmp=cmp_step) # show blockmined event first 
+        # sorted_tuples = sorted(sorted_tuples, cmp=cmp_step) # show blockmined event first 
 
         print "==="
         for (step, time, at) in sorted_tuples:

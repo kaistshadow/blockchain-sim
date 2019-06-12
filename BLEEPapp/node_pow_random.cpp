@@ -282,6 +282,11 @@ int main(int argc, char *argv[]) {
                             std::cout << "Need to implement ReqBlocks, RespBlocks" << "\n";
                             POWConsensusMessage powmsg("REQBLOCKS");
                         
+                            // add timestamp
+                            struct timespec tspec;
+                            clock_gettime(CLOCK_MONOTONIC, &tspec);
+                            blocktimelogs[msg->GetMessageId()]["BlockFork"] = tspec;
+
                             // propagate to network
                             PeerId myPeerId(gArgs.GetArg("-id"));
                             PeerId destPeerId = msg->GetSource();
@@ -378,6 +383,15 @@ int main(int argc, char *argv[]) {
                     AppendBlockToLedger(minedBlk, txPool, ledger);
                     mined_block_num++;
 
+                    // restart mining timer
+                    int txNumPerBlock = std::stoi(gArgs.GetArg("-blocktxnum"));
+                    if (txPool.GetPendingTxNum() >= txNumPerBlock && !powModule.IsMining()) {
+                        std::shared_ptr<POWBlock> candidateBlk = MakeCandidateBlock(txPool, ledger);
+                        double mining_avg = std::stof(gArgs.GetArg("-miningtime"));
+                        double mining_dev = std::stof(gArgs.GetArg("-miningtimedev"));
+                        powModule.AsyncEmulateBlockMining(candidateBlk, mining_avg, mining_dev);
+                    }
+
                     // propagate to network
                     randomNetworkModule.MulticastMessage(nMsg);
                     randomNetworkModule.InsertMessageSet(nMsg->GetMessageId());
@@ -393,6 +407,8 @@ int main(int argc, char *argv[]) {
 
                     // std::cout << "mined block num = " << mined_block_num << "\n";
                     if (ledger.GetNextBlockIdx() == 101) {
+                        PrintBlockTimeLogs();
+
                         std::cout << "total_mined_block_num=" << mined_block_num << "\n";
                         char buf[256];
                         sprintf(buf, "ResultStat,%s,%d,%lu",
@@ -400,7 +416,6 @@ int main(int argc, char *argv[]) {
                                 mined_block_num - 1, ledger.GetNextBlockIdx() - 1);
                         shadow_push_eventlog(buf);
 
-                        PrintBlockTimeLogs();
                         
                         exit(0);
                     }

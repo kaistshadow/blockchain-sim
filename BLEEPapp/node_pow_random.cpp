@@ -337,6 +337,18 @@ int main(int argc, char *argv[]) {
                         }
                     }
 
+                    if (ledger.GetNextBlockIdx() == 101) {
+                        PrintBlockTimeLogs();
+
+                        std::cout << "total_mined_block_num=" << mined_block_num << "\n";
+                        char buf[256];
+                        sprintf(buf, "ResultStat,%s,%d,%lu",
+                                "TotalMinedBlockNum",
+                                mined_block_num - 1, ledger.GetNextBlockIdx() - 1);
+                        shadow_push_eventlog(buf);
+                        exit(0);
+                    } 
+
                     // // for testing DisconnectPeer API
                     // receivedMessageCount++;
                     // if (receivedMessageCount >= 5) {
@@ -418,6 +430,7 @@ int main(int argc, char *argv[]) {
                         shadow_push_eventlog(buf);
 
                         
+                    } else if (ledger.GetNextBlockIdx() == 101) {
                         exit(0);
                     }
 

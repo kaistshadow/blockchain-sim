@@ -248,7 +248,7 @@ int main(int argc, char *argv[]) {
 
                         // add timestamp
                         struct timespec tspec;
-                        clock_gettime(CLOCK_MONOTONIC, &tspec);
+                        clock_gettime(CLOCK_REALTIME, &tspec);
                         blocktimelogs[msg->GetMessageId()]["BlockReceived"] = tspec;
 
                         unsigned long nextblkidx = ledger.GetNextBlockIdx();
@@ -285,7 +285,7 @@ int main(int argc, char *argv[]) {
                         
                             // add timestamp
                             struct timespec tspec;
-                            clock_gettime(CLOCK_MONOTONIC, &tspec);
+                            clock_gettime(CLOCK_REALTIME, &tspec);
                             blocktimelogs[msg->GetMessageId()]["BlockFork"] = tspec;
 
                             // propagate to network
@@ -389,7 +389,7 @@ int main(int argc, char *argv[]) {
 
                     // add timestamp
                     struct timespec tspec;
-                    clock_gettime(CLOCK_MONOTONIC, &tspec);
+                    clock_gettime(CLOCK_REALTIME, &tspec);
                     blocktimelogs[nMsg->GetMessageId()]["BlockMined"] = tspec;
 
                     // append block to ledger

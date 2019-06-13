@@ -182,7 +182,7 @@ namespace libBLEEP {
                                 // add timestamp for returned message
                                 // then just ignore it.
                                 struct timespec tspec;
-                                clock_gettime(CLOCK_MONOTONIC, &tspec);
+                                clock_gettime(CLOCK_REALTIME, &tspec);
                                 char name[100];
                                 sprintf(name, "MsgReturned(%s->%s)", neighborPeerId->GetId().c_str(), _networkModule->peerManager.GetMyPeerId()->GetId().c_str());
                                 blocktimelogs[message->GetMessageId()][name] = tspec;
@@ -194,7 +194,7 @@ namespace libBLEEP {
                             } else {
                                 // add timestamp
                                 struct timespec tspec;
-                                clock_gettime(CLOCK_MONOTONIC, &tspec);
+                                clock_gettime(CLOCK_REALTIME, &tspec);
                                 char name[100];
                                 sprintf(name, "MsgReceived(%s->%s)", neighborPeerId->GetId().c_str(), _networkModule->peerManager.GetMyPeerId()->GetId().c_str());
                                 blocktimelogs[message->GetMessageId()][name] = tspec;

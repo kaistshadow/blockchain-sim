@@ -198,7 +198,7 @@ bool RandomGossipNetworkModule::MulticastMessage(std::shared_ptr<Message> messag
               else {
                   // add timestamp
                   struct timespec tspec;
-                  clock_gettime(CLOCK_MONOTONIC, &tspec);
+                  clock_gettime(CLOCK_REALTIME, &tspec);
                   char name[100];
                   sprintf(name, "AppendToSendBuf(%s)", dests[i].GetId().c_str());
                   blocktimelogs[message->GetMessageId()][name] = tspec;

@@ -197,7 +197,7 @@ DoSendResultEnum libBLEEP::DataSocket_v2::DoSend() {
             if (msg->msgInfo.second != nullptr) {
                 // add timestamp
                 struct timespec tspec;
-                clock_gettime(CLOCK_REALTIME, &tspec);
+                clock_gettime(CLOCK_MONOTONIC, &tspec);
                 char name[100];
                 sprintf(name, "MsgSent(%s)", msg->msgInfo.first.GetId().c_str());
                 blocktimelogs[msg->msgInfo.second->GetMessageId()][name] = tspec;

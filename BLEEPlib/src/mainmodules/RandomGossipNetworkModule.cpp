@@ -198,7 +198,7 @@ bool RandomGossipNetworkModule::MulticastMessage(std::shared_ptr<Message> messag
               else {
                   // add timestamp
                   struct timespec tspec;
-                  clock_gettime(CLOCK_REALTIME, &tspec);
+                  clock_gettime(CLOCK_MONOTONIC, &tspec);
                   char name[100];
                   sprintf(name, "AppendToSendBuf(%s)", dests[i].GetId().c_str());
                   blocktimelogs[message->GetMessageId()][name] = tspec;
@@ -220,11 +220,10 @@ bool RandomGossipNetworkModule::ForwardMessage(std::shared_ptr<Message> message)
     auto idxs = GenRandomNumSet(dests.size(), fanOut);
     for(std::vector<PeerId>::size_type i = 0 ; i < dests.size(); i++){
         if (idxs.find(i) != idxs.end()){
-            // if (checkSourcePeer(message, dests[i])){ // for debugging
-            if (!checkSourcePeer(message, dests[i])){ // for debugging
-                if(SendMulticastMsg(dests[i], message) == false)
-                    return false;
-            }
+            // if (checkSourcePeer(message, dests[i])){ // send back to source for debugging
+            if(SendMulticastMsg(dests[i], message) == false)
+                return false;
+            // }
         }
     }
     return true;

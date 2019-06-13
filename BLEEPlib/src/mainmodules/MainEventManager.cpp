@@ -13,7 +13,7 @@ void MainEventManager::Wait() {
     while (true) {
         ev_run (_libev_loop, EVRUN_ONCE);
 
-        std::cout << "ev_run returned" << "\n";
+        // std::cout << "ev_run returned" << "\n";
         // if (_asyncEventTriggered)
         //     break;
         if (!_eventQueue.empty())

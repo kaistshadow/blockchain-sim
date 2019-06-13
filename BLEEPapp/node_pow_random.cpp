@@ -202,9 +202,9 @@ int main(int argc, char *argv[]) {
                 }
             case AsyncEventEnum::CompleteAsyncGenerateRandomTransaction:
                 {
-                    std::cout << "random transaction generated" << "\n";
+                    // std::cout << "random transaction generated" << "\n";
                     boost::shared_ptr<Transaction> generatedTx = event.GetData().GetGeneratedTx();
-                    std::cout << *generatedTx << "\n";
+                    // std::cout << *generatedTx << "\n";
 
                     txPool.AddTx(generatedTx);
                     int txNumPerBlock = std::stoi(gArgs.GetArg("-blocktxnum"));
@@ -224,7 +224,7 @@ int main(int argc, char *argv[]) {
                 }
             case AsyncEventEnum::RecvMessage:
                 {
-                    std::cout << "RecvMessage" << "\n";
+                    // std::cout << "RecvMessage" << "\n";
                     std::shared_ptr<Message> msg = event.GetData().GetReceivedMsg();
                     MessageType messageType = msg->GetType();
                     if (messageType == "newTx") {
@@ -241,7 +241,7 @@ int main(int argc, char *argv[]) {
                     } 
                     else if (messageType == "newBlock") {
                         std::shared_ptr<Block> receivedBlk = GetDeserializedBlock(msg->GetPayload());  
-                        std::cout << "received newBlock" << "\n";
+                        // std::cout << "received newBlock" << "\n";
 
                         std::shared_ptr<POWBlock> receivedPOWBlk = std::dynamic_pointer_cast<POWBlock> (receivedBlk); // we know it's POWBlock
                         M_Assert(receivedPOWBlk != nullptr, "it should be POWBlock");
@@ -279,14 +279,14 @@ int main(int argc, char *argv[]) {
                             /* received valid new blk message from neighbor,
                                and it is from longer blockchain than my blockchain.
                                Thus, request a new message for blocks of longer blockchain */
-                            std::cout << GetGlobalClock() << ":Block (sented by " << msg->GetSource().GetId() << ") is received and longer than mine" << "\n";
-                            std::cout << "Need to implement ReqBlocks, RespBlocks" << "\n";
+                            // std::cout << GetGlobalClock() << ":Block (sented by " << msg->GetSource().GetId() << ") is received and longer than mine" << "\n";
+                            // std::cout << "Need to implement ReqBlocks, RespBlocks" << "\n";
                             POWConsensusMessage powmsg("REQBLOCKS");
                         
                             // add timestamp
                             struct timespec tspec;
                             clock_gettime(CLOCK_MONOTONIC, &tspec);
-                            blocktimelogs[msg->GetMessageId()]["BlockFork"] = tspec;
+                            blocktimelogs[msg->GetMessageId()]["ForkBlockReceived"] = tspec;
 
                             // propagate to network
                             PeerId myPeerId(gArgs.GetArg("-id"));
@@ -297,12 +297,16 @@ int main(int argc, char *argv[]) {
                             randomNetworkModule.UnicastMessage(destPeerId, msg);
                         }
                         else {
-                            std::cout << GetGlobalClock() << ":Block is received but not appended" << "\n";
+                            // add timestamp
+                            struct timespec tspec;
+                            clock_gettime(CLOCK_MONOTONIC, &tspec);
+                            blocktimelogs[msg->GetMessageId()]["ForkBlockReceived"] = tspec;
+                            // std::cout << GetGlobalClock() << ":Block is received but not appended" << "\n";
                         }
                     } 
                     else if (messageType == "POWConsensusProtocol") {
                         POWConsensusMessage receivedPOWmsg = GetDeserializedPOWConsensusMessage(msg->GetPayload());  
-                        std::cout << "received POWConsensusProtocol message" << "\n";
+                        // std::cout << "received POWConsensusProtocol message" << "\n";
                         if (receivedPOWmsg.GetType() == "REQBLOCKS") {
                             std::vector<POWBlock> blks;
                             std::list<POWBlock>& ledgerBlks = ledger.GetLedger();

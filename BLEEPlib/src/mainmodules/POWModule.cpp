@@ -19,7 +19,7 @@ void POWModule::AsyncEmulateBlockMining(std::shared_ptr<POWBlock> candidateBlk, 
         waiting_time = distribution(generator);
     }
 
-    std::cout << "waiting time = " << waiting_time << "\n";
+    // std::cout << "waiting time = " << waiting_time << "\n";
     watcherManager.CreateMiningEmulationTimer(candidateBlk, waiting_time);
 
     // append shadow api log

@@ -116,11 +116,11 @@ namespace libBLEEP {
                 _timer.set<BlockMiningEmulationTimer, &BlockMiningEmulationTimer::_timerCallback>(this);
                 _timer.set(time, 0.);
                 _timer.start();
-                std::cout << "block mining timer started!" << "\n";
+                /* std::cout << "block mining timer started!" << "\n"; */
                 _powModule->_isMining = true;
             }
             ~BlockMiningEmulationTimer() {
-                std::cout << "BlockMiningEmulationTimer destroyed" << "\n";
+                /* std::cout << "BlockMiningEmulationTimer destroyed" << "\n"; */
             }
         };
 

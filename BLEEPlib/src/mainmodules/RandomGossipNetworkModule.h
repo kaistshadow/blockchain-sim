@@ -165,7 +165,7 @@ namespace libBLEEP {
 
                         } else if (message) {
                             std::shared_ptr<PeerId> neighborPeerId = _networkModule->peerManager.GetPeerIdBySocket(fd);
-                            std::cout << "message source:" << message->GetSource().GetId() << "\n";
+                            /* std::cout << "message source:" << message->GetSource().GetId() << "\n"; */
                             M_Assert(neighborPeerId != nullptr, "no neighbor peer exists for given socket");
 
                             char buf[256];

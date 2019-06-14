@@ -10,6 +10,8 @@ namespace libBLEEP {
     unsigned long GetCurrentTime();
 
     void PrintTimeDiff(const char* prefix, const struct timespec& start, const struct timespec& end);
+
+    void PrintTimespec(const char* prefix);
 }
 
 

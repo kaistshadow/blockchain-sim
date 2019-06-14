@@ -21,6 +21,40 @@
 
 using namespace libBLEEP;
 
+// buf needs to store 30 characters
+static int timespec2str(char *buf, uint len, struct timespec *ts) {
+    uint ret;
+    struct tm t;
+
+    tzset();
+    if (localtime_r(&(ts->tv_sec), &t) == NULL)
+        return 1;
+
+    ret = strftime(buf, len, "%F %T", &t);
+    if (ret == 0)
+        return 2;
+    len -= ret - 1;
+
+    ret = snprintf(&buf[strlen(buf)], len, ".%09ld", ts->tv_nsec);
+    if (ret >= len)
+        return 3;
+
+    return 0;
+}
+
+static void printtimespec(const char* prefix) {
+    struct timespec tspec;
+    clock_gettime(CLOCK_MONOTONIC, &tspec);
+    const uint TIME_FMT = strlen("2012-12-31 12:59:59.123456789") + 1;
+    char timestr[TIME_FMT];
+    if (timespec2str(timestr, sizeof(timestr), &tspec) != 0) {
+        std::cout << "timespec2str failed" << "\n";
+        exit(-1);
+    }
+    std::cout << timestr << ":" << prefix << "\n";
+    return;
+}
+
 libBLEEP::ListenSocket_v2::ListenSocket_v2(int port) {
 
     int 			listenfd;     /* listen on sock_fd */
@@ -97,7 +131,9 @@ std::pair< bool, std::shared_ptr<Message> > libBLEEP::DataSocket_v2::DoRecv() {
     case RECV_IDLE:
         {
             int length = 0;
+            printtimespec("before recv length");
             n = recv(_fd, &length, sizeof(int),0);
+            printtimespec("after recv length");
             if (n == -1 && errno != EAGAIN){
                 perror("recv - non blocking \n");
                 std::cout << "errno=" << errno << "\n";
@@ -125,7 +161,9 @@ std::pair< bool, std::shared_ptr<Message> > libBLEEP::DataSocket_v2::DoRecv() {
             // Handle all pending 'recv'  
             while(1) {
                 int recv_size = std::min(2000, _recvBuff.message_len - total_recv_size);
+                printtimespec("before recv msg");
                 numbytes = recv(_fd, string_read, recv_size, 0);
+                printtimespec("after recv msg");
                 if (numbytes > 0) {
                     total_recv_size += numbytes;
                     _recvBuff.recv_str.append(string_read, numbytes);
@@ -151,23 +189,30 @@ std::pair< bool, std::shared_ptr<Message> > libBLEEP::DataSocket_v2::DoRecv() {
                 else {
                     // std::cout << "recv: total_recv_size=" << total_recv_size << ", message_len=" << _recvBuff.message_len << "\n";
                 }
+                printtimespec("before memset 0 recvbuff");
                 memset(string_read, 0, 2000);
+                printtimespec("after memset 0 recvbuff");
             }
             if (_recvBuff.message_len != total_recv_size) {
+                printtimespec("received only part of message");
                 _recvBuff.received_len = total_recv_size;
                 // std::cout << "received only part of message (maybe recv buffer is full)" << "received_len:" << _recvBuff.received_len << ", message_len:" << _recvBuff.message_len << "\n";
                 break;
             }
             else {
+                printtimespec("fully receive message");
                 // std::cout << "fully received. size:" << total_recv_size << "\n";
                 _recvBuff.recv_status = RECV_IDLE;
 
+                printtimespec("before deserialization message");
                 // deserialization process //
                 Message *msg;
                 boost::iostreams::basic_array_source<char> device(_recvBuff.recv_str.c_str(), _recvBuff.recv_str.size());
                 boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
                 boost::archive::binary_iarchive ia(s);
                 ia >> msg;
+
+                printtimespec("after deserialization message");
 
                 return std::make_pair(true, std::shared_ptr<Message>(msg));
             }

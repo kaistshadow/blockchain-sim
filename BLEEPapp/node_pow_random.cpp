@@ -172,6 +172,26 @@ int main(int argc, char *argv[]) {
     // mainEventManager.AsyncConnectPeer(PeerId("143.248.38.37"));
     if (gArgs.IsArgSet("-txgeninterval")) {
         txGeneratorModule.AsyncGenerateRandomTransaction(std::stof(gArgs.GetArg("-txgeninterval")));
+    } else {
+        int txNumPerBlock = std::stoi(gArgs.GetArg("-blocktxnum"));
+        
+        // add txs to transaction pool
+        for (int i = 0; i < txNumPerBlock*105; i++) {
+            srand((unsigned int)time(0));
+            int sender_id = rand() % 100;
+            int receiver_id = rand() % 100;
+            float amount = (float) (rand() % 10000);
+            boost::shared_ptr<Transaction> generatedTx(new SimpleTransaction(sender_id, receiver_id, amount));
+
+            txPool.AddTx(generatedTx);
+        }
+        std::cout << "TxPool added, cur size:" << txPool.GetPendingTxNum() << "\n";
+        
+        // start mining
+        std::shared_ptr<POWBlock> candidateBlk = MakeCandidateBlock(txPool, ledger);
+        double mining_avg = std::stof(gArgs.GetArg("-miningtime"));
+        double mining_dev = std::stof(gArgs.GetArg("-miningtimedev"));
+        powModule.AsyncEmulateBlockMining(candidateBlk, mining_avg, mining_dev);
     }
 
     std::map<std::string, bool> reconnectTry;

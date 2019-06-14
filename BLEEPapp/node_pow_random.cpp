@@ -183,6 +183,7 @@ int main(int argc, char *argv[]) {
             float amount = (float) (rand() % 10000);
             boost::shared_ptr<Transaction> generatedTx(new SimpleTransaction(sender_id, receiver_id, amount));
 
+            std::cout << *generatedTx << "\n";
             txPool.AddTx(generatedTx);
         }
         std::cout << "TxPool added, cur size:" << txPool.GetPendingTxNum() << "\n";
@@ -295,6 +296,8 @@ int main(int argc, char *argv[]) {
 
                             // restart mining for new block
                             int txNumPerBlock = std::stoi(gArgs.GetArg("-blocktxnum"));
+                            std::cout << "pendingtxnum=" << txPool.GetPendingTxNum() << ",txNumPerBlock=" << txNumPerBlock << "\n";
+
                             if (txPool.GetPendingTxNum() >= txNumPerBlock) {
                                 std::cout << "recv powblock, restart mining!" << "\n";
                                 std::shared_ptr<POWBlock> candidateBlk = MakeCandidateBlock(txPool, ledger);

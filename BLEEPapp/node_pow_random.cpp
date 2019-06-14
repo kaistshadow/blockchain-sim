@@ -203,6 +203,7 @@ int main(int argc, char *argv[]) {
     while(true) {
         mainEventManager.Wait(); // main event loop (wait for next event)
         
+        PrintTimespec("mainEventManager.Wait returned");
         while (mainEventManager.ExistAsyncEvent()) {
             AsyncEvent event = mainEventManager.PopAsyncEvent();
         
@@ -255,6 +256,7 @@ int main(int argc, char *argv[]) {
             case AsyncEventEnum::RecvMessage:
                 {
                     // std::cout << "RecvMessage" << "\n";
+                    PrintTimespec("mainEventLoop AsyncEventEnum::recvMessage");
                     std::shared_ptr<Message> msg = event.GetData().GetReceivedMsg();
                     MessageType messageType = msg->GetType();
                     if (messageType == "newTx") {

@@ -134,6 +134,7 @@ namespace libBLEEP {
             ev::io _watcher;
 
             void _dataSocketIOCallback(ev::io &w, int revents) {
+                PrintTimespec("dataSocketIOCallback called");
                 M_Assert(_fd == w.fd, "fd must be same");
                 int fd = w.fd;
                 /* std::cout << "data socket IO callback called!" << "\n"; */
@@ -223,6 +224,7 @@ namespace libBLEEP {
                         UnsetWritable();
                 }
                 next_shadow_clock_update("==== done handling dataSocketIOCallback");
+                PrintTimespec("dataSocketIOCallback ended");
             }
         public :
             DataSocketWatcher(int fd, RandomGossipNetworkModule* netModule, MainEventManager* eventModule)

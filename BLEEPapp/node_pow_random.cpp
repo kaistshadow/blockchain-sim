@@ -174,6 +174,7 @@ int main(int argc, char *argv[]) {
         txGeneratorModule.AsyncGenerateRandomTransaction(std::stof(gArgs.GetArg("-txgeninterval")));
     }
 
+    std::map<std::string, bool> reconnectTry;
     while(true) {
         mainEventManager.Wait(); // main event loop (wait for next event)
         
@@ -197,7 +198,11 @@ int main(int argc, char *argv[]) {
                     std::cout << "AsyncConnectPeer got error(" << event.GetData().GetError() << ")" << "\n";
                     // try again with timer
                     PeerId peerId = event.GetData().GetRefusedPeerId();                
-                    randomNetworkModule.AsyncConnectPeer(peerId, 10);
+
+                    if (reconnectTry[peerId.GetId()] == false) {
+                        randomNetworkModule.AsyncConnectPeer(peerId, 1); // retry once
+                        reconnectTry[peerId.GetId()] = true;
+                    }
                     break;
                 }
             case AsyncEventEnum::CompleteAsyncGenerateRandomTransaction:

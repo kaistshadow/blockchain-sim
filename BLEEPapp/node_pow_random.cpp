@@ -176,8 +176,12 @@ int main(int argc, char *argv[]) {
         int txNumPerBlock = std::stoi(gArgs.GetArg("-blocktxnum"));
         
         // add txs to transaction pool
+        struct timespec tspec;
+        clock_gettime(CLOCK_MONOTONIC, &tspec);
+        unsigned int randtime = (tspec.tv_sec + tspec.tv_nsec);
+        std::cout << "randtime:" << randtime << "\n";
+        srand(randtime);
         for (int i = 0; i < txNumPerBlock*105; i++) {
-            srand((unsigned int)time(0));
             int sender_id = rand() % 100;
             int receiver_id = rand() % 100;
             float amount = (float) (rand() % 10000);
@@ -287,8 +291,6 @@ int main(int argc, char *argv[]) {
                             // stop mining
                             if (powModule.IsMining()) {
                                 powModule.StopMining();
-                                std::cout << "recv powblock stop mining" << "\n";
-                                std::cout << "pendingtxnum=" << txPool.GetPendingTxNum() << "\n";
                             }
 
                             // append a block to ledger
@@ -296,10 +298,7 @@ int main(int argc, char *argv[]) {
 
                             // restart mining for new block
                             int txNumPerBlock = std::stoi(gArgs.GetArg("-blocktxnum"));
-                            std::cout << "pendingtxnum=" << txPool.GetPendingTxNum() << ",txNumPerBlock=" << txNumPerBlock << "\n";
-
                             if (txPool.GetPendingTxNum() >= txNumPerBlock) {
-                                std::cout << "recv powblock, restart mining!" << "\n";
                                 std::shared_ptr<POWBlock> candidateBlk = MakeCandidateBlock(txPool, ledger);
                                 double mining_avg = std::stof(gArgs.GetArg("-miningtime"));
                                 double mining_dev = std::stof(gArgs.GetArg("-miningtimedev"));
@@ -359,13 +358,9 @@ int main(int argc, char *argv[]) {
                             if (UpdateLedgerAsLongestChain(blks, txPool, ledger)) {
                                 if (powModule.IsMining()) {
                                     powModule.StopMining();
-                                    std::cout << "recv respblks stop mining" << "\n";
-                                    std::cout << "pendingtxnum=" << txPool.GetPendingTxNum() << "\n";
-
                                     // restart mining for new block
                                     int txNumPerBlock = std::stoi(gArgs.GetArg("-blocktxnum"));
                                     if (txPool.GetPendingTxNum() >= txNumPerBlock) {
-                                        std::cout << "recv respblks: restart mining!" << "\n";
                                         std::shared_ptr<POWBlock> candidateBlk = MakeCandidateBlock(txPool, ledger);
                                         double mining_avg = std::stof(gArgs.GetArg("-miningtime"));
                                         double mining_dev = std::stof(gArgs.GetArg("-miningtimedev"));
@@ -423,12 +418,9 @@ int main(int argc, char *argv[]) {
                     AppendBlockToLedger(minedBlk, txPool, ledger);
                     mined_block_num++;
 
-                    std::cout << "mining complete, mined block num=" << mined_block_num << "\n";
-                    std::cout << "pendingtxnum=" << txPool.GetPendingTxNum() << "\n";
                     // restart mining timer
                     int txNumPerBlock = std::stoi(gArgs.GetArg("-blocktxnum"));
                     if (txPool.GetPendingTxNum() >= txNumPerBlock && !powModule.IsMining()) {
-                        std::cout << "restart mining!" << "\n";
                         std::shared_ptr<POWBlock> candidateBlk = MakeCandidateBlock(txPool, ledger);
                         double mining_avg = std::stof(gArgs.GetArg("-miningtime"));
                         double mining_dev = std::stof(gArgs.GetArg("-miningtimedev"));

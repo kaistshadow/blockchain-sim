@@ -152,7 +152,7 @@ std::pair< bool, std::shared_ptr<Message> > libBLEEP::DataSocket_v2::DoRecv() {
                 _recvBuff.received_len = 0;
                 _recvBuff.recv_str = "";
             }
-            // break; // directly handler RECV_MSG after RECV_IDLE
+            break; 
         }
     case RECV_MSG:
         {

@@ -192,6 +192,7 @@ namespace libBLEEP {
                                 _networkModule->ExistMessage(message->GetMessageId())) {
                                 // if the duplicated broadcasting message is received, 
                                 // then just ignore it.
+                                PrintTimespec("duplicated message");
                             } else {
                                 // add timestamp
                                 struct timespec tspec;

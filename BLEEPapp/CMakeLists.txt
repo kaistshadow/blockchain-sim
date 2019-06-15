@@ -92,6 +92,13 @@ add_shadow_plugin(NODE_POW_RANDOM node_pow_random.cpp)
 install(TARGETS NODE_POW_RANDOM DESTINATION plugins)
 target_link_libraries(NODE_POW_RANDOM BLEEP::BLEEP)
 
+add_shadow_plugin(NODE_CTXTEST_GEN node_ctxtest_gen.cpp)
+install(TARGETS NODE_CTXTEST_GEN DESTINATION plugins)
+target_link_libraries(NODE_CTXTEST_GEN BLEEP::BLEEP)
+
+add_shadow_plugin(NODE_CTXTEST_RECV node_ctxtest_recv.cpp)
+install(TARGETS NODE_CTXTEST_RECV DESTINATION plugins)
+target_link_libraries(NODE_CTXTEST_RECV BLEEP::BLEEP)
 
 ## compile for local executable
 add_executable(LOCAL_NODE_bleep node.cpp)
@@ -117,6 +124,12 @@ target_link_libraries(LOCAL_NODE_MINING BLEEP::BLEEP)
 
 add_executable(LOCAL_NODE_POW_RANDOM node_pow_random.cpp)
 target_link_libraries(LOCAL_NODE_POW_RANDOM BLEEP::BLEEP)
+
+add_executable(LOCAL_NODE_CTXTEST_GEN node_ctxtest_gen.cpp)
+target_link_libraries(LOCAL_NODE_CTXTEST_GEN BLEEP::BLEEP)
+
+add_executable(LOCAL_NODE_CTXTEST_RECV node_ctxtest_recv.cpp)
+target_link_libraries(LOCAL_NODE_CTXTEST_RECV BLEEP::BLEEP)
 
 # add tests
 enable_testing()

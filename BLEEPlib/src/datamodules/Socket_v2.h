@@ -61,6 +61,7 @@ namespace libBLEEP {
         std::list<std::shared_ptr<WriteMsg> > _sendBuff;
 
     public:
+        SocketRecvBuffer& GetRecvBuff() { return _recvBuff; }
         /* Every data socket are created after the ListenSocket or ConnectSocket 
            are created and estabilished. 
            Thus, constructor of the DataSocket receives the socket fd that

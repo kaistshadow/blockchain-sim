@@ -335,6 +335,19 @@ int main(int argc, char *argv[]) {
                             blocktimelogs[msg->GetMessageId()]["ForkBlockReceived"] = tspec;
                             // std::cout << GetGlobalClock() << ":Block is received but not appended" << "\n";
                         }
+                        if (ledger.GetNextBlockIdx() == 100) {
+                            PrintBlockTimeLogs();
+
+                            std::cout << "total_mined_block_num=" << mined_block_num << "\n";
+                            char buf[256];
+                            sprintf(buf, "ResultStat,%s,%d,%lu",
+                                    "TotalMinedBlockNum",
+                                    mined_block_num - 1, ledger.GetNextBlockIdx() - 1);
+                            shadow_push_eventlog(buf);
+
+                        
+                            exit(0);
+                        }
                     } 
                     else if (messageType == "POWConsensusProtocol") {
                         POWConsensusMessage receivedPOWmsg = GetDeserializedPOWConsensusMessage(msg->GetPayload());  

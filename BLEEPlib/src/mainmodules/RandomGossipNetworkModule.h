@@ -134,11 +134,11 @@ namespace libBLEEP {
             ev::io _watcher;
 
             void _dataSocketIOCallback(ev::io &w, int revents) {
+                init_shadow_clock_update();
                 PrintTimespec("dataSocketIOCallback called");
                 M_Assert(_fd == w.fd, "fd must be same");
                 int fd = w.fd;
                 /* std::cout << "data socket IO callback called!" << "\n"; */
-                init_shadow_clock_update();
                 /* next_shadow_clock_update("==== until datasocketIOCallback called"); */
                 
                 if (revents & EV_READ) {
@@ -224,8 +224,8 @@ namespace libBLEEP {
                     if (dataSocket->DoSend() == DoSendResultEnum::SendBuffEmptied)
                         UnsetWritable();
                 }
-                next_shadow_clock_update("==== done handling dataSocketIOCallback");
                 PrintTimespec("dataSocketIOCallback ended");
+                next_shadow_clock_update("==== done handling dataSocketIOCallback");
             }
         public :
             DataSocketWatcher(int fd, RandomGossipNetworkModule* netModule, MainEventManager* eventModule)

@@ -39,6 +39,7 @@ namespace libBLEEP {
     private:
         int fanOut;
         std::set<std::string> messageSet;
+        std::set<std::string> messageSetFirstCheck;
         class ListenSocketWatcher;
         class DataSocketWatcher;
         class ConnectSockerWatcher;
@@ -193,7 +194,15 @@ namespace libBLEEP {
                                 // if the duplicated broadcasting message is received, 
                                 // then just ignore it.
                                 PrintTimespec("duplicated message");
-                            } else {
+                            } else if (message->GetDest().GetId() == "DestAll" &&
+                                       message->GetSource().GetId() != neighborPeerId->GetId() && 
+                                       _networkModule->FirstCheckMessage(message->GetMessageId())) {
+                                // if first arrived message is not from the source
+                                PrintTimespec("First arrived message not from the source. Ignore it and Add shadow latency for emulating context switch");
+                                int delay = (rand() % 10000);
+                                shadow_usleep(30000+delay);
+                            }
+                            else {
                                 // add timestamp
                                 struct timespec tspec;
                                 clock_gettime(CLOCK_MONOTONIC, &tspec);
@@ -383,6 +392,8 @@ namespace libBLEEP {
         bool InsertMessageSet(std::string messageId);
 
         bool ExistMessage(std::string messageId);
+
+        bool FirstCheckMessage(std::string messageId);
 
         bool AsyncConnectPeer(PeerId id, double time=0);
 

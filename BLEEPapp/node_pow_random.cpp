@@ -457,8 +457,9 @@ int main(int argc, char *argv[]) {
                         exit(0);
                     }
 
+                    // next_shadow_clock_update("==== done processing EmuBlockMiningComplete Event");
+                    shadow_usleep(1000);
                     PrintTimespec("EmuBlockMiningComplete processing ended");
-                    next_shadow_clock_update("==== done processing EmuBlockMiningComplete Event");
                     // double milli = next_shadow_clock_update("===== handling EmuBlockMiningComplete");
                     break;
                 }

@@ -136,6 +136,7 @@ namespace libBLEEP {
 
             void _dataSocketIOCallback(ev::io &w, int revents) {
                 init_shadow_clock_update();
+                int delay = 0;
                 PrintTimespec("dataSocketIOCallback called");
                 M_Assert(_fd == w.fd, "fd must be same");
                 int fd = w.fd;
@@ -199,8 +200,7 @@ namespace libBLEEP {
                                        _networkModule->FirstCheckMessage(message->GetMessageId())) {
                                 // if first arrived message is not from the source
                                 PrintTimespec("First arrived message not from the source. Ignore it and Add shadow latency for emulating context switch");
-                                int delay = (rand() % 10000);
-                                shadow_usleep(30000+delay);
+                                delay = 30000 + (rand() % 10000); // context switching delay
                             }
                             else {
                                 // add timestamp
@@ -223,18 +223,21 @@ namespace libBLEEP {
 
                                 }
                             }
-
+                        } else {
+                            /* if (rand() % 3 != 0)  */
+                            /*     delay = 1000; // delay after recv length */
                         }
-
                     }
 
                 } else if (revents & EV_WRITE) {
                     std::shared_ptr<DataSocket_v2> dataSocket = _networkModule->socketManager.GetDataSocket(fd);
                     if (dataSocket->DoSend() == DoSendResultEnum::SendBuffEmptied)
                         UnsetWritable();
+                    delay = 10; // default additional computation delay for write
                 }
-                PrintTimespec("dataSocketIOCallback ended");
                 next_shadow_clock_update("==== done handling dataSocketIOCallback");
+                shadow_usleep(delay); 
+                PrintTimespec("dataSocketIOCallback ended");
             }
         public :
             DataSocketWatcher(int fd, RandomGossipNetworkModule* netModule, MainEventManager* eventModule)

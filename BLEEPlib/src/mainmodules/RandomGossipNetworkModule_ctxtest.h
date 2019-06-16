@@ -221,24 +221,24 @@ namespace libBLEEP {
                             if (isIdleBefore && isMsgAfter) { 
                                 // we receive length(msg header).
                                 // add ctx switch latency randomly
-                                struct timespec begin;
-                                shadow_clock_gettime(CLOCK_MONOTONIC, &begin);
-                                int usdelay = (rand() % 10000);
+                                /* struct timespec begin; */
+                                /* shadow_clock_gettime(CLOCK_MONOTONIC, &begin); */
+                                /* int usdelay = (rand() % 10000); */
 
                                 
-                                char buf[256];
-                                sprintf(buf, "before generating random delay(%d us)", usdelay);
-                                PrintTimespec(buf);
-                                struct timespec end;
-                                while(true) {
-                                    shadow_clock_gettime(CLOCK_MONOTONIC, &end);
-                                    int elapsed_nano = end.tv_nsec >= begin.tv_nsec
-                                        ? (end.tv_nsec - begin.tv_nsec) + (end.tv_sec - begin.tv_sec) * 1e9
-                                        : (begin.tv_nsec - end.tv_nsec) + (end.tv_sec - begin.tv_sec - 1) * 1e9;
-                                    if ( ((double)elapsed_nano / 1e3) > usdelay)
-                                        break;
-                                }
-                                PrintTimespec("after generating random delay");
+                                /* char buf[256]; */
+                                /* sprintf(buf, "before generating random delay(%d us)", usdelay); */
+                                /* PrintTimespec(buf); */
+                                /* struct timespec end; */
+                                /* while(true) { */
+                                /*     shadow_clock_gettime(CLOCK_MONOTONIC, &end); */
+                                /*     int elapsed_nano = end.tv_nsec >= begin.tv_nsec */
+                                /*         ? (end.tv_nsec - begin.tv_nsec) + (end.tv_sec - begin.tv_sec) * 1e9 */
+                                /*         : (begin.tv_nsec - end.tv_nsec) + (end.tv_sec - begin.tv_sec - 1) * 1e9; */
+                                /*     if ( ((double)elapsed_nano / 1e3) > usdelay) */
+                                /*         break; */
+                                /* } */
+                                /* PrintTimespec("after generating random delay"); */
                             }
                         }
 

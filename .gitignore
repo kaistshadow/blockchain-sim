@@ -18,6 +18,7 @@ test/temporary-code
 BLEEPeval/*-datadir/
 BLEEPeval/web-gui/node_modules/
 BLEEPeval/web-gui/package-lock.json
+BLEEPeval/web-gui/.tern-port
 
 terraform.tfstate
 terraform.tfstate.backup

@@ -224,8 +224,6 @@ namespace libBLEEP {
                                 }
                             }
                         } else {
-                            /* if (rand() % 3 != 0)  */
-                            /*     delay = 1000; // delay after recv length */
                         }
                     }
 
@@ -236,6 +234,10 @@ namespace libBLEEP {
                     delay = 10; // default additional computation delay for write
                 }
                 next_shadow_clock_update("==== done handling dataSocketIOCallback");
+                shadow_usleep(delay); 
+                delay = 0;
+                if (rand() % 3 != 0)
+                    delay = 1000; // delay after recv length
                 shadow_usleep(delay); 
                 PrintTimespec("dataSocketIOCallback ended");
             }

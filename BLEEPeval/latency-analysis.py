@@ -42,7 +42,7 @@ def analysis_logs(directory):
 
         print "==="
         for (step, time, at) in sorted_tuples:
-            print "%s %s %s" % (step, time, at)
+            print "%s %s %s" % (time, step, at)
 
         
 

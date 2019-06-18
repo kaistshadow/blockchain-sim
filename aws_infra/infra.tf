@@ -28,12 +28,22 @@ data "aws_security_group" "default" {
 #################################################
 
 resource "aws_instance" "bleep" {
-  count = 2
+  count = 10
   ami = "${var.image_id}"
-  instance_type = "t2.micro"
+  instance_type = "t2.medium"
   key_name = "${aws_key_pair.admin.key_name}"
   vpc_security_group_ids = [
     "${aws_security_group.ssh.id}",
     "${data.aws_security_group.default.id}"
   ]
+}
+
+resource "null_resource" "print_ip" {
+  count = 10
+  provisioner "local-exec" {
+    command = <<EOT
+    echo "amazonip=${element(aws_instance.bleep.*.public_ip, count.index)}"
+    echo "amazonprivip=${element(aws_instance.bleep.*.private_ip, count.index)}"
+    EOT
+  }
 }

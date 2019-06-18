@@ -18,7 +18,7 @@
                 "owners": ["099720109477"],
                 "most_recent": true
             },
-            "instance_type": "t2.micro",
+            "instance_type": "t2.medium",
             "ssh_username": "ubuntu",
             "ami_name": "packer-vault-example {{timestamp}}"
         }
@@ -32,13 +32,19 @@
         {
             "type": "shell",
             "inline": [
+                "chmod 400 /home/ubuntu/bleep_admin",
                 "sudo apt-get update",
                 "sudo apt-get install -y python",
                 "ssh-keyscan github.com >> /home/ubuntu/.ssh/known_hosts",
                 "eval $(ssh-agent)",
                 "ssh-agent bash -c 'ssh-add /home/ubuntu/bleep_admin; git clone git@github.com:kaistshadow/blockchain-sim.git'",
-                "cd blockchain-sim; python setup.py --install",
-                "cd BLEEPapp; mkdir build; cd build; cmake ../; make"
+                "cd blockchain-sim;",
+                "git checkout yg-exp",
+                "python setup.py --install",
+                "cd BLEEPapp; mkdir build; cd build; cmake ../; make",
+                "sudo sed -i 's/console=tty1 console=ttyS0/console=tty1 console=ttyS0 isolcpus=1/' /etc/default/grub",
+                "sudo sed -i 's/console=tty1 console=ttyS0/console=tty1 console=ttyS0 isolcpus=1/' /etc/default/grub.d/50-cloudimg-settings.cfg",
+                "sudo update-grub"
             ]
         }
     ]

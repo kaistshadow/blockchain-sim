@@ -25,7 +25,7 @@
                  <data key="d6">0</data>
                </node>
                <edge source="poi-1" target="poi-1">
-                 <data key="d7">2</data>
+                 <data key="d7">0.3</data>
                  <data key="d8">0.0</data>
                  <data key="d9">0.0</data>
                </edge>

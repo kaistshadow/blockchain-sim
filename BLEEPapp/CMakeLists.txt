@@ -100,6 +100,10 @@ add_shadow_plugin(NODE_CTXTEST_RECV node_ctxtest_recv.cpp)
 install(TARGETS NODE_CTXTEST_RECV DESTINATION plugins)
 target_link_libraries(NODE_CTXTEST_RECV BLEEP::BLEEP)
 
+add_shadow_plugin(NODE_RTT node_rtt.cpp)
+install(TARGETS NODE_RTT DESTINATION plugins)
+target_link_libraries(NODE_RTT BLEEP::BLEEP)
+
 ## compile for local executable
 add_executable(LOCAL_NODE_bleep node.cpp)
 target_link_libraries(LOCAL_NODE_bleep BLEEP::BLEEP)
@@ -130,6 +134,9 @@ target_link_libraries(LOCAL_NODE_CTXTEST_GEN BLEEP::BLEEP)
 
 add_executable(LOCAL_NODE_CTXTEST_RECV node_ctxtest_recv.cpp)
 target_link_libraries(LOCAL_NODE_CTXTEST_RECV BLEEP::BLEEP)
+
+add_executable(LOCAL_NODE_RTT node_rtt.cpp)
+target_link_libraries(LOCAL_NODE_RTT BLEEP::BLEEP)
 
 # add tests
 enable_testing()

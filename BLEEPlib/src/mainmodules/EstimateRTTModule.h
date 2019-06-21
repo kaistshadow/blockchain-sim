@@ -340,9 +340,15 @@ namespace libBLEEP {
                                 shadow_push_eventlog(buf);
 
                             } else if (message->GetType() == "RTTRep") {
+                                int flags = fcntl(fd, F_GETFL, 0);
+                                fcntl(fd, F_SETFL, flags |O_NONBLOCK);
+
                                 char buf[256];
                                 sprintf(buf, "RTTRep received from %s", message->GetSource().GetId().c_str());
                                 PrintTimespec(buf);
+                            } else {
+                                int flags = fcntl(fd, F_GETFL, 0);
+                                fcntl(fd, F_SETFL, flags |O_NONBLOCK);
                             }
 
                             // set asynchronous event

@@ -108,6 +108,10 @@ add_shadow_plugin(NODE_RTT_POW node_rtt_pow.cpp)
 install(TARGETS NODE_RTT_POW DESTINATION plugins)
 target_link_libraries(NODE_RTT_POW BLEEP::BLEEP)
 
+add_shadow_plugin(NODE_RTT_POW_RAN node_rtt_pow_ran.cpp)
+install(TARGETS NODE_RTT_POW_RAN DESTINATION plugins)
+target_link_libraries(NODE_RTT_POW_RAN BLEEP::BLEEP)
+
 ## compile for local executable
 add_executable(LOCAL_NODE_bleep node.cpp)
 target_link_libraries(LOCAL_NODE_bleep BLEEP::BLEEP)
@@ -144,6 +148,9 @@ target_link_libraries(LOCAL_NODE_RTT BLEEP::BLEEP)
 
 add_executable(LOCAL_NODE_RTT_POW node_rtt_pow.cpp)
 target_link_libraries(LOCAL_NODE_RTT_POW BLEEP::BLEEP)
+
+add_executable(LOCAL_NODE_RTT_POW_RAN node_rtt_pow_ran.cpp)
+target_link_libraries(LOCAL_NODE_RTT_POW_RAN BLEEP::BLEEP)
 
 # add tests
 enable_testing()

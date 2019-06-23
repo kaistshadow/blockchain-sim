@@ -110,13 +110,22 @@ int main(int argc, char *argv[]) {
     std::string myId = gArgs.GetArg("-id", "noid");
     double rttSendTime = std::stof(gArgs.GetArg("-rttstart", "0.0"));
     int sendNum = std::stoi(gArgs.GetArg("-rttnum", "0"));
-    EstimateRTTModule estimateRTTModule(myId, rttSendTime, sendNum, &mainEventManager, 0);
 
-    // int maxPeerNum = 500;
-    // genPeerList(peerList, myId, maxPeerNum);
+    int connectPeerNum = std::stoi(gArgs.GetArg("-outpeernum"));;
+    int fanOut = std::stoi(gArgs.GetArg("-fanout"));
+
+    EstimateRTTModule estimateRTTModule(myId, rttSendTime, sendNum, &mainEventManager, fanOut);
+    std::vector<PeerId> peerList;
+
     for (auto neighborPeerId : gArgs.GetArgs("-connect")) {
-        estimateRTTModule.AsyncConnectPeer(PeerId(neighborPeerId));
+        if (myId != neighborPeerId)
+            peerList.push_back(PeerId(neighborPeerId));
     }
+
+    // for (auto neighborPeerId : gArgs.GetArgs("-connect")) {
+    //     estimateRTTModule.AsyncConnectPeer(PeerId(neighborPeerId));
+    // }
+    estimateRTTModule.AsyncConnectPeers(peerList, connectPeerNum);
 
     // Transaction generator module
     TxGeneratorModule txGeneratorModule(&mainEventManager);
@@ -375,12 +384,16 @@ int main(int argc, char *argv[]) {
                     }
 
 
-                    for (auto neighborPeerId: gArgs.GetArgs("-connect")) {
-                        if (neighborPeerId == gArgs.GetArg("-id"))
-                            continue;
-                        PeerId destPeerId(neighborPeerId);
-                        estimateRTTModule.UnicastMessage(destPeerId, nMsg);
-                    }
+                    estimateRTTModule.MulticastMessage(nMsg);
+                    estimateRTTModule.InsertMessageSet(nMsg->GetMessageId());
+
+                    // for (auto neighborPeerId: gArgs.GetArgs("-connect")) {
+                    //     if (neighborPeerId == gArgs.GetArg("-id"))
+                    //         continue;
+                    //     PeerId destPeerId(neighborPeerId);
+                    //     estimateRTTModule.UnicastMessage(destPeerId, nMsg);
+                    // }
+
                     // // propagate to network
                     // randomNetworkModule.MulticastMessage(nMsg);
                     // randomNetworkModule.InsertMessageSet(nMsg->GetMessageId());

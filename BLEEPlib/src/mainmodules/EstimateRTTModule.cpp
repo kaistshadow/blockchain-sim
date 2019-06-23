@@ -1,4 +1,5 @@
 #include "EstimateRTTModule.h"
+#include "../utility/Random.h"
 
 #include <fcntl.h> /* Added for the nonblocking socket */
 #include <arpa/inet.h>
@@ -436,8 +437,9 @@ void libBLEEP::RTTModule_SocketManager::RemoveConnectSocket(int fd) {
 
 
 
-EstimateRTTModule::EstimateRTTModule(std::string myPeerId, double sendStarttime, int sendNum, MainEventManager* mainEventManager)
+EstimateRTTModule::EstimateRTTModule(std::string myPeerId, double sendStarttime, int sendNum, MainEventManager* mainEventManager, int fanOutNum)
     : watcherManager(this, mainEventManager) {
+    fanOut = fanOutNum;
     _mainEventManager = mainEventManager;
 
     // append shadow api log
@@ -458,6 +460,15 @@ EstimateRTTModule::EstimateRTTModule(std::string myPeerId, double sendStarttime,
     char buf[256];
     sprintf(buf, "InitPeerId,%s", myPeerId.c_str());
     shadow_push_eventlog(buf);
+}
+
+bool EstimateRTTModule::InsertMessageSet(std::string messageId) {
+    return messageSet.insert(messageId).second;
+}
+
+bool EstimateRTTModule::ExistMessage(std::string messageId) {
+    auto itr = messageSet.find(messageId);
+    return (itr != messageSet.end());
 }
 
 bool EstimateRTTModule::AsyncConnectPeer(PeerId id, double time) {
@@ -481,6 +492,36 @@ bool EstimateRTTModule::AsyncConnectPeer(PeerId id, double time) {
         new ConnectSocketWatcher(connecting_fd, this, _mainEventManager);
         return true;
     }
+}
+
+std::set<RTTModule_Distance, RTTModule_DistanceCmp> RTTModule_genNeighborPeerSet(PeerId myId, std::vector<PeerId> &neighborPeerIds){
+    std::set<RTTModule_Distance, RTTModule_DistanceCmp> neighborPeerIdSet;
+    UINT256_t myHashId = myId.GetIdHash();
+    for(auto peer : neighborPeerIds){
+        UINT256_t peerHashId = peer.GetIdHash();
+        UINT256_t distance = myHashId ^ peerHashId;
+        neighborPeerIdSet.insert(RTTModule_Distance(distance, peer));
+    }
+    return neighborPeerIdSet;
+}
+
+bool EstimateRTTModule::AsyncConnectPeers(std::vector<PeerId> &peerList, int peerNum, double time){
+    char buf[256];
+    sprintf(buf, "API,AsyncConnectPeers,%d,%d,%f",
+            (int)peerList.size(),
+            peerNum,
+            time);
+    shadow_push_eventlog(buf);
+
+    PeerId myId = *peerManager.GetMyPeerId();
+    auto neighborPeerIdSet = RTTModule_genNeighborPeerSet(myId, peerList);
+    int i = 0;
+    for(const RTTModule_Distance& dest : neighborPeerIdSet){
+        if (i >= peerNum) break;
+        if (EstimateRTTModule::AsyncConnectPeer(dest.GetPeerId(), time) == true)
+            i++;
+    }
+    return true;
 }
 
 
@@ -548,6 +589,116 @@ bool EstimateRTTModule::UnicastMessage(PeerId dest, std::shared_ptr<Message> mes
             message->GetMessageId().c_str());
     shadow_push_eventlog(buf);
 
+    return true;
+}
+
+bool EstimateRTTModule::MulticastMessage(std::shared_ptr<Message> message) {
+    char buf[256];
+    sprintf(buf, "API,MulticastMessage,%s", message->GetType().c_str());
+    shadow_push_eventlog(buf);
+
+    PeerId myId = *peerManager.GetMyPeerId();
+    std::vector<PeerId> dests = peerManager.GetNeighborPeerIds();
+    if (dests.size() == 0) return true;
+    auto idxs = GenRandomNumSet(dests.size(), fanOut);
+    
+    for(std::vector<PeerId>::size_type i = 0 ; i < dests.size(); i++){
+        if (idxs.find(i) != idxs.end()){
+            if (message->GetSource().GetId() != dests[i].GetId()){
+                // get datasocket
+                int socketFD = peerManager.GetConnectedSocketFD(dests[i]);
+                std::shared_ptr<RTTModule_DataSocket> dataSocket = socketManager.GetDataSocket(socketFD);
+
+                M_Assert(dataSocket != nullptr, "dataSocket must exist for neighbor");
+
+                // append shadow log
+                char buf[256];
+                sprintf(buf, "MulticastingMessage,%s,%s,%s,%s",
+                        peerManager.GetMyPeerId()->GetId().c_str(),
+                        dests[i].GetId().c_str(),
+                        message->GetType().c_str(),
+                        message->GetMessageId().c_str());
+                shadow_push_eventlog(buf);
+
+
+                // make header for message
+                struct timespec tspec;
+                clock_gettime(CLOCK_MONOTONIC, &tspec);
+                RTTModule_MessageHeader header;
+                header.type = 0;
+                if (message->GetType() == "RTTReq")
+                    header.type = MESSAGETYPE_RTTREQ;
+                header.hop = 0;
+                header.src = *peerManager.GetMyPeerId();
+                header.timestamp = tspec.tv_nsec + tspec.tv_sec * 1e9;
+
+
+                // append a message to socket
+                int flags = fcntl(socketFD, F_GETFL, 0);
+                fcntl(socketFD, F_SETFL, flags & (~O_NONBLOCK));
+
+                dataSocket->AppendMessageToSendBuff(header, message); // sending 1-hop message
+                DoSendResultEnum result = dataSocket->DoSend();
+                M_Assert(result == DoSendResultEnum::SendBuffEmptied, "must be sent");
+                flags = fcntl(socketFD, F_GETFL, 0);
+                fcntl(socketFD, F_SETFL, flags | O_NONBLOCK);
+            }
+        }
+    }
+    return true;
+
+}
+
+bool EstimateRTTModule::ForwardMessage(std::shared_ptr<RTTModule_MessageHeader> recvheader, std::shared_ptr<Message> message) {
+    char buf[256];
+    sprintf(buf, "API,ForwardMessage,%s", message->GetType().c_str());
+    shadow_push_eventlog(buf);
+
+    PeerId myId = *peerManager.GetMyPeerId();
+    std::vector<PeerId> dests = peerManager.GetNeighborPeerIds();
+    if (dests.size() == 0) return true;
+    auto idxs = GenRandomNumSet(dests.size(), fanOut);
+    
+    for(std::vector<PeerId>::size_type i = 0 ; i < dests.size(); i++){
+        if (idxs.find(i) != idxs.end()){
+            if (message->GetSource().GetId() != dests[i].GetId()){
+                // get datasocket
+                int socketFD = peerManager.GetConnectedSocketFD(dests[i]);
+                std::shared_ptr<RTTModule_DataSocket> dataSocket = socketManager.GetDataSocket(socketFD);
+
+                M_Assert(dataSocket != nullptr, "dataSocket must exist for neighbor");
+
+                // append shadow log
+                char buf[256];
+                sprintf(buf, "MulticastingMessage,%s,%s,%s,%s",
+                        peerManager.GetMyPeerId()->GetId().c_str(),
+                        dests[i].GetId().c_str(),
+                        message->GetType().c_str(),
+                        message->GetMessageId().c_str());
+                shadow_push_eventlog(buf);
+
+                // make header for message
+                struct timespec tspec;
+                clock_gettime(CLOCK_MONOTONIC, &tspec);
+                RTTModule_MessageHeader header;
+                header.type = recvheader->type;
+                header.hop = recvheader->hop + 1;
+                header.src = recvheader->src;
+                header.timestamp = recvheader->timestamp;
+
+
+                // append a message to socket
+                int flags = fcntl(socketFD, F_GETFL, 0);
+                fcntl(socketFD, F_SETFL, flags & (~O_NONBLOCK));
+
+                dataSocket->AppendMessageToSendBuff(header, message); // sending a message
+                DoSendResultEnum result = dataSocket->DoSend();
+                M_Assert(result == DoSendResultEnum::SendBuffEmptied, "must be sent");
+                flags = fcntl(socketFD, F_GETFL, 0);
+                fcntl(socketFD, F_SETFL, flags | O_NONBLOCK);
+            }
+        }
+    }
     return true;
 }
 
@@ -628,3 +779,5 @@ void EstimateRTTModule::SendRTTMsg() {
 
     }
 }
+
+

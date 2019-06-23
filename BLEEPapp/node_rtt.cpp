@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     std::string myId = gArgs.GetArg("-id", "noid");
     double rttSendTime = std::stof(gArgs.GetArg("-rttstart", "0.0"));
     int sendNum = std::stoi(gArgs.GetArg("-rttnum", "0"));
-    EstimateRTTModule estimateRTTModule(myId, rttSendTime, sendNum, &mainEventManager);
+    EstimateRTTModule estimateRTTModule(myId, rttSendTime, sendNum, &mainEventManager, 0);
 
     // int maxPeerNum = 500;
     // genPeerList(peerList, myId, maxPeerNum);

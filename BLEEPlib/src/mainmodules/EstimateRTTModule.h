@@ -25,6 +25,26 @@ namespace libBLEEP {
 #define MESSAGETYPE_RTTREQ 1
 #define MESSAGETYPE_RTTREP 2
 
+    class RTTModule_Distance {
+        UINT256_t distance;
+        PeerId peerId;
+
+    public:
+        RTTModule_Distance(UINT256_t distance, PeerId peerId)
+            : distance(distance), peerId(peerId) {}
+        PeerId GetPeerId() const { return peerId; }
+        UINT256_t GetPeerDistance() const { return distance; }
+
+        friend struct RTTModule_DistanceCmp;
+
+    };
+
+    struct RTTModule_DistanceCmp {
+        bool operator()(const RTTModule_Distance& d1, const RTTModule_Distance& d2) const {
+            return d1.distance > d2.distance;
+        }
+    };
+
     class RTTModule_MessageHeader {
     public:
         int length;
@@ -146,6 +166,9 @@ namespace libBLEEP {
 
     class EstimateRTTModule {
     private:
+        int fanOut;
+        std::set<std::string> messageSet;
+
         class ListenSocketWatcher;
         class DataSocketWatcher;
         class ConnectSocketWatcher;
@@ -339,7 +362,24 @@ namespace libBLEEP {
                             _mainEventModule->PushAsyncEvent(event);
                         }
                         else if (message) {
-                            if (message->GetType() == "RTTReq") {
+                            std::shared_ptr<PeerId> neighborPeerId = _networkModule->peerManager.GetPeerIdBySocket(fd);
+                            /* std::cout << "message source:" << message->GetSource().GetId() << "\n"; */
+                            M_Assert(neighborPeerId != nullptr, "no neighbor peer exists for given socket");
+
+                            char buf[256];
+                            sprintf(buf, "RecvMessage,%s,%s,%s,%s",
+                                    neighborPeerId->GetId().c_str(),
+                                    _networkModule->peerManager.GetMyPeerId()->GetId().c_str(),
+                                    message->GetType().c_str(),
+                                    message->GetMessageId().c_str());
+                            shadow_push_eventlog(buf);
+
+                            if (message->GetDest().GetId() == "DestAll" && 
+                                _networkModule->ExistMessage(message->GetMessageId())) {
+                                // if the duplicated broadcasting message is received, 
+                                // then just ignore it.
+                                PrintTimespec("duplicated message");
+                            } else if (message->GetType() == "RTTReq") {
                                 PeerId myPeerId = *_networkModule->peerManager.GetMyPeerId();
                                 std::shared_ptr<Message> replymsg = std::make_shared<Message>(myPeerId, message->GetSource(), "RTTRep", "");
 
@@ -376,26 +416,19 @@ namespace libBLEEP {
                                 PrintTimespec(buf);
                             } else {
 
+                                AsyncEvent event(AsyncEventEnum::RecvMessage);
+                                event.GetData().SetReceivedMsg(message);
+                                _mainEventModule->PushAsyncEvent(event);
+                                
+                                if (message->GetDest().GetId() == "DestAll") {
+                                    bool unique = _networkModule->InsertMessageSet(message->GetMessageId());
+                                    M_Assert(unique, "Message is unexpectedly duplicated!" ); 
+
+                                    // forward the received message for broadcasting
+                                    _networkModule->ForwardMessage(_networkModule->receivedHeader[fd], message);
+
+                                }
                             }
-
-                            // set asynchronous event
-                            AsyncEvent event(AsyncEventEnum::RecvMessage);
-                            event.GetData().SetReceivedMsg(message);
-                            _mainEventModule->PushAsyncEvent(event);
-
-                            // append shadow log
-                            std::shared_ptr<PeerId> neighborPeerId = _networkModule->peerManager.GetPeerIdBySocket(fd);
-                            std::cout << "message source:" << message->GetSource().GetId() << "\n";
-                            M_Assert(neighborPeerId != nullptr, "no neighbor peer exists for given socket");
-
-                            char buf[256];
-                            sprintf(buf, "RecvMessage,%s,%s,%s,%s",
-                                    neighborPeerId->GetId().c_str(),
-                                    _networkModule->peerManager.GetMyPeerId()->GetId().c_str(),
-                                    message->GetType().c_str(),
-                                    message->GetMessageId().c_str());
-                            shadow_push_eventlog(buf);
-
                         }
                     }
 
@@ -586,7 +619,7 @@ namespace libBLEEP {
 
     public:
         /* Constructor with proper peer id */
-        EstimateRTTModule(std::string myPeerId, double sendStarttime, int sendNum, MainEventManager* worker);
+        EstimateRTTModule(std::string myPeerId, double sendStarttime, int sendNum, MainEventManager* worker, int fanOutNum);
 
         /*********************************************************/
         /* Public API designed for high-level event requests */
@@ -601,11 +634,22 @@ namespace libBLEEP {
            after the given 'time' is passed. */
         bool AsyncConnectPeer(PeerId id, double time = 0);
 
+        bool AsyncConnectPeers(std::vector<PeerId, std::allocator<PeerId>> &peerList, int peerNum, double time = 0);
+
         /* asynchronous API that sends a given message to proper peer(s) */
         /* If the valid socket connection does not exist for given PeerId,
            the function immediately returns false */
         /* There's no separate complete event for this API */
         bool UnicastMessage(PeerId dest, std::shared_ptr<Message> message);
+
+
+        bool MulticastMessage(std::shared_ptr<Message> message);
+        bool ForwardMessage(std::shared_ptr<RTTModule_MessageHeader> recvheader, std::shared_ptr<Message> message); // separate from multicastMessage for debugging
+
+        bool InsertMessageSet(std::string messageId);
+
+        bool ExistMessage(std::string messageId);
+
 
         /* synchronous API that requests a disconnection for given peer */
         /* Since it's synchronous API,

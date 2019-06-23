@@ -600,49 +600,51 @@ bool EstimateRTTModule::MulticastMessage(std::shared_ptr<Message> message) {
     PeerId myId = *peerManager.GetMyPeerId();
     std::vector<PeerId> dests = peerManager.GetNeighborPeerIds();
     if (dests.size() == 0) return true;
-    auto idxs = GenRandomNumSet(dests.size(), fanOut);
+    auto idxs = GenRandomNumSet(dests.size(), fanOut+1);
     
-    for(std::vector<PeerId>::size_type i = 0 ; i < dests.size(); i++){
-        if (idxs.find(i) != idxs.end()){
-            if (message->GetSource().GetId() != dests[i].GetId()){
-                // get datasocket
-                int socketFD = peerManager.GetConnectedSocketFD(dests[i]);
-                std::shared_ptr<RTTModule_DataSocket> dataSocket = socketManager.GetDataSocket(socketFD);
+    // for(std::vector<PeerId>::size_type i = 0 ; i < dests.size(); i++){
+    //     if (idxs.find(i) != idxs.end()){
+    int sentOut = 0;
+    for (int i : idxs) {
+        if (message->GetSource().GetId() != dests[i].GetId() && sentOut < fanOut) {
+            // get datasocket
+            int socketFD = peerManager.GetConnectedSocketFD(dests[i]);
+            std::shared_ptr<RTTModule_DataSocket> dataSocket = socketManager.GetDataSocket(socketFD);
 
-                M_Assert(dataSocket != nullptr, "dataSocket must exist for neighbor");
+            M_Assert(dataSocket != nullptr, "dataSocket must exist for neighbor");
 
-                // append shadow log
-                char buf[256];
-                sprintf(buf, "MulticastingMessage,%s,%s,%s,%s",
-                        peerManager.GetMyPeerId()->GetId().c_str(),
-                        dests[i].GetId().c_str(),
-                        message->GetType().c_str(),
-                        message->GetMessageId().c_str());
-                shadow_push_eventlog(buf);
-
-
-                // make header for message
-                struct timespec tspec;
-                clock_gettime(CLOCK_MONOTONIC, &tspec);
-                RTTModule_MessageHeader header;
-                header.type = 0;
-                if (message->GetType() == "RTTReq")
-                    header.type = MESSAGETYPE_RTTREQ;
-                header.hop = 0;
-                header.src = *peerManager.GetMyPeerId();
-                header.timestamp = tspec.tv_nsec + tspec.tv_sec * 1e9;
+            // append shadow log
+            char buf[256];
+            sprintf(buf, "MulticastingMessage,%s,%s,%s,%s",
+                    peerManager.GetMyPeerId()->GetId().c_str(),
+                    dests[i].GetId().c_str(),
+                    message->GetType().c_str(),
+                    message->GetMessageId().c_str());
+            shadow_push_eventlog(buf);
 
 
-                // append a message to socket
-                int flags = fcntl(socketFD, F_GETFL, 0);
-                fcntl(socketFD, F_SETFL, flags & (~O_NONBLOCK));
+            // make header for message
+            struct timespec tspec;
+            clock_gettime(CLOCK_MONOTONIC, &tspec);
+            RTTModule_MessageHeader header;
+            header.type = 0;
+            if (message->GetType() == "RTTReq")
+                header.type = MESSAGETYPE_RTTREQ;
+            header.hop = 0;
+            header.src = *peerManager.GetMyPeerId();
+            header.timestamp = tspec.tv_nsec + tspec.tv_sec * 1e9;
 
-                dataSocket->AppendMessageToSendBuff(header, message); // sending 1-hop message
-                DoSendResultEnum result = dataSocket->DoSend();
-                M_Assert(result == DoSendResultEnum::SendBuffEmptied, "must be sent");
-                flags = fcntl(socketFD, F_GETFL, 0);
-                fcntl(socketFD, F_SETFL, flags | O_NONBLOCK);
-            }
+
+            // append a message to socket
+            int flags = fcntl(socketFD, F_GETFL, 0);
+            fcntl(socketFD, F_SETFL, flags & (~O_NONBLOCK));
+
+            dataSocket->AppendMessageToSendBuff(header, message); // sending 1-hop message
+            DoSendResultEnum result = dataSocket->DoSend();
+            M_Assert(result == DoSendResultEnum::SendBuffEmptied, "must be sent");
+            flags = fcntl(socketFD, F_GETFL, 0);
+            fcntl(socketFD, F_SETFL, flags | O_NONBLOCK);
+            sentOut++;
         }
     }
     return true;
@@ -657,46 +659,47 @@ bool EstimateRTTModule::ForwardMessage(std::shared_ptr<RTTModule_MessageHeader> 
     PeerId myId = *peerManager.GetMyPeerId();
     std::vector<PeerId> dests = peerManager.GetNeighborPeerIds();
     if (dests.size() == 0) return true;
-    auto idxs = GenRandomNumSet(dests.size(), fanOut);
+    auto idxs = GenRandomNumSet(dests.size(), fanOut+1);
     
-    for(std::vector<PeerId>::size_type i = 0 ; i < dests.size(); i++){
-        if (idxs.find(i) != idxs.end()){
-            if (message->GetSource().GetId() != dests[i].GetId()){
-                // get datasocket
-                int socketFD = peerManager.GetConnectedSocketFD(dests[i]);
-                std::shared_ptr<RTTModule_DataSocket> dataSocket = socketManager.GetDataSocket(socketFD);
+    int sentOut = 0;
+    for (int i : idxs) {
+        if (message->GetSource().GetId() != dests[i].GetId() && sentOut < fanOut){
+            // get datasocket
+            int socketFD = peerManager.GetConnectedSocketFD(dests[i]);
+            std::shared_ptr<RTTModule_DataSocket> dataSocket = socketManager.GetDataSocket(socketFD);
 
-                M_Assert(dataSocket != nullptr, "dataSocket must exist for neighbor");
+            M_Assert(dataSocket != nullptr, "dataSocket must exist for neighbor");
 
-                // append shadow log
-                char buf[256];
-                sprintf(buf, "MulticastingMessage,%s,%s,%s,%s",
-                        peerManager.GetMyPeerId()->GetId().c_str(),
-                        dests[i].GetId().c_str(),
-                        message->GetType().c_str(),
-                        message->GetMessageId().c_str());
-                shadow_push_eventlog(buf);
+            // append shadow log
+            char buf[256];
+            sprintf(buf, "MulticastingMessage,%s,%s,%s,%s",
+                    peerManager.GetMyPeerId()->GetId().c_str(),
+                    dests[i].GetId().c_str(),
+                    message->GetType().c_str(),
+                    message->GetMessageId().c_str());
+            shadow_push_eventlog(buf);
 
-                // make header for message
-                struct timespec tspec;
-                clock_gettime(CLOCK_MONOTONIC, &tspec);
-                RTTModule_MessageHeader header;
-                header.type = recvheader->type;
-                header.hop = recvheader->hop + 1;
-                header.src = recvheader->src;
-                header.timestamp = recvheader->timestamp;
+            // make header for message
+            struct timespec tspec;
+            clock_gettime(CLOCK_MONOTONIC, &tspec);
+            RTTModule_MessageHeader header;
+            header.type = recvheader->type;
+            header.hop = recvheader->hop + 1;
+            header.src = recvheader->src;
+            header.timestamp = recvheader->timestamp;
 
 
-                // append a message to socket
-                int flags = fcntl(socketFD, F_GETFL, 0);
-                fcntl(socketFD, F_SETFL, flags & (~O_NONBLOCK));
+            // append a message to socket
+            int flags = fcntl(socketFD, F_GETFL, 0);
+            fcntl(socketFD, F_SETFL, flags & (~O_NONBLOCK));
 
-                dataSocket->AppendMessageToSendBuff(header, message); // sending a message
-                DoSendResultEnum result = dataSocket->DoSend();
-                M_Assert(result == DoSendResultEnum::SendBuffEmptied, "must be sent");
-                flags = fcntl(socketFD, F_GETFL, 0);
-                fcntl(socketFD, F_SETFL, flags | O_NONBLOCK);
-            }
+            dataSocket->AppendMessageToSendBuff(header, message); // sending a message
+            DoSendResultEnum result = dataSocket->DoSend();
+            M_Assert(result == DoSendResultEnum::SendBuffEmptied, "must be sent");
+            flags = fcntl(socketFD, F_GETFL, 0);
+            fcntl(socketFD, F_SETFL, flags | O_NONBLOCK);
+                
+            sentOut++;
         }
     }
     return true;

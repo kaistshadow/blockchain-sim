@@ -190,19 +190,17 @@ bool RandomGossipNetworkModule_ctxtest::MulticastMessage(std::shared_ptr<Message
     std::vector<PeerId> dests = GetNeighborPeerIds();
     if (dests.size() == 0) return true;
     auto idxs = GenRandomNumSet(dests.size(), fanOut);
-    for(std::vector<PeerId>::size_type i = 0 ; i < dests.size(); i++){
-        if (idxs.find(i) != idxs.end()){
-            if (checkSourcePeer_ctxtest(message, dests[i])){
-              if(SendMulticastMsg(dests[i], message) == false)
-                  return false;
-              else {
-                  // add timestamp
-                  struct timespec tspec;
-                  clock_gettime(CLOCK_MONOTONIC, &tspec);
-                  char name[100];
-                  sprintf(name, "AppendToSendBuf(%s)", dests[i].GetId().c_str());
-                  blocktimelogs[message->GetMessageId()][name] = tspec;
-              }
+    for (int i : idxs) {
+        if (checkSourcePeer_ctxtest(message, dests[i])){
+            if(SendMulticastMsg(dests[i], message) == false)
+                return false;
+            else {
+                // add timestamp
+                struct timespec tspec;
+                clock_gettime(CLOCK_MONOTONIC, &tspec);
+                char name[100];
+                sprintf(name, "AppendToSendBuf(%s)", dests[i].GetId().c_str());
+                blocktimelogs[message->GetMessageId()][name] = tspec;
             }
         }
     }
@@ -218,13 +216,11 @@ bool RandomGossipNetworkModule_ctxtest::ForwardMessage(std::shared_ptr<Message> 
     std::vector<PeerId> dests = GetNeighborPeerIds();
     if (dests.size() == 0) return true;
     auto idxs = GenRandomNumSet(dests.size(), fanOut);
-    for(std::vector<PeerId>::size_type i = 0 ; i < dests.size(); i++){
-        if (idxs.find(i) != idxs.end()){
-            // if (checkSourcePeer_ctxtest(message, dests[i])){ // send back to source for debugging
-            if(SendMulticastMsg(dests[i], message) == false)
-                return false;
-            // }
-        }
+    for (int i : idxs ) {
+        // if (checkSourcePeer_ctxtest(message, dests[i])){ // send back to source for debugging
+        if(SendMulticastMsg(dests[i], message) == false)
+            return false;
+        // }
     }
     return true;
 }

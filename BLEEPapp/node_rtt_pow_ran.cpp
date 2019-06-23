@@ -384,9 +384,6 @@ int main(int argc, char *argv[]) {
                     }
 
 
-                    estimateRTTModule.MulticastMessage(nMsg);
-                    estimateRTTModule.InsertMessageSet(nMsg->GetMessageId());
-
                     // for (auto neighborPeerId: gArgs.GetArgs("-connect")) {
                     //     if (neighborPeerId == gArgs.GetArg("-id"))
                     //         continue;
@@ -397,8 +394,6 @@ int main(int argc, char *argv[]) {
                     // // propagate to network
                     // randomNetworkModule.MulticastMessage(nMsg);
                     // randomNetworkModule.InsertMessageSet(nMsg->GetMessageId());
-
-
 
                     // std::cout << "mined block num = " << mined_block_num << "\n";
                     if (ledger.GetNextBlockIdx() == 101) {
@@ -414,6 +409,10 @@ int main(int argc, char *argv[]) {
                         
                         exit(0);
                     }
+
+                    estimateRTTModule.MulticastMessage(nMsg);
+                    estimateRTTModule.InsertMessageSet(nMsg->GetMessageId());
+
 
                     // next_shadow_clock_update("==== done processing EmuBlockMiningComplete Event");
                     shadow_usleep(1000);

@@ -350,16 +350,10 @@ int main(int argc, char *argv[]) {
                     // std::cout << "block mining complte" << "\n";
                     std::shared_ptr<POWBlock> minedBlk = event.GetData().GetMinedBlock();
 
-                    // create blk message
-                    PeerId src(gArgs.GetArg("-id"));
-                    PeerId dest = PeerId("DestAll");
-                    std::string payload = GetSerializedString(minedBlk);
-                    std::shared_ptr<Message> nMsg = std::make_shared<Message>(src, dest, "newBlock", payload);
-
-                    // add timestamp
-                    struct timespec tspec;
-                    clock_gettime(CLOCK_MONOTONIC, &tspec);
-                    blocktimelogs[nMsg->GetMessageId()]["BlockMined"] = tspec;
+                    // // add timestamp
+                    // struct timespec tspec;
+                    // clock_gettime(CLOCK_MONOTONIC, &tspec);
+                    // blocktimelogs[nMsg->GetMessageId()]["BlockMined"] = tspec;
 
                     // append block to ledger
                     AppendBlockToLedger(minedBlk, txPool, ledger);
@@ -375,10 +369,17 @@ int main(int argc, char *argv[]) {
                     }
 
 
+
+                    PeerId src(gArgs.GetArg("-id"));
+                    std::string payload = GetSerializedString(minedBlk);
                     for (auto neighborPeerId: gArgs.GetArgs("-connect")) {
                         if (neighborPeerId == gArgs.GetArg("-id"))
                             continue;
                         PeerId destPeerId(neighborPeerId);
+
+                        // create blk message
+                        std::shared_ptr<Message> nMsg = std::make_shared<Message>(src, destPeerId, "newBlock", payload);
+
                         estimateRTTModule.UnicastMessage(destPeerId, nMsg);
                     }
                     // // propagate to network

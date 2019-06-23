@@ -21,6 +21,19 @@ namespace libBLEEP {
 #define DEFAULT_SOCKET_PORT 3456
 #define BACKLOG 100     /* how many pending connections queue will hold */
 
+
+#define MESSAGETYPE_RTTREQ 1
+#define MESSAGETYPE_RTTREP 2
+
+    class RTTModule_MessageHeader {
+    public:
+        int length;
+        int type;
+        int hop;
+        PeerId src;
+        double timestamp; // time at initial sending
+    };
+
     enum class DoSendResultEnum {
         none,
         SendBuffEmptied,
@@ -80,10 +93,10 @@ namespace libBLEEP {
         /* maybe following socket functions can be redesigned in more intuitive ways? 
            or there should be more intuitive interface for user who doesn't need to care 
            about internal buffers such as recvBuff, sendBuff? */
-        std::pair < bool, std::shared_ptr<Message> > DoRecv(); /* do recv and return pointer for received Message (if fully received) */
+        std::pair< bool, std::pair< std::shared_ptr<RTTModule_MessageHeader>, std::shared_ptr<Message> > > DoRecv(); /* do recv and return pointer for received Message (if fully received) */
         DoSendResultEnum DoSend(); /* do actual send (by retrieving the data stream from sendBuff) */
-        void AppendMessageToSendBuff(std::shared_ptr<Message> message); /* append a requested message into internal sendBuff */
-        void AppendMessageToSendBuff(std::shared_ptr<Message> message, PeerId dest); /* append a requested message into internal sendBuff */
+        void AppendMessageToSendBuff(RTTModule_MessageHeader header, std::shared_ptr<Message> message);
+        /* void AppendMessageToSendBuff(std::shared_ptr<Message> message, PeerId dest); /\* append a requested message into internal sendBuff *\/ */
 
         virtual ~RTTModule_DataSocket();
         virtual SocketTypeEnum GetType() { return SocketTypeEnum::DataSocket; }
@@ -280,7 +293,7 @@ namespace libBLEEP {
                     // retrieve Message from recvBuffer if possible
                     // return Message as asynchronous event
 
-                    std::pair< bool, std::shared_ptr<Message> > recvResult = dataSocket->DoRecv();
+                    std::pair< bool, std::pair< std::shared_ptr<RTTModule_MessageHeader>, std::shared_ptr<Message> >> recvResult = dataSocket->DoRecv();
                     if (!recvResult.first) {
                         // socket closed by remote while doRecv
 
@@ -305,8 +318,13 @@ namespace libBLEEP {
                     }
                     else {
                         // check whether any message is received
-                        std::shared_ptr<Message> message = recvResult.second;
-                        if (message && message->GetType() == "notifyPeerId") {
+                        std::shared_ptr<RTTModule_MessageHeader> header = recvResult.second.first;
+                        std::shared_ptr<Message> message = recvResult.second.second;
+
+                        if (header) {
+                            std::cout << "recv header after DoRecv. need to set delay for experiment." << "\n";
+                            _networkModule->receivedHeader[fd] = header;
+                        } else if (message && message->GetType() == "notifyPeerId") {
                             /** received id notify message (First message after socket establishment)    **/
                             /** This message is intended to be not visible to user of EstimateRTTModule.**/
                             /** Thus, we don't set recvMessage asynchronous event.                       **/
@@ -324,7 +342,17 @@ namespace libBLEEP {
                             if (message->GetType() == "RTTReq") {
                                 PeerId myPeerId = *_networkModule->peerManager.GetMyPeerId();
                                 std::shared_ptr<Message> replymsg = std::make_shared<Message>(myPeerId, message->GetSource(), "RTTRep", "");
-                                dataSocket->AppendMessageToSendBuff(replymsg);
+
+                                // make dummy header for reply message
+                                struct timespec tspec;
+                                clock_gettime(CLOCK_MONOTONIC, &tspec);
+                                RTTModule_MessageHeader replyheader;
+                                replyheader.type = MESSAGETYPE_RTTREP;
+                                replyheader.hop = 0;
+                                replyheader.src = myPeerId;
+                                replyheader.timestamp = tspec.tv_nsec + tspec.tv_sec * 1e9;
+
+                                dataSocket->AppendMessageToSendBuff(replyheader, replymsg);
                                 DoSendResultEnum result = dataSocket->DoSend();
                                 M_Assert(result == DoSendResultEnum::SendBuffEmptied, "must be sent");
                                 int flags = fcntl(fd, F_GETFL, 0);
@@ -347,8 +375,7 @@ namespace libBLEEP {
                                 sprintf(buf, "RTTRep received from %s", message->GetSource().GetId().c_str());
                                 PrintTimespec(buf);
                             } else {
-                                int flags = fcntl(fd, F_GETFL, 0);
-                                fcntl(fd, F_SETFL, flags |O_NONBLOCK);
+
                             }
 
                             // set asynchronous event
@@ -509,7 +536,17 @@ namespace libBLEEP {
                                                                                   connectedPeerId,
                                                                                   "notifyPeerId", "");
                     std::shared_ptr<RTTModule_DataSocket> dataSocket = _networkModule->socketManager.GetDataSocket(fd);
-                    dataSocket->AppendMessageToSendBuff(firstMsg);
+
+                    // make header for message
+                    struct timespec tspec;
+                    clock_gettime(CLOCK_MONOTONIC, &tspec);
+                    RTTModule_MessageHeader header;
+                    header.type = 0;
+                    header.hop = 0;
+                    header.src = *_networkModule->peerManager.GetMyPeerId();
+                    header.timestamp = tspec.tv_nsec + tspec.tv_sec * 1e9;
+
+                    dataSocket->AppendMessageToSendBuff(header, firstMsg);
                     // set writable for data socket watcher
                     std::shared_ptr<DataSocketWatcher> dataSocketWatcher = _networkModule->watcherManager.GetDataSocketWatcher(fd);
                     if (dataSocketWatcher)
@@ -544,6 +581,8 @@ namespace libBLEEP {
 
     private:
         MainEventManager* _mainEventManager;
+
+        std::map<int, std::shared_ptr<RTTModule_MessageHeader> > receivedHeader;
 
     public:
         /* Constructor with proper peer id */

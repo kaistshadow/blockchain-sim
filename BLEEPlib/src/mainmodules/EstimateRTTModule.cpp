@@ -77,7 +77,7 @@ libBLEEP::RTTModule_DataSocket::RTTModule_DataSocket(int sfd) {
     _fd = sfd;
 }
 
-std::pair< bool, std::shared_ptr<Message> > libBLEEP::RTTModule_DataSocket::DoRecv() {
+std::pair< bool, std::pair< std::shared_ptr<RTTModule_MessageHeader>, std::shared_ptr<Message> > > libBLEEP::RTTModule_DataSocket::DoRecv() {
     char string_read[2000];
     int n;
     switch (_recvBuff.recv_status) {
@@ -100,18 +100,61 @@ std::pair< bool, std::shared_ptr<Message> > libBLEEP::RTTModule_DataSocket::DoRe
             else if (n == 0) {
                 std::cout << "socket disconnected" << "\n";
 
-                return std::make_pair(false, nullptr);
+                return std::make_pair(false, std::make_pair(nullptr, nullptr) );
                 // notify closeEvent
                 // _manager->RemoveDataSocket(_fd); // remove myself(DataSocket) from manager
             }
             else if (n > 0) {
                 _recvBuff.message_len = length;
-                _recvBuff.recv_status = RECV_MSG;
                 _recvBuff.received_len = 0;
                 _recvBuff.recv_str = "";
 
                 int flags = fcntl(_fd, F_GETFL, 0);
                 fcntl(_fd, F_SETFL, flags & (~O_NONBLOCK));
+
+                
+                RTTModule_MessageHeader header;
+                char src[20];
+                if (recv(_fd, &header.type, sizeof(int), 0) <=0) {
+                    std::cout << "error while receiving header" << "\n";
+                    exit(-1);
+                } else {
+                    std::cout << "recv type:" << header.type << "\n";
+                }
+                if (recv(_fd, &header.hop, sizeof(int), 0) <=0) {
+                    std::cout << "error while receiving header" << "\n";
+                    exit(-1);
+                } else {
+                    std::cout << "recv hop:" << header.hop << "\n";
+                }
+                if (recv(_fd, src, 20, 0) <=0) {
+                    std::cout << "error while receiving header" << "\n";
+                    exit(-1);
+                } else {
+                    std::cout << "recv src:" << src << "\n";
+                }
+                header.src = PeerId(std::string(src));
+                if (recv(_fd, &header.timestamp, sizeof(double), 0) <=0) {
+                    std::cout << "error while receiving header" << "\n";
+                    exit(-1);
+                } else {
+                    std::cout << "recv timestamp:" << header.timestamp << "\n";
+                }
+                _recvBuff.recv_status = RECV_MSG;
+                flags = fcntl(_fd, F_GETFL, 0);
+                fcntl(_fd, F_SETFL, flags | O_NONBLOCK);                    
+
+                PrintTimespec("receive messageheader");
+                if (header.type == MESSAGETYPE_RTTREQ || header.type == MESSAGETYPE_RTTREP) {
+                    // make a recv blocking
+                    flags = fcntl(_fd, F_GETFL, 0);
+                    fcntl(_fd, F_SETFL, flags & (~O_NONBLOCK));
+                    // recv all message in single step.  
+                }
+                else {
+                    return std::make_pair(true, std::make_pair( std::make_shared<RTTModule_MessageHeader>(header), 
+                                                                nullptr));
+                }
             }
         }
     case RECV_MSG:
@@ -131,7 +174,7 @@ std::pair< bool, std::shared_ptr<Message> > libBLEEP::RTTModule_DataSocket::DoRe
                 else if (numbytes == 0) {
                     std::cout << "connection closed while recv\n";
 
-                    return std::make_pair(false, nullptr);
+                    return std::make_pair(false, std::make_pair( nullptr, nullptr) );
                     // notify  closeEvent
                     // _manager->RemoveDataSocket(_fd); // remove myself(DataSocket) from manager
                     // break;
@@ -174,11 +217,11 @@ std::pair< bool, std::shared_ptr<Message> > libBLEEP::RTTModule_DataSocket::DoRe
 
                 PrintTimespec("after deserialization message");
 
-                return std::make_pair(true, std::shared_ptr<Message>(msg));
+                return std::make_pair(true, std::make_pair( nullptr ,std::shared_ptr<Message>(msg)));
             }
         }
     }
-    return std::make_pair( true, nullptr);
+    return std::make_pair( true, std::make_pair( nullptr, nullptr) );
 }
 
 DoSendResultEnum libBLEEP::RTTModule_DataSocket::DoSend() {
@@ -219,7 +262,7 @@ DoSendResultEnum libBLEEP::RTTModule_DataSocket::DoSend() {
     return DoSendResultEnum::none;
 }
 
-void libBLEEP::RTTModule_DataSocket::AppendMessageToSendBuff(std::shared_ptr<Message> message) {
+void libBLEEP::RTTModule_DataSocket::AppendMessageToSendBuff(RTTModule_MessageHeader header, std::shared_ptr<Message> message) {
     Message* msg = message.get();
 
     std::string serial_str;
@@ -231,29 +274,38 @@ void libBLEEP::RTTModule_DataSocket::AppendMessageToSendBuff(std::shared_ptr<Mes
     s.flush();
 
     int message_len = serial_str.size();
+    int type = header.type;
+    int hop = header.hop;
+    char src[20];
+    sprintf(src, "%s", header.src.GetId().c_str());
+    double timestamp = header.timestamp;
 
     _sendBuff.push_back(std::make_shared<WriteMsg>((char*)&message_len, sizeof(int)));
+    _sendBuff.push_back(std::make_shared<WriteMsg>((char*)&type, sizeof(int)));
+    _sendBuff.push_back(std::make_shared<WriteMsg>((char*)&hop, sizeof(int)));
+    _sendBuff.push_back(std::make_shared<WriteMsg>(src, 20));
+    _sendBuff.push_back(std::make_shared<WriteMsg>((char*)&timestamp, sizeof(double)));
     _sendBuff.push_back(std::make_shared<WriteMsg>(serial_str.c_str(), message_len));
     // _manager->SetWritable(_fd);
 }
 
-void libBLEEP::RTTModule_DataSocket::AppendMessageToSendBuff(std::shared_ptr<Message> message, PeerId dest) {
-    Message* msg = message.get();
+// void libBLEEP::RTTModule_DataSocket::AppendMessageToSendBuff(std::shared_ptr<Message> message, PeerId dest) {
+//     Message* msg = message.get();
 
-    std::string serial_str;
-    // serialize message obj into an std::string message
-    boost::iostreams::back_insert_device<std::string> inserter(serial_str);
-    boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
-    boost::archive::binary_oarchive oa(s);
-    oa << msg;
-    s.flush();
+//     std::string serial_str;
+//     // serialize message obj into an std::string message
+//     boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+//     boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
+//     boost::archive::binary_oarchive oa(s);
+//     oa << msg;
+//     s.flush();
 
-    int message_len = serial_str.size();
+//     int message_len = serial_str.size();
 
-    _sendBuff.push_back(std::make_shared<WriteMsg>((char*)&message_len, sizeof(int)));
-    _sendBuff.push_back(std::make_shared<WriteMsg>(serial_str.c_str(), message_len, dest, message));
-    // _manager->SetWritable(_fd);
-}
+//     _sendBuff.push_back(std::make_shared<WriteMsg>((char*)&message_len, sizeof(int)));
+//     _sendBuff.push_back(std::make_shared<WriteMsg>(serial_str.c_str(), message_len, dest, message));
+//     // _manager->SetWritable(_fd);
+// }
 
 libBLEEP::RTTModule_DataSocket::~RTTModule_DataSocket() {
     if ( close(_fd) == -1) {
@@ -432,6 +484,7 @@ bool EstimateRTTModule::AsyncConnectPeer(PeerId id, double time) {
 }
 
 
+// sending 1-hop message
 bool EstimateRTTModule::UnicastMessage(PeerId dest, std::shared_ptr<Message> message) {
     // check whether there exists a data socket for the destination peer
     if (!peerManager.HasEstablishedDataSocket(dest))
@@ -448,19 +501,43 @@ bool EstimateRTTModule::UnicastMessage(PeerId dest, std::shared_ptr<Message> mes
     int socketFD = peerManager.GetConnectedSocketFD(dest);
     std::shared_ptr<RTTModule_DataSocket> dataSocket = socketManager.GetDataSocket(socketFD);
 
-    if (!dataSocket)
-        return false;
+    M_Assert(dataSocket != nullptr, "dataSocket must exist for neighbor");
+
+
+    // make header for message
+    struct timespec tspec;
+    clock_gettime(CLOCK_MONOTONIC, &tspec);
+    RTTModule_MessageHeader header;
+    header.type = 0;
+    if (message->GetType() == "RTTReq")
+        header.type = MESSAGETYPE_RTTREQ;
+    header.hop = 0;
+    header.src = *peerManager.GetMyPeerId();
+    header.timestamp = tspec.tv_nsec + tspec.tv_sec * 1e9;
+
 
     // append a message to socket
-    dataSocket->AppendMessageToSendBuff(message);
+    int flags = fcntl(socketFD, F_GETFL, 0);
+    fcntl(socketFD, F_SETFL, flags & (~O_NONBLOCK));
 
+    dataSocket->AppendMessageToSendBuff(header, message); // sending 1-hop message
+    DoSendResultEnum result = dataSocket->DoSend();
+    M_Assert(result == DoSendResultEnum::SendBuffEmptied, "must be sent");
+    flags = fcntl(socketFD, F_GETFL, 0);
+    fcntl(socketFD, F_SETFL, flags | O_NONBLOCK);
 
-    // set writable for data socket watcher
-    std::shared_ptr<DataSocketWatcher> dataSocketWatcher = watcherManager.GetDataSocketWatcher(socketFD);
-    if (dataSocketWatcher)
-        dataSocketWatcher->SetWritable();
-    else
-        M_Assert(0, "proper dataSocketWatcher not exist");
+    if (message->GetType() == "RTTReq") {
+        char msg[100];
+        sprintf(msg, "RTTReq sent to %s", dest.GetId().c_str());
+        PrintTimespec(msg);
+    }
+
+    // // set writable for data socket watcher
+    // std::shared_ptr<DataSocketWatcher> dataSocketWatcher = watcherManager.GetDataSocketWatcher(socketFD);
+    // if (dataSocketWatcher)
+    //     dataSocketWatcher->SetWritable();
+    // else
+    //     M_Assert(0, "proper dataSocketWatcher not exist");
 
     // append shadow log
     char buf[256];
@@ -547,31 +624,7 @@ void EstimateRTTModule::SendRTTMsg() {
         std::shared_ptr<Message> msg = std::make_shared<Message>(myPeerId, peer, 
                                                                  "RTTReq", "");
 
-        // append shadow log
-        char buf[256];
-        sprintf(buf, "UnicastMessage,%s,%s,%s,%s",
-                myPeerId.GetId().c_str(),
-                peer.GetId().c_str(),
-                msg->GetType().c_str(),
-                msg->GetMessageId().c_str());
-        shadow_push_eventlog(buf);
+        UnicastMessage(peer, msg);
 
-
-        int socketFD = peerManager.GetConnectedSocketFD(peer);
-        std::shared_ptr<RTTModule_DataSocket> dataSocket = socketManager.GetDataSocket(socketFD);
-
-        M_Assert(dataSocket != nullptr, "dataSocket must exist for neighbor");
-
-        // send a message to socket
-        int flags = fcntl(socketFD, F_GETFL, 0);
-        fcntl(socketFD, F_SETFL, flags & (~O_NONBLOCK));
-        dataSocket->AppendMessageToSendBuff(msg);
-        DoSendResultEnum result = dataSocket->DoSend();
-        M_Assert(result == DoSendResultEnum::SendBuffEmptied, "must be sent");
-        flags = fcntl(socketFD, F_GETFL, 0);
-        fcntl(socketFD, F_SETFL, flags | O_NONBLOCK);
-
-        sprintf(buf, "RTTReq sent to %s", peer.GetId().c_str());
-        PrintTimespec(buf);
     }
 }

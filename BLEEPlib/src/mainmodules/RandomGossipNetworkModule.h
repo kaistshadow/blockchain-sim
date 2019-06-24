@@ -170,6 +170,7 @@ namespace libBLEEP {
                             std::cout << "message source:" << message->GetSource().GetId() << "\n";
                             M_Assert(neighborPeerId != nullptr, "no neighbor peer exists for given socket");
 
+
                             char buf[256];
                             sprintf(buf, "RecvMessage,%s,%s,%s,%s",
                                     neighborPeerId->GetId().c_str(),
@@ -180,8 +181,8 @@ namespace libBLEEP {
 
                             if (message->GetDest().GetId() == "DestAll") {
                                 if(true == _networkModule->InsertMessageSet(message->GetMessageId())){
-                                    sprintf(buf, " NewTx %s %s",
-                                            _networkModule->peerManager.GetMyPeerId()->GetId().c_str(),
+                                    sprintf(buf, " NewTx from %s %s",
+                                            neighborPeerId->GetId().c_str(),
                                             message->GetMessageId().c_str());
                                     shadow_push_eventlog(buf);
                                     _networkModule->MulticastMessage(message);

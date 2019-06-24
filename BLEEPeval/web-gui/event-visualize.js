@@ -109,7 +109,7 @@ function performEvent(event) {
 
             removeEdge(from, to);
             removeEdge(to, from);
-        } else if (eventtype === "UnicastMessage") {
+        } else if (eventtype === "UnicastMessage" || eventtype == "MulticastMessage") {
             var from = eventargs.split(",")[0];
             var to = eventargs.split(",")[1];
             var hashId = eventargs.split(",")[3];
@@ -153,7 +153,7 @@ function revertEvent(event) {
             var from = eventargs.split(",")[0];
             var to = eventargs.split(",")[1];
             addEdge(from, to);
-        } else if (eventtype === "UnicastMessage") {
+        } else if (eventtype === "UnicastMessage" || eventtype == "MulticastMessage") {
             var from = eventargs.split(",")[0];
             var to = eventargs.split(",")[1];
             var hashId = eventargs.split(",")[3];

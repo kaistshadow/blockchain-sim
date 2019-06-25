@@ -72,6 +72,7 @@ void ListLedgerManager<T>::ReplaceLedger(typename std::list<T>::iterator orig_st
         std::cout << *new_start << "\n";
 
         new_start++;
+        recvPOWBlknumfork++;
     }
 }
 

@@ -645,6 +645,9 @@ bool EstimateRTTModule::MulticastMessage(std::shared_ptr<Message> message) {
             flags = fcntl(socketFD, F_GETFL, 0);
             fcntl(socketFD, F_SETFL, flags | O_NONBLOCK);
             sentOut++;
+
+            if (message->GetType() == "newBlock")
+                sentPOWBlknum++;
         }
     }
     return true;
@@ -700,6 +703,9 @@ bool EstimateRTTModule::ForwardMessage(std::shared_ptr<RTTModule_MessageHeader> 
             fcntl(socketFD, F_SETFL, flags | O_NONBLOCK);
                 
             sentOut++;
+
+            if (message->GetType() == "newBlock")
+                sentPOWBlknum++;
         }
     }
     return true;

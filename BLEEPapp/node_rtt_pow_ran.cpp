@@ -95,6 +95,11 @@ bool UpdateLedgerAsLongestChain(std::vector<POWBlock>& received_blks, TxPool& tx
 
 
 int main(int argc, char *argv[]) {
+    // add timestamp
+    struct timespec start;
+    clock_gettime(CLOCK_REALTIME, &start);
+
+
     std::list<UINT256_t> mined_hash_list;
 
     gArgs.ParseParameters(argc, argv);
@@ -292,6 +297,7 @@ int main(int argc, char *argv[]) {
                             std::shared_ptr<Message> msg = std::make_shared<Message>(myPeerId, destPeerId, 
                                                                                      "POWConsensusProtocol", payload);
                             estimateRTTModule.UnicastMessage(destPeerId, msg);
+                            sentPOWMsgnum++;
                         }
                         else {
                             // add timestamp
@@ -319,6 +325,7 @@ int main(int argc, char *argv[]) {
                             std::shared_ptr<Message> msg = std::make_shared<Message>(myPeerId, destPeerId, 
                                                                                      "POWConsensusProtocol", payload);
                             estimateRTTModule.UnicastMessage(destPeerId, msg);
+                            sentPOWMsgnum++;
                         } 
                         else if (receivedPOWmsg.GetType() == "RESPBLOCKS") {
                             std::vector<POWBlock>& blks = receivedPOWmsg.GetPOWBlocks();
@@ -402,6 +409,10 @@ int main(int argc, char *argv[]) {
                     if (ledger.GetNextBlockIdx() == 101) {
                         PrintBlockTimeLogs();
 
+                        std::cout << "sentPOWBlknum=" << sentPOWBlknum << "\n";
+                        std::cout << "sentPOWMsgnum=" << sentPOWMsgnum << "\n";
+                        std::cout << "recvPOWBlknumfork=" << recvPOWBlknumfork << "\n";
+
                         std::cout << "total_mined_block_num=" << mined_block_num << "\n";
                         char buf[256];
                         sprintf(buf, "ResultStat,%s,%d,%lu",
@@ -424,6 +435,14 @@ int main(int argc, char *argv[]) {
                             }
                         }
                         std::cout << "applied_mined_block_num=" << applied_mined_block_num << "\n";
+
+                        // add timestamp
+                        struct timespec end;
+                        clock_gettime(CLOCK_REALTIME, &end);
+                        double milliseconds = end.tv_nsec >= start.tv_nsec
+                            ? (end.tv_nsec - start.tv_nsec) / 1e6 + (end.tv_sec - start.tv_sec) * 1e3
+                            : (start.tv_nsec - end.tv_nsec) / 1e6 + (end.tv_sec - start.tv_sec - 1) * 1e3;
+                        std::cout << "milliseconds=" << milliseconds << "\n";
 
                         exit(0);
                     }

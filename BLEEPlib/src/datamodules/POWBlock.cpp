@@ -14,6 +14,10 @@ using namespace libBLEEP;
 
 std::map<std::string, std::map<std::string, struct timespec> > libBLEEP::blocktimelogs;
 
+int libBLEEP::sentPOWMsgnum = 0;
+int libBLEEP::sentPOWBlknum = 0;
+int libBLEEP::recvPOWBlknumfork = 0;
+
 // buf needs to store 30 characters
 static int timespec2str(char *buf, uint len, const struct timespec *ts) {
     uint ret;

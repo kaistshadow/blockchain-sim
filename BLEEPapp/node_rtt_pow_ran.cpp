@@ -95,6 +95,8 @@ bool UpdateLedgerAsLongestChain(std::vector<POWBlock>& received_blks, TxPool& tx
 
 
 int main(int argc, char *argv[]) {
+    std::list<UINT256_t> mined_hash_list;
+
     gArgs.ParseParameters(argc, argv);
 
     if (gArgs.IsArgSet("-?") || gArgs.IsArgSet("-h") ||  gArgs.IsArgSet("-help") || gArgs.IsArgSet("-version")) {
@@ -373,6 +375,7 @@ int main(int argc, char *argv[]) {
                     // append block to ledger
                     AppendBlockToLedger(minedBlk, txPool, ledger);
                     mined_block_num++;
+                    mined_hash_list.push_back(minedBlk->GetBlockHash());
 
                     // restart mining timer
                     int txNumPerBlock = std::stoi(gArgs.GetArg("-blocktxnum"));
@@ -407,6 +410,21 @@ int main(int argc, char *argv[]) {
                         shadow_push_eventlog(buf);
 
                         
+                        // mining power dist
+                        int applied_mined_block_num = 0;
+                        for (UINT256_t hash : mined_hash_list) { 
+                            auto ledger_it = ledger.GetLedger().begin();
+                            auto end_it = ledger.GetLedger().end();
+                            while (ledger_it != end_it) {
+                                if (hash == ledger_it->GetBlockHash()) {
+                                    applied_mined_block_num++;
+                                    break;
+                                }
+                                ledger_it++;
+                            }
+                        }
+                        std::cout << "applied_mined_block_num=" << applied_mined_block_num << "\n";
+
                         exit(0);
                     }
 

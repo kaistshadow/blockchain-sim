@@ -12,6 +12,9 @@ def exec_shell_cmd(cmd):
 
 def run_experiment(configfile):
     datadir = "visualize-datadir"
+    current_config_path = "%s/current-config.xml" % os.path.dirname(configfile)
+    exec_shell_cmd("cp %s %s" % (configfile, current_config_path))
+
     shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-d", datadir, configfile], stdout=PIPE)    
     shadow_stdout_filename = "shadow.output"
     shadow_stdout_file = open(shadow_stdout_filename, 'w')
@@ -45,6 +48,8 @@ def run_visualization_server(shadowoutput, configfile, background=False):
     else:
         web_server = Popen(["node", "server.js", "../"+shadowoutput], cwd="./web-gui")
 
+    current_config_path = "%s/current-config.xml" % os.path.dirname(configfile)
+    exec_shell_cmd("rm %s" % current_config_path)
  
     time.sleep(1)
     print ""

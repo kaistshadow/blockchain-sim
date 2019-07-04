@@ -80,6 +80,10 @@ add_shadow_plugin(NODE_Random_client client_Random.cpp)
 install(TARGETS NODE_Random_client DESTINATION plugins)
 target_link_libraries(NODE_Random_client BLEEP::BLEEP)
 
+add_shadow_plugin(NODE_Random_bleep_attacker node_Random_attacker.cpp)
+install(TARGETS NODE_Random_bleep_attacker DESTINATION plugins)
+target_link_libraries(NODE_Random_bleep_attacker BLEEP::BLEEP)
+
 add_shadow_plugin(NODE_POW_TX node_pow_tx.cpp)
 install(TARGETS NODE_POW_TX DESTINATION plugins)
 target_link_libraries(NODE_POW_TX BLEEP::BLEEP)
@@ -100,6 +104,9 @@ target_link_libraries(LOCAL_NODE_POW BLEEP::BLEEP)
 
 add_executable(LOCAL_NODE_Random_bleep node_Random.cpp)
 target_link_libraries(LOCAL_NODE_Random_bleep BLEEP::BLEEP)
+
+add_executable(LOCAL_NODE_Random_bleep_attacker node_Random_attacker.cpp)
+target_link_libraries(LOCAL_NODE_Random_bleep_attacker BLEEP::BLEEP)
 
 add_executable(LOCAL_NODE_Random_client client_Random.cpp)
 target_link_libraries(LOCAL_NODE_Random_client BLEEP::BLEEP)

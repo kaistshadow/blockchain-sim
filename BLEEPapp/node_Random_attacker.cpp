@@ -38,24 +38,32 @@ void mutate (char * name, size_t size) {
 
 void  genPeerList(std::vector<PeerId> &lst, std::string myId, int maxPeerNum, std::string victimId){
 
+    char current_config[50];
+    sprintf(current_config, "config-examples/current-config.%d.xml", (int) getppid() );
+
+    char generated_config[60];
+    sprintf(generated_config, "config-examples/rc1-eventloop-random-generated.%d.xml", (int) getppid() );
+
     tinyxml2::XMLDocument doc;
-    auto errorId = doc.LoadFile("config-examples/rc1-eventloop-random-generated.xml");
+    auto errorId = doc.LoadFile(generated_config);
     if (!errorId) {
-        doc.LoadFile("config-examples/current-config.xml");
+        // ===== comment this block if you don't want attacker nodes to make outgoing connections
+        doc.LoadFile(current_config);
         for (tinyxml2::XMLElement * node = doc.FirstChildElement("shadow")->FirstChildElement("node");
             node != NULL; node = node->NextSiblingElement()) {
                 const char * nodeId = node->Attribute("id");
                 if (nodeId == myId) break;
                 lst.push_back(PeerId(nodeId));
         }
+        // =====
     }
 
     else {
         int connectPeerNum = 20; // Same maximum number as in main()
 
-        auto errorId = doc.LoadFile("config-examples/current-config.xml");
+        auto errorId = doc.LoadFile(current_config);
         if (!errorId) {
-            doc.SaveFile("config-examples/rc1-eventloop-random-generated.xml");
+            doc.SaveFile(generated_config);
             for (tinyxml2::XMLElement * node = doc.FirstChildElement("shadow")->FirstChildElement("node");
                 node != NULL; node = node->NextSiblingElement()) {
                     const char * nodeId = node->Attribute("id");
@@ -94,7 +102,7 @@ void  genPeerList(std::vector<PeerId> &lst, std::string myId, int maxPeerNum, st
             doc.FirstChildElement("shadow")->InsertAfterChild(insertAfter, attackerNode);
             insertAfter = attackerNode;
         }
-        doc.SaveFile("config-examples/rc1-eventloop-random-generated.xml");
+        doc.SaveFile(generated_config);
     }
 }
 

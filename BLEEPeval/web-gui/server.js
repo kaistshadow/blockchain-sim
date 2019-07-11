@@ -2,18 +2,21 @@
 "use strict";
 
 // Optional. You will see this name in eg. 'ps' or 'top' command
-process.title = 'node-chat';
+process.title = 'visu_server';
 
 var shadowoutputfile = '';
+
+// Port where we'll run the websocket server
+var webSocketsServerPort;
 
 process.argv.forEach(function (val, index, array) {
     if (index == 2) {
         shadowoutputfile = val;
     }
+    if (index == 3) {
+        webSocketsServerPort = parseInt(val);
+    }
 });
-
-// Port where we'll run the websocket server
-var webSocketsServerPort = 1337;
 
 // websocket and http servers
 var webSocketServer = require('websocket').server;
@@ -474,6 +477,34 @@ wsServer.on('request', function(request) {
                 for (var i=0; i < clients.length; i++) {
                     clients[i].conn.sendUTF(json);
                 }
+            }
+            else if (msg.startsWith("new-experiment")) {
+                var newPort = webSocketsServerPort + 1;
+                var config = '';
+                switch (msg.split(' ')[1]) {
+                    case "basic-eventloop": config = "rc1-eventloop.xml"; break;
+                    case "pow-5":           config = "rc1-pow-5.xml"; break;
+                    case "pow-large":       config = "rc1-pow-large.xml"; break;
+                    case "gossip":          config = "rc1-eventloop-random.xml"; break;
+                    case "generate":        config = "rc1-eventloop-random-attack.xml"; break;
+                    case "eclipse":         config = "rc1-eventloop-random-generated." + process.ppid +  ".xml"; break;
+                }
+                var args = ["visualize-events.py", `config-examples/${config}`, "-p", `${newPort.toString()}`];
+
+                const { spawn } = require('child_process');
+                const child = spawn('python', args, {cwd:'../', shell:true})
+                connection.send(JSON.stringify({type: "newExperiment", port: newPort}));
+
+                child.stdout.on('data', (data) => {
+                    //console.log(`stdout: ${data}`);
+                });
+                child.stderr.on('data', (data) => {
+                    //console.log(`stderr: ${data}`);
+                    connection.send(JSON.stringify({type: "error", stderr: `${data}`}));
+                });
+                child.on("close", (code) => {
+                    console.log(`child process exited with code ${code}`);
+                });
             }
             else if (msg === 'stop') {
                 if (proc) {

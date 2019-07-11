@@ -289,6 +289,14 @@ $(function () {
         } else if (json.type === 'userindex') {
             myIndex = json.data;
         }
+        else if (json.type === 'newExperiment') {
+            var domain = new URL(window.location.href);
+            domain.port = json.port;
+            window.open(domain.href);
+        }
+        else if (json.type === 'error') {
+            console.log(`Experiment error: ${json.stderr}`);
+        }
         else {
             console.log('Hmm..., I\'ve never seen JSON like this: ', json);
         }
@@ -326,6 +334,12 @@ $(function () {
             // sends back response
             input.attr('disabled', 'disabled');
         }
+    });
+
+    $("#experiment-list li").on("click", function () {
+        var msg = "new-experiment " + this.id,
+            conf = {};
+        connection.send(JSON.stringify({message: msg, configure: conf}));
     });
 
     /**

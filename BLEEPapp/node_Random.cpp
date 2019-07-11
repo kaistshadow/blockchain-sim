@@ -15,8 +15,10 @@
 using namespace libBLEEP;
 
 void  genPeerList(std::vector<PeerId> &lst, std::string myId, int maxPeerNum){
+    char current_config[50];
+    sprintf(current_config, "config-examples/current-config.%d.xml", (int) getppid() );
     tinyxml2::XMLDocument doc;
-    auto errorId = doc.LoadFile("config-examples/current-config.xml");
+    auto errorId = doc.LoadFile(current_config);
     if (!errorId) {
         for (tinyxml2::XMLElement * node = doc.FirstChildElement("shadow")->FirstChildElement("node");
             node != NULL; node = node->NextSiblingElement()) {

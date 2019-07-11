@@ -11,8 +11,8 @@ def exec_shell_cmd(cmd):
         exit(-1)
 
 def run_experiment(configfile):
-    datadir = "visualize-datadir"
-    current_config_path = "%s/current-config.xml" % os.path.dirname(configfile)
+    datadir = "visualize-datadir." + str(os.getpid())
+    current_config_path = "%s/current-config.%d.xml" % (os.path.dirname(configfile), os.getpid())
     exec_shell_cmd("cp %s %s" % (configfile, current_config_path))
 
     shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-d", datadir, configfile], stdout=PIPE)    
@@ -42,13 +42,13 @@ def run_experiment(configfile):
     return "./%s/%s" % (datadir, shadow_stdout_filename)
     
 
-def run_visualization_server(shadowoutput, configfile, background=False):
+def run_visualization_server(shadowoutput, configfile, port, background=False):
     if background:
-        web_server = Popen(["node", "server.js", "../"+shadowoutput], cwd="./web-gui", close_fds=True)
+        web_server = Popen(["node", "server.js", "../"+shadowoutput, port], cwd="./web-gui", close_fds=True)
     else:
-        web_server = Popen(["node", "server.js", "../"+shadowoutput], cwd="./web-gui")
+        web_server = Popen(["node", "server.js", "../"+shadowoutput, port], cwd="./web-gui")
 
-    current_config_path = "%s/current-config.xml" % os.path.dirname(configfile)
+    current_config_path = "%s/current-config.%d.xml" % (os.path.dirname(configfile), os.getpid())
     exec_shell_cmd("rm %s" % current_config_path)
  
     time.sleep(1)
@@ -58,7 +58,7 @@ def run_visualization_server(shadowoutput, configfile, background=False):
     print ""
     print "The script have launched the NodeJS web server for visualization."
     print "You can see the visualization results of the configuration requested (i.e., %s)" % configfile
-    print "To see the results, connect to the server using address 'http://ipaddress_of_this_machine:1337/frontend.html' in web browser."
+    print "To see the results, connect to the server using address 'http://ipaddress_of_this_machine:%s/frontend.html' in web browser." % port
     print ""
     print ""
     print ""
@@ -71,18 +71,20 @@ def run_visualization_server(shadowoutput, configfile, background=False):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
     parser.add_argument("configfile", help="filepath for blockchain network configuration file (shadow xml configuration)")
+    parser.add_argument("-p", "--port", metavar="port", default="1337", help="Port where we'll run the websocket server")
     parser.add_argument("--background", action="store_true", help="Run server as background daemon.")
 
     args = parser.parse_args()
     configfile = args.configfile
+    port = args.port
     OPT_BACKGROUND = args.background
 
     print "Execute shadow experiment"
     output = run_experiment(configfile)
 
     if OPT_BACKGROUND:
-        run_visualization_server(output, configfile, background=True)
+        run_visualization_server(output, configfile, port, background=True)
     else:
-        run_visualization_server(output, configfile)
+        run_visualization_server(output, configfile, port)
 
     

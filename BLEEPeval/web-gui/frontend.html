@@ -103,7 +103,10 @@
              border:1px solid #CCC; height: 200px; }
          #input { border-radius:2px; border:1px solid #ccc;
              margin-top:10px; padding:5px; width:400px;  }
-         #status { width:88px; display:block; float:left; margin-top:15px; }
+         #status { width:88px; display:block; float:left; margin-top:10px; }
+         #experiments { border: 1px solid #ccc; border-radius: 2px; margin-top: 12px}
+         #experiments p {margin: 0;}
+         #experiment-list { margin-top: 0; columns: 2; -webkit-columns: 2; -moz-columns: 2;}
          #node_API_event_list {
              max-height: 18em;
              overflow-y: auto;
@@ -209,6 +212,19 @@
                     <div>
                         <span id="status">Connecting...</span>
                         <input type="text" id="input" disabled="disabled" />
+                    </div>
+                    <div id="experiments">
+                        <p>Experiments:</p>
+                        <ul id="experiment-list">
+                            <li id="basic-eventloop"><a href="javascript:;">basic eventloop</a></li>
+                            <li id="pow-5"><a href="javascript:;">pow 5</a></li>
+                            <li id="pow-large"><a href="javascript:;">pow large</a></li>
+                            <li id="gossip"><a href="javascript:;">gossip</a></li>
+                            <ol style="padding-left: 10px">
+                                <li id="generate"><a href="javascript:;">generate eclipse</a></li>
+                                <li id="eclipse"><a href="javascript:;">run eclipse</a></li>
+                            </ol>
+                        </ul>
                     </div>
                 </div>
                 <div class="clearfix"></div>

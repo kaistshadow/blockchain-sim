@@ -240,17 +240,22 @@ $(function () {
                     li.setAttribute("style", "display:none;");
                 ul.appendChild(li);
 
-                if (eventlog.type === "InitPeerId")
+                if (eventlog.type === "InitPeerId") {
                     addNode(eventlog.args);
+                    n_addNode(eventlog.args);
+                }
                 else if (eventlog.type === "ConnectPeer") {
                     var from = eventlog.args.split(",")[0];
                     var to = eventlog.args.split(",")[1];
                     addEdge(from, to);
+                    n_addEdge(from, to);
                 } else if (eventlog.type === "DisconnectPeer") {
                     var from = eventlog.args.split(",")[0];
                     var to = eventlog.args.split(",")[1];
                     removeEdge(from, to);
                     removeEdge(to, from);
+                    n_removeEdge(from, to);
+                    n_removeEdge(to, from);
                 } else if (eventlog.type === "BlockAppend") {
                     var peerId = eventlog.host;
                     var hash = eventlog.args.split(",")[1];

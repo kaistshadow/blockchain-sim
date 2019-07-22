@@ -110,6 +110,9 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
+    // int usleeptime = std::stoi(gArgs.GetArg("-sleep", "0"));
+    // usleep(usleeptime*1000);
+
     /* allocate mainEventManager */
     MainEventManager mainEventManager;
     // MainEventManager mainEventManager(gArgs.GetArg("-id", "noid"));
@@ -365,6 +368,12 @@ int main(int argc, char *argv[]) {
                 {
                     // init_shadow_clock_update();
 
+                    char buf2[256];
+                    sprintf(buf2, "EmuBlockMiningComplete,%lu",
+                            ledger.GetNextBlockIdx() + 1);
+                    shadow_push_eventlog(buf2);
+
+
                     // std::cout << "block mining complte" << "\n";
                     std::shared_ptr<POWBlock> minedBlk = event.GetData().GetMinedBlock();
 
@@ -383,6 +392,7 @@ int main(int argc, char *argv[]) {
                     AppendBlockToLedger(minedBlk, txPool, ledger);
                     mined_block_num++;
                     mined_hash_list.push_back(minedBlk->GetBlockHash());
+
 
                     // restart mining timer
                     int txNumPerBlock = std::stoi(gArgs.GetArg("-blocktxnum"));
@@ -452,7 +462,7 @@ int main(int argc, char *argv[]) {
 
 
                     // next_shadow_clock_update("==== done processing EmuBlockMiningComplete Event");
-                    shadow_usleep(1000);
+                    // shadow_usleep(1000);
                     PrintTimespec("EmuBlockMiningComplete processing ended");
                     // double milli = next_shadow_clock_update("===== handling EmuBlockMiningComplete");
                     break;

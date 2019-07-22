@@ -303,10 +303,10 @@ namespace libBLEEP {
 
             /* event io callback */
             void _dataSocketIOCallback (ev::io &w, int revents) {
-                init_shadow_clock_update();
+                /* init_shadow_clock_update(); */
                 M_Assert(_fd == w.fd, "fd must be same");
                 int fd = w.fd;
-                PrintTimespec("dataSocketIOCallback called");
+                /* PrintTimespec("dataSocketIOCallback called"); */
 
                 if (revents & EV_READ) {
                     std::shared_ptr<RTTModule_DataSocket> dataSocket = _networkModule->socketManager.GetDataSocket(fd);
@@ -345,7 +345,7 @@ namespace libBLEEP {
                         std::shared_ptr<Message> message = recvResult.second.second;
 
                         if (header) {
-                            std::cout << "recv header after DoRecv. need to set delay for experiment." << "\n";
+                            /* std::cout << "recv header after DoRecv. need to set delay for experiment." << "\n"; */
                             _networkModule->receivedHeader[fd] = header;
                         } else if (message && message->GetType() == "notifyPeerId") {
                             /** received id notify message (First message after socket establishment)    **/
@@ -378,7 +378,7 @@ namespace libBLEEP {
                                 _networkModule->ExistMessage(message->GetMessageId())) {
                                 // if the duplicated broadcasting message is received, 
                                 // then just ignore it.
-                                PrintTimespec("duplicated message");
+                                /* PrintTimespec("duplicated message"); */
                             } else if (message->GetType() == "RTTReq") {
                                 PeerId myPeerId = *_networkModule->peerManager.GetMyPeerId();
                                 std::shared_ptr<Message> replymsg = std::make_shared<Message>(myPeerId, message->GetSource(), "RTTRep", "");
@@ -446,7 +446,7 @@ namespace libBLEEP {
                 }
 
                 /* next_shadow_clock_update("==== done handling dataSocketIOCallback"); */
-                PrintTimespec("dataSocketIOCallback ended");
+                /* PrintTimespec("dataSocketIOCallback ended"); */
             }
         public:
             DataSocketWatcher(int fd, EstimateRTTModule* netModule, MainEventManager* eventModule)

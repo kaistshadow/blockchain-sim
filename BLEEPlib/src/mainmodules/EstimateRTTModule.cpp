@@ -90,9 +90,9 @@ std::pair< bool, std::pair< std::shared_ptr<RTTModule_MessageHeader>, std::share
     case RECV_IDLE:
         {
             int length = 0;
-            PrintTimespec("before recv length");
+            // PrintTimespec("before recv length");
             n = recv(_fd, &length, sizeof(int),0);
-            PrintTimespec("after recv length");
+            // PrintTimespec("after recv length");
             if (n == -1 && errno != EAGAIN){
                 perror("recv - non blocking \n");
                 std::cout << "errno=" << errno << "\n";
@@ -120,32 +120,32 @@ std::pair< bool, std::pair< std::shared_ptr<RTTModule_MessageHeader>, std::share
                     std::cout << "error while receiving header" << "\n";
                     exit(-1);
                 } else {
-                    std::cout << "recv type:" << header.type << "\n";
+                    // std::cout << "recv type:" << header.type << "\n";
                 }
                 if (recv(_fd, &header.hop, sizeof(int), 0) <=0) {
                     std::cout << "error while receiving header" << "\n";
                     exit(-1);
                 } else {
-                    std::cout << "recv hop:" << header.hop << "\n";
+                    // std::cout << "recv hop:" << header.hop << "\n";
                 }
                 if (recv(_fd, src, 20, 0) <=0) {
                     std::cout << "error while receiving header" << "\n";
                     exit(-1);
                 } else {
-                    std::cout << "recv src:" << src << "\n";
+                    // std::cout << "recv src:" << src << "\n";
                 }
                 header.src = PeerId(std::string(src));
                 if (recv(_fd, &header.timestamp, sizeof(double), 0) <=0) {
                     std::cout << "error while receiving header" << "\n";
                     exit(-1);
                 } else {
-                    std::cout << "recv timestamp:" << header.timestamp << "\n";
+                    // std::cout << "recv timestamp:" << header.timestamp << "\n";
                 }
                 _recvBuff.recv_status = RECV_MSG;
                 flags = fcntl(_fd, F_GETFL, 0);
                 fcntl(_fd, F_SETFL, flags | O_NONBLOCK);                    
 
-                PrintTimespec("receive messageheader");
+                // PrintTimespec("receive messageheader");
                 if (header.type == MESSAGETYPE_RTTREQ || header.type == MESSAGETYPE_RTTREP) {
                     // make a recv blocking
                     flags = fcntl(_fd, F_GETFL, 0);
@@ -165,9 +165,9 @@ std::pair< bool, std::pair< std::shared_ptr<RTTModule_MessageHeader>, std::share
             // Handle all pending 'recv'  
             while(1) {
                 int recv_size = std::min(2000, _recvBuff.message_len - total_recv_size);
-                PrintTimespec("before recv msg");
+                // PrintTimespec("before recv msg");
                 numbytes = recv(_fd, string_read, recv_size, 0);
-                PrintTimespec("after recv msg");
+                // PrintTimespec("after recv msg");
                 if (numbytes > 0) {
                     total_recv_size += numbytes;
                     _recvBuff.recv_str.append(string_read, numbytes);
@@ -193,22 +193,22 @@ std::pair< bool, std::pair< std::shared_ptr<RTTModule_MessageHeader>, std::share
                 else {
                     // std::cout << "recv: total_recv_size=" << total_recv_size << ", message_len=" << _recvBuff.message_len << "\n";
                 }
-                PrintTimespec("before memset 0 recvbuff");
+                // PrintTimespec("before memset 0 recvbuff");
                 memset(string_read, 0, 2000);
-                PrintTimespec("after memset 0 recvbuff");
+                // PrintTimespec("after memset 0 recvbuff");
             }
             if (_recvBuff.message_len != total_recv_size) {
-                PrintTimespec("received only part of message");
+                // PrintTimespec("received only part of message");
                 _recvBuff.received_len = total_recv_size;
                 // std::cout << "received only part of message (maybe recv buffer is full)" << "received_len:" << _recvBuff.received_len << ", message_len:" << _recvBuff.message_len << "\n";
                 break;
             }
             else {
-                PrintTimespec("fully receive message");
+                // PrintTimespec("fully receive message");
                 // std::cout << "fully received. size:" << total_recv_size << "\n";
                 _recvBuff.recv_status = RECV_IDLE;
 
-                PrintTimespec("before deserialization message");
+                // PrintTimespec("before deserialization message");
                 // deserialization process //
                 Message *msg;
                 boost::iostreams::basic_array_source<char> device(_recvBuff.recv_str.c_str(), _recvBuff.recv_str.size());
@@ -216,7 +216,7 @@ std::pair< bool, std::pair< std::shared_ptr<RTTModule_MessageHeader>, std::share
                 boost::archive::binary_iarchive ia(s);
                 ia >> msg;
 
-                PrintTimespec("after deserialization message");
+                // PrintTimespec("after deserialization message");
 
                 return std::make_pair(true, std::make_pair( nullptr ,std::shared_ptr<Message>(msg)));
             }

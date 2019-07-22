@@ -15,17 +15,243 @@
              <key attr.name="ip" attr.type="string" for="node" id="d1" />
              <key attr.name="packetloss" attr.type="double" for="node" id="d0" />
              <graph edgedefault="undirected">
-               <node id="poi-1">
+               <node id="poi-seoul">
                  <data key="d0">0.0</data>
-                 <data key="d1">0.0.0.0</data>
+                 <data key="d1">13.125.246.114</data>
+                 <data key="d2">KR</data>
+                 <data key="d3">10000020000040</data>
+                 <data key="d4">10000240</data>
+                 <data key="d5">net</data>
+                 <data key="d6">0</data>
+               </node>
+               <node id="poi-california">
+                 <data key="d0">0.0</data>
+                 <data key="d1">18.144.37.41</data>
                  <data key="d2">US</data>
                  <data key="d3">10000020000040</data>
                  <data key="d4">10000240</data>
                  <data key="d5">net</data>
                  <data key="d6">0</data>
                </node>
-               <edge source="poi-1" target="poi-1">
-                 <data key="d7">2</data>
+               <node id="poi-virginia">
+                 <data key="d0">0.0</data>
+                 <data key="d1">3.88.178.52</data>
+                 <data key="d2">US2</data>
+                 <data key="d3">10000020000040</data>
+                 <data key="d4">10000240</data>
+                 <data key="d5">net</data>
+                 <data key="d6">0</data>
+               </node>
+               <node id="poi-canada">
+                 <data key="d0">0.0</data>
+                 <data key="d1">35.183.12.211</data>
+                 <data key="d2">CA</data>
+                 <data key="d3">10000020000040</data>
+                 <data key="d4">10000240</data>
+                 <data key="d5">net</data>
+                 <data key="d6">0</data>
+               </node>
+               <node id="poi-ireland">
+                 <data key="d0">0.0</data>
+                 <data key="d1">54.171.131.109</data>
+                 <data key="d2">IR</data>
+                 <data key="d3">10000020000040</data>
+                 <data key="d4">10000240</data>
+                 <data key="d5">net</data>
+                 <data key="d6">0</data>
+               </node>
+               <node id="poi-paulo">
+                 <data key="d0">0.0</data>
+                 <data key="d1">54.207.47.179</data>
+                 <data key="d2">PA</data>
+                 <data key="d3">10000020000040</data>
+                 <data key="d4">10000240</data>
+                 <data key="d5">net</data>
+                 <data key="d6">0</data>
+               </node>
+
+               <edge source="poi-seoul" target="poi-seoul">
+                 <data key="d7">0.3</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-seoul" target="poi-california">
+                 <data key="d7">225</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-seoul" target="poi-virginia">
+                 <data key="d7">307</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-seoul" target="poi-canada">
+                 <data key="d7">307</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-seoul" target="poi-ireland">
+                 <data key="d7">385</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-seoul" target="poi-paulo">
+                 <data key="d7">468</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+
+               <edge source="poi-california" target="poi-seoul">
+                 <data key="d7">228</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-california" target="poi-california">
+                 <data key="d7">0.3</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-california" target="poi-virginia">
+                 <data key="d7">109</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-california" target="poi-canada">
+                 <data key="d7">150</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-california" target="poi-ireland">
+                 <data key="d7">305</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-california" target="poi-paulo">
+                 <data key="d7">312</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+
+               <edge source="poi-virginia" target="poi-seoul">
+                 <data key="d7">287</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-virginia" target="poi-california">
+                 <data key="d7">107</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-virginia" target="poi-virginia">
+                 <data key="d7">0.3</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-virginia" target="poi-canada">
+                 <data key="d7">38</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-virginia" target="poi-ireland">
+                 <data key="d7">124</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-virginia" target="poi-paulo">
+                 <data key="d7">201</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+
+               <edge source="poi-canada" target="poi-seoul">
+                 <data key="d7">311</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-canada" target="poi-california">
+                 <data key="d7">148</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-canada" target="poi-virginia">
+                 <data key="d7">38</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-canada" target="poi-canada">
+                 <data key="d7">0.3</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-canada" target="poi-ireland">
+                 <data key="d7">136</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-canada" target="poi-paulo">
+                 <data key="d7">206</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+
+               <edge source="poi-ireland" target="poi-seoul">
+                 <data key="d7">385</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-ireland" target="poi-california">
+                 <data key="d7">236</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-ireland" target="poi-virginia">
+                 <data key="d7">119</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-ireland" target="poi-canada">
+                 <data key="d7">132.5</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-ireland" target="poi-ireland">
+                 <data key="d7">0.3</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-ireland" target="poi-paulo">
+                 <data key="d7">294</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+
+               <edge source="poi-paulo" target="poi-seoul">
+                 <data key="d7">471</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-paulo" target="poi-california">
+                 <data key="d7">314</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-paulo" target="poi-virginia">
+                 <data key="d7">214</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-paulo" target="poi-canada">
+                 <data key="d7">225</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-paulo" target="poi-ireland">
+                 <data key="d7">296</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+               <edge source="poi-paulo" target="poi-paulo">
+                 <data key="d7">0.3</data>
                  <data key="d8">0.0</data>
                  <data key="d9">0.0</data>
                </edge>
@@ -39,31 +265,31 @@
 
 
   <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="600" />
+  <kill time="1200" />
   <!-- our nodes -->
 
-  <node id="bleep0" iphint="213.145.108.101">
-    <application plugin="NODE" time="0" arguments="-id=bleep0 -fanout=3 -miningtime=5 -miningtimedev=0.5 -connect=bleep0 -connect=bleep1 -connect=bleep2 -connect=bleep3 -connect=bleep4 -connect=bleep5" />
+  <node id="bleep0" iphint="13.125.246.114">
+    <application plugin="NODE" time="0" arguments="-id=bleep0 -fanout=3 -miningtime=10 -miningtimedev=0.5 -connect=bleep0 -connect=bleep1 -connect=bleep2 -connect=bleep3 -connect=bleep4 -connect=bleep5" />
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>
 
-  <node id="bleep1" iphint="89.247.167.117">
-    <application plugin="NODE" time="0" arguments="-id=bleep1 -fanout=3 -miningtime=5 -miningtimedev=0.5 -connect=bleep0 -connect=bleep1 -connect=bleep2 -connect=bleep3 -connect=bleep4 -connect=bleep5" />
+  <node id="bleep1" iphint="18.144.37.41">
+    <application plugin="NODE" time="0" arguments="-id=bleep1 -fanout=3 -miningtime=10 -miningtimedev=0.5 -connect=bleep0 -connect=bleep1 -connect=bleep2 -connect=bleep3 -connect=bleep4 -connect=bleep5" />
   </node>
 
-  <node id="bleep2" iphint="88.217.43.2">
-    <application plugin="NODE" time="0" arguments="-id=bleep2 -fanout=3 -miningtime=5 -miningtimedev=0.5 -connect=bleep0 -connect=bleep1 -connect=bleep2 -connect=bleep3 -connect=bleep4 -connect=bleep5" />
+  <node id="bleep2" iphint="3.88.178.52">
+    <application plugin="NODE" time="0" arguments="-id=bleep2 -fanout=3 -miningtime=10 -miningtimedev=0.5 -connect=bleep0 -connect=bleep1 -connect=bleep2 -connect=bleep3 -connect=bleep4 -connect=bleep5" />
   </node>
 
-  <node id="bleep3" iphint="178.193.36.6">
-    <application plugin="NODE" time="0" arguments="-id=bleep3 -fanout=3 -miningtime=5 -miningtimedev=0.5 -connect=bleep0 -connect=bleep1 -connect=bleep2 -connect=bleep3 -connect=bleep4 -connect=bleep5" />
+  <node id="bleep3" iphint="35.183.12.211">
+    <application plugin="NODE" time="0" arguments="-id=bleep3 -fanout=3 -miningtime=10 -miningtimedev=0.5 -connect=bleep0 -connect=bleep1 -connect=bleep2 -connect=bleep3 -connect=bleep4 -connect=bleep5" />
   </node>
 
-  <node id="bleep4" iphint="84.56.179.134">
-    <application plugin="NODE" time="0" arguments="-id=bleep4 -fanout=3 -miningtime=5 -miningtimedev=0.5 -connect=bleep0 -connect=bleep1 -connect=bleep2 -connect=bleep3 -connect=bleep4 -connect=bleep5" />
+  <node id="bleep4" iphint="54.171.131.109">
+    <application plugin="NODE" time="0" arguments="-id=bleep4 -fanout=3 -miningtime=10 -miningtimedev=0.5 -connect=bleep0 -connect=bleep1 -connect=bleep2 -connect=bleep3 -connect=bleep4 -connect=bleep5" />
   </node>
-  <node id="bleep5" iphint="65.175.133.136">
-    <application plugin="NODE" time="0" arguments="-id=bleep5 -fanout=3 -miningtime=5 -miningtimedev=0.5 -connect=bleep0 -connect=bleep1 -connect=bleep2 -connect=bleep3 -connect=bleep4 -connect=bleep5 " />
+  <node id="bleep5" iphint="54.207.47.179">
+    <application plugin="NODE" time="0" arguments="-id=bleep5 -fanout=3 -miningtime=10 -miningtimedev=0.5 -connect=bleep0 -connect=bleep1 -connect=bleep2 -connect=bleep3 -connect=bleep4 -connect=bleep5 " />
   </node>
 
 

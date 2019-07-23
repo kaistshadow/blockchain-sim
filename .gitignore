@@ -16,6 +16,7 @@ test/plugin-bitcoin/shadow.data/
 test/temporary-code
 
 BLEEPeval/*-datadir/
+BLEEPeval/*_datadir_*/
 BLEEPeval/web-gui/node_modules/
 BLEEPeval/web-gui/package-lock.json
 BLEEPeval/web-gui/.tern-port

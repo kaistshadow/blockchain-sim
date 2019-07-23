@@ -157,7 +157,7 @@ std::shared_ptr<Message> libBLEEP::DataSocket::DoRecv() {
                 _recvBuff.received_len = 0;
                 _recvBuff.recv_str = "";
             }
-            // break; // directly handle RECV_MSG after RECV_IDLE
+            break;
         }
     case RECV_MSG:
         {
@@ -223,26 +223,20 @@ void libBLEEP::DataSocket::DoSend() {
         return;
     }
     
-    while (!_sendBuff.empty()) {
-        std::shared_ptr<WriteMsg> msg = _sendBuff.front();
+    std::shared_ptr<WriteMsg> msg = _sendBuff.front();
+    int numbytes = send(_fd, msg->dpos(), msg->nbytes(), 0);
+    if (numbytes < 0) {
+        perror("write error");
+        exit(-1);
+    }
 
-        int numbytes = send(_fd, msg->dpos(), msg->nbytes(), 0);
-        if (numbytes < 0) {
-            perror("write error");
-            exit(-1);
-        }
+    std::cout << "DoSend: write " << numbytes << " bytes" << "\n";
 
-        // std::cout << "DoSend: write " << numbytes << " bytes" << "\n";
-
-        msg->pos += numbytes;
-        if (msg->nbytes() == 0) {
-            _sendBuff.pop_front();
-            if (_sendBuff.empty()) {
-                _manager->UnsetWritable(_fd);
-                return;
-            }
-        } else {
-            return;
+    msg->pos += numbytes;
+    if (msg->nbytes() == 0) {
+        _sendBuff.pop_front();
+        if (_sendBuff.empty()) {
+            _manager->UnsetWritable(_fd);
         }
     }
 }

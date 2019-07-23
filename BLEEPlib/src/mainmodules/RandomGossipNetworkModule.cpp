@@ -30,10 +30,6 @@ bool RandomGossipNetworkModule::ExistMessage(std::string messageId) {
     return (itr != messageSet.end());
 }
 
-bool RandomGossipNetworkModule::FirstCheckMessage(std::string messageId) {
-    return messageSetFirstCheck.insert(messageId).second;    
-}
-
 bool RandomGossipNetworkModule::AsyncConnectPeer(PeerId id, double time) {
     if (peerManager.HasEstablishedDataSocket(id))
         return false;

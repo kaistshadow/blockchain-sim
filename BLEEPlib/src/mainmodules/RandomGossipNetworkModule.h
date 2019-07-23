@@ -39,7 +39,6 @@ namespace libBLEEP {
     private:
         int fanOut;
         std::set<std::string> messageSet;
-        std::set<std::string> messageSetFirstCheck;
         class ListenSocketWatcher;
         class DataSocketWatcher;
         class ConnectSockerWatcher;
@@ -135,14 +134,10 @@ namespace libBLEEP {
             ev::io _watcher;
 
             void _dataSocketIOCallback(ev::io &w, int revents) {
-                init_shadow_clock_update();
-                int delay = 0;
-                PrintTimespec("dataSocketIOCallback called");
                 M_Assert(_fd == w.fd, "fd must be same");
                 int fd = w.fd;
-                /* std::cout << "data socket IO callback called!" << "\n"; */
-                /* next_shadow_clock_update("==== until datasocketIOCallback called"); */
-                
+                std::cout << "data socket IO callback called!" << "\n";
+
                 if (revents & EV_READ) {
                     std::shared_ptr<DataSocket_v2> dataSocket = _networkModule->socketManager.GetDataSocket(fd);
                     std::pair<bool, std::shared_ptr<Message>> recvResult = dataSocket->DoRecv();
@@ -167,9 +162,14 @@ namespace libBLEEP {
                             _mainEventModule->PushAsyncEvent(event);
 
                         } else if (message) {
+                            AsyncEvent event(AsyncEventEnum::RecvMessage);
+                            event.GetData().SetReceivedMsg(message);
+                            _mainEventModule->PushAsyncEvent(event);
+
                             std::shared_ptr<PeerId> neighborPeerId = _networkModule->peerManager.GetPeerIdBySocket(fd);
-                            /* std::cout << "message source:" << message->GetSource().GetId() << "\n"; */
+                            std::cout << "message source:" << message->GetSource().GetId() << "\n";
                             M_Assert(neighborPeerId != nullptr, "no neighbor peer exists for given socket");
+
 
                             char buf[256];
                             sprintf(buf, "RecvMessage,%s,%s,%s,%s",
@@ -179,67 +179,25 @@ namespace libBLEEP {
                                     message->GetMessageId().c_str());
                             shadow_push_eventlog(buf);
 
-                            if (message->GetDest().GetId() == "DestAll" && 
-                                message->GetSource().GetId() == _networkModule->peerManager.GetMyPeerId()->GetId()) {
-                                // for debugging
-                                // add timestamp for returned message
-                                // then just ignore it.
-                                struct timespec tspec;
-                                clock_gettime(CLOCK_MONOTONIC, &tspec);
-                                char name[100];
-                                sprintf(name, "MsgReturned(%s->%s)", neighborPeerId->GetId().c_str(), _networkModule->peerManager.GetMyPeerId()->GetId().c_str());
-                                blocktimelogs[message->GetMessageId()][name] = tspec;
-                            }
-                            else if (message->GetDest().GetId() == "DestAll" &&
-                                _networkModule->ExistMessage(message->GetMessageId())) {
-                                // if the duplicated broadcasting message is received, 
-                                // then just ignore it.
-                                PrintTimespec("duplicated message");
-                            } else if (message->GetDest().GetId() == "DestAll" &&
-                                       message->GetSource().GetId() != neighborPeerId->GetId() && 
-                                       _networkModule->FirstCheckMessage(message->GetMessageId())) {
-                                // if first arrived message is not from the source
-                                PrintTimespec("First arrived message not from the source. Ignore it and Add shadow latency for emulating context switch");
-                                delay = 30000 + (rand() % 10000); // context switching delay
-                            }
-                            else {
-                                // add timestamp
-                                struct timespec tspec;
-                                clock_gettime(CLOCK_MONOTONIC, &tspec);
-                                char name[100];
-                                sprintf(name, "MsgReceived(%s->%s)", neighborPeerId->GetId().c_str(), _networkModule->peerManager.GetMyPeerId()->GetId().c_str());
-                                blocktimelogs[message->GetMessageId()][name] = tspec;
-
-                                AsyncEvent event(AsyncEventEnum::RecvMessage);
-                                event.GetData().SetReceivedMsg(message);
-                                _mainEventModule->PushAsyncEvent(event);
-
-                                if (message->GetDest().GetId() == "DestAll") {
-                                    bool unique = _networkModule->InsertMessageSet(message->GetMessageId());
-                                    M_Assert(unique, "Message is unexpectedly duplicated!" ); 
-
-                                    // forward the received message for broadcasting
-                                    _networkModule->ForwardMessage(message);
-
+                            if (message->GetDest().GetId() == "DestAll") {
+                                if(true == _networkModule->InsertMessageSet(message->GetMessageId())){
+                                    sprintf(buf, " NewTx from %s %s",
+                                            neighborPeerId->GetId().c_str(),
+                                            message->GetMessageId().c_str());
+                                    shadow_push_eventlog(buf);
+                                    _networkModule->MulticastMessage(message);
                                 }
                             }
-                        } else {
+
                         }
+
                     }
 
                 } else if (revents & EV_WRITE) {
                     std::shared_ptr<DataSocket_v2> dataSocket = _networkModule->socketManager.GetDataSocket(fd);
                     if (dataSocket->DoSend() == DoSendResultEnum::SendBuffEmptied)
                         UnsetWritable();
-                    delay = 10; // default additional computation delay for write
                 }
-                next_shadow_clock_update("==== done handling dataSocketIOCallback");
-                shadow_usleep(delay); 
-                delay = 0;
-                if (rand() % 3 != 0)
-                    delay = 1000; // delay after recv length
-                shadow_usleep(delay); 
-                PrintTimespec("dataSocketIOCallback ended");
             }
         public :
             DataSocketWatcher(int fd, RandomGossipNetworkModule* netModule, MainEventManager* eventModule)
@@ -397,8 +355,6 @@ namespace libBLEEP {
         bool InsertMessageSet(std::string messageId);
 
         bool ExistMessage(std::string messageId);
-
-        bool FirstCheckMessage(std::string messageId);
 
         bool AsyncConnectPeer(PeerId id, double time=0);
 

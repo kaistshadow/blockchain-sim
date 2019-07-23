@@ -529,16 +529,18 @@ function appendBlock(peerId, hash, prevHash, timestamp) {
     // add node pointer
 
 
-    // edges.remove(peerId);
-    // try {
-    //     edges.add({id:peerId, from:hash, to:peerId});
-    // } catch(err) {
-    // }
-    // try {
-    //     nodes.update({id:peerId, label:peerId});
-    // } catch(err) {}
+    edges.remove(peerId);
+    try {
+        edges.add({id:peerId, from:hash, to:peerId});
+    } catch(err) {
+    }
+    try {
+        nodes.update({id:peerId, label:peerId});
+    } catch(err) {}
 
-
+    // nodes.remove({id:peerId});
+    // edges.update({id:peerId, from:hash, to:peerId});
+    // nodes.add({id:peerId, label:peerId});
 
 }
 

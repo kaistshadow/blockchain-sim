@@ -12,11 +12,20 @@ void POWModule::AsyncEmulateBlockMining(std::shared_ptr<POWBlock> candidateBlk, 
     }
 
     double waiting_time = -1;
+    // while (waiting_time < 10 || waiting_time > 20) {
     while (waiting_time < 0) {
-        unsigned int random_num = time(0) + GetHostNumber();
+        struct timespec cur;
+        clock_gettime(CLOCK_MONOTONIC, &cur);
+        unsigned int randtime = (unsigned int)cur.tv_nsec;
+
+        unsigned int random_num = randtime + GetHostNumber();
         std::default_random_engine generator(random_num);
         std::normal_distribution<double> distribution(avg, stddev);
         waiting_time = distribution(generator);
+
+        // if (waiting_time < 10 || waiting_time > 20)
+        if (waiting_time < 0)
+            usleep(1);
     }
 
     // std::cout << "waiting time = " << waiting_time << "\n";

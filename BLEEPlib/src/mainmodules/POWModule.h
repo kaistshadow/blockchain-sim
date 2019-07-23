@@ -74,7 +74,7 @@ namespace libBLEEP {
             std::shared_ptr<const POWBlock> _candidateBlk;
 
             void _timerCallback(ev::timer &w, int revents) {
-                init_shadow_clock_update();                
+                /* init_shadow_clock_update();                 */
                 PrintTimespec("POW miningTimer callback called");
 
                 // 1. calculate random block.
@@ -112,7 +112,7 @@ namespace libBLEEP {
                 _powModule->watcherManager.RemoveMiningEmulationTimer();
                 // it will eventually remove myself (BlockMiningEmulationTimer object)
                 PrintTimespec("POW miningTimer callback ended");
-                next_shadow_clock_update("==== done handling miningTimer callback");
+                /* next_shadow_clock_update("==== done handling miningTimer callback"); */
             }
         public:
             BlockMiningEmulationTimer(std::shared_ptr<POWBlock> candidateBlk, double time, POWModule* powModule, MainEventManager* eventModule)

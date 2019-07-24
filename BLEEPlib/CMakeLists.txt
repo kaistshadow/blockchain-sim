@@ -38,7 +38,6 @@ set(SRCS
   src/mainmodules/BasicNetworkModule.cpp
   src/mainmodules/RandomGossipNetworkModule.cpp
   src/mainmodules/EstimateRTTModule.cpp
-  src/mainmodules/RandomGossipNetworkModule_ctxtest.cpp
   src/mainmodules/TxGeneratorModule.cpp
   src/mainmodules/POWModule.cpp
   src/utility/UInt256.cpp

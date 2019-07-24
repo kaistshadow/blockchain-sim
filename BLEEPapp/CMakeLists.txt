@@ -117,7 +117,7 @@ target_link_libraries(LOCAL_NODE_MINING BLEEP::BLEEP)
 add_executable(LOCAL_NODE_POW_RANDOM node_pow_random.cpp)
 target_link_libraries(LOCAL_NODE_POW_RANDOM BLEEP::BLEEP)
 
-add_subdirectory(amz_exp_nodes)
+# add_subdirectory(amz_exp_nodes)
 
 # add tests
 enable_testing()

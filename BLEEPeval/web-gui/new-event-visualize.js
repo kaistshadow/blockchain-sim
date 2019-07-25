@@ -174,6 +174,7 @@ google.load("visualization", "1");
 
 // Set callback to run when API is loaded
 google.setOnLoadCallback(n_drawVisualization);
+
 // Called when the Visualization API is loaded.
 // Called when the Visualization API is loaded.
 function n_drawVisualization() {
@@ -200,21 +201,42 @@ function n_drawVisualization() {
     };
 
     var options = {
-        width: '800px',
-        height: '600px',
-        configure: {
-          enabled: true,
-          filter:function (option, path) {
-            if (path.indexOf('physics') !== -1) {
-              return true;
-            }
-            if (path.indexOf('smooth') !== -1 || option === 'smooth') {
-              return true;
-            }
-            return false;
-          },
-          container: document.getElementById("configure-list"),
-          showButton: true
+        'width': '800px',
+        'height': '600px',
+        'configure': {
+            'enabled': true,
+            'filter':function (option, path) {
+                if (path.indexOf('physics') !== -1) { return true;}
+                if (path.indexOf('smooth') !== -1 || option === 'smooth') { return true;}
+                return false;
+            },
+            'container': document.getElementById("configure-list"),
+            'showButton': true
+        },
+        'edges': {
+            'color': {
+                'color': "#cccccc",
+                'highlight': "#343434"
+            },
+            "smooth": false /*{
+                "enabled": false,
+                "type": "continuous",
+                "forceDirection": "none",
+                "roundness": 0
+            }*/
+        },
+        'interaction': {
+            'hideEdgesOnDrag': true,
+            'multiselect': true
+        },
+        "physics": {
+            "forceAtlas2Based": {
+                "springLength": 100,
+                "avoidOverlap": 0.24
+            },
+            "minVelocity": 0.75,
+            "solver": "forceAtlas2Based",
+            "timestep": 0.23
         }
     };
 
@@ -266,8 +288,14 @@ function n_drawVisualization() {
             doc.body.removeEventListener("mousemove", resize);
         });
     });
+    n_network.on('stablized', function (params) {
+        n_network.setOptions({
+            'physics': {'enabled': false}
+        });
+        console.log("stabilized, physics stopped!", params);
+    });
     // Add event listeners for node selection
-    google.visualization.events.addListener(n_network, 'select', onNodeSelect);
+    //google.visualization.events.addListener(n_network, 'select', onNodeSelect);
 }
 
 function n_resetVisualization() {
@@ -307,7 +335,11 @@ function n_removeNode(nodeid) {
 
 function n_addEdge(from, to) {
     try {
-        n_edges.add({id: from+to, from: from, to: to});
+        if (from.startsWith("client")) {
+            n_edges.add({id: from+to, from: from, to: to, arrows: "middle", color:{color:"red", highlight: "red"}});
+        }
+        else
+            n_edges.add({id: from+to, from: from, to: to, arrows: "middle"});
     }
     catch(err) {
         alert(err);

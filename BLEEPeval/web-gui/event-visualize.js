@@ -211,8 +211,6 @@ function drawVisualization() {
     // linksTable.addRow([1, 4, 'moving-dot', undefined, 1]);
     // linksTable.addRow([1, 2, 'moving-arrows', undefined, 2]);
 
-
-    // Specify options using the dimensions of the network if it has already been drawn
     var options = {
         'width': '800px',
         'height': '600px',

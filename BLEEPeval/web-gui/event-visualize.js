@@ -112,6 +112,11 @@ function performEvent(event) {
             var to = eventargs.split(",")[1];
             var hashId = eventargs.split(",")[3];
             sendMessage(from, to, hashId);
+        } else if (eventtype === "MulticastingMessage") {
+            var from = eventargs.split(",")[0];
+            var to = eventargs.split(",")[1];
+            var hashId = eventargs.split(",")[3];
+            sendMessage(from, to, hashId);
         } else if (eventtype === "RecvMessage") {
             var from = eventargs.split(",")[0];
             var to = eventargs.split(",")[1];
@@ -123,7 +128,7 @@ function performEvent(event) {
             var prevHash = eventargs.split(",")[2];
             var timestamp = eventargs.split(",")[3];
             appendBlock(peerId, hash, prevHash, timestamp);
-        }
+        }        
     }
     onNodeSelect(); // update event list for selected node
     return event;
@@ -152,6 +157,11 @@ function revertEvent(event) {
             var to = eventargs.split(",")[1];
             addEdge(from, to);
         } else if (eventtype === "UnicastMessage") {
+            var from = eventargs.split(",")[0];
+            var to = eventargs.split(",")[1];
+            var hashId = eventargs.split(",")[3];
+            unsendMessage(from, to, hashId);
+        } else if (eventtype === "MulticastingMessage") {
             var from = eventargs.split(",")[0];
             var to = eventargs.split(",")[1];
             var hashId = eventargs.split(",")[3];
@@ -363,23 +373,6 @@ function sendMessage(from, to, hashId) {
         var packagesTable = new google.visualization.DataTable();
         packagesTable.addColumn('string', 'id');
         packagesTable.addColumn('string', 'from');
-        packagesTable.addColumn('string', 'to');        
-        packagesTable.addColumn('number', 'progress');        
-        packagesTable.addColumn('number', 'duration');        
-        packagesTable.addColumn('string', 'action');        
-        packagesTable.addRow([from+to+hashId, from, to, 0.001, undefined, 'create']);
-        network.addPackages(packagesTable);
-    }
-    catch(err) {
-        alert(err);
-    }
-}
-
-function sendMessage(from, to, hashId) {
-    try {
-        var packagesTable = new google.visualization.DataTable();
-        packagesTable.addColumn('string', 'id');
-        packagesTable.addColumn('string', 'from');
         packagesTable.addColumn('string', 'to');
         packagesTable.addColumn('number', 'progress');
         packagesTable.addColumn('number', 'duration');
@@ -534,9 +527,6 @@ function appendBlock(peerId, hash, prevHash, timestamp) {
     }
 
     // add node pointer
-    try {
-
-    } catch(err) {}
 
 
     edges.remove(peerId);
@@ -551,7 +541,6 @@ function appendBlock(peerId, hash, prevHash, timestamp) {
     // nodes.remove({id:peerId});
     // edges.update({id:peerId, from:hash, to:peerId});
     // nodes.add({id:peerId, label:peerId});
-
 
 }
 

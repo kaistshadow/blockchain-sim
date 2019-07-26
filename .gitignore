@@ -2,6 +2,7 @@
 *.swp
 
 tags
+TAGS
 
 build/
 test/BLEEP/*-datadir/
@@ -12,11 +13,24 @@ test/BLEEP/web-gui/node_modules/
 test/BLEEP/web-gui/package-lock.json
 test/plugin-bitcoin/data/
 test/plugin-bitcoin/shadow.data/
+test/temporary-code
 
 BLEEPeval/*-datadir/
+BLEEPeval/*_datadir_*/
 BLEEPeval/web-gui/node_modules/
 BLEEPeval/web-gui/package-lock.json
+BLEEPeval/web-gui/.tern-port
 
 terraform.tfstate
 terraform.tfstate.backup
 .terraform
+
+test/BLEEP/internet_topology/atlas-ccs18.xml
+
+*.tf_
+
+BLEEPlib/boost
+aws_infra/*ec2_outputs*/
+aws_infra/admin
+aws_infra/admin.pub
+aws_infra/cur_ips

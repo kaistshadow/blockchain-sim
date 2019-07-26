@@ -62,13 +62,20 @@ std::set<Distance, DistanceCmp> genNeighborPeerSet(PeerId myId, std::vector<Peer
 }
 
 bool RandomGossipNetworkModule::AsyncConnectPeers(std::vector<PeerId> &peerList, int peerNum, double time){
+    char buf[256];
+    sprintf(buf, "API,AsyncConnectPeers,%d,%d,%f",
+            (int)peerList.size(),
+            peerNum,
+            time);
+    shadow_push_eventlog(buf);
+
     PeerId myId = *peerManager.GetMyPeerId();
     auto neighborPeerIdSet = genNeighborPeerSet(myId, peerList);
     int i = 0;
     for(const Distance& dest : neighborPeerIdSet){
         if (i >= peerNum) break;
-        if (RandomGossipNetworkModule::AsyncConnectPeer(dest.GetPeerId(), time) == false) return false;
-        i++;
+        if (RandomGossipNetworkModule::AsyncConnectPeer(dest.GetPeerId(), time) == true)
+            i++;
     }
     return true;
 }
@@ -151,7 +158,7 @@ bool RandomGossipNetworkModule::SendMulticastMsg(PeerId dest, std::shared_ptr<Me
     std::shared_ptr<DataSocket_v2> dataSocket = socketManager.GetDataSocket(socketFD);
 
     // append a message to socket
-    dataSocket->AppendMessageToSendBuff(message);
+    dataSocket->AppendMessageToSendBuff(message, dest);
     // set writable for data socket watcher
     std::shared_ptr<DataSocketWatcher> dataSocketWatcher = watcherManager.GetDataSocketWatcher(socketFD);
     if (dataSocketWatcher)
@@ -167,25 +174,53 @@ bool RandomGossipNetworkModule::SendMulticastMsg(PeerId dest, std::shared_ptr<Me
             message->GetType().c_str(),
             message->GetMessageId().c_str());
     shadow_push_eventlog(buf);
-    printf("sendMessage %s %s\n",
-            peerManager.GetMyPeerId()->GetId().c_str(),
-            dest.GetId().c_str());
+    // printf("sendMessage %s %s\n",
+    //         peerManager.GetMyPeerId()->GetId().c_str(),
+    //         dest.GetId().c_str());
 
     return true;
 }
 
 bool RandomGossipNetworkModule::MulticastMessage(std::shared_ptr<Message> message){
+    char buf[256];
+    sprintf(buf, "API,MulticastMessage,%s", message->GetType().c_str());
+    shadow_push_eventlog(buf);
+
     PeerId myId = *peerManager.GetMyPeerId();
     std::vector<PeerId> dests = GetNeighborPeerIds();
     if (dests.size() == 0) return true;
     auto idxs = GenRandomNumSet(dests.size(), fanOut);
-    for(std::vector<PeerId>::size_type i = 0 ; i < dests.size(); i++){
-        if (idxs.find(i) != idxs.end()){
-            if (checkSourcePeer(message, dests[i])){
-              if(SendMulticastMsg(dests[i], message) == false)
-                  return false;
+    for (int i : idxs){
+        if (checkSourcePeer(message, dests[i])){
+            if(SendMulticastMsg(dests[i], message) == false)
+                return false;
+            else {
+                // add timestamp
+                struct timespec tspec;
+                clock_gettime(CLOCK_MONOTONIC, &tspec);
+                char name[100];
+                sprintf(name, "AppendToSendBuf(%s)", dests[i].GetId().c_str());
+                blocktimelogs[message->GetMessageId()][name] = tspec;
             }
         }
+    }
+    return true;
+}
+
+bool RandomGossipNetworkModule::ForwardMessage(std::shared_ptr<Message> message){
+    char buf[256];
+    sprintf(buf, "API,ForwardMessage,%s", message->GetType().c_str());
+    shadow_push_eventlog(buf);
+
+    PeerId myId = *peerManager.GetMyPeerId();
+    std::vector<PeerId> dests = GetNeighborPeerIds();
+    if (dests.size() == 0) return true;
+    auto idxs = GenRandomNumSet(dests.size(), fanOut);
+    for (int i : idxs) {
+        // if (checkSourcePeer(message, dests[i])){ // send back to source for debugging
+        if(SendMulticastMsg(dests[i], message) == false)
+            return false;
+            // }
     }
     return true;
 }

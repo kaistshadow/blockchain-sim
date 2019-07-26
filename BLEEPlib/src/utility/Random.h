@@ -1,9 +1,10 @@
 #include<iostream>
 #include<set>
+#include <list>
 
 namespace libBLEEP {
 
-    std::set<int> GenRandomNumSet(int maxNum, int maxCount);
+    std::list<int> GenRandomNumSet(int maxNum, int maxCount);
 
 }
 

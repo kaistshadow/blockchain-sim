@@ -98,6 +98,9 @@ std::string ArgsManager::HelpMessage() {
     strUsage += HelpMessageOpt("-blocktxnum=<n>", "Number of transactions in one block. default:5");
     strUsage += HelpMessageOpt("-miningtime=<n>", "Emulated mean time for mining a block. default:10");    
     strUsage += HelpMessageOpt("-miningtimedev=<n>", "Standard deviation time for mining a block. default:2");    
+    strUsage += HelpMessageGroup("Random Gossip Protocol Options:");
+    strUsage += HelpMessageOpt("-fanout=<n>", "Number of fanout. default:7");
+    strUsage += HelpMessageOpt("-outpeernum=<n>", "Number of outpeer connection. default:10");    
 
     return strUsage;
 }
@@ -153,6 +156,12 @@ std::string ArgsManager::GetArg(const std::string& strArg) const
         return "10";
     } else if (strArg == "-miningtimedev") {
         return "2";
+    } else if (strArg == "-fanout") {
+        return "7";
+    } else if (strArg == "-outpeernum") {
+        return "10";
+    } else if (strArg == "-txgeninterval") {
+        return "1";
     } else {
         M_Assert(0, "Invalid request for not existed argument. (Also, default value of the argument is not existed)");
     }

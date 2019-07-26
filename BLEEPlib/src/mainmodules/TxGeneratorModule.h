@@ -19,7 +19,7 @@ namespace libBLEEP {
         private:
             ev::timer _timer; // destructor automatically stops the watcher
             void _timerCallback(ev::timer &w, int revents) {
-                std::cout << "AsyncGenerateRandomTransaction timer callback executes!" << "\n";
+                /* std::cout << "AsyncGenerateRandomTransaction timer callback executes!" << "\n"; */
                 srand((unsigned int)time(0));
                 int sender_id = rand() % 100;
                 int receiver_id = rand() % 100;
@@ -38,7 +38,7 @@ namespace libBLEEP {
                 _timer.set<AsyncGenerateRandomTransactionTimer, &AsyncGenerateRandomTransactionTimer::_timerCallback> (this);
                 _timer.set(time, 0.);
                 _timer.start();
-                std::cout << "timer started!" << "\n";
+                /* std::cout << "timer started!" << "\n"; */
             }
         };
 

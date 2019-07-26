@@ -256,6 +256,15 @@ $(function () {
                     var prevHash = eventlog.args.split(",")[2];
                     var timestamp = eventlog.args.split(",")[3];
                     appendBlock(peerId, hash, prevHash, timestamp);
+                } else if (eventlog.type === "ResultStat") {
+                    var statName = eventlog.args.split(",")[0];
+                    if (statName === "TotalMinedBlockNum") {
+                        var curBlkNum = Number(document.getElementById('totalblk').value);
+                        var blockchainLength = eventlog.args.split(",")[2];
+                        curBlkNum += Number(eventlog.args.split(",")[1]);
+                        document.getElementById('totalblk').value = String(curBlkNum);
+                        document.getElementById('forkrate').value = (curBlkNum - Number(blockchainLength))/Number(blockchainLength);
+                    }
                 }
             }
             endInitialLoading();

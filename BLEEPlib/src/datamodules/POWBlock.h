@@ -77,5 +77,10 @@ namespace libBLEEP {
 
     };
 
+    extern std::map<std::string, std::map<std::string, struct timespec> > blocktimelogs;
+    extern int sentPOWMsgnum;
+    extern int sentPOWBlknum;
+    extern int recvPOWBlknumfork;
+    void PrintBlockTimeLogs();
 }
 #endif

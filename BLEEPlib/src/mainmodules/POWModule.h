@@ -53,7 +53,7 @@ namespace libBLEEP {
 
             void CreateMiningThread(std::shared_ptr<POWBlock> candidateBlk, UINT256_t difficulty) {
                 M_Assert(_miningThreadWatcher == nullptr, "there exists miningThreadWatcher already");
-                // allocate new MiningEmulationTimer 
+                // allocate new MiningThread
                 _miningThreadWatcher = std::make_shared<BlockMiningThread>(candidateBlk, difficulty, _powModule, _mainEventModule);
             }
 
@@ -74,6 +74,9 @@ namespace libBLEEP {
             std::shared_ptr<const POWBlock> _candidateBlk;
 
             void _timerCallback(ev::timer &w, int revents) {
+                /* init_shadow_clock_update();                 */
+                PrintTimespec("POW miningTimer callback called");
+
                 // 1. calculate random block.
                 srand((unsigned int)time(0));
                 /* unsigned long nonce = 0;  // since this is an emulator, we use arbitrary nonce value. */
@@ -108,6 +111,8 @@ namespace libBLEEP {
                 _powModule->_isMining = false;
                 _powModule->watcherManager.RemoveMiningEmulationTimer();
                 // it will eventually remove myself (BlockMiningEmulationTimer object)
+                PrintTimespec("POW miningTimer callback ended");
+                /* next_shadow_clock_update("==== done handling miningTimer callback"); */
             }
         public:
             BlockMiningEmulationTimer(std::shared_ptr<POWBlock> candidateBlk, double time, POWModule* powModule, MainEventManager* eventModule)
@@ -116,11 +121,11 @@ namespace libBLEEP {
                 _timer.set<BlockMiningEmulationTimer, &BlockMiningEmulationTimer::_timerCallback>(this);
                 _timer.set(time, 0.);
                 _timer.start();
-                std::cout << "block mining timer started!" << "\n";
+                /* std::cout << "block mining timer started!" << "\n"; */
                 _powModule->_isMining = true;
             }
             ~BlockMiningEmulationTimer() {
-                std::cout << "BlockMiningEmulationTimer destroyed" << "\n";
+                /* std::cout << "BlockMiningEmulationTimer destroyed" << "\n"; */
             }
         };
 
@@ -262,9 +267,14 @@ namespace libBLEEP {
 
                 return result;
             }
+            // assume ip is given as id. 
+            // TODO : support for arbitrary id.
             else {
-                std::cout << "nodeid does not contain 'bleep'. _myPeerId:" << _myPeerId << "\n";
-                return 0;
+                unsigned int ips[4];
+                sscanf(_myPeerId.c_str(), "%u.%u.%u.%u", &ips[3], &ips[2], &ips[1], &ips[0]);
+                unsigned int val = ips[0] + ips[1]*256 + ips[2]*256*256 + ips[3]*256*256*256;
+                return val;
+                /* std::cout << "nodeid does not contain 'bleep'. _myPeerId:" << _myPeerId << "\n"; */
             }
         }
 

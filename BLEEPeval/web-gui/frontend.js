@@ -241,30 +241,26 @@ $(function () {
                 ul.appendChild(li);
 
                 if (eventlog.type === "InitPeerId") {
-                    //addNode(eventlog.args);
-                    n_addNode(eventlog.args);
+                    addNode(eventlog.args);
                 }
                 else if (eventlog.type === "ConnectPeer") {
                     var from = eventlog.args.split(",")[0];
                     var to = eventlog.args.split(",")[1];
-                    //addEdge(from, to);
-                    n_addEdge(from, to);
+                    addEdge(from, to);
                 } else if (eventlog.type === "DisconnectPeer") {
                     var from = eventlog.args.split(",")[0];
                     var to = eventlog.args.split(",")[1];
-                    //removeEdge(from, to);
-                    //removeEdge(to, from);
-                    n_removeEdge(from, to);
-                    n_removeEdge(to, from);
+                    removeEdge(from, to);
+                    removeEdge(to, from);
                 } else if (eventlog.type === "BlockAppend") {
                     var peerId = eventlog.host;
                     var hash = eventlog.args.split(",")[1];
                     var prevHash = eventlog.args.split(",")[2];
                     var timestamp = eventlog.args.split(",")[3];
-                    //appendBlock(peerId, hash, prevHash, timestamp);
+                    appendBlock(peerId, hash, prevHash, timestamp);
                 }
             }
-            //endInitialLoading();
+            endInitialLoading();
         } else if (json.type === 'graph') {
             addMessage("Notice", "Snapshot of the blockchain graph is received",
                        "red", new Date(json.data.time));

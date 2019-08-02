@@ -73,6 +73,8 @@ function Network(container, data, options) {
     nodeIndices: [],
     edges: {},
     edgeIndices: [],
+    packages: {},
+    packagesIndices: [],
 
     emitter: {
       on: this.on.bind(this),
@@ -224,6 +226,7 @@ Network.prototype.setOptions = function(options) {
       let networkOptions = {
         nodes: {},
         edges: {},
+        packages: {},
         layout: {},
         interaction: {},
         manipulation: {},
@@ -232,6 +235,7 @@ Network.prototype.setOptions = function(options) {
       }
       util.deepExtend(networkOptions.nodes, this.nodesHandler.options)
       util.deepExtend(networkOptions.edges, this.edgesHandler.options)
+      util.deepExtend(networkOptions.packages, this.packagesHandler.options);
       util.deepExtend(networkOptions.layout, this.layoutEngine.options)
       // load the selectionHandler and render default options in to the interaction group
       util.deepExtend(networkOptions.interaction, this.selectionHandler.options)
@@ -399,6 +403,7 @@ Network.prototype.setData = function(data) {
   } else {
     this.nodesHandler.setData(data && data.nodes, true)
     this.edgesHandler.setData(data && data.edges, true)
+    this.packagesHandler.setData(data && data.packages, true)
   }
 
   // emit change in data

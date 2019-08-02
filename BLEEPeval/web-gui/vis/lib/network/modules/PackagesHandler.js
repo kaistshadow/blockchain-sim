@@ -6,7 +6,6 @@ var Package = require('./components/Package').default
 /**
  * Handler for Packages
  */
-
 class PackagesHandler {
   /**
    * @param {Object} body
@@ -15,25 +14,25 @@ class PackagesHandler {
    * @param {LayoutEngine} layoutEngine
    */
   constructor(body, images) {
-    this.body = body;
-    this.images = images;
+    this.body = body
+    this.images = images
 
     // create the edge API in the body container
-    this.body.functions.createPackage = this.create.bind(this);
+    this.body.functions.createPackage = this.create.bind(this)
     
     this.packagesListeners = {
       add: function add(event, params) {
-        this.add(params.items);
+        this.add(params.items)
       },
       update: function update(event, params) {
-        this.update(params.items);
+        this.update(params.items)
       },
       remove: function remove(event, params) {
-        this.remove(params.items);
+        this.remove(params.items)
       }
-    };
+    }
 
-    this.options = {};
+    this.options = {}
     this.defaultOptions = {
       borderWidth: 1,
       borderWidthSelected: 2,
@@ -111,10 +110,10 @@ class PackagesHandler {
         },
         customScalingFunction: function customScalingFunction(min, max, total, value) {
           if (max === min) {
-            return 0.5;
+            return 0.5
           } else {
-            var scale = 1 / (max - min);
-            return Math.max(0, (value - min) * scale);
+            var scale = 1 / (max - min)
+            return Math.max(0, (value - min) * scale)
           }
         }
       },
@@ -136,33 +135,30 @@ class PackagesHandler {
       size: 15,
       title: "coucou",
       value: undefined
-    };
+    }
 
-    util.deepExtend(this.options, this.defaultOptions);
+    util.deepExtend(this.options, this.defaultOptions)
 
-    this.bindEventListeners();
+    this.bindEventListeners()
   }
 
   /**
    * Binds event listeners
    */
-
   bindEventListeners() {
-    var _this2 = this;
-
     // refresh the packages. Used when reverting from hierarchical layout
-    this.body.emitter.on('refreshPackages', this.refresh.bind(this));
-    this.body.emitter.on('refresh', this.refresh.bind(this));
-    this.body.emitter.on('destroy', function () {
-      util.forEach(_this2.packagesListeners, function (callback, event) {
-        if (_this2.body.data.packages) _this2.body.data.packages.off(event, callback);
-      });
-      delete _this2.body.functions.createPackage;
-      delete _this2.packagesListeners.add;
-      delete _this2.packagesListeners.update;
-      delete _this2.packagesListeners.remove;
-      delete _this2.packagesListeners;
-    });
+    this.body.emitter.on('refreshPackages', this.refresh.bind(this))
+    this.body.emitter.on('refresh', this.refresh.bind(this))
+    this.body.emitter.on('destroy', () => {
+      util.forEach(this.packagesListeners, (callback, event) => {
+        if (this.body.data.packages) this.body.data.packages.off(event, callback)
+      })
+      delete this.body.functions.createPackage
+      delete this.packagesListeners.add
+      delete this.packagesListeners.update
+      delete this.packagesListeners.remove
+      delete this.packagesListeners
+    })
   }
 
   /**
@@ -172,13 +168,13 @@ class PackagesHandler {
 
   setOptions(options) {
     if (options !== undefined) {
-      Package.parseOptions(this.options, options);
+      Package.parseOptions(this.options, options)
 
       // update the shape in all packages
       if (options.shape !== undefined) {
         for (var packageId in this.body.packages) {
           if (this.body.packages.hasOwnProperty(packageId)) {
-            this.body.packages[packageId].updateShape();
+            this.body.packages[packageId].updateShape()
           }
         }
       }
@@ -187,8 +183,8 @@ class PackagesHandler {
       if (options.font !== undefined) {
         for (var _packageId in this.body.packages) {
           if (this.body.packages.hasOwnProperty(_packageId)) {
-            this.body.packages[_packageId].updateLabelModule();
-            this.body.packages[_packageId].needsRefresh();
+            this.body.packages[_packageId].updateLabelModule()
+            this.body.packages[_packageId].needsRefresh()
           }
         }
       }
@@ -197,58 +193,61 @@ class PackagesHandler {
       if (options.size !== undefined) {
         for (var _packageId2 in this.body.packages) {
           if (this.body.packages.hasOwnProperty(_packageId2)) {
-            this.body.packages[_packageId2].needsRefresh();
+            this.body.packages[_packageId2].needsRefresh()
           }
         }
       }
 
       // update the state of the variables if needed
       if (options.hidden !== undefined) {
-        this.body.emitter.emit('_dataChanged');
+        this.body.emitter.emit('_dataChanged')
       }
     }
   }
 
-  setData(packages) {
-    var doNotEmit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-    var oldNodesData = this.body.data.packages;
+  /**
+   * Load packages by reading the data table
+   * @param {Array | DataSet | DataView} packages    The data containing the packages.
+   * @param {boolean} [doNotEmit=false]
+   * @private
+   */
+  setData(packages, doNotEmit = false) {
+    var oldNodesData = this.body.data.packages
 
     if (packages instanceof DataSet || packages instanceof DataView) {
-      this.body.data.packages = packages;
+      this.body.data.packages = packages
     } else if (Array.isArray(packages)) {
-      this.body.data.packages = new DataSet();
-      this.body.data.packages.add(packages);
+      this.body.data.packages = new DataSet()
+      this.body.data.packages.add(packages)
     } else if (!packages) {
-      this.body.data.packages = new DataSet();
+      this.body.data.packages = new DataSet()
     } else {
-      throw new TypeError('Array or DataSet expected');
+      throw new TypeError('Array or DataSet expected')
     }
 
     if (oldNodesData) {
       // unsubscribe from old dataset
       util.forEach(this.nodesListeners, function (callback, event) {
-        oldNodesData.off(event, callback);
-      });
+        oldNodesData.off(event, callback)
+      })
     }
 
     // remove drawn packages
-    this.body.packages = {};
+    this.body.packages = {}
 
     if (this.body.data.packages) {
       // subscribe to new dataset
-      var me = this;
-      util.forEach(this.nodesListeners, function (callback, event) {
-        me.body.data.packages.on(event, callback);
-      });
+      util.forEach(this.nodesListeners, (callback, event) => {
+        this.body.data.packages.on(event, callback)
+      })
 
       // draw all new packages
-      var ids = this.body.data.packages.getIds();
-      this.add(ids, true);
+      var ids = this.body.data.packages.getIds()
+      this.add(ids, true)
     }
 
     if (doNotEmit === false) {
-      this.body.emitter.emit("_dataChanged");
+      this.body.emitter.emit("_dataChanged")
     }
   }
 
@@ -258,23 +257,21 @@ class PackagesHandler {
    * @param {boolean} [doNotEmit=false]
    * @private
    */
+  add(ids, doNotEmit = false) {
+    var packages = this.body.packages
+    var packagesData = this.body.data.packages
 
-  add(ids) {
-    var doNotEmit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-    var packages = this.body.packages;
-
-    var newPackages = [];
+    var newPackages = []
     for (var i = 0; i < ids.length; i++) {
-      id = ids[i];
-      var properties = this.body.data.packages.get(id);
-      var pkg = this.create(properties);
-      newPackages.push(pkg);
-      this.body.packages[id] = pkg; // note: this may replace an existing package
+      id = ids[i]
+      var properties = packagesData.get(id)
+      var pkg = this.create(properties)
+      newPackages.push(pkg)
+      packages[id] = pkg // note: this may replace an existing package
     }
 
     if (doNotEmit === false) {
-      this.body.emitter.emit("_dataChanged");
+      this.body.emitter.emit("_dataChanged")
     }
   }
 
@@ -282,34 +279,32 @@ class PackagesHandler {
    * Update existing packages, or create them when not yet existing
    * @param {number[] | string[]} ids id's of changed packages
    * @param {Array} changedData array with changed data
-   * @param {Array|undefined} oldData optional; array with previous data
    * @private
    */
-
-  update(ids, changedData, oldData) {
-    var packages = this.body.packages;
-    var dataChanged = false;
+  update(ids, changedData) {
+    var packages = this.body.packages
+    var dataChanged = false
     for (var i = 0; i < ids.length; i++) {
-      var id = ids[i];
-      var pkg = packages[id];
-      var data = changedData[i];
+      var id = ids[i]
+      var pkg = packages[id]
+      var data = changedData[i]
       if (pkg !== undefined) {
         // update package
         if (pkg.setOptions(data)) {
-          dataChanged = true;
+          dataChanged = true
         }
       } else {
-        dataChanged = true;
+        dataChanged = true
         // create package
-        pkg = this.create(data);
-        packages[id] = pkg;
+        pkg = this.create(data)
+        packages[id] = pkg
       }
     }
 
     if (dataChanged === true) {
-      this.body.emitter.emit("_dataChanged");
+      this.body.emitter.emit("_dataChanged")
     } else {
-      this.body.emitter.emit("_dataUpdated");
+      this.body.emitter.emit("_dataUpdated")
     }
   }
 
@@ -318,16 +313,15 @@ class PackagesHandler {
    * @param {number[] | string[]} ids
    * @private
    */
-
   remove(ids) {
-    var packages = this.body.packages;
+    var packages = this.body.packages
 
     for (var i = 0; i < ids.length; i++) {
-      var id = ids[i];
-      delete packages[id];
+      var id = ids[i]
+      delete packages[id]
     }
 
-    this.body.emitter.emit("_dataChanged");
+    this.body.emitter.emit("_dataChanged")
   }
 
   /**
@@ -335,24 +329,20 @@ class PackagesHandler {
    * @param {Object} properties
    * @returns {Package}
    */
-
   create(properties) {
-    return new Package(properties, this.body, this.images, this.options, this.defaultOptions);
+    return new Package(properties, this.body, this.images, this.options, this.defaultOptions)
   }
 
   /**
    * Refreshes Edge Handler
    */
-
   refresh() {
-    var _this4 = this;
-
-    util.forEach(this.body.edges, function (edge, edgeId) {
-      var data = _this4.body.data.edges._data[edgeId];
+    util.forEach(this.body.edges, (edge, edgeId) => {
+      var data = this.body.data.edges._data[edgeId]
       if (data !== undefined) {
-        edge.setOptions(data);
+        edge.setOptions(data)
       }
-    });
+    })
   }
 }
 

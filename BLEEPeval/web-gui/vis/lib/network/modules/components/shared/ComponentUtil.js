@@ -29,7 +29,7 @@ class ComponentUtil {
    */
   static choosify(subOption, pile) {
     // allowed values for subOption
-    let allowed = ['node', 'edge', 'label']
+    let allowed = ['node', 'edge', 'label', 'package']
     let value = true
 
     let chosen = util.topMost(pile, 'chosen')

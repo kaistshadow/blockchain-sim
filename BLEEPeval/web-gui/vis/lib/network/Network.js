@@ -12,6 +12,7 @@ var Images = require('./Images').default
 var Groups = require('./modules/Groups').default
 var NodesHandler = require('./modules/NodesHandler').default
 var EdgesHandler = require('./modules/EdgesHandler').default
+var PackagesHandler = require('./modules/PackagesHandler').default
 var PhysicsEngine = require('./modules/PhysicsEngine').default
 var ClusterEngine = require('./modules/Clustering').default
 var CanvasRenderer = require('./modules/CanvasRenderer').default
@@ -140,6 +141,7 @@ function Network(container, data, options) {
     this.layoutEngine
   ) // Handle adding, deleting and updating of nodes as well as global options
   this.edgesHandler = new EdgesHandler(this.body, this.images, this.groups) // Handle adding, deleting and updating of edges as well as global options
+  this.packagesHandler = new PackagesHandler(this.body, this.images) // Handle adding, deleting and updating of packages as well as global options
 
   this.body.modules['kamadaKawai'] = new KamadaKawai(this.body, 150, 0.05) // Layouting algorithm.
   this.body.modules['clustering'] = this.clustering
@@ -188,6 +190,7 @@ Network.prototype.setOptions = function(options) {
     this.groups.setOptions(options.groups)
     this.nodesHandler.setOptions(options.nodes)
     this.edgesHandler.setOptions(options.edges)
+    this.packagesHandler.setOptions(options.packages)
     this.physics.setOptions(options.physics)
     this.manipulation.setOptions(options.manipulation, options, this.options) // manipulation uses the locales in the globals
 
@@ -433,6 +436,7 @@ Network.prototype.destroy = function() {
   delete this.manipulation
   delete this.nodesHandler
   delete this.edgesHandler
+  delete this.packagesHandler
   delete this.configurator
   delete this.images
 

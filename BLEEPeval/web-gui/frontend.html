@@ -5,9 +5,6 @@
         <title>BLEEP - Blockchain Emulation and Evaluation Platform</title>
         <script type="text/javascript" src="vis/dist/vis.js"></script>
         <link href="vis/dist/vis-network.min.css" rel="stylesheet" type="text/css" />
-        <!--    <script type="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.js" src="new-vis.js"></script>
-                <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.css" rel="stylesheet" type="text/css" />
-            -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <!-- <script src="http://visjs.org/dist/vis.js"></script>
              <link href="http://visjs.org/dist/vis.css" rel="stylesheet" type="text/css" /> -->
@@ -96,7 +93,6 @@
             -webkit-animation: spin 2s linear infinite; /* Chrome < 43.0 */
             -moz-animation: spin 2s linear infinite; /* Firefox < 16.0 */
             animation: spin 2s linear infinite;
-
          }
 
          /* * { font-family:tahoma; font-size:12px; padding:0px; margin:0px; } */
@@ -106,6 +102,15 @@
              border:1px solid #CCC; height: 200px; }
          #input { border-radius:2px; border:1px solid #ccc;
              margin-top:10px; padding:5px; width:400px;  }
+         #toggle-btn {
+             border-width: 2px;
+             border-color: white #909090 #909090 white;
+             background-color: #ccc;
+         }
+         #toggle-btn[toggled] {
+             border-color: #909090 white white #909090;
+             background-color: #aaa;
+         }
          #status { width:88px; display:block; float:left; margin-top:10px; }
          #experiments { border: 1px solid #ccc; border-radius: 2px; margin-top: 12px}
          #experiments p {margin: 0;}
@@ -113,6 +118,10 @@
          #node_API_event_list {
              max-height: 18em;
              overflow-y: auto;
+             position: relative;
+         }
+         #eventvisualize {
+             border: 1px solid lightgray;
              position: relative;
          }
          #ledgereventvisualize{
@@ -203,7 +212,7 @@
                             <button id="ex1-start" class="toolbar-item" aria-disabled="false" >StartFromBeginning</button>
                             <button id="ex1-up" class="toolbar-item selected" aria-keyshortcuts="Alt+ArrowUp" aria-disabled="true">Prev</button>
                             <button id="ex1-down" class="toolbar-item" aria-keyshortcuts="Alt+ArrowDown" aria-disabled="true">Next</button>
-                            <button id="toggle-btn" class="toolbar-item" aria-disabled="false" toggle="true">TogglePhysics</button>
+                            <button id="toggle-btn" class="toolbar-item" aria-disabled="false">TogglePhysics</button>
                             <!-- <button id="ex1-delete" class="toolbar-item move-right-btn" tabindex="-1" aria-keyshortcuts="Alt+ArrowRight Delete" aria-disabled="true">Not Important</button> -->
                         </div>
                     </div>
@@ -233,11 +242,10 @@
                 <div class="clearfix"></div>
             </div>
 
-            <!--<script src="./event-visualize.js"></script>-->
+            <script src="./event-visualize.js"></script>
             <div class="content">
                 <h1> Network Event Visualization</h1>
             </div>
-            <!-- <div id="eventvisualize">Test Graph</div> -->
             <table>
                 <tr>
                     <td>
@@ -257,33 +265,7 @@
                     </td>
                 </tr>
             </table>
-            <script src="./new-event-visualize.js"></script>
-            <div class="content">
-                <h1> New Visualization API</h1>
-            </div>
-            <table>
-                <tr>
-                    <td>
-                        <div id="new-eventvisualize" style="border: 1px solid; position: relative">Test Graph</div>
-                    </td>
-                    <td>
-                        <div id="configure-list"></div>
-                    </td>
-                    <!--
-                    <td>
-                        <div id="new-eventinfo" style="resize:both;">
-                            <span id="new-node_API_event">
-                                API call history:
-                            </span>
-                            <ul id="new-node_API_event_list"
-                                tabindex="0"
-                                role="listbox">
-                            </ul>
-                        </div>
-                    </td>
-                    -->
-                </tr>
-            </table>
+            <div id="configure-list"></div>
             
             <div class="content">
                 <h1> Ledger Event Visualization</h1>

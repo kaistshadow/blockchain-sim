@@ -312,6 +312,18 @@ class CanvasRenderer {
         this._drawNodes(ctx, hidden)
       }
 
+      if (hidden === false) {
+        if (
+          (this.dragging === false ||
+            (this.dragging === true &&
+              this.options.hideEdgesOnDrag === false)) &&
+          (this.zooming === false ||
+            (this.zooming === true && this.options.hideEdgesOnZoom === false))
+        ) {
+         this._drawPackages(ctx)
+        }
+      }
+
       ctx.beginPath()
       this.body.emitter.emit('afterDrawing', ctx)
       ctx.closePath()
@@ -418,6 +430,22 @@ class CanvasRenderer {
       if (edge.connected === true) {
         edge.draw(ctx)
       }
+    }
+  }
+
+  /**
+   * Redraw all packages
+   * @param {CanvasRenderingContext2D} ctx  2D context of a HTML canvas
+   * @private
+   */
+  _drawPackages(ctx) {
+    let packages = this.body.packages
+    let packageIndices = this.body.packageIndices
+    let pkg
+
+    for (let i = 0; i < packageIndices.length; i++) {
+      pkg = packages[packageIndices[i]]
+      pkg.draw(ctx)
     }
   }
 

@@ -212,7 +212,11 @@ function drawVisualization() {
                 'highlight': "#343434"
             },
             "smooth": false
-        },
+        },/*    Option parsing not working yet
+        'packages': {
+            'shape': 'image',
+            'image': ImgDIR + 'transaction_32.png'
+        },*/
         'interaction': {
             'hideEdgesOnDrag': true,
             'multiselect': true
@@ -285,7 +289,7 @@ function drawVisualization() {
 
 function recvMessage(from, to, hashId) {
     try {
-        packages.remove({id: hashId, from: from, to: to});
+        packages.remove({id: hashId, edge: from+to});
     }
     catch(err) {
         alert(err);
@@ -298,7 +302,7 @@ function unrecvMessage(from, to, hashId) {
 
 function sendMessage(from, to, hashId) {
     try {
-        packages.add({id: hashId, from: from, to: to});
+        packages.add({id: hashId, edge: from+to});
     }
     catch(err) {
         alert(err);

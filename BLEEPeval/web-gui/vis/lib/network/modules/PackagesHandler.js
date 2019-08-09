@@ -17,17 +17,17 @@ class PackagesHandler {
     this.body = body
     this.images = images
 
-    // create the edge API in the body container
+    // create the package API in the body container
     this.body.functions.createPackage = this.create.bind(this)
     
     this.packagesListeners = {
-      add: function add(event, params) {
+      add: (event, params) => {
         this.add(params.items)
       },
-      update: function update(event, params) {
+      update: (event, params) => {
         this.update(params.items)
       },
-      remove: function remove(event, params) {
+      remove: (event, params) => {
         this.remove(params.items)
       }
     }
@@ -38,15 +38,15 @@ class PackagesHandler {
       borderWidthSelected: 2,
       brokenImage: undefined,
       color: {
-        border: '#2B7CE9',
-        background: '#97C2FC',
+        border: '#ff8000',
+        background: '#ffbf80',
         highlight: {
-          border: '#2B7CE9',
-          background: '#D2E5FF'
+          border: '#ff8000',
+          background: '#ffdcb9'
         },
         hover: {
-          border: '#2B7CE9',
-          background: '#D2E5FF'
+          border: '#ff8000',
+          background: '#ffdcb9'
         }
       },
       fixed: {
@@ -86,8 +86,8 @@ class PackagesHandler {
         size: 50, //50,
         color: '#2B7CE9' //'#aa00ff'
       },
-      image: 'link_network/img/transaction_32.png', // --> URL
-      label: 'label test',
+      image: undefined, // --> URL
+      label: undefined,
       labelHighlightBold: true,
       level: undefined,
       margin: {
@@ -212,7 +212,7 @@ class PackagesHandler {
    * @private
    */
   setData(packages, doNotEmit = false) {
-    var oldNodesData = this.body.data.packages
+    var oldPackagesData = this.body.data.packages
 
     if (packages instanceof DataSet || packages instanceof DataView) {
       this.body.data.packages = packages
@@ -225,10 +225,10 @@ class PackagesHandler {
       throw new TypeError('Array or DataSet expected')
     }
 
-    if (oldNodesData) {
+    if (oldPackagesData) {
       // unsubscribe from old dataset
-      util.forEach(this.nodesListeners, function (callback, event) {
-        oldNodesData.off(event, callback)
+      util.forEach(this.packagesListeners, function (callback, event) {
+        oldPackagesData.off(event, callback)
       })
     }
 
@@ -237,7 +237,7 @@ class PackagesHandler {
 
     if (this.body.data.packages) {
       // subscribe to new dataset
-      util.forEach(this.nodesListeners, (callback, event) => {
+      util.forEach(this.packagesListeners, (callback, event) => {
         this.body.data.packages.on(event, callback)
       })
 
@@ -260,6 +260,7 @@ class PackagesHandler {
   add(ids, doNotEmit = false) {
     var packages = this.body.packages
     var packagesData = this.body.data.packages
+    let id
 
     var newPackages = []
     for (var i = 0; i < ids.length; i++) {
@@ -334,13 +335,13 @@ class PackagesHandler {
   }
 
   /**
-   * Refreshes Edge Handler
+   * Refreshes Package Handler
    */
   refresh() {
-    util.forEach(this.body.edges, (edge, edgeId) => {
-      var data = this.body.data.edges._data[edgeId]
+    util.forEach(this.body.packages, (pkg, packageId) => {
+      var data = this.body.data.packages._data[packageId]
       if (data !== undefined) {
-        edge.setOptions(data)
+        pkg.setOptions(data)
       }
     })
   }

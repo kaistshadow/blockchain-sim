@@ -74,7 +74,7 @@ function Network(container, data, options) {
     edges: {},
     edgeIndices: [],
     packages: {},
-    packagesIndices: [],
+    packageIndices: [],
 
     emitter: {
       on: this.on.bind(this),
@@ -98,11 +98,13 @@ function Network(container, data, options) {
     },
     data: {
       nodes: null, // A DataSet or DataView
-      edges: null // A DataSet or DataView
+      edges: null, // A DataSet or DataView
+      packages: null // A Dataset or Dataview
     },
     functions: {
       createNode: function() {},
       createEdge: function() {},
+      createPackage: function () {},
       getPointer: function() {}
     },
     modules: {},
@@ -235,7 +237,7 @@ Network.prototype.setOptions = function(options) {
       }
       util.deepExtend(networkOptions.nodes, this.nodesHandler.options)
       util.deepExtend(networkOptions.edges, this.edgesHandler.options)
-      util.deepExtend(networkOptions.packages, this.packagesHandler.options);
+      util.deepExtend(networkOptions.packages, this.packagesHandler.options)
       util.deepExtend(networkOptions.layout, this.layoutEngine.options)
       // load the selectionHandler and render default options in to the interaction group
       util.deepExtend(networkOptions.interaction, this.selectionHandler.options)
@@ -293,8 +295,10 @@ Network.prototype.setOptions = function(options) {
 Network.prototype._updateVisibleIndices = function() {
   let nodes = this.body.nodes
   let edges = this.body.edges
+  let packages = this.body.packages
   this.body.nodeIndices = []
   this.body.edgeIndices = []
+  this.body.packageIndices = []
 
   for (let nodeId in nodes) {
     if (nodes.hasOwnProperty(nodeId)) {
@@ -329,6 +333,16 @@ Network.prototype._updateVisibleIndices = function() {
       }
     }
   }
+
+  for (let packageId in packages) {
+    if (packages.hasOwnProperty(packageId)) {
+      let pkg = packages[packageId]
+
+      if (this.body.edgeIndices.indexOf(pkg.edgeId) != -1) {
+        this.body.packageIndices.push(pkg.id)
+      }
+    }
+  }
 }
 
 /**
@@ -336,7 +350,7 @@ Network.prototype._updateVisibleIndices = function() {
  */
 Network.prototype.bindEventListeners = function() {
   // This event will trigger a rebuilding of the cache everything.
-  // Used when nodes or edges have been added or removed.
+  // Used when nodes, edges or packages have been added or removed.
   this.body.emitter.on('_dataChanged', () => {
     this.edgesHandler._updateState()
     this.body.emitter.emit('_dataUpdated')
@@ -350,6 +364,7 @@ Network.prototype.bindEventListeners = function() {
 
     this._updateValueRange(this.body.nodes)
     this._updateValueRange(this.body.edges)
+    this._updateValueRange(this.body.packages)
     // start simulation (can be called safely, even if already running)
     this.body.emitter.emit('startSimulation')
     this.body.emitter.emit('_requestRedraw')
@@ -362,6 +377,7 @@ Network.prototype.bindEventListeners = function() {
  * @param {Object} data              Object containing parameters:
  *                                   {Array | DataSet | DataView} [nodes] Array with nodes
  *                                   {Array | DataSet | DataView} [edges] Array with edges
+ *                                   {Array | DataSet | DataView} [packages] Array with packages
  *                                   {String} [dot] String containing data in DOT format
  *                                   {String} [gephi] String containing data in gephi JSON format
  *                                   {Options} [options] Object with options
@@ -391,6 +407,7 @@ Network.prototype.setData = function(data) {
     // parse DOT file
     var dotData = dotparser.DOTToGraph(data.dot)
     this.setData(dotData)
+    this.packagesHandler.setData(data.packages, true)
     return
   } else if (data && data.gephi) {
     // parse DOT file
@@ -399,6 +416,7 @@ Network.prototype.setData = function(data) {
     )
     var gephiData = gephiParser.parseGephi(data.gephi)
     this.setData(gephiData)
+    this.packagesHandler.setData(data.packages, true)
     return
   } else {
     this.nodesHandler.setData(data && data.nodes, true)
@@ -462,7 +480,7 @@ Network.prototype.destroy = function() {
 /**
  * Update the values of all object in the given array according to the current
  * value range of the objects in the array.
- * @param {Object} obj    An object containing a set of Edges or Nodes
+ * @param {Object} obj    An object containing a set of Edges, Nodes or Packages
  *                        The objects must have a method getValue() and
  *                        setValueRange(min, max).
  * @private

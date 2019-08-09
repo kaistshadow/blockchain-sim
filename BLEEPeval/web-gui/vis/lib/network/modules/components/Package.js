@@ -81,8 +81,6 @@ class Package {
     }
 
     if (options.id !== undefined) {this.id = options.id;}
-    if (options.from !== undefined) {this.fromId = options.from;}
-    if (options.to !== undefined) {this.toId = options.to;}
     if (options.edge !== undefined) {this.edgeId = options.edge;}
     if (options.value !== undefined) {options.value = parseFloat(options.value);}
     if (options.radius != undefined) {this.radius = options.radius;}
@@ -92,7 +90,6 @@ class Package {
     if (options.dashgap != undefined) {this.dashgap = options.dashgap;}
     if (options.altdashlength != undefined) {this.altdashlength = options.altdashlength;}
     if (options.progress != undefined) {this.progress = options.progress;}
-    if (options.timestamp != undefined) {this.timestamp = options.timestamp;}
     if (options.duration != undefined) {this.duration = options.duration;}
 
     this.radiusFixed = this.radiusFixed || (options.radius != undefined);
@@ -107,7 +104,7 @@ class Package {
     if (this.progress < 0.0) {this.progress = 0.0;}
     if (this.progress > 1.0) {this.progress = 1.0;}
 
-    // binds the edge and the two end nodes
+    // check if edge exists
     this.connect();
 
     // this transforms all shorthands into fully defined options
@@ -120,8 +117,6 @@ class Package {
     this.updateLabelModule(options);
     this.updateShape(currentShape);
 
-    this.connect();
-
     if (options.hidden !== undefined) {
       dataChanged = true;
     }
@@ -129,7 +124,7 @@ class Package {
   }
 
   /**
-   * Load the images from the options, for the nodes that need them.
+   * Load the images from the options, for the packages that need them.
    *
    * TODO: The imageObj members should be moved to CircularImageBase.
    *       It's the only place where they are required.
@@ -254,18 +249,8 @@ class Package {
    */
 
   connect() {
-    this.from = this.body.nodes[this.fromId];
-    this.to = this.body.nodes[this.toId];
-    this.edge = this.body.edges[this.edgeId];
-
-    if (!this.from) {
-      throw "Node with id " + this.fromId + " not found";
-    }
-    if (!this.to) {
-        throw "Node with id " + this.toId + " not found";
-    }
-    if (!this.edge) {
-        throw "Edge with id " + this.edgeId + " not found";
+    if (!this.body.edges.hasOwnProperty(this.edgeId)) {
+      throw "Edge with id " + this.edgeId + " not found";
     }
   }
 
@@ -275,6 +260,106 @@ class Package {
 
   needsRefresh() {
     this.shape.refreshNeeded = true;
+  }
+
+  /**
+   * Set a new value for the progress of the package
+   * @param {number} progress    A value between 0 and 1
+   */
+  setProgress(progress) {
+    this.progress = progress;
+    this.autoProgress = false;
+  }
+
+  /**
+   * Draw this package in the given canvas
+   * The 2d context of a HTML canvas can be retrieved by canvas.getContext("2d");
+   * @param {CanvasRenderingContext2D}   ctx
+   */
+  draw(ctx) {
+    let values = this.getFormattingValues()
+    let pos = this._getPosition()
+    this.shape.draw(ctx, pos.x, pos.y, this.selected, this.hover, values)
+  }
+
+  /**
+   * Calculate the current position of the package
+   * @return {Object} position    The object has parameters x and y.
+   */
+  _getPosition() {
+    let edgeType = this.body.edges[this.edgeId].edgeType
+    let viaNode = edgeType.getViaNode()
+    let point = edgeType.getPoint(this.progress, viaNode)
+    return {
+        "x" : point.x,
+        "y" : point.y
+    }
+  }
+
+  /**
+   * Get the title of this package.
+   * @return {string} title    The title of the package, or undefined when no
+   *                           title has been set.
+   */
+  getTitle() {
+    return this.options.title;
+  }
+
+  /**
+  * Retrieve the value of the package. Can be undefined
+  * @return {Number} value
+  */
+  getValue() {
+    return this.options.value;
+  }
+
+  /**
+   * Update the bounding box of the shape
+   * @param {CanvasRenderingContext2D}   ctx
+   */
+  updateBoundingBox(ctx) {
+    this.shape.updateBoundingBox(this.x, this.y, ctx)
+  }
+
+  /**
+   * Recalculate the size of this package in the given canvas
+   * The 2d context of a HTML canvas can be retrieved by canvas.getContext("2d")
+   * @param {CanvasRenderingContext2D}   ctx
+   */
+  resize(ctx) {
+    let values = this.getFormattingValues()
+    this.shape.resize(ctx, this.selected, this.hover, values)
+  }
+
+  /**
+   * Adjust the value range of the package. The package will adjust its size
+   * based on its value.
+   * @param {number} min
+   * @param {number} max
+   * @param {number} total
+   */
+  setValueRange(min, max, total) {
+    if (this.options.value !== undefined) {
+      var scale = this.options.scaling.customScalingFunction(
+        min,
+        max,
+        total,
+        this.options.value
+      )
+      var sizeDiff = this.options.scaling.max - this.options.scaling.min
+      if (this.options.scaling.label.enabled === true) {
+        var fontDiff =
+          this.options.scaling.label.max - this.options.scaling.label.min
+        this.options.font.size =
+          this.options.scaling.label.min + scale * fontDiff
+      }
+      this.options.size = this.options.scaling.min + scale * sizeDiff
+    } else {
+      this.options.size = this.baseSize
+      this.options.font.size = this.baseFontSize
+    }
+
+    this.updateLabelModule()
   }
 
   /**
@@ -321,6 +406,56 @@ class Package {
       util.mergeOptions(parentOptions.scaling, newOptions.scaling, 'label', globalOptions.scaling);
     }
   }
+
+  /**
+   *
+   * @returns {{color: *, borderWidth: *, borderColor: *, size: *, borderDashes: (boolean|Array|allOptions.nodes.shapeProperties.borderDashes|{boolean, array}), borderRadius: (number|allOptions.nodes.shapeProperties.borderRadius|{number}|Array), shadow: *, shadowColor: *, shadowSize: *, shadowX: *, shadowY: *}}
+   */
+  getFormattingValues() {
+    let values = {
+      color: this.options.color.background,
+      borderWidth: this.options.borderWidth,
+      borderColor: this.options.color.border,
+      size: this.options.size,
+      borderDashes: this.options.shapeProperties.borderDashes,
+      borderRadius: this.options.shapeProperties.borderRadius,
+      shadow: this.options.shadow.enabled,
+      shadowColor: this.options.shadow.color,
+      shadowSize: this.options.shadow.size,
+      shadowX: this.options.shadow.x,
+      shadowY: this.options.shadow.y
+    }
+    if (this.selected || this.hover) {
+      if (this.chooser === true) {
+        if (this.selected) {
+          values.borderWidth *= 2
+          values.color = this.options.color.highlight.background
+          values.borderColor = this.options.color.highlight.border
+          values.shadow = this.options.shadow.enabled
+        } else if (this.hover) {
+          values.color = this.options.color.hover.background
+          values.borderColor = this.options.color.hover.border
+          values.shadow = this.options.shadow.enabled
+        }
+      } else if (typeof this.chooser === 'function') {
+        this.chooser(values, this.options.id, this.selected, this.hover)
+        if (values.shadow === false) {
+          if (
+            values.shadowColor !== this.options.shadow.color ||
+            values.shadowSize !== this.options.shadow.size ||
+            values.shadowX !== this.options.shadow.x ||
+            values.shadowY !== this.options.shadow.y
+          ) {
+            values.shadow = true
+          }
+        }
+      }
+    } else {
+      values.shadow = this.options.shadow.enabled
+    }
+    return values
+  }
+
 }
 
 export default Package

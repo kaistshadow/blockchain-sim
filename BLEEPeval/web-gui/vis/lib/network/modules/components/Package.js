@@ -374,17 +374,14 @@ class Package {
    * @static
    */
 
-  static parseOptions(parentOptions, newOptions) {
-    var allowDeletion = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-    var globalOptions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-    var groupList = arguments[4];
-
-
-    /*var fields = ['arrowStrikethrough', 'id', 'from', 'hidden', 'hoverWidth', 'labelHighlightBold', 
-    'length', 'line', 'opacity', 'physics', 'scaling', 'selectionWidth', 'selfReferenceSize', 
-    'to', 'title', 'value', 'width', 'font', 'chosen', 'widthConstraint'];*/
+  static parseOptions(
+    parentOptions,
+    newOptions,
+    allowDeletion = false,
+    globalOptions = {}
+  ) {
     var fields = ['color', 'shadow', 'size'];
-    util.selectiveDeepExtend(fields, parentOptions, newOptions, allowDeletion);
+    util.selectiveNotDeepExtend(fields, parentOptions, newOptions, allowDeletion);
 
     // merge the shadow options into the parent.
     util.mergeOptions(parentOptions, newOptions, 'shadow', globalOptions);

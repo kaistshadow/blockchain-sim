@@ -49,18 +49,14 @@ class PackagesHandler {
           background: '#ffdcb9'
         }
       },
-      fixed: {
-        x: false,
-        y: false
-      },
       font: {
+        align: 'center',
         color: '#343434',
         size: 14, // px
         face: 'arial',
         background: 'none',
         strokeWidth: 0, // px
         strokeColor: '#ffffff',
-        align: 'center',
         vadjust: 0,
         multi: false,
         bold: {
@@ -89,18 +85,15 @@ class PackagesHandler {
       image: undefined, // --> URL
       label: undefined,
       labelHighlightBold: true,
-      level: undefined,
       margin: {
         top: 5,
         right: 5,
         bottom: 5,
         left: 5
       },
-      radiusMin: 5,
-      radiusMax: 10,
       scaling: {
-        min: 10,
-        max: 30,
+        min: 5,
+        max: 10,
         label: {
           enabled: false,
           min: 14,

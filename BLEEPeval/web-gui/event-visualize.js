@@ -1,5 +1,3 @@
-var nodesTable = null;
-var linksTable = null;
 var network = null;
 var physics = true;
 
@@ -196,8 +194,9 @@ function drawVisualization() {
         'configure': {
             'enabled': true,
             'filter':function (option, path) {
-                if (path.indexOf('physics') !== -1) { return true;}
-                if (path.indexOf('smooth') !== -1 || option === 'smooth') { return true;}
+                if (path.indexOf('physics') !== -1) { return true}
+                if (path.indexOf('smooth') !== -1 || option === 'smooth') { return true}
+                if (path.indexOf('interaction') !== -1 && option.indexOf('hide') !== -1) { return true}
                 return false;
             },
             'container': document.getElementById("configure-list"),
@@ -212,14 +211,15 @@ function drawVisualization() {
                 'highlight': "#343434"
             },
             "smooth": false
-        },/*    Option parsing not working yet
+        },
         'packages': {
-            'shape': 'image',
-            'image': ImgDIR + 'transaction_32.png'
-        },*/
+            'image': ImgDIR + 'transaction_32.png',
+            'shape': 'image'
+        },
         'interaction': {
             'hideEdgesOnDrag': true,
-            'multiselect': true
+            'multiselect': true,
+            'selectConnectedEdges': false
         },
         "physics": {
             "forceAtlas2Based": {

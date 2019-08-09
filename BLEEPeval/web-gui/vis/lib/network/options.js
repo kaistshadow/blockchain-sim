@@ -405,6 +405,151 @@ let allOptions = {
     y: { number },
     __type__: { object }
   },
+  packages: {
+    borderWidth: { number },
+    borderWidthSelected: { number, undefined: 'undefined' },
+    brokenImage: { string, undefined: 'undefined' },
+    chosen: {
+      label: { boolean: bool, function: 'function' },
+      node: { boolean: bool, function: 'function' },
+      __type__: { object, boolean: bool }
+    },
+    color: {
+      border: { string },
+      background: { string },
+      highlight: {
+        border: { string },
+        background: { string },
+        __type__: { object, string }
+      },
+      hover: {
+        border: { string },
+        background: { string },
+        __type__: { object, string }
+      },
+      __type__: { object, string }
+    },
+    font: {
+      align: { string },
+      color: { string },
+      size: { number }, // px
+      face: { string },
+      background: { string },
+      strokeWidth: { number }, // px
+      strokeColor: { string },
+      vadjust: { number },
+      multi: { boolean: bool, string },
+      bold: {
+        color: { string },
+        size: { number }, // px
+        face: { string },
+        mod: { string },
+        vadjust: { number },
+        __type__: { object, string }
+      },
+      boldital: {
+        color: { string },
+        size: { number }, // px
+        face: { string },
+        mod: { string },
+        vadjust: { number },
+        __type__: { object, string }
+      },
+      ital: {
+        color: { string },
+        size: { number }, // px
+        face: { string },
+        mod: { string },
+        vadjust: { number },
+        __type__: { object, string }
+      },
+      mono: {
+        color: { string },
+        size: { number }, // px
+        face: { string },
+        mod: { string },
+        vadjust: { number },
+        __type__: { object, string }
+      },
+      __type__: { object, string }
+    },
+    hidden: { boolean: bool },
+    icon: {
+      face: { string },
+      code: { string }, //'\uf007',
+      size: { number }, //50,
+      color: { string },
+      __type__: { object }
+    },
+    id: { string, number },
+    image: {
+      selected: { string, undefined: 'undefined' }, // --> URL
+      unselected: { string, undefined: 'undefined' }, // --> URL
+      __type__: { object, string }
+    },
+    label: { string, undefined: 'undefined' },
+    labelHighlightBold: { boolean: bool },
+    margin: {
+      top: { number },
+      right: { number },
+      bottom: { number },
+      left: { number },
+      __type__: { object, number }
+    },
+    scaling: {
+      min: { number },
+      max: { number },
+      label: {
+        enabled: { boolean: bool },
+        min: { number },
+        max: { number },
+        maxVisible: { number },
+        drawThreshold: { number },
+        __type__: { object, boolean: bool }
+      },
+      customScalingFunction: { function: 'function' },
+      __type__: { object }
+    },
+    shadow: {
+      enabled: { boolean: bool },
+      color: { string },
+      size: { number },
+      x: { number },
+      y: { number },
+      __type__: { object, boolean: bool }
+    },
+    shape: {
+      string: [
+        'ellipse',
+        'circle',
+        'database',
+        'box',
+        'text',
+        'image',
+        'circularImage',
+        'diamond',
+        'dot',
+        'star',
+        'triangle',
+        'triangleDown',
+        'square',
+        'icon',
+        'hexagon'
+      ]
+    },
+    shapeProperties: {
+      borderDashes: { boolean: bool, array },
+      borderRadius: { number },
+      interpolation: { boolean: bool },
+      useImageSize: { boolean: bool },
+      useBorderWithImage: { boolean: bool },
+      __type__: { object }
+    },
+    size: { number },
+    title: { string, dom, undefined: 'undefined' },
+    value: { number, undefined: 'undefined' },
+    __type__: { object }
+  },
   physics: {
     enabled: { boolean: bool },
     barnesHut: {

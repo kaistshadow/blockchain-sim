@@ -58,7 +58,7 @@ class Package {
     this.image = defaultOptions.image;
     this.value = undefined;
     this.progress =  0.0;
-    this.timestamp = undefined;
+    this.isMoving = false;
     this.duration = defaultOptions.duration;
     this.autoProgress = true;
     this.radiusFixed = false;

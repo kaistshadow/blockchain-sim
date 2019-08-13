@@ -62,6 +62,8 @@ class CanvasRenderer {
     this.renderingActive = false
     this.renderRequests = 0
     this.allowRedraw = true
+    this.movingPackages = false
+    this.packagesTimer = undefined
 
     this.dragging = false
     this.zooming = false
@@ -120,6 +122,15 @@ class CanvasRenderer {
       this.renderRequests -= 1
       this.renderingActive = this.renderRequests > 0
       this.renderTimer = undefined
+    })
+    this.body.emitter.on('_startMovingPackages', () => {
+      if (this.movingPackages === false) {
+        this._startMovingPackages()
+        this.movingPackages = true
+      }
+    })
+    this.body.emitter.on('_stopMovingPackages', () => {
+      this.movingPackages = false
     })
     this.body.emitter.on('destroy', () => {
       this.renderRequests = 0
@@ -446,6 +457,54 @@ class CanvasRenderer {
     for (let i = 0; i < packageIndices.length; i++) {
       pkg = packages[packageIndices[i]]
       pkg.draw(ctx)
+    }
+  }
+
+  /**
+   * Launch the package animation
+   * @private
+   */
+  _startMovingPackages() {
+    if (this.packagesTimer === undefined) {
+      this.packagesTimer = this._requestNextFrame(
+        this._animationStepPackages.bind(this),
+        this.simulationInterval
+      )
+    }
+  }
+
+  /**
+   * Perform one step for all moving packages
+   * Actually delete finished packages
+   * @private
+   */
+  _animationStepPackages() {
+    this.packagesTimer = undefined
+    let interval = 1 / 60
+    let endAnimation = true
+    let packages = this.body.packages
+    for (let packageId in packages) {
+      if (packages.hasOwnProperty(packageId)) {
+        let pkg = packages[packageId]
+        if (pkg.isMoving) {
+          if (pkg.progress >= 1.0) {
+            delete packages[packageId]
+            this.body.emitter.emit('_dataChanged')
+          }
+          else {
+            endAnimation = false
+            pkg.discreteStep(interval)
+          }
+        }
+      }
+    }
+    if (endAnimation) {
+      this.body.emitter.emit('_stopMovingPackages')
+    }
+    else {
+      this._redraw()
+      //this.body.emitter.emit('_requestRedraw')
+      this._startMovingPackages()
     }
   }
 

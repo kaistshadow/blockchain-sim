@@ -16,7 +16,6 @@ class PackagesHandler {
   constructor(body, images) {
     this.body = body
     this.images = images
-    this.movingPackages = []
 
     // create the package API in the body container
     this.body.functions.createPackage = this.create.bind(this)
@@ -309,38 +308,14 @@ class PackagesHandler {
    * @private
    */
   remove(ids) {
-    this.movingPackages = this.movingPackages.concat(ids)
-
-    this.body.emitter.on('beforeDrawing', this._discreteStepPackages.bind(this))
-    this.body.emitter.emit("_dataChanged")
-  }
-
-  /**
-   * Perform one discrete step for all sent packages
-   */
-  _discreteStepPackages() {
-    let interval = 1 / 60
-    let ids = this.movingPackages
     let packages = this.body.packages
-    for (var i = 0; i < ids.length; i++) {
-      var id = ids[i]
-      if (packages[id].progress >= 1.0) {
-        ids.splice(i, 1)
-        delete packages[id]
-        this.body.emitter.emit('_dataChanged')
-      }
-      else {
-        packages[id].discreteStep(interval)
+    for (let i in ids) {
+      if (packages[ids[i]].autoProgress === true) {
+        packages[ids[i]].isMoving = true
       }
     }
-    if (!this.movingPackages.length) {
-      this.body.emitter.off('beforeDrawing', this._discreteStepPackages)
-      this.body.emitter.emit('_stopRendering')
-    }
-    else {
-      this.body.emitter.emit('_startRendering')
-    }
-  };
+    this.body.emitter.emit('_startMovingPackages')
+  }
 
   /**
    * create a package

@@ -363,6 +363,17 @@ class Package {
   }
 
   /**
+   * Perform one discrete step for the package. Only applicable when the
+   * package has no manually set, fixed progress.
+   * @param {number} interval    Time interval in seconds
+   */
+  discreteStep(interval) {
+    this.progress += (parseFloat(interval) / 1); // 1 to be replaced by this.duration
+    if (this.progress > 1.0)
+        this.progress = 1.0;
+  };
+
+  /**
    * This process all possible shorthands in the new options and makes sure that the parentOptions are fully defined.
    * Static so it can also be used by the handler.
    *

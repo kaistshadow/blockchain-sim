@@ -187,7 +187,7 @@ namespace libBLEEP {
                     /* approximate time(in us) for executing above loop one time
                        The value '5850' is obtained from above PrintTimeDiff in my local machine
                        ,i.e., i7-6700 3.4GHz machine with 16GM mem. */
-                    shadow_usleep(5850);  
+                    /* shadow_usleep(5850);   */
                     if (_thread_exit) {
                         // Check the atomic flag, and if it's set, terminate current thread.
                         std::cout << "thread exits!" << "\n";

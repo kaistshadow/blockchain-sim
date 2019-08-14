@@ -368,10 +368,6 @@ int main(int argc, char *argv[]) {
                 {
                     // init_shadow_clock_update();
 
-                    char buf2[256];
-                    sprintf(buf2, "EmuBlockMiningComplete,%lu",
-                            ledger.GetNextBlockIdx() + 1);
-                    shadow_push_eventlog(buf2);
 
 
                     // std::cout << "block mining complte" << "\n";
@@ -382,6 +378,13 @@ int main(int argc, char *argv[]) {
                     PeerId dest = PeerId("DestAll");
                     std::string payload = GetSerializedString(minedBlk);
                     std::shared_ptr<Message> nMsg = std::make_shared<Message>(src, dest, "newBlock", payload);
+
+                    char buf2[256];
+                    sprintf(buf2, "EmuBlockMiningComplete,%lu,%s",
+                            ledger.GetNextBlockIdx() + 1, 
+                            nMsg->GetMessageId().c_str());
+                    shadow_push_eventlog(buf2);
+
 
                     // add timestamp
                     struct timespec tspec;

@@ -29,6 +29,7 @@ set(SRCS
   src/datamodules/Pipe.cpp
   src/datamodules/Socket.cpp
   src/datamodules/Message.cpp
+  src/datamodules/Inventory.cpp
   src/datamanagermodules/TxPool.cpp
   src/datamanagermodules/ShadowPipeManager.cpp
   src/datamanagermodules/PipeManager.cpp

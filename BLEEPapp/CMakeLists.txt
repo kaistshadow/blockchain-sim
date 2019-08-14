@@ -92,6 +92,10 @@ add_shadow_plugin(NODE_POW_RANDOM node_pow_random.cpp)
 install(TARGETS NODE_POW_RANDOM DESTINATION plugins)
 target_link_libraries(NODE_POW_RANDOM BLEEP::BLEEP)
 
+add_shadow_plugin(NODE_POW_RANDOM_TREE node_pow_random_tree.cpp)
+install(TARGETS NODE_POW_RANDOM_TREE DESTINATION plugins)
+target_link_libraries(NODE_POW_RANDOM_TREE BLEEP::BLEEP)
+
 ## compile for local executable
 add_executable(LOCAL_NODE_bleep node.cpp)
 target_link_libraries(LOCAL_NODE_bleep BLEEP::BLEEP)
@@ -117,7 +121,10 @@ target_link_libraries(LOCAL_NODE_MINING BLEEP::BLEEP)
 add_executable(LOCAL_NODE_POW_RANDOM node_pow_random.cpp)
 target_link_libraries(LOCAL_NODE_POW_RANDOM BLEEP::BLEEP)
 
-# add_subdirectory(amz_exp_nodes)
+add_executable(LOCAL_NODE_POW_RANDOM_TREE node_pow_random_tree.cpp)
+target_link_libraries(LOCAL_NODE_POW_RANDOM_TREE BLEEP::BLEEP)
+
+add_subdirectory(amz_exp_nodes)
 
 # add tests
 enable_testing()

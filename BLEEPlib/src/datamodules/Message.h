@@ -9,6 +9,7 @@
 #include "Transaction.h"
 #include "Peer.h"
 #include "POWConsensusMessage.h"
+#include "Inventory.h"
 #include "../utility/GlobalClock.h"
 
 namespace libBLEEP {
@@ -62,10 +63,12 @@ namespace libBLEEP {
     std::string GetSerializedString(boost::shared_ptr<Transaction> tx);
     std::string GetSerializedString(std::shared_ptr<Block> msg);
     std::string GetSerializedString(POWConsensusMessage msg);
+    std::string GetSerializedString(Inventory inv);
 
     boost::shared_ptr<Transaction> GetDeserializedTransaction(std::string str);
     std::shared_ptr<Block> GetDeserializedBlock(std::string str);
     POWConsensusMessage GetDeserializedPOWConsensusMessage(std::string str);
+    Inventory GetDeserializedInventory(std::string str);
 
 }
 

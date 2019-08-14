@@ -486,7 +486,7 @@ class CanvasRenderer {
     for (let packageId in packages) {
       if (packages.hasOwnProperty(packageId)) {
         let pkg = packages[packageId]
-        if (pkg.isMoving) {
+        if (pkg.autoProgress && pkg.isMoving) {
           if (pkg.progress >= 1.0) {
             delete packages[packageId]
             this.body.emitter.emit('_dataChanged')

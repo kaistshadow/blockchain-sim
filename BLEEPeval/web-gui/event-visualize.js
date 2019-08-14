@@ -218,8 +218,7 @@ function drawVisualization() {
         },
         'interaction': {
             'hideEdgesOnDrag': true,
-            'multiselect': true,
-            'selectConnectedEdges': false
+            'multiselect': true
         },
         "physics": {
             "forceAtlas2Based": {

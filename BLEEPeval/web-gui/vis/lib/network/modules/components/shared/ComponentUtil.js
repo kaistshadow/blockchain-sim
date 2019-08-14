@@ -14,7 +14,7 @@ class ComponentUtil {
    * - chosen: <boolean value>
    * - chosen: { subOption: <boolean or function> }
    *
-   * Where subOption is 'node', 'edge' or 'label'.
+   * Where subOption is 'node', 'edge', 'label' or 'package'.
    *
    * The intention of this method appears to be to set a specific priority to the options;
    * Since most properties are either bridged or merged into the local options objects, there
@@ -22,7 +22,7 @@ class ComponentUtil {
    * TODO: examine if 'most' in previous sentence can be replaced with 'all'. In that case, we
    *       should be able to get rid of this method.
    *
-   * @param {string}  subOption  option within object 'chosen' to consider; either 'node', 'edge' or 'label'
+   * @param {string}  subOption  option within object 'chosen' to consider; either 'node', 'edge', 'label' or 'package'
    * @param {Object}  pile       array of options objects to consider
    *
    * @return {boolean|function}  value for passed subOption of 'chosen' to use

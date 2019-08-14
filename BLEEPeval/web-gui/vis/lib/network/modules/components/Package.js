@@ -1,3 +1,5 @@
+import { option } from '../../../util';
+
 var util = require('../../../util')
 
 var Label = require('./shared/Label').default
@@ -17,7 +19,6 @@ var Star = require('./nodes/shapes/Star').default
 var Text = require('./nodes/shapes/Text').default
 var Triangle = require('./nodes/shapes/Triangle').default
 var TriangleDown = require('./nodes/shapes/TriangleDown').default
-var { printStyle } = require('../../../shared/Validator')
 
 /**
  * A message sent along a visible edge
@@ -33,39 +34,37 @@ class Package {
   constructor(options, body, imagelist, globalOptions, defaultOptions) {
 
     if (body === undefined) {
-      throw new Error("No body provided");
+      throw new Error("No body provided")
     }
 
-    this.options = util.bridgeObject(globalOptions);
-    this.globalOptions = globalOptions;
-    this.defaultOptions = defaultOptions;
-    this.body = body;
+    this.options = util.bridgeObject(globalOptions)
+    this.globalOptions = globalOptions
+    this.defaultOptions = defaultOptions
+    this.body = body
 
     // constants
-    this.radiusMin = defaultOptions.radiusMin;
-    this.radiusMax = defaultOptions.radiusMax;
-    this.imagelist = imagelist;
-    this.network = network;
+    this.imagelist = imagelist
+    this.network = network
 
-    // initialize variables
-    this.id = undefined;
-    this.from = undefined;
-    this.to = undefined;
-    this.title = undefined; //useless, replaced by label in vis
-    //this.shape = defaultOptions.shape;
-    this.radius = defaultOptions.radius;
-    this.color = defaultOptions.color;
-    this.image = defaultOptions.image;
-    this.value = undefined;
-    this.progress =  0.0;
-    this.isMoving = false;
-    this.duration = defaultOptions.duration;
-    this.autoProgress = true;
-    this.radiusFixed = false;
+    // state options
+    this.id = undefined
+    this.from = undefined
+    this.to = undefined
+    this.baseSize = this.options.size
+    this.baseFontSize = this.options.font.size
+    this.selected = false
+    this.hover = false
+    this.autoProgress = this.options.progress.autoProgress
+    this.duration = this.options.progress.duration
+    this.progress =  0.0
+    this.isMoving = false
 
-    this.labelModule = new Label(this.body, this.options, false /* Not edge label */);
-    // set properties
-    this.setOptions(options);
+    this.labelModule = new Label(
+      this.body,
+      this.options,
+      false /* Not edge label */
+    )
+    this.setOptions(options)
   }
 
   /**
@@ -75,52 +74,125 @@ class Package {
    */
 
   setOptions(options) {
-    var currentShape = this.options.shape;
+    var currentShape = this.options.shape
     if (!options) {
-      return;
+      return
     }
 
-    if (options.id !== undefined) {this.id = options.id;}
-    if (options.edge !== undefined) {this.edgeId = options.edge;}
-    if (options.value !== undefined) {options.value = parseFloat(options.value);}
-    if (options.radius != undefined) {this.radius = options.radius;}
-    if (options.image != undefined) {this.image = options.image;}
-    if (options.color != undefined) {this.color = options.color;}
-    if (options.dashlength != undefined) {this.dashlength = options.dashlength;}
-    if (options.dashgap != undefined) {this.dashgap = options.dashgap;}
-    if (options.altdashlength != undefined) {this.altdashlength = options.altdashlength;}
-    if (options.progress != undefined) {this.progress = options.progress;}
-    if (options.duration != undefined) {this.duration = options.duration;}
+    if (options.id !== undefined) {
+      this.id = options.id
+    }
+    if (this.id === undefined) {
+      throw new Error('Package must have an id')
+    }
 
-    this.radiusFixed = this.radiusFixed || (options.radius != undefined);
-    this.autoProgress = (this.autoProgress == true) ? (options.progress == undefined) : false;
+    if (options.edge !== undefined) {
+      this.edgeId = options.edge
+    }
+    if (this.edgeId === undefined) {
+      throw new Error('Packages travel along edges, please provide an edge id')
+    }
+    // check if edge exists
+    this.connect()
 
-    if (this.shape == 'image') {
-      this.radiusMin = defaultOptions.widthMin;
-      this.radiusMax = defaultOptions.widthMax;
+    if (options.progress !== undefined) {
+      if (options.progress.autoProgress !== undefined) {
+        this.autoProgress = options.progress.autoProgress
+      }
+      if (options.progress.value !== undefined) {
+        this.progress = options.progress.value
+        this.autoProgress = false
+      }
+      if (options.progress.isMoving !== undefined) {
+        this.isMoving = options.progress.isMoving
+      }
+      if (options.progress.duration !== undefined) {
+        this.duration = options.progress.duration
+      }
+    }
+
+    if (options.size !== undefined) {
+      this.baseSize = options.size
+    }
+    if (options.value !== undefined) {
+      options.value = parseFloat(options.value)
     }
 
     // handle progress
-    if (this.progress < 0.0) {this.progress = 0.0;}
-    if (this.progress > 1.0) {this.progress = 1.0;}
-
-    // check if edge exists
-    this.connect();
+    if (this.progress < 0.0) {this.progress = 0.0}
+    if (this.progress > 1.0) {this.progress = 1.0}
 
     // this transforms all shorthands into fully defined options
-    Package.parseOptions(this.options, options, true, this.globalOptions);
+    Package.parseOptions(this.options, options, true, this.globalOptions)
 
-    var pile = [options, this.options, this.defaultOptions];
-    this.chooser = ComponentUtil.choosify('package', pile);
+    var pile = [options, this.options, this.defaultOptions]
+    this.chooser = ComponentUtil.choosify('package', pile)
     
-    this._load_images();
-    this.updateLabelModule(options);
-    this.updateShape(currentShape);
+    this._load_images()
+    this.updateLabelModule(options)
+    this.updateShape(currentShape)
 
     if (options.hidden !== undefined) {
-      dataChanged = true;
+      dataChanged = true
+    }
+    if (this.isMoving === true) {
+      this.body.emitter.emit('_startMovingPackages')
+    }
+  }
+
+  /**
+   * Connect to the edge and end nodes of the package
+   */
+  connect() {
+    if (!this.body.edges.hasOwnProperty(this.edgeId)) {
+      throw "Edge with id " + this.edgeId + " not found"
+    }
+  }
+
+  /**
+   * This process all possible shorthands in the new options and makes sure that the parentOptions are fully defined.
+   * Static so it can also be used by the handler.
+   *
+   * @param {Object} parentOptions
+   * @param {Object} newOptions
+   * @param {boolean} [allowDeletion=false]
+   * @param {Object} [globalOptions={}]
+   * @param {Object} [groupList]
+   * @static
+   */
+  static parseOptions(
+    parentOptions,
+    newOptions,
+    allowDeletion = false,
+    globalOptions = {}
+  ) {
+    var fields = ['color', 'shadow']
+    util.selectiveNotDeepExtend(fields, parentOptions, newOptions, allowDeletion)
+
+    // merge the shadow options into the parent.
+    util.mergeOptions(parentOptions, newOptions, 'shadow', globalOptions)
+
+    // individual shape newOptions
+    if (newOptions.color !== undefined && newOptions.color !== null) {
+      let parsedColor = util.parseColor(newOptions.color)
+      util.fillIfDefined(parentOptions.color, parsedColor)
+    } else if (allowDeletion === true && newOptions.color === null) {
+      parentOptions.color = util.bridgeObject(globalOptions.color) // set the object back to the global options
     }
 
+    if (allowDeletion === true && newOptions.font === null) {
+      parentOptions.font = util.bridgeObject(globalOptions.font) // set the object back to the global options
+    }
+
+    // handle the scaling options, specifically the label part
+    if (newOptions.scaling !== undefined) {
+      util.mergeOptions(
+        parentOptions.scaling,
+        newOptions.scaling,
+        'label',
+        globalOptions.scaling
+      )
+    }
   }
 
   /**
@@ -135,30 +207,30 @@ class Package {
   _load_images() {
     // Don't bother loading for packages without images
     if (this.options.shape !== 'circularImage' && this.options.shape !== 'image') {
-      return;
+      return
     }
 
     if (this.options.image === undefined) {
-      throw new Error("Option image must be defined for package type '" + this.options.shape + "'");
+      throw new Error("Option image must be defined for package type '" + this.options.shape + "'")
     }
 
     if (this.imagelist === undefined) {
-      throw new Error("Internal Error: No images provided");
+      throw new Error("Internal Error: No images provided")
     }
 
     if (typeof this.options.image === 'string') {
-      this.imageObj = this.imagelist.load(this.options.image, this.options.brokenImage, this.id);
+      this.imageObj = this.imagelist.load(this.options.image, this.options.brokenImage, this.id)
     } else {
       if (this.options.image.unselected === undefined) {
-        throw new Error("No unselected image provided");
+        throw new Error("No unselected image provided")
       }
 
-      this.imageObj = this.imagelist.load(this.options.image.unselected, this.options.brokenImage, this.id);
+      this.imageObj = this.imagelist.load(this.options.image.unselected, this.options.brokenImage, this.id)
 
       if (this.options.image.selected !== undefined) {
-        this.imageObjAlt = this.imagelist.load(this.options.image.selected, this.options.brokenImage, this.id);
+        this.imageObjAlt = this.imagelist.load(this.options.image.selected, this.options.brokenImage, this.id)
       } else {
-        this.imageObjAlt = undefined;
+        this.imageObjAlt = undefined
       }
     }
   }
@@ -171,12 +243,12 @@ class Package {
 
   updateLabelModule(options) {
     var pile = [options, this.options, this.globalOptions, // Currently set global package options
-    this.defaultOptions];
+    this.defaultOptions]
 
-    this.labelModule.update(this.options, pile);
+    this.labelModule.update(this.options, pile)
 
     if (this.labelModule.baseSize !== undefined) {
-      this.baseFontSize = this.labelModule.baseSize;
+      this.baseFontSize = this.labelModule.baseSize
     }
   }
 
@@ -187,79 +259,68 @@ class Package {
 
   updateShape(currentShape) {
     if (currentShape === this.options.shape && this.shape) {
-      this.shape.setOptions(this.options, this.imageObj, this.imageObjAlt);
+      this.shape.setOptions(this.options, this.imageObj, this.imageObjAlt)
     } else {
       // choose draw method depending on the shape
       switch (this.options.shape) {
         case 'box':
-          this.shape = new Box(this.options, this.body, this.labelModule);
-          break;
+          this.shape = new Box(this.options, this.body, this.labelModule)
+          break
         case 'circle':
-          this.shape = new Circle(this.options, this.body, this.labelModule);
-          break;
+          this.shape = new Circle(this.options, this.body, this.labelModule)
+          break
         case 'circularImage':
-          this.shape = new CircularImage(this.options, this.body, this.labelModule, this.imageObj, this.imageObjAlt);
-          break;
+          this.shape = new CircularImage(this.options, this.body, this.labelModule, this.imageObj, this.imageObjAlt)
+          break
         case 'database':
-          this.shape = new Database(this.options, this.body, this.labelModule);
-          break;
+          this.shape = new Database(this.options, this.body, this.labelModule)
+          break
         case 'diamond':
-          this.shape = new Diamond(this.options, this.body, this.labelModule);
-          break;
+          this.shape = new Diamond(this.options, this.body, this.labelModule)
+          break
         case 'dot':
-          this.shape = new Dot(this.options, this.body, this.labelModule);
-          break;
+          this.shape = new Dot(this.options, this.body, this.labelModule)
+          break
         case 'ellipse':
-          this.shape = new Ellipse(this.options, this.body, this.labelModule);
-          break;
+          this.shape = new Ellipse(this.options, this.body, this.labelModule)
+          break
         case 'icon':
-          this.shape = new Icon(this.options, this.body, this.labelModule);
-          break;
+          this.shape = new Icon(this.options, this.body, this.labelModule)
+          break
         case 'image':
-          this.shape = new Image(this.options, this.body, this.labelModule, this.imageObj, this.imageObjAlt);
-          break;
+          this.shape = new Image(this.options, this.body, this.labelModule, this.imageObj, this.imageObjAlt)
+          break
         case 'square':
-          this.shape = new Square(this.options, this.body, this.labelModule);
-          break;
+          this.shape = new Square(this.options, this.body, this.labelModule)
+          break
         case 'hexagon':
-          this.shape = new Hexagon(this.options, this.body, this.labelModule);
-          break;
+          this.shape = new Hexagon(this.options, this.body, this.labelModule)
+          break
         case 'star':
-          this.shape = new Star(this.options, this.body, this.labelModule);
-          break;
+          this.shape = new Star(this.options, this.body, this.labelModule)
+          break
         case 'text':
-          this.shape = new Text(this.options, this.body, this.labelModule);
-          break;
+          this.shape = new Text(this.options, this.body, this.labelModule)
+          break
         case 'triangle':
-          this.shape = new Triangle(this.options, this.body, this.labelModule);
-          break;
+          this.shape = new Triangle(this.options, this.body, this.labelModule)
+          break
         case 'triangleDown':
-          this.shape = new TriangleDown(this.options, this.body, this.labelModule);
-          break;
+          this.shape = new TriangleDown(this.options, this.body, this.labelModule)
+          break
         default:
-          this.shape = new Ellipse(this.options, this.body, this.labelModule);
-          break;
+          this.shape = new Ellipse(this.options, this.body, this.labelModule)
+          break
       }
     }
-    this.needsRefresh();
-  }
-
-  /**
-   * Connect to the edge and end nodes of the package
-   */
-
-  connect() {
-    if (!this.body.edges.hasOwnProperty(this.edgeId)) {
-      throw "Edge with id " + this.edgeId + " not found";
-    }
+    this.needsRefresh()
   }
 
   /**
    * Reset the calculated size of the package, forces it to recalculate its size
    */
-
   needsRefresh() {
-    this.shape.refreshNeeded = true;
+    this.shape.refreshNeeded = true
   }
 
   /**
@@ -267,13 +328,16 @@ class Package {
    * @param {number} progress    A value between 0 and 1
    */
   setProgress(progress) {
-    this.progress = progress;
-    this.autoProgress = false;
+    this.setOptions({
+      progress: {
+        value: progress
+      }
+    })
   }
 
   /**
    * Draw this package in the given canvas
-   * The 2d context of a HTML canvas can be retrieved by canvas.getContext("2d");
+   * The 2d context of a HTML canvas can be retrieved by canvas.getContext("2d")
    * @param {CanvasRenderingContext2D}   ctx
    */
   draw(ctx) {
@@ -287,12 +351,17 @@ class Package {
    * @return {Object} position    The object has parameters x and y.
    */
   _getPosition() {
-    let edgeType = this.body.edges[this.edgeId].edgeType
-    let viaNode = edgeType.getViaNode()
-    let point = edgeType.getPoint(this.progress, viaNode)
-    return {
-        "x" : point.x,
-        "y" : point.y
+    if (this.body.edges.hasOwnProperty(this.edgeId)) {
+      let edgeType = this.body.edges[this.edgeId].edgeType
+      let viaNode = edgeType.getViaNode()
+      let point = edgeType.getPoint(this.progress, viaNode)
+      return {
+          "x" : point.x,
+          "y" : point.y
+      }
+    }
+    else {
+      throw new Error('Unknown edge id: ' + this.edgeId)
     }
   }
 
@@ -302,7 +371,7 @@ class Package {
    *                           title has been set.
    */
   getTitle() {
-    return this.options.title;
+    return this.options.title
   }
 
   /**
@@ -310,7 +379,7 @@ class Package {
   * @return {Number} value
   */
   getValue() {
-    return this.options.value;
+    return this.options.value
   }
 
   /**
@@ -368,51 +437,9 @@ class Package {
    * @param {number} interval    Time interval in seconds
    */
   discreteStep(interval) {
-    this.progress += (parseFloat(interval) / 1); // 1 to be replaced by this.duration
+    this.progress += (parseFloat(interval) / this.duration)
     if (this.progress > 1.0)
-        this.progress = 1.0;
-  };
-
-  /**
-   * This process all possible shorthands in the new options and makes sure that the parentOptions are fully defined.
-   * Static so it can also be used by the handler.
-   *
-   * @param {Object} parentOptions
-   * @param {Object} newOptions
-   * @param {boolean} [allowDeletion=false]
-   * @param {Object} [globalOptions={}]
-   * @param {Object} [groupList]
-   * @static
-   */
-
-  static parseOptions(
-    parentOptions,
-    newOptions,
-    allowDeletion = false,
-    globalOptions = {}
-  ) {
-    var fields = ['color', 'shadow', 'size'];
-    util.selectiveNotDeepExtend(fields, parentOptions, newOptions, allowDeletion);
-
-    // merge the shadow options into the parent.
-    util.mergeOptions(parentOptions, newOptions, 'shadow', globalOptions);
-
-    // individual shape newOptions
-    if (newOptions.color !== undefined && newOptions.color !== null) {
-      var parsedColor = util.parseColor(newOptions.color);
-      util.fillIfDefined(parentOptions.color, parsedColor);
-    } else if (allowDeletion === true && newOptions.color === null) {
-      parentOptions.color = util.bridgeObject(globalOptions.color); // set the object back to the global options
-    }
-
-    if (allowDeletion === true && newOptions.font === null) {
-      parentOptions.font = util.bridgeObject(globalOptions.font); // set the object back to the global options
-    }
-
-    // handle the scaling options, specifically the label part
-    if (newOptions.scaling !== undefined) {
-      util.mergeOptions(parentOptions.scaling, newOptions.scaling, 'label', globalOptions.scaling);
-    }
+        this.progress = 1.0
   }
 
   /**

@@ -91,6 +91,12 @@ class PackagesHandler {
         bottom: 5,
         left: 5
       },
+      progress: {
+        autoProgress: true,
+        duration: 1, // seconds
+        value: undefined,
+        isMoving: undefined
+      },
       scaling: {
         min: 5,
         max: 10,
@@ -310,8 +316,10 @@ class PackagesHandler {
   remove(ids) {
     let packages = this.body.packages
     for (let i in ids) {
-      if (packages[ids[i]].autoProgress === true) {
-        packages[ids[i]].isMoving = true
+      if (packages.hasOwnProperty(ids[i])) {
+        if (packages[ids[i]].autoProgress === true) {
+          packages[ids[i]].isMoving = true
+        }
       }
     }
     this.body.emitter.emit('_startMovingPackages')

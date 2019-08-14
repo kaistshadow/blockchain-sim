@@ -496,6 +496,13 @@ let allOptions = {
       left: { number },
       __type__: { object, number }
     },
+    progress: {
+      autoProgress: { booblean: bool },
+      duration: { number },
+      value: { number },
+      isMoving: { boolean : bool },
+      __type__: { object }
+    },
     scaling: {
       min: { number },
       max: { number },

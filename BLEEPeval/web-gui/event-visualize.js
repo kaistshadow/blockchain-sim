@@ -309,7 +309,13 @@ function sendMessage(from, to, hashId) {
 }
 
 function unsendMessage(from, to, hashId) {
-    recvMessage(from, to, hashId);
+    try {
+        packages.update({id: hashId, progress: {autoProgress: false}})
+        packages.remove({id: hashId, edge: from+to});
+    }
+    catch(err) {
+        alert(err);
+    }
 }
 
 function addNode(nodeid) {

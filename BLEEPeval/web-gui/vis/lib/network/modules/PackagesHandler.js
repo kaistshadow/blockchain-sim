@@ -25,7 +25,7 @@ class PackagesHandler {
         this.add(params.items)
       },
       update: (event, params) => {
-        this.update(params.items)
+        this.update(params.items, params.data)
       },
       remove: (event, params) => {
         this.remove(params.items)
@@ -309,20 +309,34 @@ class PackagesHandler {
   }
 
   /**
-   * Remove existing packages. If packages do not exist, the method will just ignore it.
+   * Remove existing packages. Non existing ids will be ignored
    * @param {number[] | string[]} ids
+   * @param {boolean} [emit=true]
+   * @param {boolean} [animate=true]
    * @private
    */
-  remove(ids) {
+  remove(ids, emit = true, animate = true) {
     let packages = this.body.packages
+    let dataChanged = false
     for (let i in ids) {
       if (packages.hasOwnProperty(ids[i])) {
-        if (packages[ids[i]].autoProgress === true) {
+        if (packages[ids[i]].autoProgress === true  && animate === true) {
           packages[ids[i]].isMoving = true
+        }
+        else {
+          delete packages[ids[i]]
+          dataChanged = true
         }
       }
     }
-    this.body.emitter.emit('_startMovingPackages')
+    if (emit) {
+      if (dataChanged === true && animate === true) {
+        this.body.emitter.emit('_dataChanged')
+      }
+      else {
+        this.body.emitter.emit('_startMovingPackages')
+      }
+    }
   }
 
   /**
@@ -345,6 +359,33 @@ class PackagesHandler {
       }
     })
   }
+
+  /**
+   * There is no direct relation between the edges and the packages DataSet,
+   * so the right place to do call this is in the handler for event `_dataChanged`.
+   */
+  _updateState() {
+    this._removeInvalidPackages()
+  }
+
+  /**
+   * Scan for missing nodes and remove corresponding edges, if any.
+   * @private
+   */
+  _removeInvalidPackages() {
+    let packagesToDelete = []
+
+    util.forEach(this.body.packages, (pkg, id) => {
+      let edgeId = pkg.edgeId
+
+      if (this.body.edges.hasOwnProperty(edgeId) === false) {
+        packagesToDelete.push(id)
+      }
+    })
+
+    this.remove(packagesToDelete, false, false)
+  }
+
 }
 
 export default PackagesHandler

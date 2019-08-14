@@ -353,10 +353,11 @@ Network.prototype.bindEventListeners = function() {
   // Used when nodes, edges or packages have been added or removed.
   this.body.emitter.on('_dataChanged', () => {
     this.edgesHandler._updateState()
+    this.packagesHandler._updateState()
     this.body.emitter.emit('_dataUpdated')
   })
 
-  // this is called when options of EXISTING nodes or edges have changed.
+  // this is called when options of EXISTING nodes, edges or packages have changed.
   this.body.emitter.on('_dataUpdated', () => {
     // Order important in following block
     this.clustering._updateState()

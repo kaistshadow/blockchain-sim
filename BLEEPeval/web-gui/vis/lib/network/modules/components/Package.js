@@ -145,7 +145,7 @@ class Package {
    */
   connect() {
     if (!this.body.edges.hasOwnProperty(this.edgeId)) {
-      throw "Edge with id " + this.edgeId + " not found"
+      throw new Error("Unknown edge id '" + this.edgeId + "'")
     }
   }
 
@@ -351,7 +351,10 @@ class Package {
    * @return {Object} position    The object has parameters x and y.
    */
   _getPosition() {
-    if (this.body.edges.hasOwnProperty(this.edgeId)) {
+    if (this.body.edges.hasOwnProperty(this.edgeId) === false) {
+      throw new Error("Unknown edge id '" + this.edgeId + "'")
+    }
+    else {
       let edgeType = this.body.edges[this.edgeId].edgeType
       let viaNode = edgeType.getViaNode()
       let point = edgeType.getPoint(this.progress, viaNode)
@@ -359,9 +362,6 @@ class Package {
           "x" : point.x,
           "y" : point.y
       }
-    }
-    else {
-      throw new Error('Unknown edge id: ' + this.edgeId)
     }
   }
 

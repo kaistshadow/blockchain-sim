@@ -45,6 +45,7 @@ set(SRCS
   src/utility/Assert.cpp
   src/utility/Random.cpp
   src/utility/ArgsManager.cpp
+  src/utility/Logger.cpp
   src/datamodules/Socket_v2.cpp
   src/datamanagermodules/SocketManager_v2.cpp
   src/datamodules/POWBlock.cpp

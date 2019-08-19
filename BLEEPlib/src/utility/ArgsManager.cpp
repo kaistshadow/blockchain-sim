@@ -1,5 +1,6 @@
 #include "ArgsManager.h"
 #include "Assert.h"
+#include "Logger.h"
 #include <sstream>
 
 using namespace libBLEEP;
@@ -84,6 +85,7 @@ static std::string HelpMessageOpt(const std::string &option, const std::string &
 std::string ArgsManager::HelpMessage() {
     std::string strUsage = HelpMessageGroup("General Options:");
     strUsage += HelpMessageOpt("-?", "Print this help message and exit");
+    strUsage += HelpMessageOpt("-l=<level>", "log LEVEL above which to filter messages ('error' < 'critical' < 'message' < 'info' < 'debug') (default:debug)");
 
     strUsage += HelpMessageGroup("Blockchain Node General Options:");
     strUsage += HelpMessageOpt("-id=<id>", "Specify the peer id. (default:noid)");
@@ -133,6 +135,23 @@ void ArgsManager::ParseParameters(int argc, const char* const argv[])
         mapArgs[str] = strValue;
         mapMultiArgs[str].push_back(strValue);
     }
+
+    if (IsArgSet("-l")) {
+        std::string loglevel = GetArg("-l");
+        if (loglevel == "error") 
+            gLog.SetLogLevel(LOGLEVEL_ERROR);
+        else if (loglevel == "critical")
+            gLog.SetLogLevel(LOGLEVEL_CRITICAL);
+        else if (loglevel == "message")
+            gLog.SetLogLevel(LOGLEVEL_MESSAGE);
+        else if (loglevel == "info")
+            gLog.SetLogLevel(LOGLEVEL_INFO);
+        else if (loglevel == "debug")
+            gLog.SetLogLevel(LOGLEVEL_DEBUG);
+        else 
+            gLog.SetLogLevel(LOGLEVEL_UNSET);
+    } else
+        gLog.SetLogLevel(LOGLEVEL_UNSET);
 }
 
 std::vector<std::string> ArgsManager::GetArgs(const std::string& strArg) const

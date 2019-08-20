@@ -1,6 +1,7 @@
 #include "Socket_v2.h"
 #include "../datamanagermodules/SocketManager_v2.h"
 #include "../utility/Assert.h"
+#include "../utility/Logger.h"
 
 #include <fcntl.h> /* Added for the nonblocking socket */
 #include <arpa/inet.h>
@@ -48,10 +49,10 @@ static void printtimespec(const char* prefix) {
     const uint TIME_FMT = strlen("2012-12-31 12:59:59.123456789") + 1;
     char timestr[TIME_FMT];
     if (timespec2str(timestr, sizeof(timestr), &tspec) != 0) {
-        std::cout << "timespec2str failed" << "\n";
+        gLog << "timespec2str failed" << "\n";
         exit(-1);
     }
-    std::cout << timestr << ":" << prefix << "\n";
+    gLog << timestr << ":" << prefix << "\n";
     return;
 }
 
@@ -92,7 +93,7 @@ int libBLEEP::ListenSocket_v2::DoAccept() {
     sin_size = sizeof(struct sockaddr_in);
     sock_fd = accept(_fd, (struct sockaddr *)&their_addr, &sin_size);
     if ( sock_fd != -1 ) {
-        std::cout << "server: got connection from " << inet_ntoa(their_addr.sin_addr) << "\n";
+        gLog << "server: got connection from " << inet_ntoa(their_addr.sin_addr) << "\n";
 
         fcntl(sock_fd, F_SETFL, O_NONBLOCK);
 
@@ -100,7 +101,7 @@ int libBLEEP::ListenSocket_v2::DoAccept() {
     }
     else {
         if( errno != EAGAIN && errno != EWOULDBLOCK ) {
-            std::cout << "accept() failed errno=" << errno << strerror(errno) << "\n";
+            gLog << "accept() failed errno=" << errno << strerror(errno) << "\n";
             exit(-1);
         }
         return -1;
@@ -125,7 +126,7 @@ std::pair< bool, std::shared_ptr<Message> > libBLEEP::DataSocket_v2::DoRecv() {
     switch (_recvBuff.recv_status) {
     case RECV_NONE:
         {
-            std::cout << "invalid recv state" << "\n";
+            gLog << "invalid recv state" << "\n";
             exit(-1);
         }
     case RECV_IDLE:
@@ -136,11 +137,11 @@ std::pair< bool, std::shared_ptr<Message> > libBLEEP::DataSocket_v2::DoRecv() {
             printtimespec("after recv length");
             if (n == -1 && errno != EAGAIN){
                 perror("recv - non blocking \n");
-                std::cout << "errno=" << errno << "\n";
+                gLog << "errno=" << errno << "\n";
                 exit(-1);
             }
             else if (n == 0) {
-                std::cout << "socket disconnected" << "\n";
+                gLog << "socket disconnected" << "\n";
 
                 return std::make_pair(false, nullptr);
                 // notify closeEvent
@@ -169,7 +170,7 @@ std::pair< bool, std::shared_ptr<Message> > libBLEEP::DataSocket_v2::DoRecv() {
                     _recvBuff.recv_str.append(string_read, numbytes);
                 }
                 else if (numbytes == 0) {
-                    std::cout << "connection closed while recv\n";
+                    gLog << "connection closed while recv\n";
 
                     return std::make_pair(false, nullptr);
                     // notify  closeEvent
@@ -178,7 +179,7 @@ std::pair< bool, std::shared_ptr<Message> > libBLEEP::DataSocket_v2::DoRecv() {
                 }
                 else if (numbytes < 0) {
                     if (errno != EAGAIN && errno != EWOULDBLOCK) {
-                        std::cout << "recv failed errno=" << errno << strerror(errno) << "\n";
+                        gLog << "recv failed errno=" << errno << strerror(errno) << "\n";
                         exit(-1);
                     }
                     break;
@@ -187,7 +188,7 @@ std::pair< bool, std::shared_ptr<Message> > libBLEEP::DataSocket_v2::DoRecv() {
                 if (total_recv_size == _recvBuff.message_len)
                     break;
                 else {
-                    // std::cout << "recv: total_recv_size=" << total_recv_size << ", message_len=" << _recvBuff.message_len << "\n";
+                    // gLog << "recv: total_recv_size=" << total_recv_size << ", message_len=" << _recvBuff.message_len << "\n";
                 }
                 printtimespec("before memset 0 recvbuff");
                 memset(string_read, 0, 2000);
@@ -196,12 +197,12 @@ std::pair< bool, std::shared_ptr<Message> > libBLEEP::DataSocket_v2::DoRecv() {
             if (_recvBuff.message_len != total_recv_size) {
                 printtimespec("received only part of message");
                 _recvBuff.received_len = total_recv_size;
-                // std::cout << "received only part of message (maybe recv buffer is full)" << "received_len:" << _recvBuff.received_len << ", message_len:" << _recvBuff.message_len << "\n";
+                // gLog << "received only part of message (maybe recv buffer is full)" << "received_len:" << _recvBuff.received_len << ", message_len:" << _recvBuff.message_len << "\n";
                 break;
             }
             else {
                 printtimespec("fully receive message");
-                // std::cout << "fully received. size:" << total_recv_size << "\n";
+                // gLog << "fully received. size:" << total_recv_size << "\n";
                 _recvBuff.recv_status = RECV_IDLE;
 
                 printtimespec("before deserialization message");
@@ -235,7 +236,7 @@ DoSendResultEnum libBLEEP::DataSocket_v2::DoSend() {
             exit(-1);
         }
 
-        // std::cout << "DoSend: write " << numbytes << " bytes" << "\n";
+        // gLog << "DoSend: write " << numbytes << " bytes" << "\n";
 
         msg->pos += numbytes;
         if (msg->nbytes() == 0) {
@@ -315,10 +316,10 @@ libBLEEP::ConnectSocket_v2::ConnectSocket_v2(std::string domain) {
     struct addrinfo* servinfo;
     int n = getaddrinfo(domain.c_str(), NULL, NULL, &servinfo);
     if (n != 0) {
-        std::cout << "Value of errno: " << errno << "\n";
+        gLog << "Value of errno: " << errno << "\n";
         fprintf(stderr, "getaddrinfo:%s\n", gai_strerror(n));
         perror("getaddrinfo");
-        std::cout << "domain" << domain << "\n";
+        gLog << "domain" << domain << "\n";
         M_Assert(0, "error : getaddrinfo ");
     }
 
@@ -331,11 +332,11 @@ libBLEEP::ConnectSocket_v2::ConnectSocket_v2(std::string domain) {
     n = connect(remote_fd, (struct sockaddr *) &servaddr, sizeof(servaddr));
     if (n < 0 && errno != EINPROGRESS) {
         perror("connect");
-        std::cout << "Unable to connect to " << domain << "\n";
+        gLog << "Unable to connect to " << domain << "\n";
         M_Assert(0, "connect error returned");
     }
     else if (n == 0) {
-        std::cout << "connection established" << "\n";
+        gLog << "connection established" << "\n";
         M_Assert(0, "non-blocking socket is immediately suceeded. is it possible?");
     }
     else if (n > 0) {

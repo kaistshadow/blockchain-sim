@@ -400,6 +400,11 @@ int main(int argc, char *argv[]) {
                 }
             case AsyncEventEnum::EmuBlockMiningComplete:
                 {
+                    char buf[256];
+                    sprintf(buf, "EmuBlockMiningComplete,%d,%lu",
+                            mined_block_num, ledger.GetNextBlockIdx() );
+                    shadow_push_eventlog(buf);
+
                     // init_shadow_clock_update();
 
                     // std::cout << "block mining complte" << "\n";
@@ -433,34 +438,24 @@ int main(int argc, char *argv[]) {
                     randomNetworkModule.MulticastMessage(nMsg);
                     randomNetworkModule.InsertMessageSet(nMsg->GetMessageId());
 
-                    // PeerId myPeerId(gArgs.GetArg("-id"));
-                    // std::string payload = GetSerializedString(minedBlk);
-                    // for (auto neighborPeerId : gArgs.GetArgs("-connect")) {
-                    //     PeerId destPeerId(neighborPeerId);
-                    //     std::shared_ptr<Message> msg = std::make_shared<Message>(myPeerId, destPeerId, 
-                    //                                                              "newBlock", payload);
-                    //     basicNetworkModule.UnicastMessage(destPeerId, msg);
-                    // }
 
                     // std::cout << "mined block num = " << mined_block_num << "\n";
-                    if (ledger.GetNextBlockIdx() == 101) {
-                        PrintBlockTimeLogs();
 
-                        std::cout << "total_mined_block_num=" << mined_block_num << "\n";
-                        char buf[256];
-                        sprintf(buf, "ResultStat,%s,%d,%lu",
-                                "TotalMinedBlockNum",
-                                mined_block_num - 1, ledger.GetNextBlockIdx() - 1);
-                        shadow_push_eventlog(buf);
+
+                    // if (ledger.GetNextBlockIdx() == 101) {
+                    //     PrintBlockTimeLogs();
+
+                    //     std::cout << "total_mined_block_num=" << mined_block_num << "\n";
+                    //     char buf[256];
+                    //     sprintf(buf, "ResultStat,%s,%d,%lu",
+                    //             "TotalMinedBlockNum",
+                    //             mined_block_num - 1, ledger.GetNextBlockIdx() - 1);
+                    //     shadow_push_eventlog(buf);
 
                         
-                        exit(0);
-                    }
+                    //     exit(0);
+                    // }
 
-                    // next_shadow_clock_update("==== done processing EmuBlockMiningComplete Event");
-                    shadow_usleep(1000);
-                    PrintTimespec("EmuBlockMiningComplete processing ended");
-                    // double milli = next_shadow_clock_update("===== handling EmuBlockMiningComplete");
                     break;
                 }
             }

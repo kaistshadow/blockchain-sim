@@ -15,7 +15,9 @@ namespace libBLEEP {
     enum class PeerConnectMode {
         none,
         ConnectMyself,
-        ConnectByRemote
+        ConnectByRemote,
+        ConnectExceptClient,
+            
     };
 
     class PeerInfo {

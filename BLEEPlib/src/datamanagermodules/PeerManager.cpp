@@ -68,6 +68,10 @@ std::vector<PeerId> libBLEEP::PeerManager::GetNeighborPeerIds(PeerConnectMode mo
                     id.push_back(i->first);
                 }
                 break;
+            case PeerConnectMode::ConnectExceptClient:
+                if (i->first.GetId().find("client") != 0)
+                    id.push_back(i->first);
+                break;
             default :
                 id.push_back(i->first);
                 break;

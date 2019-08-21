@@ -3,16 +3,16 @@ import os
 import time
 import sys
 from subprocess import check_output, Popen, PIPE
-
+import datetime
 
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
         print("error while executing '%s'" % cmd)
         exit(-1)
 
-def run_experiment(configfile):
+def run_experiment(configfile, LOGLEVEL):
     datadir = "visualize-datadir"
-    shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-d", datadir, configfile], stdout=PIPE)    
+    shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-l", LOGLEVEL, "-d", datadir, "-w", "8", configfile], stdout=PIPE)    
     shadow_stdout_filename = "shadow.output"
     shadow_stdout_file = open(shadow_stdout_filename, 'w')
 
@@ -67,13 +67,24 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
     parser.add_argument("configfile", help="filepath for blockchain network configuration file (shadow xml configuration)")
     parser.add_argument("--background", action="store_true", help="Run server as background daemon.")
+    parser.add_argument("--log", help="Shadow Log LEVEL above which to filter messages ('error' < 'critical' < 'warning' < 'message' < 'info' < 'debug') ['message']")
 
     args = parser.parse_args()
     configfile = args.configfile
     OPT_BACKGROUND = args.background
 
+    if not args.log:
+        LOGLEVEL = "message"
+    else:
+        LOGLEVEL = args.log
+
     print "Execute shadow experiment"
-    output = run_experiment(configfile)
+    start = datetime.datetime.now()
+    output = run_experiment(configfile, LOGLEVEL)
+    end = datetime.datetime.now()
+
+    elapsed_time = end - start
+    print "elapsed_millisec=%d\n" % (int(elapsed_time.total_seconds() * 1000)) 
 
     if OPT_BACKGROUND:
         run_visualization_server(output, configfile, background=True)

@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
     BasicNetworkModule basicNetworkModule(gArgs.GetArg("-id", "noid"), &mainEventManager);
 
     // POWModule
-    POWModule powModule(&mainEventManager);
+    POWModule powModule(gArgs.GetArg("-id", "noid"), &mainEventManager);
 
     // transaction pool
     TxPool txPool;

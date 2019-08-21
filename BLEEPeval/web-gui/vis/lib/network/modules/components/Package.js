@@ -103,11 +103,9 @@ class Package {
         this.progress = options.progress.value
         this.autoProgress = false
       }
-      if (options.progress.isMoving !== undefined) {
-        this.isMoving = options.progress.isMoving
-      }
       if (options.progress.duration !== undefined) {
         this.duration = options.progress.duration
+        this.duration = this.duration == 0 ? 0.001 : this.duration
       }
     }
 
@@ -134,9 +132,6 @@ class Package {
 
     if (options.hidden !== undefined) {
       dataChanged = true
-    }
-    if (this.isMoving === true) {
-      this.body.emitter.emit('_startMovingPackages')
     }
   }
 

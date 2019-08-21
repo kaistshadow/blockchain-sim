@@ -500,7 +500,6 @@ let allOptions = {
       autoProgress: { booblean: bool },
       duration: { number },
       value: { number },
-      isMoving: { boolean : bool },
       __type__: { object }
     },
     scaling: {

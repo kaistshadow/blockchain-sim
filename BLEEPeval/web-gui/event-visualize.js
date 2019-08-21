@@ -2,6 +2,11 @@ var network = null;
 var physics = true;
 
 var nodes, edges, packages;
+var nodesBuffer = [],
+    edgesBuffer = [],
+    packagesBuffer = [],
+    blocksBuffer = [];
+var bufferedOperation = '';
 var nodes_block, edges_block;
 var ledger = null;
 var ImgDIR = 'link_network/img/';
@@ -66,6 +71,7 @@ var muObserver = new MutationObserver(function(mutations) {
                 targetReached = lastEvent == targetEvent;
             }
         }
+        applyBuffers();
     }
 });
 
@@ -91,28 +97,28 @@ function performEvent(event) {
         console.log("Performing " + eventtype);
 
         if (eventtype === "InitPeerId")
-            addNode(eventargs);
+            addNode(eventargs, true);
         else if (eventtype === "ConnectPeer") {
             var from = eventargs.split(",")[0];
             var to = eventargs.split(",")[1];
-            addEdge(from, to);
+            addEdge(from, to, true);
         }
         else if (eventtype === "DisconnectPeer") {
             var from = eventargs.split(",")[0];
             var to = eventargs.split(",")[1];
 
-            removeEdge(from, to);
-            removeEdge(to, from);
+            removeEdge(from, to, true);
+            removeEdge(to, from, true);
         } else if (eventtype === "UnicastMessage" || eventtype == "MulticastMessage") {
             var from = eventargs.split(",")[0];
             var to = eventargs.split(",")[1];
             var hashId = eventargs.split(",")[3];
-            sendMessage(from, to, hashId);
+            sendMessage(from, to, hashId, true);
         } else if (eventtype === "RecvMessage") {
             var from = eventargs.split(",")[0];
             var to = eventargs.split(",")[1];
             var hashId = eventargs.split(",")[3];
-            recvMessage(from, to, hashId);
+            recvMessage(from, to, hashId, true);
         } else if (eventtype === "BlockAppend") {
             var peerId = eventhost;
             var hash = eventargs.split(",")[1];
@@ -137,26 +143,26 @@ function revertEvent(event) {
         console.log("Reverting " + eventtype);
 
         if (eventtype === "InitPeerId")
-            removeNode(eventargs);
+            removeNode(eventargs, true);
         else if (eventtype === "ConnectPeer") {
             var from = eventargs.split(",")[0];
             var to = eventargs.split(",")[1];
-            removeEdge(from, to);
-            removeEdge(to, from);
+            removeEdge(from, to, true);
+            removeEdge(to, from, true);
         } else if (eventtype === "DisconnectPeer") {
             var from = eventargs.split(",")[0];
             var to = eventargs.split(",")[1];
-            addEdge(from, to);
+            addEdge(from, to, true);
         } else if (eventtype === "UnicastMessage" || eventtype == "MulticastMessage") {
             var from = eventargs.split(",")[0];
             var to = eventargs.split(",")[1];
             var hashId = eventargs.split(",")[3];
-            unsendMessage(from, to, hashId);
+            unsendMessage(from, to, hashId, true);
         } else if (eventtype === "RecvMessage") {
             var from = eventargs.split(",")[0];
             var to = eventargs.split(",")[1];
             var hashId = eventargs.split(",")[3];
-            unrecvMessage(from, to, hashId);
+            unrecvMessage(from, to, hashId, true);
         } else if (eventtype === "BlockAppend") {
             var peerId = eventhost;
             var hash = eventargs.split(",")[1];
@@ -286,75 +292,115 @@ function drawVisualization() {
     ledger = new vis.Network(container, data, ledgerplotoptions);
 }
 
-function recvMessage(from, to, hashId) {
-    try {
-        packages.remove({id: hashId, edge: from+to});
+function recvMessage(from, to, hashId, buffered = true) {
+    if (buffered == true) {
+        pushToBuffer(packagesBuffer, {id: hashId}, 'remove');
     }
-    catch(err) {
-        alert(err);
-    }
-}
-
-function unrecvMessage(from, to, hashId) {
-    sendMessage(from, to, hashId);
-}
-
-function sendMessage(from, to, hashId) {
-    try {
-        packages.add({id: hashId, edge: from+to});
-    }
-    catch(err) {
-        alert(err);
+    else {
+        try {
+            packages.remove({id: hashId});
+        }
+        catch(err) {
+            alert(err);
+        }
     }
 }
 
-function unsendMessage(from, to, hashId) {
-    try {
-        packages.update({id: hashId, progress: {autoProgress: false}})
-        packages.remove({id: hashId, edge: from+to});
+function unrecvMessage(from, to, hashId, buffered = true) {
+    sendMessage(from, to, hashId, buffered);
+}
+
+function sendMessage(from, to, hashId, buffered = true) {
+    if (buffered == true) {
+        pushToBuffer(packagesBuffer, {id: hashId, edge: from+to}, 'add');
     }
-    catch(err) {
-        alert(err);
+    else {
+        try {
+            packages.add({id: hashId, edge: from+to});
+        }
+        catch(err) {
+            alert(err);
+        }
     }
 }
 
-function addNode(nodeid) {
-    try {
-        nodes.add({id: nodeid, label: nodeid});
+function unsendMessage(from, to, hashId, buffered = true) {
+    if (buffered == true) {
+        pushToBuffer(packagesBuffer, {id: hashId, edge: from+to, progress: {autoProgress: false}}, 'remove');
     }
-    catch(err) {
-        alert(err);
+    else {
+        try {
+            packages.update({id: hashId, edge: from+to, progress: {autoProgress: false}})
+            packages.remove({id: hashId});
+        }
+        catch(err) {
+            alert(err);
+        }
     }
 }
 
-function removeNode(nodeid) {
-    try {
-        nodes.remove({id: nodeid})
+function addNode(nodeid, buffered = true) {
+    if (buffered == true) {
+        pushToBuffer(nodesBuffer, {id: nodeid, label: nodeid}, 'add');
     }
-    catch(err) {
-        alert(err);
+    else {
+        try {
+            nodes.add({id: nodeid, label: nodeid});
+        }
+        catch(err) {
+            alert(err);
+        }
+    }
+}
+
+function removeNode(nodeid, buffered = true) {
+    if (buffered == true) {
+        pushToBuffer(nodesBuffer, {id: nodeid}, 'remove')
+    }
+    else {
+        try {
+            nodes.remove({id: nodeid})
+        }
+        catch(err) {
+            alert(err);
+        }
     }
 };
 
-function addEdge(from, to) {
-    try {
-        if (from.startsWith("client")) {
-            edges.add({id: from+to, from: from, to: to, arrows: "middle", color:{color:"red", highlight: "red"}});
-        }
-        else
-            edges.add({id: from+to, from: from, to: to, arrows: "middle"});
+function addEdge(from, to, buffered = true) {
+    let edge;
+    if (from.startsWith("client")) {
+        edge = {id: from+to, from: from, to: to, arrows: "middle",
+            color:{color:"red", highlight: "red"}};
     }
-    catch(err) {
-        alert(err);
+    else {
+        edge = {id: from+to, from: from, to: to, arrows: "middle"};
+    }
+
+    if (buffered == true) {
+            pushToBuffer(edgesBuffer, edge, 'add');
+    }
+    else {
+        try {
+            edges.add(edge);
+        }
+        catch(err) {
+            alert(err);
+        }
     }
 }
 
-function removeEdge(from, to) {
-    try {
-        edges.remove({id: from+to});
+function removeEdge(from, to, buffered = true) {
+    if (buffered == true) {
+        pushToBuffer(edgesBuffer, {id: from+to}, 'remove');
     }
-    catch(err) {
-        alert(err);
+    else {
+        try {
+            edges.remove({id: from+to});
+        }
+        catch(err) {
+            alert(err);
+        }
     }
 }
 
@@ -425,8 +471,58 @@ function removeBlock(peerId, hash, prevHash, timestamp) {
 
 }
 
+function pushToBuffer(buffer, data, operation) {
+    if (bufferedOperation != operation) {
+        applyBuffers();
+        bufferedOperation = operation;
+    }
+    buffer.push(data);
+}
+
+function applyBuffers() {
+    if (bufferedOperation == 'add') {
+        applyBuffer(nodes, nodesBuffer, 'add');
+        applyBuffer(edges, edgesBuffer, 'add');
+        applyBuffer(packages, packagesBuffer, 'add');
+    }
+    else if (bufferedOperation == 'remove') {
+        // When unsending messages, this clears the autoProgress option
+        applyBuffer(packages, packagesBuffer, 'update');
+
+        applyBuffer(packages, packagesBuffer, 'remove');
+        applyBuffer(edges, edgesBuffer, 'remove');
+        applyBuffer(nodes, nodesBuffer, 'remove');
+    }
+    bufferedOperation = '';
+}
+function applyBuffer(dataset, buffer, operation) {
+    try {
+        if (operation == 'add') {
+            dataset.add(buffer);
+            buffer.length = 0;  // clears every existing reference of "buffer"
+        }
+        else if (operation == 'remove') {
+            dataset.remove(buffer);
+            buffer.length = 0;
+        }
+        else {
+            dataset.update(buffer);
+        }
+    }
+    catch(err) {
+        alert(err);
+    }
+}
+
 // Called after receiving the eventlog
 function endInitialLoading() {
+    nodes.add(nodesBuffer);
+    edges.add(edgesBuffer);
+    packages.add(packagesBuffer);
+    nodesBuffer.length = 0;
+    edgesBuffer.length = 0;
+    packagesBuffer.length = 0;
+
     var lastItem = document.getElementById("ss_elem_list").lastChild;
     while (lastItem && lastItem.getAttribute("style") === "display:none;") {
         lastItem = lastItem.previousElementSibling;

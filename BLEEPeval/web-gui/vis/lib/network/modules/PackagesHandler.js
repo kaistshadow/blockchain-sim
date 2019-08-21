@@ -94,8 +94,7 @@ class PackagesHandler {
       progress: {
         autoProgress: true,
         duration: 1, // seconds
-        value: undefined,
-        isMoving: undefined
+        value: undefined
       },
       scaling: {
         min: 5,
@@ -329,13 +328,11 @@ class PackagesHandler {
         }
       }
     }
-    if (emit) {
-      if (dataChanged === true && animate === true) {
+    if (emit === true || dataChanged === true) {
         this.body.emitter.emit('_dataChanged')
-      }
-      else {
-        this.body.emitter.emit('_startMovingPackages')
-      }
+    }
+    if (animate === true){
+      this.body.emitter.emit('_startMovingPackages')
     }
   }
 

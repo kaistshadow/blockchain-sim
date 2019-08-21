@@ -474,6 +474,10 @@ Network.prototype.destroy = function() {
     delete this.body.edges[edgeId]
   }
 
+  for (var packageId in this.body.packages) {
+    if (!this.body.packages.hasOwnProperty(packageId)) continue
+    delete this.body.packages[packageId]
+  }
   // remove the container and everything inside it recursively
   util.recursiveDOMDelete(this.body.container)
 }

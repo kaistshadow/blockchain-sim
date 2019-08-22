@@ -14,6 +14,11 @@
 namespace libBLEEP {
 
 
+    enum class ConnectionMethod {
+        Kademlia,
+        Random,
+    };
+
     class Distance {
         UINT256_t distance;
         PeerId peerId;
@@ -360,7 +365,7 @@ namespace libBLEEP {
 
         bool AsyncConnectPeer(PeerId id, double time=0);
 
-        bool AsyncConnectPeers(std::vector<PeerId, std::allocator<PeerId>> &peerList, int peerNum, double time = 0);
+        bool AsyncConnectPeers(std::vector<PeerId, std::allocator<PeerId>> &peerList, int peerNum, double time = 0, ConnectionMethod cmethod = ConnectionMethod::Kademlia);
 
         bool UnicastMessage(PeerId dest, std::shared_ptr<Message> message);
 

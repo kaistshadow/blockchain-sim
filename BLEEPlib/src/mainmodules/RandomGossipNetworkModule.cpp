@@ -61,7 +61,7 @@ std::set<Distance, DistanceCmp> genNeighborPeerSet(PeerId myId, std::vector<Peer
     return neighborPeerIdSet;
 }
 
-bool RandomGossipNetworkModule::AsyncConnectPeers(std::vector<PeerId> &peerList, int peerNum, double time){
+bool RandomGossipNetworkModule::AsyncConnectPeers(std::vector<PeerId> &peerList, int peerNum, double time, ConnectionMethod cmethod){
     char buf[256];
     sprintf(buf, "API,AsyncConnectPeers,%d,%d,%f",
             (int)peerList.size(),
@@ -69,13 +69,28 @@ bool RandomGossipNetworkModule::AsyncConnectPeers(std::vector<PeerId> &peerList,
             time);
     shadow_push_eventlog(buf);
 
-    PeerId myId = *peerManager.GetMyPeerId();
-    auto neighborPeerIdSet = genNeighborPeerSet(myId, peerList);
-    int i = 0;
-    for(const Distance& dest : neighborPeerIdSet){
-        if (i >= peerNum) break;
-        if (RandomGossipNetworkModule::AsyncConnectPeer(dest.GetPeerId(), time) == true)
-            i++;
+    if (cmethod == ConnectionMethod::Kademlia) {
+        PeerId myId = *peerManager.GetMyPeerId();
+        auto neighborPeerIdSet = genNeighborPeerSet(myId, peerList);
+        int i = 0;
+        for(const Distance& dest : neighborPeerIdSet){
+            if (i >= peerNum) break;
+            if (RandomGossipNetworkModule::AsyncConnectPeer(dest.GetPeerId(), time) == true)
+                i++;
+        } 
+    }
+    else if (cmethod == ConnectionMethod::Random) {
+        std::vector<PeerId> shufflePeerList = peerList;
+        std::shuffle(std::begin(shufflePeerList), std::end(shufflePeerList), std::default_random_engine {});
+        int i = 0;
+        PeerId myId = *peerManager.GetMyPeerId();
+        for (PeerId peer : shufflePeerList) {
+            if (i >= peerNum) break;
+            else if (myId.GetId() != peer.GetId()) {
+                if (RandomGossipNetworkModule::AsyncConnectPeer(peer, time) == true)
+                    i++;
+            }
+        }
     }
     return true;
 }

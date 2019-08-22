@@ -125,7 +125,8 @@ int main(int argc, char *argv[]) {
     // std::cout << "time for executing loop:" << loopmilli << "\n";
 
 
-    // for testing DisconnectPeer API
+    // wait for stable connection
+    sleep(1);
 
     gArgs.ParseParameters(argc, argv);
 
@@ -152,7 +153,7 @@ int main(int argc, char *argv[]) {
             peerList.push_back(PeerId(neighborPeerId));
     }
 
-    randomNetworkModule.AsyncConnectPeers(peerList, connectPeerNum);
+    randomNetworkModule.AsyncConnectPeers(peerList, connectPeerNum, 0, ConnectionMethod::Random);
 
     // BasicNetworkModule basicNetworkModule(gArgs.GetArg("-id", "noid"), &mainEventManager);
 

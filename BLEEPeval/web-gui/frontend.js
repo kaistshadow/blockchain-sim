@@ -18,7 +18,9 @@ function switch_div(show) {
 
 $(function () {
     "use strict";
-
+    console.log("Client started");
+    console.time("Start receiving log afer ");
+    console.time("Client side takes ");
     // for network
     var nodesArray = [
         {
@@ -228,6 +230,8 @@ $(function () {
             
             var ul = document.getElementById("ss_elem_list");
             ul.innerHTML = '';
+            console.timeEnd("Start receiving log afer ");
+            console.time("Log received in ");
             for (var i = 0, l = json.data.eventlogs.length; i < l; i++) {
                 var eventlog = json.data.eventlogs[i];
                 addMessage("eventlog", `host : ${eventlog.host}, time : ${eventlog.time}, type : ${eventlog.type}, args : ${eventlog.args}`, "blue", new Date(json.data.time));
@@ -246,20 +250,25 @@ $(function () {
                     var from = eventlog.args.split(",")[0];
                     var to = eventlog.args.split(",")[1];
                     addEdge(from, to);
-                } else if (eventlog.type === "DisconnectPeer") {
-                    var from = eventlog.args.split(",")[0];
-                    var to = eventlog.args.split(",")[1];
-                    removeEdge(from, to);
-                    removeEdge(to, from);
                 } else if (eventlog.type === "BlockAppend") {
                     var peerId = eventlog.host;
                     var hash = eventlog.args.split(",")[1];
                     var prevHash = eventlog.args.split(",")[2];
                     var timestamp = eventlog.args.split(",")[3];
                     appendBlock(peerId, hash, prevHash, timestamp);
+                } else if (eventlog.type === "DisconnectPeer") {
+                    // Ignore disconnection because it is not reversible yet
+
+                    /*var from = eventlog.args.split(",")[0];
+                    var to = eventlog.args.split(",")[1];
+                    removeEdge(from, to);
+                    removeEdge(to, from);*/
+                    alert("Disconnect is not supported yet");
                 }
             }
+            console.timeEnd("Log received in ");
             endInitialLoading();
+            console.timeEnd("Client side takes ");
         } else if (json.type === 'graph') {
             addMessage("Notice", "Snapshot of the blockchain graph is received",
                        "red", new Date(json.data.time));

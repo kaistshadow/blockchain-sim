@@ -1,5 +1,3 @@
-import { option } from '../../../util';
-
 var util = require('../../../util')
 
 var Label = require('./shared/Label').default
@@ -28,6 +26,7 @@ class Package {
   /**
  * @param {Object} options        values specific to this edge, must contain at least 'from' and 'to'
  * @param {Object} body           shared state from Network instance
+ * @param {Network.Images} imagelist  A list with images. Only needed when the node has an image
  * @param {Object} globalOptions  options from the EdgesHandler instance
  * @param {Object} defaultOptions default options from the EdgeHandler instance. Value and reference are constant
  */
@@ -42,20 +41,24 @@ class Package {
     this.defaultOptions = defaultOptions
     this.body = body
 
-    // constants
+    // set default
     this.imagelist = imagelist
-    this.network = network
+    this.duration = this.options.progress.duration
 
-    // state options
+    // initialize variables
     this.id = undefined
     this.from = undefined
     this.to = undefined
+    this.fromId = undefined
+    this.toId = undefined
+    this.edgeId = undefined
+
+    // state variables
     this.baseSize = this.options.size
     this.baseFontSize = this.options.font.size
     this.selected = false
     this.hover = false
     this.autoProgress = this.options.progress.autoProgress
-    this.duration = this.options.progress.duration
     this.progress =  0.0
     this.isMoving = false
 
@@ -89,10 +92,13 @@ class Package {
     if (options.edge !== undefined) {
       this.edgeId = options.edge
     }
-    if (this.edgeId === undefined) {
-      throw new Error('Packages travel along edges, please provide an edge id')
+    if (options.from !== undefined) {
+      this.fromId = options.from
     }
-    // check if edge exists
+    if (options.to !== undefined) {
+      this.toId = options.to
+    }
+    // Set this.edge if edgeId, fromId, and toId are valid
     this.connect()
 
     if (options.progress !== undefined) {
@@ -139,8 +145,17 @@ class Package {
    * Connect to the edge and end nodes of the package
    */
   connect() {
-    if (!this.body.edges.hasOwnProperty(this.edgeId)) {
-      throw new Error("Unknown edge id '" + this.edgeId + "'")
+    let edge = this.body.edges[this.edgeId] || undefined
+    let connected = edge !== undefined && edge.connected === true
+    if (connected === true) {
+      if (edge.fromId === this.fromId && edge.toId === this.toId) {
+        this.oppositeDirection = false
+        this.edge = edge
+      }
+      else if (edge.fromId === this.toId && edge.toId === this.fromId) {
+        this.oppositeDirection = true
+        this.edge = edge
+      }
     }
   }
 
@@ -346,17 +361,14 @@ class Package {
    * @return {Object} position    The object has parameters x and y.
    */
   _getPosition() {
-    if (this.body.edges.hasOwnProperty(this.edgeId) === false) {
-      throw new Error("Unknown edge id '" + this.edgeId + "'")
-    }
-    else {
-      let edgeType = this.body.edges[this.edgeId].edgeType
-      let viaNode = edgeType.getViaNode()
-      let point = edgeType.getPoint(this.progress, viaNode)
-      return {
-          "x" : point.x,
-          "y" : point.y
-      }
+    let edgeType = this.edge.edgeType
+    let viaNode = edgeType.getViaNode()
+    let point = this.oppositeDirection ?
+      edgeType.getPoint(1 - this.progress, viaNode) :
+      edgeType.getPoint(this.progress, viaNode)
+    return {
+        "x" : point.x,
+        "y" : point.y
     }
   }
 

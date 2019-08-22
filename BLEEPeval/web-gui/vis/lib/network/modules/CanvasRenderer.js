@@ -324,15 +324,7 @@ class CanvasRenderer {
       }
 
       if (hidden === false) {
-        if (
-          (this.dragging === false ||
-            (this.dragging === true &&
-              this.options.hideEdgesOnDrag === false)) &&
-          (this.zooming === false ||
-            (this.zooming === true && this.options.hideEdgesOnZoom === false))
-        ) {
          this._drawPackages(ctx)
-        }
       }
 
       ctx.beginPath()

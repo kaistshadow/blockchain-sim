@@ -7,7 +7,7 @@ var nodesBuffer = [],
     packagesBuffer = [],
     blocksBuffer = [];
 var bufferedOperation = '';
-var nodes_block, edges_block;
+var ledgerNodes, ledgerEdges;
 var ledger = null;
 var ImgDIR = 'link_network/img/';
 
@@ -72,6 +72,7 @@ var muObserver = new MutationObserver(function(mutations) {
             }
         }
         applyBuffers();
+        onNodeSelect(); // update event list for selected node
     }
 });
 
@@ -96,38 +97,46 @@ function performEvent(event) {
         var eventargs = matches[4];
         console.log("Performing " + eventtype);
 
-        if (eventtype === "InitPeerId")
-            addNode(eventargs, true);
-        else if (eventtype === "ConnectPeer") {
-            var from = eventargs.split(",")[0];
-            var to = eventargs.split(",")[1];
-            addEdge(from, to, true);
-        }
-        else if (eventtype === "DisconnectPeer") {
-            var from = eventargs.split(",")[0];
-            var to = eventargs.split(",")[1];
+        switch (eventtype) {
+            case "InitPeerId":
+                addNode(eventargs);
+                break;
+            case "ConnectPeer":
+                var from = eventargs.split(",")[0];
+                var to = eventargs.split(",")[1];
+                addEdge(from, to);
+                break;
+            case "DisconnectPeer":
+                // Ignore disconnection because it is not reversible yet
 
-            removeEdge(from, to, true);
-            removeEdge(to, from, true);
-        } else if (eventtype === "UnicastMessage" || eventtype == "MulticastMessage") {
-            var from = eventargs.split(",")[0];
-            var to = eventargs.split(",")[1];
-            var hashId = eventargs.split(",")[3];
-            sendMessage(from, to, hashId, true);
-        } else if (eventtype === "RecvMessage") {
-            var from = eventargs.split(",")[0];
-            var to = eventargs.split(",")[1];
-            var hashId = eventargs.split(",")[3];
-            recvMessage(from, to, hashId, true);
-        } else if (eventtype === "BlockAppend") {
-            var peerId = eventhost;
-            var hash = eventargs.split(",")[1];
-            var prevHash = eventargs.split(",")[2];
-            var timestamp = eventargs.split(",")[3];
-            appendBlock(peerId, hash, prevHash, timestamp);
+                /* var from = eventargs.split(",")[0];
+                var to = eventargs.split(",")[1];
+                removeEdge(from, to);
+                removeEdge(to, from);*/
+                alert("Disconnect is not supported yet");
+                break;
+            case "UnicastMessage":  // fallthrough
+            case "MulticastingMessage":
+                var from = eventargs.split(",")[0];
+                var to = eventargs.split(",")[1];
+                var hashId = eventargs.split(",")[3];
+                sendMessage(from, to, hashId);
+                break
+            case "RecvMessage":
+                var from = eventargs.split(",")[0];
+                var to = eventargs.split(",")[1];
+                var hashId = eventargs.split(",")[3];
+                recvMessage(from, to, hashId);
+                break;
+            case "BlockAppend":
+                var peerId = eventhost;
+                var hash = eventargs.split(",")[1];
+                var prevHash = eventargs.split(",")[2];
+                var timestamp = eventargs.split(",")[3];
+                appendBlock(peerId, hash, prevHash, timestamp);
+                break;
         }
     }
-    onNodeSelect(); // update event list for selected node
     return event;
 }
 
@@ -142,36 +151,46 @@ function revertEvent(event) {
         var eventargs = matches[4];
         console.log("Reverting " + eventtype);
 
-        if (eventtype === "InitPeerId")
-            removeNode(eventargs, true);
-        else if (eventtype === "ConnectPeer") {
-            var from = eventargs.split(",")[0];
-            var to = eventargs.split(",")[1];
-            removeEdge(from, to, true);
-            removeEdge(to, from, true);
-        } else if (eventtype === "DisconnectPeer") {
-            var from = eventargs.split(",")[0];
-            var to = eventargs.split(",")[1];
-            addEdge(from, to, true);
-        } else if (eventtype === "UnicastMessage" || eventtype == "MulticastMessage") {
-            var from = eventargs.split(",")[0];
-            var to = eventargs.split(",")[1];
-            var hashId = eventargs.split(",")[3];
-            unsendMessage(from, to, hashId, true);
-        } else if (eventtype === "RecvMessage") {
-            var from = eventargs.split(",")[0];
-            var to = eventargs.split(",")[1];
-            var hashId = eventargs.split(",")[3];
-            unrecvMessage(from, to, hashId, true);
-        } else if (eventtype === "BlockAppend") {
-            var peerId = eventhost;
-            var hash = eventargs.split(",")[1];
-            var prevHash = eventargs.split(",")[2];
-            var timestamp = eventargs.split(",")[3];
-            removeBlock(peerId, hash, prevHash, timestamp);
+        switch (eventtype) {
+            case "InitPeerId":
+                removeNode(eventargs);
+                break;
+            case "ConnectPeer":
+                var from = eventargs.split(",")[0];
+                var to = eventargs.split(",")[1];
+                removeEdge(from, to);
+                break;
+            case "DisconnectPeer":
+                // Ignore disconnection because it is not reversible yet
+
+                /*var from = eventargs.split(",")[0];
+                var to = eventargs.split(",")[1];
+                addEdge(from, to);
+                addEdge(to, from);*/
+                alert("Disconnect is not supported yet");
+                break;
+            case "UnicastMessage":  // fallthrough
+            case "MulticastingMessage":
+                var from = eventargs.split(",")[0];
+                var to = eventargs.split(",")[1];
+                var hashId = eventargs.split(",")[3];
+                unsendMessage(from, to, hashId);
+                break;
+            case "RecvMessage":
+                var from = eventargs.split(",")[0];
+                var to = eventargs.split(",")[1];
+                var hashId = eventargs.split(",")[3];
+                unrecvMessage(from, to, hashId);
+                break;
+            case "BlockAppend":
+                var peerId = eventhost;
+                var hash = eventargs.split(",")[1];
+                var prevHash = eventargs.split(",")[2];
+                var timestamp = eventargs.split(",")[3];
+                removeBlock(peerId, hash, prevHash, timestamp);
+                break;
         }
     }
-    onNodeSelect(); // update event list for selected node
     return event;
 }
 
@@ -228,7 +247,8 @@ function drawVisualization() {
         },
         "physics": {
             "forceAtlas2Based": {
-                "springLength": 130,
+                "springLength": 200,
+                "springConstant": 0.03,
                 "avoidOverlap": 0.24
             },
             "minVelocity": 0.75,
@@ -261,11 +281,11 @@ function drawVisualization() {
     ];
     var edgesArray = [
     ];
-    nodes_block = new vis.DataSet(nodesArray);
-    edges_block = new vis.DataSet(edgesArray);
+    ledgerNodes = new vis.DataSet(nodesArray);
+    ledgerEdges = new vis.DataSet(edgesArray);
     var data = {
-        nodes: nodes_block,
-        edges: edges_block
+        nodes: ledgerNodes,
+        edges: ledgerEdges
     };
     var ledgerplotoptions = {
         layout: {
@@ -294,14 +314,14 @@ function drawVisualization() {
 
 function recvMessage(from, to, hashId, buffered = true) {
     if (buffered == true) {
-        pushToBuffer(packagesBuffer, {id: hashId}, 'remove');
+        pushToBuffer(packagesBuffer, {id: from+to+hashId}, 'remove');
     }
     else {
         try {
-            packages.remove({id: hashId});
+            packages.remove({id: from+to+hashId});
         }
         catch(err) {
-            alert(err);
+            alert("Message " + hashId + " " + err);
         }
     }
 }
@@ -312,29 +332,64 @@ function unrecvMessage(from, to, hashId, buffered = true) {
 
 function sendMessage(from, to, hashId, buffered = true) {
     if (buffered == true) {
-        pushToBuffer(packagesBuffer, {id: hashId, edge: from+to}, 'add');
+        let edgeId = findEdgeId(from, to);
+        pushToBuffer(packagesBuffer,
+            {id: from+to+hashId, edge: edgeId, from: from, to: to},
+            'add'
+        );
     }
     else {
         try {
-            packages.add({id: hashId, edge: from+to});
+            packages.add({id: from+to+hashId, edge: from+to});
         }
         catch(err) {
-            alert(err);
+            alert("Message " + hashId + " " + err);
         }
     }
 }
 
+function findEdgeId(from, to) {
+    let id = [from+to, to+from].find( function(edgeId) {
+
+        let edgeFound = edges.get(edgeId) || undefined;
+        if (edgeFound !== undefined) {
+            // The edge exists but its deletion might be buffered
+            if (bufferedOperation != 'remove') {
+                return true;
+            }
+            else {
+                let removedEdge = edgesBuffer.find((item) => item.id == edgeId);
+                if (removedEdge === undefined) {
+                    return true;
+                }
+            }
+        }
+
+        // The edge doesn't exist but its creation might be buffered
+        else if (bufferedOperation == 'add') {
+            let edge = edgesBuffer.find((edge) => edge.id == edgeId);
+            if (edge !== undefined) {
+                return true;
+            }
+        }
+    });
+    return id;
+}
+
 function unsendMessage(from, to, hashId, buffered = true) {
     if (buffered == true) {
-        pushToBuffer(packagesBuffer, {id: hashId, edge: from+to, progress: {autoProgress: false}}, 'remove');
+        pushToBuffer(packagesBuffer,
+            {id: from+to+hashId, progress: {autoProgress: false}},
+            'remove'
+        );
     }
     else {
         try {
-            packages.update({id: hashId, edge: from+to, progress: {autoProgress: false}})
-            packages.remove({id: hashId});
+            packages.update({id: from+to+hashId, progress: {autoProgress: false}})
+            packages.remove({id: from+to+hashId});
         }
         catch(err) {
-            alert(err);
+            alert("Message " + hashId + " " + err);
         }
     }
 }
@@ -408,64 +463,64 @@ function appendBlock(peerId, hash, prevHash, timestamp) {
     if (prevHash === "0000000000") {
         // (catch err because dataSet returns error when we try to add existed node)
         try {
-            nodes_block.add({id:prevHash, label:"genesis"});
+            ledgerNodes.add({id:prevHash, label:"genesis"});
         } catch(err) {
 
         }
     }
 
     try {
-        nodes_block.add({id:hash, label:timestamp});
+        ledgerNodes.add({id:hash, label:timestamp});
     } catch(err) {
     }
 
     try {
-        nodes_block.add({id:prevHash, label:timestamp});
+        ledgerNodes.add({id:prevHash, label:timestamp});
     } catch(err) {
     }
 
 
     try {
-        edges_block.add({id:prevHash+hash, from:prevHash, to:hash});
+        ledgerEdges.add({id:prevHash+hash, from:prevHash, to:hash});
     } catch(err) {
     }
 
-    edges_block.remove(peerId);
+    ledgerEdges.remove(peerId);
     try {
-        edges_block.add({id:peerId, from:hash, to:peerId});
+        ledgerEdges.add({id:peerId, from:hash, to:peerId});
     } catch(err) {
     }
     try {
-        nodes_block.update({id:peerId, label:peerId});
+        ledgerNodes.update({id:peerId, label:peerId});
     } catch(err) {}
 
-    // nodes_block.remove({id:peerId});
-    // edges_block.update({id:peerId, from:hash, to:peerId});
-    // nodes_block.add({id:peerId, label:peerId});
+    // ledgerNodes.remove({id:peerId});
+    // ledgerEdges.update({id:peerId, from:hash, to:peerId});
+    // ledgerNodes.add({id:peerId, label:peerId});
 
 
 }
 
 function removeBlock(peerId, hash, prevHash, timestamp) {
 
-    edges_block.remove(peerId);
+    ledgerEdges.remove(peerId);
     try {
-        edges_block.add({id:peerId, from:prevHash, to:peerId});
+        ledgerEdges.add({id:peerId, from:prevHash, to:peerId});
     } catch(err) {
     }
     try {
-        nodes_block.update({id:peerId, label:peerId});
+        ledgerNodes.update({id:peerId, label:peerId});
     } catch(err) {}
 
-    if ( edges_block.distinct("from").find(from => from == hash) == undefined ) {
+    if ( ledgerEdges.distinct("from").find(from => from == hash) == undefined ) {
         // If no edge start from node "hash", delete node "hash"
-        nodes_block.remove(hash);
-        edges_block.remove(prevHash+hash);
+        ledgerNodes.remove(hash);
+        ledgerEdges.remove(prevHash+hash);
 
-        if ( edges_block.get({filter: edge => edge.to == prevHash}).length == 0
-        && edges_block.get({filter: edge => edge.from == prevHash}).length == 1 ) {
+        if ( ledgerEdges.get({filter: edge => edge.to == prevHash}).length == 0
+        && ledgerEdges.get({filter: edge => edge.from == prevHash}).length == 1 ) {
             // If prevHash is the first block and has no child
-            nodes_block.remove([prevHash, peerId]);
+            ledgerNodes.remove([prevHash, peerId]);
         }
     }
 
@@ -487,9 +542,10 @@ function applyBuffers() {
     }
     else if (bufferedOperation == 'remove') {
         // When unsending messages, this clears the autoProgress option
+        let buff = Array.from(packagesBuffer);
         applyBuffer(packages, packagesBuffer, 'update');
 
-        applyBuffer(packages, packagesBuffer, 'remove');
+        applyBuffer(packages, buff, 'remove');
         applyBuffer(edges, edgesBuffer, 'remove');
         applyBuffer(nodes, nodesBuffer, 'remove');
     }
@@ -499,15 +555,14 @@ function applyBuffer(dataset, buffer, operation) {
     try {
         if (operation == 'add') {
             dataset.add(buffer);
-            buffer.length = 0;  // clears every existing reference of "buffer"
         }
         else if (operation == 'remove') {
             dataset.remove(buffer);
-            buffer.length = 0;
         }
         else {
             dataset.update(buffer);
         }
+        buffer.length = 0;  // clears every existing reference of "buffer"
     }
     catch(err) {
         alert(err);
@@ -516,12 +571,7 @@ function applyBuffer(dataset, buffer, operation) {
 
 // Called after receiving the eventlog
 function endInitialLoading() {
-    nodes.add(nodesBuffer);
-    edges.add(edgesBuffer);
-    packages.add(packagesBuffer);
-    nodesBuffer.length = 0;
-    edgesBuffer.length = 0;
-    packagesBuffer.length = 0;
+    applyBuffers();
 
     var lastItem = document.getElementById("ss_elem_list").lastChild;
     while (lastItem && lastItem.getAttribute("style") === "display:none;") {

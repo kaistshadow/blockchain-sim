@@ -366,16 +366,14 @@ class PackagesHandler {
   }
 
   /**
-   * Scan for missing nodes and remove corresponding edges, if any.
+   * Scan for missing edges and remove corresponding packages, if any.
    * @private
    */
   _removeInvalidPackages() {
     let packagesToDelete = []
 
     util.forEach(this.body.packages, (pkg, id) => {
-      let edgeId = pkg.edgeId
-
-      if (this.body.edges.hasOwnProperty(edgeId) === false) {
+      if (pkg.edge === undefined) {
         packagesToDelete.push(id)
       }
     })

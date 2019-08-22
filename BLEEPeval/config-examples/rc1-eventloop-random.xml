@@ -9,7 +9,7 @@
   <plugin id="CLIENT" path="~/.bleep/plugins/libNODE_Random_client.so" />
 
 
-  <!-- the length of our experiment in seconds  1404101800-->
+  <!-- the length of our experiment in seconds -->
   <kill time="1600" />
   <!-- our nodes -->
 

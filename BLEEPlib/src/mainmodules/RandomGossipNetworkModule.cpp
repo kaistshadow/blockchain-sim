@@ -187,7 +187,7 @@ bool RandomGossipNetworkModule::MulticastMessage(std::shared_ptr<Message> messag
     shadow_push_eventlog(buf);
 
     PeerId myId = *peerManager.GetMyPeerId();
-    std::vector<PeerId> dests = GetNeighborPeerIds();
+    std::vector<PeerId> dests = GetNeighborPeerIds(PeerConnectMode::ConnectExceptClient);
     if (dests.size() == 0) return true;
     auto idxs = GenRandomNumSet(dests.size(), fanOut);
     for (int i : idxs){
@@ -213,7 +213,7 @@ bool RandomGossipNetworkModule::ForwardMessage(std::shared_ptr<Message> message)
     shadow_push_eventlog(buf);
 
     PeerId myId = *peerManager.GetMyPeerId();
-    std::vector<PeerId> dests = GetNeighborPeerIds();
+    std::vector<PeerId> dests = GetNeighborPeerIds(PeerConnectMode::ConnectExceptClient);
     if (dests.size() == 0) return true;
     auto idxs = GenRandomNumSet(dests.size(), fanOut);
     for (int i : idxs) {

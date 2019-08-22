@@ -34,9 +34,9 @@ bool RandomGossipNetworkModule::AsyncConnectPeer(PeerId id, double time) {
     if (peerManager.HasEstablishedDataSocket(id))
         return false;
 
-    char buf[256];
-    sprintf(buf, "API,AsyncConnectPeer,%s,%f", id.GetId().c_str(), time);
-    shadow_push_eventlog(buf);
+    // char buf[256];
+    // sprintf(buf, "API,AsyncConnectPeer,%s,%f", id.GetId().c_str(), time);
+    // shadow_push_eventlog(buf);
 
     if (time > 0) {
         new AsyncConnectTimer(id, time, this, _mainEventManager);
@@ -100,10 +100,10 @@ bool RandomGossipNetworkModule::UnicastMessage(PeerId dest, std::shared_ptr<Mess
         return false;
 
     char buf[256];
-    sprintf(buf, "API,UnicastMessage,%s,%s",
-            dest.GetId().c_str(),
-            message->GetType().c_str());
-    shadow_push_eventlog(buf);
+    // sprintf(buf, "API,UnicastMessage,%s,%s",
+    //         dest.GetId().c_str(),
+    //         message->GetType().c_str());
+    // shadow_push_eventlog(buf);
 
     int socketFD = peerManager.GetConnectedSocketFD(dest);
     std::shared_ptr<DataSocket_v2> dataSocket = socketManager.GetDataSocket(socketFD);
@@ -189,6 +189,9 @@ bool RandomGossipNetworkModule::SendMulticastMsg(PeerId dest, std::shared_ptr<Me
             message->GetType().c_str(),
             message->GetMessageId().c_str());
     shadow_push_eventlog(buf);
+
+
+
     // printf("sendMessage %s %s\n",
     //         peerManager.GetMyPeerId()->GetId().c_str(),
     //         dest.GetId().c_str());
@@ -197,9 +200,9 @@ bool RandomGossipNetworkModule::SendMulticastMsg(PeerId dest, std::shared_ptr<Me
 }
 
 bool RandomGossipNetworkModule::MulticastMessage(std::shared_ptr<Message> message){
-    char buf[256];
-    sprintf(buf, "API,MulticastMessage,%s", message->GetType().c_str());
-    shadow_push_eventlog(buf);
+    // char buf[256];
+    // sprintf(buf, "API,MulticastMessage,%s", message->GetType().c_str());
+    // shadow_push_eventlog(buf);
 
     PeerId myId = *peerManager.GetMyPeerId();
     std::vector<PeerId> dests = GetNeighborPeerIds(PeerConnectMode::ConnectExceptClient);
@@ -223,9 +226,9 @@ bool RandomGossipNetworkModule::MulticastMessage(std::shared_ptr<Message> messag
 }
 
 bool RandomGossipNetworkModule::ForwardMessage(std::shared_ptr<Message> message){
-    char buf[256];
-    sprintf(buf, "API,ForwardMessage,%s", message->GetType().c_str());
-    shadow_push_eventlog(buf);
+    // char buf[256];
+    // sprintf(buf, "API,ForwardMessage,%s", message->GetType().c_str());
+    // shadow_push_eventlog(buf);
 
     PeerId myId = *peerManager.GetMyPeerId();
     std::vector<PeerId> dests = GetNeighborPeerIds(PeerConnectMode::ConnectExceptClient);

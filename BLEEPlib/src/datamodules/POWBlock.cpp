@@ -4,10 +4,55 @@
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/iostreams/device/array.hpp>
 
+#include <time.h>
+
 #include "POWBlock.h"
 #include "../crypto/SHA256.h"
 
+
 using namespace libBLEEP;
+
+std::map<std::string, std::map<std::string, struct timespec> > libBLEEP::blocktimelogs;
+
+int libBLEEP::sentPOWMsgnum = 0;
+int libBLEEP::sentPOWBlknum = 0;
+int libBLEEP::recvPOWBlknumfork = 0;
+
+// buf needs to store 30 characters
+static int timespec2str(char *buf, uint len, const struct timespec *ts) {
+    uint ret;
+    struct tm t;
+
+    tzset();
+    if (localtime_r(&(ts->tv_sec), &t) == NULL)
+        return 1;
+
+    ret = strftime(buf, len, "%F %T", &t);
+    if (ret == 0)
+        return 2;
+    len -= ret - 1;
+
+    ret = snprintf(&buf[strlen(buf)], len, ".%09ld", ts->tv_nsec);
+    if (ret >= len)
+        return 3;
+
+    return 0;
+}
+
+void libBLEEP::PrintBlockTimeLogs() {
+    for (const auto &blkpair : blocktimelogs) {
+        // std::cout << "PrintBlockTimeLogs:blockmsgid=" << blkpair.first << "\n";
+        for (const auto &times : blkpair.second) {
+            const uint TIME_FMT = strlen("2012-12-31 12:59:59.123456789") + 1;
+            char timestr[TIME_FMT];
+            if (timespec2str(timestr, sizeof(timestr), &times.second) != 0) {
+                std::cout << "timespec2str failed" << "\n";
+                exit(-1);
+            }
+            std::cout << "PrintBlockTimeLogs," << blkpair.first << "," << times.first << "," << timestr << "\n";
+        }
+    }
+}
 
 void POWBlock::SetTxHash() {
     // TODO: build merkle tree & calculate root hash

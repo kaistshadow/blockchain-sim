@@ -1,9 +1,31 @@
 #include "GlobalClock.h"
 #include <iostream>
+#include <string.h>
 
 using namespace libBLEEP;
 
 long libBLEEP::globalclock_starttime = 946684800; // hardcoded for shadow start time
+
+// buf needs to store 30 characters
+static int timespec2str(char *buf, uint len, struct timespec *ts) {
+    uint ret;
+    struct tm t;
+
+    tzset();
+    if (localtime_r(&(ts->tv_sec), &t) == NULL)
+        return 1;
+
+    ret = strftime(buf, len, "%F %T", &t);
+    if (ret == 0)
+        return 2;
+    len -= ret - 1;
+
+    ret = snprintf(&buf[strlen(buf)], len, ".%09ld", ts->tv_nsec);
+    if (ret >= len)
+        return 3;
+
+    return 0;
+}
 
 double libBLEEP::GetGlobalClock() {
     // auto now = std::chrono::high_resolution_clock::now();
@@ -49,4 +71,17 @@ void libBLEEP::PrintTimeDiff(const char* prefix, const struct timespec& start, c
                         ? (end.tv_nsec - start.tv_nsec) / 1e6 + (end.tv_sec - start.tv_sec) * 1e3
                         : (start.tv_nsec - end.tv_nsec) / 1e6 + (end.tv_sec - start.tv_sec - 1) * 1e3;
     std::cout << prefix << ": " << milliseconds << "milliseconds" << "\n";
+}
+
+void libBLEEP::PrintTimespec(const char* prefix) {
+    struct timespec tspec;
+    clock_gettime(CLOCK_MONOTONIC, &tspec);
+    const uint TIME_FMT = strlen("2012-12-31 12:59:59.123456789") + 1;
+    char timestr[TIME_FMT];
+    if (timespec2str(timestr, sizeof(timestr), &tspec) != 0) {
+        std::cout << "timespec2str failed" << "\n";
+        exit(-1);
+    }
+    std::cout << timestr << ":" << prefix << "\n";
+    return;
 }

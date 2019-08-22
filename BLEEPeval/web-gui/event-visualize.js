@@ -498,7 +498,6 @@ function appendBlock(peerId, hash, prevHash, timestamp) {
     // ledgerEdges.update({id:peerId, from:hash, to:peerId});
     // ledgerNodes.add({id:peerId, label:peerId});
 
-
 }
 
 function removeBlock(peerId, hash, prevHash, timestamp) {

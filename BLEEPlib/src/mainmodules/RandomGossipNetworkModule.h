@@ -363,6 +363,7 @@ namespace libBLEEP {
         bool UnicastMessage(PeerId dest, std::shared_ptr<Message> message);
 
         bool MulticastMessage(std::shared_ptr<Message> message);
+        bool ForwardMessage(std::shared_ptr<Message> message); // separate from multicastMessage for debugging
 
         bool DisconnectPeer(PeerId id);
 

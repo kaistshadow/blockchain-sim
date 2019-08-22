@@ -61,6 +61,7 @@ namespace libBLEEP {
         std::list<std::shared_ptr<WriteMsg> > _sendBuff;
 
     public:
+        SocketRecvBuffer& GetRecvBuff() { return _recvBuff; }
         /* Every data socket are created after the ListenSocket or ConnectSocket 
            are created and estabilished. 
            Thus, constructor of the DataSocket receives the socket fd that
@@ -74,6 +75,7 @@ namespace libBLEEP {
         std::pair < bool, std::shared_ptr<Message> > DoRecv(); /* do recv and return pointer for received Message (if fully received) */
         DoSendResultEnum DoSend(); /* do actual send (by retrieving the data stream from sendBuff) */
         void AppendMessageToSendBuff(std::shared_ptr<Message> message); /* append a requested message into internal sendBuff */
+        void AppendMessageToSendBuff(std::shared_ptr<Message> message, PeerId dest); /* append a requested message into internal sendBuff */
 
         virtual ~DataSocket_v2();
         virtual SocketTypeEnum GetType() { return SocketTypeEnum::DataSocket; }

@@ -11,6 +11,7 @@ startButton.addEventListener('click', resetVisualization);
 var toggleButton;
 toggleButton = document.getElementById("toggle");
 
+var peerHash = {};
 
 var muObserver = new MutationObserver(function(mutations) {
 
@@ -527,21 +528,32 @@ function appendBlock(peerId, hash, prevHash, timestamp) {
     }
 
     // add node pointer
+    peerHash[peerId] = hash;
 
-
-    edges.remove(peerId);
-    try {
-        edges.add({id:peerId, from:hash, to:peerId});
-    } catch(err) {
-    }
-    try {
-        nodes.update({id:peerId, label:peerId});
-    } catch(err) {}
+    // edges.remove(peerId);
+    // try {
+    //     edges.add({id:peerId, from:hash, to:peerId});
+    // } catch(err) {
+    // }
+    // try {
+    //     nodes.update({id:peerId, label:peerId});
+    // } catch(err) {}
 
     // nodes.remove({id:peerId});
     // edges.update({id:peerId, from:hash, to:peerId});
     // nodes.add({id:peerId, label:peerId});
 
+}
+
+function drawBLEEPNode() {
+    for (var peer in peerHash) {
+        try {
+            edges.add({id:peer, from:peerHash[peer], to:peer});
+        } catch(err) {}
+        try {
+            nodes.update({id:peer, label:peer});
+        } catch(err) {}
+    }
 }
 
 function removeBlock(peerId, hash, prevHash, timestamp) {

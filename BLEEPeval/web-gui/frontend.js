@@ -267,6 +267,7 @@ $(function () {
                     }
                 }
             }
+            drawBLEEPNode();
             endInitialLoading();
         } else if (json.type === 'graph') {
             addMessage("Notice", "Snapshot of the blockchain graph is received",

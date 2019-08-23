@@ -19,11 +19,21 @@ BLEEPeval/*-datadir/
 BLEEPeval/*_datadir_*/
 BLEEPeval/web-gui/node_modules/
 BLEEPeval/web-gui/package-lock.json
+<<<<<<< HEAD
+BLEEPeval/web-gui/vis/dist/
+BLEEPeval/web-gui/vis/node_modules/
+BLEEPeval/web-gui/vis/npm-debug.log
+BLEEPeval/web-gui/vis/package-lock.json
+BLEEPeval/web-gui/vis/yarn-error.log
+=======
 BLEEPeval/web-gui/.tern-port
+>>>>>>> origin/master
 
 terraform.tfstate
 terraform.tfstate.backup
 .terraform
+<<<<<<< HEAD
+=======
 
 test/BLEEP/internet_topology/atlas-ccs18.xml
 
@@ -34,3 +44,4 @@ aws_infra/*ec2_outputs*/
 aws_infra/admin
 aws_infra/admin.pub
 aws_infra/cur_ips
+>>>>>>> origin/master

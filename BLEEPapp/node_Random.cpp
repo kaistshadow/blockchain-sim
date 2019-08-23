@@ -7,16 +7,25 @@
 
 #include "utility/ArgsManager.h"
 #include "utility/Random.h"
+#include "utility/tinyxml2.h"
 
+#include <iostream>
+#include <fstream>
 
 using namespace libBLEEP;
 
 void  genPeerList(std::vector<PeerId> &lst, std::string myId, int maxPeerNum){
-    for(int i = 0; i < maxPeerNum; i++){
-        char name[10];
-        sprintf(name, "bleep%d", i);
-        if(myId == name) break;
-        lst.push_back(PeerId(name));
+    char current_config[50];
+    sprintf(current_config, "config-examples/current-config.%d.xml", (int) getppid() );
+    tinyxml2::XMLDocument doc;
+    auto errorId = doc.LoadFile(current_config);
+    if (!errorId) {
+        for (tinyxml2::XMLElement * node = doc.FirstChildElement("shadow")->FirstChildElement("node");
+            node != NULL; node = node->NextSiblingElement()) {
+                const char * nodeId = node->Attribute("id");
+                if (nodeId == myId) break;
+                lst.push_back(PeerId(nodeId));
+        }
     }
 }
 

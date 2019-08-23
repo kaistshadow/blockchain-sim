@@ -3,15 +3,16 @@
     <head>
         <meta charset="utf-8">
         <title>BLEEP - Blockchain Emulation and Evaluation Platform</title>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.js"></script>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="vis/dist/vis.js"></script>
+        <link href="vis/dist/vis-network.min.css" rel="stylesheet" type="text/css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <!-- <script src="http://visjs.org/dist/vis.js"></script>
              <link href="http://visjs.org/dist/vis.css" rel="stylesheet" type="text/css" /> -->
         <script src="plotly-latest.min.js"></script>
         <script type="text/javascript" src="http://www.google.com/jsapi"></script>
         <script type="text/javascript" src="link_network/network.js"></script>
-
+        
+        <link rel="shortcut icon" href="">
 
         <link href="listbox/listbox.css" rel="stylesheet">
         <script src="listbox/examples.js" type="text/javascript"></script>
@@ -84,6 +85,16 @@
          .hide {
              display: none;
          }
+         .loader {
+            border: 10px solid #b8b8b8;
+            border-radius: 50%;
+            border-top: 10px solid #3498db;
+            width: 30px;
+            height: 30px;
+            -webkit-animation: spin 2s linear infinite; /* Chrome < 43.0 */
+            -moz-animation: spin 2s linear infinite; /* Firefox < 16.0 */
+            animation: spin 2s linear infinite;
+         }
 
          /* * { font-family:tahoma; font-size:12px; padding:0px; margin:0px; } */
          p { line-height:18px; }
@@ -92,10 +103,26 @@
              border:1px solid #CCC; height: 200px; }
          #input { border-radius:2px; border:1px solid #ccc;
              margin-top:10px; padding:5px; width:400px;  }
-         #status { width:88px; display:block; float:left; margin-top:15px; }
+         #toggle-btn {
+             border-width: 2px;
+             border-color: white #909090 #909090 white;
+             background-color: #ccc;
+         }
+         #toggle-btn[toggled] {
+             border-color: #909090 white white #909090;
+             background-color: #aaa;
+         }
+         #status { width:88px; display:block; float:left; margin-top:10px; }
+         #experiments { border: 1px solid #ccc; border-radius: 2px; margin-top: 12px}
+         #experiments p {margin: 0;}
+         #experiment-list { margin-top: 0; columns: 2; -webkit-columns: 2; -moz-columns: 2;}
          #node_API_event_list {
              max-height: 18em;
              overflow-y: auto;
+             position: relative;
+         }
+         #eventvisualize {
+             border: 1px solid lightgray;
              position: relative;
          }
          #ledgereventvisualize{
@@ -132,6 +159,23 @@
              height:90vh;
              border: 1px solid lightgray;
          }
+
+         /* Chrome < 43.0 */
+         @-webkit-keyframes spin {
+             0% { -webkit-transform: rotate(0deg); }
+             100% { -webkit-transform: rotate(360deg); }
+         }
+
+         /* Firefox < 16.0 */
+         @-moz-keyframes spin {
+             0% { -moz-transform: rotate(0deg); }
+             100% { -moz-transform: rotate(360deg); }
+         }
+
+         @keyframes spin {
+             0% { transform: rotate(0deg); }
+             100% { transform: rotate(360deg); }
+         }
         </style>
     </head>
     <body>
@@ -140,8 +184,8 @@
                 <h1>BLEEP Web Interface</h1>
             </div>
             <div class="content">
-                <!-- <p>You can re-run the blockchain experiment by typing 'visualize' on command box.</p>
-                     <p>The experiment will be automatically executed on back-end server.  </p> -->
+                <p>You can re-run the blockchain experiment by typing 'visualize' on command box.</p>
+                <p>The experiment will be automatically executed on back-end server.  </p>
             </div>
             <div class="wrapper">
                 <div class="leftcontent">
@@ -191,8 +235,8 @@
                         <div role="toolbar" aria-label="Actions" class="toolbar">
                             <button id="ex1-start" class="toolbar-item" aria-disabled="false" >StartFromBeginning</button>
                             <button id="ex1-up" class="toolbar-item selected" aria-keyshortcuts="Alt+ArrowUp" aria-disabled="true">Prev</button>
-                            <button id="ex1-down" class="toolbar-item" tabindex="-1" aria-keyshortcuts="Alt+ArrowDown" aria-disabled="true">Next</button>
-                            <button id="toggle" class="toolbar-item" aria-disabled="false">TogglePhysics</button>
+                            <button id="ex1-down" class="toolbar-item" aria-keyshortcuts="Alt+ArrowDown" aria-disabled="true">Next</button>
+                            <button id="toggle-btn" class="toolbar-item" aria-disabled="false">TogglePhysics</button>
                             <!-- <button id="ex1-delete" class="toolbar-item move-right-btn" tabindex="-1" aria-keyshortcuts="Alt+ArrowRight Delete" aria-disabled="true">Not Important</button> -->
                         </div>
                     </div>
@@ -205,6 +249,19 @@
                         <span id="status">Connecting...</span>
                         <input type="text" id="input" disabled="disabled" />
                     </div>
+                    <div id="experiments">
+                        <p>Experiments:</p>
+                        <ul id="experiment-list">
+                            <li id="basic-eventloop"><a href="javascript:;">basic eventloop</a></li>
+                            <li id="pow-5"><a href="javascript:;">pow 5</a></li>
+                            <li id="pow-large"><a href="javascript:;">pow large</a></li>
+                            <li id="gossip"><a href="javascript:;">gossip</a></li>
+                            <ol style="padding-left: 10px">
+                                <li id="generate"><a href="javascript:;">generate eclipse</a></li>
+                                <li id="eclipse"><a href="javascript:;">run eclipse</a></li>
+                            </ol>
+                        </ul>
+                    </div>
                 </div>
                 <div class="clearfix"></div>
             </div>
@@ -213,7 +270,6 @@
             <div class="content">
                 <h1> Network Event Visualization</h1>
             </div>
-            <!-- <div id="eventvisualize">Test Graph</div> -->
             <table>
                 <tr>
                     <td>
@@ -233,6 +289,7 @@
                     </td>
                 </tr>
             </table>
+            <div id="configure-list"></div>
             
             <div class="content">
                 <h1> Ledger Event Visualization</h1>

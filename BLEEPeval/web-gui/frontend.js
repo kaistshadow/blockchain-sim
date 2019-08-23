@@ -245,26 +245,20 @@ $(function () {
                     var from = eventlog.args.split(",")[0];
                     var to = eventlog.args.split(",")[1];
                     addEdge(from, to);
-                } else if (eventlog.type === "DisconnectPeer") {
-                    var from = eventlog.args.split(",")[0];
-                    var to = eventlog.args.split(",")[1];
-                    removeEdge(from, to);
-                    removeEdge(to, from);
                 } else if (eventlog.type === "BlockAppend") {
                     var peerId = eventlog.host;
                     var hash = eventlog.args.split(",")[1];
                     var prevHash = eventlog.args.split(",")[2];
                     var timestamp = eventlog.args.split(",")[3];
                     appendBlock(peerId, hash, prevHash, timestamp);
-                } else if (eventlog.type === "ResultStat") {
-                    var statName = eventlog.args.split(",")[0];
-                    if (statName === "TotalMinedBlockNum") {
-                        var curBlkNum = Number(document.getElementById('totalblk').value);
-                        var blockchainLength = eventlog.args.split(",")[2];
-                        curBlkNum += Number(eventlog.args.split(",")[1]);
-                        document.getElementById('totalblk').value = String(curBlkNum);
-                        document.getElementById('forkrate').value = (curBlkNum - Number(blockchainLength))/Number(blockchainLength);
-                    }
+                } else if (eventlog.type === "DisconnectPeer") {
+                    // Ignore disconnection because it is not reversible yet
+
+                    /*var from = eventlog.args.split(",")[0];
+                    var to = eventlog.args.split(",")[1];
+                    removeEdge(from, to);
+                    removeEdge(to, from);*/
+                    alert("Disconnect is not supported yet");
                 }
             }
             endInitialLoading();
@@ -296,6 +290,14 @@ $(function () {
             }
         } else if (json.type === 'userindex') {
             myIndex = json.data;
+        }
+        else if (json.type === 'newExperiment') {
+            var domain = new URL(window.location.href);
+            domain.port = json.port;
+            window.open(domain.href);
+        }
+        else if (json.type === 'error') {
+            console.log(`Experiment error: ${json.stderr}`);
         }
         else {
             console.log('Hmm..., I\'ve never seen JSON like this: ', json);
@@ -334,6 +336,12 @@ $(function () {
             // sends back response
             input.attr('disabled', 'disabled');
         }
+    });
+
+    $("#experiment-list li").on("click", function () {
+        var msg = "new-experiment " + this.id,
+            conf = {};
+        connection.send(JSON.stringify({message: msg, configure: conf}));
     });
 
     /**

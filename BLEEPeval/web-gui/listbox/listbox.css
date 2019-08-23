@@ -153,9 +153,10 @@ button[aria-disabled="true"] {
   background: #ccc;
 }
 
-.toolbar-item[aria-disabled="false"]:focus {
+.toolbar-item[aria-disabled="false"]:focus{
   background-color: #eee;
 }
+
 
 .offscreen {
   clip: rect(1px 1px 1px 1px);

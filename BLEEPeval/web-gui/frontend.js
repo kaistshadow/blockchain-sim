@@ -251,6 +251,7 @@ $(function () {
                     var prevHash = eventlog.args.split(",")[2];
                     var timestamp = eventlog.args.split(",")[3];
                     appendBlock(peerId, hash, prevHash, timestamp);
+                    appendBlockMap(peerId, hash, prevHash, timestamp);
                 } else if (eventlog.type === "DisconnectPeer") {
                     // Ignore disconnection because it is not reversible yet
 

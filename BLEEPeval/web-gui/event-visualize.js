@@ -1,14 +1,18 @@
 var network = null;
 var physics = true;
-
 var nodes, edges, packages;
 var nodesBuffer = [],
     edgesBuffer = [],
     packagesBuffer = [],
     blocksBuffer = [];
 var bufferedOperation = '';
+
 var ledgerNodes, ledgerEdges;
 var ledger = null;
+
+var mapNodes, mapEdges;
+var blockchainMap = null;
+
 var ImgDIR = 'link_network/img/';
 
 var toggleButton = document.getElementById("toggle-btn");
@@ -260,7 +264,7 @@ function drawVisualization() {
     // Instantiate our graph object.
     network = new vis.Network(document.getElementById('eventvisualize'), data, options);
 
-    drawResizer('eventvisualize');
+    drawResizer('eventvisualize', network);
 
     // Stops network physics after initial loading
     network.on('stabilized', function() {
@@ -310,6 +314,43 @@ function drawVisualization() {
     };
 
     ledger = new vis.Network(container, data, ledgerplotoptions);
+
+    container = document.getElementById('blockchain-map');
+    var nodesArray = [
+        {id:"0000000000", label:"genesis"}
+    ];
+    var edgesArray = [
+    ];
+    mapNodes = new vis.DataSet(nodesArray);
+    mapEdges = new vis.DataSet(edgesArray);
+    var data = {
+        nodes: mapNodes,
+        edges: mapEdges
+    };
+    var mapplotoptions = {
+        height: '300px',
+        layout: {
+            hierarchical: {
+                direction: "UD",
+                sortMethod: "directed",
+                levelSeparation: 30,
+                nodeSpacing : 100
+            }
+        },
+        interaction: {dragNodes :false},
+        physics: {
+            enabled: false,
+        },
+        nodes : {
+            shape: "box",
+            size: 50
+        },
+        edges : {
+            length: 1
+        }
+    };
+    blockchainMap = new vis.Network(container, data, mapplotoptions);
+    blockchainMap.on('selectNode', loadSnapshot);
 }
 
 function recvMessage(from, to, hashId, buffered = true) {
@@ -457,6 +498,36 @@ function removeEdge(from, to, buffered = true) {
             alert(err);
         }
     }
+}
+
+function appendBlockMap(peerId, hash, prevHash, timestamp) {
+    if (prevHash === "0000000000") {
+        // (catch err because dataSet returns error when we try to add existed node)
+        try {
+            mapNodes.add({id:prevHash, label:"genesis"});
+        } catch(err) {
+
+        }
+    }
+
+    try {
+        mapNodes.add({id:hash, label:timestamp});
+    } catch(err) {
+    }
+
+    try {
+        mapEdges.add({id:prevHash+hash, from:prevHash, to:hash});
+    } catch(err) {
+    }
+
+    mapEdges.remove(peerId);
+    try {
+        mapEdges.add({id:peerId, from:hash, to:peerId});
+    } catch(err) {
+    }
+    try {
+        mapNodes.update({id:peerId, label:peerId});
+    } catch(err) {}
 }
 
 function appendBlock(peerId, hash, prevHash, timestamp) {
@@ -629,8 +700,14 @@ function onNodeSelect() {
     $('#node_API_event_list').animate({scrollTop: $('#node_API_event_list').prop("scrollHeight")}, 0 /*duration*/);
 }
 
+function loadSnapshot() {
+    var selection = blockchainMap.getSelectedNodes();
+    var blockId = selection[0];
+    $('#ss_elem_list li[role="option"]:not([style="display:none;"]):contains(' + blockId + ')')[0].click();
+}
+
 // Custom resize button, we need this because vis Network captures click events on the canvas
-function drawResizer(element) {
+function drawResizer(element, network) {
     var frame = document.getElementById(element);
     frame.rsz = document.createElement("div");
     frame.rsz.style.position = "absolute";

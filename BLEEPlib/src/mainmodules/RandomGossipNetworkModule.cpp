@@ -225,7 +225,7 @@ bool RandomGossipNetworkModule::MulticastMessage(std::shared_ptr<Message> messag
     return true;
 }
 
-bool RandomGossipNetworkModule::ForwardMessage(std::shared_ptr<Message> message){
+bool RandomGossipNetworkModule::ForwardMessage(std::shared_ptr<Message> message, std::shared_ptr<PeerId> from){
     // char buf[256];
     // sprintf(buf, "API,ForwardMessage,%s", message->GetType().c_str());
     // shadow_push_eventlog(buf);
@@ -236,8 +236,10 @@ bool RandomGossipNetworkModule::ForwardMessage(std::shared_ptr<Message> message)
     auto idxs = GenRandomNumSet(dests.size(), fanOut);
     for (int i : idxs) {
         // if (checkSourcePeer(message, dests[i])){ // send back to source for debugging
-        if(SendMulticastMsg(dests[i], message) == false)
-            return false;
+        if (dests[i].GetId() != from->GetId()) {
+            if(SendMulticastMsg(dests[i], message) == false)
+                return false;
+        }
             // }
     }
     return true;

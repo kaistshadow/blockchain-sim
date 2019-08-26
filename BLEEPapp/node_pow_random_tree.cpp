@@ -18,6 +18,11 @@
 
 using namespace libBLEEP;
 
+static void printHash(std::string hash) {
+    gLog << "blockhash:" << UINT256_t((const unsigned char*)hash.c_str(), 32) << "\n";
+    return;
+}
+
 void  genPeerList(std::vector<PeerId> &lst, std::string myId, int maxPeerNum){
     for(int i = 0; i < maxPeerNum; i++){
         char name[10];
@@ -260,6 +265,7 @@ int main(int argc, char *argv[]) {
                     // gLog << "RecvMessage" << "\n";
                     PrintTimespec("mainEventLoop AsyncEventEnum::recvMessage");
                     std::shared_ptr<Message> msg = event.GetData().GetReceivedMsg();
+                    std::shared_ptr<PeerId> msgFrom = event.GetData().GetReceivedFromPeerId();
                     MessageType messageType = msg->GetType();
                     if (messageType == "newTx") {
                         boost::shared_ptr<Transaction> receivedTx = GetDeserializedTransaction(msg->GetPayload());
@@ -280,6 +286,10 @@ int main(int argc, char *argv[]) {
                         Inventory inv = GetDeserializedInventory(msg->GetPayload());
                         const std::list<std::string>& hashlist = inv.GetHashlist();
                         gLog << "inventory hashlist size:" << hashlist.size() << "\n";
+
+                        for (auto h : hashlist) {
+                            printHash(h);
+                        }
                         
                         if (ledger.HasProcessingInv())
                             break;
@@ -312,7 +322,7 @@ int main(int argc, char *argv[]) {
                             
                             // propagate to network
                             PeerId myPeerId(gArgs.GetArg("-id"));
-                            PeerId destPeerId = msg->GetSource();
+                            PeerId destPeerId = *msgFrom;
                             std::string payload = GetSerializedString(powmsg);
                             std::shared_ptr<Message> msg = std::make_shared<Message>(myPeerId, destPeerId, 
                                                                                      "POWConsensusProtocol", payload);
@@ -330,19 +340,28 @@ int main(int argc, char *argv[]) {
 
 
                             // Second, if hash tree lacks of actual block, request the block
+                            bool containAll = true;
                             for (std::string h : hashlist) {
                                 if (!ledger.ContainBlock(h)) {
                                     gLog << "send POW getdata message" << "\n";
                                     POWConsensusMessage powmsg("getdata", h);
                                     // propagate to network
                                     PeerId myPeerId(gArgs.GetArg("-id"));
-                                    PeerId destPeerId = msg->GetSource();
+                                    PeerId destPeerId = *msgFrom;
                                     std::string payload = GetSerializedString(powmsg);
                                     std::shared_ptr<Message> msg = std::make_shared<Message>(myPeerId, destPeerId, 
                                                                                              "POWConsensusProtocol", payload);
                                     randomNetworkModule.UnicastMessage(destPeerId, msg);
+                                    containAll = false;
                                     break; // request only a single block
                                 }
+                                else 
+                                    gLog << "ledger contains" << h << "\n";
+                            }
+
+                            if (containAll) {
+                                gLog << "stop processing inv" << "\n";
+                                ledger.StopProcessingInv();
                             }
 
                             M_Assert( lasthash == ledger.GetLastHash(), "Lasthash should not be changed");
@@ -472,6 +491,15 @@ int main(int argc, char *argv[]) {
                                 if (invAllProcessed) {
                                     gLog << "stop processing inv" << "\n";
                                     ledger.StopProcessingInv();
+
+                                    // create blk hash message
+                                    PeerId src(gArgs.GetArg("-id"));
+                                    PeerId dest = PeerId("Multicast");
+                                    std::string payload = GetSerializedString(inv);
+                                    std::shared_ptr<Message> nMsg = std::make_shared<Message>(src, dest, "Inventory", payload);
+                                    // propagate to network
+                                    randomNetworkModule.ForwardMessage(nMsg, std::make_shared<PeerId>(src));
+                                    randomNetworkModule.InsertMessageSet(nMsg->GetMessageId());
                                 }
                             }
                         } 
@@ -549,10 +577,10 @@ int main(int argc, char *argv[]) {
                 }
             case AsyncEventEnum::EmuBlockMiningComplete:
                 {
-                    char buf[256];
-                    sprintf(buf, "EmuBlockMiningComplete,%d,%lu",
-                            mined_block_num, ledger.GetNextBlockIdx() - 1);
-                    shadow_push_eventlog(buf);
+                    // char buf[256];
+                    // sprintf(buf, "EmuBlockMiningComplete,%d,%lu",
+                    //         mined_block_num, ledger.GetNextBlockIdx() - 1);
+                    // shadow_push_eventlog(buf);
 
                     // init_shadow_clock_update();
                     gLog << "block mining complte" << "\n";
@@ -566,11 +594,38 @@ int main(int argc, char *argv[]) {
                     inv.AppendHash(minedBlk->GetPrevBlockHash().str());
                     inv.AppendHash(minedBlk->GetBlockHash().str());
 
+                    const std::list<std::string>& hashlist = inv.GetHashlist();
+                    gLog << "sending inventory hashlist size:" << hashlist.size() << "\n";
+                    for (auto h : hashlist) {
+                        printHash(h);
+                    }
+
                     // create blk hash message
                     PeerId src(gArgs.GetArg("-id"));
-                    PeerId dest = PeerId("DestAll");
+                    PeerId dest = PeerId("Multicast");
                     std::string payload = GetSerializedString(inv);
                     std::shared_ptr<Message> nMsg = std::make_shared<Message>(src, dest, "Inventory", payload);
+
+                    std::stringstream str, str2;
+                    std::ostringstream ss, ss2;
+                    str << minedBlk->GetBlockHash();
+                    ss << str.rdbuf();
+                    std::string blockHash = ss.str();
+
+                    str2 << minedBlk->GetPrevBlockHash();
+                    ss2 << str2.rdbuf();
+                    std::string prevBlockHash = ss2.str();
+
+
+                    char buf2[256];
+                    sprintf(buf2, "EmuBlockMiningComplete,%s,%s,%f,%lu,%s",
+                            blockHash.substr(2, 10).c_str(),
+                            prevBlockHash.substr(2,10).c_str(),
+                            minedBlk->GetTimestamp(),
+                            ledger.GetNextBlockIdx(), 
+                            nMsg->GetMessageId().c_str());
+                    shadow_push_eventlog(buf2);
+
 
                     gLog << "Inventory message created" << "\n";
                     // add timestamp

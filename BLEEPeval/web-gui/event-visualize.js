@@ -207,6 +207,10 @@ google.setOnLoadCallback(drawVisualization);
 
 // Called when the Visualization API is loaded
 function drawVisualization() {
+    nodesBuffer = [];
+    edgesBuffer = [];
+    packagesBuffer = [];
+    bufferedOperation = '';
 
     nodes = new vis.DataSet([]);
     edges = new vis.DataSet([]);

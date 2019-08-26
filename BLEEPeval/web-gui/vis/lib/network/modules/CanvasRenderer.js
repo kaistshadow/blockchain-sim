@@ -427,12 +427,24 @@ class CanvasRenderer {
     let edges = this.body.edges
     let edgeIndices = this.body.edgeIndices
     let edge
+    let selected = []
 
     for (let i = 0; i < edgeIndices.length; i++) {
       edge = edges[edgeIndices[i]]
       if (edge.connected === true) {
-        edge.draw(ctx)
+        // set selected edges aside
+        if (edge.isSelected()) {
+          selected.push(edgeIndices[i])
+        } else {
+          edge.draw(ctx)
+        }
       }
+    }
+
+    // draw the selected edges on top
+    for (let i = 0; i < selected.length; i++) {
+      edge = edges[selected[i]]
+      edge.draw(ctx)
     }
   }
 
@@ -473,6 +485,7 @@ class CanvasRenderer {
   _animationStepPackages() {
     this.packagesTimer = undefined
     let interval = 1 / 60
+    let dataChanged = false
     let endAnimation = true
     let packages = this.body.packages
     for (let packageId in packages) {
@@ -481,7 +494,7 @@ class CanvasRenderer {
         if (pkg.autoProgress && pkg.isMoving) {
           if (pkg.progress >= 1.0) {
             delete packages[packageId]
-            this.body.emitter.emit('_dataChanged')
+            dataChanged = true
           }
           else {
             endAnimation = false
@@ -490,12 +503,15 @@ class CanvasRenderer {
         }
       }
     }
-    if (endAnimation) {
+    if (dataChanged === true) {
+      this.body.emitter.emit('_dataChanged')
+    }
+    if (endAnimation === true) {
       this.body.emitter.emit('_stopMovingPackages')
     }
     else {
-      this._redraw()
-      //this.body.emitter.emit('_requestRedraw')
+      //this._redraw()
+      this.body.emitter.emit('_requestRedraw')
       this._startMovingPackages()
     }
   }

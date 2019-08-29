@@ -1,5 +1,6 @@
 #include "SocketManager_v2.h"
 #include "../utility/Assert.h"
+#include "../utility/Logger.h"
 
 #include <strings.h>
 #include <unistd.h>
@@ -19,7 +20,7 @@ int libBLEEP::SocketManager_v2::CreateListenSocket(int port) {
 std::shared_ptr<ListenSocket_v2> libBLEEP::SocketManager_v2::GetListenSocket(int fd) {
     auto it = _listenSockets.find(fd);
     if (it == _listenSockets.end()) {
-        std::cout << "No valid listenSocket exists" << "\n";
+        gLog << "No valid listenSocket exists" << "\n";
         return nullptr;
     }
     return it->second;
@@ -33,7 +34,7 @@ void libBLEEP::SocketManager_v2::CreateDataSocket(int sfd) {
     std::shared_ptr<DataSocket_v2> new_socket = std::make_shared<DataSocket_v2>(sfd);
     _dataSockets[new_socket->GetFD()] = new_socket;
     
-    std::cout << "DataSocket created" << "\n";
+    gLog << "DataSocket created" << "\n";
 }
 
 void libBLEEP::SocketManager_v2::RemoveDataSocket(int fd) {
@@ -46,7 +47,7 @@ void libBLEEP::SocketManager_v2::RemoveDataSocket(int fd) {
 std::shared_ptr<DataSocket_v2> libBLEEP::SocketManager_v2::GetDataSocket(int fd) {
     auto it = _dataSockets.find(fd);
     if (it == _dataSockets.end()) {
-        std::cout << "No valid dataSocket exists" << "\n";
+        gLog << "No valid dataSocket exists" << "\n";
         return nullptr;
     }
     return it->second;

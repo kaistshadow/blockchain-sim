@@ -15,8 +15,11 @@ var blockchainMap = null;
 
 var ImgDIR = 'link_network/img/';
 
+var peerHash = {};
+
 var toggleButton = document.getElementById("toggle-btn");
 toggleButton.addEventListener('click', toggle);
+
 
 var muObserver = new MutationObserver(function(mutations) {
 
@@ -560,6 +563,7 @@ function appendBlock(peerId, hash, prevHash, timestamp) {
     } catch(err) {
     }
 
+
     ledgerEdges.remove(peerId);
     try {
         ledgerEdges.add({id:peerId, from:hash, to:peerId});
@@ -569,10 +573,24 @@ function appendBlock(peerId, hash, prevHash, timestamp) {
         ledgerNodes.update({id:peerId, label:peerId});
     } catch(err) {}
 
+    // add node pointer
+    peerHash[peerId] = hash;
+
     // ledgerNodes.remove({id:peerId});
     // ledgerEdges.update({id:peerId, from:hash, to:peerId});
     // ledgerNodes.add({id:peerId, label:peerId});
 
+}
+
+function drawBLEEPNode() {
+    for (var peer in peerHash) {
+        try {
+            edges.add({id:peer, from:peerHash[peer], to:peer});
+        } catch(err) {}
+        try {
+            nodes.update({id:peer, label:peer});
+        } catch(err) {}
+    }
 }
 
 function removeBlock(peerId, hash, prevHash, timestamp) {

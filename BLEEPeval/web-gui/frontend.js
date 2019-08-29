@@ -262,6 +262,7 @@ $(function () {
                     alert("Disconnect is not supported yet");
                 }
             }
+            drawBLEEPNode();
             endInitialLoading();
         } else if (json.type === 'graph') {
             addMessage("Notice", "Snapshot of the blockchain graph is received",

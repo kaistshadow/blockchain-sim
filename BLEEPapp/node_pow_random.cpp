@@ -125,7 +125,8 @@ int main(int argc, char *argv[]) {
     // std::cout << "time for executing loop:" << loopmilli << "\n";
 
 
-    // for testing DisconnectPeer API
+    // wait for stable connection
+    sleep(1);
 
     gArgs.ParseParameters(argc, argv);
 
@@ -152,7 +153,7 @@ int main(int argc, char *argv[]) {
             peerList.push_back(PeerId(neighborPeerId));
     }
 
-    randomNetworkModule.AsyncConnectPeers(peerList, connectPeerNum);
+    randomNetworkModule.AsyncConnectPeers(peerList, connectPeerNum, 0, ConnectionMethod::Random);
 
     // BasicNetworkModule basicNetworkModule(gArgs.GetArg("-id", "noid"), &mainEventManager);
 
@@ -255,9 +256,10 @@ int main(int argc, char *argv[]) {
                 }
             case AsyncEventEnum::RecvMessage:
                 {
-                    // std::cout << "RecvMessage" << "\n";
+                    std::cout << "RecvMessage" << "\n";
                     PrintTimespec("mainEventLoop AsyncEventEnum::recvMessage");
                     std::shared_ptr<Message> msg = event.GetData().GetReceivedMsg();
+                    std::shared_ptr<PeerId> msgFrom = event.GetData().GetReceivedFromPeerId();
                     MessageType messageType = msg->GetType();
                     if (messageType == "newTx") {
                         boost::shared_ptr<Transaction> receivedTx = GetDeserializedTransaction(msg->GetPayload());
@@ -273,7 +275,7 @@ int main(int argc, char *argv[]) {
                     } 
                     else if (messageType == "newBlock") {
                         std::shared_ptr<Block> receivedBlk = GetDeserializedBlock(msg->GetPayload());  
-                        // std::cout << "received newBlock" << "\n";
+                        std::cout << "received newBlock" << "\n";
 
                         std::shared_ptr<POWBlock> receivedPOWBlk = std::dynamic_pointer_cast<POWBlock> (receivedBlk); // we know it's POWBlock
                         M_Assert(receivedPOWBlk != nullptr, "it should be POWBlock");
@@ -311,8 +313,8 @@ int main(int argc, char *argv[]) {
                             /* received valid new blk message from neighbor,
                                and it is from longer blockchain than my blockchain.
                                Thus, request a new message for blocks of longer blockchain */
-                            // std::cout << GetGlobalClock() << ":Block (sented by " << msg->GetSource().GetId() << ") is received and longer than mine" << "\n";
-                            // std::cout << "Need to implement ReqBlocks, RespBlocks" << "\n";
+                            std::cout << GetGlobalClock() << ":Block (sented by " << msg->GetSource().GetId() << ") is received and longer than mine" << "\n";
+                            std::cout << "Need to implement ReqBlocks, RespBlocks" << "\n";
                             POWConsensusMessage powmsg("REQBLOCKS");
                         
                             // add timestamp
@@ -322,7 +324,7 @@ int main(int argc, char *argv[]) {
 
                             // propagate to network
                             PeerId myPeerId(gArgs.GetArg("-id"));
-                            PeerId destPeerId = msg->GetSource();
+                            PeerId destPeerId = *msgFrom;
                             std::string payload = GetSerializedString(powmsg);
                             std::shared_ptr<Message> msg = std::make_shared<Message>(myPeerId, destPeerId, 
                                                                                      "POWConsensusProtocol", payload);
@@ -333,12 +335,12 @@ int main(int argc, char *argv[]) {
                             struct timespec tspec;
                             clock_gettime(CLOCK_MONOTONIC, &tspec);
                             blocktimelogs[msg->GetMessageId()]["ForkBlockReceived"] = tspec;
-                            // std::cout << GetGlobalClock() << ":Block is received but not appended" << "\n";
+                            std::cout << GetGlobalClock() << ":Block is received but not appended" << "\n";
                         }
                     } 
                     else if (messageType == "POWConsensusProtocol") {
                         POWConsensusMessage receivedPOWmsg = GetDeserializedPOWConsensusMessage(msg->GetPayload());  
-                        // std::cout << "received POWConsensusProtocol message" << "\n";
+                        std::cout << "received POWConsensusProtocol message" << "\n";
                         if (receivedPOWmsg.GetType() == "REQBLOCKS") {
                             std::vector<POWBlock> blks;
                             std::list<POWBlock>& ledgerBlks = ledger.GetLedger();
@@ -400,6 +402,11 @@ int main(int argc, char *argv[]) {
                 }
             case AsyncEventEnum::EmuBlockMiningComplete:
                 {
+                    char buf[256];
+                    sprintf(buf, "EmuBlockMiningComplete,%d,%lu",
+                            mined_block_num, ledger.GetNextBlockIdx() );
+                    shadow_push_eventlog(buf);
+
                     // init_shadow_clock_update();
 
                     // std::cout << "block mining complte" << "\n";
@@ -433,34 +440,24 @@ int main(int argc, char *argv[]) {
                     randomNetworkModule.MulticastMessage(nMsg);
                     randomNetworkModule.InsertMessageSet(nMsg->GetMessageId());
 
-                    // PeerId myPeerId(gArgs.GetArg("-id"));
-                    // std::string payload = GetSerializedString(minedBlk);
-                    // for (auto neighborPeerId : gArgs.GetArgs("-connect")) {
-                    //     PeerId destPeerId(neighborPeerId);
-                    //     std::shared_ptr<Message> msg = std::make_shared<Message>(myPeerId, destPeerId, 
-                    //                                                              "newBlock", payload);
-                    //     basicNetworkModule.UnicastMessage(destPeerId, msg);
-                    // }
 
                     // std::cout << "mined block num = " << mined_block_num << "\n";
-                    if (ledger.GetNextBlockIdx() == 101) {
-                        PrintBlockTimeLogs();
 
-                        std::cout << "total_mined_block_num=" << mined_block_num << "\n";
-                        char buf[256];
-                        sprintf(buf, "ResultStat,%s,%d,%lu",
-                                "TotalMinedBlockNum",
-                                mined_block_num - 1, ledger.GetNextBlockIdx() - 1);
-                        shadow_push_eventlog(buf);
+
+                    // if (ledger.GetNextBlockIdx() == 101) {
+                    //     PrintBlockTimeLogs();
+
+                    //     std::cout << "total_mined_block_num=" << mined_block_num << "\n";
+                    //     char buf[256];
+                    //     sprintf(buf, "ResultStat,%s,%d,%lu",
+                    //             "TotalMinedBlockNum",
+                    //             mined_block_num - 1, ledger.GetNextBlockIdx() - 1);
+                    //     shadow_push_eventlog(buf);
 
                         
-                        exit(0);
-                    }
+                    //     exit(0);
+                    // }
 
-                    // next_shadow_clock_update("==== done processing EmuBlockMiningComplete Event");
-                    shadow_usleep(1000);
-                    PrintTimespec("EmuBlockMiningComplete processing ended");
-                    // double milli = next_shadow_clock_update("===== handling EmuBlockMiningComplete");
                     break;
                 }
             }

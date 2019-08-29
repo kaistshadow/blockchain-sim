@@ -8,6 +8,7 @@
 #include "../datamodules/Message.h"
 #include "../datamodules/Peer.h"
 #include "../utility/Assert.h"
+#include "../utility/Logger.h"
 
 #include "shadow_interface.h"
 #include <sys/socket.h>
@@ -49,7 +50,7 @@ namespace libBLEEP {
             std::shared_ptr<DataSocketWatcher> GetDataSocketWatcher(int fd) {
                 auto it = _dataSocketWatchers.find(fd);
                 if (it == _dataSocketWatchers.end()) {
-                    std::cout << "No valid dataSocketWatcher exists" << "\n";
+                    gLog << "No valid dataSocketWatcher exists" << "\n";
                     return nullptr;
                 }
                 return it->second;
@@ -68,7 +69,7 @@ namespace libBLEEP {
             ev::timer _timer; // destructor automatically stops the watcher
             PeerId _id;
             void _timerCallback(ev::timer &w, int revents) {
-                std::cout << "AsyncConnect timer callback executes!" << "\n";
+                gLog << "AsyncConnect timer callback executes!" << "\n";
                 _networkModule->AsyncConnectPeer(_id);
                 delete this;
             }
@@ -79,7 +80,7 @@ namespace libBLEEP {
                 _timer.set<AsyncConnectTimer, &AsyncConnectTimer::_timerCallback> (this);
                 _timer.set(time, 0.);
                 _timer.start();
-                std::cout << "timer started!" << "\n";
+                gLog << "timer started!" << "\n";
             }
         };
 
@@ -90,7 +91,7 @@ namespace libBLEEP {
 
             /* event io callback */
             void _listenSocketIOCallback (ev::io &w, int revents) {
-                std::cout << "listen socket IO callback called!" << "\n";
+                gLog << "listen socket IO callback called!" << "\n";
 
                 if (revents & EV_READ) {
                     int fd = w.fd;
@@ -129,7 +130,7 @@ namespace libBLEEP {
             void _dataSocketIOCallback (ev::io &w, int revents) {
                 M_Assert(_fd == w.fd, "fd must be same");
                 int fd = w.fd;
-                std::cout << "data socket IO callback called!" << "\n";
+                gLog << "data socket IO callback called!" << "\n";
 
                 if (revents & EV_READ) {
                     std::shared_ptr<DataSocket_v2> dataSocket = _networkModule->socketManager.GetDataSocket(fd);
@@ -187,7 +188,7 @@ namespace libBLEEP {
 
                             // append shadow log
                             std::shared_ptr<PeerId> neighborPeerId = _networkModule->peerManager.GetPeerIdBySocket(fd);
-                            std::cout << "message source:" << message->GetSource().GetId() << "\n";
+                            gLog << "message source:" << message->GetSource().GetId() << "\n";
                             M_Assert(neighborPeerId != nullptr, "no neighbor peer exists for given socket");
 
                             char buf[256];
@@ -220,10 +221,10 @@ namespace libBLEEP {
                 _watcher.set<DataSocketWatcher, &DataSocketWatcher::_dataSocketIOCallback> (this);
                 _watcher.start(fd, ev::READ); // ev::WRITE will be set only when there exists any pending send request.
                 _fd = fd;
-                std::cout << "dataSocketWatcher created" << "\n";
+                gLog << "dataSocketWatcher created" << "\n";
             }
             ~DataSocketWatcher() {
-                std::cout << "destructor called for dataSocketWatcher" << "\n";
+                gLog << "destructor called for dataSocketWatcher" << "\n";
             }
 
             void SetWritable() {
@@ -244,10 +245,10 @@ namespace libBLEEP {
 
             /* event io callback */
             void _connectSocketIOCallback (ev::io &w, int revents) {
-                std::cout << "connect socket IO callback called!!!" << "\n";
+                gLog << "connect socket IO callback called!!!" << "\n";
 
                 if (revents & EV_READ) {
-                    std::cout << "invalid event is triggered. " << "\n";
+                    gLog << "invalid event is triggered. " << "\n";
                     exit(-1);
                 } else if (revents & EV_WRITE) {
                     int fd = w.fd;

@@ -29,6 +29,7 @@ set(SRCS
   src/datamodules/Pipe.cpp
   src/datamodules/Socket.cpp
   src/datamodules/Message.cpp
+  src/datamodules/Inventory.cpp
   src/datamanagermodules/TxPool.cpp
   src/datamanagermodules/ShadowPipeManager.cpp
   src/datamanagermodules/PipeManager.cpp
@@ -45,6 +46,7 @@ set(SRCS
   src/utility/Random.cpp
   src/utility/ArgsManager.cpp
   src/utility/tinyxml2.cpp
+  src/utility/Logger.cpp
   src/datamodules/Socket_v2.cpp
   src/datamanagermodules/SocketManager_v2.cpp
   src/datamodules/POWBlock.cpp

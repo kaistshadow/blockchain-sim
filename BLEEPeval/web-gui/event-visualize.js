@@ -710,7 +710,11 @@ function loadSnapshot() {
     $('#ss_elem_list li[role="option"]:not([style="display:none;"]):contains(' + blockId + ')')[0].click();
 }
 
-// Custom resize button, we need this because vis Network captures click events on the canvas
+/**
+ * Custom resize button, we need this because vis Network captures click events on the canvas
+ * @param {string} element | The DOM element, may NOT have position static
+ * @param {Object} network | The network created from this element
+ */
 function drawResizer(element, network) {
     var frame = document.getElementById(element);
     frame.rsz = document.createElement("div");

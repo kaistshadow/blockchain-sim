@@ -21,8 +21,10 @@ process.argv.forEach(function (val, index, array) {
 // websocket and http servers
 var webSocketServer = require('websocket').server;
 var http = require('http');
-
+const {performance} = require('perf_hooks');
 var fs        = require('fs');
+
+var t0 = performance.now();
 
 /**
  * Global variables
@@ -95,14 +97,16 @@ function sendEventlogs(connection, shadowoutputfile) {
 
     console.log('start eventlog parsing ');
     for (let line of lines) {
-        var matches = line.match(rePattern);
-        if (matches) {
-            console.log('line matches : ' + line);
-            var eventhost = matches[1];
-            var eventtime = matches[2];
-            var eventtype = matches[3];
-            var eventargs = matches[4];
-            eventlogs.push({host:eventhost, time:eventtime,type:eventtype, args:eventargs});
+        if (line.indexOf("shadow_push_eventlog") != -1) {
+            var matches = line.match(rePattern);
+            if (matches) {
+                console.log('line matches : ' + line);
+                var eventhost = matches[1];
+                var eventtime = matches[2];
+                var eventtype = matches[3];
+                var eventargs = matches[4];
+                eventlogs.push({host:eventhost, time:eventtime,type:eventtype, args:eventargs});
+            }
         }
     }
     console.log('eventlogs length:'  + eventlogs.length);
@@ -110,6 +114,21 @@ function sendEventlogs(connection, shadowoutputfile) {
         time: curTime,
         eventlogs: eventlogs
     };
+    // broadcast message to requested connection
+    var json = JSON.stringify({ type:'eventlog', data: eventlogObj });
+    connection.sendUTF(json);
+}
+
+function sendJSON(connection, eventlogsfile) {
+    console.log('sendEventlogs for' + eventlogsfile);
+    if (!fs.existsSync(eventlogsfile))
+        return;
+
+    var lines = fs.readFileSync(eventlogsfile);
+    var eventlogObj = JSON.parse(lines);
+    var curDate = new Date();
+    eventlogObj.time = (curDate).getTime();
+
     // broadcast message to requested connection
     var json = JSON.stringify({ type:'eventlog', data: eventlogObj });
     connection.sendUTF(json);
@@ -271,8 +290,14 @@ wsServer.on('request', function(request) {
     connection.sendUTF(JSON.stringify( {type:'status', data: {operator:operatorIndex }  } ));
 
     // send experiment's event logs
-    if (shadowoutputfile != '')
+    if (shadowoutputfile != '') {
         sendEventlogs(connection, shadowoutputfile);
+        //sendJSON(connection, shadowoutputfile);
+        var t1 = performance.now();
+        fs.appendFile('../timelogs.txt', "Send eventlog: " + ((t1-t0)/1000).toFixed(3) + '\n', (err) => {
+            if (err) throw err;
+        });
+    }
 
     // user sent some message
     connection.on('message', function(message) {

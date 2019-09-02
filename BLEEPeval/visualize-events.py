@@ -2,6 +2,8 @@ import argparse
 import os
 import time
 import sys
+import re
+import json
 from subprocess import check_output, Popen, PIPE
 
 
@@ -10,7 +12,39 @@ def exec_shell_cmd(cmd):
         print("error while executing '%s'" % cmd)
         exit(-1)
 
+def parse_output(output, datadir):
+    start = int(time.time()*1000)
+    data = {}
+    data['eventlogs'] = []
+    eventlogs_filename = "eventlogs.json"
+
+    print "Parsing shadow output"
+    with open(output) as ifile:
+        for line in ifile:
+            if "shadow_push_eventlog" in line:
+                matches = re.findall(r'.*shadow_push_eventlog:(.+?),([0-9]+),(.+?),(.*)', line)
+                if len(matches) > 0 and len(matches[0]) >= 3:
+                    #print line
+                    event = {
+                        'host': matches[0][0],
+                        'time': matches[0][1],
+                        'type': matches[0][2],
+                        'args': matches[0][3]
+                    }
+                    data['eventlogs'].append(event)
+    
+    print "eventlogs length: %d" % len(data['eventlogs'])
+    with open("./%s/%s" % (datadir, eventlogs_filename), "w+") as ofile:
+        json.dump(data, ofile)
+
+    end = int(time.time()*1000)
+    with open("timelogs.txt", "a+") as ifile:
+        ifile.write("Converting to json: %s\n" % str((end-start)/1000.0))
+
+    return eventlogs_filename
+
 def run_experiment(configfile):
+    start = int(time.time()*1000)
     datadir = "visualize-datadir." + str(os.getpid())
     current_config_path = "%s/current-config.%d.xml" % (os.path.dirname(configfile), os.getpid())
     exec_shell_cmd("cp %s %s" % (configfile, current_config_path))
@@ -38,9 +72,74 @@ def run_experiment(configfile):
     if shadow_returnCode != 0:
         print "experiment failed"
         sys.exit(-1)
+
+    end = int(time.time()*1000)
+    eventlogs_filename = parse_output("./%s/%s" % (datadir, shadow_stdout_filename), datadir)
+    other = int(time.time()*1000)
+
+    with open("timelogs.txt", "a+") as ifile:
+        ifile.write("\n%s\nExperiment with parsing function: %s\nParsing added time: %s\n" %
+            (configfile, str((end-start)/1000.0), str((other-end)/1000.0)))
     
-    return "./%s/%s" % (datadir, shadow_stdout_filename)
+    return "./%s/%s" % (datadir, eventlogs_filename)
+
+def run_experiment_parse(configfile):
+    data = {}
+    T = 0
+    start = int(time.time()*1000)
+    data['eventlogs'] = []
+    eventlogs_filename = "eventlogs.json"
+
+    datadir = "visualize-datadir." + str(os.getpid())
+    current_config_path = "%s/current-config.%d.xml" % (os.path.dirname(configfile), os.getpid())
+    exec_shell_cmd("cp %s %s" % (configfile, current_config_path))
+
+    shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-d", datadir, configfile], stdout=PIPE)    
+    shadow_stdout_filename = "shadow.output"
+    shadow_stdout_file = open(shadow_stdout_filename, 'w')
+
+    while shadow.poll() is None:
+        l = shadow.stdout.readline()
+        shadow_stdout_file.write(l)
+    for l in shadow.stdout:
+        shadow_stdout_file.write(l)
+    shadow_stdout_file.close()
+
+    exec_shell_cmd("mv %s ./%s/%s" % (shadow_stdout_filename, datadir, shadow_stdout_filename))
+
+    shadow_stdout_file = open("./%s/%s" % (datadir, shadow_stdout_filename),'r')
+    shadow_returnCode = shadow.returncode
     
+    print "Parsing shadow output"
+    for line in shadow_stdout_file:
+        if "critical" in line:
+            print "critical error is occurred during shadow simulation"
+            sys.exit(-1)
+        t0 = int(time.time()*1000)
+        if "shadow_push_eventlog" in line:
+            matches = re.findall(r'.*shadow_push_eventlog:(.+?),([0-9]+),(.+?),(.*)$', line)
+            if len(matches) > 0 and len(matches[0]) >= 3:
+                event = {
+                    'host': matches[0][0],
+                    'time': matches[0][1],
+                    'type': matches[0][2],
+                    'args': matches[0][3]
+                }
+                data['eventlogs'].append(event)
+        T = T + int(time.time()*1000) - t0 
+    
+    print "eventlogs length: %d" % len(data['eventlogs'])
+    with open("%s/%s" % (datadir, eventlogs_filename), "w+") as ofile:
+        json.dump(data, ofile)
+    
+    if shadow_returnCode != 0:
+        print "experiment failed"
+        sys.exit(-1)
+    end = int(time.time()*1000)
+    with open("timelogs.txt", "a+") as ifile:
+        ifile.write("\n%s\nExperiment with parsing: %s\nParsing added time: %s\n" %
+            (configfile, str((end-start)/1000.0), str(T/1000.0)))
+    return "./%s/%s" % (datadir, eventlogs_filename)
 
 def run_visualization_server(shadowoutput, configfile, port, background=False):
     if background:
@@ -82,6 +181,7 @@ if __name__ == '__main__':
     print "Execute shadow experiment"
     output = run_experiment(configfile)
 
+    print "Starting visualization"
     if OPT_BACKGROUND:
         run_visualization_server(output, configfile, port, background=True)
     else:

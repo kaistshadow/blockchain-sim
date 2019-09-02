@@ -18,7 +18,8 @@ function switch_div(show) {
 
 $(function () {
     "use strict";
-
+    console.log("Client started");
+    console.time("Client loading took: ");
     // for network
     var nodesArray = [
         {
@@ -262,7 +263,10 @@ $(function () {
                     alert("Disconnect is not supported yet");
                 }
             }
+            console.timeEnd("Client loading took: ");
+            console.time("Applying buffers: ");
             endInitialLoading();
+            console.timeEnd("Applying buffers: ");
         } else if (json.type === 'graph') {
             addMessage("Notice", "Snapshot of the blockchain graph is received",
                        "red", new Date(json.data.time));

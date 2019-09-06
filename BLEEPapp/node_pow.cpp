@@ -10,6 +10,7 @@
 #include "datamanagermodules/ListLedgerManager.h"
 
 #include "utility/ArgsManager.h"
+#include "utility/Logger.h"
 
 using namespace libBLEEP;
 
@@ -106,7 +107,7 @@ int main(int argc, char *argv[]) {
 
     if (gArgs.IsArgSet("-?") || gArgs.IsArgSet("-h") ||  gArgs.IsArgSet("-help") || gArgs.IsArgSet("-version")) {
         std::string strUsage = gArgs.HelpMessage();
-        std::cout << strUsage << "\n";
+        gLog << strUsage << "\n";
         return 0;
     }
 
@@ -116,7 +117,7 @@ int main(int argc, char *argv[]) {
     BasicNetworkModule basicNetworkModule(gArgs.GetArg("-id", "noid"), &mainEventManager);
 
     // POWModule
-    POWModule powModule(&mainEventManager);
+    POWModule powModule(gArgs.GetArg("-id", "noid"), &mainEventManager);
 
     // transaction pool
     TxPool txPool;
@@ -137,19 +138,19 @@ int main(int argc, char *argv[]) {
         
             switch (event.GetType()) {
             case AsyncEventEnum::none:
-                std::cout << "invalid event is triggered. " << "\n";
+                gLog << "invalid event is triggered. " << "\n";
                 exit(-1);
             case AsyncEventEnum::CompleteAsyncConnectPeer:
                 {
-                    std::cout << "event for connection complete for peer. " << "\n";
+                    gLog << "event for connection complete for peer. " << "\n";
                     PeerId peerId = event.GetData().GetConnectedPeerId();
-                    std::cout << "connected peerId : " << peerId.GetId() << "\n";
+                    gLog << "connected peerId : " << peerId.GetId() << "\n";
                     // mainEventManager.SendMessage(message);
                     break;
                 }
             case AsyncEventEnum::ErrorAsyncConnectPeer:
                 {
-                    std::cout << "AsyncConnectPeer got error(" << event.GetData().GetError() << ")" << "\n";
+                    gLog << "AsyncConnectPeer got error(" << event.GetData().GetError() << ")" << "\n";
                     // try again with timer
                     PeerId peerId = event.GetData().GetRefusedPeerId();                
                     basicNetworkModule.AsyncConnectPeer(peerId, 10);
@@ -157,19 +158,19 @@ int main(int argc, char *argv[]) {
                 }
             case AsyncEventEnum::CompleteAsyncGenerateRandomTransaction:
                 {
-                    std::cout << "random transaction generated" << "\n";
+                    gLog << "random transaction generated" << "\n";
                     boost::shared_ptr<Transaction> generatedTx = event.GetData().GetGeneratedTx();
-                    std::cout << *generatedTx << "\n";
+                    gLog << *generatedTx << "\n";
                     break;
                 }
             case AsyncEventEnum::RecvMessage:
                 {
-                    std::cout << "RecvMessage" << "\n";
+                    gLog << "RecvMessage" << "\n";
                     std::shared_ptr<Message> msg = event.GetData().GetReceivedMsg();
                     MessageType messageType = msg->GetType();
                     if (messageType == "newTx") {
                         boost::shared_ptr<Transaction> receivedTx = GetDeserializedTransaction(msg->GetPayload());
-                        std::cout << *receivedTx << "\n";
+                        gLog << *receivedTx << "\n";
                         txPool.AddTx(receivedTx);
                         int txNumPerBlock = std::stoi(gArgs.GetArg("-blocktxnum"));
                         if (txPool.GetPendingTxNum() >= txNumPerBlock && !powModule.IsMining()) {
@@ -181,7 +182,7 @@ int main(int argc, char *argv[]) {
                     } 
                     else if (messageType == "newBlock") {
                         std::shared_ptr<Block> receivedBlk = GetDeserializedBlock(msg->GetPayload());  
-                        std::cout << "received newBlock" << "\n";
+                        gLog << "received newBlock" << "\n";
 
                         std::shared_ptr<POWBlock> receivedPOWBlk = std::dynamic_pointer_cast<POWBlock> (receivedBlk); // we know it's POWBlock
                         M_Assert(receivedPOWBlk != nullptr, "it should be POWBlock");
@@ -214,8 +215,8 @@ int main(int argc, char *argv[]) {
                             /* received valid new blk message from neighbor,
                                and it is from longer blockchain than my blockchain.
                                Thus, request a new message for blocks of longer blockchain */
-                            std::cout << GetGlobalClock() << ":Block (sented by " << msg->GetSource().GetId() << ") is received and longer than mine" << "\n";
-                            std::cout << "Need to implement ReqBlocks, RespBlocks" << "\n";
+                            gLog << GetGlobalClock() << ":Block (sented by " << msg->GetSource().GetId() << ") is received and longer than mine" << "\n";
+                            gLog << "Need to implement ReqBlocks, RespBlocks" << "\n";
                             POWConsensusMessage powmsg("REQBLOCKS");
                         
                             // propagate to network
@@ -227,12 +228,12 @@ int main(int argc, char *argv[]) {
                             basicNetworkModule.UnicastMessage(destPeerId, msg);
                         }
                         else {
-                            std::cout << GetGlobalClock() << ":Block is received but not appended" << "\n";
+                            gLog << GetGlobalClock() << ":Block is received but not appended" << "\n";
                         }
                     } 
                     else if (messageType == "POWConsensusProtocol") {
                         POWConsensusMessage receivedPOWmsg = GetDeserializedPOWConsensusMessage(msg->GetPayload());  
-                        std::cout << "received POWConsensusProtocol message" << "\n";
+                        gLog << "received POWConsensusProtocol message" << "\n";
                         if (receivedPOWmsg.GetType() == "REQBLOCKS") {
                             std::vector<POWBlock> blks;
                             std::list<POWBlock>& ledgerBlks = ledger.GetLedger();
@@ -278,20 +279,20 @@ int main(int argc, char *argv[]) {
             case AsyncEventEnum::NewPeerConnected:
                 {
                     std::shared_ptr<PeerId> newConnectedNeighbor = event.GetData().GetNewlyConnectedPeer();
-                    std::cout << "NewPeerConnected requested from " << newConnectedNeighbor->GetId() << "\n";
+                    gLog << "NewPeerConnected requested from " << newConnectedNeighbor->GetId() << "\n";
 
                     break;
                 }
             case AsyncEventEnum::PeerDisconnected:
                 {
                     std::shared_ptr<PeerId> disconnectedNeighbor = event.GetData().GetDisconnectedPeerId();
-                    std::cout << "Disconnection requested from " << disconnectedNeighbor->GetId() << "\n";
+                    gLog << "Disconnection requested from " << disconnectedNeighbor->GetId() << "\n";
 
                     break;
                 }
             case AsyncEventEnum::EmuBlockMiningComplete:
                 {
-                    std::cout << "block mining complte" << "\n";
+                    gLog << "block mining complte" << "\n";
                     std::shared_ptr<POWBlock> minedBlk = event.GetData().GetMinedBlock();
                     AppendBlockToLedger(minedBlk, txPool, ledger);
 

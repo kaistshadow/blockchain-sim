@@ -11,7 +11,7 @@ def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
         print("error while executing '%s'" % cmd)
         exit(-1)
-
+    
 def parse_output(output, datadir):
     data = {}
     data['eventlogs'] = []
@@ -30,7 +30,7 @@ def parse_output(output, datadir):
                         'args': matches[0][3]
                     }
                     data['eventlogs'].append(event)
-    
+
     print "eventlogs length: %d" % len(data['eventlogs'])
     with open("./%s/%s" % (datadir, eventlogs_filename), "w+") as ofile:
         json.dump(data, ofile)
@@ -39,11 +39,11 @@ def parse_output(output, datadir):
 
 def run_experiment(configfile, LOGLEVEL):
     datadir = "visualize-datadir." + str(os.getpid())
-    current_config_path = "%s/current-config.%d.xml" % (os.path.dirname(configfile), os.getpid())
+    configdir = os.path.dirname(configfile)
+    configdir = configdir if configdir else "."
+    current_config_path = "%s/current-config.%d.xml" % (configdir, os.getpid())
     exec_shell_cmd("cp %s %s" % (configfile, current_config_path))
-
-    shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-l", LOGLEVEL, "-w", "8", "-d", datadir, configfile], stdout=PIPE)    
-
+    shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-l", LOGLEVEL, "-d", datadir, "-w", "8", configfile], stdout=PIPE)    
     shadow_stdout_filename = "shadow.output"
     shadow_stdout_file = open(shadow_stdout_filename, 'w')
 
@@ -64,20 +64,22 @@ def run_experiment(configfile, LOGLEVEL):
             sys.exit(-1)
 
     if shadow_returnCode != 0:
-        print "experiment failed"
+        print "experiment failed. Try again."
         sys.exit(-1)
-
-    eventlogs_filename = parse_output("./%s/%s" % (datadir, shadow_stdout_filename), datadir)
     
+    eventlogs_filename = parse_output("./%s/%s" % (datadir, shadow_stdout_filename), datadir)
+
     return "./%s/%s" % (datadir, eventlogs_filename)
 
 def run_visualization_server(shadowoutput, configfile, port, background=False):
     if background:
-        web_server = Popen(["node", "server.js", "../"+shadowoutput, port], cwd="./web-gui", close_fds=True)
+        web_server = Popen(["node", "server.js", "../../regtest/"+shadowoutput, port], cwd="../BLEEPeval/web-gui", close_fds=True)
     else:
-        web_server = Popen(["node", "server.js", "../"+shadowoutput, port], cwd="./web-gui")
+        web_server = Popen(["node", "server.js", "../../regtest/"+shadowoutput, port], cwd="../BLEEPeval/web-gui")
 
-    current_config_path = "%s/current-config.%d.xml" % (os.path.dirname(configfile), os.getpid())
+    configdir = os.path.dirname(configfile)
+    configdir = configdir if configdir else "."
+    current_config_path = "%s/current-config.%d.xml" % (configdir, os.getpid())
     exec_shell_cmd("rm %s" % current_config_path)
  
     time.sleep(1)
@@ -87,7 +89,7 @@ def run_visualization_server(shadowoutput, configfile, port, background=False):
     print ""
     print "The script has launched the NodeJS web server for visualization."
     print "You can see the visualization results of the configuration requested (i.e., %s)" % configfile
-    print "To see the results, connect to the server using address 'http://ipaddress_of_this_machine:%s/frontend.html' in web browser." % port
+    print "To see the results, connect to the server using address 'http://ipaddress_of_this_machine:1337/frontend.html' in web browser."
     print ""
     print ""
     print ""
@@ -122,7 +124,6 @@ if __name__ == '__main__':
     elapsed_time = end - start
     print "elapsed_millisec=%d\n" % (int(elapsed_time.total_seconds() * 1000)) 
 
-    print "Starting visualization"
     if OPT_BACKGROUND:
         run_visualization_server(output, configfile, port, background=True)
     else:

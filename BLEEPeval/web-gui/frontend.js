@@ -19,7 +19,7 @@ function switch_div(show) {
 $(function () {
     "use strict";
     console.log("Client started");
-    console.time("Client loading took: ");
+    let startClient = performance.now()
     // for network
     var nodesArray = [
         {
@@ -224,6 +224,7 @@ $(function () {
             };
             Plotly.update('topology_internet', update_data, {});
         } else if (json.type === 'eventlog') {
+            let startEventlog = performance.now();
             addMessage("Notice", "Received eventlog",
                        "red", new Date(json.data.time));
             
@@ -235,7 +236,7 @@ $(function () {
                 var li = document.createElement("li");
                 li.appendChild(document.createTextNode(`${eventlog.host},${eventlog.time},${eventlog.type},${eventlog.args}`));
                 li.setAttribute("id", `event_${i}`); 
-                li.setAttribute("role", "option"); 
+                li.setAttribute("role", "option");
                 if (eventlog.type === "API")
                     li.setAttribute("style", "display:none;");
                 ul.appendChild(li);
@@ -260,13 +261,15 @@ $(function () {
                     var to = eventlog.args.split(",")[1];
                     removeEdge(from, to);
                     removeEdge(to, from);*/
-                    alert("Disconnect is not supported yet");
+                    alert("Disconnection is not supported yet");
                 }
             }
-            console.timeEnd("Client loading took: ");
-            console.time("Applying buffers: ");
+            let endEventlog = performance.now();
+            console.log(`Buffering eventlog: ${Math.floor(endEventlog - startEventlog)}ms`);
             endInitialLoading();
-            console.timeEnd("Applying buffers: ");
+            let end = performance.now();
+            console.log(`Applying buffer: ${Math.floor(end- endEventlog)}ms`);
+            console.log(`Total loading time: ${Math.floor(end - startClient)}ms`);
         } else if (json.type === 'graph') {
             addMessage("Notice", "Snapshot of the blockchain graph is received",
                        "red", new Date(json.data.time));

@@ -1,5 +1,6 @@
 #include "PeerManager.h"
 #include "../utility/Assert.h"
+#include "../utility/Logger.h"
 #include "shadow_interface.h"
 
 #include <algorithm>
@@ -23,7 +24,7 @@ std::shared_ptr<PeerId> libBLEEP::PeerManager::GetPeerIdBySocket(int socketfd) {
                                        t.second->GetSocketFDRemote() == socketfd);
                           } );
     if (it == _neighborPeers.end()) {
-        std::cout << "No peer exists" << "\n";
+        gLog << "No peer exists" << "\n";
         return nullptr;
     }
     return std::make_shared<PeerId>(it->first);
@@ -32,7 +33,7 @@ std::shared_ptr<PeerId> libBLEEP::PeerManager::GetPeerIdBySocket(int socketfd) {
 std::shared_ptr<PeerInfo> libBLEEP::PeerManager::GetPeerInfo(PeerId peer) {
     auto it = _neighborPeers.find(peer);
     if (it == _neighborPeers.end()) {
-        std::cout << "No peer exists" << "\n";
+        gLog << "No peer exists" << "\n";
         return nullptr;
     }
     return it->second;
@@ -45,7 +46,7 @@ std::shared_ptr<PeerInfo> libBLEEP::PeerManager::GetPeerInfoBySocket(int socketf
                                        t.second->GetSocketFDRemote() == socketfd);
                           } );
     if (it == _neighborPeers.end()) {
-        std::cout << "No peer exists" << "\n";
+        gLog << "No peer exists" << "\n";
         return nullptr;
     }
     return it->second;
@@ -67,6 +68,10 @@ std::vector<PeerId> libBLEEP::PeerManager::GetNeighborPeerIds(PeerConnectMode mo
                     id.push_back(i->first);
                 }
                 break;
+            case PeerConnectMode::ConnectExceptClient:
+                if (i->first.GetId().find("client") != 0)
+                    id.push_back(i->first);
+                break;
             default :
                 id.push_back(i->first);
                 break;
@@ -79,14 +84,14 @@ std::vector<PeerId> libBLEEP::PeerManager::GetNeighborPeerIds(PeerConnectMode mo
 // std::shared_ptr<PeerInfo> libBLEEP::PeerManager::AppendNewNeighborPeer(PeerId peer) {
 //     std::shared_ptr<PeerInfo> peerPtr = GetPeerInfo(peer);
 //     if (peerPtr) {
-//         std::cout << "Peer already exists for " << peer.GetId() << "\n";
+//         gLog << "Peer already exists for " << peer.GetId() << "\n";
 //         return peerPtr;
 //     }
 
 //     // allocate new peer
 //     // and append it into the map structure (_neighborPeers)
 //     _neighborPeers[peer] = std::make_shared<PeerInfo>();
-//     std::cout << "PeerManager appends NewNeighbor for " << peer.GetId() << "\n";
+//     gLog << "PeerManager appends NewNeighbor for " << peer.GetId() << "\n";
 //     return _neighborPeers[peer];
 // }
 
@@ -99,7 +104,7 @@ std::shared_ptr<PeerInfo> libBLEEP::PeerManager::AppendNeighborPeerConnectedByMy
         // update socket information
         peerPtr->SetSocketFD(socketfd);
         peerPtr->SetSocketStatus(SocketStatus::SocketConnected);
-        std::cout << "Peer already exists. Update connected socket info for " << peer.GetId() << "\n";
+        gLog << "Peer already exists. Update connected socket info for " << peer.GetId() << "\n";
         return peerPtr;
     }
 
@@ -109,7 +114,7 @@ std::shared_ptr<PeerInfo> libBLEEP::PeerManager::AppendNeighborPeerConnectedByMy
     peerPtr->SetSocketFD(socketfd);
     peerPtr->SetSocketStatus(SocketStatus::SocketConnected);
     _neighborPeers[peer] = peerPtr;
-    std::cout << "PeerManager appends ConnectedNeighbor for " << peer.GetId() << "\n";
+    gLog << "PeerManager appends ConnectedNeighbor for " << peer.GetId() << "\n";
     return peerPtr;
 }
 
@@ -122,7 +127,7 @@ std::shared_ptr<PeerInfo> libBLEEP::PeerManager::AppendNeighborPeerConnectedByRe
         // update socket information
         peerPtr->SetSocketFDRemote(socketfd);
         peerPtr->SetSocketStatusRemote(SocketStatus::SocketConnected);
-        std::cout << "Peer already exists. Update (remotely requested) connected socket info for "
+        gLog << "Peer already exists. Update (remotely requested) connected socket info for "
                   << peer.GetId() << "\n";
         return peerPtr;
     }
@@ -133,7 +138,7 @@ std::shared_ptr<PeerInfo> libBLEEP::PeerManager::AppendNeighborPeerConnectedByRe
     peerPtr->SetSocketFDRemote(socketfd);
     peerPtr->SetSocketStatusRemote(SocketStatus::SocketConnected);
     _neighborPeers[peer] = peerPtr;
-    std::cout << "PeerManager appends (remotely requested) ConnectedNeighbor for " << peer.GetId() << "\n";
+    gLog << "PeerManager appends (remotely requested) ConnectedNeighbor for " << peer.GetId() << "\n";
     return peerPtr;
 }
 // void libBLEEP::PeerManager::UpdateNeighborSocketDisconnection(PeerId peer) {
@@ -143,7 +148,7 @@ std::shared_ptr<PeerInfo> libBLEEP::PeerManager::AppendNeighborPeerConnectedByRe
 //     std::shared_ptr<PeerInfo> peerInfo = it->second;
 //     peerInfo->SetSocketFD(-1);
 //     peerInfo->SetSocketStatus(SocketStatus::SocketDisconnected);
-//     std::cout << "PeerManager set disconnection for " << peer.GetId() << "\n";
+//     gLog << "PeerManager set disconnection for " << peer.GetId() << "\n";
 // }
 
 void libBLEEP::PeerManager::UpdateNeighborSocketDisconnection(int socketfd) {
@@ -155,7 +160,7 @@ void libBLEEP::PeerManager::UpdateNeighborSocketDisconnection(int socketfd) {
         std::shared_ptr<PeerInfo> peerInfo = it->second;
         peerInfo->SetSocketFD(-1);
         peerInfo->SetSocketStatus(SocketStatus::SocketDisconnected);
-        std::cout << "PeerManager set disconnection for " << it->first.GetId() << "\n";
+        gLog << "PeerManager set disconnection for " << it->first.GetId() << "\n";
     }
 
     auto it_remote = std::find_if(_neighborPeers.begin(), _neighborPeers.end(),
@@ -166,7 +171,7 @@ void libBLEEP::PeerManager::UpdateNeighborSocketDisconnection(int socketfd) {
         std::shared_ptr<PeerInfo> peerInfo = it_remote->second;
         peerInfo->SetSocketFD(-1);
         peerInfo->SetSocketStatusRemote(SocketStatus::SocketDisconnected);
-        std::cout << "PeerManager set disconnection of the (remotely requested) socket for " << it_remote->first.GetId() << "\n";
+        gLog << "PeerManager set disconnection of the (remotely requested) socket for " << it_remote->first.GetId() << "\n";
     }
 
     M_Assert( it == _neighborPeers.end() || it_remote == _neighborPeers.end(),

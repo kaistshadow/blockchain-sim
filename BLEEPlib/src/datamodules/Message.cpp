@@ -18,6 +18,9 @@ BOOST_CLASS_EXPORT(SimpleTransaction);
 #include "POWBlock.h"
 BOOST_CLASS_EXPORT(POWBlock);
 
+#include "Inventory.h"
+BOOST_CLASS_EXPORT(Inventory);
+
 std::ostream& libBLEEP::operator<<(std::ostream& os, const Message& msg) {
     if (msg.GetType() == "StringMessage") 
         os << msg.GetPayload();
@@ -59,6 +62,17 @@ std::string libBLEEP::GetSerializedString(POWConsensusMessage msg) {
     return serial_str;
 }
 
+std::string libBLEEP::GetSerializedString(Inventory inv) {
+    std::string serial_str;
+    // serialize msg into an std::string
+    boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+    boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
+    boost::archive::binary_oarchive oa(s);
+    oa << inv;
+    s.flush();
+    return serial_str;
+}
+
 boost::shared_ptr<Transaction> libBLEEP::GetDeserializedTransaction(std::string str) {
     Transaction* tx;
     // wrap buffer inside a stream and deserialize string_read into obj
@@ -90,6 +104,17 @@ POWConsensusMessage libBLEEP::GetDeserializedPOWConsensusMessage(std::string str
     ia >> msg;
 
     return msg;
+}
+
+Inventory libBLEEP::GetDeserializedInventory(std::string str) {
+    Inventory inv;
+    // wrap buffer inside a stream and deserialize string_read into obj
+    boost::iostreams::basic_array_source<char> device(str.c_str(), str.size());
+    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
+    boost::archive::binary_iarchive ia(s);
+    ia >> inv;
+
+    return inv;
 }
 
 std::string Message::GenMessageHash(std::string msg){

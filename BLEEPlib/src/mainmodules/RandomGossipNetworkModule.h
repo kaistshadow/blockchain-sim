@@ -14,6 +14,11 @@
 namespace libBLEEP {
 
 
+    enum class ConnectionMethod {
+        Kademlia,
+        Random,
+    };
+
     class Distance {
         UINT256_t distance;
         PeerId peerId;
@@ -162,10 +167,6 @@ namespace libBLEEP {
                             _mainEventModule->PushAsyncEvent(event);
 
                         } else if (message) {
-                            AsyncEvent event(AsyncEventEnum::RecvMessage);
-                            event.GetData().SetReceivedMsg(message);
-                            _mainEventModule->PushAsyncEvent(event);
-
                             std::shared_ptr<PeerId> neighborPeerId = _networkModule->peerManager.GetPeerIdBySocket(fd);
                             std::cout << "message source:" << message->GetSource().GetId() << "\n";
                             M_Assert(neighborPeerId != nullptr, "no neighbor peer exists for given socket");
@@ -179,18 +180,25 @@ namespace libBLEEP {
                                     message->GetMessageId().c_str());
                             shadow_push_eventlog(buf);
 
-                            if (message->GetDest().GetId() == "DestAll") {
-                                if(true == _networkModule->InsertMessageSet(message->GetMessageId())){
-                                    sprintf(buf, " NewTx from %s %s",
-                                            neighborPeerId->GetId().c_str(),
-                                            message->GetMessageId().c_str());
-                                    shadow_push_eventlog(buf);
-                                    _networkModule->MulticastMessage(message);
+                            if (message->GetDest().GetId() == "DestAll" &&
+                                _networkModule->ExistMessage(message->GetMessageId())) {
+                                // if the duplicated broadcasting message is received, 
+                                // then just ignore it.
+                            }
+                            else {
+                                AsyncEvent event(AsyncEventEnum::RecvMessage);
+                                event.GetData().SetReceivedMsg(message);
+                                event.GetData().SetReceivedFromPeerId(neighborPeerId);
+                                _mainEventModule->PushAsyncEvent(event);
+
+                                if (message->GetDest().GetId() == "DestAll") {
+                                    bool unique = _networkModule->InsertMessageSet(message->GetMessageId());
+                                    M_Assert(unique, "Message is unexpectedly duplicated!" ); 
+
+                                    _networkModule->ForwardMessage(message, neighborPeerId);
                                 }
                             }
-
                         }
-
                     }
 
                 } else if (revents & EV_WRITE) {
@@ -358,12 +366,12 @@ namespace libBLEEP {
 
         bool AsyncConnectPeer(PeerId id, double time=0);
 
-        bool AsyncConnectPeers(std::vector<PeerId, std::allocator<PeerId>> &peerList, int peerNum, double time = 0);
+        bool AsyncConnectPeers(std::vector<PeerId, std::allocator<PeerId>> &peerList, int peerNum, double time = 0, ConnectionMethod cmethod = ConnectionMethod::Kademlia);
 
         bool UnicastMessage(PeerId dest, std::shared_ptr<Message> message);
 
         bool MulticastMessage(std::shared_ptr<Message> message);
-        bool ForwardMessage(std::shared_ptr<Message> message); // separate from multicastMessage for debugging
+        bool ForwardMessage(std::shared_ptr<Message> message, std::shared_ptr<PeerId> from); // separate from multicastMessage for debugging
 
         bool DisconnectPeer(PeerId id);
 

@@ -41,6 +41,7 @@ namespace libBLEEP {
 
         // data for RecvMessage
         std::shared_ptr<Message> _receivedMsg;
+        std::shared_ptr<PeerId> _receivedFromPeerId;
 
         // data for NewPeerConnected 
         std::shared_ptr<PeerId> _newConnectedPeerId;
@@ -75,8 +76,10 @@ namespace libBLEEP {
 
         // data set function for RecvMessage
         void SetReceivedMsg(std::shared_ptr<Message> msg) { _receivedMsg = msg; }
+        void SetReceivedFromPeerId(std::shared_ptr<PeerId> id) { _receivedFromPeerId = id; }
         // data access function for RecvMessage
         std::shared_ptr<Message> GetReceivedMsg() { return _receivedMsg; }
+        std::shared_ptr<PeerId> GetReceivedFromPeerId() { return _receivedFromPeerId; }
 
         // data set function for NewPeerConnected
         void SetNewlyConnectedPeer(std::shared_ptr<PeerId> id) { _newConnectedPeerId = id; }

@@ -22,8 +22,8 @@ process.argv.forEach(function (val, index, array) {
 // websocket and http servers
 var webSocketServer = require('websocket').server;
 var http = require('http');
-
 var fs        = require('fs');
+
 
 /**
  * Global variables
@@ -81,36 +81,19 @@ var wsServer = new webSocketServer({
     httpServer: server
 });
 
-function sendEventlogs(connection, shadowoutputfile) {
-    console.log('sendEventlogs for' + shadowoutputfile);
-    if (!fs.existsSync(shadowoutputfile))
+function sendEventlogs(connection, eventlogsfile) {
+    console.log('sendEventlogs for' + eventlogsfile);
+    if (!fs.existsSync(eventlogsfile)) {
+        console.log("File " + eventlogsfile + " doesn't exist")
         return;
-
-    var lines = fs.readFileSync(shadowoutputfile).toString().split('\n');
-    
-    var curDate = new Date();
-    var curTime = (curDate).getTime();
-    var eventlogs = [];
-
-    var rePattern = new RegExp(/.*shadow_push_eventlog:(.+?),([0-9]+),(.+?),(.*)$/);
-
-    console.log('start eventlog parsing ');
-    for (let line of lines) {
-        var matches = line.match(rePattern);
-        if (matches) {
-            console.log('line matches : ' + line);
-            var eventhost = matches[1];
-            var eventtime = matches[2];
-            var eventtype = matches[3];
-            var eventargs = matches[4];
-            eventlogs.push({host:eventhost, time:eventtime,type:eventtype, args:eventargs});
-        }
     }
-    console.log('eventlogs length:'  + eventlogs.length);
-    var eventlogObj = {
-        time: curTime,
-        eventlogs: eventlogs
-    };
+
+    var lines = fs.readFileSync(eventlogsfile);
+    var eventlogObj = JSON.parse(lines);
+    var curDate = new Date();
+    eventlogObj.time = (curDate).getTime();
+    console.log("eventlogs length: " + eventlogObj.eventlogs.length);
+
     // broadcast message to requested connection
     var json = JSON.stringify({ type:'eventlog', data: eventlogObj });
     connection.sendUTF(json);
@@ -272,8 +255,9 @@ wsServer.on('request', function(request) {
     connection.sendUTF(JSON.stringify( {type:'status', data: {operator:operatorIndex }  } ));
 
     // send experiment's event logs
-    if (shadowoutputfile != '')
+    if (shadowoutputfile != '') {
         sendEventlogs(connection, shadowoutputfile);
+    }
 
     // user sent some message
     connection.on('message', function(message) {

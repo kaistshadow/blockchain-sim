@@ -12,6 +12,7 @@ var webSocketsServerPort;
 process.argv.forEach(function (val, index, array) {
     if (index == 2) {
         shadowoutputfile = val;
+        webSocketsServerPort = 1337;
     }
     if (index == 3) {
         webSocketsServerPort = parseInt(val);

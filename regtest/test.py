@@ -41,9 +41,9 @@ def run_experiment(configfile, LOGLEVEL):
 
 def run_visualization_server(shadowoutput, configfile, background=False):
     if background:
-        web_server = Popen(["node", "server.js", "../"+shadowoutput], cwd="../BLEEPeval/web-gui", close_fds=True)
+        web_server = Popen(["node", "server.js", "../../regtest/"+shadowoutput], cwd="../BLEEPeval/web-gui", close_fds=True)
     else:
-        web_server = Popen(["node", "server.js", "../"+shadowoutput], cwd="../BLEEPeval/web-gui")
+        web_server = Popen(["node", "server.js", "../../regtest/"+shadowoutput], cwd="../BLEEPeval/web-gui")
 
  
     time.sleep(1)

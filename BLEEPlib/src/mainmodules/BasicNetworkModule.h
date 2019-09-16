@@ -17,10 +17,13 @@ namespace libBLEEP {
 
     class BasicNetworkModule {
     private:
-        class ListenSocketWatcher;
-        class DataSocketWatcher;
-        class ConnectSocketWatcher;
-
+        /***********************************************************************/
+        /* Inner classes for implementing asynchronous events with libev watchers */
+        /* As the manual of libev states, 'watcher' is an opaque structure 
+           that you allocate and register to record your interest in some event */
+        /* To make it(watchers) concrete for specific events, we define class for
+           each events. As a result, WatcherWrapper class is defined. */
+        /***********************************************************************/
         class WatcherWrapper {
         protected:
             BasicNetworkModule* _networkModule;
@@ -29,41 +32,15 @@ namespace libBLEEP {
             WatcherWrapper(BasicNetworkModule* netModule, MainEventManager* eventModule)
                 : _networkModule(netModule), _mainEventModule(eventModule) {};
         };
-        class WatcherManager {
-        private:
-            BasicNetworkModule* _networkModule;
-            MainEventManager* _mainEventModule;
 
-            /* event watcher */
-            std::map<int, std::shared_ptr<DataSocketWatcher> > _dataSocketWatchers;
 
-        public:
-            WatcherManager(BasicNetworkModule* netModule, MainEventManager* eventModule)
-                : _networkModule(netModule), _mainEventModule(eventModule) {};
-            void CreateDataSocketWatcher(int fd) {
-                M_Assert(_dataSocketWatchers.find(fd) == _dataSocketWatchers.end(), "fd must not have duplicated watchers");
-                // allocate new DataSocketWatcher
-                // and append it into the map structure (_dataSocketWatchers)
-                _dataSocketWatchers[fd] = std::make_shared<DataSocketWatcher>(fd, _networkModule, _mainEventModule);
-            }
-
-            std::shared_ptr<DataSocketWatcher> GetDataSocketWatcher(int fd) {
-                auto it = _dataSocketWatchers.find(fd);
-                if (it == _dataSocketWatchers.end()) {
-                    gLog << "No valid dataSocketWatcher exists" << "\n";
-                    return nullptr;
-                }
-                return it->second;
-            }
-
-            void RemoveDataSocketWatcher(int fd) {
-                auto it = _dataSocketWatchers.find(fd);
-                if (it != _dataSocketWatchers.end())
-                    _dataSocketWatchers.erase(it);
-            }
-
-        };
-
+        /***********************************************************************/
+        /* Inheriting the WatcherWrapper, following watcher classes are defined
+           1) AsyncConnectTimer : Monitor the timer for asynchronous connection
+           2) ListenSocketWatcher : Monitor the listen socket 
+           3) DataSocketWatcher : Monitor the data socket
+           4) ConnectSocketWatcher : Monitor the connecting socket */
+        /***********************************************************************/
         class AsyncConnectTimer : public WatcherWrapper {
         private:
             ev::timer _timer; // destructor automatically stops the watcher
@@ -167,10 +144,10 @@ namespace libBLEEP {
                         // check whether any message is received
                         std::shared_ptr<Message> message = recvResult.second;
                         if (message && message->GetType() == "notifyPeerId") {
-                            /** received id notify message (First message after socket establishment)    **/
-                            /** This message is intended to be not visible to user of BasicNetworkModule.**/
-                            /** Thus, we don't set recvMessage asynchronous event.                       **/
-                            /** Instead, we only set newPeerConnected event.                             **/
+                            /* received id notify message (First message after socket establishment)
+                               This message is intended to be not visible to user of BasicNetworkModule.
+                               Thus, we don't set recvMessage asynchronous event.                      
+                               Instead, we only set newPeerConnected event. */
 
                             // append a peer information
                             _networkModule->peerManager.AppendNeighborPeerConnectedByRemote(message->GetSource().GetId(), fd);
@@ -369,6 +346,52 @@ namespace libBLEEP {
             }
         };
 
+
+    private:
+        /*********************************************************/
+        /* In order to manage multiple watchers for long-living data sockets, 
+           we implemented WatcherManager class. 
+           Any other watchers are all ephemeral, so do not need manager. */
+        /*********************************************************/
+        class WatcherManager {
+        private:
+            BasicNetworkModule* _networkModule;
+            MainEventManager* _mainEventModule;
+
+            /* event watcher */
+            std::map<int, std::shared_ptr<DataSocketWatcher> > _dataSocketWatchers;
+
+        public:
+            WatcherManager(BasicNetworkModule* netModule, MainEventManager* eventModule)
+                : _networkModule(netModule), _mainEventModule(eventModule) {};
+            void CreateDataSocketWatcher(int fd) {
+                M_Assert(_dataSocketWatchers.find(fd) == _dataSocketWatchers.end(), "fd must not have duplicated watchers");
+                // allocate new DataSocketWatcher
+                // and append it into the map structure (_dataSocketWatchers)
+                _dataSocketWatchers[fd] = std::make_shared<DataSocketWatcher>(fd, _networkModule, _mainEventModule);
+            }
+
+            std::shared_ptr<DataSocketWatcher> GetDataSocketWatcher(int fd) {
+                auto it = _dataSocketWatchers.find(fd);
+                if (it == _dataSocketWatchers.end()) {
+                    gLog << "No valid dataSocketWatcher exists" << "\n";
+                    return nullptr;
+                }
+                return it->second;
+            }
+
+            void RemoveDataSocketWatcher(int fd) {
+                auto it = _dataSocketWatchers.find(fd);
+                if (it != _dataSocketWatchers.end())
+                    _dataSocketWatchers.erase(it);
+            }
+
+        };
+    private:
+        WatcherManager watcherManager;
+
+
+
     private:
         MainEventManager* _mainEventManager;
 
@@ -413,9 +436,6 @@ namespace libBLEEP {
         // for managing AsyncConnectPeer's requested data
         std::list<std::pair< PeerId, int > > _asyncConnectPeerRequests;
 
-
-    private:
-        WatcherManager watcherManager;
 
     private:
         // Internal management module for managing peers

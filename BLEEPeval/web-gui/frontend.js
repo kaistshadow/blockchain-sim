@@ -241,20 +241,20 @@ $(function () {
                     li.setAttribute("style", "display:none;");
                 ul.appendChild(li);
 
-                if (eventlog.type === "InitPeerId")
-                    addNode(eventlog.args);
-                else if (eventlog.type === "ConnectPeer") {
-                    var from = eventlog.args.split(",")[0];
-                    var to = eventlog.args.split(",")[1];
-                    addEdge(from, to);
-                } else if (eventlog.type === "BlockAppend") {
+                if (eventlog.type === "BlockAppend") {
                     var peerId = eventlog.host;
                     var hash = eventlog.args.split(",")[1];
                     var prevHash = eventlog.args.split(",")[2];
                     var timestamp = eventlog.args.split(",")[3];
                     appendBlock(peerId, hash, prevHash, timestamp);
                     appendBlockMap(peerId, hash, prevHash, timestamp);
-                } else if (eventlog.type === "DisconnectPeer") {
+                } else if (eventlog.type === "ConnectPeer") {
+                    var from = eventlog.args.split(",")[0];
+                    var to = eventlog.args.split(",")[1];
+                    addEdge(from, to);
+                } else if (eventlog.type === "InitPeerId")
+                    addNode(eventlog.args);
+                else if (eventlog.type === "DisconnectPeer") {
                     // Ignore disconnection because it is not reversible yet
 
                     /*var from = eventlog.args.split(",")[0];

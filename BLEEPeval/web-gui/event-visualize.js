@@ -10,7 +10,7 @@ class NetworkData {
         this.buffer = {
             nodes: [],
             edges: [],
-            packages: [],
+            packages: {toAdd: {}, toRemove: {}},
             operation: ''
         }
         this.network = undefined;
@@ -31,36 +31,82 @@ class NetworkData {
     }
     applyBuffers() {
         if (this.buffer.operation == 'remove') {
-            // When unsending messages, this allows to clear the autoProgress option
-            let buff = Array.from(this.buffer.packages);
-            this.buffer.operation = 'update';
-            this.applyBuffer('packages');
-    
-            this.buffer.operation = 'remove';
-            this.buffer.packages = buff;
-            this.applyBuffer('packages');
             this.applyBuffer('edges');
             this.applyBuffer('nodes');
         }
         else {
             this.applyBuffer('nodes');
             this.applyBuffer('edges');
-            this.applyBuffer('packages');
         }
+        this.applyPackagesBuffer();
         this.buffer.operation = '';
     }
     pushToBuffer(itemsType, data, operation) {
-        if (this.buffer.operation != operation) {
-            this.applyBuffers();
-            this.buffer.operation = operation;
-        }
-        if (Array.isArray(data)) {
-            for (var i = 0, len = data.length; i < len; i++) {
-              this.buffer[itemsType].push(data[i])
+        if (itemsType == 'packages') {
+            if (operation == 'add') {
+                this._addPackage(data);
             }
-        } else if (data && typeof data === 'object') {
-            this.buffer[itemsType].push(data);
+            else {
+                this._removePackage(data);
+            }
         }
+        else {
+            if (this.buffer.operation != operation) {
+                this.applyBuffers();
+                this.buffer.operation = operation;
+            }
+            if (Array.isArray(data)) {
+                for (var i = 0, len = data.length; i < len; i++) {
+                    this.buffer[itemsType].push(data[i])
+                }
+            } else if (data && typeof data === 'object') {
+                this.buffer[itemsType].push(data);
+            }
+        }
+    }
+    _addPackage(pkg) {
+        let toAdd = this.buffer.packages.toAdd;
+        let toRemove = this.buffer.packages.toRemove;
+        if (Array.isArray(pkg)) {
+            for (var i = 0, len = pkg.length; i < len; i++) {
+                if (toRemove[pkg[i].id] != undefined)
+                    delete toRemove[pkg[i].id];
+                else {
+                    toAdd[pkg.id] = pkg[i];
+                }
+            }
+        } else if (pkg && typeof pkg === 'object') {
+            if (toRemove[pkg.id] != undefined)
+                delete toRemove[pkg.id];
+            else {
+                toAdd[pkg.id] = pkg;
+            }
+        }
+    }
+    _removePackage(pkg) {
+        let toAdd = this.buffer.packages.toAdd;
+        let toRemove = this.buffer.packages.toRemove;
+        if (Array.isArray(pkg)) {
+            for (var i = 0, len = pkg.length; i < len; i++) {
+                if (toAdd[pkg[i].id] != undefined)
+                    delete toAdd[pkg[i].id];
+                else {
+                    toRemove[pkg.id] = pkg[i];
+                }
+            }
+        } else if (pkg && typeof pkg === 'object') {
+            if (toAdd[pkg.id] != undefined)
+                delete toAdd[pkg.id];
+            else {
+                toRemove[pkg.id] = pkg;
+            }
+        }
+    }
+    applyPackagesBuffer() {
+        this.packages.add(Object.values(this.buffer.packages.toAdd));
+        this.packages.update(Object.values(this.buffer.packages.toRemove));
+        this.packages.remove(Object.values(this.buffer.packages.toRemove));
+        this.buffer.packages = {toAdd: {}, toRemove: {}};
     }
 }
 
@@ -90,6 +136,7 @@ var muObserver = new MutationObserver(function(mutations) {
     var targetEvent;
     var lastEvent;
     var restart;
+    let t0 = performance.now();
 
     mutations.forEach(function(mutation) {
         //Find the mutation occuring when the target event is selected
@@ -118,6 +165,7 @@ var muObserver = new MutationObserver(function(mutations) {
         var targetEventNumber = parseInt(targetEvent.getAttribute("id").split("_")[1]);
         var lastEventNumber = parseInt(lastEvent.getAttribute("id").split("_")[1]);
         var targetReached = false;
+        var longJump = false;
         if (restart)
             restartEvent(targetEvent);
 
@@ -127,8 +175,10 @@ var muObserver = new MutationObserver(function(mutations) {
                 while (nextEvent && nextEvent.getAttribute("style") === "display:none;") {
                     nextEvent = nextEvent.nextElementSibling;
                 }
+                if (nextEvent != targetEvent)
+                    longJump = true;
                 if (nextEvent)
-                    lastEvent = performEvent(nextEvent);
+                    lastEvent = performEvent(nextEvent, longJump);
                 targetReached = lastEvent == targetEvent;
            }
         }
@@ -145,6 +195,10 @@ var muObserver = new MutationObserver(function(mutations) {
         visualizationData.applyBuffers();
         ledgerData.applyBuffers();
         onNodeSelect(); // update event list for selected node
+        // Even though the timeout is 0, this will be executed after redering the webport
+        window.setTimeout(function() {
+            console.log('elapsed time: ' + Math.floor(performance.now() - t0) + 'ms')
+        });
     }
 });
 
@@ -158,7 +212,7 @@ function restartEvent(event) {
     return event;
 }
 
-function performEvent(event) {
+function performEvent(event, buffered = true) {
     var eventlog = event.textContent;
     var rePattern = new RegExp(/(.+?),([0-9]+),(.+?),(.*)$/);
     var matches = eventlog.match(rePattern);
@@ -167,7 +221,7 @@ function performEvent(event) {
         var eventtime = matches[2];
         var eventtype = matches[3];
         var eventargs = matches[4];
-        console.log("Performing " + eventtype);
+        //console.log("Performing " + eventtype);
 
         switch (eventtype) {
             case "InitPeerId":
@@ -198,7 +252,7 @@ function performEvent(event) {
                 var from = eventargs.split(",")[0];
                 var to = eventargs.split(",")[1];
                 var hashId = eventargs.split(",")[3];
-                recvMessage(from, to, hashId);
+                recvMessage(from, to, hashId, buffered);
                 break;
             case "BlockAppend":
                 var peerId = eventhost;
@@ -221,7 +275,7 @@ function revertEvent(event) {
         var eventtime = matches[2];
         var eventtype = matches[3];
         var eventargs = matches[4];
-        console.log("Reverting " + eventtype);
+        //console.log("Reverting " + eventtype);
 
         switch (eventtype) {
             case "InitPeerId":
@@ -422,12 +476,16 @@ function drawVisualization() {
     }
 }
 
-function recvMessage(from, to, hashId) {
-    visualizationData.pushToBuffer('packages', {id: from+to+hashId}, 'remove');
+function recvMessage(from, to, hashId, buffered = true) {
+    visualizationData.pushToBuffer(
+        'packages',
+        {id: from+to+hashId, progress: {autoProgress: !buffered}},
+        'remove'
+    );
 }
 
 function unrecvMessage(from, to, hashId) {
-    sendMessage(from, to, hashId, buffered);
+    sendMessage(from, to, hashId);
 }
 
 function sendMessage(from, to, hashId) {
@@ -636,7 +694,14 @@ function onNodeSelect() {
 function loadSnapshot() {
     var selection = blockchainMap.getSelectedNodes();
     var blockId = selection[0];
-    $('#ss_elem_list li[role="option"]:not([style="display:none;"]):contains(' + blockId + ')')[0].click();
+    if (blockId == '0000000000') {
+        document.getElementById("ss_elem_list")
+            .querySelector('[role="option"]:not([style="display:none;"])')
+            .click();
+    }
+    else {
+        $('#ss_elem_list li[role="option"]:not([style="display:none;"]):contains(' + blockId + ')')[0].click();
+    }
 }
 
 /**

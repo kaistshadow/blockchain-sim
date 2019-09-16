@@ -13,23 +13,21 @@
 
 namespace libBLEEP {
 
-
-    enum class ConnectionMethod {
-        Kademlia,
-        Random,
-    };
-
+    /***********************************************************************/
+    /* Classes for implementing Kademlia-based distance for peering */
+    /***********************************************************************/
     class Distance {
+    private:
+        friend struct DistanceCmp;
+
         UINT256_t distance;
         PeerId peerId;
 
     public:
-        Distance(UINT256_t distance, PeerId peerId)
-            : distance(distance), peerId(peerId) {}
+    Distance(UINT256_t distance, PeerId peerId)
+        : distance(distance), peerId(peerId) {}
         PeerId GetPeerId() const { return peerId; }
         UINT256_t GetPeerDistance() const { return distance; }
-
-        friend struct DistanceCmp;
 
     };
 
@@ -39,15 +37,23 @@ namespace libBLEEP {
         }
     };
 
+    enum class ConnectionMethod {
+        Kademlia,
+        Random,
+    };
 
     class RandomGossipNetworkModule {
     private:
-        int fanOut;
-        std::set<std::string> messageSet;
-        class ListenSocketWatcher;
-        class DataSocketWatcher;
-        class ConnectSockerWatcher;
 
+
+    private:
+        /***********************************************************************/
+        /* Inner classes for implementing asynchronous events with libev watchers */
+        /* As the manual of libev states, 'watcher' is an opaque structure 
+           that you allocate and register to record your interest in some event */
+        /* To make it(watchers) concrete for specific events, we define class for
+           each events. As a result, WatcherWrapper class is defined. */
+        /***********************************************************************/
         class WatcherWrapper {
         protected:
             RandomGossipNetworkModule* _networkModule;
@@ -58,36 +64,13 @@ namespace libBLEEP {
 
         };
 
-        class WatcherManager {
-        private:
-            RandomGossipNetworkModule* _networkModule;
-            MainEventManager* _mainEventModule;
-
-            std::map<int, std::shared_ptr<DataSocketWatcher>> _dataSocketWatchers;
-        public:
-            WatcherManager(RandomGossipNetworkModule* netModule, MainEventManager* eventModule)
-                : _networkModule(netModule), _mainEventModule(eventModule) {};
-            void CreateDataSocketWatcher(int fd) {
-            M_Assert(_dataSocketWatchers.find(fd) == _dataSocketWatchers.end(), "fd must not have duplicated watchers");
-            _dataSocketWatchers[fd] = std::make_shared<DataSocketWatcher>(fd, _networkModule, _mainEventModule);
-
-            }
-            std::shared_ptr<DataSocketWatcher> GetDataSocketWatcher(int fd) {
-                auto it = _dataSocketWatchers.find(fd);
-                if (it == _dataSocketWatchers.end()) {
-                    std::cout << "No valid dataSocketWatcher exists" << "\n";
-                        return nullptr;
-                }
-                return it->second;
-            }
-
-            void RemoveDataSocketWatcher(int fd) {
-                auto it = _dataSocketWatchers.find(fd);
-                if (it == _dataSocketWatchers.end())
-                    _dataSocketWatchers.erase(it);
-                }
-        };
-
+        /***********************************************************************/
+        /* Inheriting the WatcherWrapper, following watcher classes are defined
+           1) AsyncConnectTimer : Monitor the timer for asynchronous connection
+           2) ListenSocketWatcher : Monitor the listen socket 
+           3) DataSocketWatcher : Monitor the data socket
+           4) ConnectSocketWatcher : Monitor the connecting socket */
+        /***********************************************************************/
         class AsyncConnectTimer : public WatcherWrapper {
         private:
             ev::timer _timer;
@@ -135,9 +118,13 @@ namespace libBLEEP {
 
         class DataSocketWatcher : public WatcherWrapper {
         private:
+            /* socket fd */
             int _fd;
+
+            /* event watcher */
             ev::io _watcher;
 
+            /* event io callback */
             void _dataSocketIOCallback(ev::io &w, int revents) {
                 M_Assert(_fd == w.fd, "fd must be same");
                 int fd = w.fd;
@@ -145,21 +132,44 @@ namespace libBLEEP {
 
                 if (revents & EV_READ) {
                     std::shared_ptr<DataSocket_v2> dataSocket = _networkModule->socketManager.GetDataSocket(fd);
+
+                    // overall process of receiving data
+                    // retrieve raw stream data from socket and append them into recvBuffer
+                    // retrieve Message from recvBuffer if possible
+                    // return Message as asynchronous event
+
                     std::pair<bool, std::shared_ptr<Message>> recvResult = dataSocket->DoRecv();
                     if (!recvResult.first) {
-                        std::shared_ptr<PeerId> disconnectedPeerId = _networkModule->peerManager.GetPeerIdBySocket(fd);
+                        // socket closed by remote while doRecv
+                        std::shared_ptr<PeerId> disconnectedPeerId = 
+                            _networkModule->peerManager.GetPeerIdBySocket(fd);
+
+                        // update peermanager for closed socket
                         _networkModule->peerManager.UpdateNeighborSocketDisconnection(fd);
+
                         if (disconnectedPeerId != nullptr) {
+                            // set asynchronous event
                             AsyncEvent event(AsyncEventEnum::PeerDisconnected);
                             event.GetData().SetDisconnectedPeer(disconnectedPeerId);
                             _mainEventModule->PushAsyncEvent(event);
+                        }
+                        else {
+                            // this case is possible
+                            // when redundant connection is closed by remote peer
                         }
 
                         _networkModule->socketManager.RemoveDataSocket(fd);
                         _networkModule->watcherManager.RemoveDataSocketWatcher(fd);
                     } else {
+                        // check whether any message is received
                         std::shared_ptr<Message> message = recvResult.second;
                         if (message && message->GetType() == "notifyPeerId") {
+                            /* received id notify message (First message after socket establishment)
+                               This message is intended to be not visible to user of BasicNetworkModule.
+                               Thus, we don't set recvMessage asynchronous event.                      
+                               Instead, we only set newPeerConnected event. */
+
+                            // append a peer information
                             _networkModule->peerManager.AppendNeighborPeerConnectedByRemote(message->GetSource().GetId(), fd);
                             std::shared_ptr<PeerId> newlyConnectedNeighborPeer = std::make_shared<PeerId>(message->GetSource());
                             AsyncEvent event(AsyncEventEnum::NewPeerConnected);
@@ -338,14 +348,99 @@ namespace libBLEEP {
                     _watcher.start(fd, ev::WRITE);
                     _fd = fd;
                 }
+        };
 
+    private:
+        /*********************************************************/
+        /* In order to manage multiple watchers for long-living data sockets, 
+           we implemented WatcherManager class. 
+           Any other watchers are all ephemeral, so do not need separate manager class. */
+        /*********************************************************/
+        class WatcherManager {
+        private:
+            RandomGossipNetworkModule* _networkModule;
+            MainEventManager* _mainEventModule;
 
+            std::map<int, std::shared_ptr<DataSocketWatcher>> _dataSocketWatchers;
+        public:
+            WatcherManager(RandomGossipNetworkModule* netModule, MainEventManager* eventModule)
+                : _networkModule(netModule), _mainEventModule(eventModule) {};
+            void CreateDataSocketWatcher(int fd) {
+            M_Assert(_dataSocketWatchers.find(fd) == _dataSocketWatchers.end(), "fd must not have duplicated watchers");
+            _dataSocketWatchers[fd] = std::make_shared<DataSocketWatcher>(fd, _networkModule, _mainEventModule);
+
+            }
+            std::shared_ptr<DataSocketWatcher> GetDataSocketWatcher(int fd) {
+                auto it = _dataSocketWatchers.find(fd);
+                if (it == _dataSocketWatchers.end()) {
+                    std::cout << "No valid dataSocketWatcher exists" << "\n";
+                        return nullptr;
+                }
+                return it->second;
+            }
+
+            void RemoveDataSocketWatcher(int fd) {
+                auto it = _dataSocketWatchers.find(fd);
+                if (it == _dataSocketWatchers.end())
+                    _dataSocketWatchers.erase(it);
+                }
         };
     private:
-        MainEventManager* _mainEventManager;
-        SocketManager_v2 socketManager;
+        WatcherManager watcherManager; // manager class for data sockets
 
-        WatcherManager watcherManager;
+
+
+    private:
+        MainEventManager* _mainEventManager;
+
+    public:
+        /* Constructor with fanout number */
+        RandomGossipNetworkModule(std::string myPeerId, MainEventManager* worker, int fanOutNum);
+
+        /*********************************************************/
+        /* Public API designed for high-level Network requests */
+        /*********************************************************/
+
+        /* asynchronous API that requests a connection for given peer */
+        /* When the task is complete, 'complete event' will be triggered. */
+        /* 'complete event' offers connected socket fd and requested PeerId */
+        /* If the valid socket connection exists for given PeerId,
+           the function immediately returns false, and 'complete event' will not be triggered */
+        /* If the 'time' is given, the API tries connection
+           after the given 'time' is passed. */
+        bool AsyncConnectPeer(PeerId id, double time=0);
+
+        /* documentation needed */
+        bool AsyncConnectPeers(std::vector<PeerId, std::allocator<PeerId>> &peerList, int peerNum, double time = 0, ConnectionMethod cmethod = ConnectionMethod::Kademlia);
+
+
+        /* asynchronous API that sends a given message to proper peer(s) */
+        /* If the valid socket connection does not exist for given PeerId,
+           the function immediately returns false */
+        /* There's no separate complete event for this API */
+        bool UnicastMessage(PeerId dest, std::shared_ptr<Message> message);
+
+        
+        /* documentation needed */
+        bool MulticastMessage(std::shared_ptr<Message> message);
+        bool ForwardMessage(std::shared_ptr<Message> message, std::shared_ptr<PeerId> from); 
+
+
+        /* synchronous API that requests a disconnection for given peer */
+        /* Since it's synchronous API,
+           there's no separate complete event for this API */
+        /* If the valid socket connection does not exist for given PeerId,
+           the function immediately returns false */
+        bool DisconnectPeer(PeerId id);
+
+        /* documentation needed */
+        bool InsertMessageSet(std::string messageId);
+
+    private:
+        int fanOut;
+        std::set<std::string> messageSet;
+
+        SocketManager_v2 socketManager;
 
         PeerManager peerManager;
 
@@ -355,25 +450,9 @@ namespace libBLEEP {
 
         std::vector<PeerId> GetNeighborPeerIds(PeerConnectMode mode = PeerConnectMode::none);
 
-    public:
-        RandomGossipNetworkModule(std::string myPeerId, MainEventManager* worker, int fanOutNum);
-
         PeerId GetMyPeerId();
 
-        bool InsertMessageSet(std::string messageId);
-
         bool ExistMessage(std::string messageId);
-
-        bool AsyncConnectPeer(PeerId id, double time=0);
-
-        bool AsyncConnectPeers(std::vector<PeerId, std::allocator<PeerId>> &peerList, int peerNum, double time = 0, ConnectionMethod cmethod = ConnectionMethod::Kademlia);
-
-        bool UnicastMessage(PeerId dest, std::shared_ptr<Message> message);
-
-        bool MulticastMessage(std::shared_ptr<Message> message);
-        bool ForwardMessage(std::shared_ptr<Message> message, std::shared_ptr<PeerId> from); // separate from multicastMessage for debugging
-
-        bool DisconnectPeer(PeerId id);
 
     };
 

@@ -38,8 +38,11 @@ def parse_output(output, datadir):
     return eventlogs_filename
 
 def run_experiment(configfile, LOGLEVEL):
-    datadir = "visualize-datadir." + str(os.getpid())
-    current_config_path = "%s/current-config.%d.xml" % (os.path.dirname(configfile), os.getpid())
+    datadir = "visualize-datadir.%d" % os.getpid()
+    current_config_path = os.path.join(
+        os.path.dirname(configfile),
+        "current-config.%d.xml" % os.getpid()
+    )
     exec_shell_cmd("cp %s %s" % (configfile, current_config_path))
 
     shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-l", LOGLEVEL, "-w", "8", "-d", datadir, configfile], stdout=PIPE)    
@@ -64,21 +67,24 @@ def run_experiment(configfile, LOGLEVEL):
             sys.exit(-1)
 
     if shadow_returnCode != 0:
-        print "experiment failed"
+        print "experiment failed. Try again."
         sys.exit(-1)
 
     eventlogs_filename = parse_output("./%s/%s" % (datadir, shadow_stdout_filename), datadir)
     
+    exec_shell_cmd("rm %s" % current_config_path)
     return "./%s/%s" % (datadir, eventlogs_filename)
 
-def run_visualization_server(shadowoutput, configfile, port, background=False):
-    if background:
-        web_server = Popen(["node", "server.js", "../"+shadowoutput, port], cwd="./web-gui", close_fds=True)
-    else:
-        web_server = Popen(["node", "server.js", "../"+shadowoutput, port], cwd="./web-gui")
+def run_visualization_server(eventlogs, configfile, port, background=False):
+    eventlogs_path = os.path.join(os.getcwd(), eventlogs)
+    # relative path from this file to web-gui/
+    relpath = "/web-gui"
+    wd = os.path.dirname(os.path.realpath(__file__)) + relpath
 
-    current_config_path = "%s/current-config.%d.xml" % (os.path.dirname(configfile), os.getpid())
-    exec_shell_cmd("rm %s" % current_config_path)
+    if background:
+        web_server = Popen(["node", "server.js", eventlogs_path, port], cwd=wd, close_fds=True)
+    else:
+        web_server = Popen(["node", "server.js", eventlogs_path, port], cwd=wd)
  
     time.sleep(1)
     print ""

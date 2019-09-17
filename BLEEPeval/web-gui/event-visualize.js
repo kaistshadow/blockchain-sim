@@ -422,7 +422,11 @@ function drawVisualization() {
                 nodeSpacing : 100
             }
         },
-        interaction: {dragNodes :false},
+        interaction: {
+            dragNodes: false,
+            hover: true,
+            hoverConnectedEdges: false
+        },
         physics: {
             enabled: false,
         },
@@ -431,7 +435,8 @@ function drawVisualization() {
             size: 50
         },
         edges : {
-            length: 1
+            length: 1,
+            chosen: false
         }
     };
 
@@ -459,16 +464,21 @@ function drawVisualization() {
                     nodeSpacing : 100
                 }
             },
-            interaction: {dragNodes :false},
+            interaction: {
+                dragNodes :false,
+                hover: true,
+                hoverConnectedEdges: false
+            },
             physics: {
-                enabled: false,
+                enabled: false
             },
             nodes : {
                 shape: "box",
                 size: 50
             },
             edges : {
-                length: 1
+                length: 1,
+                chosen: false
             }
         };
         blockchainMap = new vis.Network(container, data, mapplotoptions);
@@ -559,7 +569,7 @@ function removeEdge(from, to) {
 
 function appendBlockMap(peerId, hash, prevHash, timestamp) {
     let newNodes = [
-        {id: hash, label: timestamp},
+        {id: hash, label: timestamp, title: hash},
         {id: peerId, label: peerId}
     ];
     let newEdges = [
@@ -574,13 +584,13 @@ function appendBlockMap(peerId, hash, prevHash, timestamp) {
 }
 
 function appendBlock(peerId, hash, prevHash, timestamp) {
+    let newNodes = [
+        {id: hash, label: timestamp, title: hash},
+        {id: peerId, label: peerId}
+    ];
     let newEdges = [
         {id: prevHash+hash, from: prevHash, to: hash},
         {id: peerId, from: hash, to: peerId}
-    ];
-    let newNodes = [
-        {id: hash, label: timestamp},
-        {id: peerId, label: peerId}
     ];
     if (prevHash === "0000000000") {
         newNodes.unshift({id:prevHash, label:"genesis"});

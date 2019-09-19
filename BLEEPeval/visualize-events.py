@@ -12,6 +12,7 @@ def exec_shell_cmd(cmd):
         print("error while executing '%s'" % cmd)
         exit(-1)
 
+# Extract eventlog from shadow output file and store it in JSON file 
 def parse_output(output, datadir):
     data = {}
     data['eventlogs'] = []
@@ -20,6 +21,8 @@ def parse_output(output, datadir):
     print "Parsing shadow output"
     with open(output) as ifile:
         for line in ifile:
+            # Regexp matching is expensive, and eventlog lines are a minority in
+            #  shadow.output . So we first use regular pettern matching
             if "shadow_push_eventlog" in line:
                 matches = re.findall(r'.*shadow_push_eventlog:(.+?),([0-9]+),(.+?),(.*)', line)
                 if len(matches) > 0 and len(matches[0]) >= 3:
@@ -38,6 +41,8 @@ def parse_output(output, datadir):
     return eventlogs_filename
 
 def run_experiment(configfile, LOGLEVEL):
+    # Datadir is sign with pid to differenciate experiments currently running on
+    # different ports
     datadir = "visualize-datadir.%d" % os.getpid()
     current_config_path = os.path.join(
         os.path.dirname(configfile),
@@ -77,7 +82,7 @@ def run_experiment(configfile, LOGLEVEL):
 
 def run_visualization_server(eventlogs, configfile, port, background=False):
     eventlogs_path = os.path.join(os.getcwd(), eventlogs)
-    # relative path from this file to web-gui/
+    # Relative path from this file (visualize-event.py) to web-gui/
     relpath = "/web-gui"
     wd = os.path.dirname(os.path.realpath(__file__)) + relpath
 

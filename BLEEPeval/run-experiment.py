@@ -41,8 +41,8 @@ def parse_output(output, datadir):
     return eventlogs_filename
 
 def run_experiment(configfile, LOGLEVEL):
-    # Datadir is signed with pid to differenciate experiments currently running on
-    # different ports
+    # Datadir is signed with pid to differenciate experiments currently running
+    # on different ports
     datadir = "visualize-datadir.%d" % os.getpid()
     current_config_path = os.path.join(
         os.path.dirname(configfile),
@@ -79,42 +79,15 @@ def run_experiment(configfile, LOGLEVEL):
     
     exec_shell_cmd("rm %s" % current_config_path)
     return "%s/%s/%s" % (os.getcwd(), datadir, eventlogs_filename)
-
-def run_visualization_server(eventlogs, configfile, port, background=False):
-    eventlogs_path = os.path.join(os.getcwd(), eventlogs)
-    # Relative path from this file (visualize-event.py) to web-gui/
-    relpath = "/web-gui"
-    wd = os.path.dirname(os.path.realpath(__file__)) + relpath
-
-    if background:
-        web_server = Popen(["node", "server.js", eventlogs_path, port], cwd=wd, close_fds=True)
-    else:
-        web_server = Popen(["node", "server.js", eventlogs_path, port], cwd=wd)
- 
-    time.sleep(1)
-    print ""
-    print ""
-    print ""
-    print ""
-    print "The script has launched the NodeJS web server for visualization."
-    print "You can see the visualization results of the configuration requested (i.e., %s)" % configfile
-    print "To see the results, connect to the server using address 'http://ipaddress_of_this_machine:%s/frontend.html' in web browser." % port
-    print ""
-    print ""
-    print ""
     
-    if not background:
-        print "Type Ctrl-C to terminate the NodeJS web server."
-        web_server.wait()
-
-
+    
+    
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
     parser.add_argument("configfile", help="filepath for blockchain network configuration file (shadow xml configuration)")
     parser.add_argument("-p", "--port", metavar="port", default="1337", help="Port where we'll run the websocket server")
     parser.add_argument("--background", action="store_true", help="Run server as background daemon.")
     parser.add_argument("--log", help="Shadow Log LEVEL above which to filter messages ('error' < 'critical' < 'warning' < 'message' < 'info' < 'debug') ['message']")
-    # --no server
 
     args = parser.parse_args()
     configfile = args.configfile
@@ -134,10 +107,4 @@ if __name__ == '__main__':
     elapsed_time = end - start
     print "elapsed_millisec=%d\n" % (int(elapsed_time.total_seconds() * 1000)) 
 
-    print "Starting visualization"
-    if OPT_BACKGROUND:
-        run_visualization_server(output, configfile, port, background=True)
-    else:
-        run_visualization_server(output, configfile, port)
-
-    
+    print "eventlogs_path=%s" % output

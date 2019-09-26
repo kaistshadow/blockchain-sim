@@ -510,7 +510,6 @@ class CanvasRenderer {
       this.body.emitter.emit('_stopMovingPackages')
     }
     else {
-      //this._redraw()
       this.body.emitter.emit('_requestRedraw')
       this._startMovingPackages()
     }

@@ -15,6 +15,8 @@ test/plugin-bitcoin/data/
 test/plugin-bitcoin/shadow.data/
 test/temporary-code
 
+regtest/*-datadir*/
+
 BLEEPeval/*-datadir*/
 BLEEPeval/*_datadir_*/
 BLEEPeval/web-gui/node_modules/

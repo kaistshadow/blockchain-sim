@@ -38,14 +38,14 @@ void mutate (char * name, size_t size) {
 
 void  genPeerList(std::vector<PeerId> &lst, std::string myId, int maxPeerNum, std::string victimId){
 
-    char current_config[50];
-    sprintf(current_config, "config-examples/current-config.%d.xml", (int) getppid() );
+    const char * current_config = "config-examples/current-config.xml";
 
-    char generated_config[60];
-    sprintf(generated_config, "config-examples/rc1-eventloop-random-generated.%d.xml", (int) getppid() );
+    const char * generated_config = "config-examples/rc1-eventloop-random-eclipse.xml";
 
     tinyxml2::XMLDocument doc;
     auto errorId = doc.LoadFile(generated_config);
+    // if the config has already been generated, just behave normally
+    // i.e. return a vector of IDs of all nodes defined before this one
     if (!errorId) {
         // ===== comment this block if you don't want attacker nodes to make outgoing connections
         doc.LoadFile(current_config);
@@ -58,6 +58,7 @@ void  genPeerList(std::vector<PeerId> &lst, std::string myId, int maxPeerNum, st
         // =====
     }
 
+    // Generate the config to run to perform the attack
     else {
         int connectPeerNum = 20; // Same maximum number as in main()
 
@@ -68,6 +69,7 @@ void  genPeerList(std::vector<PeerId> &lst, std::string myId, int maxPeerNum, st
                 node != NULL; node = node->NextSiblingElement()) {
                     const char * nodeId = node->Attribute("id");
                     if (nodeId == victimId) break;
+                    // fill the vector with all the IDs the victim can connect to
                     lst.push_back(PeerId(nodeId));
             }
         }
@@ -82,6 +84,8 @@ void  genPeerList(std::vector<PeerId> &lst, std::string myId, int maxPeerNum, st
             char name[20];
             sprintf(name, "attacker%d", i);
             PeerId peer = PeerId(name);
+            // this is how the set of peers to connect to is randomly generated
+            // cf RandomGossipNetworkModule.cpp @ genNeighborPeerSet()
             UINT256_t distance = victimHash ^ peer.GetIdHash();
             while (distance < minDist) {
                 mutate(name, sizeof(name));
@@ -121,7 +125,7 @@ int main(int argc, char *argv[]) {
         return 0;
     }
     std::string myId = gArgs.GetArg("-id", "noid");
-    std::string victim = gArgs.GetArg("-victim", "bleep0");
+    std::string victim = gArgs.GetArg("-victim", "bleep20");
 
     MainEventManager mainEventManager;
     RandomGossipNetworkModule randomNetworkModule(myId, &mainEventManager, fanOut);

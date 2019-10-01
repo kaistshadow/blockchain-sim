@@ -298,16 +298,14 @@ $(function () {
             }
         } else if (json.type === 'userindex') {
             myIndex = json.data;
-        }
-        else if (json.type === 'newExperiment') {
+        } else if (json.type === 'newExperiment') {
             var domain = new URL(window.location.href);
             domain.port = json.port;
-            window.open(domain.href);
-        }
-        else if (json.type === 'error') {
+            window.open(domain.href);               // open in new tab
+            //location.replace(domain.href);        // change current url
+        } else if (json.type === 'error') {
             console.log(`Experiment error: ${json.stderr}`);
-        }
-        else {
+        } else {
             console.log('Hmm..., I\'ve never seen JSON like this: ', json);
         }
     };

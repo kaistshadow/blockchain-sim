@@ -33,8 +33,6 @@ var operatorIndex = -1;
 // network graph option
 var draw_network = true;
 
-// latest 100 messages
-var history = [ ];
 // list of currently connected clients (users)
 var clients = [ ];
 var globalClientId = 0;
@@ -60,26 +58,45 @@ var colors = [ 'red', 'green', 'blue', 'magenta', 'purple', 'plum', 'orange' ];
 // ... in random order
 colors.sort(function(a,b) { return Math.random() > 0.5; } );
 
-/**
- * HTTP server
- */
-var server = http.createServer(function(request, response) {
-    var done = finalhandler(request, response);
-    serve(request, response, done);
-    // Not important for us. We're writing WebSocket server, not HTTP server
-});
-server.listen(webSocketsServerPort, function() {
-    console.log((new Date()) + " Server is listening on port " + webSocketsServerPort);
-});
+// Base http server of the WebSocket server
+var server;
+// WebSocket server
+var wsServer;
+
+initializeWebSocketServer(webSocketsServerPort);
 
 /**
- * WebSocket server
+ * Creates an active WebSocket server listening to new connections
+ * The previously active server doesn't accept new connections anymore
+ * @param {integer} port port where the server runs
  */
-var wsServer = new webSocketServer({
-    // WebSocket server is tied to a HTTP server. WebSocket request is just
-    // an enhanced HTTP request. For more info http://tools.ietf.org/html/rfc6455#page-6
-    httpServer: server
-});
+function initializeWebSocketServer(port) {
+    if (server) {
+        server.close(); // stop any new connection to the previous port
+    }
+
+    /**
+     * HTTP server
+     */
+    server = http.createServer(function(request, response) {
+        var done = finalhandler(request, response);
+        serve(request, response, done);
+        // Not important for us. We're writing WebSocket server, not HTTP server
+    });
+    server.listen(port, function() {
+        console.log((new Date()) + " Server is listening on port " + port);
+    });
+    
+    /**
+     * WebSocket server
+     */
+    wsServer = new webSocketServer({
+        // WebSocket server is tied to a HTTP server. WebSocket request is just
+        // an enhanced HTTP request. For more info http://tools.ietf.org/html/rfc6455#page-6
+        httpServer: server
+    });
+    wsServer.on('request', onRequest);
+}
 
 function sendEventlogs(connection, eventlogsfile) {
     console.log('sendEventlogs for' + eventlogsfile);
@@ -222,8 +239,8 @@ function sendSnapshot(connection, nodenum) {
 
 // This callback function is called every time someone
 // tries to connect to the WebSocket server
-wsServer.on('request', function(request) {
-    console.log((new Date()) + ' Connection from origin ' + request.origin + '.');
+function onRequest(request) {
+    console.log('\n' + (new Date()) + ' Connection from origin ' + request.origin + '.');
 
     // accept connection - you should check 'request.origin' to make sure that
     // client is connecting from your website
@@ -247,10 +264,6 @@ wsServer.on('request', function(request) {
     var proc = null;
     var snapshotIntervalId;
 
-    // send back chat history
-    if (history.length > 0) {
-        connection.sendUTF(JSON.stringify( { type: 'history', data: history} ));
-    }
     connection.sendUTF(JSON.stringify( {type: 'userindex', data: index}));
     connection.sendUTF(JSON.stringify( {type:'status', data: {operator:operatorIndex }  } ));
 
@@ -464,27 +477,34 @@ wsServer.on('request', function(request) {
                 }
             }
             else if (msg.startsWith("new-experiment")) {
-                var newPort = webSocketsServerPort + 1;
+                webSocketsServerPort ++;
+                initializeWebSocketServer(webSocketsServerPort);
                 var config = '';
                 switch (msg.split(' ')[1]) {
                     case "basic-eventloop": config = "rc1-eventloop.xml"; break;
                     case "pow-5":           config = "rc1-pow-5.xml"; break;
                     case "pow-large":       config = "rc1-pow-large.xml"; break;
                     case "gossip":          config = "rc1-eventloop-random.xml"; break;
-                    case "generate":        config = "rc1-eventloop-random-attack.xml"; break;
-                    case "eclipse":         config = "rc1-eventloop-random-generated." + process.ppid +  ".xml"; break;
+                    case "generate":        config = "rc1-eventloop-random-generate.xml"; break;
+                    case "eclipse":         config = "rc1-eventloop-random-eclipse.xml"; break;
                 }
-                var args = ["visualize-events.py", `config-examples/${config}`, "-p", `${newPort.toString()}`];
+                var args = ["run-experiment.py", `config-examples/${config}`, "-p", `${webSocketsServerPort}`];
 
                 const { spawn } = require('child_process');
                 const child = spawn('python', args, {cwd:'../', shell:true})
-                connection.send(JSON.stringify({type: "newExperiment", port: newPort}));
 
+                var rePattern = new RegExp(/.*eventlogs_path=(.*)visualize-datadir.([0-9]*)(.*)/);
                 child.stdout.on('data', (data) => {
-                    //console.log(`stdout: ${data}`);
+                    console.log(`stdout: ${data}`);
+                    const dataStr = data.toString();
+                    const matches = dataStr.match(rePattern);
+                    if (matches) {
+                        shadowoutputfile = matches[1] + 'visualize-datadir.' + matches[2] + matches[3];
+                        connection.send(JSON.stringify({type: "newExperiment", port: webSocketsServerPort}));
+                    }
                 });
                 child.stderr.on('data', (data) => {
-                    //console.log(`stderr: ${data}`);
+                    console.log(`stderr: ${data}`);
                     connection.send(JSON.stringify({type: "error", stderr: `${data}`}));
                 });
                 child.on("close", (code) => {
@@ -545,8 +565,6 @@ wsServer.on('request', function(request) {
                 author: "user"+index,
                 color: 'red'
             };
-            history.push(obj);
-            history = history.slice(-100);
 
             // broadcast message to all connected clients
             var json = JSON.stringify({ type:'message', data: obj });
@@ -578,5 +596,4 @@ wsServer.on('request', function(request) {
         //     clients[i].sendUTF(JSON.stringify( {type: 'userindex', data: i}));
         // }
     });
-
-});
+};

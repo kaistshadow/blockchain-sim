@@ -1,8 +1,11 @@
-
+/**
+ * Manage all the data for each vis.Network
+ */
 class NetworkData {
     constructor(data = {}) {
         this.setData(data);
     }
+
     setData(data) {
         this.nodes = new vis.DataSet(data.nodes);
         this.edges = new vis.DataSet(data.edges);
@@ -15,33 +18,18 @@ class NetworkData {
         }
         this.network = undefined;
     }
-    applyBuffer(itemsType) {
-        try {
-            if (this.buffer.operation == 'remove') {
-                this[itemsType].remove(this.buffer[itemsType]);
-            }
-            else if (this.buffer.operation == 'add') {
-                this[itemsType].add(this.buffer[itemsType]);
-            }
-            else {
-                this[itemsType].update(this.buffer[itemsType]);
-            }
-            this.buffer[itemsType].length = 0;
-        } catch(err) {}
-    }
-    applyBuffers() {
-        if (this.buffer.operation == 'remove') {
-            this.applyBuffer('edges');
-            this.applyBuffer('nodes');
-        }
-        else {
-            this.applyBuffer('nodes');
-            this.applyBuffer('edges');
-        }
-        this.applyPackagesBuffer();
-        this.buffer.operation = '';
-    }
+
+    /**
+     * Used to buffer an modification of the data of a Network. This is much
+     * faster than updating the Dataset every time.
+     * 
+     * @param {string} itemsType 
+     * @param {Object} data 
+     * @param {string} operation 
+     */
     pushToBuffer(itemsType, data, operation) {
+        // Packages history doesn't matter we can switch between 'add' and
+        // 'remove' without applying the buffer to the Dataset
         if (itemsType == 'packages') {
             if (operation == 'add') {
                 this._addPackage(data);
@@ -51,6 +39,8 @@ class NetworkData {
             }
         }
         else {
+            // We can only buffer one operation at a time for both nodes or edges
+            // because the order is not remembered when applying buffers. 
             if (this.buffer.operation != operation) {
                 this.applyBuffers();
                 this.buffer.operation = operation;
@@ -64,6 +54,39 @@ class NetworkData {
             }
         }
     }
+
+    applyBuffers() {
+        this._applyBuffer('nodes');
+        this._applyBuffer('edges');
+        this._applyPackagesBuffer();
+        this.buffer.operation = '';
+    }
+
+    /**
+     * Actually apply the content of a buffer to the corresponding Dataset
+     * 
+     * @param {string} itemsType 
+     */
+    _applyBuffer(itemsType) {
+        try {
+            if (this.buffer.operation == 'add') {
+                this[itemsType].add(this.buffer[itemsType]);
+            }
+            else if (this.buffer.operation == 'remove') {
+                this[itemsType].remove(this.buffer[itemsType]);
+            }
+            else {
+                this[itemsType].update(this.buffer[itemsType]);
+            }
+            this.buffer[itemsType].length = 0;
+        } catch(err) {}
+    }
+
+    /**
+     * Push the addition of packages
+     * 
+     * @param {Object|Array} pkg    A package or array of packages
+     */
     _addPackage(pkg) {
         let toAdd = this.buffer.packages.toAdd;
         let toRemove = this.buffer.packages.toRemove;
@@ -83,6 +106,12 @@ class NetworkData {
             }
         }
     }
+
+    /**
+     * Push the deletion of packages
+     * 
+     * @param {Object|Array} pkg    A package or array of packages
+     */
     _removePackage(pkg) {
         let toAdd = this.buffer.packages.toAdd;
         let toRemove = this.buffer.packages.toRemove;
@@ -102,7 +131,8 @@ class NetworkData {
             }
         }
     }
-    applyPackagesBuffer() {
+
+    _applyPackagesBuffer() {
         this.packages.add(Object.values(this.buffer.packages.toAdd));
         this.packages.update(Object.values(this.buffer.packages.toRemove));
         this.packages.remove(Object.values(this.buffer.packages.toRemove));
@@ -127,16 +157,24 @@ var ImgDIR = 'link_network/img/';
 var peerHash = {};
 var peerPrevHash = {};
 
+// bind listeners
 var toggleButton = document.getElementById("toggle-btn");
 toggleButton.addEventListener('click', toggle);
-
+document.addEventListener("keydown", function(event) {
+    if (event.altKey === true && event.ctrlKey === true) {
+        event.preventDefault();
+        document.getElementById("ss_elem_list").focus({
+            preventScroll: true
+        });
+    }
+});
 
 var muObserver = new MutationObserver(function(mutations) {
 
     var targetEvent;
     var lastEvent;
     var restart;
-    let t0 = performance.now();
+    var t0 = performance.now();
 
     mutations.forEach(function(mutation) {
         //Find the mutation occuring when the target event is selected
@@ -422,7 +460,11 @@ function drawVisualization() {
                 nodeSpacing : 100
             }
         },
-        interaction: {dragNodes :false},
+        interaction: {
+            dragNodes: false,
+            hover: true,
+            hoverConnectedEdges: false
+        },
         physics: {
             enabled: false,
         },
@@ -431,7 +473,8 @@ function drawVisualization() {
             size: 50
         },
         edges : {
-            length: 1
+            length: 1,
+            chosen: false
         }
     };
 
@@ -459,16 +502,21 @@ function drawVisualization() {
                     nodeSpacing : 100
                 }
             },
-            interaction: {dragNodes :false},
+            interaction: {
+                dragNodes :false,
+                hover: true,
+                hoverConnectedEdges: false
+            },
             physics: {
-                enabled: false,
+                enabled: false
             },
             nodes : {
                 shape: "box",
                 size: 50
             },
             edges : {
-                length: 1
+                length: 1,
+                chosen: false
             }
         };
         blockchainMap = new vis.Network(container, data, mapplotoptions);
@@ -559,7 +607,7 @@ function removeEdge(from, to) {
 
 function appendBlockMap(peerId, hash, prevHash, timestamp) {
     let newNodes = [
-        {id: hash, label: timestamp},
+        {id: hash, label: timestamp, title: hash},
         {id: peerId, label: peerId}
     ];
     let newEdges = [
@@ -574,13 +622,13 @@ function appendBlockMap(peerId, hash, prevHash, timestamp) {
 }
 
 function appendBlock(peerId, hash, prevHash, timestamp) {
+    let newNodes = [
+        {id: hash, label: timestamp, title: hash},
+        {id: peerId, label: peerId}
+    ];
     let newEdges = [
         {id: prevHash+hash, from: prevHash, to: hash},
         {id: peerId, from: hash, to: peerId}
-    ];
-    let newNodes = [
-        {id: hash, label: timestamp},
-        {id: peerId, label: peerId}
     ];
     if (prevHash === "0000000000") {
         newNodes.unshift({id:prevHash, label:"genesis"});
@@ -673,10 +721,10 @@ function onNodeSelect() {
     var items = document.getElementById("ss_elem_list").getElementsByTagName("li");
     var node_event_count = 0;
     for (var i = 0; i < items.length; i++) {
-        var item = items[i];
+        let item = items[i];
 
         if (item.innerHTML.includes(",API,") && item.innerHTML.startsWith(nodeid)) {
-            var li = document.createElement("li");
+            let li = document.createElement("li");
             li.appendChild(document.createTextNode(item.innerHTML));
             li.setAttribute("id", 'node_API_event_${node_event_count}');
             li.setAttribute("role", "option");

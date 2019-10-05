@@ -10,9 +10,11 @@ namespace libBLEEP_BL {
     enum class AsyncEventEnum {
         Base,
         Layer1_Event_Start,
-        SocketRecv,
         SocketAccept,
         SocketConnect,
+        SocketConnectFailed,
+        SocketRecv,
+        SocketWrite,
         Layer1_Event_End,
 
 
@@ -35,8 +37,18 @@ namespace libBLEEP_BL {
         // data for SocketAccept event
         int _newlyAcceptedSocket;
 
-        // data for SocketConnected event
+        // data for SocketConnect event
         int _newlyConnectedSocket;
+
+        // data for SocketConnectFailed event
+        int _failedSocket;
+        std::string _failedDomain;
+
+        // data for SocketRecv event
+        int _recvSocket;
+
+        // data for SocketWrite event
+        int _writeSocket;
 
     public:
         // data set function for SocketAccept
@@ -44,10 +56,27 @@ namespace libBLEEP_BL {
         // data access function for SocketAccept
         int GetNewlyAcceptedSocket() { return _newlyAcceptedSocket; }
 
-        // data set function for SocketConnected
+        // data set function for SocketConnect
         void SetNewlyConnectedSocket(int fd) { _newlyConnectedSocket = fd; }
-        // data access function for SocketConnected
+        // data access function for SocketConnect
         int GetNewlyConnectedSocket() { return _newlyConnectedSocket; }
+
+        // data set function for SocketConnectFailed
+        void SetFailedSocket(int fd) { _failedSocket = fd; }
+        void SetFailedDomain(std::string s) { _failedDomain = s; }
+        // data access function for SocketConnectFailed
+        int GetFailedSocket() { return _failedSocket; }
+        std::string GetFailedDomain() { return _failedDomain; }
+
+        // data set function for SocketRecv
+        void SetRecvSocket(int fd) { _recvSocket = fd; }
+        // data access function for SocketRecv
+        int GetRecvSocket() { return _recvSocket; }
+
+        // data set function for SocketWrite
+        void SetWriteSocket(int fd) { _writeSocket = fd; }
+        // data access function for SocketWrite
+        int GetWriteSocket() { return _writeSocket; }
 
     };
 

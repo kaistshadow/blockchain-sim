@@ -26,6 +26,23 @@ namespace libBLEEP_BL {
 
         // remove connecting socket and related IO watcher
         void RemoveConnectSocket(int fd);
+
+        std::shared_ptr<ConnectSocket> GetConnectSocket(int fd);
+
+    private:
+        std::map<int, std::shared_ptr<DataSocket> > _dataSockets;  // map fd -> DataSocket structure
+
+    public:
+        // When the CreateDataSocket is called?
+        // when SocketAccept event is triggered : accept & create data socket
+        // when socketConnect event is triggered : replace connect socket as data socket
+        void CreateDataSocket(int sfd);
+
+        // remove data socket from container and remove related IO watcher
+        void RemoveDataSocket(int fd);
+
+        /* get DataSocket method */
+        std::shared_ptr<DataSocket> GetDataSocket(int fd);
     };
 
 }

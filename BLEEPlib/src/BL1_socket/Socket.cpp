@@ -70,7 +70,7 @@ ListenSocket::~ListenSocket() {
     }
 }
 
-ConnectSocket::ConnectSocket(std::string domain) {
+ConnectSocket::ConnectSocket(std::string domain) : _domain(domain) {
     int remote_fd;
     if ( (remote_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("socket");
@@ -114,4 +114,50 @@ ConnectSocket::ConnectSocket(std::string domain) {
 
     // create event watcher for the ConnectSocket
     _watcher = std::unique_ptr<ConnectSocketWatcher>(new ConnectSocketWatcher(_fd));    
+}
+
+DataSocket::DataSocket(int sfd) {
+    _fd = sfd;
+
+    // create event watcher for the DataSocket
+    _watcher = std::unique_ptr<DataSocketWatcher>(new DataSocketWatcher(_fd));
+}
+
+DataSocket::~DataSocket() {
+    if ( close(_fd) == -1) {
+        perror("close");
+        libBLEEP::M_Assert(0, "error on close data socket");
+    }
+}
+
+void DataSocket::AppendToSendBuff(char *buf, int size) {
+    _sendBuff.push_back(std::make_shared<WriteMsg>(buf, size));
+    _watcher->SetWritable();
+}
+
+void DataSocket::DoSend() {
+    if (_sendBuff.empty()) {
+        _watcher->UnsetWritable(); // no data left to send. so, make the watcher to not monitor write event.
+    }
+
+    while (!_sendBuff.empty()) {
+        std::shared_ptr<WriteMsg> msg = _sendBuff.front();
+        int numbytes = send(_fd, msg->dpos(), msg->nbytes(), 0);
+        if (numbytes < 0) {
+            perror("write error");
+            exit(-1);
+        }
+
+        msg->pos += numbytes;
+        if (msg->nbytes() == 0) {
+            _sendBuff.pop_front();
+            if (_sendBuff.empty()) {
+                _watcher->UnsetWritable(); // no data left to send. so, make the watcher to not monitor write event.
+                std::cout << "all sent" << "\n";
+                return;
+            }
+        } else {
+            return;
+        }
+    }
 }

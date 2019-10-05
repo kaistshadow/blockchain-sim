@@ -56,6 +56,10 @@ int main(int argc, char *argv[]) {
         switch (event.GetType()) {
         case libBLEEP_BL::AsyncEventEnum::Layer1_Event_Start ... libBLEEP_BL::AsyncEventEnum::Layer1_Event_End:
             libBLEEP_BL::g_SocketLayer_API->SwitchAsyncEventHandler(event);
+            if (event.GetType() == libBLEEP_BL::AsyncEventEnum::SocketConnect) {
+                libBLEEP_BL::g_SocketLayer_API->SendToSocket(event.GetData().GetNewlyConnectedSocket(), "hello", 5);
+                libBLEEP_BL::g_SocketLayer_API->SendToSocket(event.GetData().GetNewlyConnectedSocket(), "world", 5);
+            }
             break;
         }
     }

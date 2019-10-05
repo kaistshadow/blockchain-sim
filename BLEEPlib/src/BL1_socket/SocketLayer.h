@@ -16,6 +16,8 @@ namespace libBLEEP_BL {
         /* handler functions for each asynchronous event */
         void AcceptHandler(int fd);
         void ConnectHandler(int fd);
+        void RecvHandler(int fd);
+        void WriteHandler(int fd);
 
     public:
         BL_SocketLayer();
@@ -26,6 +28,7 @@ namespace libBLEEP_BL {
 
         /* public API functions */
         virtual void ConnectSocket(std::string dest);
+        virtual void SendToSocket(int fd, char* buf, int size);
     };
 
 }

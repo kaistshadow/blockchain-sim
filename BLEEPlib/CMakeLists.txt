@@ -18,9 +18,9 @@ set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.bleep")
 # debug option
 if(BLEEP_DEBUG STREQUAL ON)
   message(STATUS "Debug enabled.")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address") # suppress error for manually installed boost (1.58)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch") # suppress error for manually installed boost (1.58)
 else(BLEEP_DEBUG STREQUAL ON)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch")
 endif(BLEEP_DEBUG STREQUAL ON)
 
 set(SRCS
@@ -52,7 +52,19 @@ set(SRCS
   src/datamodules/POWBlock.cpp
   src/crypto/SHA256.cpp
   src/utility/GlobalClock.cpp
+  # 
 )
+
+set(NEW_SRCS
+  src/BL_MainEventManager.cpp
+  src/BL1_socket/Socket.cpp
+  src/BL1_socket/SocketLayer.cpp
+  src/BL1_socket/SocketManager.cpp
+  src/BL1_socket/RecvBufferManager.cpp
+  src/BL2_peer_connectivity/PeerConnectivityLayer.cpp
+  src/BL2_peer_connectivity/PeerManager.cpp
+)
+
 
 include(GNUInstallDirs)
 
@@ -64,6 +76,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_CURRENT_SOURCE_DIR}/boost/lib")
 
 add_library(BLEEP SHARED ${SRCS})
+
 # target_include_directories(BLEEP
 #   PRIVATE src
 #   INTERFACE src)
@@ -72,6 +85,14 @@ target_include_directories(BLEEP
   $<INSTALL_INTERFACE:include> 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/shadow_interface>)
+
+add_library(NEWBLEEP SHARED ${NEW_SRCS})
+target_include_directories(NEWBLEEP
+  PUBLIC 
+  $<INSTALL_INTERFACE:include> 
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/shadow_interface>)
+
 
 
 # use 3rd party library (boost_1_58)
@@ -89,6 +110,7 @@ if(NOT Boost_FOUND)
     BUILD_IN_SOURCE TRUE
     INSTALL_COMMAND <SOURCE_DIR>/b2 -d0 install)
   add_dependencies(BLEEP Boost_EXTERNAL)
+  add_dependencies(NEWBLEEP Boost_EXTERNAL)
   set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/boost")
   set(Boost_INCLUDE_DIRS "${BOOST_ROOT}/include")
   set(BOOST_LIBRARY_DIRS "${BOOST_ROOT}/lib")
@@ -133,9 +155,30 @@ install(DIRECTORY "src/crypto"
   FILES_MATCHING
   PATTERN
   "*.h")
+
+set_target_properties(NEWBLEEP PROPERTIES 
+  SOVERSION 1)
+install(TARGETS NEWBLEEP
+  EXPORT FindBLEEP
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(DIRECTORY "src/"
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  FILES_MATCHING
+  PATTERN
+  "*.h")
+install(DIRECTORY "src/BL1_socket"
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  FILES_MATCHING
+  PATTERN
+  "*.h")
 target_link_libraries(BLEEP -lev)
 target_link_libraries(BLEEP SHADOW_INTERFACE)
 target_link_libraries(BLEEP ${Boost_LIBRARIES})
+
+target_link_libraries(NEWBLEEP -lev)
+target_link_libraries(NEWBLEEP SHADOW_INTERFACE)
+target_link_libraries(NEWBLEEP ${Boost_LIBRARIES})
+
 
 include_directories(./shadow_interface)
 include_directories(${Boost_INCLUDE_DIRS})

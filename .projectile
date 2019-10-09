@@ -6,3 +6,7 @@
 -/shadow-bitcoin
 -/test
 -/doc
+-/regtest
+-/BLEEPapp/build
+-/BLEEPlib/build
+-/build

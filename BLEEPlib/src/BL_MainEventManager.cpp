@@ -1,5 +1,6 @@
 #include "BL_MainEventManager.h"
 #include "BL1_socket/SocketLayer_API.h"
+#include "BL2_peer_connectivity/PeerConnectivityLayer_API.h"
 #include "utility/Assert.h"
 #include "utility/GlobalClock.h"
 
@@ -15,7 +16,11 @@ static void HandleAsyncEvent(AsyncEvent& event) {
     case AsyncEventEnum::Layer1_Event_Start ... AsyncEventEnum::Layer1_Event_End:
         g_SocketLayer_API->SwitchAsyncEventHandler(event);
         break;
+    case AsyncEventEnum::Layer2_Event_Start ... AsyncEventEnum::Layer2_Event_End:
+        g_PeerConnectivityLayer_API->SwitchAsyncEventHandler(event);
+        break;
     }
+
 }
 
 void MainEventManager::Wait() {

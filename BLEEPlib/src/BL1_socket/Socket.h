@@ -182,7 +182,7 @@ namespace libBLEEP_BL {
     public:
         DataSocket(int fd);
 
-        void AppendToSendBuff(char* buf, int size);
+        void AppendToSendBuff(const char* buf, int size);
         void DoSend();
 
         virtual ~DataSocket();

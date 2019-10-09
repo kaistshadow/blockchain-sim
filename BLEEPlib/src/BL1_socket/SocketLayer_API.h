@@ -14,7 +14,7 @@ namespace libBLEEP_BL {
         virtual void SwitchAsyncEventHandler(AsyncEvent& event) = 0;
 
         /* public API functions */
-        virtual void ConnectSocket(std::string dest) = 0;
+        virtual int ConnectSocket(std::string dest) = 0;
         virtual void SendToSocket(int fd, char* buf, int size) = 0;
 
     };

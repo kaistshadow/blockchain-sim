@@ -5,7 +5,12 @@
 #include <queue>
 #include <memory>
 
+#include "BL2_peer_connectivity/Peer.h"
+#include "BL2_peer_connectivity/Message.h"
+
 namespace libBLEEP_BL {
+
+    class DataSocket;
 
     enum class AsyncEventEnum {
         Base,
@@ -19,10 +24,13 @@ namespace libBLEEP_BL {
 
 
         Layer2_Event_Start,
-        CompleteAsyncConnectPeer,
-        ErrorAsyncConnectPeer,
-        NewPeerConnected,  /* connection estabilished by neighbor peer */
-        PeerDisconnected,  /* connection disconnected by remote peer */
+        PeerSocketConnect,
+        PeerRecvMsg,
+        PeerNotifyRecv,
+        // CompleteAsyncConnectPeer,
+        // ErrorAsyncConnectPeer,
+        // NewPeerConnected,  /* connection estabilished by neighbor peer */
+        // PeerDisconnected,  /* connection disconnected by remote peer */
         Layer2_Event_End,
 
 
@@ -49,6 +57,17 @@ namespace libBLEEP_BL {
 
         // data for SocketWrite event
         int _writeSocket;
+
+        // data for PeerSocketConnect event
+        std::shared_ptr<DataSocket> _dataSocket;
+
+        // data for PeerNotifyRecv event
+        PeerId _neighborId;
+        std::shared_ptr<DataSocket> _incomingSocket;
+
+        // data for PeerRecvMsg event
+        PeerId _sourceId;
+        std::shared_ptr<Message> _message;
 
     public:
         // data set function for SocketAccept
@@ -78,6 +97,24 @@ namespace libBLEEP_BL {
         // data access function for SocketWrite
         int GetWriteSocket() { return _writeSocket; }
 
+        // data set function for PeerNotifyRecv
+        void SetNeighborId(PeerId peerId) { _neighborId = peerId; }
+        void SetIncomingSocket(std::shared_ptr<DataSocket> sock) { _incomingSocket = sock; }
+        // data access function for PeerNotifyRecv
+        PeerId GetNeighborId() { return _neighborId; }
+        std::shared_ptr<DataSocket> GetIncomingSocket() { return _incomingSocket; }
+        
+        // data set function for PeerSocketConnect
+        void SetDataSocket(std::shared_ptr<DataSocket> sock) { _dataSocket = sock; }
+        // data access function for PeerSocketConnect
+        std::shared_ptr<DataSocket> GetDataSocket() { return _dataSocket; }
+
+        // data set function for PeerNotifyRecv
+        void SetMsgSourceId(PeerId peerId) { _sourceId = peerId; }
+        void SetMsg(std::shared_ptr<Message> msg) { _message = msg; }
+        // data access function for PeerNotifyRecv
+        PeerId GetMsgSourceId() { return _sourceId; }
+        std::shared_ptr<Message> GetMsg() { return _message; }
     };
 
     class AsyncEvent {

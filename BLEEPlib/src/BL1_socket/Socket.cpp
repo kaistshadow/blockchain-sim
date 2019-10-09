@@ -130,7 +130,7 @@ DataSocket::~DataSocket() {
     }
 }
 
-void DataSocket::AppendToSendBuff(char *buf, int size) {
+void DataSocket::AppendToSendBuff(const char *buf, int size) {
     _sendBuff.push_back(std::make_shared<WriteMsg>(buf, size));
     _watcher->SetWritable();
 }

@@ -1,7 +1,10 @@
 #include "BL_MainEventManager.h"
 #include "BL1_socket/SocketLayer.h"
 #include "BL1_socket/SocketLayer_API.h"
+#include "BL2_peer_connectivity/PeerConnectivityLayer.h"
+#include "BL2_peer_connectivity/PeerConnectivityLayer_API.h"
 
+#include "BL2_peer_connectivity/Peer.h"
 
 #include "utility/ArgsManager.h"
 #include "utility/GlobalClock.h"
@@ -17,6 +20,7 @@ using namespace libBLEEP;
 
 
 std::unique_ptr<libBLEEP_BL::BL_SocketLayer_API> libBLEEP_BL::g_SocketLayer_API;
+std::unique_ptr<libBLEEP_BL::BL_PeerConnectivityLayer_API> libBLEEP_BL::g_PeerConnectivityLayer_API;
 std::unique_ptr<libBLEEP_BL::MainEventManager> libBLEEP_BL::g_mainEventManager;
 
 int main(int argc, char *argv[]) {
@@ -35,12 +39,15 @@ int main(int argc, char *argv[]) {
     libBLEEP_BL::g_mainEventManager = std::unique_ptr<libBLEEP_BL::MainEventManager>(new libBLEEP_BL::MainEventManager());
     /* allocate socketlayer */
     libBLEEP_BL::g_SocketLayer_API = std::unique_ptr<libBLEEP_BL::BL_SocketLayer_API>(new libBLEEP_BL::BL_SocketLayer());
-
+    /* allocate peerConnectivityLayer */
     std::string myId = gArgs.GetArg("-id", "noid");
+    libBLEEP_BL::g_PeerConnectivityLayer_API = std::unique_ptr<libBLEEP_BL::BL_PeerConnectivityLayer_API>(new libBLEEP_BL::BL_PeerConnectivityLayer(myId));
+
 
     std::cout << "before connect" << "\n";
     for (auto neighborPeerIdStr : gArgs.GetArgs("-connect"))
-        libBLEEP_BL::g_SocketLayer_API->ConnectSocket(neighborPeerIdStr);
+        // libBLEEP_BL::g_SocketLayer_API->ConnectSocket(neighborPeerIdStr);
+        libBLEEP_BL::g_PeerConnectivityLayer_API->ConnectPeer(libBLEEP_BL::PeerId(neighborPeerIdStr));
 
     std::cout << "after connect" << "\n";
 
@@ -56,10 +63,13 @@ int main(int argc, char *argv[]) {
         switch (event.GetType()) {
         case libBLEEP_BL::AsyncEventEnum::Layer1_Event_Start ... libBLEEP_BL::AsyncEventEnum::Layer1_Event_End:
             libBLEEP_BL::g_SocketLayer_API->SwitchAsyncEventHandler(event);
-            if (event.GetType() == libBLEEP_BL::AsyncEventEnum::SocketConnect) {
-                libBLEEP_BL::g_SocketLayer_API->SendToSocket(event.GetData().GetNewlyConnectedSocket(), "hello", 5);
-                libBLEEP_BL::g_SocketLayer_API->SendToSocket(event.GetData().GetNewlyConnectedSocket(), "world", 5);
-            }
+            // if (event.GetType() == libBLEEP_BL::AsyncEventEnum::SocketConnect) {
+            //     libBLEEP_BL::g_SocketLayer_API->SendToSocket(event.GetData().GetNewlyConnectedSocket(), "hello", 5);
+            //     libBLEEP_BL::g_SocketLayer_API->SendToSocket(event.GetData().GetNewlyConnectedSocket(), "world", 5);
+            // }
+            break;
+        case libBLEEP_BL::AsyncEventEnum::Layer2_Event_Start ... libBLEEP_BL::AsyncEventEnum::Layer2_Event_End:
+            libBLEEP_BL::g_PeerConnectivityLayer_API->SwitchAsyncEventHandler(event);
             break;
         }
     }

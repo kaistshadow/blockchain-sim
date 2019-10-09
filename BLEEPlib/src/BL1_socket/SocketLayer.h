@@ -5,6 +5,7 @@
 
 #include "SocketLayer_API.h"
 #include "SocketManager.h"
+#include "RecvBufferManager.h"
 
 
 namespace libBLEEP_BL {
@@ -12,6 +13,7 @@ namespace libBLEEP_BL {
     class BL_SocketLayer: public BL_SocketLayer_API {
     private:
         SocketManager _socketManager;
+        RecvBufferManager _recvBuffManager;
 
         /* handler functions for each asynchronous event */
         void AcceptHandler(int fd);
@@ -27,7 +29,7 @@ namespace libBLEEP_BL {
 
 
         /* public API functions */
-        virtual void ConnectSocket(std::string dest);
+        virtual int ConnectSocket(std::string dest); // return fd
         virtual void SendToSocket(int fd, char* buf, int size);
     };
 

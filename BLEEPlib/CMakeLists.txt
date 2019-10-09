@@ -61,6 +61,9 @@ set(NEW_SRCS
   src/BL1_socket/Socket.cpp
   src/BL1_socket/SocketLayer.cpp
   src/BL1_socket/SocketManager.cpp
+  src/BL1_socket/RecvBufferManager.cpp
+  src/BL2_peer_connectivity/PeerConnectivityLayer.cpp
+  src/BL2_peer_connectivity/PeerManager.cpp
 )
 
 

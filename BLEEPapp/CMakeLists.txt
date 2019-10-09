@@ -100,14 +100,6 @@ add_shadow_plugin(NODE_POW_RANDOM_TREE node_pow_random_tree.cpp)
 install(TARGETS NODE_POW_RANDOM_TREE DESTINATION plugins)
 target_link_libraries(NODE_POW_RANDOM_TREE BLEEP::BLEEP)
 
-add_shadow_plugin(NODE_TEST node_test.cpp)
-install(TARGETS NODE_TEST DESTINATION plugins)
-target_link_libraries(NODE_TEST BLEEP::BLEEP)
-
-add_shadow_plugin(NODE_NEW_TEST node_new_test.cpp)
-install(TARGETS NODE_NEW_TEST DESTINATION plugins)
-target_link_libraries(NODE_NEW_TEST BLEEP::BLEEP)
-
 add_shadow_plugin(NODE_BL_TEST node_bl_test.cpp)
 install(TARGETS NODE_BL_TEST DESTINATION plugins)
 target_link_libraries(NODE_BL_TEST BLEEP::NEWBLEEP)

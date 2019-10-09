@@ -35,7 +35,6 @@ set(SRCS
   src/datamanagermodules/PipeManager.cpp
   src/datamanagermodules/SocketManager.cpp
   src/datamanagermodules/PeerManager.cpp
-  src/datamanagermodules/IncomingOnlyPeerManager.cpp
   src/mainmodules/MainEventManager.cpp
   src/mainmodules/BasicNetworkModule.cpp
   src/mainmodules/RandomGossipNetworkModule.cpp

@@ -26,11 +26,17 @@ namespace libBLEEP {
             ar & LOWER;
         }
 
+    private:
+        std::pair <UINT128_t, UINT128_t> divmod(const UINT128_t & lhs, const UINT128_t & rhs) const;
+
     public:
         std::string str();
 
         const uint64_t & upper() const { return UPPER; }
         const uint64_t & lower() const { return LOWER; }
+
+        // Get bitsize of value
+        uint8_t bits() const;
 
         // Constructors
         UINT128_t();
@@ -163,9 +169,22 @@ namespace libBLEEP {
         UINT128_t operator*(const T & rhs) const{
             return *this * UINT128_t(rhs);
         }
+
+        UINT128_t operator/(const UINT128_t & rhs) const;
+
+        template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
+        UINT128_t operator/(const T & rhs) const{
+            return *this / UINT128_t(rhs);
+        }
+
+        UINT128_t operator%(const UINT128_t & rhs) const;
+
+        template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
+        UINT128_t operator%(const T & rhs) const{
+            return *this % UINT128_t(rhs);
+        }
     };
 
-    
     class UINT256_t{
     private:
         UINT128_t UPPER, LOWER;
@@ -181,10 +200,15 @@ namespace libBLEEP {
             ar & LOWER;
         }
 
+    private:
+        std::pair <UINT256_t, UINT256_t> divmod(const UINT256_t & lhs, const UINT256_t & rhs) const;
     public:
         const UINT128_t & upper() const { return UPPER; }
         const UINT128_t & lower() const { return LOWER; }
         std::string str();
+        uint64_t getint();
+        // Get bitsize of value
+        uint16_t bits() const;
 
         UINT256_t();
         UINT256_t(const UINT256_t & rhs);
@@ -334,6 +358,24 @@ namespace libBLEEP {
         UINT256_t operator*(const T & rhs) const{
             return *this * UINT256_t(rhs);
         }
+
+        UINT256_t operator/(const UINT128_t & rhs) const;
+        UINT256_t operator/(const UINT256_t & rhs) const;
+
+        template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
+        UINT256_t operator/(const T & rhs) const{
+            return *this / UINT256_t(rhs);
+        }
+
+
+        UINT256_t operator%(const UINT128_t & rhs) const;
+        UINT256_t operator%(const UINT256_t & rhs) const;
+
+        template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
+        UINT256_t operator%(const T & rhs) const{
+            return *this % UINT256_t(rhs);
+        }
+
     };
 
 

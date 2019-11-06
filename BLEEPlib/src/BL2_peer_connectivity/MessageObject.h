@@ -8,6 +8,7 @@ namespace libBLEEP_BL {
     class MessageObject {
     public:
         MessageObject() {};
+        virtual ~MessageObject() {};
     private:
         friend class boost::serialization::access;
         // When the class Archive corresponds to an output archive, the

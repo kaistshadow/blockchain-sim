@@ -265,6 +265,9 @@ function performEvent(event, buffered = true) {
             case "InitPeerId":
                 addNode(eventargs);
                 break;
+            case "ShutdownPeerId":
+                removeNode(eventargs);
+                break;
             case "ConnectPeer":
                 var from = eventargs.split(",")[0];
                 var to = eventargs.split(",")[1];
@@ -278,6 +281,16 @@ function performEvent(event, buffered = true) {
                 removeEdge(from, to);
                 removeEdge(to, from);*/
                 alert("Disconnect is not supported yet");
+                break;
+            case "DisconnectIncomingPeer":
+                var from = eventargs.split(",")[1];
+                var to = eventargs.split(",")[0];
+                removeEdge(from, to);
+                break;
+            case "DisconnectOutgoingPeer":
+                var from = eventargs.split(",")[0];
+                var to = eventargs.split(",")[1];
+                removeEdge(from, to);
                 break;
             case "UnicastMessage":  // fallthrough
             case "MulticastingMessage":
@@ -319,6 +332,9 @@ function revertEvent(event) {
             case "InitPeerId":
                 removeNode(eventargs);
                 break;
+            case "ShutdownPeerId":
+                addNode(eventargs);
+                break;
             case "ConnectPeer":
                 var from = eventargs.split(",")[0];
                 var to = eventargs.split(",")[1];
@@ -332,6 +348,16 @@ function revertEvent(event) {
                 addEdge(from, to);
                 addEdge(to, from);*/
                 alert("Disconnect is not supported yet");
+                break;
+            case "DisconnectIncomingPeer":
+                var from = eventargs.split(",")[1];
+                var to = eventargs.split(",")[0];
+                addEdge(from, to);
+                break;
+            case "DisconnectOutgoingPeer":
+                var from = eventargs.split(",")[0];
+                var to = eventargs.split(",")[1];
+                addEdge(from, to);
                 break;
             case "UnicastMessage":  // fallthrough
             case "MulticastingMessage":
@@ -587,7 +613,7 @@ function addNode(nodeid) {
 
 function removeNode(nodeid) {
     visualizationData.pushToBuffer('nodes', {id: nodeid}, 'remove');
-};
+}
 
 function addEdge(from, to) {
     let edge;

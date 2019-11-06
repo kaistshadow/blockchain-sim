@@ -3,6 +3,8 @@
 #include "BL1_socket/SocketLayer_API.h"
 #include "BL2_peer_connectivity/PeerConnectivityLayer.h"
 #include "BL2_peer_connectivity/PeerConnectivityLayer_API.h"
+#include "BL_ShadowLayer.h"
+
 
 #include "BL2_peer_connectivity/Peer.h"
 
@@ -22,6 +24,7 @@ using namespace libBLEEP;
 std::unique_ptr<libBLEEP_BL::BL_SocketLayer_API> libBLEEP_BL::g_SocketLayer_API;
 std::unique_ptr<libBLEEP_BL::BL_PeerConnectivityLayer_API> libBLEEP_BL::g_PeerConnectivityLayer_API;
 std::unique_ptr<libBLEEP_BL::MainEventManager> libBLEEP_BL::g_mainEventManager;
+std::unique_ptr<libBLEEP_BL::ShadowLayer> libBLEEP_BL::g_ShadowLayer;
 
 int main(int argc, char *argv[]) {
 
@@ -42,6 +45,15 @@ int main(int argc, char *argv[]) {
     /* allocate peerConnectivityLayer */
     std::string myId = gArgs.GetArg("-id", "noid");
     libBLEEP_BL::g_PeerConnectivityLayer_API = std::unique_ptr<libBLEEP_BL::BL_PeerConnectivityLayer_API>(new libBLEEP_BL::BL_PeerConnectivityLayer(myId));
+    /* allocate Consensus Protocol implementation */
+    // Need to be filled
+    // Need to be filled
+    // Need to be filled
+    // Need to be filled
+
+
+    /* allocate shadowLayer for debugging interface */
+    libBLEEP_BL::g_ShadowLayer = std::unique_ptr<libBLEEP_BL::ShadowLayer>(new libBLEEP_BL::ShadowLayer());
 
 
     std::cout << "before connect" << "\n";

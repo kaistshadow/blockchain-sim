@@ -3,6 +3,7 @@
 
 #include "Peer.h"
 #include "Message.h"
+#include "BL_MainEventManager.h"
 
 namespace libBLEEP_BL {
     class BL_PeerConnectivityLayer_API {
@@ -19,6 +20,7 @@ namespace libBLEEP_BL {
         virtual bool ConnectPeer(PeerId id) = 0;
         virtual bool DisconnectPeer(PeerId id) = 0;
         virtual bool SendMsgToPeer(PeerId id, std::shared_ptr<Message> msg) = 0; 
+        virtual bool Shutdown() = 0;
 
     };
 

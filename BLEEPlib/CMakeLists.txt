@@ -63,6 +63,8 @@ set(NEW_SRCS
   src/BL1_socket/RecvBufferManager.cpp
   src/BL2_peer_connectivity/PeerConnectivityLayer.cpp
   src/BL2_peer_connectivity/PeerManager.cpp
+  src/BL2_peer_connectivity/AddrManager.cpp
+  src/BL2_peer_connectivity/AdvertisementManager.cpp
 )
 
 

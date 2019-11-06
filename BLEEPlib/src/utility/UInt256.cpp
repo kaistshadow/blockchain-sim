@@ -2,8 +2,29 @@
 #include <algorithm>
 #include <string.h>
 #include "UInt256.h"
+#include "Assert.h"
 
 using namespace libBLEEP;
+
+uint8_t libBLEEP::UINT128_t::bits() const{
+    uint8_t out = 0;
+    if (UPPER){
+        out = 64;
+        uint64_t up = UPPER;
+        while (up){
+            up >>= 1;
+            out++;
+        }
+    }
+    else{
+        uint64_t low = LOWER;
+        while (low){
+            low >>= 1;
+            out++;
+        }
+    }
+    return out;
+}
 
 std::string libBLEEP::UINT128_t::str() {
     unsigned char char_lower[8];
@@ -223,9 +244,77 @@ UINT128_t libBLEEP::UINT128_t::operator*(const UINT128_t & rhs) const{
     return UINT128_t((first32 << 32) | second32, (third32 << 32) | fourth32);
 }
 
+std::pair <UINT128_t, UINT128_t> UINT128_t::divmod(const UINT128_t & lhs, const UINT128_t & rhs) const{
+    // Save some calculations /////////////////////
+    if (rhs == 0){
+        throw std::domain_error("Error: division or modulus by 0");
+    }
+    else if (rhs == 1){
+        return std::pair <UINT128_t, UINT128_t> (lhs, 0);
+    }
+    else if (lhs == rhs){
+        return std::pair <UINT128_t, UINT128_t> (1, 0);
+    }
+    else if ((lhs == 0) || (lhs < rhs)){
+        return std::pair <UINT128_t, UINT128_t> (0, lhs);
+    }
+
+    std::pair <UINT128_t, UINT128_t> qr (0, 0);
+    for(uint8_t x = lhs.bits(); x > 0; x--){
+        qr.first  = qr.first << 1;
+        qr.second = qr.second << 1;
+
+        if ( ((lhs >> (x - 1U)) & 1) != 0 ) {
+            qr.second = qr.second + 1;
+        }
+
+        if (qr.second > rhs || qr.second == rhs){
+            qr.second = qr.second - rhs;
+            qr.first = qr.first + 1;
+        }
+    }
+    return qr;
+}
+
+UINT128_t libBLEEP::UINT128_t::operator/(const UINT128_t & rhs) const{
+    return divmod(*this, rhs).first;
+}
+
+UINT128_t libBLEEP::UINT128_t::operator%(const UINT128_t & rhs) const{
+    return divmod(*this, rhs).second;
+}
+
+    
+
+
+uint16_t libBLEEP::UINT256_t::bits() const{
+    uint16_t out = 0;
+    if (UPPER != 0){
+        out = 128;
+        UINT128_t up = UPPER;
+        while (up != 0){
+            up = up >> 1;
+            out++;
+        }
+    }
+    else{
+        UINT128_t low = LOWER;
+        while (low != 0){
+            low = low >> 1;
+            out++;
+        }
+    }
+    return out;
+}
+
 std::string libBLEEP::UINT256_t::str() {
     std::string str = UPPER.str() + LOWER.str();
     return str;
+}
+
+uint64_t libBLEEP::UINT256_t::getint() {
+    // M_Assert( *this == LOWER.lower(), "getint only works for small number");
+    return LOWER.lower();
 }
 
 libBLEEP::UINT256_t::UINT256_t() 
@@ -447,6 +536,55 @@ UINT256_t libBLEEP::UINT256_t::operator*(const UINT256_t & rhs) const{
            UINT256_t(third64.upper(), third64 << UINT128_t(64)) +
            UINT256_t(second64, UINT128_t(0)) +
            UINT256_t(fourth64);
+}
+
+std::pair <UINT256_t, UINT256_t> libBLEEP::UINT256_t::divmod(const UINT256_t & lhs, const UINT256_t & rhs) const{
+    // Save some calculations /////////////////////
+    if (rhs == 0){
+        throw std::domain_error("Error: division or modulus by 0");
+    }
+    else if (rhs == 1){
+        return std::pair <UINT256_t, UINT256_t> (lhs, 0);
+    }
+    else if (lhs == rhs){
+        return std::pair <UINT256_t, UINT256_t> (1, 0);
+    }
+    else if ((lhs == 0) || (lhs < rhs)){
+        return std::pair <UINT256_t, UINT256_t> (0, lhs);
+    }
+
+    std::pair <UINT256_t, UINT256_t> qr(0, lhs);
+    UINT256_t copyd = rhs << (lhs.bits() - rhs.bits());
+    UINT256_t adder = UINT256_t(1) << (lhs.bits() - rhs.bits());
+    if (copyd > qr.second){
+        copyd = copyd >> 1;
+        adder = adder >> 1;
+    }
+    while (qr.second > rhs || qr.second == rhs){
+        if (qr.second > copyd || qr.second == copyd){
+            qr.second = qr.second - copyd;
+            qr.first = qr.first | adder;
+        }
+        copyd = copyd >> 1;
+        adder = adder >> 1;
+    }
+    return qr;
+}
+
+UINT256_t libBLEEP::UINT256_t::operator/(const UINT128_t & rhs) const{
+    return *this / UINT256_t(rhs);
+}
+
+UINT256_t libBLEEP::UINT256_t::operator/(const UINT256_t & rhs) const{
+    return divmod(*this, rhs).first;
+}
+
+UINT256_t libBLEEP::UINT256_t::operator%(const UINT128_t & rhs) const{
+    return *this % UINT256_t(rhs);
+}
+
+UINT256_t libBLEEP::UINT256_t::operator%(const UINT256_t & rhs) const{
+    return *this - (rhs * (*this / rhs));
 }
 
 std::ostream & libBLEEP::operator<<(std::ostream & stream, const UINT128_t & rhs){

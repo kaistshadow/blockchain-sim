@@ -254,6 +254,8 @@ $(function () {
                     addEdge(from, to);
                 } else if (eventlog.type === "InitPeerId")
                     addNode(eventlog.args);
+                else if (eventlog.type === "ShutdownPeerId") 
+                    removeNode(eventlog.args);
                 else if (eventlog.type === "DisconnectPeer") {
                     // Ignore disconnection because it is not reversible yet
 
@@ -262,6 +264,16 @@ $(function () {
                     removeEdge(from, to);
                     removeEdge(to, from);*/
                     alert("Disconnection is not supported yet");
+                }
+                else if (eventlog.type === "DisconnectIncomingPeer") {
+                    var from = eventlog.args.split(",")[1];
+                    var to = eventlog.args.split(",")[0];
+                    removeEdge(from, to);
+                }
+                else if (eventlog.type === "DisconnectOutgoingPeer") {
+                    var from = eventlog.args.split(",")[0];
+                    var to = eventlog.args.split(",")[1];
+                    removeEdge(from, to);
                 }
             }
             let endEventlog = performance.now();

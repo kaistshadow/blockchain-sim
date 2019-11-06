@@ -43,19 +43,29 @@ namespace libBLEEP_BL {
 
     public:
         Message() {}
-        Message(PeerId src, PeerId dest, MessageType type) { _src = src; _dest = dest; _type = type; }
+        Message(PeerId dest, MessageType type) { _dest = dest; _type = type; }
+        Message(PeerId dest, MessageType type, std::shared_ptr<MessageObject> ptr) { 
+            _dest = dest; _type = type; _ptrToObj = ptr;
+            std::string timestamp = std::to_string(libBLEEP::GetGlobalClock());
+            _messageId = GenMessageHash(dest.GetId() + type + timestamp);
+        }
+        Message(PeerId src, PeerId dest, MessageType type) { _src = src; _dest = dest; _type = type; 
+            std::string timestamp = std::to_string(libBLEEP::GetGlobalClock());
+            _messageId = GenMessageHash(src.GetId() + dest.GetId() + type + timestamp);
+        }
         Message(PeerId src, PeerId dest, MessageType type, std::shared_ptr<MessageObject> ptr) {
             _src = src; _dest = dest; _type = type; _ptrToObj = ptr;
             std::string timestamp = std::to_string(libBLEEP::GetGlobalClock());
             /* _messageId = GenMessageHash(src.GetId() + dest.GetId() + payload + timestamp); */
 
             // TODO : need to implement proper message hash
-            _messageId = GenMessageHash(src.GetId() + dest.GetId() + timestamp);
+            _messageId = GenMessageHash(src.GetId() + dest.GetId() + type + timestamp);
         }
         MessageType GetType() const { return _type; }
         std::shared_ptr<MessageObject> GetObject() const { return _ptrToObj; }
         std::string GetMessageId() const { return _messageId; }
         PeerId GetSource() const { return _src; }
+        void SetSource(PeerId src) { _src = src; }
         PeerId GetDest() const { return _dest; }
 
         /* std::string GenMessageHash(std::string msg);         */

@@ -128,6 +128,7 @@ DataSocket::~DataSocket() {
         perror("close");
         libBLEEP::M_Assert(0, "error on close data socket");
     }
+    std::cout << "data socket closed" << "\n";
 }
 
 void DataSocket::AppendToSendBuff(const char *buf, int size) {

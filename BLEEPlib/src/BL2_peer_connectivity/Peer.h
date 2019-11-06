@@ -71,6 +71,7 @@ namespace libBLEEP_BL {
 
         PeerId& GetPeerId() { return _id; }
         int GetConnSocket() { return _connSocket; }
+        PeerType GetPeerType() { return _peerType; }
 
         /* get set method for data socket */
         void SetDataSocket(std::shared_ptr<DataSocket> dataSocket) { _dataSocket = dataSocket; }

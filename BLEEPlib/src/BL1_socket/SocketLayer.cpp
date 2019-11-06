@@ -103,6 +103,10 @@ void BL_SocketLayer::RecvHandler(int fd) {
         else if (n == 0) {
             std::cout << "connection closed while recv" << "\n";
             // TODO : notify socketClose event?
+            AsyncEvent event(AsyncEventEnum::PeerSocketClose);
+            event.GetData().SetClosedSocket(_socketManager.GetDataSocket(fd));
+            g_mainEventManager->PushAsyncEvent(event);
+
             _socketManager.RemoveDataSocket(fd);
             _recvBuffManager.RemoveRecvBuffer(fd);
             break;
@@ -121,52 +125,66 @@ void BL_SocketLayer::RecvHandler(int fd) {
     if (recvBuffer) {
         // strncmp(str, substr, strlen(substr)) will return 0 if str starts with substr.
         // Check if the received string starts with the bleep magic value.
-        const char *recvBuf = recvBuffer->recv_str.c_str();
-        if (!strncmp(recvBuf, BLEEP_MAGIC, BLEEP_MAGIC_SIZE)) {
-            std::cout << "bleep magic received" << "\n";
 
-            // retrieve the size of the msg if possible
-            int msg_size = 0;
-            if (recvBuffer->recv_str.size() >= BLEEP_MAGIC_SIZE + sizeof(int)) {
-                memcpy(&msg_size, recvBuf+BLEEP_MAGIC_SIZE, sizeof(int));
-                std::cout << "msg length received : " << msg_size <<"\n";
-            }
+        while (true) {
+            const char *recvBuf = recvBuffer->recv_str.c_str();
+            if (!strncmp(recvBuf, BLEEP_MAGIC, BLEEP_MAGIC_SIZE)) {
+                std::cout << "bleep magic received" << "\n";
 
-
-            // recv entire msg if possible
-            if (msg_size && recvBuffer->recv_str.size() >= BLEEP_MAGIC_SIZE + sizeof(int) + msg_size) {
-
-                std::cout << "start deserializing MSG" << "\n";
-                recvBuf = recvBuffer->recv_str.c_str();
-                recvBuf += BLEEP_MAGIC_SIZE + sizeof(int);
-                std::shared_ptr<Message> msg;
-                boost::iostreams::basic_array_source<char> device(recvBuf, msg_size);
-                boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
-                boost::archive::binary_iarchive ia(s);
-                ia >> msg;
-
-                std::cout << "deserializing MSG complete" << "\n";
-                std::cout << msg->GetType() << "\n";
-
-                // TODO : Each msg should be handled as separate event, and switched to proper layers
-                if (msg->GetType() == "notifyPeerId") {
-                    AsyncEvent event(AsyncEventEnum::PeerNotifyRecv);
-                    event.GetData().SetNeighborId(msg->GetSource());
-                    event.GetData().SetIncomingSocket(_socketManager.GetDataSocket(fd));
-                    g_mainEventManager->PushAsyncEvent(event);
+                // retrieve the size of the msg if possible
+                int msg_size = 0;
+                if (recvBuffer->recv_str.size() >= BLEEP_MAGIC_SIZE + sizeof(int)) {
+                    memcpy(&msg_size, recvBuf+BLEEP_MAGIC_SIZE, sizeof(int));
+                    std::cout << "msg length received : " << msg_size <<"\n";
                 }
                 else
-                    libBLEEP::M_Assert(0, "Unexpected message");
+                    break;
 
-                AsyncEvent event(AsyncEventEnum::PeerRecvMsg);
-                event.GetData().SetMsgSourceId(msg->GetSource());
-                event.GetData().SetMsg(msg);
-                g_mainEventManager->PushAsyncEvent(event);
+                // recv entire msg if possible
+                if (msg_size && recvBuffer->recv_str.size() >= BLEEP_MAGIC_SIZE + sizeof(int) + msg_size) {
 
-                // TODO : recvBuffer should be updated
-                std::string remain = recvBuffer->recv_str.substr(BLEEP_MAGIC_SIZE + sizeof(int) + msg_size);
-                recvBuffer->recv_str = remain;
+                    std::cout << "start deserializing MSG" << "\n";
+                    recvBuf = recvBuffer->recv_str.c_str();
+                    recvBuf += BLEEP_MAGIC_SIZE + sizeof(int);
+                    std::shared_ptr<Message> msg;
+                    boost::iostreams::basic_array_source<char> device(recvBuf, msg_size);
+                    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
+                    boost::archive::binary_iarchive ia(s);
+                    ia >> msg;
+
+                    std::cout << "deserializing MSG complete" << "\n";
+                    std::cout << msg->GetType() << "\n";
+
+                    // TODO : Each msg should be handled as separate event, and switched to proper layers
+                    if (msg->GetType() == "notifyPeerId") {
+                        AsyncEvent event(AsyncEventEnum::PeerNotifyRecv);
+                        event.GetData().SetNeighborId(msg->GetSource());
+                        event.GetData().SetIncomingSocket(_socketManager.GetDataSocket(fd));
+                        g_mainEventManager->PushAsyncEvent(event);
+                    }
+                    else if (msg->GetType() == "GETADDR") {
+                        // GETADDR message is handled by generic (Layer2) PeerRecvMsg event
+                    }
+                    else if (msg->GetType() == "ADDR") {
+                        // ADDR message is handled by generic (Layer2) PeerRecvMsg event
+                    }
+                    else
+                        libBLEEP::M_Assert(0, "Unexpected message");
+
+                    AsyncEvent event(AsyncEventEnum::PeerRecvMsg);
+                    event.GetData().SetMsgSourceId(msg->GetSource());
+                    event.GetData().SetMsg(msg);
+                    g_mainEventManager->PushAsyncEvent(event);
+
+                    // TODO : recvBuffer should be updated efficiently. (minimizing a duplication)
+                    std::string remain = recvBuffer->recv_str.substr(BLEEP_MAGIC_SIZE + sizeof(int) + msg_size);
+                    recvBuffer->recv_str = remain;
+                }
+                else
+                    break;
             }
+            else 
+                break;
         }
     }
 }
@@ -220,4 +238,9 @@ void BL_SocketLayer::SendToSocket(int fd, char* buf, int size) {
         libBLEEP::M_Assert(0, "No valid dataSocket exists for sending");
 
     socket->AppendToSendBuff((const char*)buf, size);
+}
+
+void BL_SocketLayer::DisconnectSocket(int fd) {
+    _socketManager.RemoveDataSocket(fd);
+    return;
 }

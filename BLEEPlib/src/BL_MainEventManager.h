@@ -25,6 +25,7 @@ namespace libBLEEP_BL {
 
         Layer2_Event_Start,
         PeerSocketConnect,
+        PeerSocketClose,
         PeerRecvMsg,
         PeerNotifyRecv,
         // CompleteAsyncConnectPeer,
@@ -60,6 +61,9 @@ namespace libBLEEP_BL {
 
         // data for PeerSocketConnect event
         std::shared_ptr<DataSocket> _dataSocket;
+
+        // data for PeerSocketClose event
+        std::shared_ptr<DataSocket> _closedSocket;
 
         // data for PeerNotifyRecv event
         PeerId _neighborId;
@@ -108,6 +112,11 @@ namespace libBLEEP_BL {
         void SetDataSocket(std::shared_ptr<DataSocket> sock) { _dataSocket = sock; }
         // data access function for PeerSocketConnect
         std::shared_ptr<DataSocket> GetDataSocket() { return _dataSocket; }
+
+        // data set function for PeerSocketClose
+        void SetClosedSocket(std::shared_ptr<DataSocket> sock) { _closedSocket = sock; }
+        // data access function for PeerSocketClose
+        std::shared_ptr<DataSocket> GetClosedSocket() { return _closedSocket; }
 
         // data set function for PeerNotifyRecv
         void SetMsgSourceId(PeerId peerId) { _sourceId = peerId; }

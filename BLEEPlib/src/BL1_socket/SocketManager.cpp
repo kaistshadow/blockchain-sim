@@ -51,6 +51,7 @@ void SocketManager::CreateDataSocket(int sfd) {
     // new DataSocket
     std::shared_ptr<DataSocket> new_socket = std::make_shared<DataSocket>(sfd);
     _dataSockets[new_socket->GetFD()] = new_socket;
+    std::cout << "new datasocket created : use_count=" << new_socket.use_count() << "\n";
 }
 
 void SocketManager::RemoveDataSocket(int fd) {

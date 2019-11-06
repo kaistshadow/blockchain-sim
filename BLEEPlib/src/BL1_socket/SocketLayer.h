@@ -30,7 +30,9 @@ namespace libBLEEP_BL {
 
         /* public API functions */
         virtual int ConnectSocket(std::string dest); // return fd
+        
         virtual void SendToSocket(int fd, char* buf, int size);
+        virtual void DisconnectSocket(int fd);
     };
 
 }

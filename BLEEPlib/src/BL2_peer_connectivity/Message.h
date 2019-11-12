@@ -12,6 +12,9 @@
 #include "Peer.h"
 #include "MessageObject.h"
 
+#include "AddrAdvertisement.h"
+#include "../BL3_protocol/Inventory.h"
+
 #include "utility/GlobalClock.h"
 #include "crypto/SHA256.h"
 
@@ -76,6 +79,8 @@ namespace libBLEEP_BL {
         // is a type of input archive the & operator is defined similar to >>
         template<class Archive>
             void serialize(Archive & ar, const unsigned int version) {
+            ar.template register_type<AddrAd>();
+            ar.template register_type<Inventory>();
             ar & _src;
             ar & _dest;
             ar & _type;

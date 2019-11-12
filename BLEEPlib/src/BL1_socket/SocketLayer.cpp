@@ -14,7 +14,6 @@
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/serialization/export.hpp>
 
-
 using namespace libBLEEP_BL;
 
 
@@ -147,9 +146,12 @@ void BL_SocketLayer::RecvHandler(int fd) {
                     recvBuf = recvBuffer->recv_str.c_str();
                     recvBuf += BLEEP_MAGIC_SIZE + sizeof(int);
                     std::shared_ptr<Message> msg;
+                    std::cout << "start deserializing MSG 2" << "\n";
                     boost::iostreams::basic_array_source<char> device(recvBuf, msg_size);
+                    std::cout << "start deserializing MSG 3" << "\n";
                     boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
                     boost::archive::binary_iarchive ia(s);
+                    std::cout << "start deserializing MSG 4" << "\n";
                     ia >> msg;
 
                     std::cout << "deserializing MSG complete" << "\n";
@@ -168,8 +170,14 @@ void BL_SocketLayer::RecvHandler(int fd) {
                     else if (msg->GetType() == "ADDR") {
                         // ADDR message is handled by generic (Layer2) PeerRecvMsg event
                     }
-                    else
+                    else if (msg->GetType().find("TXGOSSIP", 0) == 0) {
+                        // TXGOSSIP protocol message are handled by generic (Layer2) PeerRecvMsg event
+                    }
+                    // If any new message is added, new statement should be added here. 
+                    // (This is for integrity check)
+                    else 
                         libBLEEP::M_Assert(0, "Unexpected message");
+                    
 
                     AsyncEvent event(AsyncEventEnum::PeerRecvMsg);
                     event.GetData().SetMsgSourceId(msg->GetSource());

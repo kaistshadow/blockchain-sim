@@ -78,6 +78,7 @@ namespace libBLEEP_BL {
         virtual bool DisconnectPeer(PeerId id);
         virtual bool SendMsgToPeer(PeerId id, std::shared_ptr<Message> msg); 
         virtual bool Shutdown();
+        virtual std::vector<PeerId> GetNeighborPeerIds();
     };
 
 }

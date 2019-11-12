@@ -65,6 +65,7 @@ set(NEW_SRCS
   src/BL2_peer_connectivity/PeerManager.cpp
   src/BL2_peer_connectivity/AddrManager.cpp
   src/BL2_peer_connectivity/AdvertisementManager.cpp
+  src/BL3_protocol/ProtocolLayerEx1.cpp
 )
 
 

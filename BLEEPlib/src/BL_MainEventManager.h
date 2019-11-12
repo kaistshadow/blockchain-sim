@@ -35,6 +35,10 @@ namespace libBLEEP_BL {
         Layer2_Event_End,
 
 
+        Layer3_Event_Start,
+        ProtocolRecvMsg,
+        Layer3_Event_End,    
+
         Layer5_Event_END,
         AllEvent,
     };
@@ -72,6 +76,9 @@ namespace libBLEEP_BL {
         // data for PeerRecvMsg event
         PeerId _sourceId;
         std::shared_ptr<Message> _message;
+
+        // data for ProtocolRecvMsg event
+        std::shared_ptr<Message> _protocolMsg;
 
     public:
         // data set function for SocketAccept
@@ -124,6 +131,11 @@ namespace libBLEEP_BL {
         // data access function for PeerNotifyRecv
         PeerId GetMsgSourceId() { return _sourceId; }
         std::shared_ptr<Message> GetMsg() { return _message; }
+
+        // data set function for ProtocolRecvMsg
+        void SetProtocolMsg(std::shared_ptr<Message> msg) { _protocolMsg = msg; }
+        // data access function for ProtocolRecvMsg
+        std::shared_ptr<Message> GetProtocolMsg() { return _protocolMsg; }
     };
 
     class AsyncEvent {

@@ -105,6 +105,11 @@ install(TARGETS NODE_BL_TEST DESTINATION plugins)
 target_link_libraries(NODE_BL_TEST BLEEP::NEWBLEEP)
 target_link_libraries(NODE_BL_TEST BLEEP::BLEEP)
 
+add_shadow_plugin(NODE_BL_TEST_TX node_bl_test_tx.cpp)
+install(TARGETS NODE_BL_TEST_TX DESTINATION plugins)
+target_link_libraries(NODE_BL_TEST_TX BLEEP::NEWBLEEP)
+target_link_libraries(NODE_BL_TEST_TX BLEEP::BLEEP)
+
 ## compile for local executable
 add_executable(LOCAL_NODE_bleep node.cpp)
 target_link_libraries(LOCAL_NODE_bleep BLEEP::BLEEP)

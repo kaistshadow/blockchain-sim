@@ -1,6 +1,7 @@
 #include "BL_MainEventManager.h"
 #include "BL1_socket/SocketLayer_API.h"
 #include "BL2_peer_connectivity/PeerConnectivityLayer_API.h"
+#include "BL3_protocol/ProtocolLayer_API.h"
 #include "utility/Assert.h"
 #include "utility/GlobalClock.h"
 
@@ -18,6 +19,9 @@ static void HandleAsyncEvent(AsyncEvent& event) {
         break;
     case AsyncEventEnum::Layer2_Event_Start ... AsyncEventEnum::Layer2_Event_End:
         g_PeerConnectivityLayer_API->SwitchAsyncEventHandler(event);
+        break;
+    case AsyncEventEnum::Layer3_Event_Start ... AsyncEventEnum::Layer3_Event_End:
+        g_ProtocolLayer_API->SwitchAsyncEventHandler(event);
         break;
     }
 
@@ -43,19 +47,18 @@ void MainEventManager::Wait() {
 
         libBLEEP::PrintTimespec("ev_run returned");
 
-        if (_eventQueue.empty())
-            continue;
-
-        AsyncEvent event = _eventQueue.front();
-        if (event.GetType() > _internalHandleEventEnum) {
-            return;
-            // The event should be handled externally. So return.
-        }
-        else {
-            // The event should be handled internally, so pop the event from the queue
-            // and transmit to the proper layer
-            _eventQueue.pop();
-            HandleAsyncEvent(event);
+        while (!_eventQueue.empty()) {
+            AsyncEvent event = _eventQueue.front();
+            if (event.GetType() > _internalHandleEventEnum) {
+                return;
+                // The event should be handled externally. So return.
+            }
+            else {
+                // The event should be handled internally, so pop the event from the queue
+                // and transmit to the proper layer
+                _eventQueue.pop();
+                HandleAsyncEvent(event);
+            }
         }
     }
 }

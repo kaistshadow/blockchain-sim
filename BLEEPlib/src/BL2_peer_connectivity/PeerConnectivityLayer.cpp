@@ -16,8 +16,8 @@
 
 using namespace libBLEEP_BL;
 
-#include "AddrAdvertisement.h"
-BOOST_CLASS_EXPORT(AddrAd); // to avoid unregistered class error. 
+// #include "AddrAdvertisement.h"
+// BOOST_CLASS_EXPORT(AddrAd); // to avoid unregistered class error. 
 // EXPORT is only needed for serialization part.
 
 
@@ -197,6 +197,12 @@ void BL_PeerConnectivityLayer::RecvMsgHandler(PeerId sourcePeerId,
             }
         }
     }
+    else {
+        // Other (protocol) messages are handled by Layer3 event (ProtocolRecvMsg)
+        AsyncEvent event(AsyncEventEnum::ProtocolRecvMsg);
+        event.GetData().SetProtocolMsg(msg);
+        g_mainEventManager->PushAsyncEvent(event);
+    }
 }
 
 void BL_PeerConnectivityLayer::PeerNotifyHandler(PeerId incomingPeerId, 
@@ -372,4 +378,15 @@ bool BL_PeerConnectivityLayer::Shutdown() {
     exit(0);
 
     return true;
+}
+
+std::vector<PeerId> BL_PeerConnectivityLayer::GetNeighborPeerIds() {
+    std::vector<PeerId> peerIds = _peerManager.GetPeerIds();
+    std::vector<PeerId> results;
+    for (auto peerId : peerIds) {
+        std::shared_ptr<Peer> peer = _peerManager.FindPeer(peerId);
+        if (peer && peer->IsActive())
+            results.push_back(peerId);
+    }
+    return results;
 }

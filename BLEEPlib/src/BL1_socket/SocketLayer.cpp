@@ -14,7 +14,6 @@
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/serialization/export.hpp>
 
-
 using namespace libBLEEP_BL;
 
 
@@ -168,8 +167,14 @@ void BL_SocketLayer::RecvHandler(int fd) {
                     else if (msg->GetType() == "ADDR") {
                         // ADDR message is handled by generic (Layer2) PeerRecvMsg event
                     }
-                    else
+                    else if (msg->GetType().find("TXGOSSIP", 0) == 0) {
+                        // TXGOSSIP protocol message are handled by generic (Layer2) PeerRecvMsg event
+                    }
+                    // If any new message is added, new statement should be added here. 
+                    // (This is for integrity check)
+                    else 
                         libBLEEP::M_Assert(0, "Unexpected message");
+                    
 
                     AsyncEvent event(AsyncEventEnum::PeerRecvMsg);
                     event.GetData().SetMsgSourceId(msg->GetSource());

@@ -146,12 +146,9 @@ void BL_SocketLayer::RecvHandler(int fd) {
                     recvBuf = recvBuffer->recv_str.c_str();
                     recvBuf += BLEEP_MAGIC_SIZE + sizeof(int);
                     std::shared_ptr<Message> msg;
-                    std::cout << "start deserializing MSG 2" << "\n";
                     boost::iostreams::basic_array_source<char> device(recvBuf, msg_size);
-                    std::cout << "start deserializing MSG 3" << "\n";
                     boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
                     boost::archive::binary_iarchive ia(s);
-                    std::cout << "start deserializing MSG 4" << "\n";
                     ia >> msg;
 
                     std::cout << "deserializing MSG complete" << "\n";

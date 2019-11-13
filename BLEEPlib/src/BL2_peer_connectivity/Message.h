@@ -14,6 +14,8 @@
 
 #include "AddrAdvertisement.h"
 #include "../BL3_protocol/Inventory.h"
+#include "../BL3_protocol/TxGossipProtocol.h"
+
 
 #include "utility/GlobalClock.h"
 #include "crypto/SHA256.h"
@@ -81,6 +83,9 @@ namespace libBLEEP_BL {
             void serialize(Archive & ar, const unsigned int version) {
             ar.template register_type<AddrAd>();
             ar.template register_type<Inventory>();
+            ar.template register_type<TxGossipInventory>();
+            ar.template register_type<TxGossipGetdata>();
+            ar.template register_type<TxGossipTxs>();
             ar & _src;
             ar & _dest;
             ar & _type;

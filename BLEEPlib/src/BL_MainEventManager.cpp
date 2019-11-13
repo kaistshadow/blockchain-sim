@@ -47,19 +47,18 @@ void MainEventManager::Wait() {
 
         libBLEEP::PrintTimespec("ev_run returned");
 
-        if (_eventQueue.empty())
-            continue;
-
-        AsyncEvent event = _eventQueue.front();
-        if (event.GetType() > _internalHandleEventEnum) {
-            return;
-            // The event should be handled externally. So return.
-        }
-        else {
-            // The event should be handled internally, so pop the event from the queue
-            // and transmit to the proper layer
-            _eventQueue.pop();
-            HandleAsyncEvent(event);
+        while (!_eventQueue.empty()) {
+            AsyncEvent event = _eventQueue.front();
+            if (event.GetType() > _internalHandleEventEnum) {
+                return;
+                // The event should be handled externally. So return.
+            }
+            else {
+                // The event should be handled internally, so pop the event from the queue
+                // and transmit to the proper layer
+                _eventQueue.pop();
+                HandleAsyncEvent(event);
+            }
         }
     }
 }

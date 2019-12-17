@@ -1,6 +1,8 @@
 #include "RandomGossipNetworkModule.h"
 #include "../utility/Random.h"
 
+#include <random>
+
 using namespace libBLEEP;
 
 RandomGossipNetworkModule::RandomGossipNetworkModule(std::string myPeerId, MainEventManager* mainEventManager, int fanOutNum)

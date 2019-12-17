@@ -4,3 +4,6 @@
 [submodule "shadow-bitcoin/shadow-plugin-bitcoin"]
 	path = shadow-bitcoin/shadow-plugin-bitcoin
 	url = https://github.com/kaistshadow/shadow-plugin-bitcoin
+[submodule "googletest"]
+	path = googletest
+	url = https://github.com/google/googletest

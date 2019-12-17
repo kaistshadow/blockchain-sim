@@ -14,6 +14,8 @@
 #include "PeerConnectivityLayer.h"
 #include "../BL1_socket/SocketLayer_API.h"
 
+#include <random>
+
 using namespace libBLEEP_BL;
 
 // #include "AddrAdvertisement.h"

@@ -1,3 +1,7 @@
+if (POLICY CMP0048)
+    cmake_policy(SET CMP0048 OLD)
+endif(POLICY CMP0048)
+
 project(BLEEP)
 
 ## ensure cmake version
@@ -45,6 +49,9 @@ enable_testing()
 
 add_subdirectory(BLEEPlib)
 add_subdirectory(BLEEPapp)
+
+add_subdirectory(googletest)
+add_subdirectory(unittest)
 
 
 ## add tests

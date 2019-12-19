@@ -22,7 +22,6 @@ BLEEPeval/*_datadir_*/
 BLEEPeval/web-gui/node_modules/
 BLEEPeval/web-gui/package-lock.json
 
-BLEEPeval/web-gui/vis/dist/
 BLEEPeval/web-gui/vis/node_modules/
 BLEEPeval/web-gui/vis/npm-debug.log
 BLEEPeval/web-gui/vis/package-lock.json

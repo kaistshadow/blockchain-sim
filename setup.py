@@ -45,7 +45,7 @@ def prepare_nodejs():
     exec_shell_cmd("curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -")
     exec_shell_cmd("sudo apt-get update")
     exec_shell_cmd("sudo apt-get install -y nodejs")
-    exec_shell_cmd("cd %s; npm install websocket finalhandler serve-static vis jsonpath" % nodejs_serv_path)
+    exec_shell_cmd("cd %s; npm install websocket finalhandler serve-static jsonpath" % nodejs_serv_path)
     exec_shell_cmd("cd %s; npm install @maxmind/geoip2-node" % nodejs_serv_path)
     exec_shell_cmd("cd vis; npm install; npm run build; cd ..")
 

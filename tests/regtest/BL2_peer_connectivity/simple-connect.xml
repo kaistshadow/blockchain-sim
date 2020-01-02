@@ -32,7 +32,7 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="NODE" path="~/.bleep/plugins/libNODE_BL_TEST.so" />
+  <plugin id="NODE" path="libNODE_BL_TEST.so" />
 
 
   <!-- the length of our experiment in seconds  1404101800-->

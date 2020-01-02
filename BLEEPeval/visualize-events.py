@@ -50,7 +50,7 @@ def run_experiment(configfile, LOGLEVEL):
     )
     exec_shell_cmd("cp %s %s" % (configfile, current_config_path))
 
-    shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-l", LOGLEVEL, "-w", "8", "-d", datadir, configfile], stdout=PIPE)    
+    shadow = Popen(["shadow", "-l", LOGLEVEL, "-w", "8", "-d", datadir, configfile], stdout=PIPE)
 
     shadow_stdout_filename = "shadow.output"
     shadow_stdout_file = open(shadow_stdout_filename, 'w')
@@ -114,12 +114,14 @@ if __name__ == '__main__':
     parser.add_argument("-p", "--port", metavar="port", default="1337", help="Port where we'll run the websocket server")
     parser.add_argument("--background", action="store_true", help="Run server as background daemon.")
     parser.add_argument("--log", help="Shadow Log LEVEL above which to filter messages ('error' < 'critical' < 'warning' < 'message' < 'info' < 'debug') ['message']")
+    parser.add_argument("--noserver", action="store_true", help="Don't run visualization server")
     # --no server
 
     args = parser.parse_args()
     configfile = args.configfile
     port = args.port
     OPT_BACKGROUND = args.background
+    OPT_NOSERVER = args.noserver
 
     if not args.log:
         LOGLEVEL = "message"
@@ -134,6 +136,9 @@ if __name__ == '__main__':
     elapsed_time = end - start
     print "elapsed_millisec=%d\n" % (int(elapsed_time.total_seconds() * 1000)) 
 
+    if OPT_NOSERVER:
+        exit()
+        
     print "Starting visualization"
     if OPT_BACKGROUND:
         run_visualization_server(output, configfile, port, background=True)

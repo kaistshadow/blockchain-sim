@@ -48,7 +48,7 @@ include(ShadowTools)
 find_package(BLEEP REQUIRED)
 
 # use 3rd party library (boost_1_58)
-find_package(Boost 1.58.0 EXACT COMPONENTS serialization filesystem system)
+find_package(Boost 1.58.0 REQUIRED COMPONENTS serialization filesystem system)
 if(NOT Boost_FOUND)
   set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../BLEEPlib/boost")
   set(Boost_INCLUDE_DIRS "${BOOST_ROOT}/include")

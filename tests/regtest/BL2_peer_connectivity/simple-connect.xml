@@ -20,7 +20,6 @@
                  <data key="d3">10000020000040</data>
                  <data key="d4">10000240</data>
                  <data key="d5">net</data>
-                 <data key="d6">0</data>
                </node>
                <edge source="poi-1" target="poi-1">
                  <data key="d7">50.0</data>

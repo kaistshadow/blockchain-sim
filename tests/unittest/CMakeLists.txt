@@ -10,7 +10,9 @@ target_link_libraries(${This} PUBLIC
         gtest_main
         BLEEP)
 
+install(TARGETS ${This} DESTINATION unittest)
+
 add_test(
         NAME ${This}
-        COMMAND ${This}
+        COMMAND ${CMAKE_INSTALL_PREFIX}/unittest/${This}
 )

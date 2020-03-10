@@ -1,10 +1,12 @@
 
+package-lock.json
 *.swp
 
 tags
 TAGS
 
 build/
+Install/
 test/BLEEP/*-datadir*/
 
 test/BLEEP/rc1-large.xml

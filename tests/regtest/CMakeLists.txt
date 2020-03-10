@@ -26,3 +26,5 @@ target_link_libraries(NODE_BL_TEST BLEEP)
 add_test(NAME BLEEP-regtest-simpleconnect
         COMMAND python test.py --noserver BL2_peer_connectivity/simple-connect.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_subdirectory(test-consensus) 

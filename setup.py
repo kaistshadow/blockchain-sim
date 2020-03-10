@@ -13,8 +13,8 @@ def prepare_shadow():
 
     # install dependencies
     exec_shell_cmd("sudo apt-get install libc6-dbg")
-    exec_shell_cmd("sudo apt-get install -y python python-pip python-matplotlib python-numpy python-scipy python-networkx python-lxml")
-    exec_shell_cmd("sudo apt-get install -y git dstat screen htop libffi-dev libev-dev")
+    exec_shell_cmd("sudo apt-get install -y python python-pyelftools python-pip python-matplotlib python-numpy python-scipy python-networkx python-lxml")
+    exec_shell_cmd("sudo apt-get install -y git dstat git screen htop libffi-dev libev-dev")
     exec_shell_cmd("sudo apt-get install -y gettext")
     # exec_shell_cmd("sudo pip install lxml") # User should install it manually when it is needed
 

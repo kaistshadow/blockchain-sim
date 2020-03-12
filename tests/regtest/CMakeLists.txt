@@ -28,3 +28,4 @@ add_test(NAME BLEEP-regtest-simpleconnect
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(test-consensus) 
+add_subdirectory(rust)

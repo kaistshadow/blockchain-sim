@@ -11,7 +11,7 @@ if __name__ == '__main__':
 
     print sys.argv
 
-    shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-d", datadir, shadow_configfile], stdout=PIPE)
+    shadow = Popen([os.path.expanduser("shadow"), "-d", datadir, shadow_configfile], stdout=PIPE)
 
     shadow_stdout_filename = "shadow.output"
     shadow_stdout_file = open(shadow_stdout_filename, 'w')

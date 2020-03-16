@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 2.8)
 
 ## ensure out-of-source build
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
-    message(FATAL_ERROR "An out-of-source build is required. Please see the README.")
+  message(FATAL_ERROR "An out-of-source build is required. Please see the README.")
 endif("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
 
 # debug option
@@ -19,7 +19,7 @@ endif(BLEEP_DEBUG STREQUAL ON)
 
 # link_directories($ENV{HOME}/opt/libev4/lib)   # for debuggin libev
 
-set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.bleep")
+set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/../Install")
 
 
 ## we use cmake files from shadow

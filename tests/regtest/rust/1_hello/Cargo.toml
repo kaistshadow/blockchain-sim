@@ -12,6 +12,3 @@ edition = "2018"
 name = "hello"
 crate-type = ["dylib"]
 
-[[bin]]
-name = "hello"
-path = "src/main.rs"

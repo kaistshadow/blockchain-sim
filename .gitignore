@@ -1,6 +1,7 @@
 
 package-lock.json
 *.swp
+Cargo.lock
 
 tags
 TAGS
@@ -44,3 +45,6 @@ aws_infra/*ec2_outputs*/
 aws_infra/admin
 aws_infra/admin.pub
 aws_infra/cur_ips
+
+.idea/
+cmake-build-debug/

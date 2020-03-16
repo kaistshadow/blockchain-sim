@@ -21,8 +21,8 @@ def setup_pow_basicnet(node_num, simultime, miningtime, miningtime_dev):
     for node in shadow.findall('plugin'):
         shadow.remove(node)
 
-    ET.SubElement(shadow, "plugin", id="NODE", path="~/.bleep/plugins/libNODE_POW.so")
-    ET.SubElement(shadow, "plugin", id="CLIENT", path="~/.bleep/plugins/libNODE_client.so")
+    ET.SubElement(shadow, "plugin", id="NODE", path="libNODE_POW.so")
+    ET.SubElement(shadow, "plugin", id="CLIENT", path="libNODE_client.so")
 
     ET.SubElement(shadow, "kill", time=str(simultime))
 
@@ -76,8 +76,8 @@ def setup_pow_random(node_num, simultime, miningtime, miningtime_dev):
     for node in shadow.findall('plugin'):
         shadow.remove(node)
 
-    ET.SubElement(shadow, "plugin", id="NODE", path="~/.bleep/plugins/libNODE_POW_RANDOM.so")
-    ET.SubElement(shadow, "plugin", id="CLIENT", path="~/.bleep/plugins/libNODE_client.so")
+    ET.SubElement(shadow, "plugin", id="NODE", path="libNODE_POW_RANDOM.so")
+    ET.SubElement(shadow, "plugin", id="CLIENT", path="libNODE_client.so")
 
     ET.SubElement(shadow, "kill", time=str(simultime))
 
@@ -137,8 +137,8 @@ def setup_pow_random_with_spanningtree_smalltest(node_num, simultime, miningtime
     for node in shadow.findall('plugin'):
         shadow.remove(node)
 
-    ET.SubElement(shadow, "plugin", id="NODE", path="~/.bleep/plugins/libNODE_POW_RANDOM.so")
-    ET.SubElement(shadow, "plugin", id="CLIENT", path="~/.bleep/plugins/libNODE_client.so")
+    ET.SubElement(shadow, "plugin", id="NODE", path="libNODE_POW_RANDOM.so")
+    ET.SubElement(shadow, "plugin", id="CLIENT", path="libNODE_client.so")
 
     ET.SubElement(shadow, "kill", time=str(simultime))
 
@@ -209,8 +209,8 @@ def setup_pow_random_with_spanningtree(node_num, simultime, miningtime, miningti
     for node in shadow.findall('plugin'):
         shadow.remove(node)
 
-    ET.SubElement(shadow, "plugin", id="NODE", path="~/.bleep/plugins/libNODE_POW_RANDOM.so")
-    ET.SubElement(shadow, "plugin", id="CLIENT", path="~/.bleep/plugins/libNODE_client.so")
+    ET.SubElement(shadow, "plugin", id="NODE", path="libNODE_POW_RANDOM.so")
+    ET.SubElement(shadow, "plugin", id="CLIENT", path="libNODE_client.so")
 
     ET.SubElement(shadow, "kill", time=str(simultime))
 
@@ -278,8 +278,8 @@ def setup_pow_random_tree_with_spanningtree(node_num, simultime, miningtime, min
     for node in shadow.findall('plugin'):
         shadow.remove(node)
 
-    ET.SubElement(shadow, "plugin", id="NODE", path="~/.bleep/plugins/libNODE_POW_RANDOM_TREE.so")
-    ET.SubElement(shadow, "plugin", id="CLIENT", path="~/.bleep/plugins/libNODE_client.so")
+    ET.SubElement(shadow, "plugin", id="NODE", path="libNODE_POW_RANDOM_TREE.so")
+    ET.SubElement(shadow, "plugin", id="CLIENT", path="libNODE_client.so")
 
     ET.SubElement(shadow, "kill", time=str(simultime))
 
@@ -348,7 +348,7 @@ def setup_multiple_node_xml_centralized(node_num, simultime, miningtime, miningt
     for node in shadow.findall('plugin'):
         shadow.remove(node)
 
-    ET.SubElement(shadow, "plugin", id="NODE", path="~/.bleep/plugins/libNODE_POW_RANDOM_TREE.so")
+    ET.SubElement(shadow, "plugin", id="NODE", path="libNODE_POW_RANDOM_TREE.so")
 
     ET.SubElement(shadow, "kill", time=str(simultime))
 

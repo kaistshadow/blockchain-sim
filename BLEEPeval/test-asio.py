@@ -8,7 +8,7 @@ if __name__ == '__main__':
     datadir = "asio-datadir"
     shadow_configfile = "./config-examples/asio.xml"
 
-    shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-d", datadir, shadow_configfile], stdout=PIPE)
+    shadow = Popen([os.path.expanduser("shadow"), "-d", datadir, shadow_configfile], stdout=PIPE)
 
     shadow_stdout = []
     while shadow.poll() is None:

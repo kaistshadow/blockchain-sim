@@ -22,7 +22,7 @@
                  <data key="d3">10000020000040</data>
                  <data key="d4">10000240</data>
                  <data key="d5">net</data>
-                 <data key="d6">0</data>
+                 <!-- <data key="d6">0</data> -->
                </node>
                <node id="poi-california">
                  <data key="d0">0.0</data>
@@ -31,7 +31,7 @@
                  <data key="d3">10000020000040</data>
                  <data key="d4">10000240</data>
                  <data key="d5">net</data>
-                 <data key="d6">0</data>
+                 <!-- <data key="d6">0</data> -->
                </node>
                <node id="poi-virginia">
                  <data key="d0">0.0</data>
@@ -40,7 +40,7 @@
                  <data key="d3">10000020000040</data>
                  <data key="d4">10000240</data>
                  <data key="d5">net</data>
-                 <data key="d6">0</data>
+                 <!-- <data key="d6">0</data> -->
                </node>
                <node id="poi-canada">
                  <data key="d0">0.0</data>
@@ -49,7 +49,7 @@
                  <data key="d3">10000020000040</data>
                  <data key="d4">10000240</data>
                  <data key="d5">net</data>
-                 <data key="d6">0</data>
+                 <!-- <data key="d6">0</data> -->
                </node>
                <node id="poi-ireland">
                  <data key="d0">0.0</data>
@@ -58,7 +58,7 @@
                  <data key="d3">10000020000040</data>
                  <data key="d4">10000240</data>
                  <data key="d5">net</data>
-                 <data key="d6">0</data>
+                 <!-- <data key="d6">0</data> -->
                </node>
                <node id="poi-paulo">
                  <data key="d0">0.0</data>
@@ -67,7 +67,7 @@
                  <data key="d3">10000020000040</data>
                  <data key="d4">10000240</data>
                  <data key="d5">net</data>
-                 <data key="d6">0</data>
+                 <!-- <data key="d6">0</data> -->
                </node>
 
                <edge source="poi-seoul" target="poi-seoul">
@@ -260,8 +260,8 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="NODE" path="~/.bleep/plugins/libNODE_RTT_POW_RAN.so" />
-  <!-- <plugin id="CLIENT" path="~/.bleep/plugins/libNODE_client.so" /> -->
+  <plugin id="NODE" path="libNODE_RTT_POW_RAN.so" />
+  <!-- <plugin id="CLIENT" path="libNODE_client.so" /> -->
 
 
   <!-- the length of our experiment in seconds  1404101800-->

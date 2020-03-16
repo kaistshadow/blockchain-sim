@@ -11,7 +11,7 @@ if __name__ == '__main__':
     os.system("rm -rf %s" % datadir)
 
     ## run shadow for test
-    returnCode = os.system("~/.shadow/bin/shadow -d %s %s" % (datadir, shadow_configfile))
+    returnCode = os.system("shadow -d %s %s" % (datadir, shadow_configfile))
     if returnCode != 0:
         print "test failed"
         sys.exit(-1)

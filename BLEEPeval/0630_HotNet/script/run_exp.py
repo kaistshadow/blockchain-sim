@@ -41,7 +41,7 @@ def exec_shell_cmd_list(cmds):
         # There was an error - command exited with non-zero code
 
 def run_experiment(configfile, datadir, workerthread = 0):
-    shadow = Popen([os.path.expanduser("~/.shadow/bin/shadow"), "-d", datadir, "-w", str(workerthread), configfile], stdout=PIPE)    
+    shadow = Popen([os.path.expanduser("shadow"), "-d", datadir, "-w", str(workerthread), configfile], stdout=PIPE)
     shadow_stdout_filename = "shadow.output"
     shadow_stdout_file = open(shadow_stdout_filename, 'w')
 

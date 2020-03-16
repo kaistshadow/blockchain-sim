@@ -20,7 +20,7 @@
                  <data key="d3">10000020000040</data>
                  <data key="d4">10000240</data>
                  <data key="d5">net</data>
-                 <data key="d6">0</data>
+                 <!-- <data key="d6">0</data> -->
                </node>
                <edge source="poi-1" target="poi-1">
                  <data key="d7">50.0</data>
@@ -32,7 +32,7 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="PEER_NONBLOCK_IO" path="~/.bleep/plugins/libPEER_NONBLOCK_IO.so" />
+  <plugin id="PEER_NONBLOCK_IO" path="libPEER_NONBLOCK_IO.so" />
 
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="20" />

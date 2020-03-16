@@ -18,14 +18,6 @@ endif()
 include(ShadowTools)
 
 
-add_shadow_plugin(NODE_BL_TEST BL2_peer_connectivity/node_bl_test.cpp)
-install(TARGETS NODE_BL_TEST DESTINATION plugins)
-target_link_libraries(NODE_BL_TEST NEWBLEEP)
-target_link_libraries(NODE_BL_TEST BLEEP)
-
-add_test(NAME BLEEP-regtest-simpleconnect
-        COMMAND python test.py --noserver BL2_peer_connectivity/simple-connect.xml
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
+add_subdirectory(test-simpleconnect)
 add_subdirectory(test-consensus) 
 add_subdirectory(rust)

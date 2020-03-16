@@ -1,6 +1,7 @@
 import os
 from subprocess import check_output
 import argparse
+import sys
 
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
@@ -40,6 +41,8 @@ def prepare_nodejs():
     exec_shell_cmd("cd %s; npm install @maxmind/geoip2-node" % nodejs_serv_path)
     exec_shell_cmd("cd vis; npm install; npm run build; cd ..")
 
+def prepare_rust():
+    exec_shell_cmd("sudo apt-get install -y rustc")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
@@ -52,6 +55,10 @@ if __name__ == '__main__':
     OPT_TEST = args.test
     OPT_DEBUG = args.debug
 
+    if len(sys.argv) == 1:
+        parser.print_help(sys.stderr)
+        sys.exit(1)        
+
     cmake_debug_opt = "-DSHADOW_DEBUG=ON"
     if OPT_DEBUG:
         cmake_debug_opt = "-DSHADOW_DEBUG=ON"
@@ -62,6 +69,7 @@ if __name__ == '__main__':
 
         prepare_shadow()
         prepare_nodejs()
+        prepare_rust()
 
         ## install
         exec_shell_cmd("mkdir build; cd build; cmake %s ../; make; make install; cd ..; rm -rf build" % cmake_debug_opt)

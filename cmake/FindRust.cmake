@@ -14,11 +14,12 @@ endif()
 find_path(CARGO_PREFIX ".cargo"
 	PATHS "${USER_HOME}")
 
-# if(CARGO_PREFIX MATCHES "NOTFOUND")
-# 	message(FATAL_ERROR "Could not find Rust!")
-# else()
-# 	set(CARGO_PREFIX "${CARGO_PREFIX}/.cargo")
-# endif()
+if(CARGO_PREFIX MATCHES "NOTFOUND")
+	message(STATUS "CARGO_PREFIX not found")
+else()
+	set(CARGO_PREFIX "${CARGO_PREFIX}/.cargo")
+	message(WARNING "Please use system package(i.e., apt-get). Currently, rustup is not compatible for shadow plugin.")
+endif()
 
 # Find cargo executable
 find_program(CARGO_EXECUTABLE cargo

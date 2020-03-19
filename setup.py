@@ -78,9 +78,9 @@ if __name__ == '__main__':
         parser.print_help(sys.stderr)
         sys.exit(1)        
 
-    cmake_debug_opt = "-DSHADOW_DEBUG=ON"
+    cmake_debug_opt = "-DSHADOW_DEBUG=ON -DBLEEP_DEBUG=ON"
     if OPT_DEBUG:
-        cmake_debug_opt = "-DSHADOW_DEBUG=ON"
+        cmake_debug_opt = "-DSHADOW_DEBUG=ON -DBLEEP_DEBUG=ON"
 
     if OPT_INSTALL:
         # cloning shadow repository (submodule)

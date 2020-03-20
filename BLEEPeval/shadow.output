@@ -1,0 +1,60 @@
+00:00:00.000083 [thread-0] n/a [message] [n/a] [shd-logger.c:296] [_logger_logStartupMessage] logging system started at 2020-03-15 22:32:16
+00:00:00.000102 [thread-0] n/a [message] [n/a] [shd-main.c:352] [_main_helper] Starting Shadow v1.12.1-151-g73ce76dd 2020-03-06 (built 2020-03-12) with GLib v2.56.4 and IGraph v0.7.1
+00:00:00.000144 [thread-0] n/a [message] [n/a] [shd-main.c:359] [_main_helper] For more information, visit https://shadow.github.io or https://github.com/shadow
+00:00:00.000146 [thread-0] n/a [message] [n/a] [shd-main.c:360] [_main_helper] logging current startup arguments and environment
+00:00:00.000152 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: shadow
+00:00:00.000153 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: -l
+00:00:00.000154 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: message
+00:00:00.000154 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: -w
+00:00:00.000155 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: 8
+00:00:00.000156 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: -d
+00:00:00.000157 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: visualize-datadir.72799
+00:00:00.000158 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: config-examples/rc1-eventloop.xml
+00:00:00.000165 [thread-0] n/a [message] [n/a] [shd-main.c:370] [_main_helper] shadow will automatically adjust environment and relaunch
+00:00:00.000167 [thread-0] n/a [message] [n/a] [shd-main.c:371] [_main_helper] loading shadow configuration file
+00:00:00.000245 [thread-0] n/a [message] [n/a] [shd-main.c:394] [_main_helper] shadow configuration file loaded, parsed, and passed validation
+00:00:00.000248 [thread-0] n/a [message] [n/a] [shd-main.c:406] [_main_helper] setting up LD_PRELOAD environment
+00:00:00.000260 [thread-0] n/a [message] [n/a] [shd-main.c:594] [_main_helper] setting up LD_STATIC_TLS_EXTRA environment
+00:00:00.007900 [thread-0] n/a [message] [n/a] [shd-main.c:151] [_main_computeLoadSize] we need 144 bytes of static TLS per load of namespace with library at path '/home/victor/.bleep/plugins/libNODE_bleep.so'
+00:00:00.014162 [thread-0] n/a [message] [n/a] [shd-main.c:151] [_main_computeLoadSize] we need 144 bytes of static TLS per load of namespace with library at path '/home/victor/.bleep/plugins/libNODE_client.so'
+00:00:00.015174 [thread-0] n/a [message] [n/a] [shd-main.c:151] [_main_computeLoadSize] we need 0 bytes of static TLS per load of namespace with library at path '/home/victor/blockchain-sim/shadow/../Install/lib/libshadow-interpose.so'
+00:00:00.015188 [thread-0] n/a [message] [n/a] [shd-main.c:303] [_main_getStaticTLSValue] finished checking TLS size required for 5 hosts; used dlmopen for 2 namespaces and cache for 3 namespaces
+00:00:00.015195 [thread-0] n/a [message] [n/a] [shd-main.c:601] [_main_helper] we need 1024 total bytes of static TLS storage
+00:00:00.015205 [thread-0] n/a [message] [n/a] [shd-main.c:642] [_main_helper] environment was updated; shadow is relaunching now with new environment
+00:00:00.015256 [thread-0] n/a [message] [n/a] [shd-logger.c:310] [_logger_logShutdownMessage] logging system stopped at 2020-03-15 22:32:16, run time was 00:00:00
+00:00:00.000202 [thread-0] n/a [message] [n/a] [shd-logger.c:296] [_logger_logStartupMessage] logging system started at 2020-03-15 22:32:16
+00:00:00.000424 [thread-0] n/a [message] [n/a] [shd-main.c:352] [_main_helper] Starting Shadow v1.12.1-151-g73ce76dd 2020-03-06 (built 2020-03-12) with GLib v2.56.4 and IGraph v0.7.1
+00:00:00.000441 [thread-0] n/a [message] [n/a] [shd-main.c:359] [_main_helper] For more information, visit https://shadow.github.io or https://github.com/shadow
+00:00:00.000444 [thread-0] n/a [message] [n/a] [shd-main.c:360] [_main_helper] logging current startup arguments and environment
+00:00:00.000449 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: shadow
+00:00:00.000450 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: -l
+00:00:00.000451 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: message
+00:00:00.000452 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: -w
+00:00:00.000453 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: 8
+00:00:00.000454 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: -d
+00:00:00.000455 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: visualize-datadir.72799
+00:00:00.000456 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: config-examples/rc1-eventloop.xml
+00:00:00.000461 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: --preload=/home/victor/blockchain-sim/shadow/../Install/lib/libshadow-interpose.so
+00:00:00.000464 [thread-0] n/a [message] [n/a] [shd-main.c:328] [_main_logEnvironment] env: LD_STATIC_TLS_EXTRA=1024
+00:00:00.000465 [thread-0] n/a [message] [n/a] [shd-main.c:328] [_main_logEnvironment] env: SHADOW_SPAWNED=TRUE
+00:00:00.001484 [thread-0] n/a [message] [n/a] [shd-main.c:696] [_main_helper] startup checks passed, we are ready to start simulation
+00:00:00.001489 [thread-0] n/a [message] [n/a] [shd-master.c:95] [master_new] simulation master created
+00:00:00.001490 [thread-0] n/a [message] [n/a] [shd-master.c:418] [master_run] loading and initializing simulation data
+00:00:00.001561 [thread-0] n/a [message] [n/a] [shd-master.c:171] [_master_loadConfiguration] successfully parsed Shadow XML input!
+00:00:00.001707 [thread-0] n/a [message] [n/a] [shd-topology.c:370] [_topology_loadGraph] reading graphml topology graph at '/tmp/shadow-topology-IN30G0.graphml.xml'...
+00:00:00.001990 [thread-0] n/a [message] [n/a] [shd-topology.c:381] [_topology_loadGraph] successfully read graphml topology graph at '/tmp/shadow-topology-IN30G0.graphml.xml'
+00:00:00.001993 [thread-0] n/a [message] [n/a] [shd-topology.c:713] [_topology_checkGraphProperties] checking graph properties...
+00:00:00.001994 [thread-0] n/a [message] [n/a] [shd-topology.c:555] [_topology_checkGraphAttributes] checking graph attributes...
+00:00:00.002009 [thread-0] n/a [warning] [n/a] [shd-topology.c:628] [_topology_checkGraphAttributes] vertex attribute 'geocode' has been renamed to 'countrycode' and is considered deprecated; please use 'countrycode' and/or 'citycode' instead
+00:00:00.002016 [thread-0] n/a [message] [n/a] [shd-topology.c:701] [_topology_checkGraphAttributes] successfully verified all graph, vertex, and edge attributes
+00:00:00.002033 [thread-0] n/a [message] [n/a] [shd-topology.c:782] [_topology_checkGraphProperties] topology graph is complete, undirected, and strongly connected with 1 cluster. It does not prefer direct paths.
+00:00:00.002036 [thread-0] n/a [message] [n/a] [shd-topology.c:1007] [_topology_checkGraphVertices] checking graph vertices...
+00:00:00.002050 [thread-0] n/a [warning] [n/a] [shd-topology.c:935] [_topology_checkGraphVerticesHelperHook] optional attribute 'asn' on vertex 0 (id='poi-1') is non-positive
+00:00:00.002052 [thread-0] n/a [warning] [n/a] [shd-topology.c:999] [_topology_iterateAllVertices] we had a problem validating vertex attributes
+00:00:00.002053 [thread-0] n/a [warning] [n/a] [shd-topology.c:1012] [_topology_checkGraphVertices] unable to validate graph vertices
+00:00:00.002060 [thread-0] n/a [message] [n/a] [shd-topology.c:1265] [_topology_clearCache] path cache cleared, spent 0.000000 seconds computing 0 shortest paths with dijkstra, and 0.000000 seconds computing 0 shortest self paths
+00:00:00.002065 [thread-0] n/a [critical] [n/a] [shd-topology.c:2490] [topology_new] we failed to create the simulation topology because we were unable to validate the topology graphml file
+00:00:00.002095 [thread-0] n/a [critical] [n/a] [shd-master.c:216] [_master_loadTopology] fatal error loading topology at path '/tmp/shadow-topology-IN30G0.graphml.xml', check your syntax and try again
+00:00:00.002103 [thread-0] n/a [message] [n/a] [shd-master.c:118] [master_free] simulation master destroyed
+00:00:00.002104 [thread-0] n/a [message] [n/a] [shd-main.c:720] [_main_helper] Shadow v1.12.1-151-g73ce76dd 2020-03-06 (built 2020-03-12) simulation was shut down cleanly, returning code 1
+00:00:00.002137 [thread-0] n/a [message] [n/a] [shd-logger.c:310] [_logger_logShutdownMessage] logging system stopped at 2020-03-15 22:32:16, run time was 00:00:00

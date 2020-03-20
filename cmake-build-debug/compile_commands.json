@@ -1,0 +1,717 @@
+[
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/logger/shd-logger.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/logger/shd-logger.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/logger/shd-logger.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/logger/shd-logger-helper.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/logger/shd-logger-helper.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/logger/shd-logger-helper.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/logger/shd-log-level.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/logger/shd-log-level.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/logger/shd-log-level.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/logger/shd-log-record.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/logger/shd-log-record.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/logger/shd-log-record.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/scheduler/shd-scheduler.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/scheduler/shd-scheduler.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/scheduler/shd-scheduler.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/scheduler/shd-scheduler-policy-global-single.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/scheduler/shd-scheduler-policy-global-single.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/scheduler/shd-scheduler-policy-global-single.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/scheduler/shd-scheduler-policy-host-single.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/scheduler/shd-scheduler-policy-host-single.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/scheduler/shd-scheduler-policy-host-single.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/scheduler/shd-scheduler-policy-host-steal.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/scheduler/shd-scheduler-policy-host-steal.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/scheduler/shd-scheduler-policy-host-steal.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/scheduler/shd-scheduler-policy-thread-perhost.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/scheduler/shd-scheduler-policy-thread-perhost.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/scheduler/shd-scheduler-policy-thread-perhost.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/scheduler/shd-scheduler-policy-thread-perthread.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/scheduler/shd-scheduler-policy-thread-perthread.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/scheduler/shd-scheduler-policy-thread-perthread.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/scheduler/shd-scheduler-policy-thread-single.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/scheduler/shd-scheduler-policy-thread-single.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/scheduler/shd-scheduler-policy-thread-single.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/support/shd-options.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/support/shd-options.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/support/shd-options.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/support/shd-examples.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/support/shd-examples.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/support/shd-examples.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/support/shd-configuration.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/support/shd-configuration.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/support/shd-configuration.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/support/shd-object-counter.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/support/shd-object-counter.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/support/shd-object-counter.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/work/shd-event.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/work/shd-event.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/work/shd-event.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/work/shd-message.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/work/shd-message.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/work/shd-message.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/work/shd-task.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/work/shd-task.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/work/shd-task.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/work/shd-command.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/work/shd-command.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/work/shd-command.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/shd-main.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/shd-main.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/shd-main.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/shd-master.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/shd-master.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/shd-master.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/shd-slave.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/shd-slave.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/shd-slave.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/core/shd-worker.c.o   -c /home/victor/blockchain-sim/shadow/src/main/core/shd-worker.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/core/shd-worker.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/host/descriptor/shd-channel.c.o   -c /home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-channel.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-channel.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/host/descriptor/shd-descriptor.c.o   -c /home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-descriptor.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-descriptor.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/host/descriptor/shd-epoll.c.o   -c /home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-epoll.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-epoll.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/host/descriptor/shd-socket.c.o   -c /home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-socket.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-socket.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/host/descriptor/shd-tcp.c.o   -c /home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-tcp.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-tcp.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/host/descriptor/shd-tcp-cong.c.o   -c /home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-tcp-cong.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-tcp-cong.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/host/descriptor/shd-tcp-cong-reno.c.o   -c /home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-tcp-cong-reno.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-tcp-cong-reno.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/host/descriptor/shd-timer.c.o   -c /home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-timer.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-timer.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/host/descriptor/shd-transport.c.o   -c /home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-transport.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-transport.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/host/descriptor/shd-udp.c.o   -c /home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-udp.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-udp.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/host/shd-process.c.o   -c /home/victor/blockchain-sim/shadow/src/main/host/shd-process.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/host/shd-process.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/host/shd-cpu.c.o   -c /home/victor/blockchain-sim/shadow/src/main/host/shd-cpu.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/host/shd-cpu.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/host/shd-host.c.o   -c /home/victor/blockchain-sim/shadow/src/main/host/shd-host.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/host/shd-host.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/host/shd-network-interface.c.o   -c /home/victor/blockchain-sim/shadow/src/main/host/shd-network-interface.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/host/shd-network-interface.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/host/shd-tracker.c.o   -c /home/victor/blockchain-sim/shadow/src/main/host/shd-tracker.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/host/shd-tracker.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/host/shd-bleep-object.c.o   -c /home/victor/blockchain-sim/shadow/src/main/host/shd-bleep-object.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/host/shd-bleep-object.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/routing/shd-payload.c.o   -c /home/victor/blockchain-sim/shadow/src/main/routing/shd-payload.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/routing/shd-payload.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/routing/shd-packet.c.o   -c /home/victor/blockchain-sim/shadow/src/main/routing/shd-packet.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/routing/shd-packet.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/routing/shd-address.c.o   -c /home/victor/blockchain-sim/shadow/src/main/routing/shd-address.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/routing/shd-address.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/routing/shd-dns.c.o   -c /home/victor/blockchain-sim/shadow/src/main/routing/shd-dns.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/routing/shd-dns.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/routing/shd-path.c.o   -c /home/victor/blockchain-sim/shadow/src/main/routing/shd-path.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/routing/shd-path.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/routing/shd-topology.c.o   -c /home/victor/blockchain-sim/shadow/src/main/routing/shd-topology.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/routing/shd-topology.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/utility/shd-async-priority-queue.c.o   -c /home/victor/blockchain-sim/shadow/src/main/utility/shd-async-priority-queue.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/utility/shd-async-priority-queue.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/utility/shd-byte-queue.c.o   -c /home/victor/blockchain-sim/shadow/src/main/utility/shd-byte-queue.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/utility/shd-byte-queue.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/utility/shd-count-down-latch.c.o   -c /home/victor/blockchain-sim/shadow/src/main/utility/shd-count-down-latch.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/utility/shd-count-down-latch.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/utility/shd-pcap-writer.c.o   -c /home/victor/blockchain-sim/shadow/src/main/utility/shd-pcap-writer.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/utility/shd-pcap-writer.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/utility/shd-priority-queue.c.o   -c /home/victor/blockchain-sim/shadow/src/main/utility/shd-priority-queue.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/utility/shd-priority-queue.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/utility/shd-random.c.o   -c /home/victor/blockchain-sim/shadow/src/main/utility/shd-random.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/utility/shd-random.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/utility/shd-utility.c.o   -c /home/victor/blockchain-sim/shadow/src/main/utility/shd-utility.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/utility/shd-utility.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/cc -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -fPIC -std=gnu99   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow.dir/main.c.o   -c /home/victor/blockchain-sim/shadow/src/main/main.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/main.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main",
+  "command": "/usr/bin/c++  -DIGRAPH_VERSION_MAJOR_GUESS=0 -DIGRAPH_VERSION_MINOR_GUESS=7 -DIGRAPH_VERSION_PATCH_GUESS=1 -DNDEBUG -Dshadow_remora_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/main -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph   -std=c++11  -std=c++11 -fPIC -O3 -DNDEBUG -fPIC   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow-remora.dir/host/descriptor/shd-tcp-retransmit-tally.cc.o -c /home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-tcp-retransmit-tally.cc",
+  "file": "/home/victor/blockchain-sim/shadow/src/main/host/descriptor/shd-tcp-retransmit-tally.cc"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/preload",
+  "command": "/usr/bin/cc -DNDEBUG -Dshadow_interpose_helper_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/preload -I/home/victor/blockchain-sim/shadow/src/preload -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph  -fPIC   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow-interpose-helper.dir/shd-interposer-helper.c.o   -c /home/victor/blockchain-sim/shadow/src/preload/shd-interposer-helper.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/preload/shd-interposer-helper.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/preload",
+  "command": "/usr/bin/cc -DNDEBUG -Dshadow_interpose_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/preload -I/home/victor/blockchain-sim/shadow/src/preload -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph  -fPIC   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow-interpose.dir/shd-interposer.c.o   -c /home/victor/blockchain-sim/shadow/src/preload/shd-interposer.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/preload/shd-interposer.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/preload",
+  "command": "/usr/bin/cc -DNDEBUG -Dshadow_interpose_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/preload -I/home/victor/blockchain-sim/shadow/src/preload -I/home/victor/blockchain-sim/shadow/src/main -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/igraph  -fPIC   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/shadow-interpose.dir/shd-preload-functions.c.o   -c /home/victor/blockchain-sim/shadow/src/preload/shd-preload-functions.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/preload/shd-preload-functions.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dvdl_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/vdl.dir/libvdl.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/libvdl.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/libvdl.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/alloc.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/alloc.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/alloc.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/avprintf-cb.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/avprintf-cb.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/avprintf-cb.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/dprintf.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/dprintf.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/dprintf.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/futex.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/futex.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/futex.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/gdb.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/gdb.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/gdb.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/glibc.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/glibc.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/glibc.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/interp.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/interp.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/interp.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/stage1.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/stage1.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/stage1.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/stage2.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/stage2.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/stage2.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/system.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/system.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/system.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/valgrind.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/valgrind.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/valgrind.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-alloc.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-alloc.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-alloc.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-context.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-context.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-context.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-dl.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-dl.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-dl.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-dl-public.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-dl-public.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-dl-public.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-fini.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-fini.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-fini.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-gc.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-gc.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-gc.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-hashmap.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-hashmap.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-hashmap.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-init.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-init.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-init.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-linkmap.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-linkmap.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-linkmap.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-list.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-list.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-list.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-log.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-log.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-log.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-lookup.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-lookup.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-lookup.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-map.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-map.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-map.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-mem.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-mem.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-mem.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-rbtree.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-rbtree.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-rbtree.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-reloc.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-reloc.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-reloc.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-sort.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-sort.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-sort.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-tls.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-tls.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-tls.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-unmap.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-unmap.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-unmap.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/vdl-utils.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-utils.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/vdl-utils.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -Dldso_EXPORTS -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD -fPIC   -mno-mmx -mno-sse -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/ldso.dir/x86_64/machine.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64/machine.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64/machine.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/readversiondef.dir/readversiondef.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/readversiondef.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/readversiondef.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/elfedit.dir/elfedit.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/elfedit.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/elfedit.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader",
+  "command": "/usr/bin/cc -DLDSO_SONAME=\\\"ldso\\\" -DMALLOC_DEBUG_ENABLE -DNDEBUG -D_GNU_SOURCE -I/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader -I/home/victor/blockchain-sim/shadow/src/external/elf-loader/x86_64 -I/home/victor/blockchain-sim/cmake-build-debug/shadow -I/home/victor/blockchain-sim/shadow/../Install/include   -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD   -ggdb -fno-omit-frame-pointer -O3 -o CMakeFiles/display-relocs.dir/display-relocs.c.o   -c /home/victor/blockchain-sim/shadow/src/external/elf-loader/display-relocs.c",
+  "file": "/home/victor/blockchain-sim/shadow/src/external/elf-loader/display-relocs.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DNEWBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/NEWBLEEP.dir/src/BL_MainEventManager.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/BL_MainEventManager.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/BL_MainEventManager.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DNEWBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/NEWBLEEP.dir/src/BL1_socket/Socket.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/BL1_socket/Socket.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/BL1_socket/Socket.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DNEWBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/NEWBLEEP.dir/src/BL1_socket/SocketLayer.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/BL1_socket/SocketLayer.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/BL1_socket/SocketLayer.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DNEWBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/NEWBLEEP.dir/src/BL1_socket/SocketManager.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/BL1_socket/SocketManager.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/BL1_socket/SocketManager.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DNEWBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/NEWBLEEP.dir/src/BL1_socket/RecvBufferManager.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/BL1_socket/RecvBufferManager.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/BL1_socket/RecvBufferManager.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DNEWBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/NEWBLEEP.dir/src/BL2_peer_connectivity/PeerConnectivityLayer.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/BL2_peer_connectivity/PeerConnectivityLayer.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/BL2_peer_connectivity/PeerConnectivityLayer.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DNEWBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/NEWBLEEP.dir/src/BL2_peer_connectivity/PeerManager.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/BL2_peer_connectivity/PeerManager.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/BL2_peer_connectivity/PeerManager.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DNEWBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/NEWBLEEP.dir/src/BL2_peer_connectivity/AddrManager.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/BL2_peer_connectivity/AddrManager.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/BL2_peer_connectivity/AddrManager.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DNEWBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/NEWBLEEP.dir/src/BL2_peer_connectivity/AdvertisementManager.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/BL2_peer_connectivity/AdvertisementManager.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/BL2_peer_connectivity/AdvertisementManager.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DNEWBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/NEWBLEEP.dir/src/BL3_protocol/ProtocolLayerEx1.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/BL3_protocol/ProtocolLayerEx1.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/BL3_protocol/ProtocolLayerEx1.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DNEWBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/NEWBLEEP.dir/src/BL3_protocol/TxGossipProtocol.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/BL3_protocol/TxGossipProtocol.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/BL3_protocol/TxGossipProtocol.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DNEWBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/NEWBLEEP.dir/src/BL3_protocol/TxPool.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/BL3_protocol/TxPool.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/BL3_protocol/TxPool.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/datamodules/Block.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/datamodules/Block.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/datamodules/Block.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/datamodules/ShadowPipe.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/datamodules/ShadowPipe.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/datamodules/ShadowPipe.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/datamodules/Pipe.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/datamodules/Pipe.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/datamodules/Pipe.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/datamodules/Socket.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/datamodules/Socket.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/datamodules/Socket.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/datamodules/Message.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/datamodules/Message.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/datamodules/Message.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/datamodules/Inventory.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/datamodules/Inventory.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/datamodules/Inventory.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/datamanagermodules/TxPool.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/datamanagermodules/TxPool.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/datamanagermodules/TxPool.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/datamanagermodules/ShadowPipeManager.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/datamanagermodules/ShadowPipeManager.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/datamanagermodules/ShadowPipeManager.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/datamanagermodules/PipeManager.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/datamanagermodules/PipeManager.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/datamanagermodules/PipeManager.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/datamanagermodules/SocketManager.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/datamanagermodules/SocketManager.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/datamanagermodules/SocketManager.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/datamanagermodules/PeerManager.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/datamanagermodules/PeerManager.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/datamanagermodules/PeerManager.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/mainmodules/MainEventManager.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/mainmodules/MainEventManager.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/mainmodules/MainEventManager.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/mainmodules/BasicNetworkModule.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/mainmodules/BasicNetworkModule.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/mainmodules/BasicNetworkModule.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/mainmodules/RandomGossipNetworkModule.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/mainmodules/RandomGossipNetworkModule.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/mainmodules/RandomGossipNetworkModule.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/mainmodules/EstimateRTTModule.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/mainmodules/EstimateRTTModule.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/mainmodules/EstimateRTTModule.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/mainmodules/TxGeneratorModule.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/mainmodules/TxGeneratorModule.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/mainmodules/TxGeneratorModule.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/mainmodules/POWModule.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/mainmodules/POWModule.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/mainmodules/POWModule.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/utility/UInt256.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/utility/UInt256.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/utility/UInt256.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/utility/Assert.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/utility/Assert.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/utility/Assert.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/utility/Random.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/utility/Random.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/utility/Random.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/utility/ArgsManager.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/utility/ArgsManager.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/utility/ArgsManager.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/utility/tinyxml2.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/utility/tinyxml2.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/utility/tinyxml2.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/utility/Logger.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/utility/Logger.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/utility/Logger.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/datamodules/Socket_v2.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/datamodules/Socket_v2.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/datamodules/Socket_v2.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/datamanagermodules/SocketManager_v2.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/datamanagermodules/SocketManager_v2.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/datamanagermodules/SocketManager_v2.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/datamodules/POWBlock.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/datamodules/POWBlock.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/datamodules/POWBlock.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/crypto/SHA256.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/crypto/SHA256.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/crypto/SHA256.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib",
+  "command": "/usr/bin/c++  -DBLEEP_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface   -std=c++11 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch -g -fPIC   -o CMakeFiles/BLEEP.dir/src/utility/GlobalClock.cpp.o -c /home/victor/blockchain-sim/BLEEPlib/src/utility/GlobalClock.cpp",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/src/utility/GlobalClock.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/BLEEPlib/shadow_interface",
+  "command": "/usr/bin/cc -DSHADOW_INTERFACE_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/./shadow_interface -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface  -g -fPIC   -o CMakeFiles/SHADOW_INTERFACE.dir/shadow_interface.c.o   -c /home/victor/blockchain-sim/BLEEPlib/shadow_interface/shadow_interface.c",
+  "file": "/home/victor/blockchain-sim/BLEEPlib/shadow_interface/shadow_interface.c"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/tests/regtest/test-consensus",
+  "command": "/usr/bin/c++  -DNODE_client_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface   -std=c++11 -g -fPIC   -o CMakeFiles/NODE_client.dir/client.cpp.o -c /home/victor/blockchain-sim/tests/regtest/test-consensus/client.cpp",
+  "file": "/home/victor/blockchain-sim/tests/regtest/test-consensus/client.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/tests/regtest/test-consensus",
+  "command": "/usr/bin/c++  -DNODE_POW_RANDOM_TREE_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface   -std=c++11 -g -fPIC   -o CMakeFiles/NODE_POW_RANDOM_TREE.dir/node_pow_random_tree.cpp.o -c /home/victor/blockchain-sim/tests/regtest/test-consensus/node_pow_random_tree.cpp",
+  "file": "/home/victor/blockchain-sim/tests/regtest/test-consensus/node_pow_random_tree.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/tests/regtest/test_simpleconnect",
+  "command": "/usr/bin/c++  -DNODE_BL_TEST_EXPORTS -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface   -std=c++11 -g -fPIC   -o CMakeFiles/NODE_BL_TEST.dir/node_bl_test.cpp.o -c /home/victor/blockchain-sim/tests/regtest/test_simpleconnect/node_bl_test.cpp",
+  "file": "/home/victor/blockchain-sim/tests/regtest/test_simpleconnect/node_bl_test.cpp"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/tests/lib/googletest/googlemock",
+  "command": "/usr/bin/c++   -isystem /home/victor/blockchain-sim/tests/lib/googletest/googlemock/include -isystem /home/victor/blockchain-sim/tests/lib/googletest/googlemock -isystem /home/victor/blockchain-sim/tests/lib/googletest/googletest/include -isystem /home/victor/blockchain-sim/tests/lib/googletest/googletest   -std=c++11 -g   -Wall -Wshadow -Werror -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -std=c++11 -o CMakeFiles/gmock_main.dir/src/gmock_main.cc.o -c /home/victor/blockchain-sim/tests/lib/googletest/googlemock/src/gmock_main.cc",
+  "file": "/home/victor/blockchain-sim/tests/lib/googletest/googlemock/src/gmock_main.cc"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/tests/lib/googletest/googlemock",
+  "command": "/usr/bin/c++   -I/home/victor/blockchain-sim/tests/lib/googletest/googlemock/include -I/home/victor/blockchain-sim/tests/lib/googletest/googlemock -isystem /home/victor/blockchain-sim/tests/lib/googletest/googletest/include -isystem /home/victor/blockchain-sim/tests/lib/googletest/googletest   -std=c++11 -g   -Wall -Wshadow -Werror -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -std=c++11 -o CMakeFiles/gmock.dir/src/gmock-all.cc.o -c /home/victor/blockchain-sim/tests/lib/googletest/googlemock/src/gmock-all.cc",
+  "file": "/home/victor/blockchain-sim/tests/lib/googletest/googlemock/src/gmock-all.cc"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/tests/lib/googletest/googletest",
+  "command": "/usr/bin/c++   -isystem /home/victor/blockchain-sim/tests/lib/googletest/googletest/include -isystem /home/victor/blockchain-sim/tests/lib/googletest/googletest   -std=c++11 -g   -Wall -Wshadow -Werror -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -std=c++11 -o CMakeFiles/gtest_main.dir/src/gtest_main.cc.o -c /home/victor/blockchain-sim/tests/lib/googletest/googletest/src/gtest_main.cc",
+  "file": "/home/victor/blockchain-sim/tests/lib/googletest/googletest/src/gtest_main.cc"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/tests/lib/googletest/googletest",
+  "command": "/usr/bin/c++   -I/home/victor/blockchain-sim/tests/lib/googletest/googletest/include -I/home/victor/blockchain-sim/tests/lib/googletest/googletest   -std=c++11 -g   -Wall -Wshadow -Werror -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -std=c++11 -o CMakeFiles/gtest.dir/src/gtest-all.cc.o -c /home/victor/blockchain-sim/tests/lib/googletest/googletest/src/gtest-all.cc",
+  "file": "/home/victor/blockchain-sim/tests/lib/googletest/googletest/src/gtest-all.cc"
+},
+{
+  "directory": "/home/victor/blockchain-sim/cmake-build-debug/tests/unittest",
+  "command": "/usr/bin/c++   -I/home/victor/blockchain-sim/BLEEPlib/src -I/home/victor/blockchain-sim/BLEEPlib/shadow_interface -isystem /home/victor/blockchain-sim/tests/lib/googletest/googletest/include -isystem /home/victor/blockchain-sim/tests/lib/googletest/googletest   -std=c++11 -g   -o CMakeFiles/ExampleTests.dir/ExampleTests.cpp.o -c /home/victor/blockchain-sim/tests/unittest/ExampleTests.cpp",
+  "file": "/home/victor/blockchain-sim/tests/unittest/ExampleTests.cpp"
+}
+]

@@ -1,0 +1,1 @@
+/usr/bin/cc  -O3 -g3 -fno-tree-loop-distribute-patterns -Wall -Wextra -fno-stack-protector -fPIC -MD  -rdynamic CMakeFiles/display-relocs.dir/display-relocs.c.o  -o display-relocs  -L/home/victor/blockchain-sim/shadow/../Install/lib 

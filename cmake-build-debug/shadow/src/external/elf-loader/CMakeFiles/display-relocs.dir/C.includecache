@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/victor/blockchain-sim/shadow/src/external/elf-loader/display-relocs.c
+elf.h
+-
+link.h
+-
+sys/types.h
+-
+sys/stat.h
+-
+unistd.h
+-
+sys/mman.h
+-
+fcntl.h
+-
+stdlib.h
+-
+stdio.h
+-
+assert.h
+-
+string.h
+-
+

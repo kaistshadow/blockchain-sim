@@ -1,0 +1,1 @@
+/usr/bin/cc -fPIC -g  -shared -Wl,-soname,libSHADOW_INTERFACE.so -o libSHADOW_INTERFACE.so CMakeFiles/SHADOW_INTERFACE.dir/shadow_interface.c.o -Wl,-rpath,::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: 

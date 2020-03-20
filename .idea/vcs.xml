@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/deprecated/shadow-bitcoin/shadow-plugin-bitcoin" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/shadow" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/tests/lib/googletest" vcs="Git" />
+  </component>
+</project>

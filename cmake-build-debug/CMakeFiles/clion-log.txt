@@ -1,0 +1,108 @@
+/snap/clion/107/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/victor/blockchain-sim
+CMake Deprecation Warning at CMakeLists.txt:2 (cmake_policy):
+  The OLD behavior for policy CMP0048 will be removed from a future version
+  of CMake.
+
+  The cmake-policies(7) manual explains that the OLD behaviors of all
+  policies are deprecated and that a policy should be set to OLD only under
+  specific short-term circumstances.  Projects should be ported to the NEW
+  behavior and not rely on setting a policy to OLD.
+
+
+-- CMAKE_SOURCE_DIR: /home/victor/blockchain-sim
+-- CMAKE_BINARY_DIR: /home/victor/blockchain-sim/cmake-build-debug
+-- GLIB_VERSION = 2.56.4
+-- System name: Linux
+-- System version: 5.3.0-40-generic
+-- System processor: x86_64
+-- CMAKE_INSTALL_PREFIX = /home/victor/blockchain-sim/shadow/../Install
+-- CMAKE_EXTRA_INCLUDES = /home/victor/blockchain-sim/shadow/../Install/include
+-- CMAKE_EXTRA_LIBRARIES = /home/victor/blockchain-sim/shadow/../Install/lib
+-- CMAKE_SOURCE_DIR: /home/victor/blockchain-sim
+-- CMAKE_BINARY_DIR: /home/victor/blockchain-sim/cmake-build-debug
+-- PROJECT_SOURCE_DIR: /home/victor/blockchain-sim/shadow
+-- PROJECT_BINARY_DIR: /home/victor/blockchain-sim/cmake-build-debug/shadow
+-- CMAKE_MODULE_PATH = /home/victor/blockchain-sim/shadow/cmake/;/home/victor/blockchain-sim/shadow/../Install/include
+fatal: No names found, cannot describe anything.
+-- 
+-- -------------------------------------------------------------------------------
+-- Current settings: (change with '$ cmake -D<OPTION>=<ON|OFF>')
+-- SHADOW_DEBUG=OFF
+-- SHADOW_PROFILE=OFF
+-- SHADOW_TEST=OFF
+-- SHADOW_EXPORT=OFF
+-- -------------------------------------------------------------------------------
+-- 
+-- CMAKE_BUILD_TYPE Release enabled.
+CMake Deprecation Warning at shadow/CMakeLists.txt:155 (cmake_policy):
+  The OLD behavior for policy CMP0026 will be removed from a future version
+  of CMake.
+
+  The cmake-policies(7) manual explains that the OLD behaviors of all
+  policies are deprecated and that a policy should be set to OLD only under
+  specific short-term circumstances.  Projects should be ported to the NEW
+  behavior and not rely on setting a policy to OLD.
+
+
+-- Found components for RT
+-- RT_INCLUDES = /usr/include
+-- RT_LIBRARIES = /usr/lib/x86_64-linux-gnu/librt.so
+-- Found components for DL
+-- DL_INCLUDES = /usr/include
+-- DL_LIBRARIES = /usr/lib/x86_64-linux-gnu/libdl.so
+-- Found components for M
+-- M_INCLUDES = /usr/include
+-- M_LIBRARIES = /usr/lib/x86_64-linux-gnu/libm.so
+-- Found components for IGRAPH
+-- IGRAPH_INCLUDES = /usr/include/igraph
+-- IGRAPH_LIBRARIES = /usr/lib/x86_64-linux-gnu/libigraph.so
+-- IGRAPH_VERSION_STRING_LINE = #define IGRAPH_VERSION "0.7.1"
+-- IGRAPH_VERSION_MAJOR_GUESS = 0
+-- IGRAPH_VERSION_MINOR_GUESS = 7
+-- IGRAPH_VERSION_PATCH_GUESS = 1
+-- Found components for GLIB
+-- GLIB_INCLUDES = /usr/include/glib-2.0;/usr/lib/x86_64-linux-gnu/glib-2.0/include
+-- GLIB_LIBRARIES = /usr/lib/x86_64-linux-gnu/libglib-2.0.so;/usr/lib/x86_64-linux-gnu/libgthread-2.0.so;/usr/lib/x86_64-linux-gnu/libgmodule-2.0.so
+-- GLIB_MAJOR_VERSION = 2
+-- GLIB_MINOR_VERSION = 56
+-- GLIB_MICRO_VERSION = 4
+-- Using Threads library: -lpthread
+-- Found components for GLIB
+-- GLIB_INCLUDES = /usr/include/glib-2.0;/usr/lib/x86_64-linux-gnu/glib-2.0/include
+-- GLIB_LIBRARIES = /usr/lib/x86_64-linux-gnu/libglib-2.0.so;/usr/lib/x86_64-linux-gnu/libgthread-2.0.so;/usr/lib/x86_64-linux-gnu/libgmodule-2.0.so
+-- GLIB_MAJOR_VERSION = 2
+-- GLIB_MINOR_VERSION = 56
+-- GLIB_MICRO_VERSION = 4
+-- Found components for IGRAPH
+-- IGRAPH_INCLUDES = /usr/include/igraph
+-- IGRAPH_LIBRARIES = /usr/lib/x86_64-linux-gnu/libigraph.so
+-- IGRAPH_VERSION_STRING_LINE = #define IGRAPH_VERSION "0.7.1"
+-- IGRAPH_VERSION_MAJOR_GUESS = 0
+-- IGRAPH_VERSION_MINOR_GUESS = 7
+-- IGRAPH_VERSION_PATCH_GUESS = 1
+-- Found components for DL
+-- DL_INCLUDES = /usr/include
+-- DL_LIBRARIES = /usr/lib/x86_64-linux-gnu/libdl.so
+-- System version: 5.3.0-40-generic
+-- Architecture: x86_64
+-- LDSO = /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+-- LIBDL = /lib/x86_64-linux-gnu/libdl.so.2
+-- CMAKE_INSTALL_LIBDIR:lib
+-- CMAKE_INSTALL_INCLUDEDIR:include
+-- CMAKE_CURRENT_SOURCE_DIR:/home/victor/blockchain-sim/BLEEPlib/shadow_interface
+-- CMAKE_MODULE_PATH = /home/victor/blockchain-sim/tests/regtest/../../shadow/cmake
+CMake Error at tests/regtest/test_node_bl_tx/CMakeLists.txt:6 (add_test):
+  Syntax error in cmake code at
+
+    /home/victor/blockchain-sim/tests/regtest/test_node_bl_tx/CMakeLists.txt:8
+
+  when parsing string
+
+    ${CMAKE _CURRENT_SOURCE_DIR}/..
+
+  syntax error, unexpected cal_SYMBOL, expecting } (28)
+
+
+-- Configuring incomplete, errors occurred!
+See also "/home/victor/blockchain-sim/cmake-build-debug/CMakeFiles/CMakeOutput.log".
+See also "/home/victor/blockchain-sim/cmake-build-debug/CMakeFiles/CMakeError.log".

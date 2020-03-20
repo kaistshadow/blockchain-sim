@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/CMakeFiles/rpth"
+		},
+		{
+			"file" : "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/CMakeFiles/rpth.rule"
+		},
+		{
+			"file" : "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/CMakeFiles/rpth-complete.rule"
+		},
+		{
+			"file" : "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth/src/rpth-stamp/rpth-install.rule"
+		},
+		{
+			"file" : "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth/src/rpth-stamp/rpth-mkdir.rule"
+		},
+		{
+			"file" : "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth/src/rpth-stamp/rpth-download.rule"
+		},
+		{
+			"file" : "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth/src/rpth-stamp/rpth-update.rule"
+		},
+		{
+			"file" : "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth/src/rpth-stamp/rpth-patch.rule"
+		},
+		{
+			"file" : "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth/src/rpth-stamp/rpth-configure.rule"
+		},
+		{
+			"file" : "/home/victor/blockchain-sim/cmake-build-debug/shadow/src/external/rpth/src/rpth-stamp/rpth-build.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"rpth"
+		],
+		"name" : "rpth"
+	}
+}

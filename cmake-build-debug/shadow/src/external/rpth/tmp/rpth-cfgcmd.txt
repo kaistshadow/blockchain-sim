@@ -1,0 +1,1 @@
+cmd='/home/victor/blockchain-sim/shadow/src/external/rpth/configure;--quiet;--prefix=/home/victor/blockchain-sim/cmake-build-debug/shadow;--with-tags=;--disable-shared;--disable-tests;--enable-optimize=yes'

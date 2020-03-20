@@ -1,0 +1,384 @@
+main started
+before connect
+No peer exists
+Peer added for [bleep0]
+after connect
+while
+before ev_run
+connect socket IO callback called!!!
+2000-01-01 00:00:13.100000001:ev_run returned
+2000-01-01 00:00:13.100000001:mainEventManager.Wait returned
+Socket is successfully connected
+new datasocket created : use_count=2
+while
+2000-01-01 00:00:13.100000001:mainEventManager.Wait returned
+Send notifyPeerId MSG
+MSG length:188
+Sent notifyPeerId MSG
+Send GETADDR MSG
+MSG length:183
+getnewbucket
+addrStr:bleep0
+1024 mod result:4
+bucket position:14
+while
+before ev_run
+data socket IO callback called!
+2000-01-01 00:00:13.100000001:ev_run returned
+2000-01-01 00:00:13.100000001:mainEventManager.Wait returned
+DoSend!
+all sent
+while
+before ev_run
+2000-01-01 00:00:13.999000001:ev_run returned
+before ev_run
+2000-01-01 00:00:14.000000001:ev_run returned
+before ev_run
+periodic address advertisement
+periodic address advertisement
+size of _addrToSend:1
+send to bleep0
+MSG length:234
+sent addr:bleep1
+2000-01-01 00:00:14.001000001:ev_run returned
+before ev_run
+data socket IO callback called!
+2000-01-01 00:00:14.001000001:ev_run returned
+2000-01-01 00:00:14.001000001:mainEventManager.Wait returned
+DoSend!
+all sent
+while
+before ev_run
+2000-01-01 00:00:22.999000001:ev_run returned
+before ev_run
+2000-01-01 00:00:23.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:00:23.001000001:ev_run returned
+before ev_run
+2000-01-01 00:00:32.999000001:ev_run returned
+before ev_run
+2000-01-01 00:00:33.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:00:33.001000001:ev_run returned
+before ev_run
+2000-01-01 00:00:42.999000001:ev_run returned
+before ev_run
+2000-01-01 00:00:43.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:00:43.001000001:ev_run returned
+before ev_run
+2000-01-01 00:00:43.999000001:ev_run returned
+before ev_run
+2000-01-01 00:00:44.000000001:ev_run returned
+before ev_run
+periodic address advertisement
+periodic address advertisement
+size of _addrToSend:0
+2000-01-01 00:00:44.001000001:ev_run returned
+before ev_run
+2000-01-01 00:00:52.999000001:ev_run returned
+before ev_run
+2000-01-01 00:00:53.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:00:53.001000001:ev_run returned
+before ev_run
+2000-01-01 00:01:02.999000001:ev_run returned
+before ev_run
+2000-01-01 00:01:03.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:01:03.001000001:ev_run returned
+before ev_run
+2000-01-01 00:01:12.999000001:ev_run returned
+before ev_run
+2000-01-01 00:01:13.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:01:13.001000001:ev_run returned
+before ev_run
+2000-01-01 00:01:13.999000001:ev_run returned
+before ev_run
+2000-01-01 00:01:14.000000001:ev_run returned
+before ev_run
+periodic address advertisement
+periodic address advertisement
+size of _addrToSend:0
+2000-01-01 00:01:14.001000001:ev_run returned
+before ev_run
+2000-01-01 00:01:22.999000001:ev_run returned
+before ev_run
+2000-01-01 00:01:23.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:01:23.001000001:ev_run returned
+before ev_run
+2000-01-01 00:01:32.999000001:ev_run returned
+before ev_run
+2000-01-01 00:01:33.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:01:33.001000001:ev_run returned
+before ev_run
+2000-01-01 00:01:42.999000001:ev_run returned
+before ev_run
+2000-01-01 00:01:43.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:01:43.001000001:ev_run returned
+before ev_run
+2000-01-01 00:01:43.999000001:ev_run returned
+before ev_run
+2000-01-01 00:01:44.000000001:ev_run returned
+before ev_run
+periodic address advertisement
+periodic address advertisement
+size of _addrToSend:0
+2000-01-01 00:01:44.001000001:ev_run returned
+before ev_run
+2000-01-01 00:01:52.999000001:ev_run returned
+before ev_run
+2000-01-01 00:01:53.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:01:53.001000001:ev_run returned
+before ev_run
+2000-01-01 00:02:02.999000001:ev_run returned
+before ev_run
+2000-01-01 00:02:03.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:02:03.001000001:ev_run returned
+before ev_run
+2000-01-01 00:02:12.999000001:ev_run returned
+before ev_run
+2000-01-01 00:02:13.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:02:13.001000001:ev_run returned
+before ev_run
+2000-01-01 00:02:13.999000001:ev_run returned
+before ev_run
+2000-01-01 00:02:14.000000001:ev_run returned
+before ev_run
+periodic address advertisement
+periodic address advertisement
+size of _addrToSend:0
+2000-01-01 00:02:14.001000001:ev_run returned
+before ev_run
+2000-01-01 00:02:22.999000001:ev_run returned
+before ev_run
+2000-01-01 00:02:23.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:02:23.001000001:ev_run returned
+before ev_run
+2000-01-01 00:02:32.999000001:ev_run returned
+before ev_run
+2000-01-01 00:02:33.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:02:33.001000001:ev_run returned
+before ev_run
+2000-01-01 00:02:42.999000001:ev_run returned
+before ev_run
+2000-01-01 00:02:43.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:02:43.001000001:ev_run returned
+before ev_run
+2000-01-01 00:02:43.999000001:ev_run returned
+before ev_run
+2000-01-01 00:02:44.000000001:ev_run returned
+before ev_run
+periodic address advertisement
+periodic address advertisement
+size of _addrToSend:0
+2000-01-01 00:02:44.001000001:ev_run returned
+before ev_run
+2000-01-01 00:02:52.999000001:ev_run returned
+before ev_run
+2000-01-01 00:02:53.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:02:53.001000001:ev_run returned
+before ev_run
+2000-01-01 00:03:02.999000001:ev_run returned
+before ev_run
+2000-01-01 00:03:03.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:03:03.001000001:ev_run returned
+before ev_run
+2000-01-01 00:03:12.999000001:ev_run returned
+before ev_run
+2000-01-01 00:03:13.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:03:13.001000001:ev_run returned
+before ev_run
+2000-01-01 00:03:13.999000001:ev_run returned
+before ev_run
+2000-01-01 00:03:14.000000001:ev_run returned
+before ev_run
+periodic address advertisement
+periodic address advertisement
+size of _addrToSend:0
+2000-01-01 00:03:14.001000001:ev_run returned
+before ev_run
+2000-01-01 00:03:22.999000001:ev_run returned
+before ev_run
+2000-01-01 00:03:23.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:03:23.001000001:ev_run returned
+before ev_run
+2000-01-01 00:03:32.999000001:ev_run returned
+before ev_run
+2000-01-01 00:03:33.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:03:33.001000001:ev_run returned
+before ev_run
+2000-01-01 00:03:42.999000001:ev_run returned
+before ev_run
+2000-01-01 00:03:43.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:03:43.001000001:ev_run returned
+before ev_run
+2000-01-01 00:03:43.999000001:ev_run returned
+before ev_run
+2000-01-01 00:03:44.000000001:ev_run returned
+before ev_run
+periodic address advertisement
+periodic address advertisement
+size of _addrToSend:0
+2000-01-01 00:03:44.001000001:ev_run returned
+before ev_run
+2000-01-01 00:03:52.999000001:ev_run returned
+before ev_run
+2000-01-01 00:03:53.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:03:53.001000001:ev_run returned
+before ev_run
+2000-01-01 00:04:02.999000001:ev_run returned
+before ev_run
+2000-01-01 00:04:03.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:04:03.001000001:ev_run returned
+before ev_run
+2000-01-01 00:04:12.999000001:ev_run returned
+before ev_run
+2000-01-01 00:04:13.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:04:13.001000001:ev_run returned
+before ev_run
+2000-01-01 00:04:13.999000001:ev_run returned
+before ev_run
+2000-01-01 00:04:14.000000001:ev_run returned
+before ev_run
+periodic address advertisement
+periodic address advertisement
+size of _addrToSend:0
+2000-01-01 00:04:14.001000001:ev_run returned
+before ev_run
+2000-01-01 00:04:22.999000001:ev_run returned
+before ev_run
+2000-01-01 00:04:23.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:04:23.001000001:ev_run returned
+before ev_run
+2000-01-01 00:04:32.999000001:ev_run returned
+before ev_run
+2000-01-01 00:04:33.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:04:33.001000001:ev_run returned
+before ev_run
+2000-01-01 00:04:42.999000001:ev_run returned
+before ev_run
+2000-01-01 00:04:43.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:04:43.001000001:ev_run returned
+before ev_run
+2000-01-01 00:04:43.999000001:ev_run returned
+before ev_run
+2000-01-01 00:04:44.000000001:ev_run returned
+before ev_run
+periodic address advertisement
+periodic address advertisement
+size of _addrToSend:0
+2000-01-01 00:04:44.001000001:ev_run returned
+before ev_run
+2000-01-01 00:04:52.999000001:ev_run returned
+before ev_run
+2000-01-01 00:04:53.000000001:ev_run returned
+before ev_run
+periodic outgoing connection update
+stored addr num:1
+bleep0
+2000-01-01 00:04:53.001000001:ev_run returned
+before ev_run

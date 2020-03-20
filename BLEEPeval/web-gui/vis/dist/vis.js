@@ -5,7 +5,7 @@
  * A dynamic, browser-based visualization library.
  *
  * @version 4.24.10
- * @date    2019-08-26
+ * @date    2020-03-15
  *
  * @license
  * Copyright (C) 2011-2017 Almende B.V, http://almende.com
@@ -1809,7 +1809,7 @@ exports.default = function (subClass, superClass) {
 /* 6 */
 /***/ (function(module, exports) {
 
-var core = module.exports = { version: '2.6.9' };
+var core = module.exports = { version: '2.6.11' };
 if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 
 
@@ -7138,7 +7138,7 @@ var Edge = function () {
   /**
    * Set or overwrite options for the edge
    * @param {Object} options  an object with options
-   * @returns {null|boolean} null if no options, boolean if date changed
+   * @returns {undefined|boolean} undefined if no options, true if layout affecting data changed, false otherwise.
    */
 
 
@@ -7149,12 +7149,8 @@ var Edge = function () {
         return;
       }
 
-      // record old value of this.options.hidden
-      var oldHidden = this.options.hidden;
-
-      if (oldHidden === undefined || oldHidden === null) {
-        oldHidden = false;
-      }
+      // Following options if changed affect the layout.
+      var affectsLayout = typeof options.physics !== "undefined" && this.options.physics !== options.physics || typeof options.hidden !== "undefined" && (this.options.hidden || false) !== (options.hidden || false) || typeof options.from !== "undefined" && this.options.from !== options.from || typeof options.to !== "undefined" && this.options.to !== options.to;
 
       Edge.parseOptions(this.options, options, true, this.globalOptions);
 
@@ -7180,7 +7176,8 @@ var Edge = function () {
       // update label Module
       this.updateLabelModule(options);
 
-      var dataChanged = this.updateEdgeType();
+      // Update edge type, this if changed affects the layout.
+      affectsLayout = this.updateEdgeType() || affectsLayout;
 
       // if anything has been updates, reset the selection width and the hover width
       this._setInteractionWidths();
@@ -7188,16 +7185,7 @@ var Edge = function () {
       // A node is connected when it has a from and to node that both exist in the network.body.nodes.
       this.connect();
 
-      var newHidden = this.options.hidden;
-
-      if (newHidden === undefined || newHidden === null) {
-        newHidden = false;
-      }
-      if (newHidden != oldHidden || options.physics !== undefined) {
-        dataChanged = true;
-      }
-
-      return dataChanged;
+      return affectsLayout;
     }
 
     /**
@@ -33924,12 +33912,24 @@ var CanvasRenderer = function () {
       var edges = this.body.edges;
       var edgeIndices = this.body.edgeIndices;
       var edge = void 0;
+      var selected = [];
 
       for (var i = 0; i < edgeIndices.length; i++) {
         edge = edges[edgeIndices[i]];
         if (edge.connected === true) {
-          edge.draw(ctx);
+          // set selected edges aside
+          if (edge.isSelected()) {
+            selected.push(edgeIndices[i]);
+          } else {
+            edge.draw(ctx);
+          }
         }
+      }
+
+      // draw the selected edges on top
+      for (var _i2 = 0; _i2 < selected.length; _i2++) {
+        edge = edges[selected[_i2]];
+        edge.draw(ctx);
       }
     }
 
@@ -33976,6 +33976,7 @@ var CanvasRenderer = function () {
     value: function _animationStepPackages() {
       this.packagesTimer = undefined;
       var interval = 1 / 60;
+      var dataChanged = false;
       var endAnimation = true;
       var packages = this.body.packages;
       for (var packageId in packages) {
@@ -33984,7 +33985,7 @@ var CanvasRenderer = function () {
           if (pkg.autoProgress && pkg.isMoving) {
             if (pkg.progress >= 1.0) {
               delete packages[packageId];
-              this.body.emitter.emit('_dataChanged');
+              dataChanged = true;
             } else {
               endAnimation = false;
               pkg.discreteStep(interval);
@@ -33992,11 +33993,13 @@ var CanvasRenderer = function () {
           }
         }
       }
-      if (endAnimation) {
+      if (dataChanged === true) {
+        this.body.emitter.emit('_dataChanged');
+      }
+      if (endAnimation === true) {
         this.body.emitter.emit('_stopMovingPackages');
       } else {
-        this._redraw();
-        //this.body.emitter.emit('_requestRedraw')
+        this.body.emitter.emit('_requestRedraw');
         this._startMovingPackages();
       }
     }

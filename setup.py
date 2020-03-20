@@ -61,7 +61,7 @@ if __name__ == '__main__':
         exec_shell_cmd("git submodule update --init")
 
         prepare_shadow()
-        prepare_nodejs()
+        #prepare_nodejs()
 
         ## install
         exec_shell_cmd("mkdir build; cd build; cmake %s ../; make; make install; cd ..; rm -rf build" % cmake_debug_opt)

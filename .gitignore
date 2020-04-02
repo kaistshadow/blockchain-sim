@@ -44,3 +44,12 @@ aws_infra/*ec2_outputs*/
 aws_infra/admin
 aws_infra/admin.pub
 aws_infra/cur_ips
+
+.idea/blockchain-sim.iml
+cmake-build-debug/
+venv/
+tests/regtest/visualize-datadir*/
+tests/regtest/test-gossip-10node/visualize-datadir*/
+tests/regtest/shadow.output
+tests/regtest/*.bak
+tests/regtest/test-gossip-10node/current-config.xml

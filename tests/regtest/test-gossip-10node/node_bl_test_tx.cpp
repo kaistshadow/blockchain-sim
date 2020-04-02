@@ -7,7 +7,6 @@
 #include "BL3_protocol/ProtocolLayer_API.h"
 #include "BL_ShadowLayer.h"
 
-
 #include "BL2_peer_connectivity/Peer.h"
 
 #include "utility/ArgsManager.h"

@@ -7,6 +7,7 @@ import json
 from subprocess import check_output, Popen, PIPE
 import datetime
 
+
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
         print("error while executing '%s'" % cmd)

@@ -82,7 +82,6 @@ def run_experiment(configfile, LOGLEVEL):
     exec_shell_cmd("rm %s" % current_config_path)
     #compare result about 'host log'
     cmp_result = checking_output(datadir)
-    print cmp_result
 
     return "%s/%s/%s" % (os.getcwd(), datadir, eventlogs_filename)
 
@@ -128,17 +127,30 @@ def checking_output(datadir):
     cnt_list = []
     fname_list = []
     log_list = search_logfile(os.path.join(datadir,"hosts"))
+    i=0
+    flag = True
     for log in log_list:
         fname_list.append(log.split('/')[-2])
         f = open(log,'r')
         text = f.read()
         matches=re.findall(r'======== TXPOOL ========([\w\s\n]+)', text)
         out = matches[-1]
-        #print(len(out.split('\n'))-2)
         cnt_list.append(len(out.split('\n'))-2)
         f.close()
-    print fname_list
-    return cnt_list
+
+        if len(cnt_list) > 1:
+            if abs(cnt_list[0]- cnt_list[i]) > 1:
+                flag = False
+        i=i+1
+
+    print fname_list, '\n', cnt_list
+
+    if flag:
+        print "[Checking Result : Success]"
+        return True
+    else :
+        print "[Checking Result : Fail]"
+        sys.exit(-1)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Script for installation and simulation')

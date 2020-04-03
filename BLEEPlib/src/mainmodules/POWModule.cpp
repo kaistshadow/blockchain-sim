@@ -5,19 +5,19 @@
 
 using namespace libBLEEP;
 
-void POWModule::AsyncEmulateBlockMining(std::shared_ptr<POWBlock> candidateBlk, double avg, double stddev) {
-    if (avg < 0) {
+void POWModule::AsyncEmulateBlockMining(std::shared_ptr<POWBlock> candidateBlk, double lambda) {
+    if (lambda < 0) {
         M_Assert(0, "average value of the time should be positive value");
     }
 
-    double waiting_time = get_global_random_source(GetHostNumber()).get_normal_value(avg, stddev, RAND_DROP_NEGATIVE);
+    double waiting_time = get_global_random_source(GetHostNumber()).get_exp_value(lambda);
 
     // std::cout << "waiting time = " << waiting_time << "\n";
     watcherManager.CreateMiningEmulationTimer(candidateBlk, waiting_time);
 
     // append shadow api log
     char buf[256];
-    sprintf(buf, "API,AsyncEmulateBlockMining,%f,%f", avg, stddev);
+    sprintf(buf, "API,AsyncEmulateBlockMining,%f", lambda);
     shadow_push_eventlog(buf);
 }
 

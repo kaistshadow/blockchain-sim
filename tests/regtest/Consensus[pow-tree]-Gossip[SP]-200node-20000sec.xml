@@ -33,8 +33,8 @@
   <!-- <node id="bleep1"> -->
   <!--   <application plugin="PEER_NONBLOCK_IO" time="13" arguments="bleep0"/> -->
   <!-- </node> -->
-  <plugin id="NODE" path="~/.bleep/plugins/libNODE_POW_RANDOM_TREE.so"/>
-  <plugin id="CLIENT" path="~/.bleep/plugins/libNODE_client.so"/>
+  <plugin id="NODE" path="libNODE_POW_RANDOM_TREE.so"/>
+  <plugin id="CLIENT" path="libNODE_client.so"/>
   <kill time="20000"/>
   <node id="bleep0">
     <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep0 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep1 -connect=bleep2 -connect=bleep3 -connect=bleep4 -connect=bleep5 -connect=bleep6 " plugin="NODE" time="0"/>

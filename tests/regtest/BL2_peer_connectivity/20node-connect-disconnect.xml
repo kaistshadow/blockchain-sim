@@ -33,7 +33,7 @@
   <!-- <node id="bleep1"> -->
   <!--   <application plugin="PEER_NONBLOCK_IO" time="13" arguments="bleep0"/> -->
   <!-- </node> -->
-  <plugin id="NODE" path="~/.bleep/plugins/libNODE_BL_TEST.so"/>
+  <plugin id="NODE" path="libNODE_BL_TEST.so"/>
   <kill time="1000"/>
   <node id="bleep0">
     <application arguments="-id=bleep0" plugin="NODE" time="0"/>

@@ -19,7 +19,6 @@
                  <data key="d3">10000020000040</data>
                  <data key="d4">10000240</data>
                  <data key="d5">net</data>
-                 <data key="d6">0</data>
                </node>
                <edge source="poi-1" target="poi-1">
                  <data key="d7">15.0</data>
@@ -34,608 +33,608 @@
   <!-- <node id="bleep1"> -->
   <!--   <application plugin="PEER_NONBLOCK_IO" time="13" arguments="bleep0"/> -->
   <!-- </node> -->
-  <plugin id="NODE" path="~/.bleep/plugins/libNODE_POW_RANDOM_TREE.so"/>
-  <plugin id="CLIENT" path="~/.bleep/plugins/libNODE_client.so"/>
+  <plugin id="NODE" path="libNODE_POW_RANDOM_TREE.so"/>
+  <plugin id="CLIENT" path="libNODE_client.so"/>
   <kill time="100"/>
   <node id="bleep0">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep0 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep1 -connect=bleep2 -connect=bleep3 -connect=bleep4 -connect=bleep5 -connect=bleep6 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep0 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep1 -connect=bleep2 -connect=bleep3 -connect=bleep4 -connect=bleep5 -connect=bleep6 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep1">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep1 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep7 -connect=bleep8 -connect=bleep9 -connect=bleep10 -connect=bleep11 -connect=bleep12 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep1 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep7 -connect=bleep8 -connect=bleep9 -connect=bleep10 -connect=bleep11 -connect=bleep12 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep2">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep2 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep13 -connect=bleep14 -connect=bleep15 -connect=bleep16 -connect=bleep17 -connect=bleep18 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep2 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep13 -connect=bleep14 -connect=bleep15 -connect=bleep16 -connect=bleep17 -connect=bleep18 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep3">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep3 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep19 -connect=bleep20 -connect=bleep21 -connect=bleep22 -connect=bleep23 -connect=bleep24 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep3 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep19 -connect=bleep20 -connect=bleep21 -connect=bleep22 -connect=bleep23 -connect=bleep24 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep4">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep4 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep25 -connect=bleep26 -connect=bleep27 -connect=bleep28 -connect=bleep29 -connect=bleep30 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep4 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep25 -connect=bleep26 -connect=bleep27 -connect=bleep28 -connect=bleep29 -connect=bleep30 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep5">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep5 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep31 -connect=bleep32 -connect=bleep33 -connect=bleep34 -connect=bleep35 -connect=bleep36 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep5 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep31 -connect=bleep32 -connect=bleep33 -connect=bleep34 -connect=bleep35 -connect=bleep36 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep6">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep6 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep37 -connect=bleep38 -connect=bleep39 -connect=bleep40 -connect=bleep41 -connect=bleep42 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep6 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep37 -connect=bleep38 -connect=bleep39 -connect=bleep40 -connect=bleep41 -connect=bleep42 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep7">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep7 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep43 -connect=bleep44 -connect=bleep45 -connect=bleep46 -connect=bleep47 -connect=bleep48 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep7 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep43 -connect=bleep44 -connect=bleep45 -connect=bleep46 -connect=bleep47 -connect=bleep48 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep8">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep8 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep49 -connect=bleep50 -connect=bleep51 -connect=bleep52 -connect=bleep53 -connect=bleep54 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep8 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep49 -connect=bleep50 -connect=bleep51 -connect=bleep52 -connect=bleep53 -connect=bleep54 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep9">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep9 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep55 -connect=bleep56 -connect=bleep57 -connect=bleep58 -connect=bleep59 -connect=bleep60 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep9 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep55 -connect=bleep56 -connect=bleep57 -connect=bleep58 -connect=bleep59 -connect=bleep60 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep10">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep10 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep61 -connect=bleep62 -connect=bleep63 -connect=bleep64 -connect=bleep65 -connect=bleep66 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep10 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep61 -connect=bleep62 -connect=bleep63 -connect=bleep64 -connect=bleep65 -connect=bleep66 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep11">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep11 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep67 -connect=bleep68 -connect=bleep69 -connect=bleep70 -connect=bleep71 -connect=bleep72 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep11 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep67 -connect=bleep68 -connect=bleep69 -connect=bleep70 -connect=bleep71 -connect=bleep72 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep12">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep12 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep73 -connect=bleep74 -connect=bleep75 -connect=bleep76 -connect=bleep77 -connect=bleep78 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep12 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep73 -connect=bleep74 -connect=bleep75 -connect=bleep76 -connect=bleep77 -connect=bleep78 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep13">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep13 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep79 -connect=bleep80 -connect=bleep81 -connect=bleep82 -connect=bleep83 -connect=bleep84 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep13 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep79 -connect=bleep80 -connect=bleep81 -connect=bleep82 -connect=bleep83 -connect=bleep84 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep14">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep14 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep85 -connect=bleep86 -connect=bleep87 -connect=bleep88 -connect=bleep89 -connect=bleep90 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep14 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep85 -connect=bleep86 -connect=bleep87 -connect=bleep88 -connect=bleep89 -connect=bleep90 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep15">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep15 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep91 -connect=bleep92 -connect=bleep93 -connect=bleep94 -connect=bleep95 -connect=bleep96 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep15 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep91 -connect=bleep92 -connect=bleep93 -connect=bleep94 -connect=bleep95 -connect=bleep96 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep16">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep16 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep97 -connect=bleep98 -connect=bleep99 -connect=bleep100 -connect=bleep101 -connect=bleep102 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep16 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep97 -connect=bleep98 -connect=bleep99 -connect=bleep100 -connect=bleep101 -connect=bleep102 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep17">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep17 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep103 -connect=bleep104 -connect=bleep105 -connect=bleep106 -connect=bleep107 -connect=bleep108 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep17 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep103 -connect=bleep104 -connect=bleep105 -connect=bleep106 -connect=bleep107 -connect=bleep108 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep18">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep18 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep109 -connect=bleep110 -connect=bleep111 -connect=bleep112 -connect=bleep113 -connect=bleep114 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep18 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep109 -connect=bleep110 -connect=bleep111 -connect=bleep112 -connect=bleep113 -connect=bleep114 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep19">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep19 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep115 -connect=bleep116 -connect=bleep117 -connect=bleep118 -connect=bleep119 -connect=bleep120 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep19 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep115 -connect=bleep116 -connect=bleep117 -connect=bleep118 -connect=bleep119 -connect=bleep120 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep20">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep20 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep121 -connect=bleep122 -connect=bleep123 -connect=bleep124 -connect=bleep125 -connect=bleep126 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep20 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep121 -connect=bleep122 -connect=bleep123 -connect=bleep124 -connect=bleep125 -connect=bleep126 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep21">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep21 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep127 -connect=bleep128 -connect=bleep129 -connect=bleep130 -connect=bleep131 -connect=bleep132 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep21 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep127 -connect=bleep128 -connect=bleep129 -connect=bleep130 -connect=bleep131 -connect=bleep132 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep22">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep22 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep133 -connect=bleep134 -connect=bleep135 -connect=bleep136 -connect=bleep137 -connect=bleep138 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep22 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep133 -connect=bleep134 -connect=bleep135 -connect=bleep136 -connect=bleep137 -connect=bleep138 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep23">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep23 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep139 -connect=bleep140 -connect=bleep141 -connect=bleep142 -connect=bleep143 -connect=bleep144 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep23 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep139 -connect=bleep140 -connect=bleep141 -connect=bleep142 -connect=bleep143 -connect=bleep144 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep24">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep24 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep145 -connect=bleep146 -connect=bleep147 -connect=bleep148 -connect=bleep149 -connect=bleep150 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep24 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep145 -connect=bleep146 -connect=bleep147 -connect=bleep148 -connect=bleep149 -connect=bleep150 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep25">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep25 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep151 -connect=bleep152 -connect=bleep153 -connect=bleep154 -connect=bleep155 -connect=bleep156 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep25 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep151 -connect=bleep152 -connect=bleep153 -connect=bleep154 -connect=bleep155 -connect=bleep156 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep26">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep26 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep157 -connect=bleep158 -connect=bleep159 -connect=bleep160 -connect=bleep161 -connect=bleep162 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep26 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep157 -connect=bleep158 -connect=bleep159 -connect=bleep160 -connect=bleep161 -connect=bleep162 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep27">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep27 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep163 -connect=bleep164 -connect=bleep165 -connect=bleep166 -connect=bleep167 -connect=bleep168 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep27 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep163 -connect=bleep164 -connect=bleep165 -connect=bleep166 -connect=bleep167 -connect=bleep168 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep28">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep28 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep169 -connect=bleep170 -connect=bleep171 -connect=bleep172 -connect=bleep173 -connect=bleep174 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep28 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep169 -connect=bleep170 -connect=bleep171 -connect=bleep172 -connect=bleep173 -connect=bleep174 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep29">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep29 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep175 -connect=bleep176 -connect=bleep177 -connect=bleep178 -connect=bleep179 -connect=bleep180 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep29 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep175 -connect=bleep176 -connect=bleep177 -connect=bleep178 -connect=bleep179 -connect=bleep180 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep30">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep30 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep181 -connect=bleep182 -connect=bleep183 -connect=bleep184 -connect=bleep185 -connect=bleep186 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep30 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep181 -connect=bleep182 -connect=bleep183 -connect=bleep184 -connect=bleep185 -connect=bleep186 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep31">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep31 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep187 -connect=bleep188 -connect=bleep189 -connect=bleep190 -connect=bleep191 -connect=bleep192 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep31 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep187 -connect=bleep188 -connect=bleep189 -connect=bleep190 -connect=bleep191 -connect=bleep192 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep32">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep32 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep193 -connect=bleep194 -connect=bleep195 -connect=bleep196 -connect=bleep197 -connect=bleep198 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep32 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep193 -connect=bleep194 -connect=bleep195 -connect=bleep196 -connect=bleep197 -connect=bleep198 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep33">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep33 -l=debug -miningtime=10 -miningtimedev=3 -connect=bleep199 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep33 -l=debug -miningtime=10 -miningnodecnt=200 -connect=bleep199 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep34">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep34 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep34 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep35">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep35 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep35 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep36">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep36 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep36 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep37">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep37 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep37 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep38">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep38 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep38 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep39">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep39 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep39 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep40">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep40 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep40 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep41">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep41 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep41 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep42">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep42 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep42 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep43">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep43 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep43 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep44">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep44 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep44 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep45">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep45 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep45 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep46">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep46 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep46 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep47">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep47 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep47 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep48">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep48 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep48 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep49">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep49 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep49 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep50">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep50 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep50 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep51">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep51 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep51 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep52">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep52 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep52 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep53">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep53 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep53 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep54">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep54 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep54 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep55">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep55 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep55 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep56">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep56 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep56 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep57">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep57 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep57 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep58">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep58 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep58 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep59">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep59 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep59 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep60">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep60 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep60 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep61">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep61 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep61 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep62">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep62 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep62 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep63">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep63 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep63 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep64">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep64 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep64 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep65">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep65 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep65 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep66">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep66 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep66 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep67">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep67 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep67 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep68">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep68 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep68 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep69">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep69 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep69 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep70">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep70 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep70 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep71">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep71 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep71 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep72">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep72 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep72 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep73">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep73 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep73 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep74">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep74 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep74 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep75">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep75 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep75 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep76">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep76 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep76 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep77">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep77 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep77 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep78">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep78 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep78 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep79">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep79 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep79 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep80">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep80 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep80 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep81">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep81 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep81 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep82">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep82 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep82 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep83">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep83 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep83 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep84">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep84 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep84 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep85">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep85 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep85 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep86">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep86 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep86 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep87">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep87 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep87 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep88">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep88 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep88 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep89">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep89 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep89 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep90">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep90 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep90 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep91">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep91 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep91 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep92">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep92 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep92 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep93">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep93 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep93 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep94">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep94 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep94 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep95">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep95 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep95 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep96">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep96 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep96 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep97">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep97 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep97 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep98">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep98 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep98 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep99">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep99 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep99 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep100">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep100 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep100 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep101">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep101 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep101 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep102">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep102 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep102 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep103">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep103 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep103 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep104">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep104 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep104 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep105">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep105 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep105 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep106">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep106 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep106 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep107">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep107 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep107 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep108">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep108 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep108 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep109">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep109 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep109 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep110">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep110 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep110 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep111">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep111 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep111 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep112">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep112 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep112 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep113">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep113 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep113 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep114">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep114 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep114 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep115">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep115 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep115 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep116">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep116 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep116 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep117">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep117 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep117 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep118">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep118 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep118 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep119">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep119 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep119 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep120">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep120 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep120 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep121">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep121 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep121 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep122">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep122 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep122 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep123">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep123 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep123 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep124">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep124 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep124 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep125">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep125 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep125 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep126">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep126 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep126 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep127">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep127 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep127 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep128">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep128 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep128 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep129">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep129 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep129 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep130">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep130 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep130 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep131">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep131 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep131 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep132">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep132 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep132 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep133">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep133 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep133 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep134">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep134 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep134 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep135">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep135 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep135 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep136">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep136 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep136 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep137">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep137 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep137 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep138">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep138 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep138 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep139">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep139 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep139 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep140">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep140 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep140 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep141">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep141 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep141 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep142">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep142 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep142 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep143">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep143 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep143 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep144">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep144 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep144 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep145">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep145 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep145 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep146">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep146 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep146 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep147">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep147 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep147 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep148">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep148 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep148 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep149">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep149 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep149 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep150">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep150 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep150 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep151">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep151 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep151 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep152">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep152 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep152 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep153">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep153 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep153 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep154">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep154 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep154 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep155">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep155 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep155 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep156">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep156 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep156 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep157">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep157 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep157 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep158">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep158 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep158 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep159">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep159 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep159 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep160">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep160 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep160 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep161">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep161 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep161 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep162">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep162 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep162 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep163">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep163 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep163 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep164">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep164 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep164 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep165">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep165 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep165 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep166">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep166 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep166 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep167">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep167 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep167 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep168">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep168 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep168 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep169">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep169 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep169 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep170">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep170 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep170 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep171">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep171 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep171 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep172">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep172 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep172 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep173">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep173 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep173 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep174">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep174 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep174 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep175">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep175 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep175 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep176">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep176 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep176 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep177">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep177 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep177 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep178">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep178 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep178 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep179">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep179 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep179 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep180">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep180 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep180 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep181">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep181 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep181 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep182">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep182 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep182 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep183">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep183 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep183 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep184">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep184 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep184 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep185">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep185 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep185 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep186">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep186 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep186 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep187">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep187 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep187 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep188">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep188 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep188 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep189">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep189 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep189 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep190">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep190 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep190 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep191">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep191 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep191 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep192">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep192 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep192 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep193">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep193 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep193 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep194">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep194 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep194 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep195">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep195 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep195 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep196">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep196 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep196 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep197">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep197 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep197 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep198">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep198 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep198 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="bleep199">
-    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep199 -l=debug -miningtime=10 -miningtimedev=3 " plugin="NODE" time="0"/>
+    <application arguments="-txgeninterval=1000000000 -outpeernum=20 -fanout=7 -id=bleep199 -l=debug -miningtime=10 -miningnodecnt=200 " plugin="NODE" time="0"/>
   </node>
   <node id="client0">
     <application arguments="-id=client0 -txgeninterval=1 -connect=bleep0 -connect=bleep1 -connect=bleep2 -connect=bleep3 -connect=bleep4 -connect=bleep5 -connect=bleep6 -connect=bleep7 -connect=bleep8 -connect=bleep9 -connect=bleep10 -connect=bleep11 -connect=bleep12 -connect=bleep13 -connect=bleep14 -connect=bleep15 -connect=bleep16 -connect=bleep17 -connect=bleep18 -connect=bleep19 -connect=bleep20 -connect=bleep21 -connect=bleep22 -connect=bleep23 -connect=bleep24 -connect=bleep25 -connect=bleep26 -connect=bleep27 -connect=bleep28 -connect=bleep29 -connect=bleep30 -connect=bleep31 -connect=bleep32 -connect=bleep33 -connect=bleep34 -connect=bleep35 -connect=bleep36 -connect=bleep37 -connect=bleep38 -connect=bleep39 -connect=bleep40 -connect=bleep41 -connect=bleep42 -connect=bleep43 -connect=bleep44 -connect=bleep45 -connect=bleep46 -connect=bleep47 -connect=bleep48 -connect=bleep49 -connect=bleep50 -connect=bleep51 -connect=bleep52 -connect=bleep53 -connect=bleep54 -connect=bleep55 -connect=bleep56 -connect=bleep57 -connect=bleep58 -connect=bleep59 -connect=bleep60 -connect=bleep61 -connect=bleep62 -connect=bleep63 -connect=bleep64 -connect=bleep65 -connect=bleep66 -connect=bleep67 -connect=bleep68 -connect=bleep69 -connect=bleep70 -connect=bleep71 -connect=bleep72 -connect=bleep73 -connect=bleep74 -connect=bleep75 -connect=bleep76 -connect=bleep77 -connect=bleep78 -connect=bleep79 -connect=bleep80 -connect=bleep81 -connect=bleep82 -connect=bleep83 -connect=bleep84 -connect=bleep85 -connect=bleep86 -connect=bleep87 -connect=bleep88 -connect=bleep89 -connect=bleep90 -connect=bleep91 -connect=bleep92 -connect=bleep93 -connect=bleep94 -connect=bleep95 -connect=bleep96 -connect=bleep97 -connect=bleep98 -connect=bleep99 -connect=bleep100 -connect=bleep101 -connect=bleep102 -connect=bleep103 -connect=bleep104 -connect=bleep105 -connect=bleep106 -connect=bleep107 -connect=bleep108 -connect=bleep109 -connect=bleep110 -connect=bleep111 -connect=bleep112 -connect=bleep113 -connect=bleep114 -connect=bleep115 -connect=bleep116 -connect=bleep117 -connect=bleep118 -connect=bleep119 -connect=bleep120 -connect=bleep121 -connect=bleep122 -connect=bleep123 -connect=bleep124 -connect=bleep125 -connect=bleep126 -connect=bleep127 -connect=bleep128 -connect=bleep129 -connect=bleep130 -connect=bleep131 -connect=bleep132 -connect=bleep133 -connect=bleep134 -connect=bleep135 -connect=bleep136 -connect=bleep137 -connect=bleep138 -connect=bleep139 -connect=bleep140 -connect=bleep141 -connect=bleep142 -connect=bleep143 -connect=bleep144 -connect=bleep145 -connect=bleep146 -connect=bleep147 -connect=bleep148 -connect=bleep149 -connect=bleep150 -connect=bleep151 -connect=bleep152 -connect=bleep153 -connect=bleep154 -connect=bleep155 -connect=bleep156 -connect=bleep157 -connect=bleep158 -connect=bleep159 -connect=bleep160 -connect=bleep161 -connect=bleep162 -connect=bleep163 -connect=bleep164 -connect=bleep165 -connect=bleep166 -connect=bleep167 -connect=bleep168 -connect=bleep169 -connect=bleep170 -connect=bleep171 -connect=bleep172 -connect=bleep173 -connect=bleep174 -connect=bleep175 -connect=bleep176 -connect=bleep177 -connect=bleep178 -connect=bleep179 -connect=bleep180 -connect=bleep181 -connect=bleep182 -connect=bleep183 -connect=bleep184 -connect=bleep185 -connect=bleep186 -connect=bleep187 -connect=bleep188 -connect=bleep189 -connect=bleep190 -connect=bleep191 -connect=bleep192 -connect=bleep193 -connect=bleep194 -connect=bleep195 -connect=bleep196 -connect=bleep197 -connect=bleep198 -connect=bleep199 " plugin="CLIENT" time="5"/>

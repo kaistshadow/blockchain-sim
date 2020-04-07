@@ -19,7 +19,6 @@
                  <data key="d3">10000020000040</data>
                  <data key="d4">10000240</data>
                  <data key="d5">net</data>
-                 <data key="d6">0</data>
                </node>
                <edge source="poi-1" target="poi-1">
                  <data key="d7">50.0</data>
@@ -34,7 +33,7 @@
   <!-- <node id="bleep1"> -->
   <!--   <application plugin="PEER_NONBLOCK_IO" time="13" arguments="bleep0"/> -->
   <!-- </node> -->
-  <plugin id="NODE" path="~/.bleep/plugins/libNODE_BL_TEST.so"/>
+  <plugin id="NODE" path="libNODE_BL_TEST.so"/>
   <kill time="1000"/>
   <node id="bleep0">
     <application arguments="-id=bleep0" plugin="NODE" time="0"/>

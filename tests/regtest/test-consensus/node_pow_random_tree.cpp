@@ -202,8 +202,8 @@ int main(int argc, char *argv[]) {
         // start mining
         std::shared_ptr<POWBlock> candidateBlk = MakeCandidateBlock(txPool, ledger);
         double mining_avg = std::stof(gArgs.GetArg("-miningtime"));
-        double mining_dev = std::stof(gArgs.GetArg("-miningtimedev"));
-        powModule.AsyncEmulateBlockMining(candidateBlk, mining_avg, mining_dev);
+        int mining_node_cnt = std::stof(gArgs.GetArg("-miningnodecnt"));
+        powModule.AsyncEmulateBlockMining(candidateBlk, 1/mining_avg/mining_node_cnt);
     }
 
     std::map<std::string, bool> reconnectTry;
@@ -249,8 +249,8 @@ int main(int argc, char *argv[]) {
                     if (txPool.GetPendingTxNum() >= txNumPerBlock && !powModule.IsMining()) {
                         std::shared_ptr<POWBlock> candidateBlk = MakeCandidateBlock(txPool, ledger);
                         double mining_avg = std::stof(gArgs.GetArg("-miningtime"));
-                        double mining_dev = std::stof(gArgs.GetArg("-miningtimedev"));
-                        powModule.AsyncEmulateBlockMining(candidateBlk, mining_avg, mining_dev);
+                        int mining_node_cnt = std::stof(gArgs.GetArg("-miningnodecnt"));
+                        powModule.AsyncEmulateBlockMining(candidateBlk, 1/mining_avg/mining_node_cnt);
                     }
 
                     // Call another request, i.e., periodically generate transaction
@@ -275,8 +275,8 @@ int main(int argc, char *argv[]) {
                         if (txPool.GetPendingTxNum() >= txNumPerBlock && !powModule.IsMining()) {
                             std::shared_ptr<POWBlock> candidateBlk = MakeCandidateBlock(txPool, ledger);
                             double mining_avg = std::stof(gArgs.GetArg("-miningtime"));
-                            double mining_dev = std::stof(gArgs.GetArg("-miningtimedev"));
-                            powModule.AsyncEmulateBlockMining(candidateBlk, mining_avg, mining_dev);
+                            int mining_node_cnt = std::stof(gArgs.GetArg("-miningnodecnt"));
+                            powModule.AsyncEmulateBlockMining(candidateBlk, 1/mining_avg/mining_node_cnt);
                         }
                     } 
                     else if (messageType == "Inventory") {
@@ -459,8 +459,8 @@ int main(int argc, char *argv[]) {
                                 if (txPool.GetPendingTxNum() >= txNumPerBlock) {
                                     std::shared_ptr<POWBlock> candidateBlk = MakeCandidateBlock(txPool, ledger);
                                     double mining_avg = std::stof(gArgs.GetArg("-miningtime"));
-                                    double mining_dev = std::stof(gArgs.GetArg("-miningtimedev"));
-                                    powModule.AsyncEmulateBlockMining(candidateBlk, mining_avg, mining_dev);
+                                    int mining_node_cnt = std::stof(gArgs.GetArg("-miningnodecnt"));
+                                    powModule.AsyncEmulateBlockMining(candidateBlk, 1/mining_avg/mining_node_cnt);
                                 }
                             }
 
@@ -644,8 +644,8 @@ int main(int argc, char *argv[]) {
                     if (txPool.GetPendingTxNum() >= txNumPerBlock && !powModule.IsMining()) {
                         std::shared_ptr<POWBlock> candidateBlk = MakeCandidateBlock(txPool, ledger);
                         double mining_avg = std::stof(gArgs.GetArg("-miningtime"));
-                        double mining_dev = std::stof(gArgs.GetArg("-miningtimedev"));
-                        powModule.AsyncEmulateBlockMining(candidateBlk, mining_avg, mining_dev);
+                        int mining_node_cnt = std::stof(gArgs.GetArg("-miningnodecnt"));
+                        powModule.AsyncEmulateBlockMining(candidateBlk, 1/mining_avg/mining_node_cnt);
                     }
 
                     // propagate to network

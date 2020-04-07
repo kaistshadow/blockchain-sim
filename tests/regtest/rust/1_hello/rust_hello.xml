@@ -34,8 +34,8 @@
   <!-- <node id="bleep1"> -->
   <!--   <application plugin="PEER_NONBLOCK_IO" time="13" arguments="bleep0"/> -->
   <!-- </node> -->
-  <!-- <plugin id="NODE" path="~/.bleep/plugins/libNODE_POW_RANDOM_TREE.so"/> -->
-  <!-- <plugin id="CLIENT" path="~/.bleep/plugins/libNODE_client.so"/> -->
+  <!-- <plugin id="NODE" path="libNODE_POW_RANDOM_TREE.so"/> -->
+  <!-- <plugin id="CLIENT" path="libNODE_client.so"/> -->
   <plugin id="NODE" path="libhello.so"/>
 
 

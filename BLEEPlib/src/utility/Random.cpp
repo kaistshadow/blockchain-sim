@@ -23,7 +23,8 @@ libBLEEP::random_source::random_source(int host_id) {
     struct timespec cur;
     clock_gettime(CLOCK_MONOTONIC, &cur);
     unsigned int randtime = (unsigned int)cur.tv_nsec;
-    unsigned int random_num = randtime + host_id;
+    unsigned int randvalue = rand();
+    unsigned int random_num = randtime + host_id +randvalue;
     static std::default_random_engine generator(random_num);
     default_random_source = &generator;
 }

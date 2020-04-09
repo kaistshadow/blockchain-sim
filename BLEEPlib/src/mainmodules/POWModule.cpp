@@ -10,7 +10,7 @@ void POWModule::AsyncEmulateBlockMining(std::shared_ptr<POWBlock> candidateBlk, 
         M_Assert(0, "average value of the time should be positive value");
     }
 
-    double waiting_time = get_global_random_source(GetHostNumber()).get_exp_value(lambda);
+    double waiting_time = get_global_random_source().get_exp_value(lambda);
 
     // std::cout << "waiting time = " << waiting_time << "\n";
     watcherManager.CreateMiningEmulationTimer(candidateBlk, waiting_time);

@@ -48,3 +48,5 @@ aws_infra/cur_ips
 
 .idea/
 cmake-build-debug/
+
+tests/regtest/datadir/

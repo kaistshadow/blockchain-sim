@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import operator
 import math
 
-#import invariant_network_gossiptree as cic
 import eclipse_cdf as ecp
 import eclipse_active as ecpa
 
@@ -99,8 +98,6 @@ def add_undirected_graph_edge(i, j):
 if __name__ == '__main__':
     if len (sys.argv) < 2 or len (sys.argv) > 4:
         print "Command line input error"
-        print "check_invariant.py <num>"
-        print "check_invariant.py <num><time>"
         sys.exit (1)
     else:
         print "\n--- [Check Invariants & Network Topology] ---"

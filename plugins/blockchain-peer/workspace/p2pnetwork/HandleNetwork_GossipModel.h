@@ -19,6 +19,7 @@
 
 #define MYPORT 3456    /* the port users will be connecting to */
 #define BACKLOG 10     /* how many pending connections queue will hold */
+#define LOGGING 0
 
 // [Membership Protocol Parameters]
 // scale 10000: (5,30,6,3,5,3,4)

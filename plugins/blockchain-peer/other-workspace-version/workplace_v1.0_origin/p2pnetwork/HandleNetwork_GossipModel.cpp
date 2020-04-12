@@ -82,7 +82,9 @@ void HandleNetwork_GossipModel::onRecvSocketConnectionEvent(std::shared_ptr<Even
     PeerMap[receiver_fd] = peer;
     socketEventPublisher.RegisterSocketAsDataSocket(receiver_fd);
     TimeoutManager.RegisterTimeoutWatcher(receiver_fd);
-    //std::cout << "[onRecvSocketConnectionEvent] got connection from "<< peer->GetIP() << "\n";
+    #if LOGGING
+        std::cout << "[onRecvSocketConnectionEvent] got connection from "<< peer->GetIP() << "\n";
+    #endif
 }
 
 void HandleNetwork_GossipModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo> info) {
@@ -117,7 +119,9 @@ void HandleNetwork_GossipModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo>
                     status.recv_status = STATUS_HEADER;
                     status.received_len = 0;
                     status.recv_str = "";
-                    //std::cout << "RECV\n";
+                    #if LOGGING
+                        std::cout << "RECV\n";
+                    #endif
                 }
             }
             break;
@@ -151,8 +155,10 @@ void HandleNetwork_GossipModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo>
                     std::cout << "[onRecvSocketDataEvent] HEADER/MSG received only some part\n";
                     break;
                 }
-
-                //std::cout << "RECV\n";
+                #if LOGGING 
+                    std::cout << "RECV\n";
+                #endif
+        
                 if (status.recv_status == STATUS_HEADER) {
                     GossipModuleHeader* header = GetDeserializedMsgHeader(status.recv_str);
                     int message_len = header->GetMessageLength();
@@ -177,7 +183,9 @@ void HandleNetwork_GossipModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo>
     }
 
     if (is_disconnect) {
-        //std::cout << "[HandleRecvSocketIO] Disconnected with "<<peer->GetIP()<<'\n';
+        #if LOGGING
+            std::cout << "[HandleRecvSocketIO] Disconnected with "<<peer->GetIP()<<'\n';
+        #endif
         TimeoutManager.RemoveTimer(fd);
         socketEventPublisher.UnregisterDataSocket(fd);
         PeerMap.erase(it);
@@ -225,8 +233,10 @@ void HandleNetwork_GossipModel::onSendSocketReadyEvent(std::shared_ptr<EventInfo
     if (msg->nbytes() == 0) {
        status.sendMsgQueue.pop_front();
        //delete msg.get();
-       //std::cout << "SEND\n";
-       //std::cout << "[onSendSocketReadyEvent] Send a Msg\n";
+        #if LOGGING
+            std::cout << "SEND\n";
+            std::cout << "[onSendSocketReadyEvent] Send a Msg\n";
+        #endif
    }
 }
 
@@ -321,7 +331,9 @@ void HandleNetwork_GossipModel::Membership_HandleShutdownCallback(EV_P_ ev_timer
 void HandleNetwork_GossipModel::Membership_HandleSendShuffleCallback(EV_P_ ev_timer *w, int revents) {
     HandleNetwork_GossipModel* instance = HandleNetwork_GossipModel::GetInstance();
     if (instance->GetPartialViewManager()->CurrentActiveViewSize() > 0) {
-        //std::cout << "[Membership_HandleSendShuffleCallback] called\n";
+        #if LOGGING
+        	std::cout << "[Membership_HandleSendShuffleCallback] called\n";
+        #endif
         Neighbor* target = instance->GetPartialViewManager()->ChooseRandomFromActive();
 
         GossipModuleHeader newheader(CASTTYPE_UNICAST, PROTOCOL_MEMBERSHIP);
@@ -656,17 +668,22 @@ void HandleNetwork_GossipModel::Membership_SendNeighbor(std::string exception) {
         std::string id = candidate->id;
         Peer* peer = GetPeerFromPeerMap(id);
         if (!peer) {
-            //std::cout << "[Membership_SendNeighbor] have no connection\n";
+            #if LOGGING
+				std::cout << "[Membership_SendNeighbor] have no connection\n";
+            #endif
             if (Connect(id) == -1) {
-                PartialViewManager.DropFromPassive(id);
-                
+                PartialViewManager.DropFromPassive(id);    
                 //PartialViewManager.PrintPartialView();//
                 continue;
             }
-            //std::cout << "[Membership_SendNeighbor] make connection\n";
+            #if LOGGING
+        		std::cout << "[Membership_SendNeighbor] make connection\n";
+            #endif
         }
         else {
-            ;//std::cout << "[Membership_SendNeighbor] have connection already\n";
+            #if LOGGING
+            	std::cout << "[Membership_SendNeighbor] have connection already\n";
+            #endif
         }
         break;
     }
@@ -1215,7 +1232,10 @@ void TimeoutList::ConnectionTimeoutCallback(EV_P_ ev_timer *w, int revents) {
         exit(-1);
     }
 
-    //std::cout << "[ConnectionTimeoutCallback] Timeout occurs\n";
+    #if LOGGING
+    	std::cout << "[ConnectionTimeoutCallback] Timeout occurs\n";
+    #endif
+	
     Peer* peer = peer_it->second;
     if (instance->GetPartialViewManager()->FindPeerFromActive(peer->GetIP())) {
         ev_timer* timer = &entry->timeout_timer;

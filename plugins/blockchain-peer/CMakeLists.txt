@@ -76,4 +76,4 @@ install(TARGETS PEER_LIBEV_CLIENT DESTINATION plugins)
 target_link_libraries(PEER_LIBEV_CLIENT -lev)
 
 
-add_subdirectory(workplace)
+add_subdirectory(workspace)

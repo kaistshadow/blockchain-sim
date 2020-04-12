@@ -1,0 +1,38 @@
+<shadow>
+  <!-- our network -->
+  <topology path="xmls/internet_topology500.xml"/>
+  <!-- the plug-ins we will be using -->
+  <plugin id="PEER" path="libNODE.so"/>
+  <!-- </node> -->
+  <kill time="1010"/>
+  <node id="bleep0">
+    <application arguments="-handlenetwork=gossip -contactnode -miningtime=10 -miningtimedev=3.0" plugin="PEER" time="0"/>
+  </node>
+  <node id="bleep1">
+    <application arguments="-handlenetwork=gossip -miningtime=10 -miningtimedev=3.0" plugin="PEER" time="1"/>
+  </node>
+  <node id="bleep2">
+    <application arguments="-handlenetwork=gossip -miningtime=10 -miningtimedev=3.0" plugin="PEER" time="2"/>
+  </node>
+  <node id="bleep3">
+    <application arguments="-handlenetwork=gossip -miningtime=10 -miningtimedev=3.0" plugin="PEER" time="3"/>
+  </node>
+  <node id="bleep4">
+    <application arguments="-handlenetwork=gossip -miningtime=10 -miningtimedev=3.0" plugin="PEER" time="4"/>
+  </node>
+  <node id="bleep5">
+    <application arguments="-handlenetwork=gossip -miningtime=10 -miningtimedev=3.0" plugin="PEER" time="5"/>
+  </node>
+  <node id="bleep6">
+    <application arguments="-handlenetwork=gossip -miningtime=10 -miningtimedev=3.0" plugin="PEER" time="6"/>
+  </node>
+  <node id="bleep7">
+    <application arguments="-handlenetwork=gossip -miningtime=10 -miningtimedev=3.0" plugin="PEER" time="7"/>
+  </node>
+  <node id="bleep8">
+    <application arguments="-handlenetwork=gossip -miningtime=10 -miningtimedev=3.0" plugin="PEER" time="8"/>
+  </node>
+  <node id="bleep9">
+    <application arguments="-handlenetwork=gossip -miningtime=10 -miningtimedev=3.0" plugin="PEER" time="9"/>
+  </node>
+</shadow>

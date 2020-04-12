@@ -1,0 +1,489 @@
+<shadow>
+  <!-- our network -->
+  <topology><![CDATA[<?xml version="1.0" encoding="utf-8"?><graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+             <key attr.name="packetloss" attr.type="double" for="edge" id="d9" />
+             <key attr.name="jitter" attr.type="double" for="edge" id="d8" />
+             <key attr.name="latency" attr.type="double" for="edge" id="d7" />
+             <key attr.name="asn" attr.type="int" for="node" id="d6" />
+             <key attr.name="type" attr.type="string" for="node" id="d5" />
+             <key attr.name="bandwidthup" attr.type="int" for="node" id="d4" />
+             <key attr.name="bandwidthdown" attr.type="int" for="node" id="d3" />
+             <key attr.name="geocode" attr.type="string" for="node" id="d2" />
+             <key attr.name="ip" attr.type="string" for="node" id="d1" />
+             <key attr.name="packetloss" attr.type="double" for="node" id="d0" />
+             <graph edgedefault="undirected">
+               <node id="poi-1">
+                 <data key="d0">0.0</data>
+                 <data key="d1">0.0.0.0</data>
+                 <data key="d2">US</data>
+                 <data key="d3">10000020000040</data>
+                 <data key="d4">10000240</data>
+                 <data key="d5">net</data>
+                 <data key="d6">0</data>
+               </node>
+               <edge source="poi-1" target="poi-1">
+                 <data key="d7">50.0</data>
+                 <data key="d8">0.0</data>
+                 <data key="d9">0.0</data>
+               </edge>
+             </graph>
+             </graphml>]]></topology>
+  <!-- the plug-ins we will be using -->
+  <plugin id="PEER" path="libNODE.so"/>
+  <!-- the length of our experiment in seconds  1404101800-->
+  <!-- our nodes -->
+  <!-- <node id="bleep1"> -->
+  <!--   <application plugin="PEER_NONBLOCK_IO" time="13" arguments="bleep0"/> -->
+  <!-- </node> -->
+  <kill time="1000"/>
+  <node id="bleep0">
+    <application arguments="-handlenetwork=gossip -contactnode" plugin="PEER" time="0"/>
+  </node>
+  <node id="bleep1">
+    <application arguments="-handlenetwork=gossip -eclipseTime=199" plugin="PEER" time="1"/>
+  </node>
+  <node id="bleep2">
+    <application arguments="-handlenetwork=gossip -eclipseTime=198" plugin="PEER" time="2"/>
+  </node>
+  <node id="bleep3">
+    <application arguments="-handlenetwork=gossip -eclipseTime=197" plugin="PEER" time="3"/>
+  </node>
+  <node id="bleep4">
+    <application arguments="-handlenetwork=gossip -eclipseTime=196" plugin="PEER" time="4"/>
+  </node>
+  <node id="bleep5">
+    <application arguments="-handlenetwork=gossip -eclipseTime=195" plugin="PEER" time="5"/>
+  </node>
+  <node id="bleep6">
+    <application arguments="-handlenetwork=gossip -eclipseTime=194" plugin="PEER" time="6"/>
+  </node>
+  <node id="bleep7">
+    <application arguments="-handlenetwork=gossip -eclipseTime=193" plugin="PEER" time="7"/>
+  </node>
+  <node id="bleep8">
+    <application arguments="-handlenetwork=gossip -eclipseTime=192" plugin="PEER" time="8"/>
+  </node>
+  <node id="bleep9">
+    <application arguments="-handlenetwork=gossip -eclipseTime=191" plugin="PEER" time="9"/>
+  </node>
+  <node id="bleep10">
+    <application arguments="-handlenetwork=gossip -eclipseTime=190" plugin="PEER" time="10"/>
+  </node>
+  <node id="bleep11">
+    <application arguments="-handlenetwork=gossip -eclipseTime=189" plugin="PEER" time="11"/>
+  </node>
+  <node id="bleep12">
+    <application arguments="-handlenetwork=gossip -eclipseTime=188" plugin="PEER" time="12"/>
+  </node>
+  <node id="bleep13">
+    <application arguments="-handlenetwork=gossip -eclipseTime=187" plugin="PEER" time="13"/>
+  </node>
+  <node id="bleep14">
+    <application arguments="-handlenetwork=gossip -eclipseTime=186" plugin="PEER" time="14"/>
+  </node>
+  <node id="bleep15">
+    <application arguments="-handlenetwork=gossip -eclipseTime=185" plugin="PEER" time="15"/>
+  </node>
+  <node id="bleep16">
+    <application arguments="-handlenetwork=gossip -eclipseTime=184" plugin="PEER" time="16"/>
+  </node>
+  <node id="bleep17">
+    <application arguments="-handlenetwork=gossip -eclipseTime=183" plugin="PEER" time="17"/>
+  </node>
+  <node id="bleep18">
+    <application arguments="-handlenetwork=gossip -eclipseTime=182" plugin="PEER" time="18"/>
+  </node>
+  <node id="bleep19">
+    <application arguments="-handlenetwork=gossip -eclipseTime=181" plugin="PEER" time="19"/>
+  </node>
+  <node id="bleep20">
+    <application arguments="-handlenetwork=gossip -eclipseTime=180" plugin="PEER" time="20"/>
+  </node>
+  <node id="bleep21">
+    <application arguments="-handlenetwork=gossip -eclipseTime=179" plugin="PEER" time="21"/>
+  </node>
+  <node id="bleep22">
+    <application arguments="-handlenetwork=gossip -eclipseTime=178" plugin="PEER" time="22"/>
+  </node>
+  <node id="bleep23">
+    <application arguments="-handlenetwork=gossip -eclipseTime=177" plugin="PEER" time="23"/>
+  </node>
+  <node id="bleep24">
+    <application arguments="-handlenetwork=gossip -eclipseTime=176" plugin="PEER" time="24"/>
+  </node>
+  <node id="bleep25">
+    <application arguments="-handlenetwork=gossip -eclipseTime=175" plugin="PEER" time="25"/>
+  </node>
+  <node id="bleep26">
+    <application arguments="-handlenetwork=gossip -eclipseTime=174" plugin="PEER" time="26"/>
+  </node>
+  <node id="bleep27">
+    <application arguments="-handlenetwork=gossip -eclipseTime=173" plugin="PEER" time="27"/>
+  </node>
+  <node id="bleep28">
+    <application arguments="-handlenetwork=gossip -eclipseTime=172" plugin="PEER" time="28"/>
+  </node>
+  <node id="bleep29">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="29"/>
+  </node>
+  <node id="bleep30">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="30"/>
+  </node>
+  <node id="bleep31">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="31"/>
+  </node>
+  <node id="bleep32">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="32"/>
+  </node>
+  <node id="bleep33">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="33"/>
+  </node>
+  <node id="bleep34">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="34"/>
+  </node>
+  <node id="bleep35">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="35"/>
+  </node>
+  <node id="bleep36">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="36"/>
+  </node>
+  <node id="bleep37">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="37"/>
+  </node>
+  <node id="bleep38">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="38"/>
+  </node>
+  <node id="bleep39">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="39"/>
+  </node>
+  <node id="bleep40">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="40"/>
+  </node>
+  <node id="bleep41">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="41"/>
+  </node>
+  <node id="bleep42">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="42"/>
+  </node>
+  <node id="bleep43">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="43"/>
+  </node>
+  <node id="bleep44">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="44"/>
+  </node>
+  <node id="bleep45">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="45"/>
+  </node>
+  <node id="bleep46">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="46"/>
+  </node>
+  <node id="bleep47">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="47"/>
+  </node>
+  <node id="bleep48">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="48"/>
+  </node>
+  <node id="bleep49">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="49"/>
+  </node>
+  <node id="bleep50">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="50"/>
+  </node>
+  <node id="bleep51">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="51"/>
+  </node>
+  <node id="bleep52">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="52"/>
+  </node>
+  <node id="bleep53">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="53"/>
+  </node>
+  <node id="bleep54">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="54"/>
+  </node>
+  <node id="bleep55">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="55"/>
+  </node>
+  <node id="bleep56">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="56"/>
+  </node>
+  <node id="bleep57">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="57"/>
+  </node>
+  <node id="bleep58">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="58"/>
+  </node>
+  <node id="bleep59">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="59"/>
+  </node>
+  <node id="bleep60">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="60"/>
+  </node>
+  <node id="bleep61">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="61"/>
+  </node>
+  <node id="bleep62">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="62"/>
+  </node>
+  <node id="bleep63">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="63"/>
+  </node>
+  <node id="bleep64">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="64"/>
+  </node>
+  <node id="bleep65">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="65"/>
+  </node>
+  <node id="bleep66">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="66"/>
+  </node>
+  <node id="bleep67">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="67"/>
+  </node>
+  <node id="bleep68">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="68"/>
+  </node>
+  <node id="bleep69">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="69"/>
+  </node>
+  <node id="bleep70">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="70"/>
+  </node>
+  <node id="bleep71">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="71"/>
+  </node>
+  <node id="bleep72">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="72"/>
+  </node>
+  <node id="bleep73">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="73"/>
+  </node>
+  <node id="bleep74">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="74"/>
+  </node>
+  <node id="bleep75">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="75"/>
+  </node>
+  <node id="bleep76">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="76"/>
+  </node>
+  <node id="bleep77">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="77"/>
+  </node>
+  <node id="bleep78">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="78"/>
+  </node>
+  <node id="bleep79">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="79"/>
+  </node>
+  <node id="bleep80">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="80"/>
+  </node>
+  <node id="bleep81">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="81"/>
+  </node>
+  <node id="bleep82">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="82"/>
+  </node>
+  <node id="bleep83">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="83"/>
+  </node>
+  <node id="bleep84">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="84"/>
+  </node>
+  <node id="bleep85">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="85"/>
+  </node>
+  <node id="bleep86">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="86"/>
+  </node>
+  <node id="bleep87">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="87"/>
+  </node>
+  <node id="bleep88">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="88"/>
+  </node>
+  <node id="bleep89">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="89"/>
+  </node>
+  <node id="bleep90">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="90"/>
+  </node>
+  <node id="bleep91">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="91"/>
+  </node>
+  <node id="bleep92">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="92"/>
+  </node>
+  <node id="bleep93">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="93"/>
+  </node>
+  <node id="bleep94">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="94"/>
+  </node>
+  <node id="bleep95">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="95"/>
+  </node>
+  <node id="bleep96">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="96"/>
+  </node>
+  <node id="bleep97">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="97"/>
+  </node>
+  <node id="bleep98">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="98"/>
+  </node>
+  <node id="bleep99">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="99"/>
+  </node>
+  <node id="bleep100">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="100"/>
+  </node>
+  <node id="bleep101">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="101"/>
+  </node>
+  <node id="bleep102">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="102"/>
+  </node>
+  <node id="bleep103">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="103"/>
+  </node>
+  <node id="bleep104">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="104"/>
+  </node>
+  <node id="bleep105">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="105"/>
+  </node>
+  <node id="bleep106">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="106"/>
+  </node>
+  <node id="bleep107">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="107"/>
+  </node>
+  <node id="bleep108">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="108"/>
+  </node>
+  <node id="bleep109">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="109"/>
+  </node>
+  <node id="bleep110">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="110"/>
+  </node>
+  <node id="bleep111">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="111"/>
+  </node>
+  <node id="bleep112">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="112"/>
+  </node>
+  <node id="bleep113">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="113"/>
+  </node>
+  <node id="bleep114">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="114"/>
+  </node>
+  <node id="bleep115">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="115"/>
+  </node>
+  <node id="bleep116">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="116"/>
+  </node>
+  <node id="bleep117">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="117"/>
+  </node>
+  <node id="bleep118">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="118"/>
+  </node>
+  <node id="bleep119">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="119"/>
+  </node>
+  <node id="bleep120">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="120"/>
+  </node>
+  <node id="bleep121">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="121"/>
+  </node>
+  <node id="bleep122">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="122"/>
+  </node>
+  <node id="bleep123">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="123"/>
+  </node>
+  <node id="bleep124">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="124"/>
+  </node>
+  <node id="bleep125">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="125"/>
+  </node>
+  <node id="bleep126">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="126"/>
+  </node>
+  <node id="bleep127">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="127"/>
+  </node>
+  <node id="bleep128">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="128"/>
+  </node>
+  <node id="bleep129">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="129"/>
+  </node>
+  <node id="bleep130">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="130"/>
+  </node>
+  <node id="bleep131">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="131"/>
+  </node>
+  <node id="bleep132">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="132"/>
+  </node>
+  <node id="bleep133">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="133"/>
+  </node>
+  <node id="bleep134">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="134"/>
+  </node>
+  <node id="bleep135">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="135"/>
+  </node>
+  <node id="bleep136">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="136"/>
+  </node>
+  <node id="bleep137">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="137"/>
+  </node>
+  <node id="bleep138">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="138"/>
+  </node>
+  <node id="bleep139">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="139"/>
+  </node>
+  <node id="bleep140">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="140"/>
+  </node>
+  <node id="bleep141">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="141"/>
+  </node>
+  <node id="bleep142">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="142"/>
+  </node>
+  <node id="bleep143">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="143"/>
+  </node>
+  <node id="bleep144">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="144"/>
+  </node>
+  <node id="bleep145">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="145"/>
+  </node>
+  <node id="bleep146">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="146"/>
+  </node>
+  <node id="bleep147">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="147"/>
+  </node>
+  <node id="bleep148">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="148"/>
+  </node>
+  <node id="bleep149">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="149"/>
+  </node>
+</shadow>

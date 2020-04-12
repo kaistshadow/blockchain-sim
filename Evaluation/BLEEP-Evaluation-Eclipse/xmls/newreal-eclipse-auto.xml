@@ -1,0 +1,307 @@
+<shadow>
+  <!-- our network -->
+  <topology path="xmls/internet_topology500.xml"/>
+  <!-- the plug-ins we will be using -->
+  <plugin id="PEER" path="libNODE.so"/>
+  <kill time="1600"/>
+  <node id="bleep0" iphint="213.145.108.101">
+    <application arguments="-handlenetwork=gossip -contactnode" plugin="PEER" time="0"/>
+  </node>
+  <node id="bleep1" iphint="89.247.167.117">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="1"/>
+  </node>
+  <node id="bleep2" iphint="88.217.43.2">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="2"/>
+  </node>
+  <node id="bleep3" iphint="178.193.36.6">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="3"/>
+  </node>
+  <node id="bleep4" iphint="84.56.179.134">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="4"/>
+  </node>
+  <node id="bleep5" iphint="65.175.133.136">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="5"/>
+  </node>
+  <node id="bleep6" iphint="196.44.32.103">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="6"/>
+  </node>
+  <node id="bleep7" iphint="185.66.193.41">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="7"/>
+  </node>
+  <node id="bleep8" iphint="91.67.23.61">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="8"/>
+  </node>
+  <node id="bleep9" iphint="197.89.188.74">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="9"/>
+  </node>
+  <node id="bleep10" iphint="84.255.169.218">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="10"/>
+  </node>
+  <node id="bleep11" iphint="79.54.183.65">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="11"/>
+  </node>
+  <node id="bleep12" iphint="84.246.202.232">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="12"/>
+  </node>
+  <node id="bleep13" iphint="124.170.205.190">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="13"/>
+  </node>
+  <node id="bleep14" iphint="66.84.81.42">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="14"/>
+  </node>
+  <node id="bleep15" iphint="92.237.49.142">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="15"/>
+  </node>
+  <node id="bleep16" iphint="178.142.123.18">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="16"/>
+  </node>
+  <node id="bleep17" iphint="81.246.153.136">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="17"/>
+  </node>
+  <node id="bleep18" iphint="217.236.154.70">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="18"/>
+  </node>
+  <node id="bleep19" iphint="90.184.91.2">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="19"/>
+  </node>
+  <node id="bleep20" iphint="80.79.58.236">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="20"/>
+  </node>
+  <node id="bleep21" iphint="188.75.141.6">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="21"/>
+  </node>
+  <node id="bleep22" iphint="186.156.15.221">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="22"/>
+  </node>
+  <node id="bleep23" iphint="89.3.47.172">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="23"/>
+  </node>
+  <node id="bleep24" iphint="83.128.39.28">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="24"/>
+  </node>
+  <node id="bleep25" iphint="151.74.15.70">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="25"/>
+  </node>
+  <node id="bleep26" iphint="88.201.24.98">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="26"/>
+  </node>
+  <node id="bleep27" iphint="174.60.161.25">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="27"/>
+  </node>
+  <node id="bleep28" iphint="96.230.75.66">
+    <application arguments="-handlenetwork=gossip -eclipseTime=1000" plugin="PEER" time="28"/>
+  </node>
+  <node id="bleep29" iphint="41.85.161.100">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="29"/>
+  </node>
+  <node id="bleep30" iphint="91.126.236.163">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="30"/>
+  </node>
+  <node id="bleep31" iphint="190.216.233.147">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="31"/>
+  </node>
+  <node id="bleep32" iphint="83.63.246.42">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="32"/>
+  </node>
+  <node id="bleep33" iphint="109.90.105.153">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="33"/>
+  </node>
+  <node id="bleep34" iphint="213.129.66.97">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="34"/>
+  </node>
+  <node id="bleep35" iphint="77.22.194.163">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="35"/>
+  </node>
+  <node id="bleep36" iphint="83.42.217.62">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="36"/>
+  </node>
+  <node id="bleep37" iphint="2.237.29.206">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="37"/>
+  </node>
+  <node id="bleep38" iphint="60.240.29.242">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="38"/>
+  </node>
+  <node id="bleep39" iphint="202.129.228.140">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="39"/>
+  </node>
+  <node id="bleep40" iphint="187.74.212.2">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="40"/>
+  </node>
+  <node id="bleep41" iphint="89.249.248.151">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="41"/>
+  </node>
+  <node id="bleep42" iphint="80.242.36.134">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="42"/>
+  </node>
+  <node id="bleep43" iphint="83.110.55.111">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="43"/>
+  </node>
+  <node id="bleep44" iphint="217.238.90.149">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="44"/>
+  </node>
+  <node id="bleep45" iphint="178.22.52.12">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="45"/>
+  </node>
+  <node id="bleep46" iphint="87.122.140.24">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="46"/>
+  </node>
+  <node id="bleep47" iphint="82.202.91.77">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="47"/>
+  </node>
+  <node id="bleep48" iphint="148.202.210.253">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="48"/>
+  </node>
+  <node id="bleep49" iphint="188.35.187.107">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="49"/>
+  </node>
+  <node id="bleep50" iphint="178.26.162.46">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="50"/>
+  </node>
+  <node id="bleep51" iphint="46.227.102.53">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="51"/>
+  </node>
+  <node id="bleep52" iphint="43.245.131.179">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="52"/>
+  </node>
+  <node id="bleep53" iphint="31.128.13.222">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="53"/>
+  </node>
+  <node id="bleep54" iphint="151.32.8.236">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="54"/>
+  </node>
+  <node id="bleep55" iphint="80.201.192.117">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="55"/>
+  </node>
+  <node id="bleep56" iphint="81.198.224.232">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="56"/>
+  </node>
+  <node id="bleep57" iphint="88.67.247.225">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="57"/>
+  </node>
+  <node id="bleep58" iphint="179.108.204.219">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="58"/>
+  </node>
+  <node id="bleep59" iphint="76.75.64.35">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="59"/>
+  </node>
+  <node id="bleep60" iphint="78.21.230.28">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="60"/>
+  </node>
+  <node id="bleep61" iphint="109.190.10.7">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="61"/>
+  </node>
+  <node id="bleep62" iphint="90.79.236.245">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="62"/>
+  </node>
+  <node id="bleep63" iphint="89.245.207.254">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="63"/>
+  </node>
+  <node id="bleep64" iphint="151.74.68.140">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="64"/>
+  </node>
+  <node id="bleep65" iphint="79.78.28.9">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="65"/>
+  </node>
+  <node id="bleep66" iphint="71.220.183.58">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="66"/>
+  </node>
+  <node id="bleep67" iphint="79.233.194.132">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="67"/>
+  </node>
+  <node id="bleep68" iphint="88.200.136.209">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="68"/>
+  </node>
+  <node id="bleep69" iphint="89.247.12.225">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="69"/>
+  </node>
+  <node id="bleep70" iphint="92.255.198.34">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="70"/>
+  </node>
+  <node id="bleep71" iphint="109.238.40.80">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="71"/>
+  </node>
+  <node id="bleep72" iphint="198.47.62.174">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="72"/>
+  </node>
+  <node id="bleep73" iphint="178.15.128.132">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="73"/>
+  </node>
+  <node id="bleep74" iphint="83.255.134.228">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="74"/>
+  </node>
+  <node id="bleep75" iphint="121.44.94.120">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="75"/>
+  </node>
+  <node id="bleep76" iphint="89.247.71.166">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="76"/>
+  </node>
+  <node id="bleep77" iphint="63.118.133.42">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="77"/>
+  </node>
+  <node id="bleep78" iphint="50.38.79.64">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="78"/>
+  </node>
+  <node id="bleep79" iphint="73.150.238.226">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="79"/>
+  </node>
+  <node id="bleep80" iphint="72.50.192.24">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="80"/>
+  </node>
+  <node id="bleep81" iphint="185.87.18.223">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="81"/>
+  </node>
+  <node id="bleep82" iphint="90.155.9.20">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="82"/>
+  </node>
+  <node id="bleep83" iphint="90.155.9.24">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="83"/>
+  </node>
+  <node id="bleep84" iphint="83.78.53.88">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="84"/>
+  </node>
+  <node id="bleep85" iphint="89.93.252.96">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="85"/>
+  </node>
+  <node id="bleep86" iphint="213.149.191.11">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="86"/>
+  </node>
+  <node id="bleep87" iphint="202.65.113.15">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="87"/>
+  </node>
+  <node id="bleep88" iphint="174.49.169.30">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="88"/>
+  </node>
+  <node id="bleep89" iphint="88.170.235.198">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="89"/>
+  </node>
+  <node id="bleep90" iphint="85.10.107.75">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="90"/>
+  </node>
+  <node id="bleep91" iphint="83.160.74.54">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="91"/>
+  </node>
+  <node id="bleep92" iphint="62.133.128.9">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="92"/>
+  </node>
+  <node id="bleep93" iphint="62.107.26.58">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="93"/>
+  </node>
+  <node id="bleep94" iphint="87.197.122.78">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="94"/>
+  </node>
+  <node id="bleep95" iphint="186.49.47.54">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="95"/>
+  </node>
+  <node id="bleep96" iphint="212.18.203.132">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="96"/>
+  </node>
+  <node id="bleep97" iphint="94.210.154.6">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="97"/>
+  </node>
+  <node id="bleep98" iphint="106.51.140.171">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="98"/>
+  </node>
+  <node id="bleep99" iphint="217.234.180.204">
+    <application arguments="-handlenetwork=gossip" plugin="PEER" time="99"/>
+  </node>
+</shadow>

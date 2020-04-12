@@ -76,7 +76,7 @@ def set_edge_color(edges):
 if __name__ == '__main__':
     if len (sys.argv) < 2 or len (sys.argv) > 4:
         print "Command line input error"
-        print "invariant_network_graph_proxy.py <num>"
+        print "network_graph_proxy.py <num>"
         sys.exit (1)
     else:
         print "\n--- [Proxy Network Topology] ---"

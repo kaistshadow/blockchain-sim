@@ -4,7 +4,7 @@ import argparse
 import sys
 import networkx as nx
 import matplotlib.pyplot as plt
-import invariant_network_gossiptree as cic
+import network_gossiptree as cic
 import operator
 import math
 
@@ -96,8 +96,6 @@ def add_undirected_graph_edge(i, j):
 if __name__ == '__main__':
     if len (sys.argv) < 2 or len (sys.argv) > 4:
         print "Command line input error"
-        print "./python-script/check_invariant.py <num>"
-        print "./python-script/check_invariant.py <num><time>"
         sys.exit (1)
     else:
         print "\n--- [Check Invariants & Network Topology] ---"

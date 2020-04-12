@@ -12,7 +12,7 @@ send_cnt = 0
 if __name__ == '__main__':
     if len (sys.argv) != 2:
         print "Command line input error"
-        print "check_invariant_SRcount.py <num>"
+        print "invariant_SRcount.py <num>"
         sys.exit (1)
     else:
         print "\n--- [Check Invariants Send-Recv Count] ---"

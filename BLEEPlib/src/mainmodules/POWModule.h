@@ -291,6 +291,15 @@ namespace libBLEEP {
         void AsyncEmulateBlockMining(std::shared_ptr<POWBlock> candidateBlk, double lambda);
 
         /* asynchronous API that requests a block mining 
+           Argument 'candidateBlk' specifies the candidate block for mining 
+           Argument 'avg' specifies average time for completing mining 
+           Argument 'stddev' specifies standard deviation of the time for completing mining 
+           When the mining emulation task is complete, 'complete event'
+           called 'EmuBlockMiningComlete' will be triggered. 
+           The 'complete event' offers generated valid block. */
+        void AsyncEmulateBlockMiningGaussian(std::shared_ptr<POWBlock> candidateBlk, double avg, double stddev);
+
+        /* asynchronous API that requests a block mining 
            Argument 'candidateBlk' specifies the candidate block for mining
            Argument 'difficulty' specifies the 256bit threshold value for valid block.
             For example, if difficulty is '0x0000.....00ffff', 

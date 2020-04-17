@@ -33,7 +33,7 @@ def prepare_shadow():
 
 def prepare_nodejs():
     nodejs_serv_path = "./BLEEPeval/web-gui"    
-
+    exec_shell_cmd("sudo apt-get install -y curl")
     exec_shell_cmd("curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -")
     exec_shell_cmd("sudo apt-get update")
     exec_shell_cmd("sudo apt-get install -y nodejs")

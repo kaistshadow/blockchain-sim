@@ -175,7 +175,7 @@ int main(int argc, char *argv[]) {
                         std::shared_ptr<POWBlock> candidateBlk = MakeCandidateBlock(txPool, ledger);
                         double mining_avg = std::stof(gArgs.GetArg("-miningtime"));
                         double mining_dev = std::stof(gArgs.GetArg("-miningtimedev"));
-                        powModule.AsyncEmulateBlockMining(candidateBlk, mining_avg, mining_dev);
+                        powModule.AsyncEmulateBlockMiningGaussian(candidateBlk, mining_avg, mining_dev);
                     }
 
                     // Call another request, i.e., periodically generate transaction
@@ -196,7 +196,7 @@ int main(int argc, char *argv[]) {
                             std::shared_ptr<POWBlock> candidateBlk = MakeCandidateBlock(txPool, ledger);
                             double mining_avg = std::stof(gArgs.GetArg("-miningtime"));
                             double mining_dev = std::stof(gArgs.GetArg("-miningtimedev"));
-                            powModule.AsyncEmulateBlockMining(candidateBlk, mining_avg, mining_dev);
+                            powModule.AsyncEmulateBlockMiningGaussian(candidateBlk, mining_avg, mining_dev);
                         }
                     } 
                     else if (messageType == "newBlock") {
@@ -227,7 +227,7 @@ int main(int argc, char *argv[]) {
                                 std::shared_ptr<POWBlock> candidateBlk = MakeCandidateBlock(txPool, ledger);
                                 double mining_avg = std::stof(gArgs.GetArg("-miningtime"));
                                 double mining_dev = std::stof(gArgs.GetArg("-miningtimedev"));
-                                powModule.AsyncEmulateBlockMining(candidateBlk, mining_avg, mining_dev);
+                                powModule.AsyncEmulateBlockMiningGaussian(candidateBlk, mining_avg, mining_dev);
                             }
                         } 
                         else if (nextblkidx <= receivedPOWBlk->GetBlockIdx()) {
@@ -280,7 +280,7 @@ int main(int argc, char *argv[]) {
                                         std::shared_ptr<POWBlock> candidateBlk = MakeCandidateBlock(txPool, ledger);
                                         double mining_avg = std::stof(gArgs.GetArg("-miningtime"));
                                         double mining_dev = std::stof(gArgs.GetArg("-miningtimedev"));
-                                        powModule.AsyncEmulateBlockMining(candidateBlk, mining_avg, mining_dev);
+                                        powModule.AsyncEmulateBlockMiningGaussian(candidateBlk, mining_avg, mining_dev);
                                     }
                                 }
                             }

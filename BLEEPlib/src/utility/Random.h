@@ -13,11 +13,11 @@ namespace libBLEEP {
     private:
         std::default_random_engine* default_random_source = NULL;
     public:
-        random_source(int host_id);
+        random_source();
         double get_normal_value(double avg, double stddev, int flag);
         double get_exp_value(double lambda);
     };
-    random_source& get_global_random_source(int host_id);
+    random_source& get_global_random_source();
 }
 
 

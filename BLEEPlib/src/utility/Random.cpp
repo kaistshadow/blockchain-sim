@@ -19,12 +19,12 @@ std::list<int> libBLEEP::GenRandomNumSet(int maxNum, int maxCount){
     return numList;
 }
 
-libBLEEP::random_source::random_source(int host_id) {
+libBLEEP::random_source::random_source() {
     struct timespec cur;
     clock_gettime(CLOCK_MONOTONIC, &cur);
     unsigned int randtime = (unsigned int)cur.tv_nsec;
     unsigned int randvalue = rand();
-    unsigned int random_num = randtime + host_id +randvalue;
+    unsigned int random_num = randtime + shadow_assign_virtual_id() +randvalue;
     static std::default_random_engine generator(random_num);
     default_random_source = &generator;
 }
@@ -48,7 +48,7 @@ double libBLEEP::random_source::get_exp_value(double lambda) {
     result = distribution(*this->default_random_source);
     return result;
 }
-libBLEEP::random_source & libBLEEP::get_global_random_source(int host_id) {
-    static libBLEEP::random_source global_random_source(host_id);
+libBLEEP::random_source & libBLEEP::get_global_random_source() {
+    static libBLEEP::random_source global_random_source;
     return global_random_source;
 }

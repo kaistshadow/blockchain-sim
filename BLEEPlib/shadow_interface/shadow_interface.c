@@ -50,3 +50,8 @@ int next_shadow_clock_update(const char* prefix) {
     clock_start = cur;
     return nanoseconds;
 }
+
+int shadow_assign_virtual_id() {
+    printf("local-shadow_assign_virtual_id called\n");
+    return 0;
+}

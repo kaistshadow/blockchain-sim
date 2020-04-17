@@ -22,6 +22,9 @@ int shadow_clock_gettime(clockid_t clk_id, struct timespec *tp);
 int init_shadow_clock_update();
 int next_shadow_clock_update(const char* prefix);
 
+// virtual id assignment for plugins
+int shadow_assign_virtual_id();
+
 #ifdef __cplusplus
 }
 #endif

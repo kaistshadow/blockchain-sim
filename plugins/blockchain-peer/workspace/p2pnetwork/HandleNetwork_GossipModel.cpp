@@ -930,7 +930,7 @@ void HandleNetwork_GossipModel::Gossip_RunProtocol(std::string sender, GossipMod
         Neighbor* neighbor = PartialViewManager.FindPeerFromActive(sender);
         if (!neighbor) {
             if (header->IsInjected()) {
-                std::cout<<"NEWMSG "<<" NEW "<< utility::GetCurrentTime()<<' '<<mid<<' '<<PartialViewManager.FanoutSize()<<'\n';
+                std::cout<<"NEWMSG "<<"NEW "<< utility::GetCurrentTime()<<' '<<mid<<' '<<PartialViewManager.FanoutSize()<<'\n';
 
                 Gossip_MessageManager.AddToStorage(mid, header->GetHopCount(), NodeInfo::GetInstance()->GetHostIP() , msg);
                 header->IncreaseHopCount();

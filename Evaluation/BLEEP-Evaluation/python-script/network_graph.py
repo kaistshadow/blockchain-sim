@@ -165,29 +165,20 @@ if __name__ == '__main__':
                 sys.exit(1)
 
     # Print the start point of graph analysis
-    print "[Network] First node starts at", time_start
+    print "[NETWORK] First node starts at", time_start
     if time_interval != 0:
         time = int(math.ceil(time_start + time_interval*1000))
         print "time :",time
-
-    # [IP-DOMAIN MAP]
-    print "[IP_MAP] :"
-    cnt = 1
-    ordered_ip_map = sorted(ip_map.items(), key=operator.itemgetter(1))
-    for info in ordered_ip_map:
-        print str(info[1]).ljust(3)+" : "+str(info[0]).ljust(10)+" |",
-        if cnt == 4:
-            print '\n',
-            cnt = 1
-        else:
-            cnt = cnt +1
-    print '\n'
+    tmp = open("tmp-network-start-tim.txt",'w')
+    tmp.write(str(time_start)+'\n')
+    tmp.close()
 
     # [Add Nodes for Grap analysis]
     Graph = nx.DiGraph()
     for i in range(0, num):
         node = "%d" % (i)
         Graph.add_node(node)
+
     # [Process Edge for Graph analysis]
     for i in range(0, num):
         if i in injectors:
@@ -238,31 +229,46 @@ if __name__ == '__main__':
                 Graph.add_edge(node, node_id)
                 check_edge(node, node_id)
 
+    # [Network Stabilization Info]
     if time_end != -1:
-        print "[Network] Stabilized after", time_end-time_start
-    if len(injectors) != 0:
-        print "[INJECTOR]", injectors
-        for injector in injectors:
-            Graph.add_edge(str(injector), "0")
+        print "[NETWORK] Stabilized after", time_end-time_start, "msec (", float(time_end-time_start)/1000.0, "sec)" 
+    
+    # [IP-DOMAIN MAP]
+    print "[NETWORK][IP_MAP]: node id & ip address"
+    cnt = 1
+    ordered_ip_map = sorted(ip_map.items(), key=operator.itemgetter(1))
+    for info in ordered_ip_map:
+        print str(info[1]).ljust(3)+" : "+str(info[0]).ljust(15)+" |",
+        if cnt == 4:
+            print '\n',
+            cnt = 1
+        else:
+            cnt = cnt +1
+    print '\n'
 
-    # [CHECK_INVARIANT_CYCLE test]
-    print "[INVARIANT_NETWORK_GOSSIPTREE]",
+    # [Injector Info]
+    if len(injectors) != 0:
+        print "[NETWORK][INJECTOR] # of injector:", len(injectors), "(include first injector for tree generation: 1 + # of injector)"
+        print "[NETWORK][INJECTOR] injector list:", injectors
+    
+    # [CHECK_CYCLE test]
+    print "[NETWORK][GOSSIPTREE]",
     if len(undirected_edge_temp) == 0:
         start_point = undirected_edge[0][0]
         res = cic.cycle_detector(undirected_edge, start_point)
         if res[0]:
-            print "Cycle exists"
+            print "Cycle exists (tx not injected, network not stabilized, etc)"
         else:
             print "No cycle exists,",
             if res[1] == num-len(injectors):
                 print "all node join the network"
             else:
-                print "but some nodes are missing("+str(num-len(injectors)-res[1])+")"
+                print "but some nodes are missing("+str(num-len(injectors)-res[1])+") => injectors exist or networking fault"
     else:
-        print "Non-symmetric network topology"
+        print "Non-symmetric network topology, this gossip module should establish bi-direction connection"
 
     # [Draw network graph]
     set_node_color(num, list(Graph.nodes()))
     set_edge_color(list(Graph.edges()))
     nx.draw(Graph, with_labels = True, node_color = color, edge_color = overlay_color, width=2)
-    plt.show()
+    #plt.show()

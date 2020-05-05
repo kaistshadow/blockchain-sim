@@ -18,6 +18,8 @@ def setup_multiple_node_xml(node_num, injector_op, simultime, txnum, miningtime,
         shadow.remove(node)
     ET.SubElement(shadow, "kill", time=str(simultime))
 
+    # ----------------------------------- Generate node and add them to xml file --------------------------- 
+    # Set id 0 as contact node that every other new nodes can enter this network by contacting to the contact node
     for i in range(0, node_num):
         node_id = "bleep%d" % (i)
         node = ET.SubElement(shadow, "node", id=node_id)
@@ -28,66 +30,35 @@ def setup_multiple_node_xml(node_num, injector_op, simultime, txnum, miningtime,
             argument = "-handlenetwork=gossip -miningtime=%d -miningtimedev=%s" % (miningtime, miningtime_dev)
         ET.SubElement(node,"application", plugin="PEER", time=time, arguments=argument)
 
-    if injector_op and txnum > 0:
+    if not injector_op or txnum <= 0:    
+        tree.write(new_xml, pretty_print=True)
+        return
 
-        # ----------------------------------- msg for building gossip overlay ----------------------------------- 
-        node_id = "bleep%d" % node_num
-        node = ET.SubElement(shadow, "node", id=node_id)
-        ET.SubElement(node, "application", plugin="PEER", time=str(node_num+350),\
-                    arguments="-handlenetwork=gossip -contact=bleep0 -networkparticipant -generatetx=%d -timegeneratetx=1" %txnum)
+    # ----------------------------------- msg for building gossip overlay ----------------------------------- 
+    # Since gossip overlay scatter after injecting the first tx, it's needed to wait for stabiliaztion
+    # Time required for stablization can be checked via non-injection case (only gossip nodes)
+    node_id = "bleep%d" % node_num
+    node = ET.SubElement(shadow, "node", id=node_id)
+    ET.SubElement(node, "application", plugin="PEER", time=str(node_num+350),\
+                arguments="-handlenetwork=gossip -contact=bleep0 -networkparticipant -generatetx=%d -timegeneratetx=1" %txnum)
 
+    # ----------------------------------- msg broadcasting : 10 injector (default) --------------------------
+    # After gossip network stablization (Tree established), choose several nodes that receive a tx from injectors
+    # Injected txs has own msg id so that we can calculate propagation delay (from injection time to time that last node receive the tx)
+    num_injector = 10
+    for i in range(0, num_injector):
+        # Injector = addtional node id (not join P2P network)
+        injector_id = "bleep%d" % (node_num+1+i)             
+        # Uniformly distributed target node (target node = receive tx from injector)
+        # There are many other ways to choose injected node
+        targetnode  = "bleep%d" % ((node_num/num_injector)*i) 
+        print "[Injector]", injector_id, "->", targetnode
 
-        # ----------------------------------- msg broadcasting : 10 injector  ----------------------------------- 
-        node_id = "bleep%d" % (node_num+1)
-        node = ET.SubElement(shadow, "node", id=node_id)
-        ET.SubElement(node, "application", plugin="PEER", time=str(node_num+460),\
-                    arguments="-handlenetwork=gossip -contact=bleep0 -networkparticipant -generatetx=%d -timegeneratetx=1" %txnum)
-
-        node_id = "bleep%d" % (node_num+2)
-        node = ET.SubElement(shadow, "node", id=node_id)
-        ET.SubElement(node, "application", plugin="PEER", time=str(node_num+500),\
-                    arguments="-handlenetwork=gossip -contact=bleep50 -networkparticipant -generatetx=%d -timegeneratetx=1" %txnum)
-
-        node_id = "bleep%d" % (node_num+3)
-        node = ET.SubElement(shadow, "node", id=node_id)
-        ET.SubElement(node, "application", plugin="PEER", time=str(node_num+550),\
-                    arguments="-handlenetwork=gossip -contact=bleep120 -networkparticipant -generatetx=%d -timegeneratetx=1" %txnum)
-
-        node_id = "bleep%d" % (node_num+4)
-        node = ET.SubElement(shadow, "node", id=node_id)
-        ET.SubElement(node, "application", plugin="PEER", time=str(node_num+600),\
-                    arguments="-handlenetwork=gossip -contact=bleep150 -networkparticipant -generatetx=%d -timegeneratetx=1" %txnum)
-
-        node_id = "bleep%d" % (node_num+5)
-        node = ET.SubElement(shadow, "node", id=node_id)
-        ET.SubElement(node, "application", plugin="PEER", time=str(node_num+650),\
-                    arguments="-handlenetwork=gossip -contact=bleep220 -networkparticipant -generatetx=%d -timegeneratetx=1" %txnum)
-
-        node_id = "bleep%d" % (node_num+6)
-        node = ET.SubElement(shadow, "node", id=node_id)
-        ET.SubElement(node, "application", plugin="PEER", time=str(node_num+700),\
-                    arguments="-handlenetwork=gossip -contact=bleep250 -networkparticipant -generatetx=%d -timegeneratetx=1" %txnum)
-
-        node_id = "bleep%d" % (node_num+7)
-        node = ET.SubElement(shadow, "node", id=node_id)
-        ET.SubElement(node, "application", plugin="PEER", time=str(node_num+750),\
-                    arguments="-handlenetwork=gossip -contact=bleep320 -networkparticipant -generatetx=%d -timegeneratetx=1" %txnum)
-
-        node_id = "bleep%d" % (node_num+8)
-        node = ET.SubElement(shadow, "node", id=node_id)
-        ET.SubElement(node, "application", plugin="PEER", time=str(node_num+800),\
-                    arguments="-handlenetwork=gossip -contact=bleep350 -networkparticipant -generatetx=%d -timegeneratetx=1" %txnum)
-
-        node_id = "bleep%d" % (node_num+9)
-        node = ET.SubElement(shadow, "node", id=node_id)
-        ET.SubElement(node, "application", plugin="PEER", time=str(node_num+850),\
-                    arguments="-handlenetwork=gossip -contact=bleep420 -networkparticipant -generatetx=%d -timegeneratetx=1" %txnum)
-
-        node_id = "bleep%d" % (node_num+10)
-        node = ET.SubElement(shadow, "node", id=node_id)
-        ET.SubElement(node, "application", plugin="PEER", time=str(node_num+900),\
-                    arguments="-handlenetwork=gossip -contact=bleep450 -networkparticipant -generatetx=%d -timegeneratetx=1" %txnum)
-        
+        node = ET.SubElement(shadow, "node", id=injector_id)
+        time = str(node_num+450+50*i)
+        ET.SubElement(node, "application", plugin="PEER", time=time,\
+                    arguments="-handlenetwork=gossip -contact=%s -networkparticipant -generatetx=%d -timegeneratetx=1" % (targetnode, txnum))
+    
     tree.write(new_xml, pretty_print=True)
 
 
@@ -103,8 +74,9 @@ if __name__ == '__main__':
     miningtimedev = "3.0"
     if len(sys.argv) > 1:
         for i, arg in enumerate(sys.argv):
-            if "-injector" == arg:
+            if "--injector" == arg:
                 injector_op = True
+                simultime   = nodenum+1500 # can be changed. depends on # of injector (default 10 -> 950 secs)
             elif "--nodenum" == arg:
                 nodenum = int(sys.argv[i+1])
             elif "--simultime" == arg:
@@ -128,10 +100,7 @@ if __name__ == '__main__':
     shadow_stdout = []
     while shadow.poll() is None:
         l = shadow.stdout.readline()
-        print l.strip()
-        #log = l.strip()
-        #print log
-        #shadow_stdout.append(log)
+        #print l.strip()
 
     shadow_returnCode = shadow.returncode
 

@@ -6,9 +6,11 @@ def getCDF(start_time, eclipse, ip_map):
     datadir = "eclipse-datadir"
 
     # Create log file
-    f = open("eclipse-data.txt",'w')
+    f = open("eclipse-data-entire-view.txt",'w')
 
     # Crawling the data from target node, bleep0
+    # size of partial view = 4 + 24 (default)
+    partialview = 28 
     outputfile = "./%s/hosts/bleep0/stdout-bleep0.%s.1000.log" % (datadir, shadow_plugin)
     if os.path.exists(outputfile):
         fileHandle = open(outputfile,"r")
@@ -27,10 +29,7 @@ def getCDF(start_time, eclipse, ip_map):
                     if int(ip_map[node]) in eclipse:
                         ecnt = ecnt + 1
             
-                log = str(etime)+" "+str(float(tcnt)/float(35))+" "+str(float(ecnt)/float(35))
-                #print log
+                log = str(etime).rjust(10)+"  "+str(float(etime)/1000.0).rjust(10) +"  "+str(float(tcnt)/float(partialview)).rjust(20)+"  "+str(float(ecnt)/float(partialview)).rjust(20)
                 f.write(log+"\n")
-
-    # Close log file
     f.close()
 

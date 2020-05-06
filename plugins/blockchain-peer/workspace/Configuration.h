@@ -26,6 +26,8 @@ extern bool amIProxyNode;
 extern bool amIContactNode;
 extern bool isGossipShutdown;
 extern int shutdownTime;
+extern int eclipseTime;
+extern int eclipseLogTime;
 
 // =================  Blockchain Node Configuration End =====================
 

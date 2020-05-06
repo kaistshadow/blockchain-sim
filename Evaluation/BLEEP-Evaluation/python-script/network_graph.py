@@ -271,4 +271,4 @@ if __name__ == '__main__':
     set_node_color(num, list(Graph.nodes()))
     set_edge_color(list(Graph.edges()))
     nx.draw(Graph, with_labels = True, node_color = color, edge_color = overlay_color, width=2)
-    #plt.show()
+    plt.show()

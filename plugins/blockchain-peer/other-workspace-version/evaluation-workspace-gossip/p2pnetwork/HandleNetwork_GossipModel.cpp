@@ -82,13 +82,16 @@ void HandleNetwork_GossipModel::onRecvSocketConnectionEvent(std::shared_ptr<Even
     PeerMap[receiver_fd] = peer;
     socketEventPublisher.RegisterSocketAsDataSocket(receiver_fd);
     TimeoutManager.RegisterTimeoutWatcher(receiver_fd);
-    //std::cout << "[onRecvSocketConnectionEvent] got connection from "<< peer->GetIP() << "\n";
+    
+    #if LOGGING
+        std::cout << "[onRecvSocketConnectionEvent] got connection from "<< peer->GetIP() << "\n";
+    #endif
 }
 
 void HandleNetwork_GossipModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo> info) {
     std::shared_ptr<RecvSocketDataEventInfo> derivedInfo = std::static_pointer_cast<RecvSocketDataEventInfo>(info);
-    int fd = derivedInfo->GetSocketFD();
-
+    
+	int  fd = derivedInfo->GetSocketFD();
     auto it = PeerMap.find(fd);
     if (it == PeerMap.end()) {
         std::cout << "[onRecvSocketDataEvent] No valid peer exists\n";
@@ -113,11 +116,14 @@ void HandleNetwork_GossipModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo>
                     is_disconnect = true;
                 }
                 else if (numbytes > 0) {
-                    status.message_len = length;
-                    status.recv_status = STATUS_HEADER;
+                    status.message_len  = length;
+                    status.recv_status  = STATUS_HEADER;
                     status.received_len = 0;
-                    status.recv_str = "";
-                    //std::cout << "RECV\n";
+                    status.recv_str     = "";
+
+                    #if LOGGING
+                        std::cout << "RECV\n";
+                    #endif
                 }
             }
             break;
@@ -152,16 +158,19 @@ void HandleNetwork_GossipModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo>
                     break;
                 }
 
-                //std::cout << "RECV\n";
+                #if LOGGING
+                        std::cout << "RECV\n";
+                #endif
+             
                 if (status.recv_status == STATUS_HEADER) {
                     GossipModuleHeader* header = GetDeserializedMsgHeader(status.recv_str);
                     int message_len = header->GetMessageLength();
                     if (message_len > 0) {
-                        status.header = header; // temp
-                        status.message_len = message_len;
-                        status.recv_status = STATUS_MSG;
+                        status.header       = header; // temp
+                        status.message_len  = message_len;
+                        status.recv_status  = STATUS_MSG;
                         status.received_len = 0;
-                        status.recv_str = "";
+                        status.recv_str     = "";
                     }
                     else {
                         std::cout << "[HandleRecvSocketIO] HEADER len error\n";
@@ -177,14 +186,17 @@ void HandleNetwork_GossipModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo>
     }
 
     if (is_disconnect) {
-        //std::cout << "[HandleRecvSocketIO] Disconnected with "<<peer->GetIP()<<'\n';
+        #if LOGGING
+            std::cout << "[HandleRecvSocketIO] Disconnected with "<<peer->GetIP()<<'\n';
+        #endif
+
         TimeoutManager.RemoveTimer(fd);
         socketEventPublisher.UnregisterDataSocket(fd);
         PeerMap.erase(it);
         std::string src = peer->GetIP();
-        delete peer;
+        
+		delete peer;
         close(fd);
-
         Membership_HandleDisconnect(src);
     }
     else {
@@ -194,8 +206,8 @@ void HandleNetwork_GossipModel::onRecvSocketDataEvent(std::shared_ptr<EventInfo>
 
 void HandleNetwork_GossipModel::onSendSocketReadyEvent(std::shared_ptr<EventInfo> info) {
     std::shared_ptr<SendSocketReadyEventInfo> derivedInfo = std::static_pointer_cast<SendSocketReadyEventInfo>(info);
-    int fd = derivedInfo->GetSocketFD();
-
+    
+	int fd = derivedInfo->GetSocketFD();
     auto it = PeerMap.find(fd);
     if (it == PeerMap.end()) {
         std::cout << "[onSendSocketReadyEvent] No valid peer exists\n";
@@ -225,8 +237,10 @@ void HandleNetwork_GossipModel::onSendSocketReadyEvent(std::shared_ptr<EventInfo
     if (msg->nbytes() == 0) {
        status.sendMsgQueue.pop_front();
        //delete msg.get();
-       //std::cout << "SEND\n";
-       //std::cout << "[onSendSocketReadyEvent] Send a Msg\n";
+        #if LOGGING
+            std::cout << "SEND\n";
+            std::cout << "[onSendSocketReadyEvent] Send a Msg\n";
+        #endif
    }
 }
 
@@ -278,17 +292,13 @@ Message* HandleNetwork_GossipModel::GetDeserializedMsg(std::string str) {
 
 void HandleNetwork_GossipModel::Membership_HandleShutdownCallback(EV_P_ ev_timer *w, int revents) {
     std::cout << "[Membership_HandleShutdownCallback] called\n";
-
     HandleNetwork_GossipModel* instance = HandleNetwork_GossipModel::GetInstance();
+
     if (!isGossipShutdown) {
         std::vector<Neighbor*>& active  = instance->GetPartialViewManager()->GetActiveView();
         std::vector<Neighbor*>& passive = instance->GetPartialViewManager()->GetPassiveView();
-        for (Neighbor* p : active) {
-            delete p;
-        }
-        for (Neighbor* p : passive) {
-            delete p;
-        }
+        for (Neighbor* p : active)  delete p;
+        for (Neighbor* p : passive) delete p;
         std::cout << "[NetworkGraph] "<< utility::GetCurrentTime() << " \n";
 
         std::map<int, Peer*>& pmap = *instance->GetPeerMap();
@@ -298,30 +308,28 @@ void HandleNetwork_GossipModel::Membership_HandleShutdownCallback(EV_P_ ev_timer
             close(fd);
             delete entry.second;
         }
-
         std::cout << "[Shutdown]\n";
         ev_loop_destroy(GlobalEvent::loop);
         exit(0); // End this node
     }
-    else {
-        std::vector<Neighbor*>& active = instance->GetPartialViewManager()->GetActiveView();
-        for (Neighbor* p : active) {
-            p->isEager = false;
-        }
-        //instance->GetPartialViewManager()->PrintActiveView();
+    
+    std::vector<Neighbor*>& active = instance->GetPartialViewManager()->GetActiveView();
+    for (Neighbor* p : active) p->isEager = false;
+    instance->GetPartialViewManager()->PrintActiveView();
 
-        GossipModuleHeader newheader = GossipModuleHeader(CASTTYPE_BROADCAST, PROTOCOL_GOSSIP);
-        newheader.SetSrcId(NodeInfo::GetInstance()->GetHostIP());
-        newheader.IncreaseHopCount();
-        GossipModuleMessage newmsg = GossipModuleMessage(GOSSIP_PRUNE);
-        instance->Membership_BroadcastWithHeader("", &newheader, &newmsg);
-    }
+    GossipModuleHeader newheader = GossipModuleHeader(CASTTYPE_BROADCAST, PROTOCOL_GOSSIP);
+    newheader.SetSrcId(NodeInfo::GetInstance()->GetHostIP());
+	newheader.IncreaseHopCount();
+    GossipModuleMessage newmsg = GossipModuleMessage(GOSSIP_PRUNE);
+    instance->Membership_BroadcastWithHeader("", &newheader, &newmsg);
 }
 
 void HandleNetwork_GossipModel::Membership_HandleSendShuffleCallback(EV_P_ ev_timer *w, int revents) {
     HandleNetwork_GossipModel* instance = HandleNetwork_GossipModel::GetInstance();
     if (instance->GetPartialViewManager()->CurrentActiveViewSize() > 0) {
-        //std::cout << "[Membership_HandleSendShuffleCallback] called\n";
+        #if LOGGING
+            std::cout << "[Membership_HandleSendShuffleCallback] called\n";
+        #endif
         Neighbor* target = instance->GetPartialViewManager()->ChooseRandomFromActive();
 
         GossipModuleHeader newheader(CASTTYPE_UNICAST, PROTOCOL_MEMBERSHIP);
@@ -354,9 +362,6 @@ void HandleNetwork_GossipModel::Membership_HandleIsolationDetectionCallback(EV_P
     instance->GetPartialViewManager()->AddToActive(contactnode_ip);
     std::cout << "[Membership_HandleIsolationDetectionCallback] Rejoin to Main Network\n";
 
-    instance->GetPartialViewManager()->PrintActiveView();//
-    
-    
     ev_timer_again(EV_A_ w);
 }
 
@@ -386,81 +391,6 @@ void HandleNetwork_GossipModel::Membership_RestartIsolationTimer() {
     ev_timer_start(GlobalEvent::loop, &Membership_IsolationTimer);
 }
 
-
-/*---------------------------------------------------------------------------------*/
-void HandleNetwork_GossipModel::Eclipse_Attack_Callback(EV_P_ ev_timer *w, int revents) {
-    HandleNetwork_GossipModel* instance = HandleNetwork_GossipModel::GetInstance();
-    
-    // If not connected, then make connection
-    // Else, check target is active member or not
-    Peer* target = instance->GetPeerFromPeerMap("bleep0");
-    if (!target) { 
-        int result = instance->Connect("bleep0");
-        if (result == -1) {
-            std::cout << "[Eclipse_Attack_Callback] Cannot connect to target\n";
-            if (ECLIPSE_ITER) ev_timer_again(EV_A_ w);
-            return;
-        }
-    }
-    else {
-        // If already connect & join with target, then do nothing
-        Neighbor* ntarget = instance->GetPartialViewManager()->FindPeerFromActive(target->GetIP());
-        if (ntarget) {    
-            std::cout << "[Eclipse Attack_Callback] Already joined\n";
-            if (ECLIPSE_ITER) ev_timer_again(EV_A_ w);
-            return;
-        }
-    }
-
-    // Get IP info
-    target = instance->GetPeerFromPeerMap("bleep0");
-    std::string target_ip = target->GetIP();
-
-    if (instance->eclipseStart == 0) {
-        instance->settarget(target_ip);
-        instance->eclipseStart = 1;
-        std::cout << "[Eclipse_Attack_Callback] attack start\n";  
-    }    
-    
-    // Send neighbor with high priority
-    GossipModuleHeader header(CASTTYPE_UNICAST, PROTOCOL_MEMBERSHIP);
-    header.SetDstId(target_ip);
-    header.SetSrcId(NodeInfo::GetInstance()->GetHostIP());
-    GossipModuleMessage msg(MEMBERSHIP_NEIGHBOR);
-    msg.SetOption(1);
-    instance->UnicastWithHeader(&header, &msg);
-
-    std::cout << "[Eclipse Attack_Callback] Send Neighbor with high priority\n";
-    
-    // Restart timer for periodic attack
-    if (ECLIPSE_ITER) ev_timer_again(EV_A_ w);
-}
-
-void HandleNetwork_GossipModel::Eclipse_Attack_RegisterTimerWatcher() {
-    if (eclipseTime<=0) return;
-    ev_timer_init(&Eclipse_Attack_Timer, Eclipse_Attack_Callback, eclipseTime, ECLIPSE_INTERVAL);
-    ev_timer_start(GlobalEvent::loop, &Eclipse_Attack_Timer);
-    std::cout << "[Ecplise Attack] register timer\n";
-}
-
-/*---------------------------------------------------------------------------------*/
-
-void HandleNetwork_GossipModel::Eclipse_Attack_Log_Callback(EV_P_ ev_timer *w, int revents) {
-    HandleNetwork_GossipModel* instance = HandleNetwork_GossipModel::GetInstance();
-    
-    instance->GetPartialViewManager()->PrintPartialView();
-    ev_timer_again(EV_A_ w);
-}
-
-void HandleNetwork_GossipModel::Eclipse_Attack_Log_RegisterTimerWatcher() {
-    if (eclipseLogTime<=0) return;
-    ev_timer_init(&Eclipse_Attack_Log_Timer, Eclipse_Attack_Log_Callback, eclipseLogTime, 0.1);
-    ev_timer_start(GlobalEvent::loop, &Eclipse_Attack_Log_Timer);
-    std::cout << "[Ecplise Attack] register log timer\n";
-}
-
-/*---------------------------------------------------------------------------------*/
-
 int HandleNetwork_GossipModel::Membership_ProcessShuffleList(std::vector<std::string> list) {
     int cnt = 0;
     std::string hostid = NodeInfo::GetInstance()->GetHostIP();
@@ -470,8 +400,6 @@ int HandleNetwork_GossipModel::Membership_ProcessShuffleList(std::vector<std::st
         PartialViewManager.AddToPassive(newid);
         cnt += 1;
     }
-    
-    PartialViewManager.PrintPartialView();//
     return cnt;
 }
 
@@ -500,16 +428,9 @@ int HandleNetwork_GossipModel::JoinNetwork() {
     Membership_RegisterShutdownTimerWatcher();
     Membership_RegisterShuffleTimerWatcher();
 
-    /* Eclipse Attack */
-    Eclipse_Attack_RegisterTimerWatcher();
-    Eclipse_Attack_Log_RegisterTimerWatcher();
-    
     if (amIContactNode) {
         std::cout << "[JoinNetwork] NodeType CONTACT\n";
         return 0;
-    }
-    if (eclipseTime > 0) {
-        std::cout << "[JoinNetwork] NodeType ECLIPSE\n";
     }
 
     int result = Connect(contact);
@@ -526,9 +447,6 @@ int HandleNetwork_GossipModel::JoinNetwork() {
         UnicastWithHeader(&header, &msg);
 
         PartialViewManager.AddToActive(contactnode_ip);
-        
-        PartialViewManager.PrintActiveView();//
-        
         std::cout << "[JoinNetwork] NodeType FULL\n";
     }
     else {
@@ -601,9 +519,7 @@ int HandleNetwork_GossipModel::UnicastWithHeader(GossipModuleHeader* header, Mes
 void HandleNetwork_GossipModel::UnicastMsg(std::string destip, Message* msg) {
     Peer* peer = GetPeerFromPeerMap(destip);
     if (!peer) {
-        if (Connect(destip) == -1) {
-            return;
-        }
+        if (Connect(destip) == -1) return;
     }
     GossipModuleHeader header(CASTTYPE_UNICAST, PROTOCOL_CONSENSUS);
     header.SetDstId(destip);
@@ -659,17 +575,21 @@ void HandleNetwork_GossipModel::Membership_SendNeighbor(std::string exception) {
         std::string id = candidate->id;
         Peer* peer = GetPeerFromPeerMap(id);
         if (!peer) {
-            //std::cout << "[Membership_SendNeighbor] have no connection\n";
+            #if LOGGING
+                std::cout << "[Membership_SendNeighbor] have no connection\n";
+            #endif
             if (Connect(id) == -1) {
                 PartialViewManager.DropFromPassive(id);
-                
-                PartialViewManager.PrintPartialView();//
                 continue;
             }
-            //std::cout << "[Membership_SendNeighbor] make connection\n";
+            #if LOGGING
+                std::cout << "[Membership_SendNeighbor] make connection\n";
+            #endif
         }
         else {
-            ;//std::cout << "[Membership_SendNeighbor] have connection already\n";
+            #if LOGGING
+                std::cout << "[Membership_SendNeighbor] have connection already\n";
+            #endif
         }
         break;
     }
@@ -689,8 +609,6 @@ void HandleNetwork_GossipModel::Membership_HandleDisconnect(std::string src) {
         PartialViewManager.DropFromActive(src);
         PartialViewManager.AddToPassive(src);
         Membership_SendNeighbor("");
-        
-        PartialViewManager.PrintActiveView();//
     }
 }
 
@@ -702,8 +620,6 @@ void HandleNetwork_GossipModel::Membership_HandleCrush(std::string src) {
     else {
         PartialViewManager.DropFromPassive(src);
     }
-    
-    PartialViewManager.PrintActiveView();//
 }
 
 void HandleNetwork_GossipModel::Membership_RunProtocol(std::string sender,GossipModuleHeader* header,Message* msg) {
@@ -724,18 +640,14 @@ void HandleNetwork_GossipModel::Membership_RunProtocol(std::string sender,Gossip
         switch(type) {
             case MEMBERSHIP_JOIN:
                 {
-                    bool res = PartialViewManager.AddToActive(src);
+                    PartialViewManager.AddToActive(src);
 
-                    PartialViewManager.PrintActiveView();//
-                    
                     if (TEST_OP) break;
-                    if (res) {
-                        GossipModuleHeader newheader(CASTTYPE_BROADCAST, PROTOCOL_MEMBERSHIP);
-                        newheader.SetSrcId(src);
-                        newheader.IncreaseHopCount();
-                        GossipModuleMessage newmsg(MEMBERSHIP_FORWARDJOIN);
-                        Membership_BroadcastWithHeader(src, &newheader, &newmsg);
-                    }
+                    GossipModuleHeader newheader(CASTTYPE_BROADCAST, PROTOCOL_MEMBERSHIP);
+                    newheader.SetSrcId(src);
+                    newheader.IncreaseHopCount();
+                    GossipModuleMessage newmsg(MEMBERSHIP_FORWARDJOIN);
+                    Membership_BroadcastWithHeader(src, &newheader, &newmsg);
                 }
                 break;
 
@@ -745,9 +657,6 @@ void HandleNetwork_GossipModel::Membership_RunProtocol(std::string sender,Gossip
                     if (hop == ARWL || PartialViewManager.CurrentActiveViewSize() <= 1) {
                         if (!PartialViewManager.FindPeerFromActive(src)) {
                             PartialViewManager.AddToActive(src);
-                            
-                            PartialViewManager.PrintActiveView();//
-                            
                             Peer* peer = GetPeerFromPeerMap(src);
                             if (!peer) {
                                 if (Connect(src) == -1) {
@@ -770,8 +679,6 @@ void HandleNetwork_GossipModel::Membership_RunProtocol(std::string sender,Gossip
                     }
                     if (hop == PRWL) {
                         PartialViewManager.AddToPassive(src);
-                        
-                        PartialViewManager.PrintPartialView();
                     }
 
                     Neighbor* candidate = PartialViewManager.ChooseRandomFromActiveExcept(src);
@@ -786,32 +693,15 @@ void HandleNetwork_GossipModel::Membership_RunProtocol(std::string sender,Gossip
             case MEMBERSHIP_FORWARDJOINREPLY:
                 {
                     PartialViewManager.AddToActive(src);
-                    
-                    PartialViewManager.PrintActiveView();//
                 }
                 break;
 
             case MEMBERSHIP_DISCONNECT:
                 {
-                    // Eclipse Node does nothig.
-                    if (eclipseTime > 0) {
-                        if (eclipseStart) {
-                            if (PartialViewManager.FindPeerFromActive(src)) {
-                                PartialViewManager.DropFromActive(src);
-                                PartialViewManager.AddToPassive(src);
-                                
-                                PartialViewManager.PrintActiveView();//
-                            }                          
-                            break;
-                        }
-                    }
-                    
                     if (PartialViewManager.FindPeerFromActive(src)) {
                         PartialViewManager.DropFromActive(src);
                         PartialViewManager.AddToPassive(src);
                         Membership_SendNeighbor("");
-                        
-                        PartialViewManager.PrintActiveView();//
                     }
                 }
                 break;
@@ -825,9 +715,7 @@ void HandleNetwork_GossipModel::Membership_RunProtocol(std::string sender,Gossip
                         is_accept = 0;
                     }
                     if (is_accept) {
-                        bool res = PartialViewManager.AddToActive(src);
-                        
-                        if (res) PartialViewManager.PrintActiveView();//
+                        PartialViewManager.AddToActive(src);
                     }
 
                     GossipModuleHeader header(CASTTYPE_UNICAST, PROTOCOL_MEMBERSHIP);
@@ -844,7 +732,6 @@ void HandleNetwork_GossipModel::Membership_RunProtocol(std::string sender,Gossip
                     if (PartialViewManager.FindPeerFromActive(src)) break;
                     if (opt) {
                         PartialViewManager.AddToActive(src);
-                        PartialViewManager.PrintActiveView();//
                         break;
                     }
                     if (PartialViewManager.CurrentActiveViewSize() < ActiveViewSize) {
@@ -855,14 +742,6 @@ void HandleNetwork_GossipModel::Membership_RunProtocol(std::string sender,Gossip
 
             case MEMBERSHIP_SHUFFLE:
                 {
-                    // Eclipse Node does nothig.
-                    if (eclipseTime > 0) {
-                        if (eclipseStart) {
-                            // isolate target node by dropping hello msgs.
-                            break;
-                        }
-                    }
-
                     if (hop == SRWL || PartialViewManager.CurrentActiveViewSize() <= 1) {
                         int cnt = Membership_ProcessShuffleList(gmsg->GetShuffleList());
 
@@ -973,8 +852,12 @@ void HandleNetwork_GossipModel::Gossip_HandleCrush(std::string src) {
 
 void HandleNetwork_GossipModel::Gossip_RunProtocol(std::string sender, GossipModuleHeader* header, Message* msg) {
     int ptype = header->GetProtocolType();
+    
+    // size
+    std::cout<<"[SIZE] "<<utility::GetCurrentTime()<<" "<<sizeof(header)<<" "<<sizeof(msg)<<" "<<sizeof(header)+sizeof(msg)<<'\n';
 
-   // treat PRUNE, IHAVE, GRAFT
+    
+    // treat PRUNE, IHAVE, GRAFT
     if (ptype == PROTOCOL_GOSSIP) {
         GossipModuleMessage* gmsg = dynamic_cast<GossipModuleMessage*>(msg);
         assert(gmsg);
@@ -991,7 +874,7 @@ void HandleNetwork_GossipModel::Gossip_RunProtocol(std::string sender, GossipMod
                 }
                 if (neighbor->isEager == true) {
                     neighbor->isEager = false;
-                    //PartialViewManager.PrintActiveView();
+                    PartialViewManager.PrintActiveView();
                 }
             }
             break;
@@ -1019,7 +902,7 @@ void HandleNetwork_GossipModel::Gossip_RunProtocol(std::string sender, GossipMod
                 }
                 if (neighbor->isEager == false) {
                     neighbor->isEager = true;
-                    //PartialViewManager.PrintActiveView();
+                    PartialViewManager.PrintActiveView();
                 }
 
                 size_t mid = gmsg->GetOption();
@@ -1047,7 +930,7 @@ void HandleNetwork_GossipModel::Gossip_RunProtocol(std::string sender, GossipMod
         Neighbor* neighbor = PartialViewManager.FindPeerFromActive(sender);
         if (!neighbor) {
             if (header->IsInjected()) {
-                std::cout<<"NEWMSG "<<" NEW "<< utility::GetCurrentTime()<<' '<<mid<<' '<<PartialViewManager.FanoutSize()<<'\n';
+                std::cout<<"NEWMSG "<<"NEW "<< utility::GetCurrentTime()<<' '<<mid<<' '<<PartialViewManager.FanoutSize()<<'\n';
 
                 Gossip_MessageManager.AddToStorage(mid, header->GetHopCount(), NodeInfo::GetInstance()->GetHostIP() , msg);
                 header->IncreaseHopCount();
@@ -1067,7 +950,7 @@ void HandleNetwork_GossipModel::Gossip_RunProtocol(std::string sender, GossipMod
                     std::cout<<"NEWMSG "<<"DUP "<< utility::GetCurrentTime()<<' '<<mid<<' '<<PartialViewManager.FanoutSize()<<'\n';
   
                     neighbor->isEager = false;
-                    //PartialViewManager.PrintActiveView();
+                    PartialViewManager.PrintActiveView();
 
                     GossipModuleHeader newheader(CASTTYPE_UNICAST, PROTOCOL_GOSSIP);
                     newheader.SetDstId(sender);
@@ -1120,7 +1003,7 @@ void HandleNetwork_GossipModel::Gossip_RunProtocol(std::string sender, GossipMod
                 
                 Gossip_RecoveryManager.StopTimerAndRemoveEntries(mid);
                 neighbor->isEager = true;
-                //PartialViewManager.PrintActiveView();
+                PartialViewManager.PrintActiveView();
 
                 Gossip_MessageManager.AddToStorage(mid, header->GetHopCount(), sender, msg);
                 header->IncreaseHopCount();
@@ -1239,7 +1122,9 @@ void TimeoutList::ConnectionTimeoutCallback(EV_P_ ev_timer *w, int revents) {
         exit(-1);
     }
 
-    //std::cout << "[ConnectionTimeoutCallback] Timeout occurs\n";
+    #if LOGGING
+        std::cout << "[ConnectionTimeoutCallback] Timeout occurs\n";
+    #endif
     Peer* peer = peer_it->second;
     if (instance->GetPartialViewManager()->FindPeerFromActive(peer->GetIP())) {
         ev_timer* timer = &entry->timeout_timer;
@@ -1260,16 +1145,15 @@ void TimeoutList::ConnectionTimeoutCallback(EV_P_ ev_timer *w, int revents) {
 }
 
 /* ------ Functions related to PartialView operation ----- */
-bool PartialView::AddToActive(std::string id) {
+void PartialView::AddToActive(std::string id) {
     DropFromPassive(id);
-    if (FindPeerFromActive(id)) return false;
+    if (FindPeerFromActive(id)) return;
     if (CurrentActiveViewSize() == ActiveViewSize) {
         DropRandomFromActive();
     }
     Neighbor* newnode = new Neighbor(id);
     active.push_back(newnode);
-    //PrintActiveView();
-    return true;
+    PrintActiveView();
 }
 
 bool PartialView::DropFromActive(std::string id) {
@@ -1278,7 +1162,7 @@ bool PartialView::DropFromActive(std::string id) {
         if (temp->id == id) {
             active.erase(active.begin()+i);
             delete temp;
-            //PrintActiveView();
+            PrintActiveView();
             return true;
         }
     }
@@ -1289,10 +1173,7 @@ void PartialView::DropRandomFromActive() {
     int idx = rand() % (int)active.size();
     Neighbor* victim = active[idx];
     active.erase(active.begin() + idx);
-
-    std::cout << "[RANDOM_A] "<<idx << "\n";
-    
-    //PrintActiveView();
+    PrintActiveView();
     AddToPassive(victim->id);
 
     GossipModuleHeader header(CASTTYPE_UNICAST, PROTOCOL_MEMBERSHIP);
@@ -1337,7 +1218,7 @@ void PartialView::AddToPassive(std::string id) {
     }
     Neighbor* newnode = new Neighbor(id);
     passive.push_back(newnode);
-    //PrintPassiveView();
+    PrintPassiveView();
 }
 
 bool PartialView::DropFromPassive(std::string id) {
@@ -1346,7 +1227,7 @@ bool PartialView::DropFromPassive(std::string id) {
         if (temp->id == id) {
             passive.erase(passive.begin()+i);
             delete temp;
-            //PrintPassiveView();
+            PrintPassiveView();
             return true;
         }
     }
@@ -1355,9 +1236,8 @@ bool PartialView::DropFromPassive(std::string id) {
 void PartialView::DropRandomFromPassive() {
     srand(time(0));
     int idx = rand() % (int)passive.size();
-    std::cout << "[RANDOM_P] "<<idx << "\n";
     passive.erase(passive.begin() + idx);
-    //PrintPassiveView();
+    PrintPassiveView();
 }
 
 Neighbor* PartialView::FindPeerFromPassive(std::string id) {
@@ -1372,7 +1252,6 @@ Neighbor* PartialView::ChooseRandomFromPassive() {
 
     srand(time(0));
     int idx = rand() % (int)passive.size();
-    std::cout << idx << "\n";
     return passive[idx];
 }
 
@@ -1422,37 +1301,21 @@ void PartialView::PrintActiveView() {
         else
             std::cout << ',';
     }
-
-    PrintPartialView();
 }
 void PartialView::PrintPassiveView() {
-    /*
-      std::cout << "[PassiveView] "<< utility::GetCurrentTime() << " ";
-      if (passive.size() == 0) {
-      std::cout << '\n';
-      return;
-      }
-      for (int i=0; i<passive.size(); i++) {
-      std::cout << passive[i]->id;
-      if (i == passive.size()-1)
-      std::cout << '\n';
-      else
-      std::cout << ',';
-      }
-    */
     return;
-    PrintPartialView();
-}
-
-void PartialView::PrintPartialView() {
-    std::cout << "[ECLIPSE] "<< utility::GetCurrentTime() << " ";
-    for (int i=0; i<active.size(); i++) {
-        std::cout << active[i]->id << ",";
+    std::cout << "[PassiveView] "<< utility::GetCurrentTime() << " ";
+    if (passive.size() == 0) {
+        std::cout << '\n';
+        return;
     }
     for (int i=0; i<passive.size(); i++) {
-        std::cout << passive[i]->id << ",";
+        std::cout << passive[i]->id;
+        if (i == passive.size()-1)
+            std::cout << '\n';
+        else
+            std::cout << ',';
     }
-    std::cout << "\n";
 }
 
 /* ------ Functions related to MessageStorage operation ----- */

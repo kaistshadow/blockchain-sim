@@ -151,8 +151,8 @@ class HandleNetwork_ProxyModel: public HandleNetwork {
     void onSendSocketReadyEvent(std::shared_ptr<EventInfo>);
 
 
-    // testing
-    void setcontact(std::string id) {;}
+    //for testing
+    void setcontact(std::string id){;}
 };
 
 

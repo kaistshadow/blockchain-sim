@@ -21,6 +21,11 @@
 #define BACKLOG 10     /* how many pending connections queue will hold */
 #define LOGGING 0
 
+// Eclipse attack parameter
+#define ECLIPSE 1
+#define ECLIPSE_ITER 1      // Repeat flag for eclipse attack, if not one time attack to victim node
+#define ECLIPSE_INTERVAL 25 // Repeat interval (sec) for eclipse attack
+
 // [Membership Protocol Parameters]
 // scale 10000: (5,30,6,3,5,3,4)
 // scale 1000 : (4,24,5,2,4,2,3)
@@ -33,9 +38,9 @@
 #define Ka   2
 #define Kp   3
 #define SHUFFLE_OP 1
-#define SHUFFLE_PERIOD 5
-#define CONNECTION_TIMEOUT 120
-#define ISOLATION_CHECK_INTERVAL 100000
+#define SHUFFLE_PERIOD 50
+#define CONNECTION_TIMEOUT 1200000
+#define ISOLATION_CHECK_INTERVAL 1000000
 
 #define TEST_OP 0
 #define TEST_MEMBERSHIP 0
@@ -254,7 +259,7 @@ class PartialView {
     std::vector<Neighbor*>& GetPassiveView() {return passive;}
 
     int CurrentActiveViewSize() {return active.size();}
-    void AddToActive(std::string id);
+    bool AddToActive(std::string id);
     void DropRandomFromActive();
     bool DropFromActive(std::string id);
     Neighbor* FindPeerFromActive(std::string id);
@@ -276,6 +281,7 @@ class PartialView {
     
     void PrintActiveView();
     void PrintPassiveView();
+    void PrintPartialView();
 };
 
 /* [IHAVE_MESSAGE] & [MessageStorage]
@@ -394,6 +400,17 @@ class HandleNetwork_GossipModel: public HandleNetwork {
     // When TEST_MEMBERSHIP is true(1), it will be called
     void Test_Gossip_RunProtocol(std::string sender, GossipModuleHeader* header, Message* msg);
 
+    // For ECLIPSE attack
+    ev_timer    Eclipse_Attack_Timer;
+    static void Eclipse_Attack_Callback(EV_P_ ev_timer *w, int revents);        
+    void        Eclipse_Attack_RegisterTimerWatcher();
+    
+    // For ECLIPSE attack log
+    ev_timer    Eclipse_Attack_Log_Timer;
+    static void Eclipse_Attack_Log_Callback(EV_P_ ev_timer *w, int revents);        
+    void        Eclipse_Attack_Log_RegisterTimerWatcher();
+
+    
  public:
     //HandleNetwork_GossipModel() {}
     HandleNetwork_GossipModel() {contact = "bleep0";}
@@ -419,6 +436,11 @@ class HandleNetwork_GossipModel: public HandleNetwork {
     // testing
     std::string contact;
     void setcontact(std::string id) {contact = id;}
+
+    // Eclipse attack
+    int eclipseStart = 0;
+    std::string eclipseTarget;
+    void settarget(std::string id) {eclipseTarget = id;}
 };
 
 #endif // HANDLE_NETWORK_GOSSIP_H

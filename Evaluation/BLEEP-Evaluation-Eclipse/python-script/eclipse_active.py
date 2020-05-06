@@ -6,10 +6,16 @@ def getCDF(start_time, eclipse, ip_map):
     datadir = "eclipse-datadir"
 
     # Create log file
-    f = open("eclipse-data-active.txt",'w')
+    f = open("eclipse-data-active-view.txt",'w')
 
     # Crawling the data from target node, bleep0
+    # size of active view = 4 (default)
+    activesize = 4 
     outputfile = "./%s/hosts/bleep0/stdout-bleep0.%s.1000.log" % (datadir, shadow_plugin)
+    print "\n[Time vs. Active Veiw Ratio]"
+    print "---------------------------------------------------------------------"
+    print "time(ms)".rjust(10)+" |"+"time(s)".rjust(10) +" |"+"ratio(#node/view)".rjust(20)+" |"+"ratio(#malicious/view)".rjust(20)
+    print "---------------------------------------------------------------------"
     if os.path.exists(outputfile):
         fileHandle = open(outputfile,"r")
         lineList   = fileHandle.readlines()
@@ -27,10 +33,9 @@ def getCDF(start_time, eclipse, ip_map):
                     if int(ip_map[node[:-3]]) in eclipse:
                         ecnt = ecnt + 1
             
-                log = str(etime)+" "+str(float(tcnt)/float(5))+" "+str(float(ecnt)/float(5))
+                log = str(etime).rjust(10)+"  "+str(float(etime)/1000.0).rjust(10) +"  "+str(float(tcnt)/float(activesize)).rjust(20)+"  "+str(float(ecnt)/float(activesize)).rjust(20)
                 print log
                 f.write(log+"\n")
-
-    # Close log file
+    print "---------------------------------------------------------------------"
     f.close()
 

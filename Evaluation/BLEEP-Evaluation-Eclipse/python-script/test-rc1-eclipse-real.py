@@ -18,6 +18,7 @@ def setup_multiple_node_xml(node_num, simultime):
         shadow.remove(node)
     ET.SubElement(shadow, "kill", time=str(simultime))
 
+    # -------------------------- Malicious node: 28 (default Active view 4 + Passive view 24) ---------------------
     for i in range(0, node_num):
         node_id = "bleep%d" % (i)
         node = ET.SubElement(shadow, "node", id=node_id)
@@ -36,7 +37,6 @@ def setup_multiple_node_xml(node_num, simultime):
     tree.write(new_xml, pretty_print=True)
 
 if __name__ == '__main__':
-
     datadir = "eclipse-datadir"
     os.system("rm -rf %s" % datadir)
 
@@ -48,7 +48,6 @@ if __name__ == '__main__':
                 nodenum = int(sys.argv[i+1])
             elif "--simultime" == arg:
                 simultime = int(sys.argv[i+1])
-
     if simultime == 0:
         simultime = 1600
 
@@ -61,7 +60,7 @@ if __name__ == '__main__':
     shadow_stdout = []
     while shadow.poll() is None:
         l = shadow.stdout.readline()
-        print l.strip()
+        #print l.strip()
 
     shadow_returnCode = shadow.returncode
     if shadow_returnCode != 0:

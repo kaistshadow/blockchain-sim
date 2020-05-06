@@ -312,16 +312,19 @@ void HandleNetwork_GossipModel::Membership_HandleShutdownCallback(EV_P_ ev_timer
         ev_loop_destroy(GlobalEvent::loop);
         exit(0); // End this node
     }
-    
-    std::vector<Neighbor*>& active = instance->GetPartialViewManager()->GetActiveView();
-    for (Neighbor* p : active) p->isEager = false;
-    instance->GetPartialViewManager()->PrintActiveView();
+    else {
+        std::vector<Neighbor*>& active = instance->GetPartialViewManager()->GetActiveView();
+        for (Neighbor* p : active) {
+            p->isEager = false;
+        }
+        //instance->GetPartialViewManager()->PrintActiveView();
 
-    GossipModuleHeader newheader = GossipModuleHeader(CASTTYPE_BROADCAST, PROTOCOL_GOSSIP);
-    newheader.SetSrcId(NodeInfo::GetInstance()->GetHostIP());
-	newheader.IncreaseHopCount();
-    GossipModuleMessage newmsg = GossipModuleMessage(GOSSIP_PRUNE);
-    instance->Membership_BroadcastWithHeader("", &newheader, &newmsg);
+        GossipModuleHeader newheader = GossipModuleHeader(CASTTYPE_BROADCAST, PROTOCOL_GOSSIP);
+        newheader.SetSrcId(NodeInfo::GetInstance()->GetHostIP());
+        newheader.IncreaseHopCount();
+        GossipModuleMessage newmsg = GossipModuleMessage(GOSSIP_PRUNE);
+        instance->Membership_BroadcastWithHeader("", &newheader, &newmsg);
+    }
 }
 
 void HandleNetwork_GossipModel::Membership_HandleSendShuffleCallback(EV_P_ ev_timer *w, int revents) {
@@ -362,6 +365,7 @@ void HandleNetwork_GossipModel::Membership_HandleIsolationDetectionCallback(EV_P
     instance->GetPartialViewManager()->AddToActive(contactnode_ip);
     std::cout << "[Membership_HandleIsolationDetectionCallback] Rejoin to Main Network\n";
 
+    instance->GetPartialViewManager()->PrintActiveView();//    
     ev_timer_again(EV_A_ w);
 }
 
@@ -391,6 +395,81 @@ void HandleNetwork_GossipModel::Membership_RestartIsolationTimer() {
     ev_timer_start(GlobalEvent::loop, &Membership_IsolationTimer);
 }
 
+
+/*---------------------------------------------------------------------------------*/
+void HandleNetwork_GossipModel::Eclipse_Attack_Callback(EV_P_ ev_timer *w, int revents) {
+    HandleNetwork_GossipModel* instance = HandleNetwork_GossipModel::GetInstance();
+    
+    // If not connected, then make connection
+    // Else, check target is active member or not
+    Peer* target = instance->GetPeerFromPeerMap("bleep0");
+    if (!target) { 
+        int result = instance->Connect("bleep0");
+        if (result == -1) {
+            std::cout << "[Eclipse_Attack_Callback] Cannot connect to target\n";
+            if (ECLIPSE_ITER) ev_timer_again(EV_A_ w);
+            return;
+        }
+    }
+    else {
+        // If already connect & join with target, then do nothing
+        Neighbor* ntarget = instance->GetPartialViewManager()->FindPeerFromActive(target->GetIP());
+        if (ntarget) {    
+            std::cout << "[Eclipse Attack_Callback] Already joined\n";
+            if (ECLIPSE_ITER) ev_timer_again(EV_A_ w);
+            return;
+        }
+    }
+
+    // Get IP info
+    target = instance->GetPeerFromPeerMap("bleep0");
+    std::string target_ip = target->GetIP();
+
+    if (instance->eclipseStart == 0) {
+        instance->settarget(target_ip);
+        instance->eclipseStart = 1;
+        std::cout << "[Eclipse_Attack_Callback] attack start\n";  
+    }    
+    
+    // Send neighbor with high priority
+    GossipModuleHeader header(CASTTYPE_UNICAST, PROTOCOL_MEMBERSHIP);
+    header.SetDstId(target_ip);
+    header.SetSrcId(NodeInfo::GetInstance()->GetHostIP());
+    GossipModuleMessage msg(MEMBERSHIP_NEIGHBOR);
+    msg.SetOption(1);
+    instance->UnicastWithHeader(&header, &msg);
+
+    std::cout << "[Eclipse Attack_Callback] Send Neighbor with high priority\n";
+    
+    // Restart timer for periodic attack
+    if (ECLIPSE_ITER) ev_timer_again(EV_A_ w);
+}
+
+void HandleNetwork_GossipModel::Eclipse_Attack_RegisterTimerWatcher() {
+    if (eclipseTime<=0) return;
+    ev_timer_init(&Eclipse_Attack_Timer, Eclipse_Attack_Callback, eclipseTime, ECLIPSE_INTERVAL);
+    ev_timer_start(GlobalEvent::loop, &Eclipse_Attack_Timer);
+    std::cout << "[Ecplise Attack] register timer\n";
+}
+
+/*---------------------------------------------------------------------------------*/
+
+void HandleNetwork_GossipModel::Eclipse_Attack_Log_Callback(EV_P_ ev_timer *w, int revents) {
+    HandleNetwork_GossipModel* instance = HandleNetwork_GossipModel::GetInstance();
+    
+    instance->GetPartialViewManager()->PrintPartialView();
+    ev_timer_again(EV_A_ w);
+}
+
+void HandleNetwork_GossipModel::Eclipse_Attack_Log_RegisterTimerWatcher() {
+    if (eclipseLogTime<=0) return;
+    ev_timer_init(&Eclipse_Attack_Log_Timer, Eclipse_Attack_Log_Callback, eclipseLogTime, 0.1);
+    ev_timer_start(GlobalEvent::loop, &Eclipse_Attack_Log_Timer);
+    std::cout << "[Ecplise Attack] register log timer\n";
+}
+
+/*---------------------------------------------------------------------------------*/
+
 int HandleNetwork_GossipModel::Membership_ProcessShuffleList(std::vector<std::string> list) {
     int cnt = 0;
     std::string hostid = NodeInfo::GetInstance()->GetHostIP();
@@ -400,6 +479,7 @@ int HandleNetwork_GossipModel::Membership_ProcessShuffleList(std::vector<std::st
         PartialViewManager.AddToPassive(newid);
         cnt += 1;
     }
+    PartialViewManager.PrintPartialView();//
     return cnt;
 }
 
@@ -428,9 +508,16 @@ int HandleNetwork_GossipModel::JoinNetwork() {
     Membership_RegisterShutdownTimerWatcher();
     Membership_RegisterShuffleTimerWatcher();
 
+    /* Eclipse Attack */
+    Eclipse_Attack_RegisterTimerWatcher();
+    Eclipse_Attack_Log_RegisterTimerWatcher();
+    
     if (amIContactNode) {
         std::cout << "[JoinNetwork] NodeType CONTACT\n";
         return 0;
+    }
+    if (eclipseTime > 0) {
+        std::cout << "[JoinNetwork] NodeType ECLIPSE\n";
     }
 
     int result = Connect(contact);
@@ -447,6 +534,7 @@ int HandleNetwork_GossipModel::JoinNetwork() {
         UnicastWithHeader(&header, &msg);
 
         PartialViewManager.AddToActive(contactnode_ip);
+        PartialViewManager.PrintActiveView();//
         std::cout << "[JoinNetwork] NodeType FULL\n";
     }
     else {
@@ -580,6 +668,7 @@ void HandleNetwork_GossipModel::Membership_SendNeighbor(std::string exception) {
             #endif
             if (Connect(id) == -1) {
                 PartialViewManager.DropFromPassive(id);
+                PartialViewManager.PrintPartialView();//
                 continue;
             }
             #if LOGGING
@@ -609,6 +698,7 @@ void HandleNetwork_GossipModel::Membership_HandleDisconnect(std::string src) {
         PartialViewManager.DropFromActive(src);
         PartialViewManager.AddToPassive(src);
         Membership_SendNeighbor("");
+        PartialViewManager.PrintActiveView();//
     }
 }
 
@@ -620,6 +710,7 @@ void HandleNetwork_GossipModel::Membership_HandleCrush(std::string src) {
     else {
         PartialViewManager.DropFromPassive(src);
     }
+    PartialViewManager.PrintActiveView();//
 }
 
 void HandleNetwork_GossipModel::Membership_RunProtocol(std::string sender,GossipModuleHeader* header,Message* msg) {
@@ -640,14 +731,17 @@ void HandleNetwork_GossipModel::Membership_RunProtocol(std::string sender,Gossip
         switch(type) {
             case MEMBERSHIP_JOIN:
                 {
-                    PartialViewManager.AddToActive(src);
-
+                    bool res = PartialViewManager.AddToActive(src);
+                    PartialViewManager.PrintActiveView();//
+                    
                     if (TEST_OP) break;
-                    GossipModuleHeader newheader(CASTTYPE_BROADCAST, PROTOCOL_MEMBERSHIP);
-                    newheader.SetSrcId(src);
-                    newheader.IncreaseHopCount();
-                    GossipModuleMessage newmsg(MEMBERSHIP_FORWARDJOIN);
-                    Membership_BroadcastWithHeader(src, &newheader, &newmsg);
+                    if (res) {
+                        GossipModuleHeader newheader(CASTTYPE_BROADCAST, PROTOCOL_MEMBERSHIP);
+                        newheader.SetSrcId(src);
+                        newheader.IncreaseHopCount();
+                        GossipModuleMessage newmsg(MEMBERSHIP_FORWARDJOIN);
+                        Membership_BroadcastWithHeader(src, &newheader, &newmsg);
+                    }
                 }
                 break;
 
@@ -657,6 +751,7 @@ void HandleNetwork_GossipModel::Membership_RunProtocol(std::string sender,Gossip
                     if (hop == ARWL || PartialViewManager.CurrentActiveViewSize() <= 1) {
                         if (!PartialViewManager.FindPeerFromActive(src)) {
                             PartialViewManager.AddToActive(src);
+                            PartialViewManager.PrintActiveView();//                            
                             Peer* peer = GetPeerFromPeerMap(src);
                             if (!peer) {
                                 if (Connect(src) == -1) {
@@ -679,6 +774,7 @@ void HandleNetwork_GossipModel::Membership_RunProtocol(std::string sender,Gossip
                     }
                     if (hop == PRWL) {
                         PartialViewManager.AddToPassive(src);
+                        PartialViewManager.PrintPartialView();
                     }
 
                     Neighbor* candidate = PartialViewManager.ChooseRandomFromActiveExcept(src);
@@ -693,15 +789,29 @@ void HandleNetwork_GossipModel::Membership_RunProtocol(std::string sender,Gossip
             case MEMBERSHIP_FORWARDJOINREPLY:
                 {
                     PartialViewManager.AddToActive(src);
+                    PartialViewManager.PrintActiveView();//
                 }
                 break;
 
             case MEMBERSHIP_DISCONNECT:
                 {
+                    // Eclipse Node does nothig.
+                    if (eclipseTime > 0) {
+                        if (eclipseStart) {
+                            if (PartialViewManager.FindPeerFromActive(src)) {
+                                PartialViewManager.DropFromActive(src);
+                                PartialViewManager.AddToPassive(src);
+                                PartialViewManager.PrintActiveView();//
+                            }                          
+                            break;
+                        }
+                    }
+                    
                     if (PartialViewManager.FindPeerFromActive(src)) {
                         PartialViewManager.DropFromActive(src);
                         PartialViewManager.AddToPassive(src);
                         Membership_SendNeighbor("");
+                        PartialViewManager.PrintActiveView();//
                     }
                 }
                 break;
@@ -715,7 +825,8 @@ void HandleNetwork_GossipModel::Membership_RunProtocol(std::string sender,Gossip
                         is_accept = 0;
                     }
                     if (is_accept) {
-                        PartialViewManager.AddToActive(src);
+                        bool res = PartialViewManager.AddToActive(src);                        
+                        if (res) PartialViewManager.PrintActiveView();//
                     }
 
                     GossipModuleHeader header(CASTTYPE_UNICAST, PROTOCOL_MEMBERSHIP);
@@ -732,6 +843,7 @@ void HandleNetwork_GossipModel::Membership_RunProtocol(std::string sender,Gossip
                     if (PartialViewManager.FindPeerFromActive(src)) break;
                     if (opt) {
                         PartialViewManager.AddToActive(src);
+                        PartialViewManager.PrintActiveView();//
                         break;
                     }
                     if (PartialViewManager.CurrentActiveViewSize() < ActiveViewSize) {
@@ -742,6 +854,14 @@ void HandleNetwork_GossipModel::Membership_RunProtocol(std::string sender,Gossip
 
             case MEMBERSHIP_SHUFFLE:
                 {
+                    // Eclipse Node does nothig.
+                    if (eclipseTime > 0) {
+                        if (eclipseStart) {
+                            // isolate target node by dropping hello msgs.
+                            break;
+                        }
+                    }
+
                     if (hop == SRWL || PartialViewManager.CurrentActiveViewSize() <= 1) {
                         int cnt = Membership_ProcessShuffleList(gmsg->GetShuffleList());
 
@@ -1145,15 +1265,16 @@ void TimeoutList::ConnectionTimeoutCallback(EV_P_ ev_timer *w, int revents) {
 }
 
 /* ------ Functions related to PartialView operation ----- */
-void PartialView::AddToActive(std::string id) {
+bool PartialView::AddToActive(std::string id) {
     DropFromPassive(id);
-    if (FindPeerFromActive(id)) return;
+    if (FindPeerFromActive(id)) return false;
     if (CurrentActiveViewSize() == ActiveViewSize) {
         DropRandomFromActive();
     }
     Neighbor* newnode = new Neighbor(id);
     active.push_back(newnode);
     PrintActiveView();
+    return true;
 }
 
 bool PartialView::DropFromActive(std::string id) {
@@ -1173,6 +1294,7 @@ void PartialView::DropRandomFromActive() {
     int idx = rand() % (int)active.size();
     Neighbor* victim = active[idx];
     active.erase(active.begin() + idx);
+    std::cout << "[RANDOM_A] "<<idx << "\n";
     PrintActiveView();
     AddToPassive(victim->id);
 
@@ -1236,6 +1358,7 @@ bool PartialView::DropFromPassive(std::string id) {
 void PartialView::DropRandomFromPassive() {
     srand(time(0));
     int idx = rand() % (int)passive.size();
+    std::cout << "[RANDOM_P] "<<idx << "\n";
     passive.erase(passive.begin() + idx);
     PrintPassiveView();
 }
@@ -1252,6 +1375,7 @@ Neighbor* PartialView::ChooseRandomFromPassive() {
 
     srand(time(0));
     int idx = rand() % (int)passive.size();
+    std::cout << idx << "\n";
     return passive[idx];
 }
 
@@ -1301,6 +1425,7 @@ void PartialView::PrintActiveView() {
         else
             std::cout << ',';
     }
+    PrintPartialView();
 }
 void PartialView::PrintPassiveView() {
     return;
@@ -1316,6 +1441,17 @@ void PartialView::PrintPassiveView() {
         else
             std::cout << ',';
     }
+}
+
+void PartialView::PrintPartialView() {
+    std::cout << "[ECLIPSE] "<< utility::GetCurrentTime() << " ";
+    for (int i=0; i<active.size(); i++) {
+        std::cout << active[i]->id << ",";
+    }
+    for (int i=0; i<passive.size(); i++) {
+        std::cout << passive[i]->id << ",";
+    }
+    std::cout << "\n";
 }
 
 /* ------ Functions related to MessageStorage operation ----- */

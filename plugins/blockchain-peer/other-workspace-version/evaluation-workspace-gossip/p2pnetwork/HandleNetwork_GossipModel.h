@@ -19,6 +19,7 @@
 
 #define MYPORT 3456    /* the port users will be connecting to */
 #define BACKLOG 10     /* how many pending connections queue will hold */
+#define LOGGING 0
 
 // [Membership Protocol Parameters]
 // scale 10000: (5,30,6,3,5,3,4)
@@ -29,19 +30,13 @@
 #define ARWL 5
 #define PRWL 2
 #define SRWL 4
-#define Ka   3
-#define Kp   4
+#define Ka   2
+#define Kp   3
 #define SHUFFLE_OP 1
-#define SHUFFLE_PERIOD 50
-#define CONNECTION_TIMEOUT 1200000
-#define ISOLATION_CHECK_INTERVAL 1000000
+#define SHUFFLE_PERIOD 5
+#define CONNECTION_TIMEOUT 120
+#define ISOLATION_CHECK_INTERVAL 100000
 
-// Eclipse attack parameter
-#define ECLIPSE 1
-#define ECLIPSE_ITER 0
-#define ECLIPSE_INTERVAL 25
-
-// Test parameter
 #define TEST_OP 0
 #define TEST_MEMBERSHIP 0
 
@@ -259,7 +254,7 @@ class PartialView {
     std::vector<Neighbor*>& GetPassiveView() {return passive;}
 
     int CurrentActiveViewSize() {return active.size();}
-    bool AddToActive(std::string id);
+    void AddToActive(std::string id);
     void DropRandomFromActive();
     bool DropFromActive(std::string id);
     Neighbor* FindPeerFromActive(std::string id);
@@ -281,7 +276,6 @@ class PartialView {
     
     void PrintActiveView();
     void PrintPassiveView();
-    void PrintPartialView();
 };
 
 /* [IHAVE_MESSAGE] & [MessageStorage]
@@ -356,7 +350,6 @@ class HandleNetwork_GossipModel: public HandleNetwork {
     PartialView     PartialViewManager;       // GOSSIP : manage two partial views
     MessageStorage  Gossip_MessageManager;    // GOSSIP : store consensus-broadcast message
     RecoveryStorage Gossip_RecoveryManager;   // GOSSIP : store ihave info and manage timeout
-
     ev_timer        Membership_CyclonTimer;   // MEMBERSHIP : for periodic shuffle sending
     ev_timer        Membership_ShutdownTimer; // MEMBERSHIP : for shutdown
     ev_timer        Membership_IsolationTimer;// MEMBERSHIP : for isolation detecting callback
@@ -401,20 +394,10 @@ class HandleNetwork_GossipModel: public HandleNetwork {
     // When TEST_MEMBERSHIP is true(1), it will be called
     void Test_Gossip_RunProtocol(std::string sender, GossipModuleHeader* header, Message* msg);
 
-    // For ECLIPSE attack
-    ev_timer    Eclipse_Attack_Timer;
-    static void Eclipse_Attack_Callback(EV_P_ ev_timer *w, int revents);        
-    void        Eclipse_Attack_RegisterTimerWatcher();
-    
-    // For ECLIPSE attack log
-    ev_timer    Eclipse_Attack_Log_Timer;
-    static void Eclipse_Attack_Log_Callback(EV_P_ ev_timer *w, int revents);        
-    void        Eclipse_Attack_Log_RegisterTimerWatcher();
-
-    
  public:
     //HandleNetwork_GossipModel() {}
-    HandleNetwork_GossipModel() {contact = "bleep0";}        
+    HandleNetwork_GossipModel() {contact = "bleep0";}
+        
     ~HandleNetwork_GossipModel() {}
     static HandleNetwork_GossipModel* GetInstance();
 
@@ -436,11 +419,6 @@ class HandleNetwork_GossipModel: public HandleNetwork {
     // testing
     std::string contact;
     void setcontact(std::string id) {contact = id;}
-
-    // Eclipse attack
-    int eclipseStart = 0;
-    std::string eclipseTarget;
-    void settarget(std::string id) {eclipseTarget = id;}
 };
 
 #endif // HANDLE_NETWORK_GOSSIP_H

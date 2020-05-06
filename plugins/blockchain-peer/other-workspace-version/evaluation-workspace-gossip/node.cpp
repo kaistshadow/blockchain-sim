@@ -25,8 +25,6 @@ bool amIProxyNode = false;
 bool amIContactNode = false;
 bool isGossipShutdown = false;
 int shutdownTime = -1;
-int eclipseTime  = -1;
-int eclipseLogTime  = -1;
 
 // Blockchain Consensus Configuration
 int block_tx_num = 5;
@@ -36,8 +34,8 @@ std::string mining_time_dev = "2.0";
 // Blockchain Transaction Configuration
 TransactionType txType = EnumSimpleTransaction;
 
+// testing
 std::string contact = "bleep0";
-
 
 int main(int argc, char *argv[]) {
     gArgs.ParseParameters(argc, argv);
@@ -113,9 +111,6 @@ int main(int argc, char *argv[]) {
     amIContactNode = gArgs.GetBoolArg("-contactnode", false);
     isGossipShutdown = gArgs.GetBoolArg("-gossipshutdown", false);
     shutdownTime = gArgs.GetArg("-shutdownTime", -1);
-
-    eclipseTime  = gArgs.GetArg("-eclipseTime", -1);
-    eclipseLogTime  = gArgs.GetArg("-eclipseLogTime", -1);
 
     generateTxNum = gArgs.GetArg("-generatetx", 0);
     generateTxTime = gArgs.GetArg("-timegeneratetx", 0);

@@ -51,11 +51,11 @@ def setup_multiple_node_xml(node_num, injector_op, simultime, txnum, miningtime,
         injector_id = "bleep%d" % (node_num+1+i)             
         # Uniformly distributed target node (target node = receive tx from injector)
         # There are many other ways to choose injected node
-        targetnode  = "bleep%d" % ((node_num/num_injector)*i) 
-        print "[Injector]", injector_id, "->", targetnode
+        targetnode  = "bleep%d" % ((node_num/num_injector)*i)
+        time = str(node_num+500+50*i) 
+        print "[Injector]", injector_id, "->", targetnode, ", injection time:",time
 
         node = ET.SubElement(shadow, "node", id=injector_id)
-        time = str(node_num+450+50*i)
         ET.SubElement(node, "application", plugin="PEER", time=time,\
                     arguments="-handlenetwork=gossip -contact=%s -networkparticipant -generatetx=%d -timegeneratetx=1" % (targetnode, txnum))
     

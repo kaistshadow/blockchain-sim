@@ -974,8 +974,7 @@ void HandleNetwork_GossipModel::Gossip_RunProtocol(std::string sender, GossipMod
     int ptype = header->GetProtocolType();
     
     // size
-    std::cout<<"[SIZE] "<<utility::GetCurrentTime()<<" "<<sizeof(header)<<" "<<sizeof(msg)<<" "<<sizeof(header)+sizeof(msg)<<'\n';
-
+    //std::cout<<"[SIZE] "<<utility::GetCurrentTime()<<" "<<sizeof(header)<<" "<<sizeof(msg)<<" "<<sizeof(header)+sizeof(msg)<<'\n';
     
     // treat PRUNE, IHAVE, GRAFT
     if (ptype == PROTOCOL_GOSSIP) {
@@ -985,8 +984,7 @@ void HandleNetwork_GossipModel::Gossip_RunProtocol(std::string sender, GossipMod
         switch(gmsg->GetMessageType()) {
             case GOSSIP_PRUNE:
             {
-                std::cout << "PLUMTREE "<<utility::GetCurrentTime()<<" PRUNE\n";
-                
+                //std::cout << "PLUMTREE "<<utility::GetCurrentTime()<<" PRUNE\n";
                 Neighbor* neighbor = PartialViewManager.FindPeerFromActive(sender);
                 if (!neighbor) {
                     std::cout << "[Gossip_RunProtocol] PRUNE No Active link exists for " << sender << '\n';
@@ -1001,8 +999,7 @@ void HandleNetwork_GossipModel::Gossip_RunProtocol(std::string sender, GossipMod
 
             case GOSSIP_IHAVE:
             {
-                std::cout << "PLUMTREE "<<utility::GetCurrentTime()<<" IHAVE\n";
-
+                //std::cout << "PLUMTREE "<<utility::GetCurrentTime()<<" IHAVE\n";
                 size_t mid = gmsg->GetOption();
                 bool is_msg_exist = Gossip_MessageManager.IsExist(mid);
                 if (!is_msg_exist) {
@@ -1013,8 +1010,7 @@ void HandleNetwork_GossipModel::Gossip_RunProtocol(std::string sender, GossipMod
 
             case GOSSIP_GRAFT:
             {
-                std::cout << "PLUMTREE "<<utility::GetCurrentTime()<<" GRAFT\n";
-
+                //std::cout << "PLUMTREE "<<utility::GetCurrentTime()<<" GRAFT\n";
                 Neighbor* neighbor = PartialViewManager.FindPeerFromActive(sender);
                 if (!neighbor) {
                     std::cout << "[Gossip_RunProtocol] GRAFT No Active link exists for " << sender << '\n';
@@ -1066,7 +1062,6 @@ void HandleNetwork_GossipModel::Gossip_RunProtocol(std::string sender, GossipMod
         else {
             if (neighbor->isEager == true) {
                 if (is_msg_exist) {
-                    //
                     std::cout<<"NEWMSG "<<"DUP "<< utility::GetCurrentTime()<<' '<<mid<<' '<<PartialViewManager.FanoutSize()<<'\n';
   
                     neighbor->isEager = false;
@@ -1089,7 +1084,6 @@ void HandleNetwork_GossipModel::Gossip_RunProtocol(std::string sender, GossipMod
                     Gossip_RecoveryManager.StopTimerAndRemoveEntries(mid);
                 }
 
-                //std::cout << "NEWMSG " << utility::GetCurrentTime() << std::setw(21) << mid << '\n';
                 std::cout<<"NEWMSG "<<"NEW "<< utility::GetCurrentTime()<<' '<<mid<<' '<<PartialViewManager.FanoutSize()<<'\n';
 
                 Gossip_MessageManager.AddToStorage(mid, header->GetHopCount(), sender, msg);
@@ -1099,7 +1093,6 @@ void HandleNetwork_GossipModel::Gossip_RunProtocol(std::string sender, GossipMod
             }
             else {
                 if (is_msg_exist) {
-                    //
                     std::cout<<"NEWMSG "<<"DUP "<< utility::GetCurrentTime()<<' '<<mid<<' '<<PartialViewManager.FanoutSize()<<'\n';
                     return;
                 }
@@ -1118,7 +1111,6 @@ void HandleNetwork_GossipModel::Gossip_RunProtocol(std::string sender, GossipMod
                     return;
                 }
 
-                //std::cout << "NEWMSG "<< utility::GetCurrentTime() << std::setw(21) << mid << '\n';
                 std::cout<<"NEWMSG "<<"NEW "<< utility::GetCurrentTime()<<' '<<mid<<' '<<PartialViewManager.FanoutSize()<<'\n';
                 
                 Gossip_RecoveryManager.StopTimerAndRemoveEntries(mid);
@@ -1294,7 +1286,7 @@ void PartialView::DropRandomFromActive() {
     int idx = rand() % (int)active.size();
     Neighbor* victim = active[idx];
     active.erase(active.begin() + idx);
-    std::cout << "[RANDOM_A] "<<idx << "\n";
+    //std::cout << "[RANDOM_A] "<<idx << "\n";
     PrintActiveView();
     AddToPassive(victim->id);
 
@@ -1358,7 +1350,7 @@ bool PartialView::DropFromPassive(std::string id) {
 void PartialView::DropRandomFromPassive() {
     srand(time(0));
     int idx = rand() % (int)passive.size();
-    std::cout << "[RANDOM_P] "<<idx << "\n";
+    //std::cout << "[RANDOM_P] "<<idx << "\n";
     passive.erase(passive.begin() + idx);
     PrintPassiveView();
 }
@@ -1444,6 +1436,7 @@ void PartialView::PrintPassiveView() {
 }
 
 void PartialView::PrintPartialView() {
+    if (eclipseLogTime<=0) return;
     std::cout << "[ECLIPSE] "<< utility::GetCurrentTime() << " ";
     for (int i=0; i<active.size(); i++) {
         std::cout << active[i]->id << ",";

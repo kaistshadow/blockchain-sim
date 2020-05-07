@@ -169,7 +169,7 @@ if __name__ == '__main__':
     if time_interval != 0:
         time = int(math.ceil(time_start + time_interval*1000))
         print "time :",time
-    tmp = open("tmp-network-start-tim.txt",'w')
+    tmp = open("tmp-network-start-time.txt",'w')
     tmp.write(str(time_start)+'\n')
     tmp.close()
 
@@ -271,4 +271,4 @@ if __name__ == '__main__':
     set_node_color(num, list(Graph.nodes()))
     set_edge_color(list(Graph.edges()))
     nx.draw(Graph, with_labels = True, node_color = color, edge_color = overlay_color, width=2)
-    plt.show()
+    #plt.show()

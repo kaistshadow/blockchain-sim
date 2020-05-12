@@ -90,6 +90,9 @@ if __name__ == '__main__':
         prepare_nodejs()
         prepare_rust()
 
+        ## install boost-lib
+        exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
+
         ## install
         exec_shell_cmd("mkdir build; cd build; cmake %s ../; make; make install; cd ..; rm -rf build" % cmake_debug_opt)
 
@@ -114,6 +117,6 @@ if __name__ == '__main__':
         print "$ source ~/.bashrc"
 
     if OPT_TEST:
-        exec_shell_cmd("mkdir build; cd build; cmake ../; make test")
+        exec_shell_cmd("mkdir build; cd build; cmake ../; make; make test")
 
 

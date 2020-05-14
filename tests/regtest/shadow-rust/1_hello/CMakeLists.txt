@@ -26,6 +26,9 @@ add_custom_command(
 
 add_custom_target(${CARGO_NAME}_target ALL DEPENDS ${LIB_FILE})
 
+message(STATUS "1_hello:CMAKE_CURRENT_BINARY_DIR:${CMAKE_CURRENT_BINARY_DIR}")
+message(STATUS "1_hello:CMAKE_CURRENT_SOURCE_DIR:${CMAKE_CURRENT_SOURCE_DIR}")
+
 ### add test
 add_test(NAME regtest-rust-hello
   COMMAND shadow ${CMAKE_CURRENT_SOURCE_DIR}/rust_hello.xml

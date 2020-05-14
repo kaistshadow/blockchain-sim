@@ -131,7 +131,6 @@ install(TARGETS BLEEP
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(EXPORT FindBLEEP 
   FILE FindBLEEP.cmake
-  NAMESPACE BLEEP::
   DESTINATION cmake)
 # install(FILES "src/datamanagermodules/LedgerManager.h"
 #   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datamanagermodules)

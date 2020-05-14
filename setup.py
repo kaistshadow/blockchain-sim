@@ -94,7 +94,7 @@ if __name__ == '__main__':
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
 
         ## install
-        exec_shell_cmd("mkdir build; cd build; cmake %s ../; make; make install; cd ..; rm -rf build" % cmake_debug_opt)
+        exec_shell_cmd("mkdir build; cd build; cmake %s ../; make -j8; make install; cd ..; rm -rf build" % cmake_debug_opt)
 
 
         rcFile = os.path.expanduser("~/.bashrc")
@@ -117,6 +117,6 @@ if __name__ == '__main__':
         print "$ source ~/.bashrc"
 
     if OPT_TEST:
-        exec_shell_cmd("mkdir build; cd build; cmake ../; make; make test")
+        exec_shell_cmd("mkdir build; cd build; cmake ../; make -j8; make test")
 
 

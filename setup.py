@@ -42,25 +42,25 @@ def prepare_nodejs():
     exec_shell_cmd("cd vis; npm install; npm run build; cd ..")
 
 def prepare_rust():
-    exec_shell_cmd("sudo apt-get install -y rustc")
+    # exec_shell_cmd("sudo apt-get install -y rustc")
 
     # Following script is available for rustup installation.
     # However, shadow plugin is not compatible for rust library compiled by rustup-installed rustc
     # So, we commentify following sciprt
 
-    # exec_shell_cmd("curl https://sh.rustup.rs -sSf | sh -s -- -y")
-    # exec_shell_cmd("rustup toolchain install 1.39.0")
-    # exec_shell_cmd("rustup default 1.39.0")
-    #
-    # rcFile = os.path.expanduser("~/.bashrc")
-    # f = open(rcFile, 'r')
-    # rustPath = "export PATH=$PATH:%s" % os.path.expanduser("~/.cargo/bin" )
-    # needWriteRustPath = True
-    # for line in f:
-    #     if rustPath in line:
-    #         needWriteRustPath = False
-    # if needWriteRustPath:
-    #     exec_shell_cmd("echo '%s' >> ~/.bashrc" % rustPath)
+    exec_shell_cmd("curl https://sh.rustup.rs -sSf | sh -s -- -y")
+    exec_shell_cmd("rustup toolchain install 1.39.0")
+    exec_shell_cmd("rustup default 1.39.0")
+    
+    rcFile = os.path.expanduser("~/.bashrc")
+    f = open(rcFile, 'r')
+    rustPath = "export PATH=$PATH:%s" % os.path.expanduser("~/.cargo/bin" )
+    needWriteRustPath = True
+    for line in f:
+        if rustPath in line:
+            needWriteRustPath = False
+    if needWriteRustPath:
+        exec_shell_cmd("echo '%s' >> ~/.bashrc" % rustPath)
 
 
 if __name__ == '__main__':

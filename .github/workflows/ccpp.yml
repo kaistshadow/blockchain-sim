@@ -17,16 +17,13 @@ jobs:
       run: sudo apt install python
     - name: install BLEEP
       run: python setup.py --install      
-    - name: test BLEEP with (temporary)
+    - name: debug BLEEP
       run: |
         export PATH=${PATH}:${GITHUB_WORKSPACE}/Install/bin
         export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/Install
+        rustc --version
+        cargo --version
         cd ${GITHUB_WORKSPACE}/build/tests/regtest/shadow-rust/1_hello/debug/; shadow ${GITHUB_WORKSPACE}/tests/regtest/shadow-rust/1_hello/rust_hello.xml
-    - name: test BLEEP with verbose
-      run: |
-        export PATH=${PATH}:${GITHUB_WORKSPACE}/Install/bin
-        export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/Install
-        mkdir -p build; cd build; cmake ../; make -j8; ctest -VV
     - name: test BLEEP using script
       run: |
         export PATH=${PATH}:${GITHUB_WORKSPACE}/Install/bin

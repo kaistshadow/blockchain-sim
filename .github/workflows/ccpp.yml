@@ -12,11 +12,13 @@ jobs:
     runs-on: ubuntu-18.04
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2  
     - name: install pre-requisite
-      run: apt install python
+      run: sudo apt install python
     - name: install BLEEP
-      run: python setup.py --install
+      run: python setup.py --install      
     - name: test BLEEP
-      run: python setup.py --test
-    
+      run: |
+        export PATH=${PATH}:${GITHUB_WORKSPACE}/Install/bin
+        export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/Install
+        python setup.py --test

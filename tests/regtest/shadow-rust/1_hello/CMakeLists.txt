@@ -27,7 +27,7 @@ add_custom_command(
 add_custom_target(${CARGO_NAME}_target ALL DEPENDS ${LIB_FILE})
 
 ### add test
-add_test(NAME BLEEP-regtest-rust-hello
+add_test(NAME regtest-rust-hello
   COMMAND shadow ${CMAKE_CURRENT_SOURCE_DIR}/rust_hello.xml
   WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/debug/")
 

@@ -1,21 +1,25 @@
 ## required for independent build
 cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
+if (NOT TARGET BLEEP) # check whether it's independent build
+  list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../Install/cmake") # Path for BLEEP Module
+  find_package(BLEEP REQUIRED) # load BLEEP Module
+endif()
+## required for independent build end
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../Install/share/cmake/Modules") # Path for ShadowTool Module
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../Install/cmake") # Path for BLEEP Module
+## include shadow 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../shadow/cmake") # Path for ShadowTool Module
 include(ShadowTools) # load ShadowTools Module
-find_package(BLEEP REQUIRED) # load BLEEP Module
 
+## enable CTEST
 enable_testing()
-## required for independent build
 
 
 add_shadow_plugin(NODE_BL_TEST node_bl_test.cpp)
-target_link_libraries(NODE_BL_TEST BLEEP::NEWBLEEP)
-target_link_libraries(NODE_BL_TEST BLEEP::BLEEP)
+target_link_libraries(NODE_BL_TEST NEWBLEEP)
+target_link_libraries(NODE_BL_TEST BLEEP)
 
 
-add_test(NAME BLEEP-regtest-simpleconnect
+add_test(NAME regtest-BLEEP-simpleconnect
   COMMAND shadow ${CMAKE_CURRENT_SOURCE_DIR}/simple-connect.xml
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
   # WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/..")

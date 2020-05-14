@@ -28,6 +28,6 @@ add_custom_target(${CARGO_NAME}_target ALL DEPENDS ${EXE_FILE})
 
 
 ### add test
-add_test(NAME BLEEP-regtest-native-bintest-hellorust
+add_test(NAME regtest-native-bintest-hellorust
   COMMAND ${EXE_FILE})
 

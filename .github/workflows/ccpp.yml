@@ -16,7 +16,9 @@ jobs:
     - name: install pre-requisite
       run: sudo apt install python
     - name: install BLEEP
-      run: python setup.py --install; source ~/.bashrc      
+      run: python setup.py --install      
     - name: test BLEEP
-      run: python setup.py --test
-    
+      run: |
+        export PATH=${PATH}:${GITHUB_WORKSPACE}/Install/bin
+        export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/Install
+        python setup.py --test

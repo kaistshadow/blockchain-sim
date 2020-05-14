@@ -15,14 +15,13 @@ jobs:
     - uses: actions/checkout@v2  
     - name: install pre-requisite
       run: sudo apt install python
+    - name: install BLEEP
+      run: python setup.py --install      
     - name: test BLEEP with (temporary)
       run: |
-        mkdir -p build; cd build; cmake ../; make install;cd ..
         export PATH=${PATH}:${GITHUB_WORKSPACE}/Install/bin
         export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/Install
         cd ${GITHUB_WORKSPACE}/build/tests/regtest/shadow-rust/1_hello/debug/; shadow ${GITHUB_WORKSPACE}/tests/regtest/shadow-rust/1_hello/rust_hello.xml
-    - name: install BLEEP
-      run: python setup.py --install      
     - name: test BLEEP with verbose
       run: |
         export PATH=${PATH}:${GITHUB_WORKSPACE}/Install/bin

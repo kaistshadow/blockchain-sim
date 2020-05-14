@@ -12,11 +12,11 @@ jobs:
     runs-on: ubuntu-18.04
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2  
     - name: install pre-requisite
-      run: sudo apt install python
+      run: apt install python
     - name: install BLEEP
-      run: python setup.py --install
+      run: python setup.py --install; source ~/.bashrc      
     - name: test BLEEP
       run: python setup.py --test
     

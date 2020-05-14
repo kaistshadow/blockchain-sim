@@ -1,7 +1,14 @@
+## required for independent build
+cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../../cmake") # Path for Rust Module
+enable_language(Rust)
+enable_testing()
+## required for independent build
+
 
 set(CARGO_NAME "hellorust")
 
-set(EXE_FILE "${CMAKE_CURRENT_BINARY_DIR}/${BUILD_TYPE}/${CARGO_NAME}")
+set(EXE_FILE "${CMAKE_CURRENT_BINARY_DIR}/debug/${CARGO_NAME}") # default rust build type is debug unless the explicit option is given
 
 set(CARGO_TARGET_DIR ${CMAKE_CURRENT_BINARY_DIR})
 set(CARGO_ENV_COMMAND ${CMAKE_COMMAND} -E env "CARGO_TARGET_DIR=${CARGO_TARGET_DIR}")

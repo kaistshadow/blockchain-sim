@@ -11,6 +11,7 @@ else()
     endif("${SHADOW_SRC_ROOT}" STREQUAL "")
 
     set(CMAKE_MODULE_PATH "${SHADOW_SRC_ROOT}/cmake")
+    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../Install/cmake")
     message(STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
 endif()
 
@@ -18,7 +19,8 @@ endif()
 include(ShadowTools)
 
 
-add_subdirectory(test-simpleconnect)
-add_subdirectory(test-consensus) 
-add_subdirectory(rust)
+add_subdirectory(BLEEP-simpleconnect)
+add_subdirectory(BLEEP-gossip-10node)
+add_subdirectory(BLEEP-POW-consensus)
+add_subdirectory(shadow-rust)
 add_subdirectory(native-bintest)

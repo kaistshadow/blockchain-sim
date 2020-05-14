@@ -1,0 +1,22 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: install pre-requisite
+      run: apt install python
+    - name: install BLEEP
+      run: python setup.py --install
+    - name: test BLEEP
+      run: python setup.py --test
+    

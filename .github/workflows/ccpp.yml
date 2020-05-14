@@ -17,7 +17,12 @@ jobs:
       run: sudo apt install python
     - name: install BLEEP
       run: python setup.py --install      
-    - name: test BLEEP
+    - name: test BLEEP with verbose
+      run: |
+        export PATH=${PATH}:${GITHUB_WORKSPACE}/Install/bin
+        export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/Install
+        mkdir -p build; cd build; cmake ../; make -j8; ctest -VV
+    - name: test BLEEP using script
       run: |
         export PATH=${PATH}:${GITHUB_WORKSPACE}/Install/bin
         export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/Install

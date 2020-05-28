@@ -94,7 +94,7 @@ if __name__ == '__main__':
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
 
         ## install bitcoin dependencies
-        exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev")
+        exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
 
         ## install
         exec_shell_cmd("mkdir build; cd build; cmake %s ../; make -j8; make install; cd ..;" % cmake_debug_opt)

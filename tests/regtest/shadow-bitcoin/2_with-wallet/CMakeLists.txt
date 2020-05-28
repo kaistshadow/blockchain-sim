@@ -82,3 +82,4 @@ add_test(NAME shadow-bitcoin-with-wallet
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 set_tests_properties(shadow-bitcoin-with-wallet PROPERTIES DEPENDS shadow-bitcoin-with-wallet-prepare)
+set_tests_properties(shadow-bitcoin-with-wallet PROPERTIES TIMEOUT 60)

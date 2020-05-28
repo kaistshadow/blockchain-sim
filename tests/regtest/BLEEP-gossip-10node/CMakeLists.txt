@@ -17,11 +17,18 @@ enable_testing()
 add_shadow_plugin(NODE_BL_TEST_TX_10 node_bl_test_tx.cpp)
 target_link_libraries(NODE_BL_TEST_TX_10 NEWBLEEP)
 target_link_libraries(NODE_BL_TEST_TX_10 BLEEP)
-  
+
+# copy resulting plugins into source directory
+add_custom_command(TARGET NODE_BL_TEST_TX_10
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:NODE_BL_TEST_TX_10> ${CMAKE_CURRENT_SOURCE_DIR})
+
+
 add_test(NAME regtest-BLEEP-gossip-10node
   COMMAND python test-broadcast.py --noserver 10node-txgossip.xml
   WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/")
-  
+
 set_property(TEST regtest-BLEEP-gossip-10node APPEND
   PROPERTY
-  ENVIRONMENT LD_LIBRARY_PATH=${CMAKE_CURRENT_BINARY_DIR}:$ENV{LD_LIBRARY_PATH})
+  ENVIRONMENT LD_LIBRARY_PATH=${CMAKE_CURRENT_SOURCE_DIR}:$ENV{LD_LIBRARY_PATH}
+        PATH=$ENV{PATH}:${CMAKE_CURRENT_SOURCE_DIR}/../../../Install/bin) # add path environment in order to use CLion

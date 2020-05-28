@@ -18,8 +18,13 @@ add_shadow_plugin(NODE_BL_TEST node_bl_test.cpp)
 target_link_libraries(NODE_BL_TEST NEWBLEEP)
 target_link_libraries(NODE_BL_TEST BLEEP)
 
+# copy resulting plugins into source directory
+add_custom_command(TARGET NODE_BL_TEST
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:NODE_BL_TEST> ${CMAKE_CURRENT_SOURCE_DIR})
+
 
 add_test(NAME regtest-BLEEP-simpleconnect
-  COMMAND shadow ${CMAKE_CURRENT_SOURCE_DIR}/simple-connect.xml
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-  # WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/..")
+  COMMAND shadow simple-connect.xml
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+

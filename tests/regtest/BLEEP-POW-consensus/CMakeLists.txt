@@ -20,6 +20,14 @@ target_link_libraries(NODE_POW_RANDOM_TREE BLEEP)
 add_shadow_plugin(NODE_client client.cpp)
 target_link_libraries(NODE_client BLEEP)
 
+# copy resulting plugins into source directory
+add_custom_command(TARGET NODE_POW_RANDOM_TREE
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:NODE_POW_RANDOM_TREE> ${CMAKE_CURRENT_SOURCE_DIR})
+add_custom_command(TARGET NODE_client
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:NODE_client> ${CMAKE_CURRENT_SOURCE_DIR})
+
 add_test(NAME regtest-BLEEP-POW-consensus
-  COMMAND shadow ${CMAKE_CURRENT_SOURCE_DIR}/Consensus[pow-tree]-Gossip[SP]-200node-2sec.xml
-  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
+  COMMAND shadow Consensus[pow-tree]-Gossip[SP]-200node-2sec.xml
+  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")

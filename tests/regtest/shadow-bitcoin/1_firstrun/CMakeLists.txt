@@ -10,7 +10,7 @@ ExternalProject_Add(openssl
         URL https://www.openssl.org/source/openssl-1.1.0h.tar.gz
         CONFIGURE_COMMAND <SOURCE_DIR>/config --prefix=${CMAKE_CURRENT_BINARY_DIR} shared threads enable-ec_nistp_64_gcc_128 -fPIC
         BUILD_COMMAND make depend
-        COMMAND make
+        COMMAND make -j4
         COMMAND make install_sw
         COMMAND make clean
         BUILD_IN_SOURCE TRUE

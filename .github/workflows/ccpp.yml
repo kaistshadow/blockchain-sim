@@ -23,6 +23,11 @@ jobs:
         export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/Install
         python setup.py --test
 
+    - uses: actions/upload-artifact@v2
+      with:
+        name: my-artifact
+        path: tests/regtest/shadow-bitcoin/2_with-wallet/shadow.data/
+
     # - name: debug BLEEP
     #   run: |
     #     export PATH=${PATH}:${GITHUB_WORKSPACE}/Install/bin

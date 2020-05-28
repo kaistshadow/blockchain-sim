@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(This ExampleTests)
+set(This GTest-ExampleTests)
 
 set(SRCS
-        ExampleTests.cpp)
+        GTest-ExampleTests.cpp)
 
 add_executable(${This} ${SRCS})
 target_link_libraries(${This} PUBLIC
@@ -14,5 +14,6 @@ install(TARGETS ${This} DESTINATION unittest)
 
 add_test(
         NAME ${This}
-        COMMAND ${CMAKE_INSTALL_PREFIX}/unittest/${This}
+        COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${This}
+#        COMMAND ${CMAKE_INSTALL_PREFIX}/unittest/${This}
 )

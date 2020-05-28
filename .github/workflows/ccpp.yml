@@ -23,9 +23,11 @@ jobs:
         export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/Install
         python setup.py --test
 
-    - uses: actions/upload-artifact@v2
+    - name: Archive test output files when the test is Failed
+      uses: actions/upload-artifact@v2
+      if: failure()
       with:
-        name: my-artifact
+        name: shadow-bitcoin-with-wallet_outputs
         path: tests/regtest/shadow-bitcoin/2_with-wallet/shadow.data/
 
     # - name: debug BLEEP

@@ -39,12 +39,12 @@
   <!-- our nodes -->
 
   <node id="bcdnode1">
-    <application plugin="bitcoind" time="13" arguments="-datadir=./data/bcdnode1 -debug -printtoconsole -connect=bcdnode2 -listen" />
+    <application plugin="bitcoind" time="13" arguments="-datadir=./data/bcdnode1 -debug -printtoconsole -connect=bcdnode2 -listen -server=0" />
   </node>
 
 
   <node id="bcdnode2">
-    <application plugin="bitcoind" time="13" arguments="-datadir=./data/bcdnode2 -debug -printtoconsole -listen -connect=bcdnode1"/>
+    <application plugin="bitcoind" time="13" arguments="-datadir=./data/bcdnode2 -debug -printtoconsole -listen -connect=bcdnode1 -server=0"/>
   </node>
 
 </shadow>

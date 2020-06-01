@@ -73,7 +73,7 @@ enable_testing()
 
 add_custom_target(shadow-bitcoin-with-wallet-prepare ALL
         COMMAND rm -rf data/bcdnode1
-        COMMAND rm -rf data/bcdnode1
+        COMMAND rm -rf data/bcdnode2
         COMMAND mkdir -p data/bcdnode1
         COMMAND mkdir -p data/bcdnode2
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

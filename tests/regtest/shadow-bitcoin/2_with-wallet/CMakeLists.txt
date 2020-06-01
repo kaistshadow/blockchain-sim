@@ -28,7 +28,8 @@ ExternalProject_Add(bitcoin-with-wallet
         GIT_REPOSITORY https://github.com/bitcoin/bitcoin.git
         GIT_TAG v0.19.1
         PATCH_COMMAND <SOURCE_DIR>/autogen.sh
-        COMMAND <SOURCE_DIR>/configure CPPFLAGS=-I${CMAKE_CURRENT_BINARY_DIR}/include LDFLAGS=-L${CMAKE_CURRENT_BINARY_DIR}/lib --with-pic --prefix=<INSTALL_DIR> --disable-bench --disable-tests --enable-debug
+        #COMMAND PKG_CONFIG_PATH=${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig LDFLAGS=-L${CMAKE_CURRENT_BINARY_DIR}/lib CFLAG=-I${CMAKE_CURRENT_BINARY_DIR}/include <SOURCE_DIR>/configure --with-pic --prefix=<INSTALL_DIR> --disable-bench --disable-tests --enable-debug
+        COMMAND <SOURCE_DIR>/configure PKG_CONFIG_PATH=${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig CFLAGS=-I${CMAKE_CURRENT_BINARY_DIR}/include CPPFLAGS=-I${CMAKE_CURRENT_BINARY_DIR}/include LDFLAGS=-Wl,-rpath=${CMAKE_CURRENT_BINARY_DIR}/lib --with-pic --prefix=<INSTALL_DIR> --disable-bench --disable-tests --enable-debug
         CONFIGURE_COMMAND ""
         BUILD_COMMAND make -j8
         BUILD_IN_SOURCE TRUE

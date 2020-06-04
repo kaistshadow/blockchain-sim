@@ -72,22 +72,18 @@ enable_testing()
 
 add_custom_target(shadow-bitcoin-with-wallet-prepare ALL
         COMMAND rm -rf data/bcdnode1
-        COMMAND rm -rf data/bcdnode2
+        COMMAND rm -rf data/bcdnode1
         COMMAND mkdir -p data/bcdnode1
         COMMAND mkdir -p data/bcdnode2
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_test(NAME shadow-bitcoin-with-wallet
+        COMMAND shadow example.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_test(NAME shadow-bitcoin-with-wallet-check-pwrite-bug
         COMMAND shadow example-reproduce-logerr.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-set_tests_properties(shadow-bitcoin-with-wallet-check-pwrite-bug PROPERTIES DEPENDS shadow-bitcoin-with-wallet-prepare)
-set_tests_properties(shadow-bitcoin-with-wallet-check-pwrite-bug PROPERTIES TIMEOUT 60)
-
-add_test(NAME shadow-bitcoin-with-wallet
-        COMMAND shadow example.xml
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
 set_tests_properties(shadow-bitcoin-with-wallet PROPERTIES DEPENDS shadow-bitcoin-with-wallet-prepare)
 set_tests_properties(shadow-bitcoin-with-wallet PROPERTIES TIMEOUT 60)
-

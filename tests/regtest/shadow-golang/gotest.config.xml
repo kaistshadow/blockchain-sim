@@ -31,7 +31,7 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="gotest" path="libgotest.so" />
+  <plugin id="gotest" path="build/libgotest.so" />
 
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="20" />

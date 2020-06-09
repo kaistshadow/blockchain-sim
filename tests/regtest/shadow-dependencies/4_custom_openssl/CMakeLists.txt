@@ -30,7 +30,7 @@ ExternalProject_Add(openssl
 #        )
 
 add_custom_target(openssl-custom-shared ALL
-        COMMAND gcc ssl_rand.cpp -o libsslrand.so -L../build/4_custom_openssl/lib -lssl -lcrypto -shared -fPIC
+        COMMAND gcc ssl_rand.cpp -o libsslrand.so -L../build/4_custom_openssl/lib -lssl -lcrypto -shared -fPIC -Wl,-rpath=../build/4_custom_openssl/lib
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_test(NAME shadow-custom-openssl-librand

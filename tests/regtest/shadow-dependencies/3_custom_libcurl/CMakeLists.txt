@@ -6,7 +6,7 @@ include(ExternalProject)
 # SOURCE_DIR = <prefix>/src/<name>
 # BINARY_DIR = <prefix>/src/<name>-build
 # INSTALL_DIR = <prefix>
-ExternalProject_Add(openssl
+ExternalProject_Add(openssl_curl
         URL https://www.openssl.org/source/openssl-1.1.0h.tar.gz
         CONFIGURE_COMMAND <SOURCE_DIR>/./config --prefix=${CMAKE_CURRENT_BINARY_DIR} shared threads enable-ec_nistp_64_gcc_128 -fPIC
         BUILD_COMMAND make depend
@@ -22,7 +22,7 @@ ExternalProject_Add(curl
         BUILD_COMMAND make
         COMMAND ./buildconf
         CONFIGURE_COMMAND <SOURCE_DIR>/./configure --prefix=${CMAKE_CURRENT_BINARY_DIR} --with-ssl=${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND make -j 6
+        COMMAND make -j
         COMMAND make install
         COMMAND make clean
         BUILD_IN_SOURCE TRUE
@@ -30,7 +30,7 @@ ExternalProject_Add(curl
         )
 
 add_custom_target(curl-custom-shared ALL
-        COMMAND gcc simplecurl.c -o libsimplecurl.so -L../build/3_custom_libcurl/lib -lcurl -shared -fPIC
+        COMMAND gcc simplecurl.c -o libsimplecurl.so -L../build/3_custom_libcurl/lib -lcurl -shared -fPIC -Wl,-rpath=../build/3_custom_libcurl/lib
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_test(NAME shadow-custom-libcurl

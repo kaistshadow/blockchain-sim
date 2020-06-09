@@ -1,0 +1,13 @@
+#!/bin/bash
+if !(hash perf); then
+	sudo apt-get install linux-tools-common linux-tools-generic linux-tools-`uname -r`
+fi
+# system info modification
+sudo sysctl -w kernel.perf_event_paranoid=-1
+sudo sh -c " echo 0 > /proc/sys/kernel/kptr_restrict"
+# shadow setup
+cd ../../../../shadow/
+./setup build -c -o
+./setup install
+cd -
+

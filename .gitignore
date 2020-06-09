@@ -50,3 +50,9 @@ aws_infra/cur_ips
 cmake-build-debug/
 
 tests/regtest/datadir/
+
+gmon.out
+tests/perftest/cpu/perf/perf_results/
+
+*.so
+perf.data.old

@@ -1,6 +1,10 @@
 ## required for independent build
 cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
 
+enable_testing()
+## required for independent build end
+
+
 add_custom_target(curl-ubuntu-bin ALL
         COMMAND gcc simplecurl.c -o simplecurl -lcurl
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

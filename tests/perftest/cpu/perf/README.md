@@ -12,10 +12,11 @@ This script automatically install perf tool, reinstall Shadow with profiling fla
 
 # How to run
 
-add target xml on the xmls set in perf_run.sh. There is already one example in the perf_run.sh:
+add target xml on the xmls set in perf_run.sh. There is already two example in the perf_run.sh:
 ```
 xmls=(
-	/BLEEP-POW-consensus/Consensus\[pow-tree\]-Gossip\[SP\]-200node-2sec.xml
+    /BLEEP-POW-consensus/Consensus\[pow-tree\]-Gossip\[SP\]-200node-2sec.xml
+    /BLEEP-gossip-10node/10node-txgossip.xml
 	)
 ```
 Currently, all test tartget should be in the regtest directory.

@@ -10,4 +10,9 @@ cd ../../../../shadow/
 ./setup build -c -o
 ./setup install
 cd -
-
+# FlameGraph setup
+cd ..
+if [ ! -d ./FlameGraph ]; then
+	git clone https://github.com/brendangregg/FlameGraph
+fi
+cd -

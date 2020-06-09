@@ -23,4 +23,12 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
     	mkdir perf_results
     fi
     mv $DIR/perf.data ./perf_results/perf$i.data
+    cp ./perf_results/perf$i.data ../FlameGraph/perf.data
+    cd ../FlameGraph
+    perf script | ./stackcollapse-perf.pl > out.perf-folded
+    ./flamegraph.pl -width 2400 out.perf-folded > perf$i.svg
+    rm perf.data
+    rm out.perf-folded
+    cd -
+    cp ../FlameGraph/perf$i.svg ./perf_results/
 done

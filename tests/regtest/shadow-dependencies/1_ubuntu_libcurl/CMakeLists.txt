@@ -9,7 +9,7 @@ add_custom_target(curl-ubuntu-shared ALL
         COMMAND gcc simplecurl.c -o libsimplecurl.so -lcurl -shared -fPIC
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_test(NAME shadow-dependency-ubuntu-libcurl
+add_test(NAME shadow-ubuntu-libcurl
         COMMAND shadow simplecurl.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 

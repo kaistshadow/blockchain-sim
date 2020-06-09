@@ -29,11 +29,11 @@ include(ExternalProject)
 #        INSTALL_COMMAND ""
 #        )
 
-add_custom_target(curl-custom-shared ALL
-        COMMAND gcc simplecurl.c -o libsimplecurl.so -L../build/3_custom_libcurl/lib -lcurl -shared -fPIC
+add_custom_target(openssl-custom-shared ALL
+        COMMAND gcc ssl_rand.cpp -o libsslrand.so -L../build/4_custom_openssl/lib -lssl -lcrypto -shared -fPIC
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_test(NAME shadow-custom-libcurl
-        COMMAND shadow simplecurl.xml
+add_test(NAME shadow-custom-openssl-librand
+        COMMAND shadow ssl_rand.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 

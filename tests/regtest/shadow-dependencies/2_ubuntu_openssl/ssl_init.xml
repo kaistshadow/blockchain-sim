@@ -31,7 +31,7 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="NODE" path="libserver.so" />
+  <plugin id="NODE" path="libsslinit.so" />
   
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="300" />

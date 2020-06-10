@@ -5,7 +5,7 @@ fi
 # system info modification
 sudo sysctl -w kernel.perf_event_paranoid=-1
 sudo sh -c " echo 0 > /proc/sys/kernel/kptr_restrict"
-# shadow setup
+# shadow setup: with -pg
 cd ../../../../shadow/
 ./setup build -c -o
 ./setup install

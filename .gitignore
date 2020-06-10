@@ -57,3 +57,5 @@ tests/perftest/cpu/perf/perf_results/
 *.so
 perf.data.old
 tests/perftest/cpu/FlameGraph/
+
+tests/perftest/cpu/mpstat/mpstat_results

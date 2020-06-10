@@ -30,18 +30,21 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	FILE_DEST="$XMLROOT"${xmls[i]}
 	DIR=${FILE_DEST%/*}
 	XML_TARGET=${FILE_DEST##*/}
-	# run vmstat
-	vmstat -a 1 -Sm > vmstat.log & RUNPID=$!
+
 
 	cd $DIR
-	# run taskset shadow
-	taskset -c $TASKSET_PARAM shadow -d datadir -h 100000 -w $WORKER_CNT $XML_TARGET
-	kill -SIGINT $RUNPID
-
-	PID_CHECK=$(tr -d '\0' < /proc/$RUNPID/cmdline )
-	if [[ $PID_CHECK == *"vmstat"* ]]; then
-		kill -9 $RUNPID
-	fi
+	# run shadow
+	shadow -d datadir -h 100000 -w $WORKER_CNT $XML_TARGET & RUNPID=$!
+	ps u -p $RUNPID > ps.log
+	while :
+	do
+		sleep 0.1
+		PID_CHECK=$(tr -d '\0' < /proc/$RUNPID/cmdline )
+		if [[ ! $PID_CHECK == *"shadow"* ]]; then
+			break
+		fi
+		ps u --no-headers -p $RUNPID >> ps.log
+	done
     rm -r ./datadir
     if test -f gmon.out; then
 	    rm gmon.out
@@ -50,8 +53,8 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	    rm perf.data
 	fi
     cd -
-    if [ ! -d ./vmstat_results ]; then
-    	mkdir vmstat_results
+    if [ ! -d ./ps_results ]; then
+    	mkdir ps_results
     fi
-    mv ./vmstat.log ./vmstat_results/vmstat$i.log
+    mv $DIR/ps.log ./ps_results/ps$i.log
 done

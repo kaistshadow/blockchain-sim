@@ -34,7 +34,7 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	mpstat -P ALL 1 > mpstat.log & RUNPID=$!
 
 	cd $DIR
-	# run taskset shadow with one core
+	# run taskset shadow
 	taskset -c $TASKSET_PARAM shadow -d datadir -h 100000 -w $WORKER_CNT $XML_TARGET
 	kill -SIGINT $RUNPID
 

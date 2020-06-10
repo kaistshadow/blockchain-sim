@@ -30,8 +30,8 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	FILE_DEST="$XMLROOT"${xmls[i]}
 	DIR=${FILE_DEST%/*}
 	XML_TARGET=${FILE_DEST##*/}
-	# run mpstat
-	mpstat -P ALL 1 > mpstat.log & RUNPID=$!
+	# run vmstat
+	vmstat -a 1 -Sm > vmstat.log & RUNPID=$!
 
 	cd $DIR
 	# run taskset shadow with one core
@@ -39,7 +39,7 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	kill -SIGINT $RUNPID
 
 	PID_CHECK=$(tr -d '\0' < /proc/$RUNPID/cmdline )
-	if [[ $PID_CHECK == *"mpstat"* ]]; then
+	if [[ $PID_CHECK == *"vmstat"* ]]; then
 		kill -9 $RUNPID
 	fi
     rm -r ./datadir
@@ -50,8 +50,8 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	    rm perf.data
 	fi
     cd -
-    if [ ! -d ./mpstat_results ]; then
-    	mkdir mpstat_results
+    if [ ! -d ./vmstat_results ]; then
+    	mkdir vmstat_results
     fi
-    mv ./mpstat.log ./mpstat_results/mpstat$i.log
+    mv ./vmstat.log ./vmstat_results/vmstat$i.log
 done

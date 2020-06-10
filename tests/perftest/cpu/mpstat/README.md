@@ -1,5 +1,15 @@
 # Setup
 
+The mpstat requires that:
+* target plugin shared object should be built before the anaylsis. This can be done by just running python blockchain-sim/setup.py --install on the cloned project base directory.
+* installing Shadow without profile flag(-o). Profiling timer expiration may occur on -pg option.
+
+Before running the perf required tests, run the following script
+```
+bash mpstat_setup.sh
+```
+This script automatically install sysstat tools including mpstat, reinstall Shadow without profiling flags.
+
 # How to run
 
 add target xml on the xmls set in mpstat_run.sh. There is already two example in the mpstat_run.sh:

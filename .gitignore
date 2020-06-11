@@ -61,3 +61,4 @@ tests/perftest/cpu/FlameGraph/
 tests/perftest/cpu/mpstat/mpstat_results
 tests/perftest/memory/vmstat/vmstat_results
 tests/perftest/memory/ps/ps_results
+tests/perftest/memory/pmap/pmap_results

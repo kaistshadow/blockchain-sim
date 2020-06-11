@@ -1,5 +1,5 @@
 #!/bin/bash
-if !(hash ps); then
+if ! $(hash ps); then
 	sudo apt-get install procps
 fi
 # shadow setup: without -pg

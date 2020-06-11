@@ -1,5 +1,5 @@
 #!/bin/bash
-if !(hash pmap); then
+if ! $(hash pmap); then
 	sudo apt-get install procps
 fi
 # shadow setup: without -pg

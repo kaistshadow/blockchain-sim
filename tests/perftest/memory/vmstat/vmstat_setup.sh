@@ -1,5 +1,5 @@
 #!/bin/bash
-if !(hash vmstat); then
+if ! $(hash vmstat); then
 	sudo apt-get install sysstat
 fi
 # shadow setup: without -pg

@@ -4,6 +4,13 @@ if [ $# -ne 1 ]; then
  echo "Usage: $0 worker_count"
  exit -1
 fi
+
+# shadow setup: without -pg
+cd ../../../../shadow/
+./setup build -c
+./setup install
+cd -
+
 re='^[0-9]+$'
 if ! [[ $1 =~ $re ]] ; then
    echo "error: Worker_count is not a positive integer" >&2; exit -1
@@ -54,4 +61,5 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
     	mkdir mpstat_results
     fi
     mv ./mpstat.log ./mpstat_results/mpstat$i.log
+    python mpstat_make_figure.py mpstat$i.log $CORECNT $WORKER_CNT
 done

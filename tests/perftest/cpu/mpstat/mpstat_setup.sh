@@ -2,8 +2,7 @@
 if ! $(hash mpstat); then
 	sudo apt-get install sysstat
 fi
-# shadow setup: without -pg
-cd ../../../../shadow/
-./setup build -c
-./setup install
-cd -
+pip install numpy
+pip install matplotlib
+pip install pandas
+pip install seaborn

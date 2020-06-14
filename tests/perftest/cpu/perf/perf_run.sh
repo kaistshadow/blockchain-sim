@@ -1,4 +1,14 @@
 #!/bin/bash
+
+# shadow setup: with -pg
+cd ../../../../shadow/
+./setup build -o
+./setup install
+cd -
+# system info modification
+sudo sysctl -w kernel.perf_event_paranoid=-1
+sudo sh -c " echo 0 > /proc/sys/kernel/kptr_restrict"
+
 XMLROOT="../../../../tests/regtest"
 CORECNT=$(nproc)
 

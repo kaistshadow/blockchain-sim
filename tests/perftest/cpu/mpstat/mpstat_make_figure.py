@@ -91,6 +91,8 @@ def make_db_partition(partition_str, corecnt, workercnt, time_idx):
         curTarget = int(float(totalList[i])-0.0001)
         if curTarget < 0:
             curTarget = 0
+        if curTarget >= 100 and curTarget < 102:
+            curTarget = 99
         totalRangeList[curTarget//granularity] += 1
     #usrDf = pd.DataFrame(data=usrList, columns=[str(time_idx)])
     #sysDf = pd.DataFrame(data=sysList, columns=[str(time_idx)])
@@ -99,8 +101,9 @@ def make_db_partition(partition_str, corecnt, workercnt, time_idx):
     usrDf = pd.DataFrame(data=usrRangeList, index=RangeIndex, columns=[str(time_idx)]).sort_index(ascending=False)
     sysDf = pd.DataFrame(data=sysRangeList, index=RangeIndex, columns=[str(time_idx)]).sort_index(ascending=False)
     totalDf = pd.DataFrame(data=totalRangeList, index=RangeIndex, columns=[str(time_idx)]).sort_index(ascending=False)
-    
-    return usrDf, sysDf, totalDf
+    totalRevDf = pd.DataFrame(data=totalList, columns=[str(time_idx)])
+
+    return usrDf, sysDf, totalDf, totalRevDf
 
 def log_to_db(filename, corecnt, workercnt):
     db = 1 # required to be set empty
@@ -125,17 +128,19 @@ def log_to_db(filename, corecnt, workercnt):
             for i in range(corecnt+1):
                 db_partition_str += lines[line_idx]
                 line_idx+=1
-            usr, sys, total = make_db_partition(db_partition_str, corecnt, workercnt, timestamp_idx)
+            usr, sys, total, totalRev = make_db_partition(db_partition_str, corecnt, workercnt, timestamp_idx)
             timestamp_idx += 1
             if startFlag == 1:
                 usrDf = usr
                 sysDf = sys
                 totalDf = total
+                totalRevDf = totalRev
                 startFlag = 0
             else:
                 usrDf = pd.merge(usrDf, usr,left_index=True, right_index=True,how='outer')
                 sysDf = pd.merge(sysDf, sys,left_index=True, right_index=True,how='outer')
                 totalDf = pd.merge(totalDf, total,left_index=True, right_index=True,how='outer')
+                totalRevDf = pd.merge(totalRevDf, totalRev,left_index=True, right_index=True,how='outer')
     usrDf = usrDf
     
     wsize = 1
@@ -146,17 +151,25 @@ def log_to_db(filename, corecnt, workercnt):
     else:
         wsize = workercnt
 
-    ax = sns.heatmap(usrDf, annot=True, fmt="g", vmax=wsize, vmin=0)
+    ax = sns.heatmap(usrDf, vmax=wsize, vmin=0)
     fig = ax.get_figure()
+    fig.set_size_inches(100, 8)
     fig.savefig(filename+"usr.png")
     fig.clf()
-    ax = sns.heatmap(sysDf, annot=True, fmt="g", vmax=wsize, vmin=0)
+    ax = sns.heatmap(sysDf, vmax=wsize, vmin=0)
     fig = ax.get_figure()
+    fig.set_size_inches(100, 8)
     fig.savefig(filename+"sys.png")
     fig.clf()
-    ax = sns.heatmap(totalDf, annot=True, fmt="g", vmax=wsize, vmin=0)
+    ax = sns.heatmap(totalDf, vmax=wsize, vmin=0)
     fig = ax.get_figure()
+    fig.set_size_inches(100, 8)
     fig.savefig(filename+"total.png")
+    fig.clf()
+    ax = sns.heatmap(totalRevDf, vmax=100, vmin=0)
+    fig = ax.get_figure()
+    fig.set_size_inches(100, 8)
+    fig.savefig(filename+"totalRev.png")
     fig.clf()
     f.close()
 

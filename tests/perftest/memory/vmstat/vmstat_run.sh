@@ -38,6 +38,8 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	taskset -c $TASKSET_PARAM shadow -d datadir -h 100000 -w $WORKER_CNT $XML_TARGET
 	kill -SIGINT $RUNPID
 
+	sleep 1
+
 	PID_CHECK=$(tr -d '\0' < /proc/$RUNPID/cmdline )
 	if [[ $PID_CHECK == *"vmstat"* ]]; then
 		kill -9 $RUNPID

@@ -40,7 +40,7 @@ ExternalProject_Add_Step(curl BUILD_LIBCURL.so.4.6.0
         )
 
 add_custom_target(curl-custom-shared ALL
-        COMMAND gcc simplecurl.c -o libsimplecurl.so -L../build/3_custom_libcurl/lib -lcurl -shared -fPIC -Wl,-rpath=../build/3_custom_libcurl/lib
+        COMMAND gcc simplecurl.c -o libsimplecurl.so -L${CMAKE_CURRENT_BINARY_DIR}/lib -lcurl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_BINARY_DIR}/lib
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_test(NAME shadow-custom-libcurl

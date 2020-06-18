@@ -19,12 +19,12 @@ xmls=(
     /BLEEP-gossip-10node/10node-txgossip.xml
 	)
 ```
-Currently, all test tartget should be in the regtest directory.
-After modify xmls, just run the script.
+Currently, all test target should be in the regtest directory.
+After modifying xmls, just run the script.
 ```
 bash mpstat_run.sh <worker count>
 ```
-Worker count should be positve interger. Worker thread in Shadow is assigned with -w option on Shadow.
+Worker count should be positive integer. Worker thread in Shadow is assigned with -w option on Shadow.
 The taskset is also given based on the worker count. It assigns Shadow worker thread from the last cpu core.
 For example, when we run the script with 5 worker count in 8 core system, taskset assigns the Shadow to use 3-7 cores from 0-7 cores.
 

@@ -2,7 +2,7 @@
 
 The perf tools requires that:
 * each shared object plugin for Shadow should be complied with -g flag to enable extra debug symbol
-* target plugin shared object should be built before the anaylsis. This can be done by just running python blockchain-sim/setup.py --install on the cloned project base directory.
+* target plugin shared object should be built before the analysis. This can be done by just running python blockchain-sim/setup.py --install on the cloned project base directory.
 
 Before running the perf required tests, run the following script
 ```

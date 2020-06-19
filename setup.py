@@ -95,6 +95,8 @@ if __name__ == '__main__':
 
         ## install bitcoin dependencies
         exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
+        ## bitcoin first run (without wallet enabled) dependencies
+        exec_shell_cmd("sudo apt-get install -y libssl-dev")
 
         ## install
         exec_shell_cmd("mkdir build; cd build; cmake %s ../; make -j8; make install; cd ..;" % cmake_debug_opt)

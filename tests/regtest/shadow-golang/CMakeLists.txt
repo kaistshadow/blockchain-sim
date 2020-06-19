@@ -17,6 +17,6 @@ ADD_GO_LIBRARY(gotest ${SOURCE_FILE})
 
 ### add test
 add_test(NAME regtest-go-test
-        COMMAND shadow ${CMAKE_CURRENT_SOURCE_DIR}/gotest.config.xml
-        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/debug/")
+        COMMAND shadow gotest.config.xml
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 

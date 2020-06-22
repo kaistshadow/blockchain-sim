@@ -16,11 +16,10 @@
                <node id="poi-1">
                  <data key="d0">0.0</data>
                  <data key="d1">0.0.0.0</data>
-                 <data key="d2">US</data>
+                 <data key="d2">BG</data>
                  <data key="d3">10000020000040</data>
                  <data key="d4">10000240</data>
                  <data key="d5">net</data>
-                 
                </node>
                <edge source="poi-1" target="poi-1">
                  <data key="d7">50.0</data>
@@ -31,26 +30,16 @@
              </graphml>]]>
   </topology>
 
-  <!-- the plug-ins we will be using -->
-  <plugin id="bitcoind" path="libBITCOIND.so" />
+  <plugin id="NODE" path="libBITCOIND.so" />
+  <plugin id="CLIENT" path="rest.so" />
 
-  <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="20" />
-  <!-- our nodes -->
+  <kill time="100" />
 
-  <node id="bcdnode1" iphint="0.0.0.0">
-    <application plugin="bitcoind" time="15" arguments="-rpcuser=a -rpcpassword=1234 -rpcport=11111 -datadir=./data/bcdnode1 -debug -printtoconsole -listen=1 " />
-
+  <node id="bleep0" iphint="213.145.108.101" >
+    <application arguments="-testnet -noconnect -datadir=node1 -rest=1 -listen=1 -server=1 -debug -printtoconsole -rpcuser=node1 -rpcpassword=1234 -rpcport=18332 -port=18333 -rpcallowip=89.247.167.117 -rpcbind=213.145.108.101:18332 " plugin="NODE" time="1"/>
   </node>
-
-  <plugin id="bitcoincli" path="rpc.so" />
-
-  <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="20" />
-  <!-- our nodes -->
-
-  <node id="bcdnode2">
-    <application plugin="bitcoincli" time="15" arguments="bcdnode1:11111" />
+  <node id="client0" iphint="89.247.167.117">
+    <application arguments="" plugin="CLIENT" time="10"/>
   </node>
 
 </shadow>

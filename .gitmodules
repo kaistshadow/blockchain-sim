@@ -1,6 +1,3 @@
 [submodule "shadow"]
 	path = shadow
 	url = https://github.com/kaistshadow/shadow
-[submodule "googletest"]
-	path = tests/lib/googletest
-	url = https://github.com/google/googletest

@@ -31,7 +31,7 @@
   </topology>
 
   <plugin id="NODE" path="libBITCOIND.so" />
-  <plugin id="CLIENT" path="rest.so" />
+  <plugin id="CLIENT" path="rpc.so" />
 
   <kill time="100" />
 

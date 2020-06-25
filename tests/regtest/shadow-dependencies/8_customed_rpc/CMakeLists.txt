@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
 enable_testing()
+
 add_subdirectory(libevent2.1-6)
 
 # "3_custom_libcurl" must be installed first.
@@ -18,3 +19,5 @@ add_custom_target(bitcoin-rest ALL
 add_test(NAME shadow-rpc
         COMMAND shadow example.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_subdirectory(1_pthread)

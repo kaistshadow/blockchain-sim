@@ -61,7 +61,10 @@ def prepare_rust():
     #         needWriteRustPath = False
     # if needWriteRustPath:
     #     exec_shell_cmd("echo '%s' >> ~/.bashrc" % rustPath)
-
+def prepare_shadow_dependencies():
+    exec_shell_cmd("sudo apt-get install libcurl4-openssl-dev")
+    exec_shell_cmd("sudo apt-get update -y")
+    exec_shell_cmd("sudo apt-get install -y libidn2-dev")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
@@ -89,6 +92,7 @@ if __name__ == '__main__':
         prepare_shadow()
         prepare_nodejs()
         prepare_rust()
+        prepare_shadow_dependencies()
 
         ## install boost-lib
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")

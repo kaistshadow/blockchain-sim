@@ -59,3 +59,5 @@ tests/perftest/cpu/mpstat/mpstat_results
 
 tests/regtest/shadow-dependencies/1_ubuntu_libcurl/simplecurl
 tests/regtest/shadow-dependencies/8_customed_rpc/libevent2.1-6/
+tests/regtest/shadow-dependencies/8_customed_rpc/node1/
+shadow.data

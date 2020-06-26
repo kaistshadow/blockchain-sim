@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
 enable_testing()
 
-add_custom_target(bitcoin-rpc ALL
+add_custom_target(glibc-pthread ALL
         COMMAND gcc -o pthread.so pthread.c -lpthread -shared -fPIC -g
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 

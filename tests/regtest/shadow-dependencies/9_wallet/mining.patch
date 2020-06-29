@@ -1,0 +1,342 @@
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 947edc698..ab058f691 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -256,7 +256,7 @@ libbitcoin_util_a-clientversion.$(OBJEXT): obj/build.h
+ # from wallet and gui code (see node/README.md). Shared code should go in
+ # libbitcoin_common or libbitcoin_util libraries, instead.
+ libbitcoin_server_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(MINIUPNPC_CPPFLAGS) $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
+-libbitcoin_server_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++libbitcoin_server_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIC_FLAGS)
+ libbitcoin_server_a_SOURCES = \
+   addrdb.cpp \
+   addrman.cpp \
+@@ -315,7 +315,7 @@ endif
+ 
+ if ENABLE_ZMQ
+ libbitcoin_zmq_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(ZMQ_CFLAGS)
+-libbitcoin_zmq_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++libbitcoin_zmq_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIC_FLAGS)
+ libbitcoin_zmq_a_SOURCES = \
+   zmq/zmqabstractnotifier.cpp \
+   zmq/zmqnotificationinterface.cpp \
+@@ -327,7 +327,7 @@ endif
+ # wallet: shared between bitcoind and bitcoin-qt, but only linked
+ # when wallet enabled
+ libbitcoin_wallet_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+-libbitcoin_wallet_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++libbitcoin_wallet_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIC_FLAGS)
+ libbitcoin_wallet_a_SOURCES = \
+   interfaces/wallet.cpp \
+   wallet/coincontrol.cpp \
+@@ -347,14 +347,14 @@ libbitcoin_wallet_a_SOURCES = \
+   $(BITCOIN_CORE_H)
+ 
+ libbitcoin_wallet_tool_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+-libbitcoin_wallet_tool_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++libbitcoin_wallet_tool_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIC_FLAGS)
+ libbitcoin_wallet_tool_a_SOURCES = \
+   wallet/wallettool.cpp \
+   $(BITCOIN_CORE_H)
+ 
+ # crypto primitives library
+ crypto_libbitcoin_crypto_base_a_CPPFLAGS = $(AM_CPPFLAGS)
+-crypto_libbitcoin_crypto_base_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++crypto_libbitcoin_crypto_base_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIC_FLAGS)
+ crypto_libbitcoin_crypto_base_a_SOURCES = \
+   crypto/aes.cpp \
+   crypto/aes.h \
+@@ -386,19 +386,19 @@ if USE_ASM
+ crypto_libbitcoin_crypto_base_a_SOURCES += crypto/sha256_sse4.cpp
+ endif
+ 
+-crypto_libbitcoin_crypto_sse41_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++crypto_libbitcoin_crypto_sse41_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIC_FLAGS)
+ crypto_libbitcoin_crypto_sse41_a_CPPFLAGS = $(AM_CPPFLAGS)
+ crypto_libbitcoin_crypto_sse41_a_CXXFLAGS += $(SSE41_CXXFLAGS)
+ crypto_libbitcoin_crypto_sse41_a_CPPFLAGS += -DENABLE_SSE41
+ crypto_libbitcoin_crypto_sse41_a_SOURCES = crypto/sha256_sse41.cpp
+ 
+-crypto_libbitcoin_crypto_avx2_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++crypto_libbitcoin_crypto_avx2_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIC_FLAGS)
+ crypto_libbitcoin_crypto_avx2_a_CPPFLAGS = $(AM_CPPFLAGS)
+ crypto_libbitcoin_crypto_avx2_a_CXXFLAGS += $(AVX2_CXXFLAGS)
+ crypto_libbitcoin_crypto_avx2_a_CPPFLAGS += -DENABLE_AVX2
+ crypto_libbitcoin_crypto_avx2_a_SOURCES = crypto/sha256_avx2.cpp
+ 
+-crypto_libbitcoin_crypto_shani_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++crypto_libbitcoin_crypto_shani_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIC_FLAGS)
+ crypto_libbitcoin_crypto_shani_a_CPPFLAGS = $(AM_CPPFLAGS)
+ crypto_libbitcoin_crypto_shani_a_CXXFLAGS += $(SHANI_CXXFLAGS)
+ crypto_libbitcoin_crypto_shani_a_CPPFLAGS += -DENABLE_SHANI
+@@ -406,7 +406,7 @@ crypto_libbitcoin_crypto_shani_a_SOURCES = crypto/sha256_shani.cpp
+ 
+ # consensus: shared between all executables that validate any consensus rules.
+ libbitcoin_consensus_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+-libbitcoin_consensus_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++libbitcoin_consensus_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIC_FLAGS)
+ libbitcoin_consensus_a_SOURCES = \
+   amount.h \
+   arith_uint256.cpp \
+@@ -443,7 +443,7 @@ libbitcoin_consensus_a_SOURCES = \
+ 
+ # common: shared between bitcoind, and bitcoin-qt and non-server tools
+ libbitcoin_common_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+-libbitcoin_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++libbitcoin_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIC_FLAGS)
+ libbitcoin_common_a_SOURCES = \
+   base58.cpp \
+   bech32.cpp \
+@@ -479,7 +479,7 @@ libbitcoin_common_a_SOURCES = \
+ # This library *must* be included to make sure that the glibc
+ # backward-compatibility objects and their sanity checks are linked.
+ libbitcoin_util_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+-libbitcoin_util_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++libbitcoin_util_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIC_FLAGS)
+ libbitcoin_util_a_SOURCES = \
+   support/lockedpool.cpp \
+   chainparamsbase.cpp \
+@@ -518,7 +518,7 @@ endif
+ 
+ # cli: shared between bitcoin-cli and bitcoin-qt
+ libbitcoin_cli_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+-libbitcoin_cli_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++libbitcoin_cli_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIC_FLAGS)
+ libbitcoin_cli_a_SOURCES = \
+   rpc/client.cpp \
+   $(BITCOIN_CORE_H)
+@@ -529,7 +529,7 @@ nodist_libbitcoin_util_a_SOURCES = $(srcdir)/obj/build.h
+ # bitcoind binary #
+ bitcoind_SOURCES = bitcoind.cpp
+ bitcoind_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+-bitcoind_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++bitcoind_CXXFLAGS = $(AM_CXXFLAGS) $(PIC_FLAGS)
+ bitcoind_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+ 
+ if TARGET_WINDOWS
+@@ -558,7 +558,7 @@ bitcoind_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(E
+ # bitcoin-cli binary #
+ bitcoin_cli_SOURCES = bitcoin-cli.cpp
+ bitcoin_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
+-bitcoin_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++bitcoin_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIC_FLAGS)
+ bitcoin_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+ 
+ if TARGET_WINDOWS
+@@ -577,7 +577,7 @@ bitcoin_cli_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
+ # bitcoin-tx binary #
+ bitcoin_tx_SOURCES = bitcoin-tx.cpp
+ bitcoin_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+-bitcoin_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++bitcoin_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIC_FLAGS)
+ bitcoin_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+ 
+ if TARGET_WINDOWS
+@@ -598,7 +598,7 @@ bitcoin_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
+ # bitcoin-wallet binary #
+ bitcoin_wallet_SOURCES = bitcoin-wallet.cpp
+ bitcoin_wallet_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+-bitcoin_wallet_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++bitcoin_wallet_CXXFLAGS = $(AM_CXXFLAGS) $(PIC_FLAGS)
+ bitcoin_wallet_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+ 
+ if TARGET_WINDOWS
+@@ -634,7 +634,7 @@ endif
+ libbitcoinconsensus_la_LDFLAGS = $(AM_LDFLAGS) -no-undefined $(RELDFLAGS)
+ libbitcoinconsensus_la_LIBADD = $(LIBSECP256K1)
+ libbitcoinconsensus_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(builddir)/obj -I$(srcdir)/secp256k1/include -DBUILD_BITCOIN_INTERNAL
+-libbitcoinconsensus_la_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++libbitcoinconsensus_la_CXXFLAGS = $(AM_CXXFLAGS) $(PIC_FLAGS)
+ 
+ endif
+ #
+diff --git a/src/Makefile.leveldb.include b/src/Makefile.leveldb.include
+index bd08bcb4e..d7ff7424b 100644
+--- a/src/Makefile.leveldb.include
++++ b/src/Makefile.leveldb.include
+@@ -30,7 +30,7 @@ LEVELDB_CPPFLAGS_INT += -DLEVELDB_PLATFORM_POSIX
+ endif
+ 
+ leveldb_libleveldb_a_CPPFLAGS = $(AM_CPPFLAGS) $(LEVELDB_CPPFLAGS_INT) $(LEVELDB_CPPFLAGS)
+-leveldb_libleveldb_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++leveldb_libleveldb_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIC_FLAGS)
+ 
+ leveldb_libleveldb_a_SOURCES=
+ leveldb_libleveldb_a_SOURCES += leveldb/port/atomic_pointer.h
+diff --git a/src/chainparams.cpp b/src/chainparams.cpp
+index e8bff516b..dd71678a3 100644
+--- a/src/chainparams.cpp
++++ b/src/chainparams.cpp
+@@ -177,9 +177,9 @@ public:
+         consensus.BIP65Height = 581885; // 00000000007f6655f22f98e72ed80d8b06dc761d5da09df0fa1dc4be4f861eb6
+         consensus.BIP66Height = 330776; // 000000002104c8c45e99a8853285a3b592602a3ccde2b832481da85e9e4ba182
+         consensus.CSVHeight = 770112; // 00000000025e930139bac5c6c31a403776da130831ab85be56578f3fa75369bb
+-        consensus.SegwitHeight = 834624; // 00000000002b980fcd729daaa248fd9316a5200e9b367f4ff2c42453e84201ca
++        consensus.SegwitHeight = 0; // 00000000002b980fcd729daaa248fd9316a5200e9b367f4ff2c42453e84201ca
+         consensus.MinBIP9WarningHeight = 836640; // segwit activation height + miner confirmation window
+-        consensus.powLimit = uint256S("00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
++        consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+         consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // two weeks
+         consensus.nPowTargetSpacing = 10 * 60;
+         consensus.fPowAllowMinDifficultyBlocks = true;
+@@ -191,10 +191,10 @@ public:
+         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
+ 
+         // The best chain should have at least this much work.
+-        consensus.nMinimumChainWork = uint256S("0x00000000000000000000000000000000000000000000012b2a3a62424f21c918");
++        consensus.nMinimumChainWork = uint256S("0x00");
+ 
+         // By default assume that the signatures in ancestors of this block are valid.
+-        consensus.defaultAssumeValid = uint256S("0x00000000000000b7ab6ce61eb6d571003fbe5fe892da4c9b740c49a07542462d"); // 1580000
++        consensus.defaultAssumeValid = uint256S("0x000000000000056c49030c174179b52a928c870e6e8a822c75973b7970cfbd01"); // 1580000
+ 
+         pchMessageStart[0] = 0x0b;
+         pchMessageStart[1] = 0x11;
+@@ -205,9 +205,9 @@ public:
+         m_assumed_blockchain_size = 30;
+         m_assumed_chain_state_size = 2;
+ 
+-        genesis = CreateGenesisBlock(1296688602, 414098458, 0x1d00ffff, 1, 50 * COIN);
++        genesis = CreateGenesisBlock(1231006505, 2085223420, 0x1e0fffff, 1, 50 * COIN);
+         consensus.hashGenesisBlock = genesis.GetHash();
+-        assert(consensus.hashGenesisBlock == uint256S("0x000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943"));
++        assert(consensus.hashGenesisBlock == uint256S("0x000006d66f3cd0f0e2bf5ff0f3aa66bf4deec8eff96b7bc13fc7622532b10ad8"));
+         assert(genesis.hashMerkleRoot == uint256S("0x4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"));
+ 
+         vFixedSeeds.clear();
+@@ -242,7 +242,7 @@ public:
+         chainTxData = ChainTxData{
+             // Data from RPC: getchaintxstats 4096 00000000000000b7ab6ce61eb6d571003fbe5fe892da4c9b740c49a07542462d
+             /* nTime    */ 1569741320,
+-            /* nTxCount */ 52318009,
++            /* nTxCount */ 13483,
+             /* dTxRate  */ 0.1517002392872353,
+         };
+     }
+diff --git a/src/random.cpp b/src/random.cpp
+index 675b177af..8d9401914 100644
+--- a/src/random.cpp
++++ b/src/random.cpp
+@@ -246,6 +246,7 @@ static void Strengthen(const unsigned char (&seed)[32], int microseconds, CSHA51
+     // Hash loop
+     unsigned char buffer[64];
+     int64_t stop = GetTimeMicros() + microseconds;
++    int trial = 0;
+     do {
+         for (int i = 0; i < 1000; ++i) {
+             inner_hasher.Finalize(buffer);
+@@ -255,7 +256,7 @@ static void Strengthen(const unsigned char (&seed)[32], int microseconds, CSHA51
+         // Benchmark operation and feed it into outer hasher.
+         int64_t perf = GetPerformanceCounter();
+         hasher.Write((const unsigned char*)&perf, sizeof(perf));
+-    } while (GetTimeMicros() < stop);
++    } while (GetTimeMicros() < stop && trial++ < 100);
+ 
+     // Produce output from inner state and feed it to outer hasher.
+     inner_hasher.Finalize(buffer);
+diff --git a/src/rpc/mining.cpp b/src/rpc/mining.cpp
+index 07c295863..eb9db0f79 100644
+--- a/src/rpc/mining.cpp
++++ b/src/rpc/mining.cpp
+@@ -9,6 +9,8 @@
+ #include <consensus/consensus.h>
+ #include <consensus/params.h>
+ #include <consensus/validation.h>
++#include <node/context.h>
++
+ #include <core_io.h>
+ #include <key_io.h>
+ #include <miner.h>
+@@ -33,6 +35,7 @@
+ 
+ #include <memory>
+ #include <stdint.h>
++#include <boost/thread.hpp>
+ 
+ /**
+  * Return average network hashes per second based on the last 'lookup' blocks,
+@@ -99,6 +102,48 @@ static UniValue getnetworkhashps(const JSONRPCRequest& request)
+     return GetNetworkHashPS(!request.params[0].isNull() ? request.params[0].get_int() : 120, !request.params[1].isNull() ? request.params[1].get_int() : -1);
+ }
+ 
++void mining_thread(const CScript& coinbase_script)
++{
++    int nHeightEnd = 0;
++    int nHeight = 0;
++
++    {   // Don't keep cs_main locked
++        LOCK(cs_main);
++        nHeight = ::ChainActive().Height();
++        nHeightEnd = 1000001;
++    }
++    unsigned int nExtraNonce = 0;
++    UniValue blockHashes(UniValue::VARR);
++
++    while (nHeight < nHeightEnd && !ShutdownRequested())
++    {
++        uint64_t n_tries = 1000001;
++        std::unique_ptr<CBlockTemplate> pblocktemplate(BlockAssembler(Params()).CreateNewBlock(coinbase_script));
++        if (!pblocktemplate.get())
++            throw JSONRPCError(RPC_INTERNAL_ERROR, "Couldn't create new block");
++        CBlock *pblock = &pblocktemplate->block;
++        {
++            LOCK(cs_main);
++            IncrementExtraNonce(pblock, ::ChainActive().Tip(), nExtraNonce);
++        }
++        while (n_tries > 0 && pblock->nNonce < std::numeric_limits<uint32_t>::max() && !CheckProofOfWork(pblock->GetHash(), pblock->nBits, Params().GetConsensus()) && !ShutdownRequested()) {
++            ++pblock->nNonce;
++            --n_tries;
++        }
++        if (n_tries == 0 || ShutdownRequested()) {
++            break;
++        }
++        if (pblock->nNonce == std::numeric_limits<uint32_t>::max()) {
++            continue;
++        }
++        std::shared_ptr<const CBlock> shared_pblock = std::make_shared<const CBlock>(*pblock);
++        if (!ProcessNewBlock(Params(), shared_pblock, true, nullptr))
++            throw JSONRPCError(RPC_INTERNAL_ERROR, "ProcessNewBlock, block not accepted");
++        ++nHeight;
++        blockHashes.push_back(pblock->GetHash().GetHex());
++    }
++}
++
+ static UniValue generateBlocks(const CScript& coinbase_script, int nGenerate, uint64_t nMaxTries)
+ {
+     int nHeightEnd = 0;
+@@ -161,6 +206,8 @@ static UniValue generatetoaddress(const JSONRPCRequest& request)
+             }.Check(request);
+ 
+     int nGenerate = request.params[0].get_int();
++    static boost::thread_group* minerThreads = NULL;
++
+     uint64_t nMaxTries = 1000000;
+     if (!request.params[2].isNull()) {
+         nMaxTries = request.params[2].get_int();
+@@ -172,6 +219,8 @@ static UniValue generatetoaddress(const JSONRPCRequest& request)
+     }
+ 
+     CScript coinbase_script = GetScriptForDestination(destination);
++    minerThreads = new boost::thread_group();
++    minerThreads->create_thread(boost::bind(&mining_thread, coinbase_script));
+ 
+     return generateBlocks(coinbase_script, nGenerate, nMaxTries);
+ }
+diff --git a/src/validation.cpp b/src/validation.cpp
+index ac98bd61c..2dfea7f31 100644
+--- a/src/validation.cpp
++++ b/src/validation.cpp
+@@ -3433,7 +3433,12 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationSta
+     // Check timestamp against prev
+     if (block.GetBlockTime() <= pindexPrev->GetMedianTimePast())
+         return state.Invalid(ValidationInvalidReason::BLOCK_INVALID_HEADER, false, REJECT_INVALID, "time-too-old", "block's timestamp is too early");
+-
++    #include <iostream>
++    std::cout<<"------------------------------------------------"<<std::endl;
++    std::cout<<"block.GetBlockTime() : "<<block.GetBlockTime()<<std::endl;
++    std::cout<<"---------nAdjustedTime : "<<nAdjustedTime<<std::endl;
++    std::cout<<"---------MAX_FUTURE_BLOCK_TIME : "<<MAX_FUTURE_BLOCK_TIME<<std::endl;
++    std::cout<<"------------------------------------------------"<<std::endl;
+     // Check timestamp
+     if (block.GetBlockTime() > nAdjustedTime + MAX_FUTURE_BLOCK_TIME)
+         return state.Invalid(ValidationInvalidReason::BLOCK_TIME_FUTURE, false, REJECT_INVALID, "time-too-new", "block timestamp too far in the future");

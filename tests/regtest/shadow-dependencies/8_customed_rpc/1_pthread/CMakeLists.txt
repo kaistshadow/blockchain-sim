@@ -5,6 +5,6 @@ add_custom_target(glibc-pthread ALL
         COMMAND gcc -o pthread.so pthread.c -lpthread -shared -fPIC -g
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_test(NAME shadow-pthread
+add_test(NAME shadow-glibc-pthread
         COMMAND shadow example_pthread.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

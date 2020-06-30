@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
 enable_testing()
 
-add_subdirectory(libevent2.1-6)
-
 # copy libBITCOIND
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../../shadow-bitcoin/1_firstrun/libBITCOIND.so
         DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/)
@@ -24,4 +22,3 @@ add_test(NAME shadow-bitcoin-rpc
         COMMAND shadow example.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_subdirectory(1_pthread)

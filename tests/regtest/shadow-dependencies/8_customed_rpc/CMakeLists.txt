@@ -18,7 +18,8 @@ add_custom_target(bitcoin-rest ALL
         COMMAND gcc -o rest.so rest.c -shared -fPIC -g
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_test(NAME shadow-bitcoin-rpc
+add_test(NAME shadow-bitcoin-libevent-rpc
         COMMAND shadow example.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
+add_subdirectory(1_pthread)

@@ -78,6 +78,6 @@ add_custom_target(curl-custom-rpc-shared ALL
 ## enable CTEST
 enable_testing()
 
-add_test(NAME shadow-libevent-rpc
+add_test(NAME shadow-bitcoin-wallet
 		COMMAND shadow example.xml
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

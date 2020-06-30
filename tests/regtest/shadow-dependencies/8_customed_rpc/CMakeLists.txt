@@ -7,6 +7,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../../shadow-bitcoin/1_firstrun/libBITCOIN
         
 # "3_custom_libcurl" must be installed first.
 add_custom_target(bitcoin-dir-prepare ALL
+        COMMAND rm -rf node1
         COMMAND mkdir node1
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 

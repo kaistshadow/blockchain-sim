@@ -72,7 +72,6 @@ add_custom_target(curl-custom-rpc-shared ALL
 		COMMAND rm -rf data/bcdnode2
 		COMMAND mkdir -p data/bcdnode1
 		COMMAND mkdir -p data/bcdnode2
-		COMMAND mkdir node10
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 ## enable CTEST

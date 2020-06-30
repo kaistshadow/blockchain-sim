@@ -39,7 +39,7 @@
   <!-- our nodes -->
 
   <node id="bleep1">
-    <application plugin="NODE" time="1" arguments="-debug -testnet -datadir=node10 -noconnect -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=11.0.0.1 -rpcallowip=11.0.0.2 -rpcbind=11.0.0.1 -rpcbind=11.0.0.2" />
+    <application plugin="NODE" time="1" arguments="-debug -testnet -datadir=data/bcdnode1 -noconnect -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=11.0.0.1 -rpcallowip=11.0.0.2 -rpcbind=11.0.0.1 -rpcbind=11.0.0.2" />
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>
 
@@ -55,7 +55,7 @@
     <application plugin="rpc" time="14" arguments="" />
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>
-  <node id="bleep4">
+  <node id="bleep5">
     <application plugin="rpc" time="20" arguments="" />
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>

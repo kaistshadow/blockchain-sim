@@ -35,10 +35,10 @@
 
   <kill time="100" />
 
-  <node id="bleep0" iphint="213.145.108.101" >
+  <node id="node" iphint="213.145.108.101" >
     <application arguments="-testnet -noconnect -datadir=node1 -rest=1 -listen=1 -server=1 -debug -printtoconsole -rpcuser=node1 -rpcpassword=1234 -rpcport=18332 -port=18333 -rpcallowip=89.247.167.117 -rpcbind=213.145.108.101:18332 " plugin="NODE" time="1"/>
   </node>
-  <node id="client0" iphint="89.247.167.117">
+  <node id="client" iphint="89.247.167.117">
     <application arguments="" plugin="CLIENT" time="10"/>
   </node>
 

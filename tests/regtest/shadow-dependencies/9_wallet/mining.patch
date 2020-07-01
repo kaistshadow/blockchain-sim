@@ -1,0 +1,130 @@
+diff --git a/src/chainparams.cpp b/src/chainparams.cpp
+index e8bff516b..dd71678a3 100644
+--- a/src/chainparams.cpp
++++ b/src/chainparams.cpp
+@@ -177,9 +177,9 @@ public:
+         consensus.BIP65Height = 581885; // 00000000007f6655f22f98e72ed80d8b06dc761d5da09df0fa1dc4be4f861eb6
+         consensus.BIP66Height = 330776; // 000000002104c8c45e99a8853285a3b592602a3ccde2b832481da85e9e4ba182
+         consensus.CSVHeight = 770112; // 00000000025e930139bac5c6c31a403776da130831ab85be56578f3fa75369bb
+-        consensus.SegwitHeight = 834624; // 00000000002b980fcd729daaa248fd9316a5200e9b367f4ff2c42453e84201ca
++        consensus.SegwitHeight = 0; // 00000000002b980fcd729daaa248fd9316a5200e9b367f4ff2c42453e84201ca
+         consensus.MinBIP9WarningHeight = 836640; // segwit activation height + miner confirmation window
+-        consensus.powLimit = uint256S("00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
++        consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+         consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // two weeks
+         consensus.nPowTargetSpacing = 10 * 60;
+         consensus.fPowAllowMinDifficultyBlocks = true;
+@@ -191,10 +191,10 @@ public:
+         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
+ 
+         // The best chain should have at least this much work.
+-        consensus.nMinimumChainWork = uint256S("0x00000000000000000000000000000000000000000000012b2a3a62424f21c918");
++        consensus.nMinimumChainWork = uint256S("0x00");
+ 
+         // By default assume that the signatures in ancestors of this block are valid.
+-        consensus.defaultAssumeValid = uint256S("0x00000000000000b7ab6ce61eb6d571003fbe5fe892da4c9b740c49a07542462d"); // 1580000
++        consensus.defaultAssumeValid = uint256S("0x000000000000056c49030c174179b52a928c870e6e8a822c75973b7970cfbd01"); // 1580000
+ 
+         pchMessageStart[0] = 0x0b;
+         pchMessageStart[1] = 0x11;
+@@ -205,9 +205,9 @@ public:
+         m_assumed_blockchain_size = 30;
+         m_assumed_chain_state_size = 2;
+ 
+-        genesis = CreateGenesisBlock(1296688602, 414098458, 0x1d00ffff, 1, 50 * COIN);
++        genesis = CreateGenesisBlock(1231006505, 2085223420, 0x1e0fffff, 1, 50 * COIN);
+         consensus.hashGenesisBlock = genesis.GetHash();
+-        assert(consensus.hashGenesisBlock == uint256S("0x000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943"));
++        assert(consensus.hashGenesisBlock == uint256S("0x000006d66f3cd0f0e2bf5ff0f3aa66bf4deec8eff96b7bc13fc7622532b10ad8"));
+         assert(genesis.hashMerkleRoot == uint256S("0x4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"));
+ 
+         vFixedSeeds.clear();
+@@ -242,7 +242,7 @@ public:
+         chainTxData = ChainTxData{
+             // Data from RPC: getchaintxstats 4096 00000000000000b7ab6ce61eb6d571003fbe5fe892da4c9b740c49a07542462d
+             /* nTime    */ 1569741320,
+-            /* nTxCount */ 52318009,
++            /* nTxCount */ 13483,
+             /* dTxRate  */ 0.1517002392872353,
+         };
+     }
+diff --git a/src/rpc/mining.cpp b/src/rpc/mining.cpp
+index 07c295863..534da1fda 100644
+--- a/src/rpc/mining.cpp
++++ b/src/rpc/mining.cpp
+@@ -34,6 +34,8 @@
+ #include <memory>
+ #include <stdint.h>
+ 
++#include <boost/thread.hpp>
++
+ /**
+  * Return average network hashes per second based on the last 'lookup' blocks,
+  * or from the last difficulty change if 'lookup' is nonpositive.
+@@ -99,6 +101,48 @@ static UniValue getnetworkhashps(const JSONRPCRequest& request)
+     return GetNetworkHashPS(!request.params[0].isNull() ? request.params[0].get_int() : 120, !request.params[1].isNull() ? request.params[1].get_int() : -1);
+ }
+ 
++void mining_thread(const CScript& coinbase_script)
++{
++    int nHeightEnd = 0;
++    int nHeight = 0;
++
++    {   // Don't keep cs_main locked
++        LOCK(cs_main);
++        nHeight = ::ChainActive().Height();
++        nHeightEnd = 1000001;
++    }
++    unsigned int nExtraNonce = 0;
++    UniValue blockHashes(UniValue::VARR);
++
++    while (nHeight < nHeightEnd && !ShutdownRequested())
++    {
++        uint64_t n_tries = 1000001;
++        std::unique_ptr<CBlockTemplate> pblocktemplate(BlockAssembler(Params()).CreateNewBlock(coinbase_script));
++        if (!pblocktemplate.get())
++            throw JSONRPCError(RPC_INTERNAL_ERROR, "Couldn't create new block");
++        CBlock *pblock = &pblocktemplate->block;
++        {
++            LOCK(cs_main);
++            IncrementExtraNonce(pblock, ::ChainActive().Tip(), nExtraNonce);
++        }
++        while (n_tries > 0 && pblock->nNonce < std::numeric_limits<uint32_t>::max() && !CheckProofOfWork(pblock->GetHash(), pblock->nBits, Params().GetConsensus()) && !ShutdownRequested()) {
++            ++pblock->nNonce;
++            --n_tries;
++        }
++        if (n_tries == 0 || ShutdownRequested()) {
++            break;
++        }
++        if (pblock->nNonce == std::numeric_limits<uint32_t>::max()) {
++            continue;
++        }
++        std::shared_ptr<const CBlock> shared_pblock = std::make_shared<const CBlock>(*pblock);
++        if (!ProcessNewBlock(Params(), shared_pblock, true, nullptr))
++            throw JSONRPCError(RPC_INTERNAL_ERROR, "ProcessNewBlock, block not accepted");
++        ++nHeight;
++        blockHashes.push_back(pblock->GetHash().GetHex());
++    }
++}
++
+ static UniValue generateBlocks(const CScript& coinbase_script, int nGenerate, uint64_t nMaxTries)
+ {
+     int nHeightEnd = 0;
+@@ -161,6 +205,7 @@ static UniValue generatetoaddress(const JSONRPCRequest& request)
+             }.Check(request);
+ 
+     int nGenerate = request.params[0].get_int();
++    static boost::thread_group* minerThreads = NULL;
+     uint64_t nMaxTries = 1000000;
+     if (!request.params[2].isNull()) {
+         nMaxTries = request.params[2].get_int();
+@@ -172,7 +217,8 @@ static UniValue generatetoaddress(const JSONRPCRequest& request)
+     }
+ 
+     CScript coinbase_script = GetScriptForDestination(destination);
+-
++    minerThreads = new boost::thread_group();
++    minerThreads->create_thread(boost::bind(&mining_thread, coinbase_script));
+     return generateBlocks(coinbase_script, nGenerate, nMaxTries);
+ }
+ 

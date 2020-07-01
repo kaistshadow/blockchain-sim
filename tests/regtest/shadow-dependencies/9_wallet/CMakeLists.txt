@@ -44,7 +44,7 @@ ExternalProject_Add_Step(bitcoind-with-wallet PATCH_FOR_PIC
 ExternalProject_Add_Step(bitcoind-with-wallet PATCH_FOR_SOURCE
 		#        COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/../DisableSanityCheck.patch || echo "skip DisableSanityCheck.patch"
 		COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/InfiniteLoop.patch || echo "skip InfiniteLoop.patch"
-		COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/mining.patch || echo "skip InfiniteLoop.patch"
+		COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/mining.patch || echo "skip mining.patch"
 
 		COMMENT "Patch bitcoin src to resolve infinite execution."
 		DEPENDEES patch

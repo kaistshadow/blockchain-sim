@@ -1,8 +1,8 @@
 diff --git a/src/chainparams.cpp b/src/chainparams.cpp
-index 092c45e4c..e3f081ff4 100644
+index e8bff516b..dd71678a3 100644
 --- a/src/chainparams.cpp
 +++ b/src/chainparams.cpp
-@@ -179,9 +179,9 @@ public:
+@@ -177,9 +177,9 @@ public:
          consensus.BIP65Height = 581885; // 00000000007f6655f22f98e72ed80d8b06dc761d5da09df0fa1dc4be4f861eb6
          consensus.BIP66Height = 330776; // 000000002104c8c45e99a8853285a3b592602a3ccde2b832481da85e9e4ba182
          consensus.CSVHeight = 770112; // 00000000025e930139bac5c6c31a403776da130831ab85be56578f3fa75369bb
@@ -14,21 +14,21 @@ index 092c45e4c..e3f081ff4 100644
          consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // two weeks
          consensus.nPowTargetSpacing = 10 * 60;
          consensus.fPowAllowMinDifficultyBlocks = true;
-@@ -193,10 +193,10 @@ public:
+@@ -191,10 +191,10 @@ public:
          consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
  
          // The best chain should have at least this much work.
--        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000001495c1d5a01e2af8a23");
+-        consensus.nMinimumChainWork = uint256S("0x00000000000000000000000000000000000000000000012b2a3a62424f21c918");
 +        consensus.nMinimumChainWork = uint256S("0x00");
  
          // By default assume that the signatures in ancestors of this block are valid.
--        consensus.defaultAssumeValid = uint256S("0x000000000000056c49030c174179b52a928c870e6e8a822c75973b7970cfbd01"); // 1692000
+-        consensus.defaultAssumeValid = uint256S("0x00000000000000b7ab6ce61eb6d571003fbe5fe892da4c9b740c49a07542462d"); // 1580000
 +        consensus.defaultAssumeValid = uint256S("0x000000000000056c49030c174179b52a928c870e6e8a822c75973b7970cfbd01"); // 1580000
  
          pchMessageStart[0] = 0x0b;
          pchMessageStart[1] = 0x11;
-@@ -207,9 +207,9 @@ public:
-         m_assumed_blockchain_size = 40;
+@@ -205,9 +205,9 @@ public:
+         m_assumed_blockchain_size = 30;
          m_assumed_chain_state_size = 2;
  
 -        genesis = CreateGenesisBlock(1296688602, 414098458, 0x1d00ffff, 1, 50 * COIN);
@@ -39,32 +39,20 @@ index 092c45e4c..e3f081ff4 100644
          assert(genesis.hashMerkleRoot == uint256S("0x4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"));
  
          vFixedSeeds.clear();
-diff --git a/src/random.cpp b/src/random.cpp
-index 9c9a35709..7c84dcec8 100644
---- a/src/random.cpp
-+++ b/src/random.cpp
-@@ -231,6 +231,7 @@ static void Strengthen(const unsigned char (&seed)[32], int microseconds, CSHA51
-     // Hash loop
-     unsigned char buffer[64];
-     int64_t stop = GetTimeMicros() + microseconds;
-+    int trial = 0;
-     do {
-         for (int i = 0; i < 1000; ++i) {
-             inner_hasher.Finalize(buffer);
-@@ -240,7 +241,7 @@ static void Strengthen(const unsigned char (&seed)[32], int microseconds, CSHA51
-         // Benchmark operation and feed it into outer hasher.
-         int64_t perf = GetPerformanceCounter();
-         hasher.Write((const unsigned char*)&perf, sizeof(perf));
--    } while (GetTimeMicros() < stop);
-+    } while (GetTimeMicros() < stop && trial++ < 100);
- 
-     // Produce output from inner state and feed it to outer hasher.
-     inner_hasher.Finalize(buffer);
+@@ -242,7 +242,7 @@ public:
+         chainTxData = ChainTxData{
+             // Data from RPC: getchaintxstats 4096 00000000000000b7ab6ce61eb6d571003fbe5fe892da4c9b740c49a07542462d
+             /* nTime    */ 1569741320,
+-            /* nTxCount */ 52318009,
++            /* nTxCount */ 13483,
+             /* dTxRate  */ 0.1517002392872353,
+         };
+     }
 diff --git a/src/rpc/mining.cpp b/src/rpc/mining.cpp
-index fee6a893e..362b104c7 100644
+index 07c295863..534da1fda 100644
 --- a/src/rpc/mining.cpp
 +++ b/src/rpc/mining.cpp
-@@ -39,6 +39,8 @@
+@@ -34,6 +34,8 @@
  #include <memory>
  #include <stdint.h>
  
@@ -73,10 +61,10 @@ index fee6a893e..362b104c7 100644
  /**
   * Return average network hashes per second based on the last 'lookup' blocks,
   * or from the last difficulty change if 'lookup' is nonpositive.
-@@ -80,6 +82,47 @@ static UniValue GetNetworkHashPS(int lookup, int height) {
- 
-     return workDiff.getdouble() / timeDiff;
+@@ -99,6 +101,48 @@ static UniValue getnetworkhashps(const JSONRPCRequest& request)
+     return GetNetworkHashPS(!request.params[0].isNull() ? request.params[0].get_int() : 120, !request.params[1].isNull() ? request.params[1].get_int() : -1);
  }
+ 
 +void mining_thread(const CScript& coinbase_script)
 +{
 +    int nHeightEnd = 0;
@@ -118,25 +106,25 @@ index fee6a893e..362b104c7 100644
 +        blockHashes.push_back(pblock->GetHash().GetHex());
 +    }
 +}
- 
- static UniValue getnetworkhashps(const JSONRPCRequest& request)
++
+ static UniValue generateBlocks(const CScript& coinbase_script, int nGenerate, uint64_t nMaxTries)
  {
-@@ -220,7 +263,7 @@ static UniValue generatetodescriptor(const JSONRPCRequest& request)
-             "\nGenerate 11 blocks to mydesc\n" + HelpExampleCli("generatetodescriptor", "11 \"mydesc\"")},
-     }
-         .Check(request);
--
+     int nHeightEnd = 0;
+@@ -161,6 +205,7 @@ static UniValue generatetoaddress(const JSONRPCRequest& request)
+             }.Check(request);
+ 
+     int nGenerate = request.params[0].get_int();
 +    static boost::thread_group* minerThreads = NULL;
-     const int num_blocks{request.params[0].get_int()};
-     const uint64_t max_tries{request.params[2].isNull() ? DEFAULT_MAX_TRIES : request.params[2].get_int()};
+     uint64_t nMaxTries = 1000000;
+     if (!request.params[2].isNull()) {
+         nMaxTries = request.params[2].get_int();
+@@ -172,7 +217,8 @@ static UniValue generatetoaddress(const JSONRPCRequest& request)
+     }
  
-@@ -233,6 +276,9 @@ static UniValue generatetodescriptor(const JSONRPCRequest& request)
-     const CTxMemPool& mempool = EnsureMemPool(request.context);
-     ChainstateManager& chainman = EnsureChainman(request.context);
- 
+     CScript coinbase_script = GetScriptForDestination(destination);
+-
 +    minerThreads = new boost::thread_group();
 +    minerThreads->create_thread(boost::bind(&mining_thread, coinbase_script));
-+
-     return generateBlocks(chainman, mempool, coinbase_script, num_blocks, max_tries);
+     return generateBlocks(coinbase_script, nGenerate, nMaxTries);
  }
  

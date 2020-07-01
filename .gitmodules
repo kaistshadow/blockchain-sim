@@ -1,9 +1,3 @@
 [submodule "shadow"]
 	path = shadow
 	url = https://github.com/kaistshadow/shadow
-[submodule "shadow-bitcoin/shadow-plugin-bitcoin"]
-	path = deprecated/shadow-bitcoin/shadow-plugin-bitcoin
-	url = https://github.com/kaistshadow/shadow-plugin-bitcoin
-[submodule "googletest"]
-	path = tests/lib/googletest
-	url = https://github.com/google/googletest

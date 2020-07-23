@@ -11,7 +11,7 @@
 #
 # ``OpenSSL_1_1_0h::SSL``
 #   The OpenSSL ``ssl`` library, if found.
-# ``OpenSSL_1_10h::Crypto``
+# ``OpenSSL_1_1_0h::Crypto``
 #   The OpenSSL ``crypto`` library, if found.
 #
 # Result Variables
@@ -19,22 +19,22 @@
 #
 # This module will set the following variables in your project:
 #
-# ``OPENSSL_1_1_0h_FOUND``
+# ``OPENSSL_1_1_0H_FOUND``
 #   System has the OpenSSL library.
-# ``OPENSSL_1_1_0h_INCLUDE_DIR``
+# ``OPENSSL_1_1_0H_INCLUDE_DIR``
 #   The OpenSSL include directory.
-# ``OPENSSL_1_1_0h_CRYPTO_LIBRARY``
+# ``OPENSSL_1_1_0H_CRYPTO_LIBRARY``
 #   The OpenSSL crypto library.
-# ``OPENSSL_1_1_0h_SSL_LIBRARY``
+# ``OPENSSL_1_1_0H_SSL_LIBRARY``
 #   The OpenSSL SSL library.
-# ``OPENSSL_1_1_0h_LIBRARIES``
+# ``OPENSSL_1_1_0H_LIBRARIES``
 #   All OpenSSL libraries.
 #
 # Hints
 # ^^^^^
 #
 
-find_path(OPENSSL_1_1_0h_INCLUDE_DIR
+find_path(OPENSSL_1_1_0H_INCLUDE_DIR
   NAMES
     openssl/ssl.h
   HINTS
@@ -46,7 +46,7 @@ find_path(OPENSSL_1_1_0h_INCLUDE_DIR
 )
 
 
-find_library(OPENSSL_1_1_0h_SSL_LIBRARY
+find_library(OPENSSL_1_1_0H_SSL_LIBRARY
   NAMES
   ssl
   NAMES_PER_DIR
@@ -58,7 +58,7 @@ find_library(OPENSSL_1_1_0h_SSL_LIBRARY
   NO_SYSTEM_ENVIRONMENT_PATH
 )
 
-find_library(OPENSSL_1_1_0h_CRYPTO_LIBRARY
+find_library(OPENSSL_1_1_0H_CRYPTO_LIBRARY
   NAMES
   crypto
   NAMES_PER_DIR
@@ -70,11 +70,11 @@ find_library(OPENSSL_1_1_0h_CRYPTO_LIBRARY
   NO_SYSTEM_ENVIRONMENT_PATH
 )
 
-mark_as_advanced(OPENSSL_1_1_0h_CRYPTO_LIBRARY OPENSSL_1_1_0h_SSL_LIBRARY)
+mark_as_advanced(OPENSSL_1_1_0H_CRYPTO_LIBRARY OPENSSL_1_1_0H_SSL_LIBRARY)
 
 # compat defines
-set(OPENSSL_1_1_0h_SSL_LIBRARIES ${OPENSSL_1_1_0h_SSL_LIBRARY})
-set(OPENSSL_1_1_0h_CRYPTO_LIBRARIES ${OPENSSL_1_1_0h_CRYPTO_LIBRARY})
+set(OPENSSL_1_1_0H_SSL_LIBRARIES ${OPENSSL_1_1_0H_SSL_LIBRARY})
+set(OPENSSL_1_1_0H_CRYPTO_LIBRARIES ${OPENSSL_1_1_0H_CRYPTO_LIBRARY})
 
 
 # # for versioning check
@@ -109,8 +109,8 @@ set(OPENSSL_1_1_0h_CRYPTO_LIBRARIES ${OPENSSL_1_1_0h_CRYPTO_LIBRARY})
 #   set(${DEC} ${_res} PARENT_SCOPE)
 # endfunction()
 
-# if(OPENSSL_1_1_0h_INCLUDE_DIR AND EXISTS "${OPENSSL_1_1_0h_INCLUDE_DIR}/openssl/opensslv.h")
-#   file(STRINGS "${OPENSSL_1_1_0h_INCLUDE_DIR}/openssl/opensslv.h" openssl_version_str
+# if(OPENSSL_1_1_0H_INCLUDE_DIR AND EXISTS "${OPENSSL_1_1_0H_INCLUDE_DIR}/openssl/opensslv.h")
+#   file(STRINGS "${OPENSSL_1_1_0H_INCLUDE_DIR}/openssl/opensslv.h" openssl_version_str
 #        REGEX "^#[\t ]*define[\t ]+OPENSSL_VERSION_NUMBER[\t ]+0x([0-9a-fA-F])+.*")
 
 #   if(openssl_version_str)
@@ -150,42 +150,42 @@ set(OPENSSL_1_1_0h_CRYPTO_LIBRARIES ${OPENSSL_1_1_0h_CRYPTO_LIBRARY})
 # endif ()
 
 
-set(OPENSSL_1_1_0h_LIBRARIES ${OPENSSL_1_1_0h_SSL_LIBRARY} ${OPENSSL_1_1_0h_CRYPTO_LIBRARY} )
+set(OPENSSL_1_1_0H_LIBRARIES ${OPENSSL_1_1_0H_SSL_LIBRARY} ${OPENSSL_1_1_0H_CRYPTO_LIBRARY} )
 
 include(${CMAKE_ROOT}/Modules/FindPackageHandleStandardArgs.cmake)
 
-find_package_handle_standard_args(OPENSSL_1_1_0h
+find_package_handle_standard_args(OpenSSL_1_1_0h
   REQUIRED_VARS
     #OPENSSL_SSL_LIBRARY # FIXME: require based on a component request?
-    OPENSSL_1_1_0h_CRYPTO_LIBRARY
-    OPENSSL_1_1_0h_INCLUDE_DIR
+    OPENSSL_1_1_0H_CRYPTO_LIBRARY
+    OPENSSL_1_1_0H_INCLUDE_DIR
   FAIL_MESSAGE
-    "Could NOT find OpenSSL, try to install OpenSSL in external library folder."
+    "Could NOT find OpenSSL(v1.1.0h), try to install OpenSSL(v1.1.0h) in external library folder."
 )
 
-if(OPENSSL_1_1_0h_FOUND)
+if(OPENSSL_1_1_0H_FOUND)
   if(NOT TARGET OpenSSL_1_1_0h::Crypto AND
-      (EXISTS "${OPENSSL_1_1_0h_CRYPTO_LIBRARY}")
+      (EXISTS "${OPENSSL_1_1_0H_CRYPTO_LIBRARY}")
       )
     add_library(OpenSSL_1_1_0h::Crypto UNKNOWN IMPORTED)
     set_target_properties(OpenSSL_1_1_0h::Crypto PROPERTIES
-      INTERFACE_INCLUDE_DIRECTORIES "${OPENSSL_1_1_0h_INCLUDE_DIR}")
-    if(EXISTS "${OPENSSL_1_1_0h_CRYPTO_LIBRARY}")
+      INTERFACE_INCLUDE_DIRECTORIES "${OPENSSL_1_1_0H_INCLUDE_DIR}")
+    if(EXISTS "${OPENSSL_1_1_0H_CRYPTO_LIBRARY}")
       set_target_properties(OpenSSL_1_1_0h::Crypto PROPERTIES
         IMPORTED_LINK_INTERFACE_LANGUAGES "C"
-        IMPORTED_LOCATION "${OPENSSL_1_1_0h_CRYPTO_LIBRARY}")
+        IMPORTED_LOCATION "${OPENSSL_1_1_0H_CRYPTO_LIBRARY}")
     endif()
   endif()
   if(NOT TARGET OpenSSL_1_1_0h::SSL AND
-      (EXISTS "${OPENSSL_1_1_0h_SSL_LIBRARY}")
+      (EXISTS "${OPENSSL_1_1_0H_SSL_LIBRARY}")
       )
     add_library(OpenSSL_1_1_0h::SSL UNKNOWN IMPORTED)
     set_target_properties(OpenSSL_1_1_0h::SSL PROPERTIES
-      INTERFACE_INCLUDE_DIRECTORIES "${OPENSSL_1_1_0h_INCLUDE_DIR}")
-    if(EXISTS "${OPENSSL_1_1_0h_SSL_LIBRARY}")
+      INTERFACE_INCLUDE_DIRECTORIES "${OPENSSL_1_1_0H_INCLUDE_DIR}")
+    if(EXISTS "${OPENSSL_1_1_0H_SSL_LIBRARY}")
       set_target_properties(OpenSSL_1_1_0h::SSL PROPERTIES
         IMPORTED_LINK_INTERFACE_LANGUAGES "C"
-        IMPORTED_LOCATION "${OPENSSL_1_1_0h_SSL_LIBRARY}")
+        IMPORTED_LOCATION "${OPENSSL_1_1_0H_SSL_LIBRARY}")
     endif()
     if(TARGET OpenSSL_1_1_0h::Crypto)
       set_target_properties(OpenSSL_1_1_0h::SSL PROPERTIES

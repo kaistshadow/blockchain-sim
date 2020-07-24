@@ -5,9 +5,9 @@ if (NOT CMAKE_INSTALL_PREFIX OR
 endif()
 
 
-file(GLOB_RECURSE BITCOIN_0_19_1_SRCS ${CMAKE_CURRENT_SOURCE_DIR} *.c *.h *.cpp)
+file(GLOB_RECURSE BITCOIN_0_19_1nw_SRCS ${CMAKE_CURRENT_SOURCE_DIR} *.c *.h *.cpp)
 
-add_custom_target(bitcoin_0.19.1 ALL
+add_custom_target(bitcoin_0.19.1nw ALL
   DEPENDS ${CMAKE_INSTALL_PREFIX}/plugins/libBITCOIND_0.19.1nw.so
   )
 

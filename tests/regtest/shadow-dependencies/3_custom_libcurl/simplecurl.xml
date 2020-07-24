@@ -31,7 +31,7 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="NODE" path="libsimplecurl.so" />
+  <plugin id="NODE" path="libCURL_7_70_0.so" />
   
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="300" />

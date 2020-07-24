@@ -22,3 +22,23 @@ add_custom_command(OUTPUT ${CMAKE_INSTALL_PREFIX}/openssl_1.1.0h/lib/libssl.so
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+# Define targets that can be used in same build-tree
+add_library(OpenSSL_1_1_0h::Crypto SHARED IMPORTED GLOBAL)
+add_dependencies(OpenSSL_1_1_0h::Crypto openssl_1.1.0h)
+set_target_properties(OpenSSL_1_1_0h::Crypto
+  PROPERTIES
+  IMPORTED_LOCATION ${CMAKE_INSTALL_PREFIX}/openssl_1.1.0h/lib/libcrypto.so
+  IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+  INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  # INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_INSTALL_PREFIX}/openssl_1.1.0h/include)
+
+
+add_library(OpenSSL_1_1_0h::SSL SHARED IMPORTED GLOBAL)
+add_dependencies(OpenSSL_1_1_0h::SSL openssl_1.1.0h)
+set_target_properties(OpenSSL_1_1_0h::SSL
+  PROPERTIES
+  IMPORTED_LOCATION ${CMAKE_INSTALL_PREFIX}/openssl_1.1.0h/lib/libssl.so
+  IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+  # INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_INSTALL_PREFIX}/openssl_1.1.0h/include
+  INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/include
+  INTERFACE_LINK_LIBRARIES OpenSSL_1_1_0h::Crypto)

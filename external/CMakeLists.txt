@@ -13,5 +13,5 @@ endmacro()
 add_subdirectory(bitcoin)
 add_subdirectory(openssl)
 add_subdirectory(curl)
-# add_subdirectory(bdb)
+add_subdirectory(bdb)
 

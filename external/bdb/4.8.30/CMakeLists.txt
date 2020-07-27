@@ -6,6 +6,7 @@ if (NOT CMAKE_INSTALL_PREFIX OR
 endif()
 
 file(GLOB_RECURSE BDB_4.8.30_SRCS ${CMAKE_CURRENT_SOURCE_DIR} *.c *.h)
+list(FILTER BDB_4.8.30_SRCS EXCLUDE REGEX ".*build_unix.*")
 
 add_custom_target(bdb_4.8.30 ALL
   DEPENDS ${CMAKE_INSTALL_PREFIX}/bdb_4.8.30/lib/libdb.so
@@ -18,4 +19,4 @@ add_custom_command(OUTPUT ${CMAKE_INSTALL_PREFIX}/bdb_4.8.30/lib/libdb.so
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build_unix
   )
   
-#message(STATUS "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
+

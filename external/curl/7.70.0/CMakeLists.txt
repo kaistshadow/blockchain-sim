@@ -57,3 +57,13 @@ add_dependencies(curl_7.70.0 openssl_1.1.0h)
 add_dependencies(curl_7.70.0_STEP curl_7.70.0)
 #]==]
 
+
+# Define targets that can be used in same build-tree
+add_library(CURL_7_70_0::CURL SHARED IMPORTED GLOBAL)
+add_dependencies(CURL_7_70_0::CURL curl_7.70.0)
+set_target_properties(CURL_7_70_0::CURL
+  PROPERTIES
+  IMPORTED_LOCATION ${CMAKE_INSTALL_PREFIX}/curl_7.70.0/lib/libcurl.so.4.6.0
+  IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+  INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/include)
+

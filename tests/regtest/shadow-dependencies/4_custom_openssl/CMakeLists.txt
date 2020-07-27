@@ -14,7 +14,7 @@ include(ShadowTools) # load ShadowTools Module
 # find_package(OpenSSL 1.1.3 REQUIRED)
 find_package(OpenSSL_1_1_0h REQUIRED)
 
-message("OPENSSL_1_1_0H_FOUND=${OPENSSL_1_1_0H_FOUND}")
+message(STATUS "OPENSSL_1_1_0H_FOUND=${OPENSSL_1_1_0H_FOUND}")
 
 add_shadow_plugin(sslrand ssl_rand.cpp)
 target_link_libraries(sslrand OpenSSL_1_1_0h::Crypto OpenSSL_1_1_0h::SSL)

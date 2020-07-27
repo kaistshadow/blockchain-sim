@@ -19,7 +19,7 @@ message(STATUS "BITCOIN_0_19_1NW_PLUGIN=${BITCOIN_0_19_1NW_PLUGIN}")
 add_custom_target(bitcoin-dir-prepare ALL
         COMMAND rm -rf node1
         COMMAND mkdir node1
-        COMMAND ${CMAKE_COMMAND} -E copy ${BITCOIN_0_19_1NW_PLUGIN} ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1nw::Plugin> ${CMAKE_CURRENT_SOURCE_DIR}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_shadow_plugin(CUSTOM_RPC rpc.c)

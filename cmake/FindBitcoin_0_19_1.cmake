@@ -10,7 +10,7 @@
 # This module defines the following :prop_tgt:`IMPORTED` targets:
 #
 # ``Bitcoin_0_19_1::Plugin``
-#   The Plugin for Bitcoin v0.19.1 with no wallet, if found.
+#   The Plugin for Bitcoin v0.19.1 with wallet, if found.
 #
 # Result Variables
 # ^^^^^^^^^^^^^^^^

@@ -2,7 +2,7 @@
 # FindBitcoin_0_19_1dev
 # -----------
 #
-# Find the Bitcoin plugin of version 0.19.1 (v0.19.1)
+# Find the Bitcoin plugin of version 0.19.1 (v0.19.1) development version
 #
 # Imported Targets
 # ^^^^^^^^^^^^^^^^
@@ -10,7 +10,7 @@
 # This module defines the following :prop_tgt:`IMPORTED` targets:
 #
 # ``Bitcoin_0_19_1dev::Plugin``
-#   The Plugin for Bitcoin v0.19.1 with no wallet, if found.
+#   The Plugin for Bitcoin v0.19.1 development version, if found.
 #
 # Result Variables
 # ^^^^^^^^^^^^^^^^
@@ -18,7 +18,7 @@
 # This module will set the following variables in your project:
 #
 # ``BITCOIN_0_19_1DEV_FOUND``
-#   System has the Bitcoin plugin.
+#   System has the Bitcoin plugin for v0.19.1 dev.
 #
 # Hints
 # ^^^^^

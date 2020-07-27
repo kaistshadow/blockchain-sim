@@ -14,7 +14,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2  
     - name: install pre-requisite
-      run: sudo apt install python
+      run: |
+        sudo apt install python
+        sudo apt-get update
     - name: install BLEEP
       run: python setup.py --install      
     - name: test BLEEP using script

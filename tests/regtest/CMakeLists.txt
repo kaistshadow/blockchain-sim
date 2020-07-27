@@ -25,3 +25,4 @@ add_subdirectory(BLEEP-POW-consensus)
 # add_subdirectory(shadow-rust) # it works well on local machine, but does not work on github Action, so commentified.
 add_subdirectory(native-bintest)
 add_subdirectory(shadow-bitcoin)
+add_subdirectory(shadow-dependencies)

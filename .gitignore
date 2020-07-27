@@ -67,3 +67,4 @@ tests/regtest/shadow-dependencies/8_customed_rpc/libevent2.1-6/
 tests/regtest/shadow-dependencies/8_customed_rpc/node1/
 shadow.data
 
+external/bdb/4.8.30/build_unix

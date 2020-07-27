@@ -30,8 +30,8 @@
              </graphml>]]>
   </topology>
 
-  <plugin id="NODE" path="libBITCOIND.so" />
-  <plugin id="CLIENT" path="rpc.so" />
+  <plugin id="NODE" path="libBITCOIND_0.19.1nw.so" />
+  <plugin id="CLIENT" path="libCUSTOM_RPC.so" />
 
   <kill time="100" />
 

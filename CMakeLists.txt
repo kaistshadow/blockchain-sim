@@ -63,7 +63,10 @@ enable_testing()
 add_subdirectory(BLEEPlib)
 # add_subdirectory(BLEEPapp)
 
+add_subdirectory(external)
 add_subdirectory(tests)
+
+
 
 
 ## add tests

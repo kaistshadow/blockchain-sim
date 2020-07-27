@@ -13,8 +13,7 @@ include(ShadowTools) # load ShadowTools Module
 
 find_package(Bitcoin_0_19_1nw REQUIRED)
 
-message("BITCOIN_0_19_1NW_FOUND=${BITCOIN_0_19_1NW_FOUND}")
-message("BITCOIN_0_19_1NW_PLUGIN=${BITCOIN_0_19_1NW_PLUGIN}")
+# message("BITCOIN_0_19_1NW_FOUND=${BITCOIN_0_19_1NW_FOUND}")
 
 add_custom_target(shadow-bitcoin-firstrun-prepare ALL
   COMMAND mkdir -p data/bcdnode1

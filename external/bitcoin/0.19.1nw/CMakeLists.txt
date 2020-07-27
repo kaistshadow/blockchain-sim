@@ -28,14 +28,9 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/src/bitcoind
 )
   
 
-
-# add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/bitcoind-nowallet.stamp
-#   COMMAND ./autogen.sh
-#   COMMAND ./configure --with-pic --disable-bench --disable-tests --enable-debug --disable-wallet
-#   COMMAND make -j4
-#   COMMAND cmake -E touch ${CMAKE_CURRENT_SOURCE_DIR}/bitcoind-nowallet.stamp
-# )
-    
-
-
-# add_dependencies(bitcoin_0.19.1 openssl_1.1.0h)
+# Define targets that can be used in same build-tree
+add_library(Bitcoin_0_19_1nw::Plugin SHARED IMPORTED GLOBAL)
+add_dependencies(Bitcoin_0_19_1nw::Plugin bitcoin_0.19.1nw)
+set_target_properties(Bitcoin_0_19_1nw::Plugin PROPERTIES
+  IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+  IMPORTED_LOCATION ${CMAKE_INSTALL_PREFIX}/plugins/libBITCOIND_0.19.1nw.so)

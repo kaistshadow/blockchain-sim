@@ -22,7 +22,7 @@ add_custom_target(shadow-bitcoin-firstrun-prepare ALL
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(copy-bitcoin-plugin ALL
-  COMMAND ${CMAKE_COMMAND} -E copy ${BITCOIN_0_19_1NW_PLUGIN} ${CMAKE_CURRENT_SOURCE_DIR})
+  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1nw::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
       
 add_test(NAME shadow-bitcoin-firstrun
   COMMAND shadow example.xml

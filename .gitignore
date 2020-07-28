@@ -65,6 +65,10 @@ tests/perftest/cpu/mpstat/mpstat_results
 tests/regtest/shadow-dependencies/1_ubuntu_libcurl/simplecurl
 tests/regtest/shadow-dependencies/8_customed_rpc/libevent2.1-6/
 tests/regtest/shadow-dependencies/8_customed_rpc/node1/
+tests/regtest/shadow-bitcoin/*/base*.xml
+tests/regtest/*/datadir
+tests/regtest/*/*/datadir
+tests/regtest/shadow-bitcoin/*/data
 shadow.data
 
 external/bdb/4.8.30/build_unix

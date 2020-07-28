@@ -18,9 +18,8 @@
                  <data key="d1">0.0.0.0</data>
                  <data key="d2">US</data>
                  <data key="d3">10000020000040</data>
-                 <data key="d4">10000240</data>
+                 <data key="d4">10000020000040</data>
                  <data key="d5">net</data>
-                 
                </node>
                <edge source="poi-1" target="poi-1">
                  <data key="d7">50.0</data>
@@ -33,18 +32,15 @@
 
   <!-- the plug-ins we will be using -->
   <plugin id="bitcoind" path="libBITCOIND_0.19.1DEV.so" />
+  <plugin id="client" path="one_node_setmine.so" />
 
   <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="20" />
+  <kill time="300" />
   <!-- our nodes -->
-
-  <node id="bcdnode1">
-    <application plugin="bitcoind" time="13" arguments="-datadir=./data/bcdnode1 -debug -printtoconsole -connect=bcdnode2 -listen -server=0" />
+  <node id="bcdnode0">
+    <application plugin="bitcoind" time="1" arguments="-debug -testnet -datadir=data/bcdnode0 -port=11110 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=11.0.0.1/0 -rpcbind=11.0.0.1" />
   </node>
-
-
-  <node id="bcdnode2">
-    <application plugin="bitcoind" time="13" arguments="-datadir=./data/bcdnode2 -debug -printtoconsole -listen -connect=bcdnode1 -server=0"/>
+  <node id="client0">
+    <application plugin="client" time="5" arguments="11.0.0.1:11111 294" />
   </node>
-
 </shadow>

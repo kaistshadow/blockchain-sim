@@ -13,10 +13,10 @@ include(ShadowTools) # load ShadowTools Module
 find_package(Bitcoin_0_19_1dev REQUIRED)
 
 add_custom_target(shadow-bitcoin-dev-test-prepare ALL
+  COMMAND rm -rf data/bcdnode0
   COMMAND rm -rf data/bcdnode1
-  COMMAND rm -rf data/bcdnode2
+  COMMAND mkdir -p data/bcdnode0
   COMMAND mkdir -p data/bcdnode1
-  COMMAND mkdir -p data/bcdnode2
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(shadow-bitcoin-dev-test-copy-plugin ALL

@@ -5,11 +5,14 @@ import (
    	"fmt"
 )
 
-// export test
+//export test
 func test() {
 	fmt.Println("test code")
 }
+//export mainGo
+func mainGo() {
 
+}
 func main() {
 	
 }

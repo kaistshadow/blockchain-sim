@@ -20,19 +20,22 @@ def setup_multiple_node_xml(node_num, simultime):
 
     for i in range(0, node_num):
         node_id = "bcdnode%d" % (i)
-        node = ET.SubElement(shadow, "node", id=node_id)
+        node_iphint = "%d.%d.0.1" % (i/256 + 1, i%256)
+        node = ET.SubElement(shadow, "node", id=node_id, iphint=node_iphint)
         time = str(0)
         if i==0:
-            argument = "-debug -testnet -datadir=data/bcdnode%d -port=11110 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=11.0.0.%d/0 -rpcbind=11.0.0.%d -addnode=11.0.0.%d:11110 -addnode=11.0.0.%d:11110" % (i, (i+1), (i+1), node_num, (i+2))
+            argument = "-debug -testnet -datadir=data/bcdnode%d -port=18333 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333" % (i, (node_iphint), (node_iphint), (node_num-1)/256 + 1, (node_num-1)%256, (i+1)/256 + 1, (i+1)%256)
+        elif i<(node_num-1):
+            argument = "-debug -testnet -datadir=data/bcdnode%d -port=18333 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333" % (i, (node_iphint), (node_iphint), (i-1)/256 + 1, (i-1)%256, (i+1)/256 + 1, (i+1)%256)
         else:
-            argument = "-debug -testnet -datadir=data/bcdnode%d -port=11110 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=11.0.0.%d/0 -rpcbind=11.0.0.%d -addnode=11.0.0.%d:11110 -addnode=11.0.0.%d:11110" % (i, (i+1), (i+1), i, (i+2))
+            argument = "-debug -testnet -datadir=data/bcdnode%d -port=18333 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333" % (i, (node_iphint), (node_iphint), (i-1)/256 + 1, (i-1)%256, 1, 0)
         ET.SubElement(node,"application", plugin="bitcoind", time=time, arguments=argument)
 
     for i in range(0, node_num):
         node_id = "client%d" % (i)
         node = ET.SubElement(shadow, "node", id=node_id)
         time = str(5)
-        argument = "11.0.0.%d:11111 %d" % ((i+1), (simultime-6))
+        argument = "%d.%d.0.1:11111 %d" % (i/256 + 1, i%256, (simultime-6))
         ET.SubElement(node,"application", plugin="client", time=time, arguments=argument)
     tree.write(new_xml, pretty_print=True)
 

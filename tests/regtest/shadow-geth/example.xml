@@ -32,7 +32,7 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="geth" path="geth.a" />
+  <plugin id="geth" path="libgeth_1.9.1dev.so" />
 
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="20" />

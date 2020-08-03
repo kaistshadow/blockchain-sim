@@ -63,6 +63,7 @@ def prepare_rust():
     #     exec_shell_cmd("echo '%s' >> ~/.bashrc" % rustPath)
 
 def prepare_golang():
+    exit(-1)
     exec_shell_cmd("sudo apt-get install -y golang")
 
 def prepare_shadow_dependencies():

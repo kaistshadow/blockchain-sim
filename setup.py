@@ -61,6 +61,10 @@ def prepare_rust():
     #         needWriteRustPath = False
     # if needWriteRustPath:
     #     exec_shell_cmd("echo '%s' >> ~/.bashrc" % rustPath)
+
+def prepare_golang():
+    exec_shell_cmd("sudo apt-get install -y
+
 def prepare_shadow_dependencies():
     exec_shell_cmd("sudo apt-get install libcurl4-openssl-dev")
     exec_shell_cmd("sudo apt-get update -y")
@@ -92,6 +96,7 @@ if __name__ == '__main__':
         prepare_shadow()
         prepare_nodejs()
         prepare_rust()
+        prepare_golang()
         prepare_shadow_dependencies()
 
         ## install boost-lib

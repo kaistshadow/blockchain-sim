@@ -133,89 +133,64 @@ void rpc_sendtoaddress(char* IP, char* wallet) {
     }
 }
 
-/*
- param3 : 0-255 사이
- param4 : _IP_format = "11.0.0.1" ... or ... "11.0.0.n"
- param5 : IP_array Indexing number
- */
-void set_IP_and_Wallet(char** IP_array, char** wallet_array, int row, char* _IP_format, int id){
+void set_IP_and_Address(char** IP_array, char** wallet_array, int end) {
 
-    printf("----------------------------------------------\n");
-    printf("%d \n", row);
-    printf("%s \n", _IP_format);
-    printf("%d \n", id);
-
-    int j = 1;
-    for(int i=id; i<row + id; i++){
-        IP_array[i] = malloc(sizeof(char) * 20);
-        wallet_array[i] = malloc(sizeof(char) * 40);
+    int j = 0;
+    int i = 0;
+    int z = 1;
+    while(1) {
+        if (i > end-1) {
+            break;
+        }
 
         char IP_format[20] = "\0";
-        char IP_4th_class[4] = "\0";
-
-        strcpy(IP_format, _IP_format);
-        sprintf(IP_4th_class, "%d", j);
-        strcat(IP_format, IP_4th_class);
-        strcat(IP_format,":11111");
+        char IP_first_part[5] = "\0";
+        char IP_second_part[5] = "\0";
+        sprintf(IP_first_part, "%d", z);
+        strcat(IP_format, IP_first_part);
+        strcat(IP_format, ".");
+        sprintf(IP_second_part, "%d", j);
+        strcat(IP_format, IP_second_part);
+        strcat(IP_format,".0.1:11111");
         j ++;
+        if ((i%256 == 0) && (i!=0)) {
+            z ++;
+            j = 0;
+        }
         strcpy(IP_array[i], IP_format);
+        i ++;
     }
-
 }
 
 int main(int args, char* argv[]) {
 
     int row = atoi(argv[2]);
-    char** IP_array = "\0";
-    char** wallet_array = "\0";
+    char** IP_array;
+    char** wallet_array;
 
     IP_array = malloc(sizeof(char *) * row);
     wallet_array = malloc(sizeof(char *) * row);
-    int found = 0; // 예외처리 변수
 
-    // node < 256
-    if (row < 256) {
-        char IP_format[20] = "11.0.0.";
-        set_IP_and_Wallet(IP_array, wallet_array, row, IP_format,0);
-    } else {
-        char IP_format[20] = "11.0.0.";
-        set_IP_and_Wallet(IP_array, wallet_array, 255, IP_format,0);
+    for(int i=0; i < row; i++){
+        IP_array[i] = malloc(sizeof(char) * 20);
+        wallet_array[i] = malloc(sizeof(char) * 40);
+    }
 
-        int IPCount = row / 255;
-        for(int i=0; i < IPCount; i++){
-            char IP_format[20] = "11.0.";
-            char IP_3th_class[4] = "\0";
-            sprintf(IP_3th_class, "%d", i+1);
-            strcat(IP_format, IP_3th_class);
-            strcat(IP_format, ".");
-            if(i+1 == IPCount){
-                int rest_Nnode = (row % 255);
-                set_IP_and_Wallet(IP_array, wallet_array, rest_Nnode, IP_format, IPCount*255);
-            } else {
-                set_IP_and_Wallet(IP_array, wallet_array, 255, IP_format, (i+1)*255);
-            }
-        }
+    set_IP_and_Address(IP_array, wallet_array, row);
+
+    for(int i=0; i<row; i++){
+        rpc_getnewaddress(IP_array[i], wallet_array[i]);
     }
-//     전체 노드에게 TX 브로드 캐스팅
-//     TODO : 노드 수가 늘어날 수록 랜덤으로 특정 노드에게만 브로드캐스팅 하게 하
-     for(int i=0; i<row; i++){
-         strcpy(wallet_array[i], "\0");
-         rpc_getnewaddress(IP_array[i], wallet_array[i]);
-     }
-    for(int i =0; i < row; i++ ){
-        printf("%s \n", IP_array[i]);
-        printf("%s \n", wallet_array[i]);
-        printf("--------------------------\n");
-    }
-    free(IP_array);
-    free(wallet_array);
 
     srand(time(NULL));
-    while(1) {
-        int index = (rand() % row) +1;
-        int _index = (rand() % row) +1;
-        rpc_sendtoaddress(IP_array[index], wallet_array[_index]);
-        sleep(0.5);
+    int i=0;
+    for(int i=0; i<1000; i++){
+        int start = rand()%row + 1;
+        int end = rand()%row + 1;
+        rpc_sendtoaddress(IP_array[start], wallet_array[end]);
+        sleep(1);
     }
 
+    free(IP_array);
+    free(wallet_array);
 }

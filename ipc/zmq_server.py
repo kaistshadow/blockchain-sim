@@ -37,7 +37,6 @@ with zmq.Context() as context:
                 binary_port = received_data[fd_size+addr_size:fd_size+addr_size+port_size]
                 binary_addr = received_data[fd_size+addr_size+port_size:]
 
-                print("recv done")
                 print("Message {:d}:".format(i))
 
                 fd = struct.unpack("i", binary_fd)[0]

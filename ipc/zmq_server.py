@@ -3,6 +3,7 @@ import zmq
 import struct
 import ipaddress
 import binascii
+import datetime
 
 
 topic_tcpcontrol = "shadow_tcp_control".encode('ascii')
@@ -28,17 +29,22 @@ with zmq.Context() as context:
             fd_size = 4
             port_size = 2
             addr_size = 4
+            time_size = 8
 
             topic = binary_topic.decode(encoding='ascii')
 
             if topic == "shadow_tcp_control":
-                binary_fd = received_data[:fd_size]
-                binary_from_addr = received_data[fd_size:fd_size+addr_size]
-                binary_port = received_data[fd_size+addr_size:fd_size+addr_size+port_size]
-                binary_addr = received_data[fd_size+addr_size+port_size:]
+                binary_time = received_data[:time_size]
+                binary_fd = received_data[time_size:time_size+fd_size]
+                binary_from_addr = received_data[time_size+fd_size:time_size+fd_size+addr_size]
+                binary_port = received_data[time_size+fd_size+addr_size:time_size+fd_size+addr_size+port_size]
+                binary_addr = received_data[time_size+fd_size+addr_size+port_size:]
+
 
                 print("Message {:d}:".format(i))
 
+                time = struct.unpack("Q", binary_time)[0]
+                time = time / 1000000000.0
                 fd = struct.unpack("i", binary_fd)[0]
                 from_addr = struct.unpack("!I", binary_from_addr)[0]
                 from_addr = str(ipaddress.ip_address(from_addr))
@@ -46,15 +52,19 @@ with zmq.Context() as context:
                 addr = struct.unpack("!I", binary_addr)[0]
                 addr = str(ipaddress.ip_address(addr))
 
-                print(f'topic:{topic.split("shadow_")[1]}, fd:{fd}, {from_addr}-->{addr}:{port} (TCP connection)')
-            elif topic == "shadow_tcp_datastream":
-                binary_fd = received_data[:fd_size]
-                binary_from_port = received_data[fd_size:fd_size+port_size]
-                binary_from_addr = received_data[fd_size+port_size:fd_size+port_size+addr_size]
-                binary_peer_port = received_data[fd_size+port_size+addr_size:fd_size+port_size+addr_size+port_size]
-                binary_peer_addr = received_data[fd_size+port_size+addr_size+port_size:fd_size + port_size + addr_size + port_size+addr_size]
-                binary_buf = received_data[fd_size + port_size + addr_size + port_size+addr_size:]
 
+                print(f'[{time}] topic:{topic.split("shadow_")[1]}, fd:{fd}, {from_addr}-->{addr}:{port} (TCP connection)')
+            elif topic == "shadow_tcp_datastream_send":
+                binary_time = received_data[:time_size]
+                binary_fd = received_data[time_size:time_size+fd_size]
+                binary_from_port = received_data[time_size+fd_size:time_size+fd_size+port_size]
+                binary_from_addr = received_data[time_size+fd_size+port_size:time_size+fd_size+port_size+addr_size]
+                binary_peer_port = received_data[time_size+fd_size+port_size+addr_size:time_size+fd_size+port_size+addr_size+port_size]
+                binary_peer_addr = received_data[time_size+fd_size+port_size+addr_size+port_size:time_size+fd_size + port_size + addr_size + port_size+addr_size]
+                binary_buf = received_data[time_size+fd_size + port_size + addr_size + port_size+addr_size:]
+
+                time = struct.unpack("Q", binary_time)[0]
+                time = time / 1000000000.0
                 fd = struct.unpack("i", binary_fd)[0]
                 buf = binascii.hexlify(binary_buf)
                 from_port = struct.unpack("!H", binary_from_port)[0]
@@ -64,7 +74,7 @@ with zmq.Context() as context:
                 peer_addr = struct.unpack("!I", binary_peer_addr)[0]
                 peer_addr = str(ipaddress.ip_address(peer_addr))
 
-                print(f'topic:{topic.split("shadow_")[1]}, fd:{fd}, {from_addr}:{from_port}-->{peer_addr}:{peer_port}, buf:[{buf}]')
+                print(f'[{time}] topic:{topic.split("shadow_")[1]}, fd:{fd}, {from_addr}:{from_port}-->{peer_addr}:{peer_port}, buf:[{buf}]')
                 pass
 
             i += 1

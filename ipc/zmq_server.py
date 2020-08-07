@@ -3,7 +3,26 @@ import zmq
 import struct
 import ipaddress
 import binascii
-import datetime
+import threading
+
+def reqrep_server(context):
+    socket = context.socket(zmq.REP)
+
+    socket.bind("tcp://*:5556")
+
+    while True:
+        try:
+            message = socket.recv()
+            print("Received request:" + str(message))
+            if message == b'ping':
+                socket.send(b"pong")
+        except zmq.ContextTerminated:
+            return
+
+
+
+
+
 
 
 topic_tcpcontrol = "shadow_tcp_control".encode('ascii')
@@ -13,6 +32,11 @@ topic_tcpdata = "shadow_tcp_datastream".encode('ascii')
 print(f"Reading messages with topic: {topic_tcpcontrol}, {topic_tcpdata}")
 
 with zmq.Context() as context:
+    # run req-rep server as separate thread
+    rep_th = threading.Thread(target=reqrep_server, args=(context,))
+    rep_th.start()
+
+
     socket = context.socket(zmq.SUB)
 
     socket.bind("tcp://*:5555")
@@ -99,3 +123,5 @@ with zmq.Context() as context:
     except Exception as error:
         print("ERROR: {}".format(error))
         socket.close()
+    finally:
+        context.term()

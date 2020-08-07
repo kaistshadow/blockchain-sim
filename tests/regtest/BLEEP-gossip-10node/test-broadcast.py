@@ -53,7 +53,7 @@ def run_experiment(configfile, LOGLEVEL):
     )
     exec_shell_cmd("cp %s %s" % (configfile, current_config_path))
 
-    shadow = Popen(["shadow", "-l", LOGLEVEL, "-w", "8", "-d", datadir, configfile], stdout=PIPE)
+    shadow = Popen(["shadow", "-l", LOGLEVEL, "-w", "0", "-d", datadir, configfile], stdout=PIPE)
 
     shadow_stdout_filename = "shadow.output"
     shadow_stdout_file = open(shadow_stdout_filename, 'w')

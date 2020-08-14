@@ -15,4 +15,5 @@ add_subdirectory(openssl)
 add_subdirectory(curl)
 add_subdirectory(bdb)
 add_subdirectory(go-ethereum)
+add_subdirectory(monero)
 

@@ -5,6 +5,7 @@ if (NOT CMAKE_INSTALL_PREFIX OR
 endif()
 
 add_custom_target(shadow-make-monero ALL
+		COMMAND git submodule update --init
         COMMAND make -j6 debug
         COMMAND cp build/debug/src/daemon/libmonerod.so ${CMAKE_INSTALL_PREFIX}/plugins/libmonerod.so
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dev0.16.0

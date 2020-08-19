@@ -25,6 +25,8 @@ int next_shadow_clock_update(const char* prefix);
 // virtual id assignment for plugins
 int shadow_assign_virtual_id();
 
+void hj_interposer_test();
+
 #ifdef __cplusplus
 }
 #endif

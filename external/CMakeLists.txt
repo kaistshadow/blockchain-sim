@@ -4,7 +4,7 @@ cmake_policy(SET CMP0057 NEW)
 
 
 macro(find_package)
-  set(as_subproject OpenSSL_1_1_0h Bitcoin_0_19_1 Bitcoin_0_19_1nw Bitcoin_0_19_1dev CURL_7_70_0 Geth_1_9_1dev)
+  set(as_subproject OpenSSL_1_1_0h Bitcoin_0_19_1 Bitcoin_0_19_1nw Bitcoin_0_19_1dev CURL_7_70_0 Geth_1_9_1dev Monero_0_16_0dev)
   if (NOT "${ARGV0}" IN_LIST as_subproject )
     _find_package(${ARGV})
   endif()

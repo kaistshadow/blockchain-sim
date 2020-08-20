@@ -24,11 +24,11 @@ def setup_multiple_node_xml(node_num, simultime, bool_):
         node = ET.SubElement(shadow, "node", id=node_id, iphint=node_iphint)
         time = str(0)
         if i==0:
-            argument = "-debug -testnet -datadir=data/bcdnode%d -port=18333 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333" % (i, (node_iphint), (node_iphint), (node_num-1)/256 + 1, (node_num-1)%256, (i+1)/256 + 1, (i+1)%256)
+            argument = "-debug -testnet -datadir=data/bcdnode%d -port=18333 -txindex=1 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333" % (i, (node_iphint), (node_iphint), (node_num-1)/256 + 1, (node_num-1)%256, (i+1)/256 + 1, (i+1)%256)
         elif i<(node_num-1):
-            argument = "-debug -testnet -datadir=data/bcdnode%d -port=18333 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333" % (i, (node_iphint), (node_iphint), (i-1)/256 + 1, (i-1)%256, (i+1)/256 + 1, (i+1)%256)
+            argument = "-debug -testnet -datadir=data/bcdnode%d -port=18333 -txindex=1 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333" % (i, (node_iphint), (node_iphint), (i-1)/256 + 1, (i-1)%256, (i+1)/256 + 1, (i+1)%256)
         else:
-            argument = "-debug -testnet -datadir=data/bcdnode%d -port=18333 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333" % (i, (node_iphint), (node_iphint), (i-1)/256 + 1, (i-1)%256, 1, 0)
+            argument = "-debug -testnet -datadir=data/bcdnode%d -port=18333 -txindex=1 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333" % (i, (node_iphint), (node_iphint), (i-1)/256 + 1, (i-1)%256, 1, 0)
         ET.SubElement(node,"application", plugin="bitcoind", time=time, arguments=argument)
 
     for i in range(0, node_num):

@@ -20,6 +20,7 @@ add_custom_target(shadow-bitcoin-dev-test-prepare ALL
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(shadow-bitcoin-dev-test-copy-plugin ALL
+        DEPENDS Bitcoin_0_19_1dev::Plugin
   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1dev::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(shadow-bitcoin-dev-one-node-mine-plugin ALL

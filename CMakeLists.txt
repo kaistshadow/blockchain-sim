@@ -25,8 +25,9 @@ set(CMAKE_ROOT_BINARY_DIR ${CMAKE_BINARY_DIR})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # debug option
-set(BLEEP_DEBUG ON)
-set(SHADOW_DEBUG ON) # enable shadow debug as default. (Because some tests failed with release version of shadow (e.g. shadow-bitcoin-with-wallet)
+option(BLEEP_DEBUG "turn on debugging for BLEEP (default: ON)" ON)
+option(SHADOW_DEBUG "turn on debugging for verbose program output (default: ON for BLEEP build)" ON)
+# enable shadow debug as default. (Because some tests failed with release version of shadow (e.g. shadow-bitcoin-with-wallet)
 
 
 ## add shadow project

@@ -22,5 +22,5 @@ add_library(Libev_4_33::Libev SHARED IMPORTED GLOBAL)
 add_dependencies(Libev_4_33::Libev libev_4.33)
 set_target_properties(Libev_4_33::Libev PROPERTIES
         IMPORTED_LINK_INTERFACE_LANGUAGES "C"
-        INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/libev_4.33/include"
+        INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/4.33"
         IMPORTED_LOCATION ${CMAKE_INSTALL_PREFIX}/libev_4.33/lib/libev.so)

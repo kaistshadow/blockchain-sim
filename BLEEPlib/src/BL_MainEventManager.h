@@ -24,6 +24,9 @@ namespace libBLEEP_BL {
 
 
         Layer2_Event_Start,
+        BitcoinRecvMsg,
+
+        //
         PeerSocketConnect,
         PeerSocketClose,
         PeerRecvMsg,
@@ -62,6 +65,13 @@ namespace libBLEEP_BL {
 
         // data for SocketWrite event
         int _writeSocket;
+
+        // data for BitcoinRecvMsg event
+        int _bitcoinRecvSocket;
+        std::string _bitcoinCommand;
+        uint32_t _bitcoinPayloadLen;
+        uint32_t _bitcoinPayloadChecksum;
+        std::string _bitcoinPayload;
 
         // data for PeerSocketConnect event
         std::shared_ptr<DataSocket> _dataSocket;
@@ -107,6 +117,19 @@ namespace libBLEEP_BL {
         void SetWriteSocket(int fd) { _writeSocket = fd; }
         // data access function for SocketWrite
         int GetWriteSocket() { return _writeSocket; }
+
+        // data set function for BitcoinRecvMsg
+        void SetBitcoinRecvSocket(int sockfd) { _bitcoinRecvSocket = sockfd; }
+        void SetBitcoinCommand(std::string cmd) { _bitcoinCommand = cmd; }
+        void SetBitcoinPayload(std::string payload) { _bitcoinPayload = payload; }
+        void SetBitcoinPayloadLen(uint32_t len) { _bitcoinPayloadLen = len; }
+        void SetBitcoinPayloadChecksum(uint32_t checksum) { _bitcoinPayloadChecksum = checksum; }
+        // data access function for BitcoinRecvMsg
+        int GetBitcoinRecvSocket() { return _bitcoinRecvSocket; }
+        std::string GetBitcoinCommand() { return _bitcoinCommand; }
+        std::string GetBitcoinPayload() { return _bitcoinPayload; }
+        uint32_t GetBitcoinPayloadLen() { return _bitcoinPayloadLen; }
+        uint32_t GetBitcoinPayloadChecksum() { return _bitcoinPayloadChecksum; }
 
         // data set function for PeerNotifyRecv
         void SetNeighborId(PeerId peerId) { _neighborId = peerId; }

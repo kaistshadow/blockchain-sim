@@ -18,9 +18,9 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/../Install")
 # debug option
 if(BLEEP_DEBUG STREQUAL ON)
   message(STATUS "Debug enabled.")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch") # suppress error for manually installed boost (1.58)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -std=c++17 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-parentheses -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch") # suppress error for manually installed boost (1.58)
 else(BLEEP_DEBUG STREQUAL ON)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-parentheses -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch")
 endif(BLEEP_DEBUG STREQUAL ON)
 
 set(SRCS
@@ -61,6 +61,7 @@ set(NEW_SRCS
   src/BL1_socket/SocketLayer.cpp
   src/BL1_socket/SocketManager.cpp
   src/BL1_socket/RecvBufferManager.cpp
+        src/BL1_socket/SocketLayer_Bitcoin.cpp
   src/BL2_peer_connectivity/PeerConnectivityLayer.cpp
   src/BL2_peer_connectivity/PeerManager.cpp
   src/BL2_peer_connectivity/AddrManager.cpp
@@ -175,11 +176,15 @@ install(DIRECTORY "src/BL1_socket"
   FILES_MATCHING
   PATTERN
   "*.h")
-target_link_libraries(BLEEP -lev)
+
+find_package(Libev_4_33 REQUIRED)
+target_link_libraries(BLEEP Libev_4_33::Libev)
+#target_link_libraries(BLEEP -lev)
 target_link_libraries(BLEEP SHADOW_INTERFACE)
 target_link_libraries(BLEEP ${Boost_LIBRARIES})
 
-target_link_libraries(NEWBLEEP -lev)
+target_link_libraries(NEWBLEEP Libev_4_33::Libev)
+#target_link_libraries(NEWBLEEP -lev)
 target_link_libraries(NEWBLEEP SHADOW_INTERFACE)
 target_link_libraries(NEWBLEEP ${Boost_LIBRARIES})
 

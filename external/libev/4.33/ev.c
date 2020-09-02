@@ -4130,9 +4130,10 @@ ev_run (EV_P_ int flags)
              * amount of time for some event loop backends.
              */
             if (ecb_expect_false (waittime < backend_mintime))
-              waittime = waittime <= EV_TS_CONST (0.)
-                 ? EV_TS_CONST (0.)
-                 : backend_mintime;
+                waittime = backend_mintime; // proceed timer to avoid livelock
+//              waittime = waittime <= EV_TS_CONST (0.)
+//                 ? EV_TS_CONST (0.)
+//                 : backend_mintime;
 
             /* extra check because io_blocktime is commonly 0 */
             if (ecb_expect_false (io_blocktime))

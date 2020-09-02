@@ -14,9 +14,7 @@
 #include "crypto/SHA256.h"
 
 #include <algorithm>
-#include <random>
 #include <string_view>
-
 
 
 std::string string_to_hex(const std::string& input)
@@ -51,6 +49,7 @@ using namespace libBLEEP;
 
 std::unique_ptr<libBLEEP_BL::BL_SocketLayer_API> libBLEEP_BL::g_SocketLayer_API;
 std::unique_ptr<libBLEEP_BL::MainEventManager> libBLEEP_BL::g_mainEventManager;
+int bitcoin_msg_count = 0;
 
 int main(int argc, char *argv[]) {
 
@@ -91,6 +90,7 @@ int main(int argc, char *argv[]) {
                 uint32_t payloadSize = event.GetData().GetBitcoinPayloadLen();
                 uint32_t checksum = event.GetData().GetBitcoinPayloadChecksum();
                 std::string bitcoinPayload = event.GetData().GetBitcoinPayload();
+                std::cout << "-------------------------------------------MSG " << ++bitcoin_msg_count << "------------------------------------------\n";
                 std::cout << "received bitcoin command : ";
                 std::cout << bitcoinCommand << "\n";
                 std::cout << "received bitcoin command (hex) : ";
@@ -100,21 +100,18 @@ int main(int argc, char *argv[]) {
                 std::cout << bitcoinPayload << "\n";
                 std::cout << "received bitcoin payload (hex) : ";
                 std::cout << string_to_hex(bitcoinPayload) << "\n";
+                std::cout << "------------------------------------------------------------------------------------------\n";
 
                 int fd = event.GetData().GetBitcoinRecvSocket();
 
                 auto bitCommandView = std::string_view(bitcoinCommand);
                 if (bitCommandView.find("version") == 0) {
-                    std::cout << "version received!" << "\n";
-
+                    // if it received version message from a victim, send a valid version reply.
                     std::string response_hex = "f9beb4d976657273696f6e000000000066000000dad86bee7f11010009040000000000000de10b5e00000000000000000000000000000000000000000000ffff0b000002a917090400000000000000000000000000000000000000000000000099783b985a421805102f5361746f7368693a302e31392e312f0000000001f9beb4d976657261636b000000000000000000005df6e0e2";
                     std::string response = hex_to_string(response_hex);
                     libBLEEP_BL::g_SocketLayer_API->SendToSocket(fd, response.c_str(), response.size());
                 }
 
-//                if (bitcoinCommand.find("version") != bitcoinCommand.end()) {
-//
-//                }
                 break;
         }
     }

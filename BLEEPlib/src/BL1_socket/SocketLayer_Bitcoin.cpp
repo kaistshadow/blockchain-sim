@@ -146,18 +146,17 @@ void BL_SocketLayer_Bitcoin::RecvHandler(int fd) {
 
                 // recv entire msg if possible
                 if (payload_size && recvBuffer->recv_str.size() >= BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t) * 2 + payload_size) {
-
                     std::string command(recvBuf+BITCOIN_MAGIC_SIZE, BITCOIN_COMMAND_SIZE);
                     uint32_t checksum;
                     memcpy(&checksum, recvBuf + BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t), sizeof(uint32_t));
                     std::string payload( recvBuf + BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE  + sizeof(uint32_t)*2, payload_size);
 
-                    std::cout << "printing received payload" << "\n";
-                    std::cout << "[";
-                    for (size_t i = 0; i < payload_size; i++) {
-                        std::cout << std::setfill('0') << std::setw(2) << std::hex << (0xff & (unsigned int)(payload[i]));
-                    }
-                    std::cout << "]" << "\n";
+//                    std::cout << "printing received payload" << "\n";
+//                    std::cout << "[";
+//                    for (size_t i = 0; i < payload_size; i++) {
+//                        std::cout << std::setfill('0') << std::setw(2) << std::hex << (0xff & (unsigned int)(payload[i]));
+//                    }
+//                    std::cout << "]" << "\n";
 
                     AsyncEvent event(AsyncEventEnum::BitcoinRecvMsg);
                     event.GetData().SetBitcoinRecvSocket(fd);
@@ -167,44 +166,24 @@ void BL_SocketLayer_Bitcoin::RecvHandler(int fd) {
                     event.GetData().SetBitcoinPayloadChecksum(checksum);
                     g_mainEventManager->PushAsyncEvent(event);
 
-//                    std::shared_ptr<Message> msg;
-//                    boost::iostreams::basic_array_source<char> device(recvBuf, msg_size);
-//                    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
-//                    boost::archive::binary_iarchive ia(s);
-//                    ia >> msg;
-//
-//                    std::cout << "deserializing MSG complete" << "\n";
-//                    std::cout << msg->GetType() << "\n";
-//
-//                    // TODO : Each msg should be handled as separate event, and switched to proper layers
-//                    if (msg->GetType() == "notifyPeerId") {
-//                        AsyncEvent event(AsyncEventEnum::PeerNotifyRecv);
-//                        event.GetData().SetNeighborId(msg->GetSource());
-//                        event.GetData().SetIncomingSocket(_socketManager.GetDataSocket(fd));
-//                        g_mainEventManager->PushAsyncEvent(event);
-//                    }
-//                    else if (msg->GetType() == "GETADDR") {
-//                        // GETADDR message is handled by generic (Layer2) PeerRecvMsg event
-//                    }
-//                    else if (msg->GetType() == "ADDR") {
-//                        // ADDR message is handled by generic (Layer2) PeerRecvMsg event
-//                    }
-//                    else if (msg->GetType().find("TXGOSSIP", 0) == 0) {
-//                        // TXGOSSIP protocol message are handled by generic (Layer2) PeerRecvMsg event
-//                    }
-//                        // If any new message is added, new statement should be added here.
-//                        // (This is for integrity check)
-//                    else
-//                        libBLEEP::M_Assert(0, "Unexpected message");
-//
-//
-//                    AsyncEvent event(AsyncEventEnum::PeerRecvMsg);
-//                    event.GetData().SetMsgSourceId(msg->GetSource());
-//                    event.GetData().SetMsg(msg);
-//                    g_mainEventManager->PushAsyncEvent(event);
-
                     // TODO : recvBuffer should be updated efficiently. (minimizing a duplication)
                     std::string remain = recvBuffer->recv_str.substr(BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t)*2 + payload_size);
+                    recvBuffer->recv_str = remain;
+                }
+                else if (payload_size == 0 && recvBuffer->recv_str.size() >= BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t) * 2) {
+                    std::string command(recvBuf+BITCOIN_MAGIC_SIZE, BITCOIN_COMMAND_SIZE);
+                    uint32_t checksum;
+                    memcpy(&checksum, recvBuf + BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t), sizeof(uint32_t));
+
+                    AsyncEvent event(AsyncEventEnum::BitcoinRecvMsg);
+                    event.GetData().SetBitcoinRecvSocket(fd);
+                    event.GetData().SetBitcoinCommand(command);
+                    event.GetData().SetBitcoinPayloadLen(payload_size);
+                    event.GetData().SetBitcoinPayloadChecksum(checksum);
+                    g_mainEventManager->PushAsyncEvent(event);
+
+                    // TODO : recvBuffer should be updated efficiently. (minimizing a duplication)
+                    std::string remain = recvBuffer->recv_str.substr(BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t)*2);
                     recvBuffer->recv_str = remain;
                 }
                 else

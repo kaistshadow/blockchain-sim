@@ -69,7 +69,6 @@ tests/regtest/shadow-bitcoin/*/base*.xml
 tests/regtest/*/datadir
 tests/regtest/*/*/datadir
 tests/regtest/shadow-bitcoin/*/data
-tests/regtest/shadow-bitcoin/*/target_example.xml
 shadow.data
 
 external/bdb/4.8.30/build_unix

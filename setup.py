@@ -70,6 +70,8 @@ def prepare_shadow_dependencies():
     exec_shell_cmd("sudo apt-get install libcurl4-openssl-dev")
     exec_shell_cmd("sudo apt-get update -y")
     exec_shell_cmd("sudo apt-get install -y libidn2-dev")
+    # install dependencies for zeromq (zeromq is used for IPC implementation)
+    exec_shell_cmd("sudo apt-get install -y libzmq3-dev")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Script for installation and simulation')

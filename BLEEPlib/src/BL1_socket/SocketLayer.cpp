@@ -237,7 +237,7 @@ int BL_SocketLayer::ConnectSocket(std::string dest) {
     return conn_socket;
 }
 
-void BL_SocketLayer::SendToSocket(int fd, char* buf, int size) {
+void BL_SocketLayer::SendToSocket(int fd, const char* buf, int size) {
     auto socket = _socketManager.GetDataSocket(fd);
     if (socket == nullptr) 
         libBLEEP::M_Assert(0, "No valid dataSocket exists for sending");

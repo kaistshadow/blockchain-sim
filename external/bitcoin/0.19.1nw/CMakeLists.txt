@@ -22,7 +22,7 @@ add_custom_command(OUTPUT ${CMAKE_INSTALL_PREFIX}/plugins/libBITCOIND_0.19.1nw.s
 add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/src/bitcoind
   DEPENDS ${BITCOIN_0_19_1nw_SRCS}
   COMMAND ./autogen.sh
-  COMMAND ./configure --with-pic --disable-bench --disable-tests --enable-debug --disable-wallet
+  COMMAND ./configure --with-pic --disable-bench --disable-tests --enable-debug --disable-wallet --disable-zmq
   COMMAND make -j4
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )

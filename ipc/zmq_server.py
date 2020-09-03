@@ -98,7 +98,7 @@ with zmq.Context() as context:
                 peer_addr = struct.unpack("!I", binary_peer_addr)[0]
                 peer_addr = str(ipaddress.ip_address(peer_addr))
 
-                print(f'[{time}] topic:{topic.split("shadow_")[1]}, fd:{fd}, {from_addr}:{from_port}-->{peer_addr}:{peer_port}, buf:[{buf}]')
+                print(f'[{time}] topic:{topic.split("shadow_")[1]}, fd:{fd}, {from_addr}:{from_port}-->{peer_addr}:{peer_port}, buf:[{buf}]\n\t\t\tbufstr:[{binary_buf}]')
             elif topic == "shadow_tcp_datastream_recv":
                 binary_time = received_data[:time_size]
                 binary_fd = received_data[time_size:time_size+fd_size]

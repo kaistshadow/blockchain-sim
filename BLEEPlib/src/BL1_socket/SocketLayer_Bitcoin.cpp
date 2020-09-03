@@ -1,9 +1,13 @@
+//
+// Created by ilios on 20. 8. 26..
+//
+
 #include <iostream>
 #include <unistd.h>
 #include <fcntl.h> /* Added for the nonblocking socket */
 #include <arpa/inet.h>
 
-#include "SocketLayer.h"
+#include "SocketLayer_Bitcoin.h"
 #include "../utility/Assert.h"
 
 
@@ -17,12 +21,12 @@
 using namespace libBLEEP_BL;
 
 
-BL_SocketLayer::BL_SocketLayer() {
-    _socketManager.CreateListenSocket();
+BL_SocketLayer_Bitcoin::BL_SocketLayer_Bitcoin() {
+    _socketManager.CreateListenSocket(8333);
 
 }
 
-void BL_SocketLayer::AcceptHandler(int fd) {
+void BL_SocketLayer_Bitcoin::AcceptHandler(int fd) {
     std::shared_ptr<ListenSocket> listenSocket = _socketManager.GetListenSocket(fd);
 
     while (1) {
@@ -37,7 +41,7 @@ void BL_SocketLayer::AcceptHandler(int fd) {
     }
 }
 
-void BL_SocketLayer::ConnectHandler(int fd) {
+void BL_SocketLayer_Bitcoin::ConnectHandler(int fd) {
     // check status of socket
     int err = 0;
     socklen_t len = sizeof(err);
@@ -63,7 +67,7 @@ void BL_SocketLayer::ConnectHandler(int fd) {
 
         return;
     }
-            
+
     std::cout << "Socket is successfully connected" << "\n";
 
     // successfully connected, so create new data socket
@@ -76,10 +80,10 @@ void BL_SocketLayer::ConnectHandler(int fd) {
     AsyncEvent event(AsyncEventEnum::PeerSocketConnect);
     event.GetData().SetDataSocket(_socketManager.GetDataSocket(fd));
     g_mainEventManager->PushAsyncEvent(event);
-    
+
 }
 
-void BL_SocketLayer::RecvHandler(int fd) {
+void BL_SocketLayer_Bitcoin::RecvHandler(int fd) {
     std::cout << "DoRecv!" << "\n";
 
     // recv from socket, and append received data into the buffer.
@@ -127,103 +131,100 @@ void BL_SocketLayer::RecvHandler(int fd) {
 
         while (true) {
             const char *recvBuf = recvBuffer->recv_str.c_str();
-            if (!strncmp(recvBuf, BLEEP_MAGIC, BLEEP_MAGIC_SIZE)) {
-                std::cout << "bleep magic received" << "\n";
+            if (!strncmp(recvBuf, BITCOIN_MAGIC, BITCOIN_MAGIC_SIZE)) {
+                std::cout << "bitcoin magic received" << "\n";
 
                 // retrieve the size of the msg if possible
-                int msg_size = 0;
-                if (recvBuffer->recv_str.size() >= BLEEP_MAGIC_SIZE + sizeof(int)) {
-                    memcpy(&msg_size, recvBuf+BLEEP_MAGIC_SIZE, sizeof(int));
-                    std::cout << "msg length received : " << msg_size <<"\n";
+                uint32_t payload_size = 0;
+                if (recvBuffer->recv_str.size() >= BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t)) {
+
+                    memcpy(&payload_size, recvBuf + BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE, sizeof(uint32_t));
+                    std::cout << "msg length received : " << payload_size << "\n";
                 }
                 else
                     break;
 
                 // recv entire msg if possible
-                if (msg_size && recvBuffer->recv_str.size() >= BLEEP_MAGIC_SIZE + sizeof(int) + msg_size) {
+                if (payload_size && recvBuffer->recv_str.size() >= BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t) * 2 + payload_size) {
+                    std::string command(recvBuf+BITCOIN_MAGIC_SIZE, BITCOIN_COMMAND_SIZE);
+                    uint32_t checksum;
+                    memcpy(&checksum, recvBuf + BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t), sizeof(uint32_t));
+                    std::string payload( recvBuf + BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE  + sizeof(uint32_t)*2, payload_size);
 
-                    std::cout << "start deserializing MSG" << "\n";
-                    recvBuf = recvBuffer->recv_str.c_str();
-                    recvBuf += BLEEP_MAGIC_SIZE + sizeof(int);
-                    std::shared_ptr<Message> msg;
-                    boost::iostreams::basic_array_source<char> device(recvBuf, msg_size);
-                    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
-                    boost::archive::binary_iarchive ia(s);
-                    ia >> msg;
+//                    std::cout << "printing received payload" << "\n";
+//                    std::cout << "[";
+//                    for (size_t i = 0; i < payload_size; i++) {
+//                        std::cout << std::setfill('0') << std::setw(2) << std::hex << (0xff & (unsigned int)(payload[i]));
+//                    }
+//                    std::cout << "]" << "\n";
 
-                    std::cout << "deserializing MSG complete" << "\n";
-                    std::cout << msg->GetType() << "\n";
-
-                    // TODO : Each msg should be handled as separate event, and switched to proper layers
-                    if (msg->GetType() == "notifyPeerId") {
-                        AsyncEvent event(AsyncEventEnum::PeerNotifyRecv);
-                        event.GetData().SetNeighborId(msg->GetSource());
-                        event.GetData().SetIncomingSocket(_socketManager.GetDataSocket(fd));
-                        g_mainEventManager->PushAsyncEvent(event);
-                    }
-                    else if (msg->GetType() == "GETADDR") {
-                        // GETADDR message is handled by generic (Layer2) PeerRecvMsg event
-                    }
-                    else if (msg->GetType() == "ADDR") {
-                        // ADDR message is handled by generic (Layer2) PeerRecvMsg event
-                    }
-                    else if (msg->GetType().find("TXGOSSIP", 0) == 0) {
-                        // TXGOSSIP protocol message are handled by generic (Layer2) PeerRecvMsg event
-                    }
-                    // If any new message is added, new statement should be added here. 
-                    // (This is for integrity check)
-                    else 
-                        libBLEEP::M_Assert(0, "Unexpected message");
-                    
-
-                    AsyncEvent event(AsyncEventEnum::PeerRecvMsg);
-                    event.GetData().SetMsgSourceId(msg->GetSource());
-                    event.GetData().SetMsg(msg);
+                    AsyncEvent event(AsyncEventEnum::BitcoinRecvMsg);
+                    event.GetData().SetBitcoinRecvSocket(fd);
+                    event.GetData().SetBitcoinCommand(command);
+                    event.GetData().SetBitcoinPayload(payload);
+                    event.GetData().SetBitcoinPayloadLen(payload_size);
+                    event.GetData().SetBitcoinPayloadChecksum(checksum);
                     g_mainEventManager->PushAsyncEvent(event);
 
                     // TODO : recvBuffer should be updated efficiently. (minimizing a duplication)
-                    std::string remain = recvBuffer->recv_str.substr(BLEEP_MAGIC_SIZE + sizeof(int) + msg_size);
+                    std::string remain = recvBuffer->recv_str.substr(BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t)*2 + payload_size);
+                    recvBuffer->recv_str = remain;
+                }
+                else if (payload_size == 0 && recvBuffer->recv_str.size() >= BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t) * 2) {
+                    std::string command(recvBuf+BITCOIN_MAGIC_SIZE, BITCOIN_COMMAND_SIZE);
+                    uint32_t checksum;
+                    memcpy(&checksum, recvBuf + BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t), sizeof(uint32_t));
+
+                    AsyncEvent event(AsyncEventEnum::BitcoinRecvMsg);
+                    event.GetData().SetBitcoinRecvSocket(fd);
+                    event.GetData().SetBitcoinCommand(command);
+                    event.GetData().SetBitcoinPayloadLen(payload_size);
+                    event.GetData().SetBitcoinPayloadChecksum(checksum);
+                    g_mainEventManager->PushAsyncEvent(event);
+
+                    // TODO : recvBuffer should be updated efficiently. (minimizing a duplication)
+                    std::string remain = recvBuffer->recv_str.substr(BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t)*2);
                     recvBuffer->recv_str = remain;
                 }
                 else
                     break;
             }
-            else 
+            else
                 break;
         }
     }
 }
 
-void BL_SocketLayer::WriteHandler(int fd) {
+void BL_SocketLayer_Bitcoin::WriteHandler(int fd) {
     auto dataSocket = _socketManager.GetDataSocket(fd);
     libBLEEP::M_Assert( dataSocket != nullptr, "dataSocket not exist for given (write) event");
-    
+
     std::cout << "DoSend!" << "\n";
     dataSocket->DoSend();
 }
 
 
-void BL_SocketLayer::SwitchAsyncEventHandler(AsyncEvent& event) {
+void BL_SocketLayer_Bitcoin::SwitchAsyncEventHandler(AsyncEvent& event) {
     switch (event.GetType()) {
-    case AsyncEventEnum::SocketAccept:
+        case AsyncEventEnum::SocketAccept:
         {
             int listenfd = event.GetData().GetNewlyAcceptedSocket();
             AcceptHandler(listenfd);
             break;
         }
-    case AsyncEventEnum::SocketConnect:
+        case AsyncEventEnum::SocketConnect:
         {
             int fd = event.GetData().GetNewlyConnectedSocket();
             ConnectHandler(fd);
             break;
         }
-    case AsyncEventEnum::SocketRecv:
+        case AsyncEventEnum::SocketRecv:
         {
             int fd = event.GetData().GetRecvSocket();
             RecvHandler(fd);
             break;
         }
-    case AsyncEventEnum::SocketWrite:
+        case AsyncEventEnum::SocketWrite:
         {
             int fd = event.GetData().GetWriteSocket();
             WriteHandler(fd);
@@ -232,20 +233,20 @@ void BL_SocketLayer::SwitchAsyncEventHandler(AsyncEvent& event) {
     }
 }
 
-int BL_SocketLayer::ConnectSocket(std::string dest) {
+int BL_SocketLayer_Bitcoin::ConnectSocket(std::string dest) {
     int conn_socket = _socketManager.CreateNonblockConnectSocket(dest);
     return conn_socket;
 }
 
-void BL_SocketLayer::SendToSocket(int fd, const char* buf, int size) {
+void BL_SocketLayer_Bitcoin::SendToSocket(int fd, const char* buf, int size) {
     auto socket = _socketManager.GetDataSocket(fd);
-    if (socket == nullptr) 
+    if (socket == nullptr)
         libBLEEP::M_Assert(0, "No valid dataSocket exists for sending");
 
     socket->AppendToSendBuff((const char*)buf, size);
 }
 
-void BL_SocketLayer::DisconnectSocket(int fd) {
+void BL_SocketLayer_Bitcoin::DisconnectSocket(int fd) {
     _socketManager.RemoveDataSocket(fd);
     return;
 }

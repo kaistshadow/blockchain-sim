@@ -111,7 +111,7 @@ if __name__ == '__main__':
         exec_shell_cmd("sudo apt-get install -y libssl-dev")
 
         ## install
-        exec_shell_cmd("mkdir build; cd build; cmake %s ../; make -j8; make install; cd ..;" % cmake_debug_opt)
+        exec_shell_cmd("mkdir build; cd build; cmake %s ../; cmake --build . --target install -- -j 4; cd ..;" % cmake_debug_opt)
 
 
         rcFile = os.path.expanduser("~/.bashrc")

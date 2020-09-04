@@ -50,7 +50,7 @@ find_library(_LIBEV_4_33_LIBRARY
 
 include(${CMAKE_ROOT}/Modules/FindPackageHandleStandardArgs.cmake)
 
-find_package_handle_standard_args(LIBEV_4_33
+find_package_handle_standard_args(Libev_4_33
         REQUIRED_VARS
         _LIBEV_4_33_LIBRARY
         LIBEV_4_33_INCLUDE_DIR
@@ -59,9 +59,9 @@ find_package_handle_standard_args(LIBEV_4_33
         )
 
 if(LIBEV_4_33_FOUND)
-    if(NOT TARGET LIBEV_4_33::Libev)
-        add_library(LIBEV_4_33::Libev UNKNOWN IMPORTED)
-        set_target_properties(LIBEV_4_33::Libev PROPERTIES
+    if(NOT TARGET Libev_4_33::Libev)
+        add_library(Libev_4_33::Libev UNKNOWN IMPORTED)
+        set_target_properties(Libev_4_33::Libev PROPERTIES
                 INTERFACE_INCLUDE_DIRECTORIES "${LIBEV_4_33_INCLUDE_DIR}"
                 IMPORTED_LOCATION "${_LIBEV_4_33_LIBRARY}")
     endif()

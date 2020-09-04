@@ -10,7 +10,7 @@ add_custom_target(monero_0.16.0 ALL
 
 add_custom_command(OUTPUT ${CMAKE_INSTALL_PREFIX}/plugins/libmonerod.so
 	COMMAND git submodule update --init
-        COMMAND make -j6 debug
-        COMMAND cp build/debug/src/daemon/libmonerod.so ${CMAKE_INSTALL_PREFIX}/plugins/libmonerod.so
+        COMMAND make -j6 debug 
+        #COMMAND cp build/debug/src/daemon/libmonerod.so ${CMAKE_INSTALL_PREFIX}/plugins/libmonerod.so
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dev0.16.0
         )

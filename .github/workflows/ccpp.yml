@@ -35,7 +35,6 @@ jobs:
 #       with:
 #         name: shadow-bitcoin-with-wallet_outputs
 #         path: tests/regtest/shadow-bitcoin/2_with-wallet/shadow.data/
-<<<<<<< HEAD
 
     # - name: debug BLEEP
     #   run: |
@@ -44,5 +43,4 @@ jobs:
     #     rustc --version
     #     cargo --version
     #     cd ${GITHUB_WORKSPACE}/build/tests/regtest/shadow-rust/1_hello/debug/; shadow ${GITHUB_WORKSPACE}/tests/regtest/shadow-rust/1_hello/rust_hello.xml
-=======
->>>>>>> f5835ecca03c32353662c5208ada81cf5eb2461b
+

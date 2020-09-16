@@ -73,3 +73,17 @@ tests/regtest/shadow-bitcoin/*/target_example.xml
 shadow.data
 
 external/bdb/4.8.30/build_unix
+external/libev/4.33/.deps/
+external/libev/4.33/.libs/
+external/libev/4.33/Makefile
+external/libev/4.33/config.h
+external/libev/4.33/config.log
+external/libev/4.33/config.status
+external/libev/4.33/ev.3
+external/libev/4.33/ev.lo
+external/libev/4.33/ev.o
+external/libev/4.33/event.lo
+external/libev/4.33/event.o
+external/libev/4.33/libev.la
+external/libev/4.33/libtool
+external/libev/4.33/stamp-h1

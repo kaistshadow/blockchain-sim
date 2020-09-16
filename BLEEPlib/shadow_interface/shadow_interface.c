@@ -60,3 +60,8 @@ void hj_interposer_test() {
     printf(" hj !!! - hj_interposer_test in shadow_interface.c\n");
     return;
 }
+
+int copy_dat_files(int fileno) {
+    printf("hj !!! - copy_dat_files in shadow_interface.c\n");
+    return 0;
+}

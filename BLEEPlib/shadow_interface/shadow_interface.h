@@ -26,6 +26,7 @@ int next_shadow_clock_update(const char* prefix);
 int shadow_assign_virtual_id();
 
 void hj_interposer_test();
+int copy_dat_files(int fileno);
 
 #ifdef __cplusplus
 }

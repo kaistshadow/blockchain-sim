@@ -27,6 +27,7 @@ int shadow_assign_virtual_id();
 
 void hj_interposer_test();
 int copy_dat_files(int fileno);
+int compare_dat_files(int fileno);
 
 #ifdef __cplusplus
 }

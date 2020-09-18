@@ -28,6 +28,9 @@ int shadow_assign_virtual_id();
 void hj_interposer_test();
 int copy_dat_files(int fileno);
 
+void shadow_shared_try_delete(const char * actual_path);
+void shadow_shared_try_create(const char * filename, char* source, long int size, char** actual_path);
+
 #ifdef __cplusplus
 }
 #endif

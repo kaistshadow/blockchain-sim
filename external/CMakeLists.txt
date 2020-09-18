@@ -16,4 +16,5 @@ add_subdirectory(curl)
 add_subdirectory(bdb)
 add_subdirectory(go-ethereum)
 add_subdirectory(libev)
+add_subdirectory(shadow_storage_manager)
 

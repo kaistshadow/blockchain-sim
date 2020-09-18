@@ -65,3 +65,8 @@ int copy_dat_files(int fileno) {
     printf("hj !!! - copy_dat_files in shadow_interface.c\n");
     return 0;
 }
+
+void shadow_shared_try_delete(const char * actual_path) {
+}
+void shadow_shared_try_create(const char * filename, char* source, long int size, char** actual_path) {
+}

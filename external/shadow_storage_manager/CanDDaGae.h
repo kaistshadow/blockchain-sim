@@ -55,6 +55,7 @@ namespace CanDDaGae {
     void config(unsigned long int np_filesize, unsigned int clean_activation, unsigned int clean_until);
     FILE* fopen(const char* filename, const char* modes);
     int fclose(FILE* file);
+    void debug();
 }
 
 #endif //SHADOWSTORAGEMANAGEMENT_CANDDAGAE_H

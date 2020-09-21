@@ -12,15 +12,17 @@
 class StorageElement {
 private:
     std::string path; // virtual path (path from the application's view)
-    int storage_type; // memory: 0, storage: 1
+    int storage_type; // storage: 1, memory: 0
 public:
     StorageElement(std::string path, int storage_type) {
         this->path = path;
         this->storage_type = storage_type;
     }
+    virtual ~StorageElement() {}
     std::string get_path() {return path;}
     int get_storage_type() {return storage_type;}
     virtual FILE* request(const char* modes) = 0;
+    virtual void debug_stat();
 };
 class PersistentElement : public StorageElement{
 private:
@@ -30,6 +32,7 @@ public:
     FILE* request(const char* modes);
     std::string get_actual_path() {return actual_path;}
     void try_delete();
+    void debug_stat();
 };
 
 class NonPersistentElement : public StorageElement{
@@ -54,5 +57,6 @@ public:
     void set_filesize(long int size) {this->size = size;}
     char* get_data() {return this->data;}
     void try_create(char** actual_path_ref);
+    void debug_stat();
 };
 #endif //SHADOWSTORAGEMANAGEMENT_STORAGEELEMENT_H

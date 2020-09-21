@@ -172,12 +172,19 @@ int ContentFileTracker::close(FILE* file) {
 // TODO EXT: make debug print
 void ContentFileTracker::debug_stats() {
     std::cout<<"element count: "<<elems.size()<<"\n";
-    std::cout<<"element lists\n";
-    std::cout<<"IDX\tPATH\tTYPE\n";
+    std::cout<<"--element lists--\n";
     auto it = elems.begin();
     while(it != elems.end()) {
-
+        std::cout<<it.first<<"\t||";
+        it.second->debug_stat();
+        std::cout<<"\n";
         it++;
+    }
+    std::cout<<"--np_filelookup--\n";
+    auto it2 = np_file_lookup.begin();
+    while(it2 != np_file_lookup.end()) {
+        std::cout<<it2.first<<"\t||"<<it2.second<<"\n";
+        it2++;
     }
 }
 
@@ -190,4 +197,7 @@ FILE* CanDDaGae::fopen(const char* filename, const char* modes) {
 }
 int CanDDaGae::fclose(FILE* file) {
     return tracker.close(file);
+}
+void CanDDaGae::debug() {
+    tracker.debug_stats();
 }

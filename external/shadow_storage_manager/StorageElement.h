@@ -11,7 +11,7 @@
 #define STORAGE_NONPERSISTENT 1
 class StorageElement {
 private:
-    std::string path;
+    std::string path; // virtual path (path from the application's view)
     int storage_type; // memory: 0, storage: 1
 public:
     StorageElement(std::string path, int storage_type) {
@@ -52,9 +52,7 @@ public:
         return fmemopen(data, filesize_limit, modes);
     }
     void set_filesize(long int size) {this->size = size;}
-    char* get_data() {
-        return this->data;
-    }
+    char* get_data() {return this->data;}
     void try_create(char** actual_path_ref);
 };
 #endif //SHADOWSTORAGEMANAGEMENT_STORAGEELEMENT_H

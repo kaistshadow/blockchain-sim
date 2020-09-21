@@ -61,13 +61,13 @@ int ContentFileTracker::checkReadOnly(const char* modes) {
     return 1;
 }
 int ContentFileTracker::cleanup_condition() {
-    if (ac.size() > CLEAN_ACTIVATION_THRESHOLD) {
+    if (ac.size() > this->clean_activation) {
         return 1;
     }
     return 0;
 }
 void ContentFileTracker::do_swapouts() {
-    while(ac.size() > CLEAN_UNTIL_THRESHOLD) {
+    while(ac.size() > this->clean_until) {
         swapout(ac.pop());
     }
     return;
@@ -87,14 +87,13 @@ std::shared_ptr<PersistentElement> ContentFileTracker::swapout(NonPersistentElem
         elems.insert({p_ptr->get_path(), p_ptr});
     }
 }
-#define FIXED_FILESIZE 0x1000
 std::shared_ptr<NonPersistentElement> ContentFileTracker::swapin(std::shared_ptr<PersistentElement> elem_ptr) {
     // copy file
     long int readcnt = 0;
     long int size = 0;
-    NonPersistentElement* np_element = new NonPersistentElement(elem_ptr->get_path(), FIXED_FILESIZE);
+    NonPersistentElement* np_element = new NonPersistentElement(elem_ptr->get_path(), this->np_filesize);
     FILE* fp = elem_ptr->request("rb");
-    while((readcnt = fread(np_element->get_data()+size, sizeof(char), FIXED_FILESIZE-size, fp)) != EOF) {
+    while((readcnt = fread(np_element->get_data()+size, sizeof(char), this->np_filesize-size, fp)) != EOF) {
         size += readcnt;
     }
     np_element->set_filesize(size);
@@ -141,7 +140,7 @@ FILE* ContentFileTracker::open(const char* filename, const char* modes) {
             return res;
         }
     } else {
-        NonPersistentElement* np_element = new NonPersistentElement(filename, FIXED_FILESIZE);
+        NonPersistentElement* np_element = new NonPersistentElement(filename, this->np_filesize);
         auto elem = std::shared_ptr<StorageElement>(np_element);
         auto it = elems.insert({filename, elem});
         ac.push(std::dynamic_pointer_cast<NonPersistentElement>(elem).get());
@@ -183,6 +182,9 @@ void ContentFileTracker::debug_stats() {
 }
 
 ContentFileTracker tracker;
+void CanDDaGae::config(unsigned long int np_filesize, unsigned int clean_activation, unsigned int clean_until) {
+    tracker.config(np_filesize, clean_activation, clean_until);
+}
 FILE* CanDDaGae::fopen(const char* filename, const char* modes) {
     return tracker.open(filename, modes);
 }

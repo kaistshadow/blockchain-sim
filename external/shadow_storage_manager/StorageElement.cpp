@@ -5,7 +5,6 @@
 #include "StorageElement.h"
 #include "shadow_interface.h"
 
-// This should not be called. Write request should always called on Non-persistent storage element.
 FILE* PersistentElement::request(const char* modes) {
     return ::fopen(actual_path.c_str(), modes);
 }

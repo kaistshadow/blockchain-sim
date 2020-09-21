@@ -34,7 +34,7 @@ int main() {
     try {
         FILE* file2 = fopen("BrandonKuzma.txt", "r");
     } catch (const std::exception& e) {
-        // throw std::runtime_error("error");
+        // throw std::runtime_error("CanDDaGae::fopen called twice on same time without CanDDaGae::fclose called");
         std::cout << e.what() << "\n";
         err = true;
     }
@@ -42,7 +42,7 @@ int main() {
     try {
         FILE* file2 = fopen("BrandonKuzma.txt", "w");
     } catch (const std::exception& e) {
-        // throw std::runtime_error("error");
+        // throw std::runtime_error("CanDDaGae::fopen called twice on same time without CanDDaGae::fclose called");
         std::cout << e.what() << "\n";
         err = true;
     }

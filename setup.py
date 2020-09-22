@@ -65,6 +65,7 @@ def prepare_rust():
 def prepare_golang():
     if not os.path.exists("/usr/bin/go"):
         exec_shell_cmd("sudo apt-get install -y golang")
+    exec_shell_cmd("sudo apt-get install -y gccgo")
 
 def prepare_shadow_dependencies():
     exec_shell_cmd("sudo apt-get install libcurl4-openssl-dev")

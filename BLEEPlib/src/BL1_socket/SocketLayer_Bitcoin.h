@@ -41,6 +41,9 @@ namespace libBLEEP_BL {
 
         virtual void SendToSocket(int fd, const char* buf, int size);
         virtual void DisconnectSocket(int fd);
+
+        /* for managing Shadow IPs */
+        virtual void CreateSocketForShadowIP(int port, const char* shadow_ip_addr);
     };
 
 }

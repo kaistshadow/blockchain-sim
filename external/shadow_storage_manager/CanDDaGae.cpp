@@ -175,16 +175,24 @@ void ContentFileTracker::debug_stats() {
     std::cout<<"--element lists--\n";
     auto it = elems.begin();
     while(it != elems.end()) {
-        std::cout<<it.first<<"\t||";
-        it.second->debug_stat();
+        std::cout<<it->first<<"\t||";
+        it->second->debug_stat();
         std::cout<<"\n";
         it++;
     }
     std::cout<<"--np_filelookup--\n";
     auto it2 = np_file_lookup.begin();
     while(it2 != np_file_lookup.end()) {
-        std::cout<<it2.first<<"\t||"<<it2.second<<"\n";
+        std::cout<<it2->first<<"\t||"<<it2->second<<"\n";
         it2++;
+    }
+}
+int ContentFileTracker::debug_fileloc(const char* filename){
+    auto it = elems.find(filename);
+    if (it != elems.end()) {
+        return it->second->get_storage_type();
+    } else {
+        return -1;
     }
 }
 
@@ -200,4 +208,7 @@ int CanDDaGae::fclose(FILE* file) {
 }
 void CanDDaGae::debug() {
     tracker.debug_stats();
+}
+int CanDDaGae::debug_fileloc(const char* filename) {
+    tracker.debug_fileloc(filename);
 }

@@ -48,6 +48,7 @@ public:
         this->clean_activation = clean_activation;
         this->clean_until = clean_until;
     }
+    int debug_fileloc(const char* filename);
 };
 
 // Opener
@@ -56,6 +57,7 @@ namespace CanDDaGae {
     FILE* fopen(const char* filename, const char* modes);
     int fclose(FILE* file);
     void debug();
+    int debug_fileloc(const char* filename);
 }
 
 #endif //SHADOWSTORAGEMANAGEMENT_CANDDAGAE_H

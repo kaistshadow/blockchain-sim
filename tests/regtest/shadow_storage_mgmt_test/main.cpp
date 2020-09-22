@@ -39,6 +39,7 @@ int main() {
         err = true;
     }
     assert(err);
+    err = false;
     try {
         FILE* file2 = fopen("BrandonKuzma.txt", "w");
     } catch (const std::exception& e) {

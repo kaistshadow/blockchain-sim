@@ -55,8 +55,9 @@ NonPersistentElement* AccessOrder::remove(NonPersistentElement* np) {
 int ContentFileTracker::checkReadOnly(const char* modes) {
     int idx = 0;
     while(modes[idx] != 0) {
-        if (modes[idx]!='r' || modes[idx]!='b')
+        if (modes[idx]!='r' && modes[idx]!='b')
             return 0;
+        idx++;
     }
     return 1;
 }
@@ -139,6 +140,9 @@ FILE* ContentFileTracker::open(const char* filename, const char* modes) {
             np_file_lookup.insert({res, filename});
             return res;
         }
+    } else if(readOnly) {
+        errno = ENOENT;
+        return NULL;
     } else {
         NonPersistentElement* np_element = new NonPersistentElement(filename, this->np_filesize);
         auto elem = std::shared_ptr<StorageElement>(np_element);

@@ -20,7 +20,7 @@ FILE* PersistentElement::request(const char* modes) {
 }
 // TODO: shadow refdown on shared file => eventually file can be deleted
 void PersistentElement::try_delete() {
-    shadow_shared_try_delete(this->get_path().c_str());
+    shadow_shared_try_delete(this->get_actual_path().c_str());
 }
 void PersistentElement::debug_stat() {
     StorageElement::debug_stat();

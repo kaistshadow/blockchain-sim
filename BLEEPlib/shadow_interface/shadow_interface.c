@@ -66,9 +66,27 @@ int copy_dat_files(int fileno) {
     return 0;
 }
 
-void shadow_shared_try_delete(const char * actual_path) {
+/* HASH TABLE h CONTENT */
+// KEY: filename
+// Element: LIST x
+
+/* LIST x CONTENT */
+// Element 1: unique hash
+// Element 2: actual path
+// Element 3: reference count
+
+void shadow_shared_try_delete(const char* filename, const char * actual_path) {
+    // 1. actual_path에 매칭되는 element를 찾아서 있으면 refcnt--
+    // 2. refcnt 가 0이면 파일 제거
+    // 3. 자료구조는 지워진 element를 가리키는게 없게끔 할수 있으면 만들고 싶은대로 만들면 됨.
 }
+
 void shadow_shared_try_create(const char * filename, char* source, long int size, char** actual_path) {
+    // 1. filename이랑 매칭되는 파일이 Shadow에서 관리하는 Hash table에 있는지 확인
+    //    a. 있으면 해당 table의 element인 list를 가져와서 (이 list에는 unique hash등의 정보가 포함되야함) list의 각 entry의 unique hash와 comparable parameter(ex)source, size)와 compare
+    //        i. 매칭되는 애가 있으면 해당 entry의 refcnt++, 해당 entry에 적힌 actual_path를 가져와서 파라미터로 제공받은 actual_path 포인터의포인터로 세팅
+    //        ii. 매칭되는 애가 없으면 entry를 주어진 정보를 이용해서 만듦. actual_path도 unique하게 만들어야되고, 해당 entry의 refcnt = 1로 세팅. 만든 entry의 actual_path를 가져와서 파라미터로 제공받은 actual_path로 전달
+    //    b. 없으면 list 새로 구성하고 a.ii.과 동일하게 동작
 }
 int compare_dat_files(int fileno) {
     printf("compare_dat_files in shadow_interface.c\n");

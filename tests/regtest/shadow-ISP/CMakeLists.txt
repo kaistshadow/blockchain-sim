@@ -2,3 +2,4 @@
 
 add_subdirectory(1_churn_in_server)
 add_subdirectory(2_churn_in_client)
+add_subdirectory(3_bitcoin)

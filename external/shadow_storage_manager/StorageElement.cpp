@@ -28,8 +28,8 @@ void PersistentElement::debug_stat() {
 }
 
 // TODO: shadow refdown on shared file => eventually file can be added
-void NonPersistentElement::try_create(char** actual_path_ref) {
-    shadow_shared_try_create(this->get_path().c_str(), this->data, this->size, actual_path_ref);
+void NonPersistentElement::try_create(char* actual_path) {
+    shadow_shared_try_create(this->get_path().c_str(), this->data, this->size, actual_path);
 }
 void NonPersistentElement::debug_stat() {
     StorageElement::debug_stat();

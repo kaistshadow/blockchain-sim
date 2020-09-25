@@ -29,6 +29,7 @@ private:
     std::string actual_path;
 public:
     PersistentElement(std::string path, std::string actual_path) : StorageElement(path, STORAGE_PERSISTENT) {this->actual_path = actual_path;}
+    virtual ~PersistentElement() {}
     FILE* request(const char* modes);
     std::string get_actual_path() {return actual_path;}
     void try_delete();
@@ -48,7 +49,7 @@ public:
         prev = NULL;
         next = NULL;
     }
-    ~NonPersistentElement() {
+    virtual ~NonPersistentElement() {
         free(data);
     }
     FILE* request(const char* modes) {
@@ -56,7 +57,7 @@ public:
     }
     void set_filesize(long int size) {this->size = size;}
     char* get_data() {return this->data;}
-    void try_create(char** actual_path_ref);
+    void try_create(char* actual_path);
     void debug_stat();
 };
 #endif //SHADOWSTORAGEMANAGEMENT_STORAGEELEMENT_H

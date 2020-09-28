@@ -1,5 +1,7 @@
 #include "shadow_interface.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 struct timespec clock_start;
 
@@ -91,4 +93,128 @@ void shadow_shared_try_create(const char * filename, char* source, long int size
 int compare_dat_files(int fileno) {
     printf("compare_dat_files in shadow_interface.c\n");
     return 0;
+}
+
+//hj add for storage hashtable
+/*
+int makehash(int value, int hashSize){
+    return value%hashSize;
+}
+*/
+
+HashTable *createHashTable() {
+    HashTable *tbl = (HashTable*)malloc(sizeof(HashTable));
+    tbl->ents = (HashTblEntry*)malloc(sizeof(HashTblEntry)*10);
+    // initialize hash table entries
+    for(int i=0; i<10; i++) {
+        tbl->ents[i].listcnt = 0;
+        tbl->ents[i].list = NULL;
+    }
+    return tbl;
+};
+
+
+// AddHashData : [key]에 data 추가 -
+void AddHashData(HashTable *hashTable, int key, char* actual_path, char* lastBlockHash){
+
+    // list entry 생성
+    Hashlist* elem = (Hashlist*)malloc(sizeof(Hashlist));
+    elem->fileno=fileno;
+    elem->actual_path=actual_path;
+    elem->lasBlockHashMerkleRoot=lastBlockHash;
+    elem->refCnt=0;
+
+    // put elem to list header
+    Hashlist* cursor = hashTable->ents[key].list;
+    hashTable->ents[key].list = elem;
+    elem->n = cursor;
+    elem->prev = NULL;
+    if (cursor)
+        cursor->prev = elem;
+
+    hashTable->ents[key].listcnt++;
+}
+
+char* getLastBlockHash(HashTable *hashTable, int key){
+    char* res;
+//    =malloc(sizeof(hashTable->ents[key].list->lasBlockHashMerkleRoot));
+    res=hashTable->ents[key].list->lasBlockHashMerkleRoot;
+    return res;
+}
+
+void DeleteHashData(HashTable *hashTable, int key, char* actual_path){
+
+    if(hashTable->ents[key].list==NULL) {
+        return;
+    }
+
+    Hashlist* delNode = NULL;
+    if(hashTable->ents[key].list->actual_path==actual_path){
+        delNode=&hashTable->ents[key];
+        hashTable->ents[key].list=hashTable->ents->list->n;
+    }
+    else {
+        Hashlist *node = hashTable->ents[key].list;
+        Hashlist *next = node->n;
+
+        while (next) {
+            if (strcmp(next->actual_path ,actual_path) == 0) {
+                node->n = next->n;
+                delNode = next;
+                break;
+            }
+            node = next;
+            next = node->n;
+        }
+    }
+    free(delNode);
+}
+char * makeActualPath(int fileno, char* nodeid) {
+    char *path;
+    path=malloc(30);
+    sprintf(path,"cp_data/%s/dat_%d.dat",nodeid,fileno);
+    return path;
+}
+
+Hashlist* FindHashData(HashTable* hashTable,int key) {
+    if (hashTable->ents[key].list == NULL)
+        return NULL;
+
+    if (hashTable->ents[key].list->fileno == key) {
+        return hashTable->ents[key].list;
+    }
+    else {
+        Hashlist * node = hashTable->ents[key].list;
+        while (node->n) {
+            if (node->n->fileno == key) {
+                return node->n;
+            }
+            node = node->n;
+        }
+    }
+    return  NULL;
+}
+
+void printHashTable(HashTable *hashTable,int key){
+    Hashlist * node = hashTable->ents[key].list;
+    printf("print hash table : %s \n",node->actual_path);
+    while (node->n) {
+        node = node->n;
+        printf("print hash table : %s \n",node->actual_path);
+
+    }
+}
+
+void teshashmap(){
+    HashTable *tbl = createHashTable(sizeof(HashTable));
+
+    AddHashData(tbl,0,makeActualPath(10,"node1"),makeActualPath(20,"node10"));
+    AddHashData(tbl,0,makeActualPath(11,"node2"),makeActualPath(21,"node11"));
+    AddHashData(tbl,0,makeActualPath(12,"node3"),makeActualPath(22,"node12"));
+    printHashTable(tbl,0);
+
+    DeleteHashData(tbl,0,"cp_data/node2/dat_11.dat");
+    printHashTable(tbl,0);
+    printf("print getlastblockhash = %s \n",getLastBlockHash(tbl,0));
+
 }

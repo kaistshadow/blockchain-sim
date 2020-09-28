@@ -8,6 +8,7 @@
 #include "StorageElement.h"
 #include <memory>
 #include <unordered_map>
+#include <mutex>
 
 class AccessOrder {
     NonPersistentElement *head, *tail;
@@ -26,7 +27,10 @@ public:
 
 class ContentFileTracker {
 private:
-    std::unordered_map<std::string, std::shared_ptr<StorageElement>> elems;
+    std::recursive_mutex openAccessLock;
+    bool singleThreadAccessLocked = false;
+    //std::unordered_map<std::string, std::shared_ptr<StorageElement>> elems;
+    std::unordered_map<std::string, StorageElement*> elems;
     std::unordered_map<FILE*, std::string> np_file_lookup;
     AccessOrder ac;
     // configuration
@@ -37,8 +41,10 @@ private:
     int checkReadOnly(const char* modes);
     int cleanup_condition();
     void do_swapouts();
-    std::shared_ptr<PersistentElement> swapout(NonPersistentElement* elem_ptr);
-    std::shared_ptr<NonPersistentElement> swapin(std::shared_ptr<PersistentElement> elem_ptr);
+    //std::shared_ptr<PersistentElement> swapout(NonPersistentElement* elem_ptr);
+    //std::shared_ptr<NonPersistentElement> swapin(std::shared_ptr<PersistentElement> elem_ptr);
+    PersistentElement* swapout(NonPersistentElement* elem_ptr);
+    NonPersistentElement* swapin(PersistentElement* elem_ptr);
 public:
     FILE* open(const char* filename, const char* modes);
     int close(FILE* file);

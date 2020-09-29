@@ -283,17 +283,3 @@ void printHashTable(HashTable *hashTable,int key){
 
     }
 }
-
-void teshashmap(){
-    HashTable *tbl = createHashTable(sizeof(HashTable));
-
-    AddHashData(tbl,0,makeActualPath(10,"node1"),makeActualPath(20,"node10"));
-    AddHashData(tbl,0,makeActualPath(11,"node2"),makeActualPath(21,"node11"));
-    AddHashData(tbl,0,makeActualPath(12,"node3"),makeActualPath(22,"node12"));
-    printHashTable(tbl,0);
-
-    DeleteHashData(tbl,0,"cp_data/node2/dat_11.dat");
-    printHashTable(tbl,0);
-    printf("print getlastblockhash = %s \n",getLastBlockHash(tbl,0));
-
-}

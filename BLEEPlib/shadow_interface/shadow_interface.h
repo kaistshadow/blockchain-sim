@@ -59,7 +59,6 @@ char * getLastBlockHash(HashTable *hashTable, int fileno);
 void DeleteHashData(HashTable *hashTable,int key, char* actual_path);
 int getHash(HashTable *hashTable, int value);
 
-void teshashmap();
 
 #ifdef __cplusplus
 }

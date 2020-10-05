@@ -26,5 +26,6 @@ add_subdirectory(BLEEP-POW-consensus)
 add_subdirectory(native-bintest)
 add_subdirectory(shadow-bitcoin)
 add_subdirectory(shadow-dependencies)
+# add_subdirectory(shadow-monero)
 # add_subdirectory(shadow-geth) # results in deadlock due to futex issue
 add_subdirectory(shadow-syscalls)

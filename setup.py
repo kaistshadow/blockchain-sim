@@ -74,6 +74,11 @@ def prepare_shadow_dependencies():
     # install dependencies for zeromq (zeromq is used for IPC implementation)
     exec_shell_cmd("sudo apt-get install -y libzmq3-dev")
 
+def prepare_monero_dependencies():
+	exec_shell_cmd("sudo apt-get install build-essential cmake pkg-config libboost-all-dev libssl-dev libzmq3-dev libunbound-dev libsodium-dev libpgm-dev ")
+	#exec_shell_cmd("sudo apt-get install libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev doxygen graphviz qttools5-dev-tools libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev")
+	
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
     parser.add_argument("--install", action="store_true", help="Install the shadow simulator and BLEEP")
@@ -102,6 +107,7 @@ if __name__ == '__main__':
         prepare_rust()
         prepare_golang()
         prepare_shadow_dependencies()
+        prepare_monero_dependencies()
 
         ## install boost-lib
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")

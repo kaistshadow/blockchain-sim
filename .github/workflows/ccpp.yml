@@ -43,3 +43,4 @@ jobs:
     #     rustc --version
     #     cargo --version
     #     cd ${GITHUB_WORKSPACE}/build/tests/regtest/shadow-rust/1_hello/debug/; shadow ${GITHUB_WORKSPACE}/tests/regtest/shadow-rust/1_hello/rust_hello.xml
+

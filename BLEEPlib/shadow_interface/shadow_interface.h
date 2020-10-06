@@ -33,31 +33,31 @@ void shadow_shared_try_delete(const char * filename, const char * actual_path);
 void shadow_shared_try_create(const char * filename, char* source, long int size, char* actual_path);
 
 //hyeojin made for storage hash table
-typedef struct _Hashlist{
-    struct _Hashlist *n, *prev;
-    int fileno;
-    char *actual_path;
-    char *lasBlockHashMerkleRoot;
-    unsigned refCnt;
-
-}Hashlist;
-
-typedef struct _HashTblEntry{
-    Hashlist* list;
-    int listcnt;
-}HashTblEntry;
-
-typedef struct _HashTable{
-    HashTblEntry* ents;
-}HashTable;
-
-int makehash(int value, int hashSize);
-HashTable *createHashTable() ;
-void setHash(HashTable *hashTable,int fileno, char * actual_path);
-void AddHashData(HashTable *hashTable, int key, char* actual_path, char* lastBlockHash);
-char * getLastBlockHash(HashTable *hashTable, int fileno);
-void DeleteHashData(HashTable *hashTable,int key, char* actual_path);
-int getHash(HashTable *hashTable, int value);
+//typedef struct _Hashlist{
+//    struct _Hashlist *n, *prev;
+//    int fileno;
+//    char *actual_path;
+//    char *lasBlockHashMerkleRoot;
+//    unsigned refCnt;
+//
+//}Hashlist;
+//
+//typedef struct _HashTblEntry{
+//    Hashlist* list;
+//    int listcnt;
+//}HashTblEntry;
+//
+//typedef struct _HashTable{
+//    HashTblEntry* ents;
+//}HashTable;
+//
+//int makehash(int value, int hashSize);
+//HashTable *createHashTable() ;
+//void setHash(HashTable *hashTable,int fileno, char * actual_path);
+//void AddHashData(HashTable *hashTable, int key, char* actual_path, char* lastBlockHash);
+//char * getLastBlockHash(HashTable *hashTable, int fileno);
+//void DeleteHashData(HashTable *hashTable,int key, char* actual_path);
+//int getHash(HashTable *hashTable, int value);
 
 
 #ifdef __cplusplus

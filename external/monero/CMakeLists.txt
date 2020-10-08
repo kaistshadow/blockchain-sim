@@ -16,6 +16,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/dev_0.16.0/build/debug/ext
         )
 
 add_custom_command(OUTPUT ${CMAKE_INSTALL_PREFIX}/plugins/libmonerod.so
+	DEPENDS openssl_1.1.0h
         COMMAND git submodule update --init
         COMMAND make -j6 debug
         #COMMAND cp build/debug/src/daemon/libmonerod.so ${CMAKE_INSTALL_PREFIX}/plugins/libmonerod.so

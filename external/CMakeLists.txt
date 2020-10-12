@@ -16,4 +16,7 @@ add_subdirectory(curl)
 add_subdirectory(bdb)
 add_subdirectory(go-ethereum)
 add_subdirectory(libev)
-add_subdirectory(monero)
+
+if(DGIT_MONERO_OFF STREQUAL OFF)
+  add_subdirectory(monero)
+endif()

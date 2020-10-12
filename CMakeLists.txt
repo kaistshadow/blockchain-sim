@@ -24,6 +24,9 @@ set(CMAKE_ROOT_BINARY_DIR ${CMAKE_BINARY_DIR})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
+# git option
+option(DGIT_MONERO_OFF "start test on GIT ACTION (default : OFF)" OFF)
+
 # debug option
 option(BLEEP_DEBUG "turn on debugging for BLEEP (default: ON)" ON)
 option(SHADOW_DEBUG "turn on debugging for verbose program output (default: ON for BLEEP build)" ON)

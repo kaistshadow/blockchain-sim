@@ -28,4 +28,10 @@ add_subdirectory(shadow-bitcoin)
 add_subdirectory(shadow-dependencies)
 # add_subdirectory(shadow-geth) # results in deadlock due to futex issue
 add_subdirectory(shadow-syscalls)
-add_subdirectory(shadow-monero)
+
+if(DGIT_MONERO_OFF STREQUAL OFF)
+    add_subdirectory(shadow-monero)
+endif()
+
+# else(DGIT_MONERO_OFF STREQUAL ON)
+#     message(STATUS "xxx Monero start.")

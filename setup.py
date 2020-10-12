@@ -81,13 +81,15 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
     parser.add_argument("--install", action="store_true", help="Install the shadow simulator and BLEEP")
     parser.add_argument("--test", action="store_true", help="Run tests")
+    parser.add_argument("--test_git", action="store_true", help="Run tests")
     parser.add_argument("--debug", action="store_true", help="Include debug symbols for shadow")
 
     args = parser.parse_args()
     OPT_INSTALL = args.install
     OPT_TEST = args.test
+    OPT_TEST_GIT = args.test_git
     OPT_DEBUG = args.debug
-
+    
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
         sys.exit(1)        
@@ -117,6 +119,51 @@ if __name__ == '__main__':
 
         ## install
         exec_shell_cmd("mkdir build; cd build; cmake %s ../; cmake --build . --target install -- -j 8; cd ..;" % cmake_debug_opt)
+
+
+        rcFile = os.path.expanduser("~/.bashrc")
+        f = open(rcFile, 'r')
+        shadowPath = "export PATH=$PATH:%s" % os.path.abspath("./Install/bin" )
+        libPath = "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:%s" % os.path.abspath("./Install")
+        needWritePath = True
+        needWriteLibPath = True
+        for line in f:
+            if shadowPath in line:
+                needWritePath = False
+            if libPath in line:
+                needWriteLibPath = False
+        if needWritePath:
+            exec_shell_cmd("echo '%s' >> ~/.bashrc && . ~/.bashrc" % shadowPath)
+        if needWriteLibPath:
+            exec_shell_cmd("echo '%s' >> ~/.bashrc && . ~/.bashrc" % libPath)
+
+        print "After installing, execute following commands on your bash. (type without dollor sign)"
+        print "$ source ~/.bashrc"
+
+    if OPT_TEST_GIT:
+
+        cmake_git_opt = "-DGIT_MONERO_OFF=ON" 
+
+        # cloning shadow repository (submodule)
+        exec_shell_cmd("git submodule update --init")
+
+        prepare_shadow()
+#         prepare_nodejs()
+        prepare_rust()
+        prepare_golang()
+        prepare_shadow_dependencies()
+        prepare_monero_dependencies()
+
+        ## install boost-lib
+        exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
+
+        ## install bitcoin dependencies
+        exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
+        ## bitcoin first run (without wallet enabled) dependencies
+        exec_shell_cmd("sudo apt-get install -y libssl-dev")
+
+        ## install
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s../; cmake --build . --target install -- -j 8; cd ..;" % (cmake_debug_opt, cmake_git_opt))
 
 
         rcFile = os.path.expanduser("~/.bashrc")

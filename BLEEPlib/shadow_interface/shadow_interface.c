@@ -59,9 +59,14 @@ int shadow_assign_virtual_id() {
     return 0;
 }
 
-void hj_interposer_test() {
-    printf(" hj !!! - hj_interposer_test in shadow_interface.c\n");
-    return;
+char* get_dat_file_path(int fileno) {
+    char* test="hello";
+    return test;
+}
+
+char* get_tmp_file_path() {
+    char* test="hello";
+    return test;
 }
 
 int copy_dat_files(int fileno) {

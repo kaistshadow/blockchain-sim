@@ -27,6 +27,7 @@ int shadow_assign_virtual_id();
 
 char* get_dat_file_path(int fileno);
 char* get_tmp_file_path();
+char* get_actual_path(int fileno);
 int copy_dat_files(int fileno);
 int compare_dat_files(int fileno);
 

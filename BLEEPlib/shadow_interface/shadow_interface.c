@@ -178,3 +178,7 @@ int compare_dat_files(int fileno) {
     printf("compare_dat_files in shadow_interface.c\n");
     return 0;
 }
+char* get_actual_path(int fileno){
+    printf("get_actual_path i n shadow_interface.c\n");
+    return NULL;
+}

@@ -17,6 +17,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
 find_package(Bitcoin_0_19_1dev REQUIRED)
 find_package(CURL_7_70_0 REQUIRED)
+find_package(Libev_4_33 REQUIRED) # libev4.33 is required because BLEEP uses libev4.33..  TODO: export libev4.33 when the BLEEP is exported?
 
 ################################################## for bitcoin experiment
 add_custom_target(shadow-ISP-bitcoin-prepare ALL
@@ -48,3 +49,17 @@ add_test(NAME shadow-ISP-bitcoin
 
 set_tests_properties(shadow-ISP-bitcoin PROPERTIES TIMEOUT 60)
 
+### add test for bitcoin library & emulating benign nodes
+add_shadow_plugin(shadow-ISP-bitcoin-emulated-benigns emulated-benigns.cpp)
+target_link_libraries(shadow-ISP-bitcoin-emulated-benigns Libev_4_33::Libev_static)
+target_link_libraries(shadow-ISP-bitcoin-emulated-benigns SHADOW_INTERFACE)
+target_link_libraries(shadow-ISP-bitcoin-emulated-benigns Bitcoin_0_19_1dev::Plugin)
+# copy resulting plugins into source directory
+add_custom_command(TARGET shadow-ISP-bitcoin-emulated-benigns
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:shadow-ISP-bitcoin-emulated-benigns> ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_test(NAME shadow-ISP-emulated-benigns
+        COMMAND shadow test-bitcoinlib-benigns.xml
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+set_tests_properties(shadow-ISP-emulated-benigns PROPERTIES TIMEOUT 60)

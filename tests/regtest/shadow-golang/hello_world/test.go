@@ -7,7 +7,7 @@ import (
 
 //export test
 func test() {
-	fmt.Println("Hello World!")
+	fmt.Println("Hello world")
 }
 //export mainGo
 func mainGo() {

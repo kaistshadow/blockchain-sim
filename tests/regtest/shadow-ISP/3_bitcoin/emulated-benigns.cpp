@@ -19,6 +19,9 @@
 #include <net.h>
 #include <net_processing.h>
 
+typedef unsigned int SOCKET;
+#define INVALID_SOCKET      (SOCKET)(~0)
+
 
 std::string string_to_hex(const std::string& input)
 {
@@ -47,60 +50,16 @@ std::string hex_to_string(const std::string& hexstr)
     return output;
 }
 
-
-class RecvMsgManager {
+template<typename MSG, bool (*ReceiveMSG)(const char *, unsigned int, std::list<MSG>&, std::list<MSG>&)>
+class DataSocket {
 private:
-    std::map<int, std::list<CNetMessage> > _RecvMsgMap; // map fd -> list<CNetMessage> structure
-    std::map<int, std::list<CNetMessage> > _ProcessMsgMap; // map fd -> list<CNetMessage> structure
-public:
-    std::list<CNetMessage>& GetRecvMsg(int fd) {
-        return _RecvMsgMap[fd];
-    }
-    std::list<CNetMessage>& GetProcessMsg(int fd) {
-        return _ProcessMsgMap[fd];
-    }
-};
+    ev::io _datasocket_watcher;
+    size_t _readoffset;
+    std::list<MSG> vRecvMsg;
+    std::list<MSG> vProcessMsg;
 
-class SendMsgManager {
-private:
-    std::map<int, std::deque<std::vector<unsigned char>> > _SendMsgMap; // map fd -> std::deque<std::vector<unsigned char>>
-    std::map<int, size_t> _SendOffsetMap; //map fd -> size_t
-    std::map<int, CAddress> _addrMap; // map fd -> CAddress
-
-public:
-    std::deque<std::vector<unsigned char>>& GetSendMsg(int fd) {
-        return _SendMsgMap[fd];
-    }
-    void SetAddrMap(int fd, sockaddr_in their_addr) {
-        CAddress addr;
-        if (!addr.SetSockAddr((const struct sockaddr*)&their_addr)) {
-            LogPrintf("Warning: Unknown socket family\n");
-        }
-        _addrMap[fd] = addr;
-    }
-    CAddress& GetAddr(int fd) {
-        return _addrMap[fd];
-    }
-    size_t GetSendOffset(int fd) {
-        return _SendOffsetMap[fd];
-    }
-    void SetSendOffset(int fd, size_t offset) {
-        _SendOffsetMap[fd] = offset;
-    }
-};
-
-RecvMsgManager recvMsgManager;
-SendMsgManager sendMsgManager;
-
-class DataSocketWatcher {
-private:
-    std::string _shadow_ip;
-    int _fd;
-    /* event watcher */
-    ev::io _watcher;
-
-    /* event io callback */
-    void _dataSocketIOCallback(ev::io &w, int revents) {
+    int _socketfd;
+    void _dataSocketIOCallback (ev::io &w, int revents) {
         std::cout << "data socket IO callback called!" << "\n";
 
         if (revents & EV_READ) {
@@ -112,50 +71,51 @@ private:
 
             int nBytes = 0;
 
-            nBytes = recv(_fd, pchBuf, sizeof(pchBuf), MSG_DONTWAIT); // What is the meaning of MSG_DONTWAIT?
+            nBytes = recv(_socketfd, pchBuf, sizeof(pchBuf), MSG_DONTWAIT); // What is the meaning of MSG_DONTWAIT?
             if (nBytes > 0) {
                 std::string recv_str(pchBuf, nBytes);
-                std::cout << "received data at " << _shadow_ip << ":[" << recv_str << "]" << "\n";
+                std::cout << "received data :[" << recv_str << "]" << "\n";
                 std::cout << "received data hex:[" << string_to_hex(recv_str) << "]" << "\n";
 
-                bool ret = BitcoinLibReceiveMsg(pchBuf, nBytes, recvMsgManager.GetRecvMsg(_fd), recvMsgManager.GetProcessMsg(_fd));
+                bool ret = BitcoinLibReceiveMsg(pchBuf, nBytes, vRecvMsg, vProcessMsg);
                 if (!ret) {
                     std::cout << "error while BitcoinLibReceiveMsg" << "\n";
                     exit(-1);
                 }
-                std::list<CNetMessage>& vProcessMsg = recvMsgManager.GetProcessMsg(_fd);
+
                 if (!vProcessMsg.empty()) {
-                    std::list<CNetMessage> msgs;
+                    std::list<MSG> msgs;
 
                     // Just take one message
                     msgs.splice(msgs.begin(), vProcessMsg, vProcessMsg.begin());
-                    CNetMessage& msg(msgs.front());
+                    MSG& msg(msgs.front());
 
                     std::cout << msg.hdr.GetCommand() << "\n";
 
-                    const unsigned char MessageStartChars[4] = {'\v', '\021', '\t', '\a'};
-
-                    if (memcmp(msg.hdr.pchMessageStart, MessageStartChars, CMessageHeader::MESSAGE_START_SIZE) != 0) {
-                        std::cout << "INVALID MESSAGESTART " << msg.hdr.GetCommand() << "\n";
-                        exit(-1);
-                    }
-
-                    // Read header
-                    CMessageHeader& hdr = msg.hdr;
-                    if (!hdr.IsValid(MessageStartChars))
-                    {
-                        LogPrint(BCLog::NET, "PROCESSMESSAGE: ERRORS IN HEADER %s\n", hdr.GetCommand());
-                        exit(-1);
-                    }
-
-                    ret = BitcoinLibProcessMessage(msg, MessageStartChars, sendMsgManager.GetSendMsg(_fd), sendMsgManager.GetAddr(_fd));
-                    if (!ret)
-                    {
-                        std::cout << "error while processing message" << "\n";
-                        exit(-1);
-                    }
-                    if (!sendMsgManager.GetSendMsg(_fd).empty())
-                        SetWritable(); // make watcher to monitor write event
+                    // process message
+//                    const unsigned char MessageStartChars[4] = {'\v', '\021', '\t', '\a'};
+//
+//                    if (memcmp(msg.hdr.pchMessageStart, MessageStartChars, CMessageHeader::MESSAGE_START_SIZE) != 0) {
+//                        std::cout << "INVALID MESSAGESTART " << msg.hdr.GetCommand() << "\n";
+//                        exit(-1);
+//                    }
+//
+//                    // Read header
+//                    CMessageHeader& hdr = msg.hdr;
+//                    if (!hdr.IsValid(MessageStartChars))
+//                    {
+//                        LogPrint(BCLog::NET, "PROCESSMESSAGE: ERRORS IN HEADER %s\n", hdr.GetCommand());
+//                        exit(-1);
+//                    }
+//
+//                    ret = BitcoinLibProcessMessage(msg, MessageStartChars, sendMsgManager.GetSendMsg(_fd), sendMsgManager.GetAddr(_fd));
+//                    if (!ret)
+//                    {
+//                        std::cout << "error while processing message" << "\n";
+//                        exit(-1);
+//                    }
+//                    if (!sendMsgManager.GetSendMsg(_fd).empty())
+//                        SetWritable(); // make watcher to monitor write event
                 }
 
             } else if (nBytes == 0) {
@@ -166,78 +126,41 @@ private:
                 std::cout << "Error while recv" << "\n";
             }
         }
-        else if (revents & EV_WRITE) {
-            std::deque<std::vector<unsigned char>>& vSendMsg = sendMsgManager.GetSendMsg(_fd);
-            auto it = vSendMsg.begin();
-            size_t nSentSize = 0;
-
-            size_t nSendOffset = sendMsgManager.GetSendOffset(_fd);
-
-            while (it != vSendMsg.end()) {
-                const auto &data = *it;
-                assert(data.size() > nSendOffset);
-                int nBytes = 0;
-                {
-                    nBytes = send(_fd, reinterpret_cast<const char*>(data.data()) + nSendOffset, data.size() - nSendOffset, MSG_NOSIGNAL | MSG_DONTWAIT);
-                }
-                if (nBytes > 0) {
-                    nSendOffset += nBytes;
-                    nSentSize += nBytes;
-                    if (nSendOffset == data.size()) {
-                        nSendOffset = 0;
-                        it++;
-                    } else {
-                        // could not send full message; stop sending more
-                        break;
-                    }
-                } else {
-                    if (nBytes < 0) {
-                        // error
-                        int nErr = WSAGetLastError();
-                        if (nErr != WSAEWOULDBLOCK && nErr != WSAEMSGSIZE && nErr != WSAEINTR && nErr != WSAEINPROGRESS)
-                        {
-                            LogPrintf("socket send error %s\n");
-                            exit(-1);
-                        }
-                    }
-                    // couldn't send anything at all
-                    break;
-                }
-            }
-
-            if (it == vSendMsg.end()) {
-                assert(nSendOffset == 0);
-                UnsetWritable();
-            }
-            vSendMsg.erase(vSendMsg.begin(), it);
-        }
     }
 public:
-    DataSocketWatcher(int fd) {
-        _watcher.set<DataSocketWatcher, &DataSocketWatcher::_dataSocketIOCallback> (this);
-        _watcher.start(fd, ev::READ);
-        _fd = fd;
+    DataSocket() {}
+    DataSocket(int fd) {
+        _socketfd = fd;
+        _readoffset = 0;
     }
-    DataSocketWatcher(int fd, std::string hostname) {
-        _watcher.set<DataSocketWatcher, &DataSocketWatcher::_dataSocketIOCallback> (this);
-        _watcher.start(fd, ev::READ);
-        _fd = fd;
-        _shadow_ip = hostname;
-    }
-    void SetWritable() {
-        _watcher.set(_fd, ev::READ | ev::WRITE);
-    }
-    void UnsetWritable() {
-        _watcher.set(_fd, ev::READ);
+    // Copy constructor : don't copy a watcher
+    DataSocket(const DataSocket &s2) {_socketfd = s2._socketfd; _readoffset = s2._readoffset; vRecvMsg = s2.vRecvMsg; vProcessMsg = s2.vProcessMsg;}
+
+    void StartWatcher() {
+        _datasocket_watcher.set<DataSocket, &DataSocket::_dataSocketIOCallback> (this);
+        _datasocket_watcher.start(_socketfd, ev::READ);
     }
 };
 
-class ListenSocketWatcher {
+//template<typename MSG>
+//class RecvControl {
+//private:
+//    size_t _offset;
+//    std::list<MSG> vRecvMsg;
+//    std::list<MSG> vProcessMsg;
+//public:
+//    RecvControl() {_offset = 0;}
+//    std::list<MSG>& getVRecvMsg() {return vRecvMsg;}
+//    std::list<MSG>& getVProcessMsg() {return vProcessMsg;}
+//};
+
+template<typename MSG, bool (*ReceiveMSG)(const char *, unsigned int, std::list<MSG>&, std::list<MSG>&)>
+class PassiveNode {
 private:
-    ev::io listen_watcher;
-    std::string _shadow_ip;
+    ev::io _listen_watcher; // assume a single listening socket per Node
     void _listenSocketIOCallback (ev::io &w, int revents) {
         std::cout << "listen socket IO callback called!" << "\n";
+
         struct 	sockaddr_in 	their_addr; /* connector's address information */
         int sock_fd;
         socklen_t 			sin_size;
@@ -248,10 +171,9 @@ private:
             std::cout << "server: got connection from " << inet_ntoa(their_addr.sin_addr) << "\n";
             fcntl(sock_fd, F_SETFL, O_NONBLOCK);
 
-            // create event watcher for the DataSocket
-            new DataSocketWatcher(sock_fd, _shadow_ip);
-
-            sendMsgManager.SetAddrMap(sock_fd, their_addr);
+            // Create DataSocket and start a event watcher for the DataSocket
+            vDataSocket.push_back(DataSocket<MSG, ReceiveMSG>(sock_fd));
+            vDataSocket.back().StartWatcher();
         }
         else {
             if( errno != EAGAIN && errno != EWOULDBLOCK ) {
@@ -260,22 +182,101 @@ private:
             }
         }
     }
+
+private:
+    int _listen_sockfd;
+    std::string _shadow_ip;
+
+    // data structures
+    std::list<DataSocket<MSG, ReceiveMSG> > vDataSocket; // TODO: think about 'call by reference' to reduce unnecessary copying
+
+
+    bool SetSocketNonBlocking(const SOCKET& hSocket, bool fNonBlocking)
+    {
+        if (fNonBlocking) {
+            int fFlags = fcntl(hSocket, F_GETFL, 0);
+            if (fcntl(hSocket, F_SETFL, fFlags | O_NONBLOCK) == SOCKET_ERROR) {
+                return false;
+            }
+        } else {
+            int fFlags = fcntl(hSocket, F_GETFL, 0);
+            if (fcntl(hSocket, F_SETFL, fFlags & ~O_NONBLOCK) == SOCKET_ERROR) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    bool CloseSocket(SOCKET& hSocket)
+    {
+        if (hSocket == INVALID_SOCKET)
+            return false;
+        int ret = close(hSocket);
+        if (ret) {
+            std::cout << "Socket close failed: " << hSocket << "\n";
+            exit(-1);
+        }
+        hSocket = INVALID_SOCKET;
+        return ret != SOCKET_ERROR;
+    }
+
+    int CreateNewSocket() {
+        // Create a TCP socket in the address family of the specified service.
+        SOCKET hSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+        if (hSocket == INVALID_SOCKET)
+            return INVALID_SOCKET;
+
+        // Set the no-delay option (disable Nagle's algorithm) on the TCP socket.
+        int set = 1;
+        setsockopt(hSocket, IPPROTO_TCP, TCP_NODELAY, (const char*)&set, sizeof(int));
+
+        // Set the non-blocking option on the socket.
+        if (!SetSocketNonBlocking(hSocket, true)) {
+            CloseSocket(hSocket);
+            std::cout << "Setting socket to non-blocking failed" << "\n";
+            exit(-1);
+        }
+
+        return hSocket;
+    }
 public:
-    ListenSocketWatcher(char *shadow_ip) {
-        _shadow_ip = std::string(shadow_ip);
+    PassiveNode(std::string ip_addr, int port) {
+        _shadow_ip = ip_addr;
+        std::cout << "Node generated" << "\n";
 
-        int fd = BitcoinLibBindSocket(_shadow_ip, 18333);
+        int sockfd = CreateNewSocket();
 
-        if (listen(fd, 10) == -1) {
+        // bind to shadow's virtual NIC
+        struct 	sockaddr_in 	new_addr;    /* my address information */
+        new_addr.sin_family = AF_INET;         /* host byte order */
+        new_addr.sin_port = htons(port);     /* short, network byte order */
+        new_addr.sin_addr.s_addr = inet_addr(ip_addr.c_str());
+        bzero(&(new_addr.sin_zero), 8);        /* zero the rest of the struct */
+
+        if (shadow_bind(sockfd, (struct sockaddr *)&new_addr, sizeof(struct sockaddr)) == -1) {
+            perror("bind");
+            exit(1);
+        }
+
+        // listen
+        if (listen(sockfd, 10) == -1) {
             perror("listen");
             exit(1);
         }
 
-        listen_watcher.set<ListenSocketWatcher, &ListenSocketWatcher::_listenSocketIOCallback> (this);
-        listen_watcher.start(fd, ev::READ);
+        // register a watcher
+        _listen_sockfd = sockfd;
+        _listen_watcher.set<PassiveNode, &PassiveNode::_listenSocketIOCallback> (this);
+        _listen_watcher.start(_listen_sockfd, ev::READ);
+    }
+
+    void testRecvMsg(int a) {
+//        MSG msg;
+////        msg.content = "test";
+//        (*ReceiveMSG)(msg, a);
     }
 };
-
 
 
 int main(int argc, char *argv[]) {
@@ -288,8 +289,11 @@ int main(int argc, char *argv[]) {
 
     puts_temp("test shadow_interface\n");
 
+    PassiveNode<CNetMessage, BitcoinLibReceiveMsg> n("1.2.0.1", 18333);
+    n.testRecvMsg(10);
+
     struct ev_loop *libev_loop = EV_DEFAULT;
-    ListenSocketWatcher listenSocketWatcher("1.2.0.1");
+    // ListenSocketWatcher listenSocketWatcher("1.2.0.1");
 
     //ListenSocketWatcher listenSocketWatcher2("11.0.0.11");
 

@@ -18,6 +18,8 @@
 #include <bitcoind.h>
 #include <net.h>
 #include <net_processing.h>
+#include <util/strencodings.h>
+#include <netmessagemaker.h>
 
 typedef unsigned int SOCKET;
 #define INVALID_SOCKET      (SOCKET)(~0)
@@ -50,111 +52,139 @@ std::string hex_to_string(const std::string& hexstr)
     return output;
 }
 
-template<typename MSG, bool (*ReceiveMSG)(const char *, unsigned int, std::list<MSG>&, std::list<MSG>&)>
-class DataSocket {
-private:
-    ev::io _datasocket_watcher;
-    size_t _readoffset;
-    std::list<MSG> vRecvMsg;
-    std::list<MSG> vProcessMsg;
-
-    int _socketfd;
-    void _dataSocketIOCallback (ev::io &w, int revents) {
-        std::cout << "data socket IO callback called!" << "\n";
-
-        if (revents & EV_READ) {
-            std::cout << "DoRecv!" << "\n";
-
-            // recv from socket, and append received data into the buffer.
-            // typical socket buffer is 8K-64K
-            char pchBuf[0x10000];
-
-            int nBytes = 0;
-
-            nBytes = recv(_socketfd, pchBuf, sizeof(pchBuf), MSG_DONTWAIT); // What is the meaning of MSG_DONTWAIT?
-            if (nBytes > 0) {
-                std::string recv_str(pchBuf, nBytes);
-                std::cout << "received data :[" << recv_str << "]" << "\n";
-                std::cout << "received data hex:[" << string_to_hex(recv_str) << "]" << "\n";
-
-                bool ret = BitcoinLibReceiveMsg(pchBuf, nBytes, vRecvMsg, vProcessMsg);
-                if (!ret) {
-                    std::cout << "error while BitcoinLibReceiveMsg" << "\n";
-                    exit(-1);
-                }
-
-                if (!vProcessMsg.empty()) {
-                    std::list<MSG> msgs;
-
-                    // Just take one message
-                    msgs.splice(msgs.begin(), vProcessMsg, vProcessMsg.begin());
-                    MSG& msg(msgs.front());
-
-                    std::cout << msg.hdr.GetCommand() << "\n";
-
-                    // process message
-//                    const unsigned char MessageStartChars[4] = {'\v', '\021', '\t', '\a'};
-//
-//                    if (memcmp(msg.hdr.pchMessageStart, MessageStartChars, CMessageHeader::MESSAGE_START_SIZE) != 0) {
-//                        std::cout << "INVALID MESSAGESTART " << msg.hdr.GetCommand() << "\n";
-//                        exit(-1);
-//                    }
-//
-//                    // Read header
-//                    CMessageHeader& hdr = msg.hdr;
-//                    if (!hdr.IsValid(MessageStartChars))
-//                    {
-//                        LogPrint(BCLog::NET, "PROCESSMESSAGE: ERRORS IN HEADER %s\n", hdr.GetCommand());
-//                        exit(-1);
-//                    }
-//
-//                    ret = BitcoinLibProcessMessage(msg, MessageStartChars, sendMsgManager.GetSendMsg(_fd), sendMsgManager.GetAddr(_fd));
-//                    if (!ret)
-//                    {
-//                        std::cout << "error while processing message" << "\n";
-//                        exit(-1);
-//                    }
-//                    if (!sendMsgManager.GetSendMsg(_fd).empty())
-//                        SetWritable(); // make watcher to monitor write event
-                }
-
-            } else if (nBytes == 0) {
-                std::cout << "connection closed while recv" << "\n";
-                delete this; // is it okay for this self-destruction?
-            } else if (nBytes < 0) {
-                // error
-                std::cout << "Error while recv" << "\n";
-            }
-        }
-    }
-public:
-    DataSocket() {}
-    DataSocket(int fd) {
-        _socketfd = fd;
-        _readoffset = 0;
-    }
-    // Copy constructor : don't copy a watcher
-    DataSocket(const DataSocket &s2) {_socketfd = s2._socketfd; _readoffset = s2._readoffset; vRecvMsg = s2.vRecvMsg; vProcessMsg = s2.vProcessMsg;}
-
-    void StartWatcher() {
-        _datasocket_watcher.set<DataSocket, &DataSocket::_dataSocketIOCallback> (this);
-        _datasocket_watcher.start(_socketfd, ev::READ);
-    }
-};
-
-//template<typename MSG>
-//class RecvControl {
+//class BitcoinSpecificData {
 //private:
-//    size_t _offset;
-//    std::list<MSG> vRecvMsg;
-//    std::list<MSG> vProcessMsg;
+//    CAddress addr;
 //public:
-//    RecvControl() {_offset = 0;}
-//    std::list<MSG>& getVRecvMsg() {return vRecvMsg;}
-//    std::list<MSG>& getVProcessMsg() {return vProcessMsg;}
+//    BitcoinSpecificData() {
+//    }
+//    void SetAddress(CAddress addr) { _addr = addr;}
+//    CAddress& getAddress() {return _addr;}
 //};
 
-template<typename MSG, bool (*ReceiveMSG)(const char *, unsigned int, std::list<MSG>&, std::list<MSG>&)>
+// bitcoin specific interface
+bool BitcoinProcessMessage(CNetMessage& msg, std::deque<std::vector<unsigned char>>& vSendMsg) {
+
+    const unsigned char MessageStartChars[4] = {'\v', '\021', '\t', '\a'};
+
+    if (memcmp(msg.hdr.pchMessageStart, MessageStartChars, CMessageHeader::MESSAGE_START_SIZE) != 0) {
+        std::cout << "INVALID MESSAGESTART " << msg.hdr.GetCommand() << "\n";
+        exit(-1);
+    }
+
+    // their_addr
+    CAddress their_addr;
+    struct 	sockaddr_in 	new_addr;    /* my address information */
+    new_addr.sin_family = AF_INET;         /* host byte order */
+    new_addr.sin_port = htons(18333);     /* short, network byte order */  // TODO: okay????
+    new_addr.sin_addr.s_addr = inet_addr("1.2.0.1"); // TODO: how to assign??
+    bzero(&(new_addr.sin_zero), 8);        /* zero the rest of the struct */
+
+    if (!their_addr.SetSockAddr((const struct sockaddr*)&new_addr)) {
+        LogPrintf("Warning: Unknown socket family\n");
+    }
+
+    // Read header
+    CMessageHeader& hdr = msg.hdr;
+    if (!hdr.IsValid(MessageStartChars))
+    {
+        LogPrint(BCLog::NET, "PROCESSMESSAGE: ERRORS IN HEADER %s\n", hdr.GetCommand());
+        exit(-1);
+    }
+    std::string strCommand = hdr.GetCommand();
+    CDataStream& vRecv = msg.vRecv;
+
+    if (strCommand == NetMsgType::VERSION) {
+        int64_t nTime;
+        CAddress addrMe;
+        CAddress addrFrom;
+        uint64_t nNonce = 1;
+        uint64_t nServiceInt;
+        ServiceFlags nServices;
+        int nVersion;
+        int nSendVersion;
+        std::string cleanSubVer;
+        int nStartingHeight = -1;
+        bool fRelay = true;
+
+        vRecv >> nVersion >> nServiceInt >> nTime >> addrMe;
+        nSendVersion = std::min(nVersion, PROTOCOL_VERSION);
+        nServices = ServiceFlags(nServiceInt);
+
+        if (!vRecv.empty())
+            vRecv >> addrFrom >> nNonce;
+        if (!vRecv.empty()) {
+            std::string strSubVer;
+            vRecv >> LIMITED_STRING(strSubVer, MAX_SUBVERSION_LENGTH);
+            cleanSubVer = SanitizeString(strSubVer);
+        }
+        if (!vRecv.empty()) {
+            vRecv >> nStartingHeight;
+        }
+        if (!vRecv.empty())
+            vRecv >> fRelay;
+
+        // version message
+        ServiceFlags nLocalNodeServices = ServiceFlags(NODE_NETWORK|NODE_WITNESS|NODE_NETWORK_LIMITED);
+        uint64_t nonce = 0;
+        int myNodeStartingHeight = nStartingHeight;
+
+        CNetMsgMaker(INIT_PROTO_VERSION).Make(NetMsgType::VERSION, PROTOCOL_VERSION, (uint64_t)nLocalNodeServices, nTime, their_addr, addrFrom, nonce, strSubVersion, myNodeStartingHeight, true);
+        CSerializedNetMsg msg = CNetMsgMaker(INIT_PROTO_VERSION).Make(NetMsgType::VERSION, PROTOCOL_VERSION, (uint64_t)nLocalNodeServices, nTime, their_addr, addrFrom, nonce, strSubVersion, myNodeStartingHeight, true);
+
+        size_t nMessageSize = msg.data.size();
+        size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
+        LogPrint(BCLog::NET, "sending %s (%d bytes) \n",  SanitizeString(msg.command.c_str()), nMessageSize);
+
+        std::vector<unsigned char> serializedHeader;
+        serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
+        uint256 hash = Hash(msg.data.data(), msg.data.data() + nMessageSize);
+        CMessageHeader hdr(MessageStartChars, msg.command.c_str(), nMessageSize);
+        memcpy(hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
+
+        CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, serializedHeader, 0, hdr};
+
+        if (nMessageSize) {
+            vSendMsg.push_back(std::move(serializedHeader));
+            vSendMsg.push_back(std::move(msg.data));
+        }
+    }
+    return true;
+}
+
+
+
+template<typename MSG>
+class SocketControlStruct {
+private:
+    SOCKET _socketfd;
+    size_t _offset;
+    ev::io _datasocket_watcher;
+    std::list<MSG> vRecvMsg;
+    std::list<MSG> vProcessMsg;
+    std::deque<std::vector<unsigned char>> vSendMsg;
+
+public:
+    SocketControlStruct() {}
+    SocketControlStruct(int fd) {_offset = 0; _socketfd = fd;}
+    size_t getSendOffset() {return _offset;}
+    void setSendOffset(size_t offset) { _offset = offset; }
+    std::list<MSG>& getVRecvMsg() {return vRecvMsg;}
+    std::list<MSG>& getVProcessMsg() {return vProcessMsg;}
+    std::deque<std::vector<unsigned char>>& getVSendMsg() {   return vSendMsg;  }
+    ev::io& getSocketWatcher() {return _datasocket_watcher;}
+
+    // Copy constructor : it is needed due to rvalue(?) assignment for std::map. Don't copy a watcher
+    SocketControlStruct(const SocketControlStruct &s2) {_socketfd = s2._socketfd; _offset = s2._offset; vRecvMsg = s2.vRecvMsg; vProcessMsg = s2.vProcessMsg; vSendMsg = s2.vSendMsg;}
+
+};
+
+
+
+
+template<typename MSG,
+        bool (*ReceiveMSG)(const char *, unsigned int, std::list<MSG>&, std::list<MSG>&),
+        bool (*ProcessMSG)(MSG& , std::deque<std::vector<unsigned char>>&) >
 class PassiveNode {
 private:
     ev::io _listen_watcher; // assume a single listening socket per Node
@@ -172,8 +202,11 @@ private:
             fcntl(sock_fd, F_SETFL, O_NONBLOCK);
 
             // Create DataSocket and start a event watcher for the DataSocket
-            vDataSocket.push_back(DataSocket<MSG, ReceiveMSG>(sock_fd));
-            vDataSocket.back().StartWatcher();
+            mSocketControl.try_emplace(sock_fd, SocketControlStruct<MSG>(sock_fd));
+
+            ev::io& watcher = mSocketControl[sock_fd].getSocketWatcher();
+            watcher.set<PassiveNode, &PassiveNode::_dataSocketIOCallback> (this);
+            watcher.start(sock_fd, ev::READ);
         }
         else {
             if( errno != EAGAIN && errno != EWOULDBLOCK ) {
@@ -183,12 +216,122 @@ private:
         }
     }
 
+    void _dataSocketIOCallback (ev::io &w, int revents) {
+        std::cout << "data socket IO callback called!" << "\n";
+
+        int datasock_fd = w.fd;
+        auto& socketControl = mSocketControl[datasock_fd];
+        std::list<MSG>& vRecvMsg = socketControl.getVRecvMsg();
+        std::list<MSG>& vProcessMsg = socketControl.getVProcessMsg();
+        std::deque<std::vector<unsigned char>>& vSendMsg = socketControl.getVSendMsg();
+
+        if (revents & EV_READ) {
+            std::cout << "DoRecv!" << "\n";
+
+            // recv from socket, and append received data into the buffer.
+            // typical socket buffer is 8K-64K
+            char pchBuf[0x10000];
+
+            int nBytes = 0;
+
+            nBytes = recv(datasock_fd, pchBuf, sizeof(pchBuf), MSG_DONTWAIT); // What is the meaning of MSG_DONTWAIT?
+            if (nBytes > 0) {
+                std::string recv_str(pchBuf, nBytes);
+                std::cout << "received data :[" << recv_str << "]" << "\n";
+                std::cout << "received data hex:[" << string_to_hex(recv_str) << "]" << "\n";
+
+                bool ret = ReceiveMSG(pchBuf, nBytes, vRecvMsg, vProcessMsg);
+                if (!ret) {
+                    std::cout << "error while BitcoinLibReceiveMsg" << "\n";
+                    exit(-1);
+                }
+
+                if (!vProcessMsg.empty()) {
+                    std::list<MSG> msgs;
+
+                    // Just take one message
+                    msgs.splice(msgs.begin(), vProcessMsg, vProcessMsg.begin());
+                    MSG& msg(msgs.front());
+
+                    std::cout << msg.hdr.GetCommand() << "\n";
+
+                    // process message
+
+//
+                    ret = ProcessMSG(msg, vSendMsg);
+                    if (!ret)
+                    {
+                        std::cout << "error while processing message" << "\n";
+                        exit(-1);
+                    }
+                    if (!vSendMsg.empty()) // set Writable
+                        socketControl.getSocketWatcher().set(datasock_fd, ev::READ | ev::WRITE);
+                }
+
+            } else if (nBytes == 0) {
+                std::cout << "connection closed while recv" << "\n";
+                delete this; // is it okay for this self-destruction?
+            } else if (nBytes < 0) {
+                // error
+                std::cout << "Error while recv" << "\n";
+            }
+        }
+        else if (revents & EV_WRITE) {
+            auto it = vSendMsg.begin();
+            size_t nSentSize = 0;
+
+            size_t nSendOffset = socketControl.getSendOffset();
+
+            while (it != vSendMsg.end()) {
+                const auto &data = *it;
+                assert(data.size() > nSendOffset);
+                int nBytes = 0;
+                {
+                    nBytes = send(datasock_fd, reinterpret_cast<const char*>(data.data()) + nSendOffset, data.size() - nSendOffset, MSG_NOSIGNAL | MSG_DONTWAIT);
+                }
+                if (nBytes > 0) {
+                    nSendOffset += nBytes;
+                    nSentSize += nBytes;
+                    if (nSendOffset == data.size()) {
+                        nSendOffset = 0;
+                        it++;
+                    } else {
+                        // could not send full message; stop sending more
+                        break;
+                    }
+                } else {
+                    if (nBytes < 0) {
+                        // error
+                        int nErr = WSAGetLastError();
+                        if (nErr != WSAEWOULDBLOCK && nErr != WSAEMSGSIZE && nErr != WSAEINTR && nErr != WSAEINPROGRESS)
+                        {
+                            LogPrintf("socket send error %s\n");
+                            exit(-1);
+                        }
+                    }
+                    // couldn't send anything at all
+                    break;
+                }
+            }
+            socketControl.setSendOffset(nSendOffset);
+
+            if (it == vSendMsg.end()) {
+                assert(nSendOffset == 0);
+                // unset writable
+                socketControl.getSocketWatcher().set(datasock_fd, ev::READ);
+            }
+            vSendMsg.erase(vSendMsg.begin(), it);
+        }
+    }
+
+
+
 private:
     int _listen_sockfd;
     std::string _shadow_ip;
 
     // data structures
-    std::list<DataSocket<MSG, ReceiveMSG> > vDataSocket; // TODO: think about 'call by reference' to reduce unnecessary copying
+    std::map< SOCKET, SocketControlStruct<MSG> > mSocketControl;
 
 
     bool SetSocketNonBlocking(const SOCKET& hSocket, bool fNonBlocking)
@@ -289,7 +432,7 @@ int main(int argc, char *argv[]) {
 
     puts_temp("test shadow_interface\n");
 
-    PassiveNode<CNetMessage, BitcoinLibReceiveMsg> n("1.2.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinLibReceiveMsg, BitcoinProcessMessage> n("1.2.0.1", 18333);
     n.testRecvMsg(10);
 
     struct ev_loop *libev_loop = EV_DEFAULT;

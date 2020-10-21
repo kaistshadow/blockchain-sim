@@ -17,9 +17,9 @@
 #include <util/system.h>
 #include <bitcoind.h>
 #include <net.h>
-#include <net_processing.h>
 #include <util/strencodings.h>
 #include <netmessagemaker.h>
+#include <chainparams.h>
 
 typedef unsigned int SOCKET;
 #define INVALID_SOCKET      (SOCKET)(~0)
@@ -52,8 +52,51 @@ std::string hex_to_string(const std::string& hexstr)
     return output;
 }
 
+// bitcoin specific interface for receiving data.
+// Read a 'nBytes' data from datastream ('pch'),
+// then push back to message queues ('vRecvMsg' and 'vProcessMsg').
+// Almost code are borrowed from net.cpp of Bitcoin repo.
+bool BitcoinReceiveMsg(const char *pch, unsigned int nBytes, std::list<CNetMessage>& vRecvMsg, std::list<CNetMessage>& vProcessMsg) {
+    while (nBytes > 0) {
+        // get current incomplete message, or create a new one
+        if (vRecvMsg.empty() || vRecvMsg.back().complete())
+            vRecvMsg.push_back(CNetMessage(Params().MessageStart(), SER_NETWORK, INIT_PROTO_VERSION));
 
-// bitcoin specific interface
+        CNetMessage& msg = vRecvMsg.back();
+
+        // absorb network data
+        int handled;
+        if (!msg.in_data)
+            handled = msg.readHeader(pch, nBytes);
+        else
+            handled = msg.readData(pch, nBytes);
+
+        if (handled < 0)
+            return false;
+
+        if (msg.in_data && msg.hdr.nMessageSize > MAX_PROTOCOL_MESSAGE_LENGTH) {
+            LogPrint(BCLog::NET, "Oversized message, disconnecting\n");
+            return false;
+        }
+
+        pch += handled;
+        nBytes -= handled;
+    }
+
+    auto it(vRecvMsg.begin());
+    for (; it != vRecvMsg.end(); ++it) {
+        if (!it->complete())
+            break;
+    }
+    vProcessMsg.splice(vProcessMsg.end(), vRecvMsg, vRecvMsg.begin(), it);
+
+    return true;
+}
+
+// bitcoin specific interface for processing messages.
+// Read and process a message 'msg',
+// then push back any necessary replies to message queue ('vSendMsg').
+// Almost code are borrowed from net_processing.cpp of Bitcoin repo.
 bool BitcoinProcessMessage(CNetMessage& msg, std::deque<std::vector<unsigned char>>& vSendMsg, std::string their_ip, uint16_t their_port) {
 
     const unsigned char MessageStartChars[4] = {'\v', '\021', '\t', '\a'};
@@ -67,8 +110,8 @@ bool BitcoinProcessMessage(CNetMessage& msg, std::deque<std::vector<unsigned cha
     CAddress their_addr;
     struct 	sockaddr_in 	new_addr;    /* my address information */
     new_addr.sin_family = AF_INET;         /* host byte order */
-    new_addr.sin_port = htons(their_port);     /* short, network byte order */  // TODO: okay????
-    new_addr.sin_addr.s_addr = inet_addr(their_ip.c_str()); // TODO: how to assign??
+    new_addr.sin_port = htons(their_port);     /* short, network byte order */
+    new_addr.sin_addr.s_addr = inet_addr(their_ip.c_str());
     bzero(&(new_addr.sin_zero), 8);        /* zero the rest of the struct */
 
     if (!their_addr.SetSockAddr((const struct sockaddr*)&new_addr)) {
@@ -236,7 +279,7 @@ private:
 
                 bool ret = ReceiveMSG(pchBuf, nBytes, vRecvMsg, vProcessMsg);
                 if (!ret) {
-                    std::cout << "error while BitcoinLibReceiveMsg" << "\n";
+                    std::cout << "error while BitcoinReceiveMsg" << "\n";
                     exit(-1);
                 }
 
@@ -419,7 +462,7 @@ int main(int argc, char *argv[]) {
 
     puts_temp("test shadow_interface\n");
 
-    PassiveNode<CNetMessage, BitcoinLibReceiveMsg, BitcoinProcessMessage> n("1.1.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMessage> n("1.1.0.1", 18333);
 
     struct ev_loop *libev_loop = EV_DEFAULT;
     // ListenSocketWatcher listenSocketWatcher("1.2.0.1");

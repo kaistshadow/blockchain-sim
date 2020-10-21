@@ -97,7 +97,7 @@ bool BitcoinReceiveMsg(const char *pch, unsigned int nBytes, std::list<CNetMessa
 // Read and process a message 'msg',
 // then push back any necessary replies to message queue ('vSendMsg').
 // Almost code are borrowed from net_processing.cpp of Bitcoin repo.
-bool BitcoinProcessMessage(CNetMessage& msg, std::deque<std::vector<unsigned char>>& vSendMsg, std::string their_ip, uint16_t their_port) {
+bool BitcoinProcessMsg(CNetMessage& msg, std::deque<std::vector<unsigned char>>& vSendMsg, std::string their_ip, uint16_t their_port) {
 
     const unsigned char MessageStartChars[4] = {'\v', '\021', '\t', '\a'};
 
@@ -211,7 +211,8 @@ public:
     std::deque<std::vector<unsigned char>>& getVSendMsg() {   return vSendMsg;  }
     ev::io& getSocketWatcher() {return _datasocket_watcher;}
 
-    // Copy constructor : it is needed due to rvalue(?) assignment for std::map. Don't copy a watcher
+    // Copy constructor : it is needed due to rvalue(?) assignment for std::map. Don't copy a watcher.
+    // TODO : do not use copy. but use only move because watcher cannot be copied(?).
     SocketControlStruct(const SocketControlStruct &s2) {_socketfd = s2._socketfd; _offset = s2._offset; vRecvMsg = s2.vRecvMsg; vProcessMsg = s2.vProcessMsg; vSendMsg = s2.vSendMsg; their_ip = s2.their_ip; their_port = s2.their_port;}
 
 };
@@ -462,7 +463,8 @@ int main(int argc, char *argv[]) {
 
     puts_temp("test shadow_interface\n");
 
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMessage> n("1.1.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node1("1.1.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node2("1.2.0.1", 18333);
 
     struct ev_loop *libev_loop = EV_DEFAULT;
     // ListenSocketWatcher listenSocketWatcher("1.2.0.1");

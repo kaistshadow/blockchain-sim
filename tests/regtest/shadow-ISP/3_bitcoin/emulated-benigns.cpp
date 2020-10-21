@@ -52,18 +52,9 @@ std::string hex_to_string(const std::string& hexstr)
     return output;
 }
 
-//class BitcoinSpecificData {
-//private:
-//    CAddress addr;
-//public:
-//    BitcoinSpecificData() {
-//    }
-//    void SetAddress(CAddress addr) { _addr = addr;}
-//    CAddress& getAddress() {return _addr;}
-//};
 
 // bitcoin specific interface
-bool BitcoinProcessMessage(CNetMessage& msg, std::deque<std::vector<unsigned char>>& vSendMsg) {
+bool BitcoinProcessMessage(CNetMessage& msg, std::deque<std::vector<unsigned char>>& vSendMsg, std::string their_ip, uint16_t their_port) {
 
     const unsigned char MessageStartChars[4] = {'\v', '\021', '\t', '\a'};
 
@@ -76,8 +67,8 @@ bool BitcoinProcessMessage(CNetMessage& msg, std::deque<std::vector<unsigned cha
     CAddress their_addr;
     struct 	sockaddr_in 	new_addr;    /* my address information */
     new_addr.sin_family = AF_INET;         /* host byte order */
-    new_addr.sin_port = htons(18333);     /* short, network byte order */  // TODO: okay????
-    new_addr.sin_addr.s_addr = inet_addr("1.2.0.1"); // TODO: how to assign??
+    new_addr.sin_port = htons(their_port);     /* short, network byte order */  // TODO: okay????
+    new_addr.sin_addr.s_addr = inet_addr(their_ip.c_str()); // TODO: how to assign??
     bzero(&(new_addr.sin_zero), 8);        /* zero the rest of the struct */
 
     if (!their_addr.SetSockAddr((const struct sockaddr*)&new_addr)) {
@@ -165,8 +156,11 @@ private:
     std::deque<std::vector<unsigned char>> vSendMsg;
 
 public:
+    std::string their_ip;
+    uint16_t their_port;
+
     SocketControlStruct() {}
-    SocketControlStruct(int fd) {_offset = 0; _socketfd = fd;}
+    SocketControlStruct(int fd, std::string ip, uint16_t port) {_offset = 0; _socketfd = fd; their_ip = ip, their_port = port;}
     size_t getSendOffset() {return _offset;}
     void setSendOffset(size_t offset) { _offset = offset; }
     std::list<MSG>& getVRecvMsg() {return vRecvMsg;}
@@ -175,7 +169,7 @@ public:
     ev::io& getSocketWatcher() {return _datasocket_watcher;}
 
     // Copy constructor : it is needed due to rvalue(?) assignment for std::map. Don't copy a watcher
-    SocketControlStruct(const SocketControlStruct &s2) {_socketfd = s2._socketfd; _offset = s2._offset; vRecvMsg = s2.vRecvMsg; vProcessMsg = s2.vProcessMsg; vSendMsg = s2.vSendMsg;}
+    SocketControlStruct(const SocketControlStruct &s2) {_socketfd = s2._socketfd; _offset = s2._offset; vRecvMsg = s2.vRecvMsg; vProcessMsg = s2.vProcessMsg; vSendMsg = s2.vSendMsg; their_ip = s2.their_ip; their_port = s2.their_port;}
 
 };
 
@@ -184,7 +178,7 @@ public:
 
 template<typename MSG,
         bool (*ReceiveMSG)(const char *, unsigned int, std::list<MSG>&, std::list<MSG>&),
-        bool (*ProcessMSG)(MSG& , std::deque<std::vector<unsigned char>>&) >
+        bool (*ProcessMSG)(MSG& , std::deque<std::vector<unsigned char>>&, std::string, uint16_t) >
 class PassiveNode {
 private:
     ev::io _listen_watcher; // assume a single listening socket per Node
@@ -198,11 +192,11 @@ private:
         sin_size = sizeof(struct sockaddr_in);
         sock_fd = accept(w.fd, (struct sockaddr *)&their_addr, &sin_size);
         if ( sock_fd != -1 ) {
-            std::cout << "server: got connection from " << inet_ntoa(their_addr.sin_addr) << "\n";
             fcntl(sock_fd, F_SETFL, O_NONBLOCK);
 
             // Create DataSocket and start a event watcher for the DataSocket
-            mSocketControl.try_emplace(sock_fd, SocketControlStruct<MSG>(sock_fd));
+            mSocketControl.try_emplace(sock_fd, SocketControlStruct<MSG>(sock_fd, inet_ntoa(their_addr.sin_addr), ntohs(their_addr.sin_port)));
+            std::cout << "server: got connection from " << mSocketControl[sock_fd].their_ip << ":" << mSocketControl[sock_fd].their_port << "\n";
 
             ev::io& watcher = mSocketControl[sock_fd].getSocketWatcher();
             watcher.set<PassiveNode, &PassiveNode::_dataSocketIOCallback> (this);
@@ -256,9 +250,7 @@ private:
                     std::cout << msg.hdr.GetCommand() << "\n";
 
                     // process message
-
-//
-                    ret = ProcessMSG(msg, vSendMsg);
+                    ret = ProcessMSG(msg, vSendMsg, socketControl.their_ip, socketControl.their_port);
                     if (!ret)
                     {
                         std::cout << "error while processing message" << "\n";
@@ -414,11 +406,6 @@ public:
         _listen_watcher.start(_listen_sockfd, ev::READ);
     }
 
-    void testRecvMsg(int a) {
-//        MSG msg;
-////        msg.content = "test";
-//        (*ReceiveMSG)(msg, a);
-    }
 };
 
 
@@ -432,8 +419,7 @@ int main(int argc, char *argv[]) {
 
     puts_temp("test shadow_interface\n");
 
-    PassiveNode<CNetMessage, BitcoinLibReceiveMsg, BitcoinProcessMessage> n("1.2.0.1", 18333);
-    n.testRecvMsg(10);
+    PassiveNode<CNetMessage, BitcoinLibReceiveMsg, BitcoinProcessMessage> n("1.1.0.1", 18333);
 
     struct ev_loop *libev_loop = EV_DEFAULT;
     // ListenSocketWatcher listenSocketWatcher("1.2.0.1");

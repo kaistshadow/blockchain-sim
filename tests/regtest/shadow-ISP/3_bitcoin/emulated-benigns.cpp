@@ -186,6 +186,48 @@ bool BitcoinProcessMsg(CNetMessage& msg, std::deque<std::vector<unsigned char>>&
     return true;
 }
 
+// bitcoin specific interface for forging ADDR MSG.
+bool BitcoinForgeAddrMsg(std::vector<std::string> vIP, std::deque<std::vector<unsigned char>>& vSendMsg, std::string their_ip, uint16_t their_port) {
+    const unsigned char MessageStartChars[4] = {'\v', '\021', '\t', '\a'};
+    std::vector<CAddress> vAddr;
+    vAddr.reserve(vIP.size());
+    for (std::string ip : vIP) {
+        CAddress addr;
+
+        struct 	sockaddr_in 	sock_addr;    /* my address information */
+        sock_addr.sin_family = AF_INET;         /* host byte order */
+        sock_addr.sin_port = htons(18333);     /* short, network byte order */
+        sock_addr.sin_addr.s_addr = inet_addr(ip.c_str());
+        bzero(&(sock_addr.sin_zero), 8);        /* zero the rest of the struct */
+
+        if (!addr.SetSockAddr((const struct sockaddr*)&sock_addr)) {
+            std::cout << "error while creating a Bitcoin Forged Addr" << "\n";
+            exit(-1);
+        }
+        vAddr.push_back(addr);
+    }
+    CSerializedNetMsg msg = CNetMsgMaker(INIT_PROTO_VERSION).Make(NetMsgType::ADDR, vAddr);
+
+    size_t nMessageSize = msg.data.size();
+    size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
+    LogPrint(BCLog::NET, "sending %s (%d bytes) \n",  SanitizeString(msg.command.c_str()), nMessageSize);
+
+    std::vector<unsigned char> serializedHeader;
+    serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
+    uint256 hash = Hash(msg.data.data(), msg.data.data() + nMessageSize);
+    CMessageHeader hdr(MessageStartChars, msg.command.c_str(), nMessageSize);
+    memcpy(hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
+
+    CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, serializedHeader, 0, hdr};
+
+    if (nMessageSize) {
+        vSendMsg.push_back(std::move(serializedHeader));
+        vSendMsg.push_back(std::move(msg.data));
+    }
+
+    return true;
+}
+
 
 
 template<typename MSG>
@@ -222,7 +264,8 @@ public:
 
 template<typename MSG,
         bool (*ReceiveMSG)(const char *, unsigned int, std::list<MSG>&, std::list<MSG>&),
-        bool (*ProcessMSG)(MSG& , std::deque<std::vector<unsigned char>>&, std::string, uint16_t) >
+        bool (*ProcessMSG)(MSG& , std::deque<std::vector<unsigned char>>&, std::string, uint16_t),
+        bool (*ForgeAddrMSG)(std::vector<std::string>, std::deque<std::vector<unsigned char>>&, std::string, uint16_t)>
 class PassiveNode {
 private:
     ev::io _listen_watcher; // assume a single listening socket per Node
@@ -450,8 +493,43 @@ public:
         _listen_watcher.start(_listen_sockfd, ev::READ);
     }
 
+    void SendAddr(std::vector<std::string> vIP) {
+        // get victim address
+        if (mSocketControl.empty())
+            return;
+
+        // retrieve first data socket, since the node is passive node
+        auto& [fd, socketControl] = *mSocketControl.begin();
+        std::deque<std::vector<unsigned char>> &vSendMsg = socketControl.getVSendMsg();
+        bool ret = ForgeAddrMSG(vIP, vSendMsg, socketControl.their_ip, socketControl.their_port);
+        if (!ret) {
+            std::cout << "failed to forge ADDR msg" << "\n";
+            exit(-1);
+        }
+        if (!vSendMsg.empty()) { // set Writable
+            socketControl.getSocketWatcher().set(fd, ev::READ | ev::WRITE);
+        }
+    }
+
 };
 
+class AddrTimer {
+private:
+    ev::timer _timer;
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg>& _benign_node;
+    std::vector<std::string> vAddr;
+public:
+    AddrTimer(double time, std::vector<std::string> addrs,
+            PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg>& node): vAddr(addrs), _benign_node(node) {
+        _timer.set<AddrTimer, &AddrTimer::_timerCallback>(this);
+        _timer.set(time, 0.);
+        _timer.start();
+    }
+    void _timerCallback(ev::timer &w, int revents) {
+        std::cout << "timer called" << "\n";
+        _benign_node.SendAddr(vAddr);
+    }
+};
 
 int main(int argc, char *argv[]) {
 
@@ -463,8 +541,11 @@ int main(int argc, char *argv[]) {
 
     puts_temp("test shadow_interface\n");
 
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node1("1.1.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node2("1.2.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node1("1.1.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node2("1.2.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node3("1.3.0.1", 18333);
+
+    AddrTimer myTimer(15, {"1.3.0.1"}, benign_node2);
 
     struct ev_loop *libev_loop = EV_DEFAULT;
     // ListenSocketWatcher listenSocketWatcher("1.2.0.1");

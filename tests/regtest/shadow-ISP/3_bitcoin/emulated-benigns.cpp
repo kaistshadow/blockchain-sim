@@ -163,11 +163,10 @@ bool BitcoinProcessMsg(CNetMessage& msg, std::deque<std::vector<unsigned char>>&
         uint64_t nonce = 0;
         int myNodeStartingHeight = nStartingHeight;
 
-        CNetMsgMaker(INIT_PROTO_VERSION).Make(NetMsgType::VERSION, PROTOCOL_VERSION, (uint64_t)nLocalNodeServices, nTime, their_addr, addrFrom, nonce, strSubVersion, myNodeStartingHeight, true);
         CSerializedNetMsg msg = CNetMsgMaker(INIT_PROTO_VERSION).Make(NetMsgType::VERSION, PROTOCOL_VERSION, (uint64_t)nLocalNodeServices, nTime, their_addr, addrFrom, nonce, strSubVersion, myNodeStartingHeight, true);
 
         size_t nMessageSize = msg.data.size();
-        size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
+        //size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
         LogPrint(BCLog::NET, "sending %s (%d bytes) \n",  SanitizeString(msg.command.c_str()), nMessageSize);
 
         std::vector<unsigned char> serializedHeader;
@@ -178,35 +177,49 @@ bool BitcoinProcessMsg(CNetMessage& msg, std::deque<std::vector<unsigned char>>&
 
         CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, serializedHeader, 0, hdr};
 
+        vSendMsg.push_back(std::move(serializedHeader));
         if (nMessageSize) {
-            vSendMsg.push_back(std::move(serializedHeader));
             vSendMsg.push_back(std::move(msg.data));
         }
+
+        // send verack message
+        CSerializedNetMsg verack_msg = CNetMsgMaker(INIT_PROTO_VERSION).Make(NetMsgType::VERACK);
+        nMessageSize = verack_msg.data.size();
+        LogPrint(BCLog::NET, "sending %s (%d bytes) \n",  SanitizeString(verack_msg.command.c_str()), nMessageSize);
+
+        std::vector<unsigned char> verack_serializedHeader;
+        verack_serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
+        hash = Hash(verack_msg.data.data(), verack_msg.data.data() + nMessageSize);
+        CMessageHeader verack_hdr(MessageStartChars, verack_msg.command.c_str(), nMessageSize);
+        memcpy(verack_hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
+
+        CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, verack_serializedHeader, 0, verack_hdr};
+
+        vSendMsg.push_back(std::move(verack_serializedHeader));
+        if (nMessageSize) {
+            vSendMsg.push_back(std::move(verack_msg.data));
+        }
+
     }
     return true;
 }
 
 // bitcoin specific interface for forging ADDR MSG.
+// Create a ADDR message for `vIP`,
+// then push it to message queue ('vSendMsg').
 bool BitcoinForgeAddrMsg(std::vector<std::string> vIP, std::deque<std::vector<unsigned char>>& vSendMsg, std::string their_ip, uint16_t their_port) {
     const unsigned char MessageStartChars[4] = {'\v', '\021', '\t', '\a'};
+    ServiceFlags nLocalNodeServices = ServiceFlags(NODE_NETWORK|NODE_WITNESS|NODE_NETWORK_LIMITED);
     std::vector<CAddress> vAddr;
     vAddr.reserve(vIP.size());
     for (std::string ip : vIP) {
-        CAddress addr;
+        struct in_addr in_addr_ip;
+        in_addr_ip.s_addr = inet_addr(ip.c_str());
+        CAddress addr = CAddress(CService(CNetAddr(in_addr_ip), 18333), nLocalNodeServices);
 
-        struct 	sockaddr_in 	sock_addr;    /* my address information */
-        sock_addr.sin_family = AF_INET;         /* host byte order */
-        sock_addr.sin_port = htons(18333);     /* short, network byte order */
-        sock_addr.sin_addr.s_addr = inet_addr(ip.c_str());
-        bzero(&(sock_addr.sin_zero), 8);        /* zero the rest of the struct */
-
-        if (!addr.SetSockAddr((const struct sockaddr*)&sock_addr)) {
-            std::cout << "error while creating a Bitcoin Forged Addr" << "\n";
-            exit(-1);
-        }
         vAddr.push_back(addr);
     }
-    CSerializedNetMsg msg = CNetMsgMaker(INIT_PROTO_VERSION).Make(NetMsgType::ADDR, vAddr);
+    CSerializedNetMsg msg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::ADDR, vAddr);
 
     size_t nMessageSize = msg.data.size();
     size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
@@ -218,10 +231,10 @@ bool BitcoinForgeAddrMsg(std::vector<std::string> vIP, std::deque<std::vector<un
     CMessageHeader hdr(MessageStartChars, msg.command.c_str(), nMessageSize);
     memcpy(hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
 
-    CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, serializedHeader, 0, hdr};
+    CVectorWriter{SER_NETWORK, PROTOCOL_VERSION, serializedHeader, 0, hdr};
 
+    vSendMsg.push_back(std::move(serializedHeader));
     if (nMessageSize) {
-        vSendMsg.push_back(std::move(serializedHeader));
         vSendMsg.push_back(std::move(msg.data));
     }
 

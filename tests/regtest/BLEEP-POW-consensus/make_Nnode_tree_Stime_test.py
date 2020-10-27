@@ -1,6 +1,3 @@
-import os
-from subprocess import check_output, Popen, PIPE
-import argparse
 import sys
 import lxml.etree as ET
 

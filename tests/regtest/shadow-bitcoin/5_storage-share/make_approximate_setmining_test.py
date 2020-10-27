@@ -40,5 +40,5 @@ def setup_multiple_node_xml(node_num, simultime):
 if __name__ == '__main__':
     node_count = int(sys.argv[1])
     simulation_time = int(sys.argv[2])
-    setup_multiple_node_xml(node_count, sim_time);
+    setup_multiple_node_xml(node_count, simulation_time);
 

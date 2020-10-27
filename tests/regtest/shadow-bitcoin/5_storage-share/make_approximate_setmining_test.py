@@ -1,10 +1,7 @@
-import os
-from subprocess import check_output, Popen, PIPE
-import argparse
 import sys
 import lxml.etree as ET
 
-def setup_multiple_node_xml(node_num, simultime, bool_):
+def setup_multiple_node_xml(node_num, simultime):
     base_xml = "example.xml"
     new_xml  = "base"+str(node_num)+"N"+str(simultime)+"T.xml"
 
@@ -38,28 +35,10 @@ def setup_multiple_node_xml(node_num, simultime, bool_):
         argument = "%d.%d.0.1:11111 %d" % (i/256 + 1, i%256, (simultime-6))
         ET.SubElement(node,"application", plugin="client", time=time, arguments=argument)
 
-    if bool_ == True:
-        tree.write(new_xml, pretty_print=True)
-    else :
-        node_id = "injector"
-        node = ET.SubElement(shadow, "node", id=node_id)
-        time = str(150)
-        argument = "%d %d" % ((simultime-6), node_num)
-        ET.SubElement(node,"application", plugin="txInjector", time=time, arguments=argument)
-
     tree.write(new_xml, pretty_print=True)
 
-def select_option(param1,node_count, sim_time):
-    if param1 == "normal":
-        setup_multiple_node_xml(node_count, sim_time,True);
-    elif param1 == "transaction":
-        setup_multiple_node_xml(node_count, sim_time,False);
-
-
-
 if __name__ == '__main__':
+    node_count = int(sys.argv[1])
+    simulation_time = int(sys.argv[2])
+    setup_multiple_node_xml(node_count, sim_time);
 
-    node_count = int(sys.argv[2])
-    simulation_time = int(sys.argv[3])
-
-    select_option(sys.argv[1], node_count, simulation_time)

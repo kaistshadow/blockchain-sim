@@ -331,8 +331,8 @@ private:
             nBytes = recv(datasock_fd, pchBuf, sizeof(pchBuf), MSG_DONTWAIT); // What is the meaning of MSG_DONTWAIT?
             if (nBytes > 0) {
                 std::string recv_str(pchBuf, nBytes);
-                std::cout << "received data :[" << recv_str << "]" << "\n";
-                std::cout << "received data hex:[" << string_to_hex(recv_str) << "]" << "\n";
+                std::cout << "received data(" << _shadow_ip << "):[" << recv_str << "]" << "\n";
+                std::cout << "received data(" << _shadow_ip << ") hex:[" << string_to_hex(recv_str) << "]" << "\n";
 
                 bool ret = ReceiveMSG(pchBuf, nBytes, vRecvMsg, vProcessMsg);
                 if (!ret) {
@@ -524,6 +524,14 @@ public:
         }
     }
 
+    void ChurnOut() {
+        // close all datasocket
+        for (auto& [fd, socketControl] : mSocketControl) {
+            close(fd);
+        }
+        mSocketControl.clear();
+    }
+
 };
 
 class AddrTimer {
@@ -541,6 +549,23 @@ public:
     void _timerCallback(ev::timer &w, int revents) {
         std::cout << "timer called" << "\n";
         _benign_node.SendAddr(vAddr);
+    }
+};
+
+class ChurnOutTimer {
+private:
+    ev::timer _timer;
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg>& _benign_node;
+public:
+    ChurnOutTimer(double time,
+              PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg>& node): _benign_node(node) {
+        _timer.set<ChurnOutTimer, &ChurnOutTimer::_timerCallback>(this);
+        _timer.set(time, 0.);
+        _timer.start();
+    }
+    void _timerCallback(ev::timer &w, int revents) {
+        std::cout << "churnout timer called" << "\n";
+        _benign_node.ChurnOut();
     }
 };
 

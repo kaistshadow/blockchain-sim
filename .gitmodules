@@ -13,3 +13,6 @@
 [submodule "external/ripple/dev_ripple"]
 	path = external/ripple/dev_ripple
 	url = https://github.com/kaistshadow/rippled.git
+[submodule "external/protobuf/protobuf"]
+	path = external/protobuf/protobuf
+	url = https://github.com/protocolbuffers/protobuf.git

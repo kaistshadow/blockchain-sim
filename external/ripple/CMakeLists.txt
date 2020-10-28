@@ -12,6 +12,8 @@ add_custom_target(ripple_dev ALL
 
 add_custom_command(OUTPUT ${CMAKE_INSTALL_PREFIX}/plugins/rippled
 
+        DEPENDS boost
+        DEPENDS protobuf
         COMMAND python setup.py
                         #COMMAND cp build/debug/src/daemon/rippled ${CMAKE_INSTALL_PREFIX}/plugins/rippled
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dev_ripple

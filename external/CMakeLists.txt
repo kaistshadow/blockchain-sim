@@ -10,14 +10,13 @@ macro(find_package)
   endif()
 endmacro()
 
-# add_subdirectory(bitcoin)
-# add_subdirectory(openssl)
-# add_subdirectory(curl)
-# add_subdirectory(bdb)
+add_subdirectory(bitcoin)
+add_subdirectory(openssl)
+add_subdirectory(curl)
+add_subdirectory(bdb)
 # add_subdirectory(go-ethereum)
-# add_subdirectory(libev)
-
-#add_subdirectory(boost) # ripple
-#add_subdirectory(protobuf) # ripple
-add_subdirectory(ripple)
+add_subdirectory(libev)
+add_subdirectory(boost) # ripple
+add_subdirectory(protobuf) # ripple
+# add_subdirectory(ripple)
 #add_subdirectory(monero)

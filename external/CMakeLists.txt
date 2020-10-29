@@ -18,5 +18,5 @@ add_subdirectory(bdb)
 add_subdirectory(libev)
 # add_subdirectory(boost) # ripple
 add_subdirectory(protobuf) # ripple
-add_subdirectory(ripple)
+# add_subdirectory(ripple)
 #add_subdirectory(monero)

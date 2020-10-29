@@ -8,6 +8,13 @@ def exec_shell_cmd(cmd):
         print("error while executing '%s'" % cmd)
         exit(-1)
 
+def prepare_ripple():
+    print ("Installing ... (ripple) ")
+    exec_shell_cmd("apt-get update")
+    exec_shell_cmd("apt-get install -y gcc g++ wget git cmake protobuf-compiler libprotobuf-dev libssl-dev")
+    exec_shell_cmd("sudo apt-get install -y libsqlite3-dev")
+    exec_shell_cmd("export BOOST_ROOT=~/boost_1_70_0")
+
 
 def prepare_shadow():
     print "Installing..."

@@ -42,7 +42,7 @@
 <!--  </node>-->
 
 
-  <node id="ISP-emulated_benigns" iphint="1.10.0.1">
+  <node id="ISP-emulated_benigns" iphint="99.99.0.1">
     <application arguments="" plugin="emulated_benigns" time="5"/>
   </node>
 

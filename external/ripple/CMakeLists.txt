@@ -11,18 +11,13 @@ add_custom_target(ripple_dev ALL
         )
 
 add_custom_command(OUTPUT ${CMAKE_INSTALL_PREFIX}/plugins/rippled
-
-        DEPENDS boost
-        DEPENDS protobuf
+        # COMMAND rm -rf build
+        # COMMAND export BOOST_ROOT=~/boost_1_70_0
+        # COMMAND mkdir build && cd build && cmake .. && make -j 10
         COMMAND python setup.py
-                        #COMMAND cp build/debug/src/daemon/rippled ${CMAKE_INSTALL_PREFIX}/plugins/rippled
+
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dev_ripple
         )
 
-add_library(ripple_dev::Plugin SHARED IMPORTED GLOBAL)
-add_dependencies(ripple_dev::Plugin ripple_dev)
-set_target_properties(ripple_dev::Plugin PROPERTIES
-        IMPORTED_LINK_INTERFACE_LANGUAGES "C"
-        IMPORTED_LOCATION ${CMAKE_INSTALL_PREFIX}/plugins/rippled
-        )
+
 

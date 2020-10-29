@@ -5,14 +5,25 @@ if (NOT CMAKE_INSTALL_PREFIX OR
     set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/../../Install")
 endif()
 
-# add_custom_command(
-#         OUTPUT ${CMAKE_INSTALL_PREFIX}/Install/libprotobuf.so
-#         COMMAND ./autogen.sh && ./configure && make -j 5
-#         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/protobuf
-#         )
-
+file(GLOB_RECURSE protobuf_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/protobuf *.c *.h)
 
 add_custom_target(protobuf ALL
-        COMMAND ./autogen.sh && ./configure && make -j 5
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/protobuf
-   )
+   DEPENDS ${CMAKE_INSTALL_PREFIX}/protobuf/libprotobuf.so
+ )
+ 
+ add_custom_command(OUTPUT ${CMAKE_INSTALL_PREFIX}/protobuf/libprotobuf.so
+   COMMAND ./autogen.sh && ./configure && make -j 5
+
+   DEPENDS ${protobuf_SRCS} # for re-compilation when the source is modified
+   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/protobuf
+ )
+ 
+ # Define targets that can be used in same build-tree
+ add_library(protobuf::Crypto SHARED IMPORTED GLOBAL)
+ add_dependencies(protobuf::Crypto protobuf)
+ set_target_properties(protobuf::Crypto
+   PROPERTIES
+   IMPORTED_LOCATION ${CMAKE_INSTALL_PREFIX}/protobuf/libprotobuf.so
+   IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+   INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/include)
+   # INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_INSTALL_PREFIX}/protobuf/include)

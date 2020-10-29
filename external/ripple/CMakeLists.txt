@@ -11,11 +11,10 @@ add_custom_target(ripple_dev ALL
         )
 
 add_custom_command(OUTPUT ${CMAKE_INSTALL_PREFIX}/plugins/rippled
-        # COMMAND rm -rf build
-        # COMMAND export BOOST_ROOT=~/boost_1_70_0
-        # COMMAND mkdir build && cd build && cmake .. && make -j 10
+        COMMAND rm -rf build
+        COMMAND export BOOST_ROOT=~/boost_1_70_0
+        COMMAND mkdir build && cd build && cmake .. && make -j 10
         COMMAND python setup.py
-
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dev_ripple
         )
 

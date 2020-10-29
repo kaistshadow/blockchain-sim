@@ -19,9 +19,9 @@ endif()
 include(ShadowTools)
 
 
-# add_subdirectory(BLEEP-simpleconnect)
-# add_subdirectory(BLEEP-gossip-10node)
-# add_subdirectory(BLEEP-POW-consensus)
+add_subdirectory(BLEEP-simpleconnect)
+add_subdirectory(BLEEP-gossip-10node)
+add_subdirectory(BLEEP-POW-consensus)
 # add_subdirectory(shadow-rust) # it works well on local machine, but does not work on github Action, so commentified.
 # add_subdirectory(native-bintest)
 # add_subdirectory(shadow-bitcoin)

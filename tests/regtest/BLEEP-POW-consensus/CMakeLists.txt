@@ -29,5 +29,5 @@ add_custom_command(TARGET NODE_client
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:NODE_client> ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_test(NAME regtest-BLEEP-POW-consensus
-  COMMAND shadow Consensus[pow-tree]-Gossip[SP]-200node-2sec.xml
+  COMMAND shadow example.xml
   WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")

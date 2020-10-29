@@ -1,11 +1,7 @@
-import os
-from subprocess import check_output, Popen, PIPE
-import argparse
 import sys
 import lxml.etree as ET
 
 def setup_multiple_node_xml(node_num, simultime, bool_, storage_usuage, algorithm):
-    base_xml = "example.xml"
     new_xml  = "base"+str(node_num)+"N"+str(simultime)+"T.xml"
 
     parser = ET.XMLParser(remove_blank_text=True, strip_cdata=False)

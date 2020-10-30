@@ -338,8 +338,7 @@ public:
 
 template<typename MSG,
         bool (*ReceiveMSG)(const char *, unsigned int, std::list<MSG>&, std::list<MSG>&),
-        bool (*ProcessMSG)(MSG& , bool, std::deque<std::vector<unsigned char>>&, std::string, uint16_t),
-        bool (*ForgeAddrMSG)(std::vector<std::string>, std::deque<std::vector<unsigned char>>&, std::string, uint16_t)>
+        bool (*ProcessMSG)(MSG& , bool, std::deque<std::vector<unsigned char>>&, std::string, uint16_t)>
 class PassiveNode {
 private:
     ev::io _listen_watcher; // assume a single listening socket per Node
@@ -951,10 +950,10 @@ public:
 class ChurnOutTimer {
 private:
     ev::timer _timer;
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg>& _benign_node;
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg>& _benign_node;
 public:
     ChurnOutTimer(double time,
-              PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg>& node): _benign_node(node) {
+              PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg>& node): _benign_node(node) {
         _timer.set<ChurnOutTimer, &ChurnOutTimer::_timerCallback>(this);
         _timer.set(time, 0.);
         _timer.start();
@@ -971,7 +970,7 @@ int main(int argc, char *argv[]) {
 
     exported_main();
 
-    std::cout << "Starting ISP-server for emulated benign nodes" << "\n";
+    std::cout << "Starting ISP-server for emulated benign&attacker nodes" << "\n";
 
     puts_temp("test shadow_interface\n");
 
@@ -981,31 +980,31 @@ int main(int argc, char *argv[]) {
 
     // Step 2. Prepare 10 benign nodes and send a ADDR msg to the Bitcoin victim to indicate him to establish outgoing connections.
     // As a result bitcoin victim will establish 10 benign outgoing connection, and 1 incoming connection established in Step 1(1.1.0.1)
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node1("11.1.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node2("11.2.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node3("11.3.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node4("11.4.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node5("11.5.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node6("11.6.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node7("11.7.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node8("11.8.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node9("11.9.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> benign_node10("11.10.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node1("11.1.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node2("11.2.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node3("11.3.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node4("11.4.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node5("11.5.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node6("11.6.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node7("11.7.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node8("11.8.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node9("11.9.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node10("11.10.0.1", 18333);
     AddrTimer addrTimer1(15, {"11.1.0.1", "11.2.0.1", "11.3.0.1", "11.4.0.1", "11.5.0.1", "11.6.0.1", "11.7.0.1", "11.8.0.1", "11.9.0.1", "11.10.0.1"}, attacker_node1);
 
 
     // Step 3. Prepare 10 (shadow) attacker nodes and send a ADDR msg to the Bitcoin victim.
     // But, Bitcoin victim will not be connected to the attacker nodes since its outgoing slots are fully occupied by benign nodes in above.
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node1("2.1.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node2("2.2.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node3("2.3.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node4("2.4.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node5("2.5.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node6("2.6.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node7("2.7.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node8("2.8.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node9("2.9.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg> malicious_node10("2.10.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> malicious_node1("2.1.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> malicious_node2("2.2.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> malicious_node3("2.3.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> malicious_node4("2.4.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> malicious_node5("2.5.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> malicious_node6("2.6.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> malicious_node7("2.7.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> malicious_node8("2.8.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> malicious_node9("2.9.0.1", 18333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> malicious_node10("2.10.0.1", 18333);
     AddrTimer addrTimer2(40, {"2.1.0.1", "2.2.0.1", "2.3.0.1", "2.4.0.1", "2.5.0.1", "2.6.0.1", "2.7.0.1", "2.8.0.1", "2.9.0.1", "2.10.0.1"}, attacker_node1);
 
     // Step 4. Churnout benign nodes, check whether the eclipse attack is successful for Bitcoin victim
@@ -1023,9 +1022,6 @@ int main(int argc, char *argv[]) {
 
 
     struct ev_loop *libev_loop = EV_DEFAULT;
-    // ListenSocketWatcher listenSocketWatcher("1.2.0.1");
-
-    //ListenSocketWatcher listenSocketWatcher2("11.0.0.11");
 
     while (true) {
         std::cout << "before ev_run" << "\n";

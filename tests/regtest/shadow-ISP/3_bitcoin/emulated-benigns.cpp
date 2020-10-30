@@ -420,7 +420,8 @@ private:
 
             } else if (nBytes == 0) {
                 std::cout << "connection closed while recv" << "\n";
-                delete this; // is it okay for this self-destruction? // TODO : it's not okay for multiple data sockets
+                close(w.fd);
+                mSocketControl.erase(w.fd);
             } else if (nBytes < 0) {
                 // error
                 std::cout << "Error while recv" << "\n";

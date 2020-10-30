@@ -34,6 +34,8 @@ int compare_dat_files(int fileno);
 void shadow_shared_try_delete(const char * filename, const char * actual_path);
 void shadow_shared_try_create(const char * filename, char* source, long int size, char* actual_path);
 
+void* shadow_claim_shared_entry(void* ptr, size_t sz, int shared_id);
+
 #ifdef __cplusplus
 }
 #endif

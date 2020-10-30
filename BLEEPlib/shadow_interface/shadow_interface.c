@@ -179,6 +179,13 @@ int compare_dat_files(int fileno) {
     return 0;
 }
 char* get_actual_path(int fileno){
-    printf("get_actual_path i n shadow_interface.c\n");
+    printf("get_actual_path in shadow_interface.c\n");
     return NULL;
+}
+
+void* shadow_claim_shared_entry(void* ptr, size_t sz, int shared_id) {
+    printf("shadow_claim_shared_entry in shadow_interface.c\n");
+    void* res = malloc(sz);
+    memcpy(res, ptr, sz);
+    return res;
 }

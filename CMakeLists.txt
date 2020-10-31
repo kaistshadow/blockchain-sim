@@ -61,7 +61,7 @@ add_subdirectory(shadow)
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/Install")
 enable_testing()
 
-
+add_subdirectory(interfaces)
 add_subdirectory(external)
 
 add_subdirectory(BLEEPlib)

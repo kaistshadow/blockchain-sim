@@ -1,0 +1,2 @@
+add_subdirectory(shadow_interface)
+add_subdirectory(shadow_bitcoin_interface)

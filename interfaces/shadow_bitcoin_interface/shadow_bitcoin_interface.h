@@ -1,0 +1,7 @@
+#ifndef SHADOW_BITCOIN_INTERFACE_H
+#define SHADOW_BITCOIN_INTERFACE_H
+
+extern "C"
+{
+}
+#endif

@@ -64,10 +64,10 @@ enable_testing()
 
 add_subdirectory(external)
 
-add_subdirectory(BLEEPlib)
+# add_subdirectory(BLEEPlib)
 # add_subdirectory(BLEEPapp)
 
-add_subdirectory(tests)
+# add_subdirectory(tests)
 
 
 

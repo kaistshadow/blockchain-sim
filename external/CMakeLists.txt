@@ -16,11 +16,8 @@ endmacro()
 #add_subdirectory(bdb)
 # add_subdirectory(go-ethereum)
 # add_subdirectory(libev)
-add_subdirectory(boost) # ripple
-add_subdirectory(protobuf) # ripple
+#add_subdirectory(boost) # ripple
+#add_subdirectory(protobuf) # ripple
 #add_subdirectory(monero)
-
-ExternalProject_Add(ripple
-	GIT_REPOSITORY https://github.com/kaistshadow/rippled.git
-	)
+add_subdirectory(ripple)
 

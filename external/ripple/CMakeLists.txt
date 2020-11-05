@@ -6,7 +6,7 @@ if (NOT CMAKE_INSTALL_PREFIX OR
     set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/../../Install")
 endif()
 
-add_custom_target(ripple_dev 
+add_custom_target(ripple_dev ALL
     COMMAND python setup_ripple.py
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rippled
         )

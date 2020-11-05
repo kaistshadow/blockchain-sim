@@ -3,7 +3,16 @@
 
 #include <string>
 
-void shadow_bitcoin_register_hash(std::string hash);
-bool shadow_bitcoin_check_hash(std::string hash);
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+void shadow_bitcoin_register_hash(const char hash[]);
+int shadow_bitcoin_check_hash(const char hash[]);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

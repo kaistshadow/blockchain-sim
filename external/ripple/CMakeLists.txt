@@ -7,6 +7,8 @@ if (NOT CMAKE_INSTALL_PREFIX OR
 endif()
 
 add_custom_target(ripple_dev ALL
-    COMMAND python setup.py
+    COMMAND python setup_ripple.py
+    COMMAND python setup_library.py
+    COMMAND python setup_librippled.py
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rippled
         )

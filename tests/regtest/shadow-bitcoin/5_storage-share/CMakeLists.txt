@@ -32,4 +32,4 @@ add_test(NAME shadow-bitcoin-storage-share
         COMMAND shadow example.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-set_tests_properties(shadow-bitcoin-storage-share PROPERTIES TIMEOUT 60)
+set_tests_properties(shadow-bitcoin-storage-share PROPERTIES TIMEOUT 180)

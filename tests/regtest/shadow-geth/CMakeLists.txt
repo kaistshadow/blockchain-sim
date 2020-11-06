@@ -10,8 +10,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../shadow/cmake
 include(ShadowTools) # load ShadowTools Module
 
 find_package(Geth_1_9_1dev REQUIRED)
-
-
+find_package(Geth_1_9_1dev_gccgo REQUIRED)
 
 add_custom_target(shadow-geth-copy-plugin ALL
   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Geth_1_9_1dev::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
@@ -19,3 +18,11 @@ add_custom_target(shadow-geth-copy-plugin ALL
 add_test(NAME shadow-geth-firstrun
   COMMAND shadow example.xml
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+# add test for gccgo-compiled version
+add_custom_target(shadow-geth-gccgo-copy-plugin ALL
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Geth_1_9_1dev_gccgo::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_test(NAME shadow-geth-gccgo-firstrun
+        COMMAND shadow example_gccgo.xml
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

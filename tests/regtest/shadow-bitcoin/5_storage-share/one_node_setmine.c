@@ -103,6 +103,10 @@ void rpc_getblockchaininfo(char* ipport){
         curl_easy_perform(curl);
     }
 }
+void parsing_txcount(char* nodeid) {
+    printf("%s \n",nodeid);
+
+}
 
 int main(int argc, char* argv[]) {
     char wallet[36];
@@ -111,5 +115,6 @@ int main(int argc, char* argv[]) {
     rpc_generatetoaddress(wallet, argv[1]);
     sleep(atoi(argv[2]));
     rpc_getblockchaininfo(argv[1]);
+    parsing_txcount(argv[3]);
     return 0;
 }

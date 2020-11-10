@@ -103,9 +103,43 @@ void rpc_getblockchaininfo(char* ipport){
         curl_easy_perform(curl);
     }
 }
-void parsing_txcount(char* nodeid) {
-    printf("%s \n",nodeid);
+void parsing_txcount(char* nodename) {
+    char ptr[30];
+    strcpy(ptr,nodename);
+    char *nodeid = strtok(ptr,"e");
+    nodeid=strtok(NULL,"");
+    char input[100] = "";
+    char str[4][20] = {"./datadir/hosts/","/stdout-",".bitcoind.",".log"};
 
+    strcat(input, str[0]);
+    strcat(input,nodename);
+    strcat(input, str[1]);
+    strcat(input,nodename);
+    strcat(input,str[2]);
+    strcat(input,nodeid);
+    strcat(input, str[3]);
+
+    FILE *inputFile = fopen(input,"r");
+    int txcnt=0;
+    if (inputFile){
+        while(!feof(inputFile)){
+            char buf[256];
+            fgets(buf,sizeof(buf),inputFile);
+            char *ptr = strtok(buf," ");
+            if(ptr){
+                ptr=strtok(NULL," ");
+                if(ptr){
+                    if(memcmp(ptr,"WriteBlockToDisk-txCount",sizeof("WriteBlockToDisk-txCount"))==0) {
+                        ptr = strtok(NULL, " ");
+                        txcnt+=atoi(ptr);
+                    }
+                    else continue;
+                }
+            }
+        }
+        printf("{tx Count  = %d }\n",txcnt);
+        fclose(inputFile);
+    }
 }
 
 int main(int argc, char* argv[]) {

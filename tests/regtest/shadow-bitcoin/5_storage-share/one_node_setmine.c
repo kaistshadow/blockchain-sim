@@ -137,7 +137,7 @@ void parsing_txcount(char* nodename) {
                 }
             }
         }
-        printf("{tx Count  = %d }\n",txcnt);
+        printf("{tx Count: %d}\n",txcnt);
         fclose(inputFile);
     }
 }

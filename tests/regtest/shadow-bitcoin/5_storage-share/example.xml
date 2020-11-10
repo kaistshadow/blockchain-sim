@@ -33,6 +33,7 @@
   <!-- the plug-ins we will be using -->
   <plugin id="bitcoind" path="libBITCOIND_0.19.1DEV.so" />
   <plugin id="client" path="one_node_setmine.so" />
+  <plugin id="txInjector" path="transaction.so"/>
 
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="300" />

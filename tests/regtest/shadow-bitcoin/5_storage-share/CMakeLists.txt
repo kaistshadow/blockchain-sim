@@ -26,10 +26,11 @@ add_custom_target(shadow-bitcoin-storage-share-copy-plugin ALL
 
 add_custom_target(shadow-bitcoin-storage-share-one-node-mine-plugin ALL
         COMMAND gcc -o one_node_setmine.so one_node_setmine.c -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -g -std=c99
+        COMMAND gcc -o transaction.so transaction.c -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -g
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_test(NAME shadow-bitcoin-storage-share
         COMMAND shadow example.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-set_tests_properties(shadow-bitcoin-storage-share PROPERTIES TIMEOUT 180)
+set_tests_properties(shadow-bitcoin-storage-share PROPERTIES TIMEOUT 300)

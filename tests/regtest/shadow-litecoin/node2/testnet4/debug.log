@@ -1,0 +1,70 @@
+2020-01-01 00:00:03 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2020-01-01 00:00:03 Litecoin version v0.13.2.0-1d91167b7-dirty
+2020-01-01 00:00:03 InitParameterInteraction: parameter interaction: -connect set -> setting -dnsseed=0
+2020-01-01 00:00:03 InitParameterInteraction: parameter interaction: -whitelistforcerelay=1 -> setting -whitelistrelay=1
+2020-01-01 00:00:03 Default data directory /home/mong/.litecoin
+2020-01-01 00:00:03 Using data directory /home/mong/CLionProject/blockchain-sim_litecoin/tests/regtest/shadow-litecoin/./node2/testnet4
+2020-01-01 00:00:03 Using config file /home/mong/CLionProject/blockchain-sim_litecoin/tests/regtest/shadow-litecoin/./node2/litecoin.conf
+2020-01-01 00:00:03 Using at most 125 connections (4096 file descriptors available)
+2020-01-01 00:00:03 Using 4 threads for script verification
+2020-01-01 00:00:03 libevent: getaddrinfo: nodename nor servname provided, or not known
+2020-01-01 00:00:03 Binding RPC on address ::1 port 19332 failed.
+2020-01-01 00:00:03 HTTP: creating work queue of depth 16
+2020-01-01 00:00:03 No rpcpassword set - using random cookie authentication
+2020-01-01 00:00:03 Generated RPC authentication cookie /home/mong/CLionProject/blockchain-sim_litecoin/tests/regtest/shadow-litecoin/./node2/testnet4/.cookie
+2020-01-01 00:00:03 HTTP: starting 4 worker threads
+2020-01-01 00:00:03 Error: Couldn't open socket for incoming connections (socket returned error Address family not supported by protocol (97))
+2020-01-01 00:00:03 Bound to 0.0.0.0:19335
+2020-01-01 00:00:03 Block index database configuration:
+2020-01-01 00:00:03 * Using 1000 max open files
+2020-01-01 00:00:03 * Compression is enabled
+2020-01-01 00:00:03 Cache configuration:
+2020-01-01 00:00:03 * Max cache setting possible 16384MiB
+2020-01-01 00:00:03 * Using 2.0MiB for block index database
+2020-01-01 00:00:03 * Using 8.0MiB for chain state database
+2020-01-01 00:00:03 * Using 290.0MiB for in-memory UTXO set
+2020-01-01 00:00:03 init message: Loading block index...
+2020-01-01 00:00:03 Opening LevelDB in /home/mong/CLionProject/blockchain-sim_litecoin/tests/regtest/shadow-litecoin/./node2/testnet4/blocks/index
+2020-01-01 00:00:03 Opened LevelDB successfully
+2020-01-01 00:00:03 Using obfuscation key for /home/mong/CLionProject/blockchain-sim_litecoin/tests/regtest/shadow-litecoin/./node2/testnet4/blocks/index: 0000000000000000
+2020-01-01 00:00:03 Opening LevelDB in /home/mong/CLionProject/blockchain-sim_litecoin/tests/regtest/shadow-litecoin/./node2/testnet4/chainstate
+2020-01-01 00:00:03 Opened LevelDB successfully
+2020-01-01 00:00:03 Wrote new obfuscate key for /home/mong/CLionProject/blockchain-sim_litecoin/tests/regtest/shadow-litecoin/./node2/testnet4/chainstate: b6d14a404e287441
+2020-01-01 00:00:03 Using obfuscation key for /home/mong/CLionProject/blockchain-sim_litecoin/tests/regtest/shadow-litecoin/./node2/testnet4/chainstate: b6d14a404e287441
+2020-01-01 00:00:03 LoadBlockIndexDB: last block file = 0
+2020-01-01 00:00:03 LoadBlockIndexDB: last block file info: CBlockFileInfo(blocks=0, size=0, heights=0...0, time=1970-01-01...1970-01-01)
+2020-01-01 00:00:03 Checking all blk files are present...
+2020-01-01 00:00:03 LoadBlockIndexDB: transaction index disabled
+2020-01-01 00:00:03 LoadBlockIndexDB: address index disabled
+2020-01-01 00:00:03 LoadBlockIndexDB: timestamp index disabled
+2020-01-01 00:00:03 LoadBlockIndexDB: spent index disabled
+2020-01-01 00:00:03 InitBlockIndex: transaction index disabled
+2020-01-01 00:00:03 InitBlockIndex: address index disabled
+2020-01-01 00:00:03 InitBlockIndex: timestamp index disabled
+2020-01-01 00:00:03 InitBlockIndex: spent index disabled
+2020-01-01 00:00:03 Initializing databases...
+2020-01-01 00:00:03 Pre-allocating up to position 0x1000000 in blk00000.dat
+2020-01-01 00:00:03 init message: Verifying blocks...
+2020-01-01 00:00:03  block index               0ms
+2020-01-01 00:00:03 No wallet support compiled in!
+2020-01-01 00:00:03 scheduler thread start
+2020-01-01 00:00:03 UpdateTip: new best=4966625a4b2851d9fdee139e56211a0d88575f59ed816ff5e6a63deb4e3e29a0 height=0 version=0x00000001 log2_work=20.000022 tx=1 date='2017-02-13 01:29:26' progress=0.000000 cache=0.0MiB(0tx)

@@ -39,8 +39,10 @@
   <!-- our nodes -->
 
   <node id="bcdnode1">
-    <application plugin="litecoind" time="13" arguments="-conf=./node1.conf" />
+    <application plugin="litecoind" time="3" arguments="-datadir=./node1 --testnet  -connect=bcdnode2 -listen -server=1" />
   </node>
-
+  <node id="bcdnode2">
+    <application plugin="litecoind" time="3" arguments="-datadir=./node2  --testnet  -connect=bcdnode1 -listen -server=1" />
+  </node>
 
 </shadow>

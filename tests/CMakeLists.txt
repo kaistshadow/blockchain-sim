@@ -7,5 +7,5 @@ endif(BLEEP_DEBUG STREQUAL ON)
 
 add_subdirectory(regtest)
 add_subdirectory(lib/googletest)
-add_subdirectory(unittest)
+#add_subdirectory(unittest)
 

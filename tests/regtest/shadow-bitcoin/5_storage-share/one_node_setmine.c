@@ -137,7 +137,7 @@ void parsing_txcount(char* nodename) {
                 }
             }
         }
-        printf("{tx Count: %d}\n",txcnt);
+        printf("{\"tx Count: %d\"}\n",txcnt);
         fclose(inputFile);
     }
 }
@@ -149,6 +149,6 @@ int main(int argc, char* argv[]) {
     rpc_generatetoaddress(wallet, argv[1]);
     sleep(atoi(argv[2]));
     rpc_getblockchaininfo(argv[1]);
-    parsing_txcount(argv[3]);
+//    parsing_txcount(argv[3]);
     return 0;
 }

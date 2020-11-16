@@ -99,7 +99,7 @@ def prepare_eos_dependencies():
         exec_shell_cmd("cd %s/mongo-cxx-driver-r3.4.0; sed -i 's/\"maxAwaitTimeMS\", count/\"maxAwaitTimeMS\", static_cast<int64_t>(count)/' src/mongocxx/options/change_stream.cpp" % EOSIO_INSTALL_LOCATION)
         exec_shell_cmd("cd %s/mongo-cxx-driver-r3.4.0; sed -i 's/add_subdirectory(test)//' src/mongocxx/CMakeLists.txt src/bsoncxx/CMakeLists.txt " % EOSIO_INSTALL_LOCATION)
         exec_shell_cmd("cd %s/mongo-cxx-driver-r3.4.0; mkdir -p build" % EOSIO_INSTALL_LOCATION)
-        exec_shell_cmd("cd %s/mongo-cxx-driver-r3.4.0/build; cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=%s .." % (EOSIO_INSTALL_LOCATION,EOSIO_INSTALL_LOCATION))
+        exec_shell_cmd("cd %s/mongo-cxx-driver-r3.4.0/build; cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=%s .." % (EOSIO_INSTALL_LOCATION,EOSIO_INSTALL_LOCATION))
         exec_shell_cmd("cd %s/mongo-cxx-driver-r3.4.0/build; make -j$(nproc)" % EOSIO_INSTALL_LOCATION)
         exec_shell_cmd("cd %s/mongo-cxx-driver-r3.4.0/build; make install" % EOSIO_INSTALL_LOCATION)
         exec_shell_cmd("rm -rf %s/mongo-cxx-driver-r3.4.0.tar.gz %s/mongo-cxx-driver-r3.4.0" % (EOSIO_INSTALL_LOCATION,EOSIO_INSTALL_LOCATION))

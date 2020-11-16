@@ -67,6 +67,8 @@ def prepare_eos_dependencies():
     if not os.path.isdir(EOSIO_INSTALL_LOCATION+"/include/boost"):
         exec_shell_cmd("cd %s; curl -LO https://dl.bintray.com/boostorg/release/1.71.0/source/boost_1_71_0.tar.bz2" % EOSIO_INSTALL_LOCATION)
         exec_shell_cmd("cd %s; tar -xjf boost_1_71_0.tar.bz2" % EOSIO_INSTALL_LOCATION)
+        # add -fPIC
+        exec_shell_cmd("cp -f %s/../gcc.jam %s/boost_1_71_0/tools/build/src/tools/" % (EOSIO_INSTALL_LOCATION,EOSIO_INSTALL_LOCATION))
         exec_shell_cmd("cd %s/boost_1_71_0; ./bootstrap.sh --prefix=%s" % (EOSIO_INSTALL_LOCATION,EOSIO_INSTALL_LOCATION))
         exec_shell_cmd("cd %s/boost_1_71_0; ./b2 --with-iostreams --with-date_time --with-filesystem --with-system --with-program_options --with-chrono --with-test -q -j$(nproc) install" % (EOSIO_INSTALL_LOCATION))
         exec_shell_cmd("rm -rf %s/boost_1_71_0.tar.bz2 %s/boost_1_71_0" % (EOSIO_INSTALL_LOCATION,EOSIO_INSTALL_LOCATION))
@@ -86,26 +88,25 @@ def prepare_eos_dependencies():
         exec_shell_cmd("cd %s; curl -LO https://github.com/mongodb/mongo-c-driver/releases/download/1.13.0/mongo-c-driver-1.13.0.tar.gz" % EOSIO_INSTALL_LOCATION)
         exec_shell_cmd("cd %s; tar -xzf mongo-c-driver-1.13.0.tar.gz" % EOSIO_INSTALL_LOCATION)
         exec_shell_cmd("cd %s/mongo-c-driver-1.13.0; mkdir -p build" % EOSIO_INSTALL_LOCATION)
-        exec_shell_cmd("cd %s/mongo-c-driver-1.13.0/build; cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=%s -DENABLE_BSON=ON -DENABLE_SSL=OPENSSL -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF -DENABLE_STATIC=ON -DENABLE_ICU=OFF -DENABLE_SNAPPY=OFF .. " % (EOSIO_INSTALL_LOCATION,EOSIO_INSTALL_LOCATION))
+        exec_shell_cmd("cd %s/mongo-c-driver-1.13.0/build; cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_INSTALL_PREFIX=%s -DENABLE_BSON=ON -DENABLE_SSL=OPENSSL -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF -DENABLE_STATIC=ON -DENABLE_ICU=OFF -DENABLE_SNAPPY=OFF .. " % (EOSIO_INSTALL_LOCATION,EOSIO_INSTALL_LOCATION))
         exec_shell_cmd("cd %s/mongo-c-driver-1.13.0/build; make -j$(nproc)" % EOSIO_INSTALL_LOCATION)
         exec_shell_cmd("cd %s/mongo-c-driver-1.13.0/build; make install" % EOSIO_INSTALL_LOCATION)
         exec_shell_cmd("rm -rf %s/mongo-c-driver-1.13.0.tar.gz %s/mongo-c-driver-1.13.0" % (EOSIO_INSTALL_LOCATION,EOSIO_INSTALL_LOCATION))
     else:
         print("== Skip build mongodb_c_driver")
-    # build mongodb cxx driver
-    if not os.path.isdir(EOSIO_INSTALL_LOCATION+"/include/mongocxx"):
+    # build static mongodb cxx driver
+    if not os.path.isfile(EOSIO_INSTALL_LOCATION+"/lib/libmongocxx-static.a"):
         exec_shell_cmd("cd %s; curl -L https://github.com/mongodb/mongo-cxx-driver/archive/r3.4.0.tar.gz -o mongo-cxx-driver-r3.4.0.tar.gz" % EOSIO_INSTALL_LOCATION)
         exec_shell_cmd("cd %s; tar -xzf mongo-cxx-driver-r3.4.0.tar.gz" % EOSIO_INSTALL_LOCATION)
         exec_shell_cmd("cd %s/mongo-cxx-driver-r3.4.0; sed -i 's/\"maxAwaitTimeMS\", count/\"maxAwaitTimeMS\", static_cast<int64_t>(count)/' src/mongocxx/options/change_stream.cpp" % EOSIO_INSTALL_LOCATION)
         exec_shell_cmd("cd %s/mongo-cxx-driver-r3.4.0; sed -i 's/add_subdirectory(test)//' src/mongocxx/CMakeLists.txt src/bsoncxx/CMakeLists.txt " % EOSIO_INSTALL_LOCATION)
         exec_shell_cmd("cd %s/mongo-cxx-driver-r3.4.0; mkdir -p build" % EOSIO_INSTALL_LOCATION)
-        exec_shell_cmd("cd %s/mongo-cxx-driver-r3.4.0/build; cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=%s .." % (EOSIO_INSTALL_LOCATION,EOSIO_INSTALL_LOCATION))
+        exec_shell_cmd("cd %s/mongo-cxx-driver-r3.4.0/build; cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=%s .." % (EOSIO_INSTALL_LOCATION,EOSIO_INSTALL_LOCATION))
         exec_shell_cmd("cd %s/mongo-cxx-driver-r3.4.0/build; make -j$(nproc)" % EOSIO_INSTALL_LOCATION)
         exec_shell_cmd("cd %s/mongo-cxx-driver-r3.4.0/build; make install" % EOSIO_INSTALL_LOCATION)
         exec_shell_cmd("rm -rf %s/mongo-cxx-driver-r3.4.0.tar.gz %s/mongo-cxx-driver-r3.4.0" % (EOSIO_INSTALL_LOCATION,EOSIO_INSTALL_LOCATION))
     else:
-        print("== Skip build mongodb_cxx_driver")
-
+        print("== Skip build static mongodb_cxx_driver")
 
 def prepare_rust():
     exec_shell_cmd("sudo apt-get install -y rustc")

@@ -87,3 +87,6 @@ external/libev/4.33/event.o
 external/libev/4.33/libev.la
 external/libev/4.33/libtool
 external/libev/4.33/stamp-h1
+
+tests/regtest/shadow-eos/nodeos
+external/eosio/install/*

@@ -26,7 +26,7 @@
 
 find_library(_EOS_2_0_7_PLUGIN
   NAMES
-  EOS_2.0.7
+  NODEOS_2.0.7
   HINTS
     "${CMAKE_CURRENT_LIST_DIR}/../Install"
   PATH_SUFFIXES
@@ -35,7 +35,20 @@ find_library(_EOS_2_0_7_PLUGIN
   NO_SYSTEM_ENVIRONMENT_PATH
 )
 
+find_program(_EOS_2_0_7_EXECUTABLE
+        NAMES
+        nodeos
+        HINTS
+        "${CMAKE_CURRENT_LIST_DIR}/../external/eosio/eos/build"
+        PATH_SUFFIXES
+        bin
+        NO_DEFAULT_PATH
+        NO_SYSTEM_ENVIRONMENT_PATH
+        )
+
+
 mark_as_advanced(_EOS_2_0_7_PLUGIN)
+mark_as_advanced(_EOS_2_0_7_EXECUTABLE)
 
 include(${CMAKE_ROOT}/Modules/FindPackageHandleStandardArgs.cmake)
 
@@ -46,6 +59,14 @@ find_package_handle_standard_args(EOS_2_0_7
     "Could NOT find EOS(v2.0.7), try to install EOS(v2.0.7) in external library folder."
 )
 
+find_package_handle_standard_args(EOS_2_0_7_EXECUTABLE
+    REQUIRED_VARS
+        _EOS_2_0_7_EXECUTABLE
+    FAIL_MESSAGE
+        "Could NOT find EOS(v2.0.7) EXECUTABLE , try to install EOS(v2.0.7) in external library folder."
+)
+
+
 if(EOS_2_0_7_FOUND)
   if(NOT TARGET EOS_2_0_7::Plugin AND
       (EXISTS "${_EOS_2_0_7_PLUGIN}")
@@ -55,4 +76,15 @@ if(EOS_2_0_7_FOUND)
       IMPORTED_LINK_INTERFACE_LANGUAGES "C"
       IMPORTED_LOCATION "${_EOS_2_0_7_PLUGIN}")
   endif()
+endif()
+
+if(EOS_2_0_7_EXECUTABLE_FOUND)
+    if(NOT TARGET EOS_2_0_7_EXECUTABLE::Bin AND
+    (EXISTS "${_EOS_2_0_7_EXECUTABLE}")
+            )
+        add_library(EOS_2_0_7_EXECUTABLE::Bin UNKNOWN IMPORTED)
+        set_target_properties(EOS_2_0_7_EXECUTABLE::Bin PROPERTIES
+                IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+                IMPORTED_LOCATION "${_EOS_2_0_7_EXECUTABLE}")
+    endif()
 endif()

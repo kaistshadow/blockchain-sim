@@ -10,10 +10,17 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/c
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../../shadow/cmake")
 
 #include(ShadowTools) # load ShadowTools Module
-find_package(zcash_dev_ REQUIRED)
+#find_package(zcash_dev_ REQUIRED)
+message("-------------------------------------")
+message( ${CMAKE_HOME_DIRECTORY})
+message("-------------------------------------")
 
 add_custom_target(shadow-zcash-prepare ALL
-        COMMAND mkdir -p data/bcdnode1
+        COMMAND mkdir -p data/node1
+        COMMAND mkdir -p data/node2
+        COMMAND cd $ENV{HOME}; mkdir .zcash
+        COMMAND cp zcash1.conf $ENV{HOME}/.zcash
+        COMMAND cp zcash2.conf $ENV{HOME}/.zcash
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(copy-zcash-plugin ALL

@@ -39,29 +39,10 @@
   <!-- our nodes -->
 
   <node id="bcdnode1">
-    <application plugin="zcashd" time="13" arguments="-conf=zcash1.conf" />
+    <application plugin="zcashd" time="13" arguments="-conf=./zcash1.conf --testnet " />
   </node>
 
   <node id="bcdnode2">
-    <application plugin="zcashd" time="13" arguments="-conf=zcash2.conf" />
+    <application plugin="zcashd" time="13" arguments="-conf=./zcash2.conf --testnet  " />
   </node>
-
-
-<!--  <node id="bcdnode3">-->
-<!--    <application plugin="zcashd" time="13" arguments="-conf=zcash3.conf" />-->
-<!--  </node>-->
-
-<!--  <node id="bcdnode4">-->
-<!--    <application plugin="zcashd" time="13" arguments="-conf=zcash4.conf" />-->
-<!--  </node>-->
-
-<!--  <node id="bcdnode1">-->
-<!--    <application plugin="bitcoind" time="13" arguments="-datadir=./data/bcdnode1 -debug -connect=bcdnode2 -listen -server=0" />-->
-<!--  </node>-->
-
-
-<!--  <node id="bcdnode2">-->
-<!--    <application plugin="bitcoind" time="13" arguments="-datadir=./data/bcdnode2 -debug -listen -connect=bcdnode1 -server=0"/>-->
-<!--  </node>-->
-<!--  -->
 </shadow>

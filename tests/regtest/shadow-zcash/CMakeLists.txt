@@ -18,9 +18,9 @@ message("-------------------------------------")
 add_custom_target(shadow-zcash-prepare ALL
         COMMAND mkdir -p data/node1
         COMMAND mkdir -p data/node2
-        COMMAND cd $ENV{HOME}; mkdir -p .zcash
-        COMMAND cp zcash1.conf $ENV{HOME}/.zcash
-        COMMAND cp zcash2.conf $ENV{HOME}/.zcash
+        COMMAND cd $ENV{HOME} && mkdir .zcash
+        COMMAND cp -r zcash1.conf $ENV{HOME}/.zcash
+        COMMAND cp -r zcash2.conf $ENV{HOME}/.zcash
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(copy-zcash-plugin ALL

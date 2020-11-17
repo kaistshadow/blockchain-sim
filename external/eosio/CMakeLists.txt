@@ -20,6 +20,7 @@ add_custom_command(OUTPUT ${CMAKE_INSTALL_PREFIX}/plugins/libNODEOS_2.0.7.so
 #  DEPENDS openssl_1.1.0h
 #  COMMAND mkdir -p ${EOSIO_INSTALL_LOCATION}
 #  COMMAND git clone -b v2.0.7 https://github.com/kaistshadow/eos.git ${EOSIO_LOCATION}
+  DEPENDS ${EOS_2_0_7_SRCS}
   COMMAND cd ${EOSIO_LOCATION} && git submodule update --init --recursive
   COMMAND mkdir -p ${EOSIO_BUILD_LOCATION}
   COMMAND cd ${EOSIO_BUILD_LOCATION} && cmake -DCMAKE_BUILD_TYPE='Debug' -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_CXX_COMPILER='clang++-7' -DCMAKE_C_COMPILER='clang-7' -DLLVM_DIR='/usr/lib/llvm-7/lib/cmake/llvm' -DCMAKE_INSTALL_PREFIX=${EOSIO_INSTALL_LOCATION} -DBUILD_MONGO_DB_PLUGIN=true ${EOSIO_LOCATION}

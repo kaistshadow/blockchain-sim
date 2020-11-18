@@ -26,10 +26,13 @@ add_custom_command(OUTPUT ${CMAKE_INSTALL_PREFIX}/plugins/libNODEOS_2.0.7.so
 
 # Define targets that can be used in same build-tree
 add_library(Eosio_2_0_7::Bin SHARED IMPORTED GLOBAL)
+add_dependencies(Eosio_2_0_7::Bin eosio_2.0.7)
 set_target_properties(Eosio_2_0_7::Bin PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES "C"
   IMPORTED_LOCATION ${CMAKE_INSTALL_PREFIX}/../external/eosio/eos/build/bin/nodeos)
 add_library(Eosio_2_0_7::Lib SHARED IMPORTED GLOBAL)
+add_dependencies(Eosio_2_0_7::Lib eosio_2.0.7)
 set_target_properties(Eosio_2_0_7::Lib PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES "C"
   IMPORTED_LOCATION ${CMAKE_INSTALL_PREFIX}/plugins/libNODEOS_2.0.7.so)
+

@@ -84,16 +84,40 @@ def prepare_shadow_dependencies():
     # install dependencies for zeromq (zeromq is used for IPC implementation)
     exec_shell_cmd("sudo apt-get install -y libzmq3-dev")
 
+def process_ENV():
+    rcFile = os.path.expanduser("~/.bashrc")
+    f = open(rcFile, 'r')
+    shadowPath = "export PATH=$PATH:%s" % os.path.abspath("./Install/bin" )
+    libPath = "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:%s" % os.path.abspath("./Install")
+    needWritePath = True
+    needWriteLibPath = True
+    for line in f:
+        if shadowPath in line:
+            needWritePath = False
+        if libPath in line:
+            needWriteLibPath = False
+    if needWritePath:
+        exec_shell_cmd("echo '%s' >> ~/.bashrc && . ~/.bashrc" % shadowPath)
+    if needWriteLibPath:
+        exec_shell_cmd("echo '%s' >> ~/.bashrc && . ~/.bashrc" % libPath)
+
+    print "After installing, execute following commands on your bash. (type without dollor sign)"
+    print "$ source ~/.bashrc"
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
     parser.add_argument("--install", action="store_true", help="Install the shadow simulator and BLEEP")
     parser.add_argument("--test", action="store_true", help="Run tests")
     parser.add_argument("--debug", action="store_true", help="Include debug symbols for shadow")
+    parser.add_argument("--zcash", action="store_true", help="only Zcash build")
+
 
     args = parser.parse_args()
     OPT_INSTALL = args.install
     OPT_TEST = args.test
     OPT_DEBUG = args.debug
+
+    OPT_ZCASH = args.zcash
 
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
@@ -106,7 +130,6 @@ if __name__ == '__main__':
     if OPT_INSTALL:
         # cloning shadow repository (submodule)
         exec_shell_cmd("git submodule update --init")
-
         prepare_shadow()
         prepare_zcash()
 #         prepare_nodejs()
@@ -127,24 +150,34 @@ if __name__ == '__main__':
         exec_shell_cmd("mkdir build; cd build; cmake %s ../; cmake --build . --target install -- -j 8; cd ..;" % cmake_debug_opt)
 
 
-        rcFile = os.path.expanduser("~/.bashrc")
-        f = open(rcFile, 'r')
-        shadowPath = "export PATH=$PATH:%s" % os.path.abspath("./Install/bin" )
-        libPath = "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:%s" % os.path.abspath("./Install")
-        needWritePath = True
-        needWriteLibPath = True
-        for line in f:
-            if shadowPath in line:
-                needWritePath = False
-            if libPath in line:
-                needWriteLibPath = False
-        if needWritePath:
-            exec_shell_cmd("echo '%s' >> ~/.bashrc && . ~/.bashrc" % shadowPath)
-        if needWriteLibPath:
-            exec_shell_cmd("echo '%s' >> ~/.bashrc && . ~/.bashrc" % libPath)
+        # rcFile = os.path.expanduser("~/.bashrc")
+        # f = open(rcFile, 'r')
+        # shadowPath = "export PATH=$PATH:%s" % os.path.abspath("./Install/bin" )
+        # libPath = "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:%s" % os.path.abspath("./Install")
+        # needWritePath = True
+        # needWriteLibPath = True
+        # for line in f:
+        #     if shadowPath in line:
+        #         needWritePath = False
+        #     if libPath in line:
+        #         needWriteLibPath = False
+        # if needWritePath:
+        #     exec_shell_cmd("echo '%s' >> ~/.bashrc && . ~/.bashrc" % shadowPath)
+        # if needWriteLibPath:
+        #     exec_shell_cmd("echo '%s' >> ~/.bashrc && . ~/.bashrc" % libPath)
 
-        print "After installing, execute following commands on your bash. (type without dollor sign)"
-        print "$ source ~/.bashrc"
+        # print "After installing, execute following commands on your bash. (type without dollor sign)"
+        # print "$ source ~/.bashrc"
+        process_ENV()
+
+    if OPT_ZCASH:
+        exec_shell_cmd("git submodule update --init")
+        prepare_shadow()
+        prepare_zcash()
+        prepare_shadow_dependencies()
+        cmake_zcash_opt = "-DZCASH_OPT=ON"
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_zcash_opt))
+        process_ENV()
 
     if OPT_TEST:
         exec_shell_cmd("mkdir -p build; cd build; cmake ../; make -j8; make test")

@@ -19,14 +19,32 @@ endif()
 include(ShadowTools)
 
 
-add_subdirectory(BLEEP-simpleconnect)
-add_subdirectory(BLEEP-gossip-10node)
-add_subdirectory(BLEEP-POW-consensus)
-# add_subdirectory(shadow-rust) # it works well on local machine, but does not work on github Action, so commentified.
-add_subdirectory(native-bintest)
-add_subdirectory(shadow-bitcoin)
-add_subdirectory(shadow-dependencies)
-# add_subdirectory(shadow-geth) # results in deadlock due to futex issue
-add_subdirectory(shadow-syscalls)
-#add_subdirectory(shadow-monero)
- add_subdirectory(shadow-zcash)
+# add_subdirectory(BLEEP-simpleconnect)
+# add_subdirectory(BLEEP-gossip-10node)
+# add_subdirectory(BLEEP-POW-consensus)
+# # add_subdirectory(shadow-rust) # it works well on local machine, but does not work on github Action, so commentified.
+# add_subdirectory(native-bintest)
+# add_subdirectory(shadow-bitcoin)
+# add_subdirectory(shadow-dependencies)
+# # add_subdirectory(shadow-geth) # results in deadlock due to futex issue
+# add_subdirectory(shadow-syscalls)
+# #add_subdirectory(shadow-monero)
+# add_subdirectory(shadow-zcash)
+
+if(OPT_ZCASH STREQUAL ON)
+  message("Zcash build start")
+  add_subdirectory(shadow-zcash)
+else(OPT_ZCASH STREQUAL OFF)
+  message("default")
+  add_subdirectory(BLEEP-simpleconnect)
+  add_subdirectory(BLEEP-gossip-10node)
+  add_subdirectory(BLEEP-POW-consensus)
+  # add_subdirectory(shadow-rust) # it works well on local machine, but does not work on github Action, so commentified.
+  add_subdirectory(native-bintest)
+  add_subdirectory(shadow-bitcoin)
+  add_subdirectory(shadow-dependencies)
+  # add_subdirectory(shadow-geth) # results in deadlock due to futex issue
+  add_subdirectory(shadow-syscalls)
+  #add_subdirectory(shadow-monero)
+endif(OPT_ZCASH STREQUAL OFF)
+  

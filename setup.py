@@ -135,12 +135,23 @@ if __name__ == '__main__':
         exec_shell_cmd("sudo apt-get install -y libssl-dev")
         prepare_shadow()
         prepare_shadow_dependencies()
-        cmake_bitcoin_opt = "-DBITCOIN_OPT=ON"
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_bitcoin_opt))
+        exec_shell_cmd("mkdir build; cd build; cmake %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt))
         process_ENV()   
 
     if OPT_DEBUG:
         cmake_debug_opt = "-DSHADOW_DEBUG=ON -DBLEEP_DEBUG=ON"
+
+    if OPT_BITCOIN:
+        exec_shell_cmd("git submodule update --init")
+        #bitcoin dependency
+        exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
+        exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
+        exec_shell_cmd("sudo apt-get install -y libssl-dev")
+        prepare_shadow()
+        prepare_shadow_dependencies()
+        cmake_bitcoin_opt = "-DBITCOIN_OPT=ON"
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_bitcoin_opt))
+        process_ENV()   
 
     if OPT_ZCASH:
         exec_shell_cmd("git submodule update --init")

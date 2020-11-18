@@ -30,6 +30,9 @@ option(SHADOW_DEBUG "turn on debugging for verbose program output (default: ON f
 # enable shadow debug as default. (Because some tests failed with release version of shadow (e.g. shadow-bitcoin-with-wallet)
 
 # Bitcoin option
+option(BITCOIN_OPT "Bitcoin on build (default: OFF)" OFF)
+
+# Zcash option
 option(ZCASH_OPT "Zcash on build (default: OFF)" OFF)
 
 ## add shadow project
@@ -63,7 +66,7 @@ add_subdirectory(shadow)
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/Install")
 enable_testing()
 add_subdirectory(external)
-# add_subdirectory(BLEEPlib)
+add_subdirectory(BLEEPlib)
 # add_subdirectory(BLEEPapp)
 add_subdirectory(tests)
 

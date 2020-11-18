@@ -178,13 +178,14 @@ int main(int args, char* argv[]) {
 
     set_IP_and_Address(IP_array, wallet_array, row);
 
-    for(int i=0; i<row; i++){
+    for(int i=0; i<row; i++) {
         rpc_getnewaddress(IP_array[i], wallet_array[i]);
     }
 
-    srand(time(NULL));
+//    sleep(1200);
+    sleep(1500);
     int i=0;
-    for(int i=0; i<1000; i++){
+    for(int i=0; i<1; i++){
         int start = rand() % row;
         int end = rand() % row;
         rpc_sendtoaddress(IP_array[start], wallet_array[end]);

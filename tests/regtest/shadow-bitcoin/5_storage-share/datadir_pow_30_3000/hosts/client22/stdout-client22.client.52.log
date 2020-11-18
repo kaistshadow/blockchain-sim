@@ -1,0 +1,5 @@
+ 
+{"jsonrpc": "1.0", "id":"curltest", "method": "setgeneratetoaddress", "params": ["2N6q7gXqZtsENztRZd4xxy4Syg54miPZ8Qa"]} 
+{"result":true,"error":null,"id":"curltest"}
+{"result":{"chain":"test","blocks":6,"headers":6,"bestblockhash":"0000000068f5d4f146da43b2505707c13d0b336ba4e84f6c2154e377a61d92ce","difficulty":1,"mediantime":1577837268,"verificationprogress":1,"initialblockdownload":false,"chainwork":"0000000000000000000000000000000000000000000000000000000600160007","size_on_disk":2861,"pruned":false,"softforks":{"bip34":{"type":"buried","active":false,"height":21111},"bip66":{"type":"buried","active":false,"height":330776},"bip65":{"type":"buried","active":false,"height":581885},"csv":{"type":"buried","active":false,"height":770112},"segwit":{"type":"buried","active":true,"height":0}},"warnings":""},"error":null,"id":"curltest"}
+{"txCount": 10}

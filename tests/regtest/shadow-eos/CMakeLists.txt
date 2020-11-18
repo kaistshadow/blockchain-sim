@@ -2,8 +2,11 @@
 cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
 ## enable CTEST
 enable_testing()
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake")
-find_package(EOS_2_0_7 REQUIRED)
+#list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake")
+#list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../Install/cmake")
+#list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../shadow/cmake")
+
+#find_package(EOS_2_0_7 REQUIRED)
 #add_custom_target(shadow-eos-prepare ALL
 #        COMMAND mkdir -p data/node1
 #        COMMAND mkdir -p data/node2

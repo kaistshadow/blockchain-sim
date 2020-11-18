@@ -14,7 +14,6 @@ for i in range(int(fileno)):
     w= open("./test_result/"+sys.argv[2]+"_result.txt","a+")
 
 
-    # w= open("./test_result/"+sys.argv[2]+"_result.txt","w")
     w.write(result2[:15])
     w.write("\n")
 

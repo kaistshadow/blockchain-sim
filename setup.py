@@ -106,35 +106,67 @@ def process_ENV():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
-    parser.add_argument("--install", action="store_true", help="Install the shadow simulator and BLEEP")
+    parser.add_argument("--all", action="store_true", help="Install the shadow simulator and BLEEP")
     parser.add_argument("--test", action="store_true", help="Run tests")
     parser.add_argument("--debug", action="store_true", help="Include debug symbols for shadow")
     parser.add_argument("--zcash", action="store_true", help="only Zcash build")
     parser.add_argument("--bitcoin", action="store_true", help="only bitcoin build")
     parser.add_argument("--monero", action="store_true", help="only monero build")
+    parser.add_argument("--git", action="store_true", help="Run on Git action")
 
     args = parser.parse_args()
-    OPT_INSTALL = args.install
+    OPT_ALL = args.all
     OPT_TEST = args.test
     OPT_DEBUG = args.debug
    
     OPT_BITCOIN = args.bitcoin
     OPT_ZCASH = args.zcash
     OPT_MONERO = args.monero
-
-    if len(sys.argv) == 1:
-        parser.print_help(sys.stderr)
-        sys.exit(1)        
+    OPT_GIT = args.git
 
     cmake_debug_opt = "-DSHADOW_DEBUG=ON -DBLEEP_DEBUG=ON"
+
+    #default : Bitcoin build
+    if len(sys.argv) == 1:
+        exec_shell_cmd("git submodule update --init")
+        #bitcoin dependency
+        exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
+        exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
+        exec_shell_cmd("sudo apt-get install -y libssl-dev")
+        prepare_shadow()
+        prepare_shadow_dependencies()
+        cmake_bitcoin_opt = "-DBITCOIN_OPT=ON"
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_bitcoin_opt))
+        process_ENV()   
+
     if OPT_DEBUG:
         cmake_debug_opt = "-DSHADOW_DEBUG=ON -DBLEEP_DEBUG=ON"
 
-    if OPT_INSTALL:
+    if OPT_ZCASH:
+        exec_shell_cmd("git submodule update --init")
+        prepare_shadow()
+        prepare_shadow_dependencies()
+        prepare_zcash_dependencies()
+        exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
+        cmake_zcash_opt = "-DZCASH_OPT=ON"
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_zcash_opt))
+        process_ENV()
+
+    if OPT_MONERO:
+        exec_shell_cmd("git submodule update --init")
+        prepare_shadow()
+        prepare_shadow_dependencies()
+        prepare_monero_dependencies()
+        exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
+        cmake_monero_opt = "-DMONERO_OPT=ON"
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_monero_opt))
+        process_ENV()
+
+    if OPT_ALL:
         # cloning shadow repository (submodule)
         exec_shell_cmd("git submodule update --init")
         prepare_shadow()
-#         prepare_nodejs()
+        #prepare_nodejs()
         prepare_rust()
         prepare_golang()
         prepare_zcash_dependencies()
@@ -148,42 +180,35 @@ if __name__ == '__main__':
         exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
         ## bitcoin first run (without wallet enabled) dependencies
         exec_shell_cmd("sudo apt-get install -y libssl-dev")
+        cmake_all_opt = "-DALL_OPT=ON"
 
         ## install
-        exec_shell_cmd("mkdir build; cd build; cmake %s ../; cmake --build . --target install -- -j 8; cd ..;" % cmake_debug_opt)
-        process_ENV()
-
-    if OPT_ZCASH:
-        exec_shell_cmd("git submodule update --init")
-        prepare_shadow()
-        prepare_shadow_dependencies()
-        prepare_zcash_dependencies()
-        exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
-        cmake_zcash_opt = "-DZCASH_OPT=ON"
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_zcash_opt))
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (cmake_debug_opt, cmake_all_opt))
         process_ENV()
     
-    if OPT_BITCOIN:
+    if OPT_GIT:
+         # cloning shadow repository (submodule)
         exec_shell_cmd("git submodule update --init")
-        #bitcoin dependency
-        exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
-        exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
-        exec_shell_cmd("sudo apt-get install -y libssl-dev")
         prepare_shadow()
+        #prepare_nodejs()
+        prepare_rust()
+        prepare_golang()
+        prepare_zcash_dependencies()
         prepare_shadow_dependencies()
-        cmake_bitcoin_opt = "-DBITCOIN_OPT=ON"
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_bitcoin_opt))
-        process_ENV()
+        prepare_monero_dependencies()
 
-    # if OPT_MONERO:
-    #     exec_shell_cmd("git submodule update --init")
-    #     prepare_shadow()
-    #     prepare_shadow_dependencies()
-    #     prepare_monero_dependencies()
-    #     exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
-    #     cmake_zcash_opt = "-DZCASH_OPT=ON"
-    #     exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_zcash_opt))
-    #     process_ENV()
+        # ## install boost-lib
+        exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
+
+        ## install bitcoin dependencies
+        exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
+        ## bitcoin first run (without wallet enabled) dependencies
+        exec_shell_cmd("sudo apt-get install -y libssl-dev")
+        cmake_git_opt = "-DGIT_OPT=ON"
+
+        ## install
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (cmake_debug_opt, cmake_git_opt))
+        process_ENV()
 
     if OPT_TEST:
         exec_shell_cmd("mkdir -p build; cd build; cmake ../; make -j8; make test")

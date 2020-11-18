@@ -138,8 +138,8 @@ if __name__ == '__main__':
         prepare_shadow_dependencies()
         prepare_monero_dependencies()
 
-        ## install boost-lib
-        exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
+        # ## install boost-lib
+        # exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
 
         ## install bitcoin dependencies
         exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
@@ -175,6 +175,8 @@ if __name__ == '__main__':
         prepare_shadow()
         prepare_zcash()
         prepare_shadow_dependencies()
+        exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
+
         cmake_zcash_opt = "-DZCASH_OPT=ON"
         exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_zcash_opt))
         process_ENV()

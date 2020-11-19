@@ -13,6 +13,3 @@
 [submodule "external/litecoin/litecore-litecoin"]
 	path = external/litecoin/litecore-litecoin
 	url = https://github.com/kaistshadow/litecore-litecoin.git
-[submodule "external/zcash/zcash"]
-	path = external/zcash/zcash
-	url = https://github.com/kaistshadow/zcash.git

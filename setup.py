@@ -44,6 +44,13 @@ def prepare_nodejs():
 def prepare_monero_dependencies():
     exec_shell_cmd("sudo apt-get install build-essential cmake pkg-config libboost-all-dev libssl-dev libzmq3-dev libunbound-dev libsodium-dev libpgm-dev ")
 
+def prepare_zcash():
+    exec_shell_cmd("sudo apt-get install \
+                    build-essential pkg-config libc6-dev m4 g++-multilib \
+                    autoconf libtool ncurses-dev unzip git python3 python3-zmq \
+                    zlib1g-dev curl bsdmainutils automake libtinfo5")
+
+
 def prepare_rust():
     exec_shell_cmd("sudo apt-get install -y rustc")
 
@@ -101,6 +108,7 @@ if __name__ == '__main__':
         exec_shell_cmd("git submodule update --init")
 
         prepare_shadow()
+        prepare_zcash()
 #         prepare_nodejs()
         prepare_rust()
         prepare_golang()

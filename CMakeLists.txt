@@ -75,7 +75,7 @@ add_subdirectory(tests)
 ## add tests
 # set(SHADOW_ROOT "${CMAKE_INSTALL_PREFIX}")
 # enable_testing()
-# add_subdirectory(test)
+#add_subdirectory(test)
 
 ## add command for lauching BLEEP web interface
 add_custom_target(run-web-gui

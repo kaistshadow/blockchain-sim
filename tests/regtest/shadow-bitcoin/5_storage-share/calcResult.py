@@ -13,9 +13,10 @@ def calc_Block_Num(num) :
 		if not file : 
 			print("error! file is not open")
 		data=file.readlines()
-		print("data=",data[3])
-		dict=json.loads(data[3])
-		totalNum += dict["result"]["blocks"]
+		print(i," data=",data[4])
+		dict=json.loads(data[4])
+		# totalNum += dict["result"]["blocks"]
+		totalNum+=dict["blockCount"]
 		file.close()
 
 	blockNum=totalNum/num
@@ -29,8 +30,8 @@ def calc_Tx_Num(num) :
 		if not file :
 			print("error! file is not open")
 		data=file.readlines()
-		print(data[4])
-		dict=json.loads(data[4])
+		print(i,"data=",data[5])
+		dict=json.loads(data[5])
 		print("txcount = ",dict["txCount"])
 		totalNum += dict["txCount"]
 		file.close()

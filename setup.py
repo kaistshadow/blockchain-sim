@@ -106,7 +106,7 @@ if __name__ == '__main__':
     if OPT_INSTALL:
         # cloning shadow repository (submodule)
         exec_shell_cmd("git submodule update --init")
-
+        exec_shell_cmd("sudo apt-get install -y miniupnpc")
         prepare_shadow()
         prepare_zcash()
 #         prepare_nodejs()

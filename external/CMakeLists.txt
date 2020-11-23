@@ -56,7 +56,8 @@ elseif(GIT_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(zcash)
   add_subdirectory(bitcoin)
-  
+  add_subdirectory(litecoin)
+
 else(ZCASH_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
   message("                           default")

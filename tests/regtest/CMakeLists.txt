@@ -24,7 +24,6 @@ if(ZCASH_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
   add_subdirectory(shadow-zcash)
 
-<<<<<<< HEAD
 elseif(BITCOIN_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
   message("                           Bitcoin build start")
@@ -67,7 +66,7 @@ elseif(ALL_OPT STREQUAL ON)
   add_subdirectory(BLEEP-gossip-10node)
   add_subdirectory(BLEEP-POW-consensus)
   add_subdirectory(shadow-syscalls)
-  # add_subdirectory(shadow-litecoin)
+  add_subdirectory(shadow-litecoin)
   # add_subdirectory(shadow-geth) # results in deadlock due to futex issue
   # add_subdirectory(shadow-rust) # it works well on local machine, but does not work on github Action, so commentified.
 

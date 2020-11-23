@@ -44,6 +44,10 @@ option(ALL_OPT "All on build (deafult : OFF)" OFF)
 # git option
 option(GIT_OPT "Only run on git action (deafult : OFF)" OFF)
 
+# litecoin option
+option(LITECOIN_OPT "Litecoin on build (default: OFF)" OFF)
+
+
 ## add shadow project
 # should not modify CMAKE_SOURCE_DIR, CMAKE_BINARY_DIR (https://stackoverflow.com/a/22220680)
 # set(CMAKE_SOURCE_DIR "${CMAKE_ROOT_SOURCE_DIR}/shadow")

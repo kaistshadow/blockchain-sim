@@ -35,6 +35,12 @@ elseif(MONERO_OPT STREQUAL ON)
   message("                           Start Monero build")
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(monero)
+  
+elseif(MONERO_OPT STREQUAL ON)
+  message("--------------------------------------------------------------------------------------")
+  message("                           Start Litecoin build")
+  message("--------------------------------------------------------------------------------------")
+  add_subdirectory(litecoin)
 
 elseif(ALL_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")

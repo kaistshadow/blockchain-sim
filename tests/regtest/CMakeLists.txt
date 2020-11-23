@@ -24,6 +24,7 @@ if(ZCASH_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
   add_subdirectory(shadow-zcash)
 
+<<<<<<< HEAD
 elseif(BITCOIN_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
   message("                           Bitcoin build start")
@@ -83,4 +84,3 @@ else(ZCASH_OPT STREQUAL ON)
   add_subdirectory(shadow-dependencies)
   add_subdirectory(shadow-syscalls)
 endif(ZCASH_OPT STREQUAL ON)
-  

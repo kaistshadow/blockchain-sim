@@ -7,6 +7,7 @@ endif()
 ## required for independent build end
 
 ## include shadow 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../shadow/cmake") # Path for ShadowTool Module
 include(ShadowTools) # load ShadowTools Module
 
@@ -15,6 +16,7 @@ enable_testing()
 
 
 add_shadow_plugin(NODE_BL_TEST_TX_10 node_bl_test_tx.cpp)
+find_package(Libev_4_33 REQUIRED)
 target_link_libraries(NODE_BL_TEST_TX_10 NEWBLEEP)
 target_link_libraries(NODE_BL_TEST_TX_10 BLEEP)
 

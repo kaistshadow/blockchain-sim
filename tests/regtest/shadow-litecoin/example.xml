@@ -39,10 +39,10 @@
   <!-- our nodes -->
 
   <node id="bcdnode1">
-    <application plugin="litecoind" time="3" arguments="-debug=1 -conf=node1.conf -port=11111 -rpcport=1112" />
+    <application plugin="litecoind" time="3" arguments="-debug -conf=node1.conf -port=1111 " />
   </node>
-<!--  <node id="bcdnode2">-->
-<!--    <application plugin="litecoind" time="3" arguments="-debug=1  -conf=node2.conf" />-->
-<!--  </node>-->
+  <node id="bcdnode2">
+    <application plugin="litecoind" time="3" arguments="-debug -conf=node2.conf -port=1111 " />
+  </node>
 
 </shadow>

@@ -113,7 +113,7 @@ if __name__ == '__main__':
     parser.add_argument("--bitcoin", action="store_true", help="only bitcoin build")
     parser.add_argument("--monero", action="store_true", help="only monero build")
     parser.add_argument("--git", action="store_true", help="Run on Git action")
-    parser.add_argument("--litecoin", actoin="store_true", help="only litecoin build")
+    parser.add_argument("--litecoin", action="store_true", help="only litecoin build")
     
     args = parser.parse_args()
     OPT_ALL = args.all

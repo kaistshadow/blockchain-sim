@@ -63,3 +63,11 @@ add_test(NAME shadow-ISP-emulated-benigns
         COMMAND shadow test-bitcoinlib-benigns.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 set_tests_properties(shadow-ISP-emulated-benigns PROPERTIES TIMEOUT 60)
+
+
+###
+add_executable(test-template test-template.cpp)
+target_link_libraries(test-template Libev_4_33::Libev_static)
+target_link_libraries(test-template SHADOW_INTERFACE)
+target_link_libraries(test-template Bitcoin_0_19_1dev::Plugin)
+target_link_libraries(test-template -lboost_system)

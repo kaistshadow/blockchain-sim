@@ -18,19 +18,6 @@ endif()
 
 include(ShadowTools)
 
-
-# add_subdirectory(BLEEP-simpleconnect)
-# add_subdirectory(BLEEP-gossip-10node)
-# add_subdirectory(BLEEP-POW-consensus)
-# # add_subdirectory(shadow-rust) # it works well on local machine, but does not work on github Action, so commentified.
-# add_subdirectory(native-bintest)
-# add_subdirectory(shadow-bitcoin)
-# add_subdirectory(shadow-dependencies)
-# # add_subdirectory(shadow-geth) # results in deadlock due to futex issue
-# add_subdirectory(shadow-syscalls)
-# #add_subdirectory(shadow-monero)
-# add_subdirectory(shadow-zcash)
-
 if(ZCASH_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
   message("                           Zcash build start")
@@ -49,6 +36,12 @@ elseif(MONERO_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
   add_subdirectory(shadow-monero)
 
+elseif(MONERO_OPT STREQUAL ON)
+  message("------------------------------------------------------------------------------")
+  message("                           Litecoin build start")
+  message("------------------------------------------------------------------------------")
+  add_subdirectory(shadow-litecoin)
+
 elseif(ALL_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
   message("                           All build start")
@@ -60,17 +53,20 @@ elseif(ALL_OPT STREQUAL ON)
   add_subdirectory(BLEEP-gossip-10node)
   add_subdirectory(BLEEP-POW-consensus)
   add_subdirectory(shadow-syscalls)
- 
+  add_subdirectory(shadow-dependencies)
+
  elseif(GIT_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
   message("                           Git build start")
   message("------------------------------------------------------------------------------")
   add_subdirectory(shadow-bitcoin)
   add_subdirectory(shadow-zcash)
+  add_subdirectory(shadow-dependencies)
   add_subdirectory(BLEEP-simpleconnect)
   add_subdirectory(BLEEP-gossip-10node)
   add_subdirectory(BLEEP-POW-consensus)
   add_subdirectory(shadow-syscalls)
+  add_subdirectory(shadow-litecoin)
   # add_subdirectory(shadow-geth) # results in deadlock due to futex issue
   # add_subdirectory(shadow-rust) # it works well on local machine, but does not work on github Action, so commentified.
 
@@ -81,9 +77,9 @@ else(ZCASH_OPT STREQUAL ON)
   add_subdirectory(BLEEP-simpleconnect)
   add_subdirectory(BLEEP-gossip-10node)
   add_subdirectory(BLEEP-POW-consensus)
+  add_subdirectory(shadow-dependencies)
   add_subdirectory(native-bintest)
   add_subdirectory(shadow-bitcoin)
   add_subdirectory(shadow-dependencies)
   add_subdirectory(shadow-syscalls)
 endif(ZCASH_OPT STREQUAL ON)
-  

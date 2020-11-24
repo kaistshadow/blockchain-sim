@@ -30,7 +30,7 @@ option(SHADOW_DEBUG "turn on debugging for verbose program output (default: ON f
 # enable shadow debug as default. (Because some tests failed with release version of shadow (e.g. shadow-bitcoin-with-wallet)
 
 # Bitcoin option
-option(BITCOIN_OPT "Bitcoin on build (default: OFF)" OFF)
+option(BITCOIN_OPT "Bitcoin on build (default: ON)" ON)
 
 # Zcash option
 option(ZCASH_OPT "Zcash on build (default: OFF)" OFF)
@@ -47,6 +47,8 @@ option(GIT_OPT "Only run on git action (deafult : OFF)" OFF)
 # litecoin option
 option(LITECOIN_OPT "Litecoin on build (default: OFF)" OFF)
 
+# bleep lib option
+option(BLEEPLIB_OPT "BLEEPLIB on build (default: ON)" ON)
 
 ## add shadow project
 # should not modify CMAKE_SOURCE_DIR, CMAKE_BINARY_DIR (https://stackoverflow.com/a/22220680)
@@ -80,17 +82,20 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/Install")
 enable_testing()
 add_subdirectory(external)
 
+if(BLEEPLIB_OPT STREQUAL ON)
+    add_subdirectory(BLEEPlib)
+endif(BLEEPLIB_OPT STREQUAL ON)
 
 
-if(ALL_OPT STREQUAL ON)
-    add_subdirectory(BLEEPlib)
-elseif(BITCOIN_OPT STREQUAL ON)
-    add_subdirectory(BLEEPlib)
-elseif(GIT_OPT STREQUAL ON)
-    add_subdirectory(BLEEPlib)
-elseif(ALL_OPT STREQUAL ON)
-    add_subdirectory(BLEEPlib)
-endif(ALL_OPT STREQUAL ON)
+# if(ALL_OPT STREQUAL ON)
+#     add_subdirectory(BLEEPlib)
+# elseif(BITCOIN_OPT STREQUAL ON)
+#     add_subdirectory(BLEEPlib)
+# elseif(GIT_OPT STREQUAL ON)
+#     add_subdirectory(BLEEPlib)
+# elseif(ALL_OPT STREQUAL ON)
+#     add_subdirectory(BLEEPlib)
+# endif(ALL_OPT STREQUAL ON)
     
 
 

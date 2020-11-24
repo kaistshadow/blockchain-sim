@@ -60,7 +60,7 @@ elseif(GIT_OPT STREQUAL ON)
 
 else(ZCASH_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
-  message("                           default")
+  message("                           default (defalut = Bitcoin)")
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(bitcoin)
 

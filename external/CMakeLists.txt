@@ -36,7 +36,7 @@ elseif(MONERO_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(monero)
   
-elseif(MONERO_OPT STREQUAL ON)
+elseif(LITECOIN_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
   message("                           Start Litecoin build")
   message("--------------------------------------------------------------------------------------")

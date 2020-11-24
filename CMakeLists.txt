@@ -50,6 +50,20 @@ option(LITECOIN_OPT "Litecoin on build (default: OFF)" OFF)
 # bleep lib option
 option(BLEEPLIB_OPT "BLEEPLIB on build (default: ON)" ON)
 
+
+message("------------------------------------------------------------------------------------------------------")
+message("                                          BITCOIN_OPT : ${BITCOIN_OPT}")
+message("                                          ZCASH_OPT   : ${ZCASH_OPT}")
+message("                                          MONERO_OPT  : ${MONERO_OPT}")
+message("                                          LITECOIN_OPT: ${LITECOIN_OPT}")
+message("")
+message("")
+message("                                            ALL_OPT   : ${ALL_OPT}")
+message("                                            GIT_OPT   : ${GIT_OPT}")
+message("                                         BLEEPLIB_OPT : ${BLEEPLIB_OPT}")
+message("------------------------------------------------------------------------------------------------------")
+
+
 ## add shadow project
 # should not modify CMAKE_SOURCE_DIR, CMAKE_BINARY_DIR (https://stackoverflow.com/a/22220680)
 # set(CMAKE_SOURCE_DIR "${CMAKE_ROOT_SOURCE_DIR}/shadow")
@@ -85,19 +99,6 @@ add_subdirectory(external)
 if(BLEEPLIB_OPT STREQUAL ON)
     add_subdirectory(BLEEPlib)
 endif(BLEEPLIB_OPT STREQUAL ON)
-
-
-# if(ALL_OPT STREQUAL ON)
-#     add_subdirectory(BLEEPlib)
-# elseif(BITCOIN_OPT STREQUAL ON)
-#     add_subdirectory(BLEEPlib)
-# elseif(GIT_OPT STREQUAL ON)
-#     add_subdirectory(BLEEPlib)
-# elseif(ALL_OPT STREQUAL ON)
-#     add_subdirectory(BLEEPlib)
-# endif(ALL_OPT STREQUAL ON)
-    
-
 
 # add_subdirectory(BLEEPapp)
 add_subdirectory(tests)

@@ -36,7 +36,7 @@ elseif(MONERO_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(monero)
   
-elseif(MONERO_OPT STREQUAL ON)
+elseif(LITECOIN_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
   message("                           Start Litecoin build")
   message("--------------------------------------------------------------------------------------")
@@ -60,7 +60,7 @@ elseif(GIT_OPT STREQUAL ON)
 
 else(ZCASH_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
-  message("                           default")
+  message("                           default (defalut = Bitcoin)")
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(bitcoin)
 

@@ -125,7 +125,7 @@ if __name__ == '__main__':
     OPT_MONERO = args.monero
     OPT_LITECOIN = args.litecoin
     OPT_GIT = args.git
-
+    cmake_bleeplib_opt = "-DBLEEPLIB_OPT=ON"
     cmake_debug_opt = "-DSHADOW_DEBUG=ON -DBLEEP_DEBUG=ON"
 
     #default : Bitcoin build
@@ -137,7 +137,7 @@ if __name__ == '__main__':
         exec_shell_cmd("sudo apt-get install -y libssl-dev")
         prepare_shadow()
         prepare_shadow_dependencies()
-        exec_shell_cmd("mkdir build; cd build; cmake %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt))
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_bleeplib_opt))
         process_ENV()   
 
     if OPT_DEBUG:
@@ -151,8 +151,7 @@ if __name__ == '__main__':
         exec_shell_cmd("sudo apt-get install -y libssl-dev")
         prepare_shadow()
         prepare_shadow_dependencies()
-        cmake_bitcoin_opt = "-DBITCOIN_OPT=ON"
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_bitcoin_opt))
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_bleeplib_opt))
         process_ENV()   
 
     if OPT_ZCASH:
@@ -162,7 +161,9 @@ if __name__ == '__main__':
         prepare_zcash_dependencies()
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
         cmake_zcash_opt = "-DZCASH_OPT=ON"
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_zcash_opt))
+        cmake_bleeplib_opt = "-DBLEEPLIB_OPT=OFF"
+        cmake_bitcoin_opt = "-DBITCOIN_OPT=OFF"
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_zcash_opt,cmake_bleeplib_opt, cmake_bitcoin_opt))
         process_ENV()
 
     if OPT_MONERO:
@@ -172,7 +173,9 @@ if __name__ == '__main__':
         prepare_monero_dependencies()
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
         cmake_monero_opt = "-DMONERO_OPT=ON"
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_monero_opt))
+        cmake_bleeplib_opt = "-DBLEEPLIB_OPT=OFF"
+        cmake_bitcoin_opt = "-DBITCOIN_OPT=OFF"
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_monero_opt, cmake_bleeplib_opt,cmake_bitcoin_opt))
         process_ENV()
 
     if OPT_LITECOIN:
@@ -184,7 +187,9 @@ if __name__ == '__main__':
         prepare_shadow()
         prepare_shadow_dependencies()
         cmake_litecoin_opt = "-DLITECOIN_OPT=ON"
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_litecoin_opt))
+        cmake_bleeplib_opt = "-DBLEEPLIB_OPT=OFF"
+        cmake_bitcoin_opt = "-DBITCOIN_OPT=OFF"
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_litecoin_opt, cmake_bleeplib_opt,cmake_bitcoin_opt))
         process_ENV()          
 
     if OPT_ALL:
@@ -208,7 +213,7 @@ if __name__ == '__main__':
         cmake_all_opt = "-DALL_OPT=ON"
 
         ## install
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (cmake_debug_opt, cmake_all_opt))
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (cmake_debug_opt, cmake_all_opt, cmake_bleeplib_opt))
         process_ENV()
     
     if OPT_GIT:
@@ -232,7 +237,7 @@ if __name__ == '__main__':
         cmake_git_opt = "-DGIT_OPT=ON"
 
         ## install
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (cmake_debug_opt, cmake_git_opt))
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (cmake_debug_opt, cmake_git_opt, cmake_bleeplib_opt))
         process_ENV()
 
     if OPT_TEST:

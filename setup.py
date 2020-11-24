@@ -137,7 +137,8 @@ if __name__ == '__main__':
         exec_shell_cmd("sudo apt-get install -y libssl-dev")
         prepare_shadow()
         prepare_shadow_dependencies()
-        exec_shell_cmd("mkdir build; cd build; cmake %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt))
+        cmake_bitcoin_opt = "-DBITCOIN_OPT=ON"
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_bitcoin_opt))
         process_ENV()   
 
     if OPT_DEBUG:

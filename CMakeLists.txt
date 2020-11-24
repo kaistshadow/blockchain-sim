@@ -88,8 +88,10 @@ elseif(BITCOIN_OPT STREQUAL ON)
     add_subdirectory(BLEEPlib)
 elseif(GIT_OPT STREQUAL ON)
     add_subdirectory(BLEEPlib)
+elseif(ALL_OPT STREQUAL ON)
+    add_subdirectory(BLEEPlib)
 endif(ALL_OPT STREQUAL ON)
-
+    
 
 
 # add_subdirectory(BLEEPapp)

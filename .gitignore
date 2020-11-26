@@ -57,10 +57,12 @@ tests/perftest/cpu/perf/perf_results/
 
 *.so
 perf.data.old
+
 tests/perftest/cpu/FlameGraph/
-
-
 tests/perftest/cpu/mpstat/mpstat_results
+tests/perftest/memory/vmstat/vmstat_results
+tests/perftest/memory/ps/ps_results
+tests/perftest/memory/pmap/pmap_results
 
 tests/regtest/BLEEP-POW-consensus/target_example.xml
 tests/regtest/shadow-dependencies/1_ubuntu_libcurl/simplecurl
@@ -89,3 +91,6 @@ external/libev/4.33/event.o
 external/libev/4.33/libev.la
 external/libev/4.33/libtool
 external/libev/4.33/stamp-h1
+
+base*N*T.xml
+

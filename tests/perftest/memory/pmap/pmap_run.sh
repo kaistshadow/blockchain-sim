@@ -1,16 +1,9 @@
 #!/bin/bash
 
-if [ $# -ne 1 ]; then
- echo "Usage: $0 worker_count"
+if [ $# -ne 2 ]; then
+ echo "Usage: $0 worker_count interval(sec)"
  exit -1
 fi
-
-# shadow setup: without -pg
-cd ../../../../shadow/
-./setup build -c
-./setup install
-cd -
-
 re='^[0-9]+$'
 if ! [[ $1 =~ $re ]] ; then
    echo "error: Worker_count is not a positive integer" >&2; exit -1
@@ -29,6 +22,7 @@ else
 	SUBS_PARAM=`expr $1 - 1`
 	TASKSET_PARAM="`expr $TASKSET_PARAM_END - $SUBS_PARAM`-$TASKSET_PARAM_END"
 fi
+sudo echo
 xmls=(
 	/BLEEP-POW-consensus/Consensus\[pow-tree\]-Gossip\[SP\]-200node-2sec.xml
     /BLEEP-gossip-10node/10node-txgossip.xml
@@ -37,22 +31,24 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	FILE_DEST="$XMLROOT"${xmls[i]}
 	DIR=${FILE_DEST%/*}
 	XML_TARGET=${FILE_DEST##*/}
-	# run mpstat
-	mpstat -P ALL 1 > mpstat.log & RUNPID=$!
+
 
 	cd $DIR
-	# run taskset shadow
-	taskset -c $TASKSET_PARAM shadow -d datadir -h 100000 -w $WORKER_CNT $XML_TARGET
-	kill -SIGINT $RUNPID
-
-	sleep 1
-
-	if [ -f /proc/$RUNPID/cmdline ]; then
-		PID_CHECK=$(tr -d '\0' < /proc/$RUNPID/cmdline )
-		if [[ $PID_CHECK == *"mpstat"* ]]; then
+	# run shadow
+	shadow -d datadir -h 100000 -w $WORKER_CNT $XML_TARGET & RUNPID=$!
+	sudo pmap -x $RUNPID > pmap.log
+	while :
+	do
+		if ! $( sleep $2 ); then
 			kill -9 $RUNPID
+			exit -1
 		fi
-	fi
+		PID_CHECK=$(tr -d '\0' < /proc/$RUNPID/cmdline )
+		if [[ ! $PID_CHECK == *"shadow"* ]]; then
+			break
+		fi
+		sudo pmap -x $RUNPID >> pmap.log
+	done
     rm -r ./datadir
     if test -f gmon.out; then
 	    rm gmon.out
@@ -61,9 +57,8 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	    rm perf.data
 	fi
     cd -
-    if [ ! -d ./mpstat_results ]; then
-    	mkdir mpstat_results
+    if [ ! -d ./pmap_results ]; then
+    	mkdir pmap_results
     fi
-    mv ./mpstat.log ./mpstat_results/mpstat$i.log
-    python mpstat_make_figure.py mpstat$i.log $CORECNT $WORKER_CNT
+    mv $DIR/pmap.log ./pmap_results/pmap$i.log
 done

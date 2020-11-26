@@ -47,9 +47,11 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 
 	sleep 1
 
-	PID_CHECK=$(tr -d '\0' < /proc/$RUNPID/cmdline )
-	if [[ $PID_CHECK == *"mpstat"* ]]; then
-		kill -9 $RUNPID
+	if [ -f /proc/$RUNPID/cmdline ]; then
+		PID_CHECK=$(tr -d '\0' < /proc/$RUNPID/cmdline )
+		if [[ $PID_CHECK == *"mpstat"* ]]; then
+			kill -9 $RUNPID
+		fi
 	fi
     rm -r ./datadir
     if test -f gmon.out; then

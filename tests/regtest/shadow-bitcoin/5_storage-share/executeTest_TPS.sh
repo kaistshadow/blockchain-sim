@@ -9,4 +9,5 @@ mv base$1N$2T.xml target_example.xml
 
 # execute test
 shadow -d datadir -w 8 -h 100000 target_example.xml
-python calcResult.py $1 $2
+cd maketree
+./maketree> log.txt

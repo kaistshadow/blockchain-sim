@@ -35,14 +35,14 @@
   <plugin id="litecoind" path="liblitecoind.so" />
 
   <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="30" />
+  <kill time="300" />
   <!-- our nodes -->
+  <node id="bcdnode1" iphint="11.0.0.1">
+    <application plugin="litecoind" time="3" arguments="-debug -regtest -port=1111 -datadir=node1 -rpcallowip=11.0.0.1/0 -rpcbind=11.0.0.1 -addnode=11.1.0.1:1111" />
+  </node>
+  <node id="bcdnode2" iphint="11.1.0.1">
+    <application plugin="litecoind" time="3" arguments="-debug -regtest -port=1111 -datadir=node2 -rpcallowip=11.1.0.1/0 -rpcbind=11.1.0.1 -addnode=11.0.0.1:1111" />
+  </node>
 
-  <node id="bcdnode1">
-    <application plugin="litecoind" time="3" arguments="-debug -conf=node1.conf -port=1111 " />
-  </node>
-  <node id="bcdnode2">
-    <application plugin="litecoind" time="3" arguments="-debug -conf=node2.conf -port=1111 " />
-  </node>
 
 </shadow>

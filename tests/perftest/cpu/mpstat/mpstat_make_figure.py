@@ -1,9 +1,12 @@
+# make matplotlib not to use Xwindows on server
+import matplotlib
+matplotlib.use('Agg')
+
 import numpy as np
 import pandas as pd
 
 import seaborn as sns
 import matplotlib.pyplot as plt
-
 import argparse
 
 def multispace_remover(d):

@@ -41,5 +41,5 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
     rm perf.data
     rm out.perf-folded
     cd -
-    cp ../FlameGraph/perf$i.svg ./perf_results/
+    mv ../FlameGraph/perf$i.svg ./perf_results/perf$i.svg
 done

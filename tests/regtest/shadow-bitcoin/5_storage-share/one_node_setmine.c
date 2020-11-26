@@ -131,6 +131,8 @@ void parsing_txcount(char* nodename) {
                 if(ptr){
                     if(memcmp(ptr,"WriteBlockToDisk-txCount",sizeof("WriteBlockToDisk-txCount"))==0) {
                         ptr = strtok(NULL, " ");
+                        ptr = strtok(NULL, " ");
+                        ptr = strtok(NULL, " ");
                         txcnt+=atoi(ptr);
                     }
                     else continue;

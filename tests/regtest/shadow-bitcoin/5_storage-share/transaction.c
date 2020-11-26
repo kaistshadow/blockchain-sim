@@ -133,6 +133,44 @@ void rpc_sendtoaddress(char* IP, char* wallet) {
     }
 }
 
+void rpc_test(char* IP) {
+
+    printf("------------------------------------------------------------- start sendtoaddress \n\n");
+    char first[100] = "{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getchaintxstats\", ";
+    char input[250];
+    char second[30] = "\"params\": [";
+    char last[50];
+    strcpy(input, first);
+    strcat(input, second);
+    sprintf(last, "");
+    strcat(input, last);
+    strcat(input, "]}");
+    printf("%s \n", input);
+
+    CURL *curl = curl_easy_init();
+    struct curl_slist *headers = NULL;
+
+
+    if (curl) {
+
+        headers = curl_slist_append(headers, "content-type: text/plain;");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+        curl_easy_setopt(curl, CURLOPT_URL, IP);
+
+
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long) strlen(input));
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, input);
+
+        curl_easy_setopt(curl, CURLOPT_USERPWD,
+                         "a:1234");
+
+        curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_TRY);
+
+        curl_easy_perform(curl);
+    }
+}
+
 void set_IP_and_Address(char** IP_array, char** wallet_array, int end) {
 
     int j = 0;
@@ -191,6 +229,7 @@ int main(int args, char* argv[]) {
         rpc_sendtoaddress(IP_array[start], wallet_array[end]);
         sleep(1);
     }
+    rpc_test(IP_array[0]);
 
     free(IP_array);
     free(wallet_array);

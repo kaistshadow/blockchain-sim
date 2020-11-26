@@ -10,3 +10,9 @@
 [submodule "external/monero/dev_0.16.0"]
 	path = external/monero/dev_0.16.0
 	url = https://github.com/kaistshadow/monero.git
+[submodule "external/zcash/zcash"]
+	path = external/zcash/zcash
+	url = https://github.com/kaistshadow/zcash.git
+[submodule "external/litecoin/litecore-litecoin"]
+	path = external/litecoin/litecore-litecoin
+	url = https://github.com/kaistshadow/litecore-litecoin.git

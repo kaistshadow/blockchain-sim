@@ -259,7 +259,6 @@ if __name__ == '__main__':
 
     if OPT_EOS:
         exec_shell_cmd("git submodule update --init")
-        #bitcoin dependency
         prepare_eos_dependencies()
         prepare_shadow()
         prepare_shadow_dependencies()

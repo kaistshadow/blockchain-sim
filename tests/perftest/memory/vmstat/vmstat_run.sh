@@ -39,10 +39,11 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	kill -SIGINT $RUNPID
 
 	sleep 1
-
-	PID_CHECK=$(tr -d '\0' < /proc/$RUNPID/cmdline )
-	if [[ $PID_CHECK == *"vmstat"* ]]; then
-		kill -9 $RUNPID
+	if [ -f /proc/$RUNPID/cmdline ]; then
+		PID_CHECK=$(tr -d '\0' < /proc/$RUNPID/cmdline )
+		if [[ $PID_CHECK == *"vmstat"* ]]; then
+			kill -9 $RUNPID
+		fi
 	fi
     rm -r ./datadir
     if test -f gmon.out; then
@@ -51,7 +52,7 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
     if test -f perf.data; then
 	    rm perf.data
 	fi
-    cd -
+    cd - 1> /dev/null
     if [ ! -d ./vmstat_results ]; then
     	mkdir vmstat_results
     fi

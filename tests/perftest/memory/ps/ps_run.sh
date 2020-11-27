@@ -39,6 +39,9 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	while :
 	do
 		sleep 0.1
+		if [ ! -f /proc/$RUNPID/cmdline ]; then
+			break
+		fi
 		PID_CHECK=$(tr -d '\0' < /proc/$RUNPID/cmdline )
 		if [[ ! $PID_CHECK == *"shadow"* ]]; then
 			break
@@ -52,7 +55,7 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
     if test -f perf.data; then
 	    rm perf.data
 	fi
-    cd -
+    cd - 1> /dev/null
     if [ ! -d ./ps_results ]; then
     	mkdir ps_results
     fi

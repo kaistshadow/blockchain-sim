@@ -9,7 +9,7 @@ fi
 cd ../../../../shadow/
 ./setup build -c
 ./setup install
-cd -
+cd - 1> /dev/null
 
 re='^[0-9]+$'
 if ! [[ $1 =~ $re ]] ; then
@@ -60,7 +60,7 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
     if test -f perf.data; then
 	    rm perf.data
 	fi
-    cd -
+    cd - 1> /dev/null
     if [ ! -d ./mpstat_results ]; then
     	mkdir mpstat_results
     fi

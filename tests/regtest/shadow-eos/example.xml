@@ -39,6 +39,6 @@
     <!-- our nodes -->
 
     <node id="node1">
-        <application plugin="nodeos" time="2" arguments="--data-dir ./data/node1 --config-dir ./data/node1 --help" />
+        <application plugin="nodeos" time="2" arguments="-p eosio --data-dir ./data/node1 --config-dir ./data/node1" />
     </node>
 </shadow>

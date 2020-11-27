@@ -39,8 +39,11 @@
     <!-- our nodes -->
 
     <node id="bcdnode1">
-        <application plugin="rippled" time="2" arguments="--conf=./rippled.cfg peers --help" />
+        <application plugin="rippled" time="2" arguments="--conf=./node1.cfg" />
     </node>
 
+    <node id="bcdnode2">
+        <application plugin="rippled" time="4" arguments="--conf=./node2.cfg" />
+    </node>
 
 </shadow>

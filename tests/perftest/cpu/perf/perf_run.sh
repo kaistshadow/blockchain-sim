@@ -13,8 +13,7 @@ XMLROOT="../../../../tests/regtest"
 CORECNT=$(nproc)
 
 xmls=(
-	/BLEEP-POW-consensus/Consensus\[pow-tree\]-Gossip\[SP\]-200node-2sec.xml
-    /BLEEP-gossip-10node/10node-txgossip.xml
+	/shadow-bitcoin/5_storage-share/target_example.xml
 	)
 for (( i=0; i<${#xmls[@]}; i++ )); do
 	FILE_DEST="$XMLROOT"${xmls[i]}

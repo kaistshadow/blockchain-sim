@@ -30,7 +30,7 @@ else
 	TASKSET_PARAM="`expr $TASKSET_PARAM_END - $SUBS_PARAM`-$TASKSET_PARAM_END"
 fi
 xmls=(
-	/BLEEP-POW-consensus/Consensus\[pow-tree\]-Gossip\[SP\]-200node-2sec.xml
+	/BLEEP-POW-consensus/example.xml
     /BLEEP-gossip-10node/10node-txgossip.xml
 	)
 for (( i=0; i<${#xmls[@]}; i++ )); do

@@ -56,6 +56,7 @@ elseif(ALL_OPT STREQUAL ON)
   add_subdirectory(zcash)
   add_subdirectory(bitcoin)
   add_subdirectory(eosio)
+  add_subdirectory(litecoin)
 
 elseif(GIT_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")

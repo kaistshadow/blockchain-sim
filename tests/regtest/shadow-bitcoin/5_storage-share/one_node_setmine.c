@@ -103,84 +103,38 @@ void rpc_getblockchaininfo(char* ipport){
         curl_easy_perform(curl);
     }
 }
-void parsing_txcount(char* nodename) {
-    char ptr[30];
-    strcpy(ptr,nodename);
-    char *nodeid = strtok(ptr,"e");
-    nodeid=strtok(NULL,"");
-    char input[100] = "";
-    char str[4][20] = {"./datadir/hosts/","/stdout-",".bitcoind.",".log"};
 
-    strcat(input, str[0]);
-    strcat(input,nodename);
-    strcat(input, str[1]);
-    strcat(input,nodename);
-    strcat(input,str[2]);
-    strcat(input,nodeid);
-    strcat(input, str[3]);
-
-    FILE *inputFile = fopen(input,"r");
-    int txcnt=0;
-    if (inputFile){
-        while(!feof(inputFile)){
-            char buf[256];
-            fgets(buf,sizeof(buf),inputFile);
-            char *ptr = strtok(buf," ");
-            if(ptr){
-                ptr=strtok(NULL," ");
-                if(ptr){
-                    if(memcmp(ptr,"WriteBlockToDisk-txCount",sizeof("WriteBlockToDisk-txCount"))==0) {
-                        ptr = strtok(NULL, " ");
-                        ptr = strtok(NULL, " ");
-                        ptr = strtok(NULL, " ");
-                        txcnt+=atoi(ptr);
-                    }
-                    else continue;
-                }
-            }
-        }
-        printf("{\"txCount\": %d}\n",txcnt);
-        fclose(inputFile);
-    }
+void CalcTPS (char* result, char* simultime) {
+    char *txcnt = strtok(result,":");
+    txcnt = strtok(NULL,"");
+    int txcnt_int = atio(txcnt);
+    int simultime_int = atoi(simultime);
+    double tps = txcnt_int/simultime_int;
+    printf("TPS : %f\n",tps);
 }
 
-void parsing_block(char* nodename) {
-    char ptr[30];
-    strcpy(ptr,nodename);
-    char *nodeid = strtok(ptr,"e");
-    nodeid=strtok(NULL,"");
-    char input[100] = "";
-    char str[4][20] = {"./datadir/hosts/","/stdout-",".bitcoind.",".log"};
+void rpc_get_txcount(char* ipport, char* simultime){
+    const char *data ="{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"gettxtotalcount\", \"params\": [] }";
+    CURL *curl = curl_easy_init();
+    struct curl_slist *headers = NULL;
+    if (curl) {
+        struct string s;
+        init_string(&s);
+        headers = curl_slist_append(headers, "content-type: text/plain;");
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(curl, CURLOPT_URL, ipport);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long) strlen(data));
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, "a:1234");
+        curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_TRY);
+        curl_easy_perform(curl);
 
-    strcat(input, str[0]);
-    strcat(input,nodename);
-    strcat(input, str[1]);
-    strcat(input,nodename);
-    strcat(input,str[2]);
-    strcat(input,nodeid);
-    strcat(input, str[3]);
-
-    FILE *inputFile = fopen(input,"r");
-    int txcnt=0;
-    if (inputFile){
-        while(!feof(inputFile)){
-            char buf[256];
-            fgets(buf,sizeof(buf),inputFile);
-            char *ptr = strtok(buf," ");
-            if(ptr){
-                ptr=strtok(NULL," ");
-                if(ptr){
-                    if(memcmp(ptr,"WriteBlockToDisk-blockCount",sizeof("WriteBlockToDisk-txCount"))==0) {
-                        ptr = strtok(NULL, " ");
-                        txcnt+=atoi(ptr);
-                    }
-                    else continue;
-                }
-            }
-        }
-        printf("{\"blockCount\": %d}\n",txcnt);
-        fclose(inputFile);
+        printf("%s ", s.ptr);
+        CalcTPS(s.ptr,simultime);
     }
+
 }
 
 int main(int argc, char* argv[]) {
@@ -190,7 +144,6 @@ int main(int argc, char* argv[]) {
     rpc_generatetoaddress(wallet, argv[1]);
     sleep(atoi(argv[2]));
     rpc_getblockchaininfo(argv[1]);
-    parsing_block(argv[3]);
-    parsing_txcount(argv[3]);
+    rpc_get_txcount(argv[1],argv[2]);
     return 0;
 }

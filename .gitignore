@@ -58,6 +58,8 @@ tests/perftest/cpu/perf/perf_results/
 *.so
 perf.data.old
 
+tests/perftest/tool_set/
+tests/perftest/install_set/*/
 tests/perftest/cpu/FlameGraph/
 tests/perftest/cpu/mpstat/mpstat_results
 tests/perftest/memory/vmstat/vmstat_results

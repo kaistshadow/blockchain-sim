@@ -216,6 +216,29 @@ bool BitcoinProcessMsg(CNetMessage& msg, bool fromInbound, std::deque<std::vecto
             }
         }
 
+    } else if (strCommand == NetMsgType::PING) {
+        std::cout << "received PING" << "\n";
+        uint64_t nonce = 0;
+        vRecv >> nonce;
+
+        CSerializedNetMsg msg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::PONG, nonce);
+
+        size_t nMessageSize = msg.data.size();
+        //size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
+        // LogPrint(BCLog::NET, "sending %s (%d bytes) \n", SanitizeString(msg.command.c_str()), nMessageSize);
+
+        std::vector<unsigned char> serializedHeader;
+        serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
+        uint256 hash = Hash(msg.data.data(), msg.data.data() + nMessageSize);
+        CMessageHeader hdr(MessageStartChars, msg.command.c_str(), nMessageSize);
+        memcpy(hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
+
+        CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, serializedHeader, 0, hdr};
+
+        vSendMsg.push_back(std::move(serializedHeader));
+        if (nMessageSize) {
+            vSendMsg.push_back(std::move(msg.data));
+        }
     }
     return true;
 }

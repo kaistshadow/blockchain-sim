@@ -90,6 +90,10 @@ bool BitcoinReceiveMsg(const char *pch, unsigned int nBytes, std::list<CNetMessa
     }
     vProcessMsg.splice(vProcessMsg.end(), vRecvMsg, vRecvMsg.begin(), it);
 
+    for (CNetMessage &a : vProcessMsg) {
+        std::cout << "received command:" << a.hdr.GetCommand() << "\n";
+    }
+
     return true;
 }
 
@@ -128,7 +132,9 @@ bool BitcoinProcessMsg(CNetMessage& msg, bool fromInbound, std::deque<std::vecto
         exit(-1);
     }
     std::string strCommand = hdr.GetCommand();
-    CDataStream& vRecv = msg.vRecv;
+    CDataStream &vRecv = msg.vRecv;
+
+    std::cout << "bitcoin process msg : " << strCommand << "\n";
 
     if (strCommand == NetMsgType::VERSION) {
         int64_t nTime;
@@ -407,12 +413,9 @@ private:
                     exit(-1);
                 }
 
-                if (!vProcessMsg.empty()) {
-                    std::list<MSG> msgs;
-
+                while (!vProcessMsg.empty()) {
                     // Just take one message
-                    msgs.splice(msgs.begin(), vProcessMsg, vProcessMsg.begin());
-                    MSG& msg(msgs.front());
+                    MSG &msg = vProcessMsg.front();
 
                     // process message
                     ret = ProcessMSG(msg, socketControl.isInboundSocket(), vSendMsg, socketControl.their_ip, socketControl.their_port);
@@ -423,6 +426,8 @@ private:
                     }
                     if (!vSendMsg.empty()) // set Writable
                         socketControl.getDataSocketWatcher().set(datasock_fd, ev::READ | ev::WRITE);
+
+                    vProcessMsg.pop_front();
                 }
 
             } else if (nBytes == 0) {
@@ -650,12 +655,9 @@ private:
                     exit(-1);
                 }
 
-                if (!vProcessMsg.empty()) {
-                    std::list<MSG> msgs;
-
+                while (!vProcessMsg.empty()) {
                     // Just take one message
-                    msgs.splice(msgs.begin(), vProcessMsg, vProcessMsg.begin());
-                    MSG& msg(msgs.front());
+                    MSG &msg = vProcessMsg.front();
 
                     // process message
                     ret = ProcessMSG(msg, socketControl.isInboundSocket(), vSendMsg, socketControl.their_ip, socketControl.their_port);
@@ -666,6 +668,8 @@ private:
                     }
                     if (!vSendMsg.empty()) // set Writable
                         socketControl.getDataSocketWatcher().set(datasock_fd, ev::READ | ev::WRITE);
+
+                    vProcessMsg.pop_front();
                 }
 
             } else if (nBytes == 0) {

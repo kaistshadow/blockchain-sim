@@ -65,6 +65,17 @@ add_test(NAME shadow-ISP-emulated-benigns
 set_tests_properties(shadow-ISP-emulated-benigns PROPERTIES TIMEOUT 60)
 
 
+### realistic bitcoin emulation for EREBUS attack
+add_shadow_plugin(shadow-ISP-bitcoin-emulated-benigns-realistic emulated-benigns-realistic.cpp)
+target_link_libraries(shadow-ISP-bitcoin-emulated-benigns-realistic Libev_4_33::Libev_static)
+target_link_libraries(shadow-ISP-bitcoin-emulated-benigns-realistic SHADOW_INTERFACE)
+target_link_libraries(shadow-ISP-bitcoin-emulated-benigns-realistic Bitcoin_0_19_1dev::Plugin)
+# copy resulting plugins into source directory
+add_custom_command(TARGET shadow-ISP-bitcoin-emulated-benigns-realistic
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:shadow-ISP-bitcoin-emulated-benigns-realistic> ${CMAKE_CURRENT_SOURCE_DIR})
+
+
 ###
 add_executable(test-template test-template.cpp)
 target_link_libraries(test-template Libev_4_33::Libev_static)

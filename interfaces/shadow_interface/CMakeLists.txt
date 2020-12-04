@@ -1,7 +1,8 @@
 add_library(SHADOW_INTERFACE SHARED shadow_interface.c)
-install(TARGETS SHADOW_INTERFACE EXPORT FindBLEEP DESTINATION lib) # Why export here? : https://stackoverflow.com/a/5379238
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3")
 
-message(STATUS "CMAKE_CURRENT_SOURCE_DIR:" ${CMAKE_CURRENT_SOURCE_DIR})
+
+install(TARGETS SHADOW_INTERFACE EXPORT FindBLEEP DESTINATION lib) # Why export here? : https://stackoverflow.com/a/5379238
 
 target_include_directories(SHADOW_INTERFACE
   PUBLIC

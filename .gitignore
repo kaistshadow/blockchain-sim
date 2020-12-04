@@ -57,11 +57,16 @@ tests/perftest/cpu/perf/perf_results/
 
 *.so
 perf.data.old
+
+tests/perftest/tool_set/
+tests/perftest/install_set/*/
 tests/perftest/cpu/FlameGraph/
-
-
 tests/perftest/cpu/mpstat/mpstat_results
+tests/perftest/memory/vmstat/vmstat_results
+tests/perftest/memory/ps/ps_results
+tests/perftest/memory/pmap/pmap_results
 
+tests/regtest/BLEEP-POW-consensus/target_example.xml
 tests/regtest/shadow-dependencies/1_ubuntu_libcurl/simplecurl
 tests/regtest/shadow-dependencies/8_customed_rpc/libevent2.1-6/
 tests/regtest/shadow-dependencies/8_customed_rpc/node1/
@@ -70,7 +75,9 @@ tests/regtest/*/datadir
 tests/regtest/*/*/datadir
 tests/regtest/shadow-bitcoin/*/data
 tests/regtest/shadow-bitcoin/*/target_example.xml
-shadow.data
+tests/regtest/shadow_storage_mgmt_test/*.txt
+tests/regtest/shadow-eos/nodeos
+tests/regtest/shadow-monero/monero_exe/
 
 external/bdb/4.8.30/build_unix
 external/libev/4.33/.deps/
@@ -87,6 +94,8 @@ external/libev/4.33/event.o
 external/libev/4.33/libev.la
 external/libev/4.33/libtool
 external/libev/4.33/stamp-h1
-
-tests/regtest/shadow-eos/nodeos
 external/eosio/install/*
+
+base*N*T.xml
+shadow.data
+

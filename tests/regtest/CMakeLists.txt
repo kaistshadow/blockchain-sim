@@ -62,6 +62,7 @@ elseif(ALL_OPT STREQUAL ON)
   add_subdirectory(BLEEP-POW-consensus)
   add_subdirectory(shadow-syscalls)
   add_subdirectory(shadow-dependencies)
+  add_subdirectory(shadow_storage_mgmt_test)
 
  elseif(GIT_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
@@ -91,4 +92,3 @@ else(ZCASH_OPT STREQUAL ON)
   add_subdirectory(shadow-bitcoin)
   add_subdirectory(shadow-syscalls)
 endif(ZCASH_OPT STREQUAL ON)
-

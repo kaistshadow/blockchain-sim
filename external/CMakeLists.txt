@@ -17,6 +17,7 @@ add_subdirectory(openssl)
 add_subdirectory(bdb)
 add_subdirectory(curl)
 add_subdirectory(libev)
+add_subdirectory(shadow_storage_manager)
 
 if(ZCASH_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
@@ -74,4 +75,3 @@ else(ZCASH_OPT STREQUAL ON)
   add_subdirectory(bitcoin)
 
 endif(ZCASH_OPT STREQUAL ON)
-  

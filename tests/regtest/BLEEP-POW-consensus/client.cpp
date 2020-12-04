@@ -23,8 +23,6 @@ int main(int argc, char *argv[]) {
     }
 
     /* allocate mainEventManager */
-    // MainEventManager mainEventManager("143.248.38.189");
-    // MainEventManager mainEventManager(gArgs.GetArg("-id", "noid"));
     MainEventManager mainEventManager;
     BasicNetworkModule basicNetworkModule(gArgs.GetArg("-id", "noid"), &mainEventManager);
     TxGeneratorModule txGeneratorModule(&mainEventManager);

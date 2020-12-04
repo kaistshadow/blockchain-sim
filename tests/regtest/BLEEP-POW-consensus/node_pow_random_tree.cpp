@@ -294,7 +294,8 @@ int main(int argc, char *argv[]) {
                         if (ledger.HasProcessingInv())
                             break;
 
-                        unsigned long nextblkidx = ledger.GetNextBlockIdx();
+                        // unused variable
+                        //unsigned long nextblkidx = ledger.GetNextBlockIdx();
                         UINT256_t lasthash = ledger.GetLastHash();
 
                         // First, synchronize global hash tree

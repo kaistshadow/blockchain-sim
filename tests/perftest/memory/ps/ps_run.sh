@@ -4,13 +4,6 @@ if [ $# -ne 1 ]; then
  echo "Usage: $0 worker_count"
  exit -1
 fi
-
-# shadow setup: without -pg
-cd ../../../../shadow/
-./setup build -c
-./setup install
-cd - 1> /dev/null
-
 re='^[0-9]+$'
 if ! [[ $1 =~ $re ]] ; then
    echo "error: Worker_count is not a positive integer" >&2; exit -1
@@ -37,22 +30,24 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	FILE_DEST="$XMLROOT"${xmls[i]}
 	DIR=${FILE_DEST%/*}
 	XML_TARGET=${FILE_DEST##*/}
-	# run mpstat
-	mpstat -P ALL 1 > mpstat.log & RUNPID=$!
+
 
 	cd $DIR
-	# run taskset shadow
-	taskset -c $TASKSET_PARAM shadow -d datadir -h 100000 -w $WORKER_CNT $XML_TARGET
-	kill -SIGINT $RUNPID
-
-	sleep 1
-
-	if [ -f /proc/$RUNPID/cmdline ]; then
-		PID_CHECK=$(tr -d '\0' < /proc/$RUNPID/cmdline )
-		if [[ $PID_CHECK == *"mpstat"* ]]; then
-			kill -9 $RUNPID
+	# run shadow
+	shadow -d datadir -h 100000 -w $WORKER_CNT $XML_TARGET & RUNPID=$!
+	ps u -p $RUNPID > ps.log
+	while :
+	do
+		sleep 0.1
+		if [ ! -f /proc/$RUNPID/cmdline ]; then
+			break
 		fi
-	fi
+		PID_CHECK=$(tr -d '\0' < /proc/$RUNPID/cmdline )
+		if [[ ! $PID_CHECK == *"shadow"* ]]; then
+			break
+		fi
+		ps u --no-headers -p $RUNPID >> ps.log
+	done
     rm -r ./datadir
     if test -f gmon.out; then
 	    rm gmon.out
@@ -61,9 +56,8 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	    rm perf.data
 	fi
     cd - 1> /dev/null
-    if [ ! -d ./mpstat_results ]; then
-    	mkdir mpstat_results
+    if [ ! -d ./ps_results ]; then
+    	mkdir ps_results
     fi
-    mv ./mpstat.log ./mpstat_results/mpstat$i.log
-    python mpstat_make_figure.py mpstat$i.log $CORECNT $WORKER_CNT
+    mv $DIR/ps.log ./ps_results/ps$i.log
 done

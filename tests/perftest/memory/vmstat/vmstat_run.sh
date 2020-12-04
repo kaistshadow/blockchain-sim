@@ -4,13 +4,6 @@ if [ $# -ne 1 ]; then
  echo "Usage: $0 worker_count"
  exit -1
 fi
-
-# shadow setup: without -pg
-cd ../../../../shadow/
-./setup build -c
-./setup install
-cd - 1> /dev/null
-
 re='^[0-9]+$'
 if ! [[ $1 =~ $re ]] ; then
    echo "error: Worker_count is not a positive integer" >&2; exit -1
@@ -37,8 +30,8 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	FILE_DEST="$XMLROOT"${xmls[i]}
 	DIR=${FILE_DEST%/*}
 	XML_TARGET=${FILE_DEST##*/}
-	# run mpstat
-	mpstat -P ALL 1 > mpstat.log & RUNPID=$!
+	# run vmstat
+	vmstat -a 1 -Sm > vmstat.log & RUNPID=$!
 
 	cd $DIR
 	# run taskset shadow
@@ -46,10 +39,9 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	kill -SIGINT $RUNPID
 
 	sleep 1
-
 	if [ -f /proc/$RUNPID/cmdline ]; then
 		PID_CHECK=$(tr -d '\0' < /proc/$RUNPID/cmdline )
-		if [[ $PID_CHECK == *"mpstat"* ]]; then
+		if [[ $PID_CHECK == *"vmstat"* ]]; then
 			kill -9 $RUNPID
 		fi
 	fi
@@ -61,9 +53,8 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	    rm perf.data
 	fi
     cd - 1> /dev/null
-    if [ ! -d ./mpstat_results ]; then
-    	mkdir mpstat_results
+    if [ ! -d ./vmstat_results ]; then
+    	mkdir vmstat_results
     fi
-    mv ./mpstat.log ./mpstat_results/mpstat$i.log
-    python mpstat_make_figure.py mpstat$i.log $CORECNT $WORKER_CNT
+    mv ./vmstat.log ./vmstat_results/vmstat$i.log
 done

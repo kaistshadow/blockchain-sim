@@ -81,8 +81,6 @@ def run_experiment(configfile, LOGLEVEL):
     eventlogs_filename = parse_output("./%s/%s" % (datadir, shadow_stdout_filename), datadir)
     
     exec_shell_cmd("rm %s" % current_config_path)
-    #compare result about 'host log'
-    cmp_result = checking_output(datadir)
 
     return "%s/%s/%s" % (os.getcwd(), datadir, eventlogs_filename)
 
@@ -161,30 +159,40 @@ if __name__ == '__main__':
     parser.add_argument("--log", help="Shadow Log LEVEL above which to filter messages ('error' < 'critical' < 'warning' < 'message' < 'info' < 'debug') ['message']")
     parser.add_argument("--noserver", action="store_true", help="Don't run visualization server")
     # --no server
+    parser.add_argument("--nocheck", action="store_true", help="Don't check for TX broadcast")
 
     args = parser.parse_args()
     configfile = args.configfile
     port = args.port
     OPT_BACKGROUND = args.background
     OPT_NOSERVER = args.noserver
+    OPT_NOCHECK = args.nocheck
 
     if not args.log:
         LOGLEVEL = "message"
     else:
         LOGLEVEL = args.log
 
-    print "Execute shadow experiment"
+    print
+    "Execute shadow experiment"
     start = datetime.datetime.now()
     output = run_experiment(configfile, LOGLEVEL)
     end = datetime.datetime.now()
 
+    if not OPT_NOCHECK:
+        # compare result about 'host log'
+        datadir = "datadir"
+        cmp_result = checking_output(datadir)
+
     elapsed_time = end - start
-    print "elapsed_millisec=%d\n" % (int(elapsed_time.total_seconds() * 1000)) 
+    print
+    "elapsed_millisec=%d\n" % (int(elapsed_time.total_seconds() * 1000))
 
     if OPT_NOSERVER:
         exit()
-        
-    print "Starting visualization"
+
+    print
+    "Starting visualization"
     if OPT_BACKGROUND:
         run_visualization_server(output, configfile, port, background=True)
     else:

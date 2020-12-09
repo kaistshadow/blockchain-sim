@@ -45,18 +45,26 @@ var blockchainBlocks = [];
 var blockchainEdges = [];
 
 var serve = serveStatic("./");
+
 /**
  * Helper function for escaping input strings
  */
 function htmlEntities(str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;')
-                      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function sleep(delay) {
+    var start = new Date().getTime();
+    while (new Date().getTime() < start + delay) ;
 }
 
 // Array with some colors
-var colors = [ 'red', 'green', 'blue', 'magenta', 'purple', 'plum', 'orange' ];
+var colors = ['red', 'green', 'blue', 'magenta', 'purple', 'plum', 'orange'];
 // ... in random order
-colors.sort(function(a,b) { return Math.random() > 0.5; } );
+colors.sort(function (a, b) {
+    return Math.random() > 0.5;
+});
 
 // Base http server of the WebSocket server
 var server;
@@ -269,6 +277,8 @@ function onRequest(request) {
 
     // send experiment's event logs
     if (shadowoutputfile != '') {
+        // wait for minimal time (for visualizationData initialization)
+        sleep(500);
         sendEventlogs(connection, shadowoutputfile);
     }
 

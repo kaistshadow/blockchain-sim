@@ -404,6 +404,8 @@ private:
     ev::io _listen_watcher; // assume a single listening socket per Node
     int _listen_sockfd;
     std::string _shadow_ip;
+    double _churnout_time = 0;
+    ev::timer _churnout_timer;
 
     // data structures
     std::map<SOCKET, SocketControlStruct<MSG> > mSocketControl;
@@ -623,14 +625,36 @@ public:
 
     PassiveNode(PassiveNode &&rhs) noexcept: _listen_sockfd(std::move(rhs._listen_sockfd)),
                                              _shadow_ip(std::move(rhs._shadow_ip)),
-                                             mSocketControl(std::move(rhs.mSocketControl)) {
+                                             mSocketControl(std::move(rhs.mSocketControl)),
+                                             _churnout_time(std::move(rhs._churnout_time)) {
         rhs._listen_watcher.stop();
         _listen_watcher.set<PassiveNode, &PassiveNode::_listenSocketIOCallback>(this);
         _listen_watcher.start(_listen_sockfd, ev::READ);
+
+        double remaining_time = rhs._churnout_timer.remaining();
+        rhs._churnout_timer.stop();
+        _churnout_timer.set<PassiveNode, &PassiveNode::_churnoutTimerCallback>(this);
+        _churnout_timer.set(remaining_time, 0.);
+        _churnout_timer.start();
         std::cout << "passiveNode move constructor!" << "\n";
     }
 
     PassiveNode(const PassiveNode &rhs) = delete; // since PassiveNode includes watcher
+
+
+    void _churnoutTimerCallback(ev::timer &w, int revents) {
+        std::cout << "churnout timer called" << "\n";
+        ChurnOut();
+    }
+
+    void SetChurnOutTimer(double time) {
+        if (_churnout_time == 0) {
+            _churnout_time = time;
+            _churnout_timer.set<PassiveNode, &PassiveNode::_churnoutTimerCallback>(this);
+            _churnout_timer.set(_churnout_time, 0.);
+            _churnout_timer.start();
+        }
+    }
 
 
     void ChurnOut() {
@@ -639,6 +663,8 @@ public:
             close(fd);
         }
         mSocketControl.clear();
+        _listen_watcher.stop();
+        close(_listen_sockfd);
     }
 
 };
@@ -1034,6 +1060,7 @@ public:
 
 class ChurnOutTimer {
 private:
+    double _time;
     ev::timer _timer;
     PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> &_benign_node;
 public:
@@ -1079,19 +1106,27 @@ int main(int argc, char *argv[]) {
 
     // Update IP table
     std::ifstream read("churn.txt");
-    std::set<std::string> sIp;
+    std::map<std::string, int> mIpDuration;
     std::regex re("\\d+\\.\\d+\\.\\d+\\.\\d+");
     for (std::string line; std::getline(read, line);) {
         // split and extract
-        std::string ip;
-        std::getline(std::istringstream(line), ip, ' ');
+        auto pos = line.find(' ');
+        std::string ip = line.substr(0, pos);
+        int duration = std::stoi(line.substr(pos));
 
-        // regex check
         if (std::regex_match(ip, re)) {
-            sIp.insert(ip);
+            mIpDuration.emplace(ip, duration);
         }
+//        std::istringstream ss(line);
+//
+//        std::getline(std::istringstream(line), ip, ' ');
+//
+//        // regex check
+//        if (std::regex_match(ip, re)) {
+//            sIp.insert( );
+//        }
     }
-    std::cout << "IP table updated. Count = " << sIp.size() << "\n";
+    std::cout << "IP table updated. Count = " << mIpDuration.size() << "\n";
 
     std::vector<trace> vTrace;
     vTrace.emplace_back(1);
@@ -1099,13 +1134,27 @@ int main(int argc, char *argv[]) {
     vTrace.emplace_back(3);
     vTrace.emplace_back(4);
 
-    std::vector<std::string> vIp(sIp.begin(), sIp.end());
+//    std::vector<std::string> vIp(sIp.begin(), sIp.end());
+    std::vector<std::string> vIp;
+    std::vector<int> vDuration;
+    for (const auto &[key, value] : mIpDuration) {
+        vIp.push_back(key);
+        vDuration.push_back(value);
+    }
+    // std::random_shuffle(vDuration.begin(), vDuration.end());
+//     std::random_shuffle(vIp.begin(), vIp.end());
+
+
+
+
 
     std::vector<PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> > vPassiveNode;
-    for (auto ip : vIp) {
-//    for (int i = 0; i < 1000; i++) {
-//        auto ip = vIp[i];
+//    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < vIp.size(); i++) {
+        auto ip = vIp[i];
         vPassiveNode.emplace_back(ip, 8333);
+        vPassiveNode.back().SetChurnOutTimer(vDuration[i]);
+        std::cout << "IP:" << ip << ", duration:" << vDuration[i] << "\n";
     }
 
     TestHelloBitcoinLib();
@@ -1128,13 +1177,11 @@ int main(int argc, char *argv[]) {
     int start_time = 15;
     int ip_total_count = vIp.size();
     std::vector<AddrTimer> timers;
+//    timers.emplace_back(start_time, std::vector<std::string>(vIp.begin(), vIp.begin()+10), attacker_node1);
     for (int i = 0; i < ip_total_count / 1000; i++) {
-//    for (int i = 0; i < 2; i++) {
-//        std::cout << "i:" << i << "\n";
         timers.emplace_back(start_time + i,
                             std::vector<std::string>(vIp.begin() + i * 1000, vIp.begin() + (i + 1) * 1000),
                             attacker_node1);
-//        timers.emplace_back(start_time+i, std::vector<std::string>(vIp.begin()+i*1000, vIp.begin()+(i)*1000+100), attacker_node1);
     }
     timers.emplace_back(start_time + ip_total_count / 1000 + 1,
                         std::vector<std::string>(vIp.begin() + (ip_total_count / 1000) * 1000, vIp.end()),

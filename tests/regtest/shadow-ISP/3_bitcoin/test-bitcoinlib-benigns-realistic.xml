@@ -33,7 +33,9 @@
   <plugin id="emulated_benigns" path="libshadow-ISP-bitcoin-emulated-benigns-realistic.so"/>
   <!-- the length of our experiment in seconds  1404101800-->
   <!-- our nodes -->
-  <kill time="2419200"/>
+<!--  <kill time="2419200"/>-->
+<!--  <kill time="5184000"/>-->
+  <kill time="7776000"/>
   <node id="bcdnode0" iphint="1.0.0.1">
     <application
             arguments="-debug -datadir=data/bcdnode0 -port=18333 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=1.0.0.1/0 -rpcbind=1.0.0.1"

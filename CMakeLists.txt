@@ -29,6 +29,14 @@ option(BLEEP_DEBUG "turn on debugging for BLEEP (default: ON)" ON)
 option(SHADOW_DEBUG "turn on debugging for verbose program output (default: ON for BLEEP build)" ON)
 # enable shadow debug as default. (Because some tests failed with release version of shadow (e.g. shadow-bitcoin-with-wallet)
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(BLEEP_DEBUG ON)
+    set(SHADOW_DEBUG ON)
+elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(BLEEP_DEBUG OFF)
+    set(SHADOW_DEBUG OFF)
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+endif ()
 
 ## add shadow project
 # should not modify CMAKE_SOURCE_DIR, CMAKE_BINARY_DIR (https://stackoverflow.com/a/22220680)

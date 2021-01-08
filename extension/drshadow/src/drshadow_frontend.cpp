@@ -47,18 +47,18 @@
 
 #define MAX_DR_CMDLINE (MAXIMUM_PATH*6)
 
-#define drshadow_ERROR(msg, ...) do { \
+#define DRSHADOW_ERROR(msg, ...) do { \
     fprintf(stderr, "ERROR: " msg "\n", ##__VA_ARGS__);    \
     fflush(stderr); \
     exit(1); \
 } while (0)
 
-#define drshadow_WARN(msg, ...) do { \
+#define DRSHADOW_WARN(msg, ...) do { \
     fprintf(stderr, "WARNING: " msg "\n", ##__VA_ARGS__);    \
     fflush(stderr); \
 } while (0)
 
-#define drshadow_INFO(level, msg, ...) do { \
+#define DRSHADOW_INFO(level, msg, ...) do { \
     if (op_verbose.get_value() >= level) {\
         fprintf(stderr, "INFO: " msg "\n", ##__VA_ARGS__);    \
         fflush(stderr); \
@@ -69,7 +69,7 @@
 #define BUFPRINT(buf, bufsz, sofar, len, ...) do { \
     drfront_status_t sc = drfront_bufprint(buf, bufsz, &(sofar), &(len), ##__VA_ARGS__); \
     if (sc != DRFRONT_SUCCESS) \
-        drshadow_ERROR("drfront_bufprint failed: %d\n", sc); \
+        DRSHADOW_ERROR("drfront_bufprint failed: %d\n", sc); \
     NULL_TERMINATE_BUFFER(buf); \
 } while (0)
 
@@ -80,26 +80,26 @@ check_input_files(const char *target_app_full_name, char *dr_root, char *drshado
 
     /* check that the target application exists */
     if (target_app_full_name[0] == '\0')
-        drshadow_ERROR("target application is not specified");
+        DRSHADOW_ERROR("target application is not specified");
 
     if (drfront_access(target_app_full_name, DRFRONT_READ, &result) != DRFRONT_SUCCESS)
-        drshadow_ERROR("cannot find target application at %s", target_app_full_name);
+        DRSHADOW_ERROR("cannot find target application at %s", target_app_full_name);
     if (!result) {
-        drshadow_ERROR("cannot open target application for read at %s",
+        DRSHADOW_ERROR("cannot open target application for read at %s",
                        target_app_full_name);
     }
 
     /* check that dynamorio's root dir exists and is accessible */
     if (drfront_access(dr_root, DRFRONT_READ, &result) != DRFRONT_SUCCESS)
-        drshadow_ERROR("cannot find DynamoRIO's root dir at %s", dr_root);
+        DRSHADOW_ERROR("cannot find DynamoRIO's root dir at %s", dr_root);
     if (!result)
-        drshadow_ERROR("cannot open DynamoRIO's root dir for read at %s", dr_root);
+        DRSHADOW_ERROR("cannot open DynamoRIO's root dir for read at %s", dr_root);
 
     /* check that drfrontendlib exist */
     if (drfront_access(drshadow_path, DRFRONT_READ, &result) != DRFRONT_SUCCESS)
-        drshadow_ERROR("cannot find drshadowlib at %s", drshadow_path);
+        DRSHADOW_ERROR("cannot find drshadowlib at %s", drshadow_path);
     if (!result)
-        drshadow_ERROR("cannot open drshadowlib for read at %s", drshadow_path);
+        DRSHADOW_ERROR("cannot open drshadowlib for read at %s", drshadow_path);
 }
 
 #define TOOLNAME "drshadow"
@@ -166,7 +166,7 @@ configure_application(char *app_name, char **app_argv, void **inject_data,
                       (LPTSTR) buf + sofar,
                       BUFFER_SIZE_ELEMENTS(buf) - sofar*sizeof(char), NULL);
 #endif
-        drshadow_ERROR("%s", msg.c_str());
+        DRSHADOW_ERROR("%s", msg.c_str());
     }
 
     pid = dr_inject_get_process_id(*inject_data);
@@ -177,12 +177,12 @@ configure_application(char *app_name, char **app_argv, void **inject_data,
                             DR_MODE_CODE_MANIPULATION,
                             is_debug, DR_PLATFORM_DEFAULT,
                             dr_option) != DR_SUCCESS) {
-        drshadow_ERROR("failed to register DynamoRIO configuration");
+        DRSHADOW_ERROR("failed to register DynamoRIO configuration");
     }
 
     if (dr_register_client(process, pid, false, DR_PLATFORM_DEFAULT, 0, 0, lib_path,
                            drshadow_option) != DR_SUCCESS) {
-        drshadow_ERROR("failed to register DynamoRIO client configuration");
+        DRSHADOW_ERROR("failed to register DynamoRIO client configuration");
     }
 }
 
@@ -199,23 +199,23 @@ check_logdir_path(char *logdir, size_t logdir_len) {
     sc = drfront_get_absolute_path(logdir, absolute_logdir_path,
                                    BUFFER_SIZE_ELEMENTS(absolute_logdir_path));
     if (sc != DRFRONT_SUCCESS)
-        drshadow_ERROR("drfront_get_absolute_path failed, error code = %d\n", sc);
+        DRSHADOW_ERROR("drfront_get_absolute_path failed, error code = %d\n", sc);
 
     if (!dr_directory_exists(absolute_logdir_path))
-        drshadow_ERROR("specified logdir doesn't exist");
+        DRSHADOW_ERROR("specified logdir doesn't exist");
 
     sc = drfront_appdata_logdir(absolute_logdir_path, "Dr. LTrace", &use_root,
                                 alter_logdir_path,
                                 BUFFER_SIZE_ELEMENTS(alter_logdir_path));
     if (sc != DRFRONT_SUCCESS)
-        drshadow_ERROR("drfront_appdata_logdir failed, error code = %d\n", sc);
+        DRSHADOW_ERROR("drfront_appdata_logdir failed, error code = %d\n", sc);
     if (!use_root) {
-        drshadow_WARN("cannot write log file into %s, writing log into %s instead",
+        DRSHADOW_WARN("cannot write log file into %s, writing log into %s instead",
                       absolute_logdir_path, alter_logdir_path);
         dr_snprintf(logdir, logdir_len, "%s", alter_logdir_path);
         /* if folder doesn't exist, create it */
         if (!dr_directory_exists(alter_logdir_path) && !dr_create_dir(alter_logdir_path))
-            drshadow_ERROR("failed to create a folder at %s", alter_logdir_path);
+            DRSHADOW_ERROR("failed to create a folder at %s", alter_logdir_path);
     }
     else {
         dr_snprintf(logdir, logdir_len, "%s", absolute_logdir_path);
@@ -228,11 +228,11 @@ _tmain(int argc, const TCHAR *targv[])
 {
     char drlibpath[MAXIMUM_PATH];
 #ifdef WINDOWS
-    static const char *libname = "drshadowlib.dll";
+    static const char *libname = "drshadow.dll";
 #elif MACOS
-    static const char *libname = "libdrshadowlib.dylib";
+    static const char *libname = "libdrshadow.dylib";
 #elif LINUX
-    static const char *libname = "libdrshadowlib.so";
+    static const char *libname = "libdrshadow.so";
 #endif
     dr_snprintf(drlibpath, BUFFER_SIZE_ELEMENTS(drlibpath), "%s", libname);
     NULL_TERMINATE_BUFFER(drlibpath);
@@ -261,12 +261,12 @@ _tmain(int argc, const TCHAR *targv[])
     /* Convert to UTF-8 if necessary */
     sc = drfront_convert_args((const TCHAR **)targv, &argv, argc);
     if (sc != DRFRONT_SUCCESS)
-        drshadow_ERROR("failed to process args, error code = %d\n", sc);
+        DRSHADOW_ERROR("failed to process args, error code = %d\n", sc);
 #endif
 
     if (!droption_parser_t::parse_argv(DROPTION_SCOPE_FRONTEND, argc, (const char **)argv,
                                        &parse_err, &last_index) || argc < 2) {
-        drshadow_ERROR("Usage error: %s\n Usage:\n%s\n", parse_err.c_str(),
+        DRSHADOW_ERROR("Usage error: %s\n Usage:\n%s\n", parse_err.c_str(),
                        droption_parser_t::usage_short(DROPTION_SCOPE_ALL).c_str());
     }
 
@@ -281,13 +281,13 @@ _tmain(int argc, const TCHAR *targv[])
 
     target_app_name = argv[last_index];
     if (target_app_name == NULL) {
-        drshadow_ERROR("Usage error, target application is not specified.\n Usage:\n%s\n",
+        DRSHADOW_ERROR("Usage error, target application is not specified.\n Usage:\n%s\n",
                        droption_parser_t::usage_short(DROPTION_SCOPE_ALL).c_str());
     }
     sc = drfront_get_app_full_path(target_app_name, full_target_app_path,
                                    BUFFER_SIZE_ELEMENTS(full_target_app_path));
     if (sc != DRFRONT_SUCCESS) {
-        drshadow_ERROR("drfront_get_app_full_path failed on %s, error code = %d\n",
+        DRSHADOW_ERROR("drfront_get_app_full_path failed on %s, error code = %d\n",
                        target_app_name, sc);
     }
 
@@ -295,7 +295,7 @@ _tmain(int argc, const TCHAR *targv[])
     sc = drfront_get_app_full_path(argv[0], full_frontend_path,
                                    BUFFER_SIZE_ELEMENTS(full_frontend_path));
     if (sc != DRFRONT_SUCCESS) {
-        drshadow_ERROR("drfront_get_app_full_path failed on %s, error code = %d\n",
+        DRSHADOW_ERROR("drfront_get_app_full_path failed on %s, error code = %d\n",
                        argv[0], sc);
     }
 
@@ -314,7 +314,7 @@ _tmain(int argc, const TCHAR *targv[])
         sc = drfront_get_absolute_path(tmp_path, config_dir,
                                        BUFFER_SIZE_ELEMENTS(config_dir));
         if (sc != DRFRONT_SUCCESS)
-            drshadow_ERROR("drfront_get_absolute_path failed, error code = %d\n", sc);
+            DRSHADOW_ERROR("drfront_get_absolute_path failed, error code = %d\n", sc);
     } else {
         dr_snprintf(config_dir, BUFFER_SIZE_ELEMENTS(config_dir), "%s",
                     op_config_file.get_value().c_str());
@@ -330,7 +330,7 @@ _tmain(int argc, const TCHAR *targv[])
     NULL_TERMINATE_BUFFER(full_dr_root_path);
 
     if (sc != DRFRONT_SUCCESS)
-        drshadow_ERROR("drfront_get_absolute_path failed, error code = %d\n", sc);
+        DRSHADOW_ERROR("drfront_get_absolute_path failed, error code = %d\n", sc);
 
     dr_snprintf(full_drlibtrace_path, BUFFER_SIZE_ELEMENTS(full_drlibtrace_path),
                 "%s%s", full_frontend_path, drlibpath);
@@ -358,12 +358,12 @@ _tmain(int argc, const TCHAR *targv[])
                           config_dir);
 
     if (!dr_inject_process_inject(inject_data, false/*!force*/, NULL))
-        drshadow_ERROR("unable to inject");
+        DRSHADOW_ERROR("unable to inject");
 
     if (!dr_inject_process_run(inject_data))
-        drshadow_ERROR("unable to execute target application");
+        DRSHADOW_ERROR("unable to execute target application");
 
-    drshadow_INFO(1, "%s sucessfully started, waiting app for exit", full_target_app_path);
+    DRSHADOW_INFO(1, "%s sucessfully started, waiting app for exit", full_target_app_path);
 
     dr_inject_wait_for_child(inject_data, 0/*wait forever*/);
 
@@ -371,7 +371,7 @@ _tmain(int argc, const TCHAR *targv[])
 
     sc = drfront_cleanup_args(argv, argc);
     if (sc != DRFRONT_SUCCESS)
-        drshadow_ERROR("drfront_cleanup_args error, error code = %d", sc);
+        DRSHADOW_ERROR("drfront_cleanup_args error, error code = %d", sc);
 
     return exitcode;
 }

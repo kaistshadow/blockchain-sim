@@ -30,8 +30,8 @@
  * DAMAGE.
  */
 
-#ifndef _drshadow_UTILS_H
-#define _drshadow_UTILS_H
+#ifndef _DRSHADOW_UTILS_H
+#define _DRSHADOW_UTILS_H
 
 #include "dr_api.h"
 
@@ -145,7 +145,7 @@ extern uint op_ignore_asserts;
 #endif
 
 # define PREFIX_DEFAULT_MAIN_THREAD "~~drshadow~~ "
-#define PREFIX_drshadow                "~~drshadow~~ "
+#define PREFIX_DRSHADOW                "~~drshadow~~ "
 
 /* For printing to a buffer.
 * Usage: have a size_t variable "sofar" that counts the chars used so far.
@@ -246,4 +246,4 @@ strcasestr(const char *text, const char *pattern);
 # define ASSERT_NOT_TESTED(msg) /* nothing */
 #endif
 
-#endif /* _drshadow_UTILS_H */
+#endif /* _DRSHADOW_UTILS_H */

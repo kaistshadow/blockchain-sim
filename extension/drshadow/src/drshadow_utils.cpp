@@ -57,7 +57,7 @@ print_prefix_to_buffer(char *buf, size_t bufsz, size_t *sofar)
         BUFPRINT_NO_ASSERT(buf, bufsz, *sofar, len, "");
         return;
     } else if (op_prefix_style == PREFIX_STYLE_BLANK) {
-        BUFPRINT_NO_ASSERT(buf, bufsz, *sofar, len, "%s", PREFIX_drshadow);
+        BUFPRINT_NO_ASSERT(buf, bufsz, *sofar, len, "%s", PREFIX_DRSHADOW);
         return;
     } else if (drcontext != NULL) {
         thread_id_t tid = dr_get_thread_id(drcontext);

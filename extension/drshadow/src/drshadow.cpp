@@ -761,7 +761,7 @@ dr_client_main(client_id_t id, int argc, const char *argv[])
     module_data_t *exe;
     IF_DEBUG(bool ok;)
 
-    dr_set_client_name("Dr. LTrace", "???");
+    dr_set_client_name("DrShadow", "");
 
     if (!droption_parser_t::parse_argv(DROPTION_SCOPE_CLIENT, argc, argv,
                                        NULL, NULL))

@@ -24,6 +24,9 @@ set(CMAKE_ROOT_BINARY_DIR ${CMAKE_BINARY_DIR})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
+
 # debug option
 option(BLEEP_DEBUG "turn on debugging for BLEEP (default: ON)" ON)
 option(SHADOW_DEBUG "turn on debugging for verbose program output (default: ON for BLEEP build)" ON)
@@ -37,6 +40,46 @@ elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
     set(SHADOW_DEBUG OFF)
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 endif ()
+
+# Bitcoin option
+option(BITCOIN_OPT "Bitcoin on build (default: ON)" ON)
+
+# Zcash option
+option(ZCASH_OPT "Zcash on build (default: OFF)" OFF)
+
+# Monero option
+option(MONERO_OPT "Monero on build (default: OFF)" OFF)
+
+# all option
+option(ALL_OPT "All on build (deafult : OFF)" OFF)
+
+# git option
+option(GIT_OPT "Only run on git action (deafult : OFF)" OFF)
+
+# litecoin option
+option(LITECOIN_OPT "Litecoin on build (default: OFF)" OFF)
+
+# EOS option
+option(EOS_OPT "EOS on build (default: OFF)" OFF)
+
+# bleep lib option
+option(BLEEPLIB_OPT "BLEEPLIB on build (default: ON)" ON)
+
+
+
+message("------------------------------------------------------------------------------------------------------")
+message("                                          BITCOIN_OPT : ${BITCOIN_OPT}")
+message("                                          ZCASH_OPT   : ${ZCASH_OPT}")
+message("                                          MONERO_OPT  : ${MONERO_OPT}")
+message("                                          LITECOIN_OPT: ${LITECOIN_OPT}")
+message("                                          EOS_OPT     : ${EOS_OPT}")
+message("")
+message("")
+message("                                            ALL_OPT   : ${ALL_OPT}")
+message("                                            GIT_OPT   : ${GIT_OPT}")
+message("                                         BLEEPLIB_OPT : ${BLEEPLIB_OPT}")
+message("------------------------------------------------------------------------------------------------------")
+
 
 ## add shadow project
 # should not modify CMAKE_SOURCE_DIR, CMAKE_BINARY_DIR (https://stackoverflow.com/a/22220680)
@@ -68,8 +111,7 @@ add_subdirectory(shadow)
 ## add BLEEP
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/Install")
 enable_testing()
-
-
+add_subdirectory(interfaces)
 add_subdirectory(external)
 
 add_subdirectory(BLEEPlib)

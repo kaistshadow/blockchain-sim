@@ -1,0 +1,14 @@
+add_library(SHADOW_STORAGE_MGMT SHARED CanDDaGae.cpp StorageElement.cpp)
+add_dependencies(SHADOW_STORAGE_MGMT SHADOW_INTERFACE)
+target_link_libraries(SHADOW_STORAGE_MGMT SHADOW_INTERFACE)
+install(TARGETS SHADOW_STORAGE_MGMT EXPORT FindBLEEP DESTINATION lib) # Why export here? : https://stackoverflow.com/a/5379238
+
+message(STATUS "CMAKE_CURRENT_SOURCE_DIR:" ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_include_directories(SHADOW_STORAGE_MGMT
+  PUBLIC
+  $<INSTALL_INTERFACE:include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+
+install(FILES CanDDaGae.h 
+  DESTINATION "include")

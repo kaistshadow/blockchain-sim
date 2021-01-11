@@ -607,6 +607,10 @@ bool EstimateRTTModule::MulticastMessage(std::shared_ptr<Message> message) {
     int sentOut = 0;
     for (int i : idxs) {
         if (message->GetSource().GetId() != dests[i].GetId() && sentOut < fanOut) {
+            // check whether there exists a data socket for the destination peer
+            if (!peerManager.HasEstablishedDataSocket(dests[i]))
+                continue;
+
             // get datasocket
             int socketFD = peerManager.GetConnectedSocketFD(dests[i]);
             std::shared_ptr<RTTModule_DataSocket> dataSocket = socketManager.GetDataSocket(socketFD);
@@ -667,6 +671,10 @@ bool EstimateRTTModule::ForwardMessage(std::shared_ptr<RTTModule_MessageHeader> 
     int sentOut = 0;
     for (int i : idxs) {
         if (message->GetSource().GetId() != dests[i].GetId() && sentOut < fanOut){
+            // check whether there exists a data socket for the destination peer
+            if (!peerManager.HasEstablishedDataSocket(dests[i]))
+                continue;
+
             // get datasocket
             int socketFD = peerManager.GetConnectedSocketFD(dests[i]);
             std::shared_ptr<RTTModule_DataSocket> dataSocket = socketManager.GetDataSocket(socketFD);

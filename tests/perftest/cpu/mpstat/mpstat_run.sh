@@ -4,6 +4,13 @@ if [ $# -ne 1 ]; then
  echo "Usage: $0 worker_count"
  exit -1
 fi
+
+# shadow setup: without -pg
+cd ../../../../shadow/
+./setup build -c
+./setup install
+cd - 1> /dev/null
+
 re='^[0-9]+$'
 if ! [[ $1 =~ $re ]] ; then
    echo "error: Worker_count is not a positive integer" >&2; exit -1
@@ -23,7 +30,7 @@ else
 	TASKSET_PARAM="`expr $TASKSET_PARAM_END - $SUBS_PARAM`-$TASKSET_PARAM_END"
 fi
 xmls=(
-	/BLEEP-POW-consensus/Consensus\[pow-tree\]-Gossip\[SP\]-200node-2sec.xml
+	/BLEEP-POW-consensus/example.xml
     /BLEEP-gossip-10node/10node-txgossip.xml
 	)
 for (( i=0; i<${#xmls[@]}; i++ )); do
@@ -34,9 +41,18 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	mpstat -P ALL 1 > mpstat.log & RUNPID=$!
 
 	cd $DIR
-	# run taskset shadow with one core
+	# run taskset shadow
 	taskset -c $TASKSET_PARAM shadow -d datadir -h 100000 -w $WORKER_CNT $XML_TARGET
 	kill -SIGINT $RUNPID
+
+	sleep 1
+
+	if [ -f /proc/$RUNPID/cmdline ]; then
+		PID_CHECK=$(tr -d '\0' < /proc/$RUNPID/cmdline )
+		if [[ $PID_CHECK == *"mpstat"* ]]; then
+			kill -9 $RUNPID
+		fi
+	fi
     rm -r ./datadir
     if test -f gmon.out; then
 	    rm gmon.out
@@ -44,9 +60,10 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
     if test -f perf.data; then
 	    rm perf.data
 	fi
-    cd -
+    cd - 1> /dev/null
     if [ ! -d ./mpstat_results ]; then
     	mkdir mpstat_results
     fi
     mv ./mpstat.log ./mpstat_results/mpstat$i.log
+    python mpstat_make_figure.py mpstat$i.log $CORECNT $WORKER_CNT
 done

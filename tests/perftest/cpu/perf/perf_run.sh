@@ -1,10 +1,19 @@
 #!/bin/bash
+
+# shadow setup: with -pg
+cd ../../../../shadow/
+./setup build -o
+./setup install
+cd - 1> /dev/null
+# system info modification
+sudo sysctl -w kernel.perf_event_paranoid=-1
+sudo sh -c " echo 0 > /proc/sys/kernel/kptr_restrict"
+
 XMLROOT="../../../../tests/regtest"
 CORECNT=$(nproc)
 
 xmls=(
-	/BLEEP-POW-consensus/Consensus\[pow-tree\]-Gossip\[SP\]-200node-2sec.xml
-    /BLEEP-gossip-10node/10node-txgossip.xml
+	/shadow-bitcoin/5_storage-share/target_example.xml
 	)
 for (( i=0; i<${#xmls[@]}; i++ )); do
 	FILE_DEST="$XMLROOT"${xmls[i]}
@@ -19,7 +28,7 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
     if test -f gmon.out; then
 	    rm gmon.out
 	fi
-    cd -
+    cd - 1> /dev/null
     if [ ! -d ./perf_results ]; then
     	mkdir perf_results
     fi
@@ -30,6 +39,6 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
     ./flamegraph.pl -width 2400 out.perf-folded > perf$i.svg
     rm perf.data
     rm out.perf-folded
-    cd -
-    cp ../FlameGraph/perf$i.svg ./perf_results/
+    cd - 1> /dev/null
+    mv ../FlameGraph/perf$i.svg ./perf_results/perf$i.svg
 done

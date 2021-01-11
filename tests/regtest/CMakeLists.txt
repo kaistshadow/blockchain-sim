@@ -65,7 +65,7 @@ elseif(ALL_OPT STREQUAL ON)
   add_subdirectory(shadow-syscalls)
   add_subdirectory(shadow-dependencies)
   add_subdirectory(shadow_storage_mgmt_test)
-  add_subdirectory(shadow-ISP)
+  # add_subdirectory(shadow-ISP)
 
  elseif(GIT_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
@@ -80,7 +80,7 @@ elseif(ALL_OPT STREQUAL ON)
   add_subdirectory(BLEEP-POW-consensus)
   add_subdirectory(shadow-syscalls)
   add_subdirectory(shadow-litecoin)
-  add_subdirectory(shadow-ISP)
+  # add_subdirectory(shadow-ISP)
   # add_subdirectory(shadow-geth) # results in deadlock due to futex issue
   # add_subdirectory(shadow-rust) # it works well on local machine, but does not work on github Action, so commentified.
 
@@ -95,4 +95,5 @@ else(ZCASH_OPT STREQUAL ON)
   add_subdirectory(native-bintest)
   add_subdirectory(shadow-bitcoin)
   add_subdirectory(shadow-syscalls)
+  # add_subdirectory(shadow-ISP)
 endif(ZCASH_OPT STREQUAL ON)

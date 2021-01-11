@@ -10,12 +10,15 @@ macro(find_package)
   endif()
 endmacro()
 
+message("--------------------------------------------------------------------------------------")
+message("                           Start default dependencies build")
+message("--------------------------------------------------------------------------------------")
 add_subdirectory(openssl)
 add_subdirectory(curl)
 add_subdirectory(bdb)
+
 add_subdirectory(libev)
 
-# 
 add_subdirectory(go-ethereum)
 
 add_subdirectory(shadow_storage_manager)

@@ -18,7 +18,6 @@ endif()
 
 include(ShadowTools)
 
-
 if(ZCASH_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
   message("                           Zcash build start")
@@ -93,4 +92,3 @@ else(ZCASH_OPT STREQUAL ON)
   add_subdirectory(shadow-bitcoin)
   add_subdirectory(shadow-syscalls)
 endif(ZCASH_OPT STREQUAL ON)
-

@@ -18,8 +18,6 @@ endif()
 
 include(ShadowTools)
 
-
-
 if(ZCASH_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
   message("                           Zcash build start")
@@ -31,6 +29,7 @@ elseif(BITCOIN_OPT STREQUAL ON)
   message("                           Bitcoin build start")
   message("------------------------------------------------------------------------------")
   add_subdirectory(shadow-bitcoin)
+#  add_subdirectory(shadow-ISP)
 
 elseif(MONERO_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
@@ -54,7 +53,7 @@ elseif(ALL_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
   message("                           All build start")
   message("------------------------------------------------------------------------------")
-  add_subdirectory(shadow-monero)  
+  add_subdirectory(shadow-monero)
   add_subdirectory(shadow-bitcoin)
   add_subdirectory(shadow-zcash)
   add_subdirectory(shadow-litecoin)

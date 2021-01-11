@@ -10,7 +10,7 @@ def exec_shell_cmd(cmd):
 
 
 def prepare_shadow():
-    print "Installing..."
+    print ("Installing...")
 
     # install dependencies
     exec_shell_cmd("sudo apt-get install libc6-dbg")
@@ -21,7 +21,7 @@ def prepare_shadow():
 
     if "Ubuntu 14.04" in check_output(["bash", "-c", "cat /etc/lsb-release | grep DESCRIPTION"]):
         exec_shell_cmd("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0 libigraph0-dev cmake make xz-utils")
-        print "Installing glib manually..."
+        print ("Installing glib manually...")
         exec_shell_cmd("wget http://ftp.gnome.org/pub/gnome/sources/glib/2.42/glib-2.42.1.tar.xz")
         exec_shell_cmd("tar xaf glib-2.42.1.tar.xz")
         exec_shell_cmd("cd glib-2.42.1; ./configure --prefix=%s; make; make install" % os.path.expanduser("~/.shadow"))
@@ -165,8 +165,8 @@ def process_ENV():
     if needWriteLibPath:
         exec_shell_cmd("echo '%s' >> ~/.bashrc && . ~/.bashrc" % libPath)
 
-    print "After installing, execute following commands on your bash. (type without dollor sign)"
-    print "$ source ~/.bashrc"
+    print ("After installing, execute following commands on your bash. (type without dollor sign)")
+    print ("$ source ~/.bashrc")
 
 
 if __name__ == '__main__':
@@ -186,6 +186,7 @@ if __name__ == '__main__':
     OPT_ALL = args.all
     OPT_TEST = args.test
     OPT_DEBUG = args.debug
+   
 
     OPT_BITCOIN = args.bitcoin
     OPT_ZCASH = args.zcash
@@ -198,10 +199,16 @@ if __name__ == '__main__':
 
 
     if len(sys.argv) == 1:
-        parser.print_help(sys.stderr)
-        sys.exit(1)        
+        exec_shell_cmd("git submodule update --init")
+        #bitcoin dependency
+        exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
+        exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
+        exec_shell_cmd("sudo apt-get install -y libssl-dev")
+        prepare_shadow()
+        prepare_shadow_dependencies()
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_bleeplib_opt))
+        process_ENV()   
 
-    cmake_debug_opt = "-DSHADOW_DEBUG=ON -DBLEEP_DEBUG=ON"
     if OPT_DEBUG:
         cmake_debug_opt = "-DSHADOW_DEBUG=ON -DBLEEP_DEBUG=ON"
 
@@ -295,7 +302,7 @@ if __name__ == '__main__':
          # cloning shadow repository (submodule)
         exec_shell_cmd("git submodule update --init")
         prepare_shadow()
-#         prepare_nodejs()
+        #prepare_nodejs()
         prepare_rust()
         prepare_golang()
         prepare_zcash_dependencies()
@@ -303,7 +310,7 @@ if __name__ == '__main__':
         prepare_monero_dependencies()
         prepare_eos_dependencies()
 
-        ## install boost-lib
+        # ## install boost-lib
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
 
         ## install bitcoin dependencies

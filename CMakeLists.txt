@@ -66,7 +66,6 @@ option(EOS_OPT "EOS on build (default: OFF)" OFF)
 option(BLEEPLIB_OPT "BLEEPLIB on build (default: ON)" ON)
 
 
-
 message("------------------------------------------------------------------------------------------------------")
 message("                                          BITCOIN_OPT : ${BITCOIN_OPT}")
 message("                                          ZCASH_OPT   : ${ZCASH_OPT}")
@@ -114,18 +113,17 @@ enable_testing()
 add_subdirectory(interfaces)
 add_subdirectory(external)
 
-add_subdirectory(BLEEPlib)
+if(BLEEPLIB_OPT STREQUAL ON)
+    add_subdirectory(BLEEPlib)
+endif(BLEEPLIB_OPT STREQUAL ON)
+
 # add_subdirectory(BLEEPapp)
-
 add_subdirectory(tests)
-
-
-
 
 ## add tests
 # set(SHADOW_ROOT "${CMAKE_INSTALL_PREFIX}")
 # enable_testing()
-# add_subdirectory(test)
+#add_subdirectory(test)
 
 ## add command for lauching BLEEP web interface
 add_custom_target(run-web-gui

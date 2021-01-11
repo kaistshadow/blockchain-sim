@@ -13,8 +13,10 @@ include(ShadowTools) # load ShadowTools Module
 find_package(Bitcoin_0_19_1dev REQUIRED)
 
 add_custom_target(shadow-bitcoin-storage-share-prepare ALL
+  COMMAND rm -rf cp_data
   COMMAND rm -rf data/bcdnode0
   COMMAND rm -rf data/bcdnode1
+  COMMAND mkdir -p cp_data
   COMMAND mkdir -p data/bcdnode0
   COMMAND mkdir -p data/bcdnode1
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
@@ -31,4 +33,4 @@ add_test(NAME shadow-bitcoin-storage-share
         COMMAND shadow example.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-set_tests_properties(shadow-bitcoin-storage-share PROPERTIES TIMEOUT 60)
+set_tests_properties(shadow-bitcoin-storage-share PROPERTIES TIMEOUT 300)

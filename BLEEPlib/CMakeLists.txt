@@ -89,15 +89,13 @@ add_library(BLEEP SHARED ${SRCS})
 target_include_directories(BLEEP
   PUBLIC 
   $<INSTALL_INTERFACE:include> 
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/shadow_interface>)
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>)
 
 add_library(NEWBLEEP SHARED ${NEW_SRCS})
 target_include_directories(NEWBLEEP
   PUBLIC 
   $<INSTALL_INTERFACE:include> 
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/shadow_interface>)
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>)
 
 
 
@@ -189,10 +187,8 @@ target_link_libraries(NEWBLEEP SHADOW_INTERFACE)
 target_link_libraries(NEWBLEEP ${Boost_LIBRARIES})
 
 
-include_directories(./shadow_interface)
+include_directories(${CMAKE_ROOT_SOURCE_DIR}/interfaces/shadow_interface)
 include_directories(${Boost_INCLUDE_DIRS})
-
-add_subdirectory(shadow_interface)
 
 # add tests
 # enable_testing()

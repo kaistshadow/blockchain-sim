@@ -42,7 +42,7 @@ elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
 endif ()
 
 # Bitcoin option
-option(BITCOIN_OPT "Bitcoin on build (default: ON)" ON)
+option(BITCOIN_OPT "Bitcoin on build (default: OFF)" OFF)
 
 # Zcash option
 option(ZCASH_OPT "Zcash on build (default: OFF)" OFF)

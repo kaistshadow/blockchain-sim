@@ -142,7 +142,7 @@ def prepare_golang():
     exec_shell_cmd("sudo apt-get install -y gccgo")
 
 def prepare_shadow_dependencies():
-    exec_shell_cmd("sudo apt-get install libcurl4-openssl-dev")
+    exec_shell_cmd("sudo apt-get install -y libcurl4-openssl-dev")
     exec_shell_cmd("sudo apt-get update -y")
     exec_shell_cmd("sudo apt-get install -y libidn2-dev")
     # install dependencies for zeromq (zeromq is used for IPC implementation)
@@ -305,10 +305,13 @@ if __name__ == '__main__':
         #prepare_nodejs()
         prepare_rust()
         prepare_golang()
-        prepare_zcash_dependencies()
+
         prepare_shadow_dependencies()
-        prepare_monero_dependencies()
-        prepare_eos_dependencies()
+        ### currently, eosio induces problem for git Action tests.
+        ### Until the complete tests are done, let's exclude following external modules from git all build
+        # prepare_zcash_dependencies()
+        # prepare_monero_dependencies()
+        # prepare_eos_dependencies()
 
         # ## install boost-lib
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")

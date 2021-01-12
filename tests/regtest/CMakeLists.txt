@@ -71,17 +71,20 @@ elseif(ALL_OPT STREQUAL ON)
   message("                           Git build start")
   message("------------------------------------------------------------------------------")
   add_subdirectory(shadow-bitcoin)
-  add_subdirectory(shadow-zcash)
-  add_subdirectory(shadow-eos)
   add_subdirectory(shadow-dependencies)
   add_subdirectory(BLEEP-simpleconnect)
   add_subdirectory(BLEEP-gossip-10node)
   add_subdirectory(BLEEP-POW-consensus)
   add_subdirectory(shadow-syscalls)
-  add_subdirectory(shadow-litecoin)
   # add_subdirectory(shadow-ISP)
   # add_subdirectory(shadow-geth) # results in deadlock due to futex issue
   # add_subdirectory(shadow-rust) # it works well on local machine, but does not work on github Action, so commentified.
+
+  ### currently, eosio induces problem for git Action tests.
+  ### Until the complete tests are done, let's exclude following external modules from git all build
+  # add_subdirectory(shadow-zcash)
+  # add_subdirectory(shadow-eos)
+  # add_subdirectory(shadow-litecoin)
 
 else(ZCASH_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")

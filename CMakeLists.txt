@@ -24,13 +24,25 @@ set(CMAKE_ROOT_BINARY_DIR ${CMAKE_BINARY_DIR})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
+
 # debug option
 option(BLEEP_DEBUG "turn on debugging for BLEEP (default: ON)" ON)
 option(SHADOW_DEBUG "turn on debugging for verbose program output (default: ON for BLEEP build)" ON)
 # enable shadow debug as default. (Because some tests failed with release version of shadow (e.g. shadow-bitcoin-with-wallet)
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(BLEEP_DEBUG ON)
+    set(SHADOW_DEBUG ON)
+elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(BLEEP_DEBUG OFF)
+    set(SHADOW_DEBUG OFF)
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+endif ()
+
 # Bitcoin option
-option(BITCOIN_OPT "Bitcoin on build (default: ON)" ON)
+option(BITCOIN_OPT "Bitcoin on build (default: OFF)" OFF)
 
 # Zcash option
 option(ZCASH_OPT "Zcash on build (default: OFF)" OFF)
@@ -52,6 +64,7 @@ option(EOS_OPT "EOS on build (default: OFF)" OFF)
 
 # bleep lib option
 option(BLEEPLIB_OPT "BLEEPLIB on build (default: ON)" ON)
+
 
 message("------------------------------------------------------------------------------------------------------")
 message("                                          BITCOIN_OPT : ${BITCOIN_OPT}")

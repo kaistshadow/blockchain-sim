@@ -11,7 +11,7 @@ add_custom_target(libev_4.33 ALL
         )
 
 add_custom_command(OUTPUT ${CMAKE_INSTALL_PREFIX}/libev_4.33/lib/libev.so
-        COMMAND ./configure --prefix=${CMAKE_INSTALL_PREFIX}/libev_4.33
+        COMMAND ./configure --prefix=${CMAKE_INSTALL_PREFIX}/libev_4.33 --with-pic
         COMMAND make install
         DEPENDS ${LIBEV_4.33_SRCS}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/4.33
@@ -24,3 +24,10 @@ set_target_properties(Libev_4_33::Libev PROPERTIES
         IMPORTED_LINK_INTERFACE_LANGUAGES "C"
         INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/4.33"
         IMPORTED_LOCATION ${CMAKE_INSTALL_PREFIX}/libev_4.33/lib/libev.so)
+
+add_library(Libev_4_33::Libev_static STATIC IMPORTED GLOBAL)
+add_dependencies(Libev_4_33::Libev_static libev_4.33)
+set_target_properties(Libev_4_33::Libev_static PROPERTIES
+        IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+        INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/4.33"
+        IMPORTED_LOCATION ${CMAKE_INSTALL_PREFIX}/libev_4.33/lib/libev.a)

@@ -250,3 +250,7 @@ void BL_SocketLayer_Bitcoin::DisconnectSocket(int fd) {
     _socketManager.RemoveDataSocket(fd);
     return;
 }
+
+void BL_SocketLayer_Bitcoin::CreateSocketForShadowIP(int port, const char *shadow_ip_addr) {
+    _socketManager.CreateListenSocketForShadowIP(port, shadow_ip_addr);
+}

@@ -10,7 +10,7 @@ def exec_shell_cmd(cmd):
 
 
 def prepare_shadow():
-    print "Installing..."
+    print ("Installing...")
 
     # install dependencies
     exec_shell_cmd("sudo apt-get install libc6-dbg")
@@ -21,7 +21,7 @@ def prepare_shadow():
 
     if "Ubuntu 14.04" in check_output(["bash", "-c", "cat /etc/lsb-release | grep DESCRIPTION"]):
         exec_shell_cmd("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0 libigraph0-dev cmake make xz-utils")
-        print "Installing glib manually..."
+        print ("Installing glib manually...")
         exec_shell_cmd("wget http://ftp.gnome.org/pub/gnome/sources/glib/2.42/glib-2.42.1.tar.xz")
         exec_shell_cmd("tar xaf glib-2.42.1.tar.xz")
         exec_shell_cmd("cd glib-2.42.1; ./configure --prefix=%s; make; make install" % os.path.expanduser("~/.shadow"))
@@ -114,6 +114,7 @@ def prepare_eos_dependencies():
     else:
         print("== Skip build static mongodb_cxx_driver")
 
+
 def prepare_rust():
     exec_shell_cmd("sudo apt-get install -y rustc")
 
@@ -164,8 +165,9 @@ def process_ENV():
     if needWriteLibPath:
         exec_shell_cmd("echo '%s' >> ~/.bashrc && . ~/.bashrc" % libPath)
 
-    print "After installing, execute following commands on your bash. (type without dollor sign)"
-    print "$ source ~/.bashrc"
+    print ("After installing, execute following commands on your bash. (type without dollor sign)")
+    print ("$ source ~/.bashrc")
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
@@ -179,11 +181,13 @@ if __name__ == '__main__':
     parser.add_argument("--litecoin", action="store_true", help="only litecoin build")
     parser.add_argument("--eos", action="store_true", help="only eos build")
     
+
     args = parser.parse_args()
     OPT_ALL = args.all
     OPT_TEST = args.test
     OPT_DEBUG = args.debug
    
+
     OPT_BITCOIN = args.bitcoin
     OPT_ZCASH = args.zcash
     OPT_MONERO = args.monero
@@ -193,7 +197,7 @@ if __name__ == '__main__':
     cmake_bleeplib_opt = "-DBLEEPLIB_OPT=ON"
     cmake_debug_opt = "-DSHADOW_DEBUG=ON -DBLEEP_DEBUG=ON"
 
-    #default : Bitcoin build
+
     if len(sys.argv) == 1:
         exec_shell_cmd("git submodule update --init")
         #bitcoin dependency
@@ -318,6 +322,7 @@ if __name__ == '__main__':
         ## install
         exec_shell_cmd("mkdir build; cd build; cmake %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (cmake_debug_opt, cmake_git_opt, cmake_bleeplib_opt))
         process_ENV()
+
 
     if OPT_TEST:
         exec_shell_cmd("mkdir -p build; cd build; cmake ../; make -j8; make test")

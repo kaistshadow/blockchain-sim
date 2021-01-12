@@ -11,6 +11,13 @@ int SocketManager::CreateListenSocket(int port) {
     return new_socket->GetFD();
 }
 
+int SocketManager::CreateListenSocketForShadowIP(int port, const char *shadow_ip_addr) {
+    std::shared_ptr<ListenSocket> new_socket = std::make_shared<ListenSocket>(port, shadow_ip_addr);
+    _listenSockets[new_socket->GetFD()] = new_socket;
+
+    return new_socket->GetFD();
+}
+
 std::shared_ptr<ListenSocket> SocketManager::GetListenSocket(int fd) {
     auto it = _listenSockets.find(fd);
     if (it == _listenSockets.end()) {

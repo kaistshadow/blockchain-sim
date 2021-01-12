@@ -41,3 +41,32 @@ add_test(NAME shadow-bitcoin-dev-attacker
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 set_tests_properties(shadow-bitcoin-dev-attacker PROPERTIES TIMEOUT 60)
+
+
+################################################## for attacker-bind, sender-bind
+add_custom_target(shadow-bitcoin-dev-attacker-bind-prepare ALL
+        COMMAND rm -rf data/bcdnode2-bind
+        COMMAND mkdir -p data/bcdnode2-bind
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+## attacker-bind
+add_shadow_plugin(shadow-bitcoin-dev-attacker-bind
+        attacker-bind.cpp)
+target_link_libraries(shadow-bitcoin-dev-attacker-bind NEWBLEEP)
+target_link_libraries(shadow-bitcoin-dev-attacker-bind BLEEP)
+# copy resulting plugins into source directory
+add_custom_command(TARGET shadow-bitcoin-dev-attacker-bind
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:shadow-bitcoin-dev-attacker-bind> ${CMAKE_CURRENT_SOURCE_DIR})
+
+## sender-bind
+add_shadow_plugin(shadow-bitcoin-dev-sender-bind
+        sender-bind.cpp)
+target_link_libraries(shadow-bitcoin-dev-sender-bind NEWBLEEP)
+target_link_libraries(shadow-bitcoin-dev-sender-bind BLEEP)
+# copy resulting plugins into source directory
+add_custom_command(TARGET shadow-bitcoin-dev-sender-bind
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:shadow-bitcoin-dev-sender-bind> ${CMAKE_CURRENT_SOURCE_DIR})
+
+

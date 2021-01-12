@@ -59,6 +59,7 @@ namespace libBLEEP_BL {
 
     public:
         ListenSocket(int port = DEFAULT_SOCKET_PORT);
+        ListenSocket(int port, const char* shadow_addr); // constructor for shadow-ip
 
         int DoAccept(); /* do accept and return file descriptor */
 

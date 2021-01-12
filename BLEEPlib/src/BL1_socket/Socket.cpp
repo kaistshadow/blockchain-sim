@@ -1,5 +1,6 @@
 #include "Socket.h"
 #include "../utility/Assert.h"
+#include "shadow_interface.h"
 
 #include <fcntl.h> /* Added for the nonblocking socket */
 #include <arpa/inet.h>
@@ -33,6 +34,35 @@ ListenSocket::ListenSocket(int port) {
     int flags = fcntl(listenfd, F_GETFL, 0);
     fcntl(listenfd, F_SETFL, flags | O_NONBLOCK); /* Change the socket into non-blocking state	*/
     
+    _fd = listenfd;
+
+    // create event watcher for the ListenSocket
+    _watcher = std::unique_ptr<ListenSocketWatcher>(new ListenSocketWatcher(_fd));
+}
+
+ListenSocket::ListenSocket(int port, const char* shadow_addr) {
+    int 			listenfd;     /* listen on sock_fd */
+    struct 	sockaddr_in 	my_addr;    /* my address information */
+    if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        perror("socket");
+        exit(1);
+    }
+    my_addr.sin_family = AF_INET;         /* host byte order */
+    my_addr.sin_port = htons(port);     /* short, network byte order */
+    my_addr.sin_addr.s_addr = inet_addr(shadow_addr);
+    bzero(&(my_addr.sin_zero), 8);        /* zero the rest of the struct */
+
+    if (shadow_bind(listenfd, (struct sockaddr *)&my_addr, sizeof(struct sockaddr)) == -1) {
+        perror("bind");
+        exit(1);
+    }
+    if (listen(listenfd, BACKLOG) == -1) {
+        perror("listen");
+        exit(1);
+    }
+    int flags = fcntl(listenfd, F_GETFL, 0);
+    fcntl(listenfd, F_SETFL, flags | O_NONBLOCK); /* Change the socket into non-blocking state	*/
+
     _fd = listenfd;
 
     // create event watcher for the ListenSocket

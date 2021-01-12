@@ -14,9 +14,9 @@ message("-----------------------------------------------------------------------
 message("                           Start default dependencies build")
 message("--------------------------------------------------------------------------------------")
 add_subdirectory(openssl)
-add_subdirectory(curl)
 add_subdirectory(bdb)
 
+add_subdirectory(curl)
 add_subdirectory(libev)
 
 add_subdirectory(go-ethereum)
@@ -67,10 +67,12 @@ elseif(GIT_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
   message("                           Git All build")
   message("--------------------------------------------------------------------------------------")
-  add_subdirectory(zcash)
   add_subdirectory(bitcoin)
-  add_subdirectory(litecoin)
-  add_subdirectory(eosio)
+  ### currently, eosio induces problem for git Action tests.
+  ### Until the complete tests are done, let's exclude following external modules from git all build
+  #  add_subdirectory(zcash)
+  #  add_subdirectory(litecoin)
+  #  add_subdirectory(eosio)
 
 else(ZCASH_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
@@ -79,4 +81,3 @@ else(ZCASH_OPT STREQUAL ON)
   add_subdirectory(bitcoin)
 
 endif(ZCASH_OPT STREQUAL ON)
-

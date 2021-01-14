@@ -39,7 +39,7 @@
   <kill time="300"/>
   <!-- our nodes -->
 
-  <node id="server">
+  <node id="server" iphint="1.0.0.1">
     <application plugin="SERVER" time="5" arguments="-id=server"/>
   </node>
 

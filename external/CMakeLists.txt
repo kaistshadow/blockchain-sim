@@ -4,7 +4,7 @@ cmake_policy(SET CMP0057 NEW)
 
 
 macro(find_package)
-  set(as_subproject OpenSSL_1_1_0h Bitcoin_0_19_1 Bitcoin_0_19_1nw Bitcoin_0_19_1dev CURL_7_70_0 Geth_1_9_1dev Libev_4_33 Monero_0.16.0 EOS_2_0_7)
+  set(as_subproject OpenSSL_1_1_0h Bitcoin_0_19_1 Bitcoin_0_19_1nw Bitcoin_0_19_1dev CURL_7_70_0 Geth_1_9_1dev Libev_4_33 )
   if (NOT "${ARGV0}" IN_LIST as_subproject )
     _find_package(${ARGV})
   endif()
@@ -35,32 +35,18 @@ elseif(BITCOIN_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(bitcoin)
 
-elseif(MONERO_OPT STREQUAL ON)
-  message("--------------------------------------------------------------------------------------")
-  message("                           Start Monero build")
-  message("--------------------------------------------------------------------------------------")
-  add_subdirectory(monero)
-  
 elseif(LITECOIN_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
   message("                           Start Litecoin build")
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(litecoin)
 
-elseif(EOS_OPT STREQUAL ON)
-  message("--------------------------------------------------------------------------------------")
-  message("                           Start EOS build")
-  message("--------------------------------------------------------------------------------------")
-  add_subdirectory(eosio)
-
 elseif(ALL_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
   message("                           Start All build")
   message("--------------------------------------------------------------------------------------")
-  add_subdirectory(monero)
   add_subdirectory(zcash)
   add_subdirectory(bitcoin)
-  add_subdirectory(eosio)
   add_subdirectory(litecoin)
 
 elseif(GIT_OPT STREQUAL ON)
@@ -68,11 +54,9 @@ elseif(GIT_OPT STREQUAL ON)
   message("                           Git All build")
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(bitcoin)
-  ### currently, eosio induces problem for git Action tests.
   ### Until the complete tests are done, let's exclude following external modules from git all build
   #  add_subdirectory(zcash)
   #  add_subdirectory(litecoin)
-  #  add_subdirectory(eosio)
 
 else(ZCASH_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")

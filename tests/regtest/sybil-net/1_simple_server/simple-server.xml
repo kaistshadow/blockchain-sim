@@ -32,14 +32,19 @@
 
   <!-- the plug-ins we will be using -->
   <plugin id="SERVER" path="libSIMPLE_SERVER.so" />
+  <plugin id="ATTACKER" path="libSYBIL_ATTACKER.so"/>
 
 
   <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="300" />
+  <kill time="300"/>
   <!-- our nodes -->
 
   <node id="server">
-    <application plugin="SERVER" time="5" arguments="-id=server0" />
+    <application plugin="SERVER" time="5" arguments="-id=server"/>
+  </node>
+
+  <node id="attacker">
+    <application plugin="ATTACKER" time="5" arguments="-id=attacker -connect=server"/>
   </node>
 
   <!-- <node id="bleep1"> -->

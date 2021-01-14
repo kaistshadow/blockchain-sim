@@ -180,14 +180,15 @@ if __name__ == '__main__':
     parser.add_argument("--git", action="store_true", help="Run on Git action")
     parser.add_argument("--litecoin", action="store_true", help="only litecoin build")
     parser.add_argument("--eos", action="store_true", help="only eos build")
-    
+    parser.add_argument("--ethereum", action="store_true", help="only ehtereum build")
+
 
     args = parser.parse_args()
     OPT_ALL = args.all
     OPT_TEST = args.test
     OPT_DEBUG = args.debug
    
-
+    OPT_ETHEREUM = args.ethereum
     OPT_BITCOIN = args.bitcoin
     OPT_ZCASH = args.zcash
     OPT_MONERO = args.monero
@@ -223,6 +224,18 @@ if __name__ == '__main__':
         exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_bleeplib_opt))
         process_ENV()   
 
+    if OPT_ETHEREUM:
+        exec_shell_cmd("git submodule update --init")
+        prepare_shadow()
+        prepare_shadow_dependencies()
+        prepare_golang()
+        exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
+        cmake_ethereum_opt = "-DETHEREUM_OPT=ON"
+        cmake_bleeplib_opt = "-DBLEEPLIB_OPT=OFF"
+        cmake_bitcoin_opt = "-DBITCOIN_OPT=OFF"
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_ethereum_opt, cmake_bleeplib_opt, cmake_bitcoin_opt))
+        process_ENV
+        
     if OPT_ZCASH:
         exec_shell_cmd("git submodule update --init")
         prepare_shadow()

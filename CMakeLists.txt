@@ -65,6 +65,8 @@ option(EOS_OPT "EOS on build (default: OFF)" OFF)
 # bleep lib option
 option(BLEEPLIB_OPT "BLEEPLIB on build (default: ON)" ON)
 
+# ethereum lib option
+option(ETHEREUM_OPT "Ethreum on build (default : OFF )" OFF)
 
 message("------------------------------------------------------------------------------------------------------")
 message("                                          BITCOIN_OPT : ${BITCOIN_OPT}")
@@ -72,6 +74,8 @@ message("                                          ZCASH_OPT   : ${ZCASH_OPT}")
 message("                                          MONERO_OPT  : ${MONERO_OPT}")
 message("                                          LITECOIN_OPT: ${LITECOIN_OPT}")
 message("                                          EOS_OPT     : ${EOS_OPT}")
+message("                                          ETHEREUM_OPT: ${ETHEREUM_OPT}")
+
 message("")
 message("")
 message("                                            ALL_OPT   : ${ALL_OPT}")

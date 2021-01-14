@@ -36,6 +36,12 @@ elseif(MONERO_OPT STREQUAL ON)
   message("                           Monero build start")
   message("------------------------------------------------------------------------------")
   # add_subdirectory(shadow-monero)
+  
+elseif(ETHEREUM_OPT STREQUAL ON)
+  message("------------------------------------------------------------------------------")
+  message("                           Ethereum build start")
+  message("------------------------------------------------------------------------------")
+  #add_subdirectory(shadow-geth)
 
 elseif(LITECOIN_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")

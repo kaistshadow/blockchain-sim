@@ -16,6 +16,3 @@
 [submodule "external/litecoin/litecore-litecoin"]
 	path = external/litecoin/litecore-litecoin
 	url = https://github.com/kaistshadow/litecore-litecoin.git
-[submodule "external/eosio/eos"]
-	path = external/eosio/eos
-	url = https://github.com/kaistshadow/eos.git

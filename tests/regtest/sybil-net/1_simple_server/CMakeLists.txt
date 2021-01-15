@@ -21,6 +21,11 @@ add_shadow_plugin(SIMPLE_SERVER simple-server.cpp)
 target_link_libraries(SIMPLE_SERVER NEWBLEEP)
 target_link_libraries(SIMPLE_SERVER BLEEP)
 
+add_shadow_plugin(SIMPLE_BENIGN_NODE simple-benign-node.cpp)
+target_link_libraries(SIMPLE_BENIGN_NODE NEWBLEEP)
+target_link_libraries(SIMPLE_BENIGN_NODE BLEEP)
+
+
 add_shadow_plugin(SYBIL_ATTACKER sybil-attacker.cpp)
 target_link_libraries(SYBIL_ATTACKER NEWBLEEP)
 target_link_libraries(SYBIL_ATTACKER BLEEP)
@@ -29,6 +34,9 @@ target_link_libraries(SYBIL_ATTACKER BLEEP)
 add_custom_command(TARGET SIMPLE_SERVER
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:SIMPLE_SERVER> ${CMAKE_CURRENT_SOURCE_DIR})
+add_custom_command(TARGET SIMPLE_BENIGN_NODE
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:SIMPLE_BENIGN_NODE> ${CMAKE_CURRENT_SOURCE_DIR})
 add_custom_command(TARGET SYBIL_ATTACKER
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:SYBIL_ATTACKER> ${CMAKE_CURRENT_SOURCE_DIR})

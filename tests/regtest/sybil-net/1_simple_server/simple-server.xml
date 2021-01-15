@@ -32,6 +32,7 @@
 
   <!-- the plug-ins we will be using -->
   <plugin id="SERVER" path="libSIMPLE_SERVER.so" />
+  <plugin id="BENIGN_NODE" path="libSIMPLE_BENIGN_NODE.so"/>
   <plugin id="ATTACKER" path="libSYBIL_ATTACKER.so"/>
 
 
@@ -42,6 +43,16 @@
   <node id="server" iphint="1.0.0.1">
     <application plugin="SERVER" time="5" arguments="-id=server"/>
   </node>
+
+  <node id="node1" iphint="1.0.0.2">
+    <application plugin="BENIGN_NODE" time="6" arguments="-id=node1 -connect=server"/>
+  </node>
+
+
+  <node id="node2" iphint="1.0.0.3">
+    <application plugin="BENIGN_NODE" time="6" stoptime="10" arguments="-id=node2 -connect=server"/>
+  </node>
+
 
   <node id="attacker">
     <application plugin="ATTACKER" time="5" arguments="-id=attacker -connect=server"/>

@@ -16,7 +16,6 @@
 #include <algorithm>
 #include <arpa/inet.h>
 #include <fcntl.h> /* Added for the nonblocking socket */
-#include <assert.h>
 #include <netinet/tcp.h>
 
 #include "shadow_interface.h"
@@ -238,13 +237,6 @@ public:
     ActiveNode(const ActiveNode &rhs) = delete; // since ActiveNode includes watcher
 
 
-    void ChurnOut() {
-        // close all datasocket
-        for (auto&[fd, socketControl] : mSocketControl) {
-            close(fd);
-        }
-        mSocketControl.clear();
-    }
 
     void Connect(std::string ip, int port) {
         int remote_fd = CreateNewSocket();

@@ -25,22 +25,9 @@ typedef unsigned int SOCKET;
 #define INVALID_SOCKET      (SOCKET)(~0)
 #define SOCKET_ERROR        -1
 
-class TempMSG {
-public:
-    TempMSG() {}
-};
-
-template<typename MSG>
 class SocketControlStruct {
 private:
-    SOCKET _socketfd;
-    size_t _offset;
-    bool fInbound;
     std::unique_ptr <ev::io> _connsocket_watcher;
-    std::unique_ptr <ev::io> _datasocket_watcher;
-    std::list <MSG> vRecvMsg;
-    std::list <MSG> vProcessMsg;
-    std::deque<std::vector<unsigned char>> vSendMsg;
 
 public:
     std::string their_ip;
@@ -48,30 +35,12 @@ public:
 
     SocketControlStruct() {}
 
-    SocketControlStruct(int fd, std::string ip, uint16_t port, bool inbound = true) {
-        _offset = 0;
-        _socketfd = fd;
+    SocketControlStruct(std::string ip, uint16_t port) {
         their_ip = ip, their_port = port;
-        fInbound = inbound;
         _connsocket_watcher = std::make_unique<ev::io>();
-        _datasocket_watcher = std::make_unique<ev::io>();
     }
 
-    size_t getSendOffset() { return _offset; }
-
-    void setSendOffset(size_t offset) { _offset = offset; }
-
-    std::list<MSG> &getVRecvMsg() { return vRecvMsg; }
-
-    std::list<MSG> &getVProcessMsg() { return vProcessMsg; }
-
-    std::deque<std::vector<unsigned char>> &getVSendMsg() { return vSendMsg; }
-
-    ev::io &getDataSocketWatcher() { return *_datasocket_watcher; }
-
     ev::io &getConnSocketWatcher() { return *_connsocket_watcher; }
-
-    bool isInboundSocket() { return fInbound; }
 
     // Copy constructor : it is needed due to rvalue(?) assignment for std::map. Don't copy a watcher.
     // TODO : do not use copy. but use only move because watcher cannot be copied(?).
@@ -88,20 +57,6 @@ public:
 
 };
 
-
-std::string string_to_hex(const std::string &input) {
-    static const char hex_digits[] = "0123456789ABCDEF";
-
-    std::string output;
-    output.reserve(input.length() * 2);
-    for (unsigned char c : input) {
-        output.push_back(hex_digits[c >> 4]);
-        output.push_back(hex_digits[c & 15]);
-    }
-    return output;
-}
-
-template<typename MSG>
 class ActiveNode {
 private:
     ev::io _listen_watcher; // assume a single listening socket per Node
@@ -188,7 +143,7 @@ private:
     std::string _shadow_ip;
 
     // data structures
-    std::map<SOCKET, SocketControlStruct<MSG> > mSocketControl;
+    std::map<SOCKET, SocketControlStruct> mSocketControl;
 
 
     bool SetSocketNonBlocking(const SOCKET &hSocket, bool fNonBlocking) {
@@ -270,9 +225,9 @@ public:
         _listen_watcher.start(_listen_sockfd, ev::READ);
     }
 
-    ActiveNode(ActiveNode &&rhs) noexcept: _listen_sockfd(std::move(rhs._listen_sockfd)),
-                                           _shadow_ip(std::move(rhs._shadow_ip)),
-                                           mSocketControl(std::move(rhs.mSocketControl)) {
+    ActiveNode(ActiveNode &&rhs) : _listen_sockfd(std::move(rhs._listen_sockfd)),
+                                   _shadow_ip(std::move(rhs._shadow_ip)),
+                                   mSocketControl(std::move(rhs.mSocketControl)) {
         rhs._listen_watcher.stop();
         _listen_watcher.set<ActiveNode, &ActiveNode::_listenSocketIOCallback>(this);
         _listen_watcher.start(_listen_sockfd, ev::READ);
@@ -330,8 +285,8 @@ public:
 
 
         // Create socket and start a event watcher for the socket
-        mSocketControl.try_emplace(remote_fd, SocketControlStruct<MSG>(remote_fd, inet_ntoa(servaddr.sin_addr),
-                                                                       ntohs(servaddr.sin_port), false));
+        mSocketControl.try_emplace(remote_fd, SocketControlStruct(inet_ntoa(servaddr.sin_addr),
+                                                                  ntohs(servaddr.sin_port)));
         std::cout << "node: try to connect to " << mSocketControl[remote_fd].their_ip << ":"
                   << mSocketControl[remote_fd].their_port << "\n";
 
@@ -347,7 +302,7 @@ public:
 int main(int argc, char *argv[]) {
     std::cout << "sybil attacker launched" << "\n";
 
-    std::vector <ActiveNode<TempMSG>> vActiveNode;
+    std::vector<ActiveNode> vActiveNode;
     vActiveNode.emplace_back("111.0.0.1", DEFAULT_SOCKET_PORT);
     vActiveNode.emplace_back("111.0.0.2", DEFAULT_SOCKET_PORT);
     vActiveNode.emplace_back("111.0.0.3", DEFAULT_SOCKET_PORT);

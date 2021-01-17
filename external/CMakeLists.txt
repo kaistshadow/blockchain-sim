@@ -41,6 +41,12 @@ elseif(LITECOIN_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(litecoin)
 
+elseif(NODEJS_OPT STREQUAL ON)  # TODO : implement NODEJS_OPT for setup script
+  message("--------------------------------------------------------------------------------------")
+  message("                           Start NODE.JS build")
+  message("--------------------------------------------------------------------------------------")
+  add_subdirectory(nodejs)
+
 elseif(ALL_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
   message("                           Start All build")
@@ -48,20 +54,23 @@ elseif(ALL_OPT STREQUAL ON)
   add_subdirectory(zcash)
   add_subdirectory(bitcoin)
   add_subdirectory(litecoin)
+  add_subdirectory(nodejs)
 
 elseif(GIT_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
   message("                           Git All build")
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(bitcoin)
+  add_subdirectory(nodejs)
   ### Until the complete tests are done, let's exclude following external modules from git all build
   #  add_subdirectory(zcash)
   #  add_subdirectory(litecoin)
 
 else(ZCASH_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
-  message("                           default (defalut = Bitcoin)")
+  message("                           default (defalut = NODEJS)")
   message("--------------------------------------------------------------------------------------")
-  add_subdirectory(bitcoin)
+  #add_subdirectory(bitcoin)
+  add_subdirectory(nodejs) # for testing purpose. TODO: should be removed before merging to develop or master branch
 
 endif(ZCASH_OPT STREQUAL ON)

@@ -110,8 +110,6 @@ if __name__ == '__main__':
     OPT_TEST = args.test
     OPT_DEBUG = args.debug
     OPT_BITCOIN = args.bitcoin
-    OPT_ZCASH = args.zcash
-    OPT_LITECOIN = args.litecoin
     OPT_GIT = args.git
     cmake_bleeplib_opt = "-DBLEEPLIB_OPT=ON"
     cmake_debug_opt = "-DSHADOW_DEBUG=ON -DBLEEP_DEBUG=ON"

@@ -28,7 +28,6 @@ add_custom_target(shadow-bitcoin-dev-attacker-copy-plugin ALL
 
 add_shadow_plugin(shadow-bitcoin-dev-attacker
         attacker.cpp)
-target_link_libraries(shadow-bitcoin-dev-attacker NEWBLEEP)
 target_link_libraries(shadow-bitcoin-dev-attacker BLEEP)
 
 # copy resulting plugins into source directory
@@ -52,7 +51,6 @@ add_custom_target(shadow-bitcoin-dev-attacker-bind-prepare ALL
 ## attacker-bind
 add_shadow_plugin(shadow-bitcoin-dev-attacker-bind
         attacker-bind.cpp)
-target_link_libraries(shadow-bitcoin-dev-attacker-bind NEWBLEEP)
 target_link_libraries(shadow-bitcoin-dev-attacker-bind BLEEP)
 # copy resulting plugins into source directory
 add_custom_command(TARGET shadow-bitcoin-dev-attacker-bind
@@ -62,7 +60,6 @@ add_custom_command(TARGET shadow-bitcoin-dev-attacker-bind
 ## sender-bind
 add_shadow_plugin(shadow-bitcoin-dev-sender-bind
         sender-bind.cpp)
-target_link_libraries(shadow-bitcoin-dev-sender-bind NEWBLEEP)
 target_link_libraries(shadow-bitcoin-dev-sender-bind BLEEP)
 # copy resulting plugins into source directory
 add_custom_command(TARGET shadow-bitcoin-dev-sender-bind

@@ -68,11 +68,6 @@ def prepare_rust():
     # if needWriteRustPath:
     #     exec_shell_cmd("echo '%s' >> ~/.bashrc" % rustPath)
 
-def prepare_golang():
-    if not os.path.exists("/usr/bin/go"):
-        exec_shell_cmd("sudo apt-get install -y golang")
-    exec_shell_cmd("sudo apt-get install -y gccgo")
-
 def prepare_shadow_dependencies():
     exec_shell_cmd("sudo apt-get install -y libcurl4-openssl-dev")
     exec_shell_cmd("sudo apt-get update -y")
@@ -106,10 +101,8 @@ if __name__ == '__main__':
     parser.add_argument("--all", action="store_true", help="Install the shadow simulator and BLEEP")
     parser.add_argument("--test", action="store_true", help="Run tests")
     parser.add_argument("--debug", action="store_true", help="Include debug symbols for shadow")
-    parser.add_argument("--zcash", action="store_true", help="only Zcash build")
     parser.add_argument("--bitcoin", action="store_true", help="only bitcoin build")
     parser.add_argument("--git", action="store_true", help="Run on Git action")
-    parser.add_argument("--litecoin", action="store_true", help="only litecoin build")
     
 
     args = parser.parse_args()
@@ -117,8 +110,6 @@ if __name__ == '__main__':
     OPT_TEST = args.test
     OPT_DEBUG = args.debug
     OPT_BITCOIN = args.bitcoin
-    OPT_ZCASH = args.zcash
-    OPT_LITECOIN = args.litecoin
     OPT_GIT = args.git
     cmake_bleeplib_opt = "-DBLEEPLIB_OPT=ON"
     cmake_debug_opt = "-DSHADOW_DEBUG=ON -DBLEEP_DEBUG=ON"
@@ -148,32 +139,6 @@ if __name__ == '__main__':
         prepare_shadow_dependencies()
         exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_bleeplib_opt))
         process_ENV()   
-
-    if OPT_ZCASH:
-        exec_shell_cmd("git submodule update --init")
-        prepare_shadow()
-        prepare_shadow_dependencies()
-        prepare_zcash_dependencies()
-        exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
-        cmake_zcash_opt = "-DZCASH_OPT=ON"
-        cmake_bleeplib_opt = "-DBLEEPLIB_OPT=OFF"
-        cmake_bitcoin_opt = "-DBITCOIN_OPT=OFF"
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_zcash_opt,cmake_bleeplib_opt, cmake_bitcoin_opt))
-        process_ENV()
-
-    if OPT_LITECOIN:
-        exec_shell_cmd("git submodule update --init")
-        #bitcoin dependency
-        exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
-        exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
-        exec_shell_cmd("sudo apt-get install -y libssl-dev")
-        prepare_shadow()
-        prepare_shadow_dependencies()
-        cmake_litecoin_opt = "-DLITECOIN_OPT=ON"
-        cmake_bleeplib_opt = "-DBLEEPLIB_OPT=OFF"
-        cmake_bitcoin_opt = "-DBITCOIN_OPT=OFF"
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_litecoin_opt, cmake_bleeplib_opt,cmake_bitcoin_opt))
-        process_ENV()
 
     if OPT_ALL:
         # cloning shadow repository (submodule)

@@ -4,12 +4,3 @@
 [submodule "external/bitcoin/0.19.1dev"]
 	path = external/bitcoin/0.19.1dev
 	url = https://github.com/kaistshadow/bitcoin.git
-[submodule "external/go-ethereum/1.9.1dev"]
-	path = external/go-ethereum/1.9.1dev
-	url = https://github.com/kaistshadow/go-ethereum
-[submodule "external/zcash/zcash"]
-	path = external/zcash/zcash
-	url = https://github.com/kaistshadow/zcash.git
-[submodule "external/litecoin/litecore-litecoin"]
-	path = external/litecoin/litecore-litecoin
-	url = https://github.com/kaistshadow/litecore-litecoin.git

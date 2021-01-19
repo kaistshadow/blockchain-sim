@@ -18,16 +18,13 @@ enable_testing()
 
 
 add_shadow_plugin(SIMPLE_SERVER simple-server.cpp)
-target_link_libraries(SIMPLE_SERVER NEWBLEEP)
 target_link_libraries(SIMPLE_SERVER BLEEP)
 
 add_shadow_plugin(SIMPLE_BENIGN_NODE simple-benign-node.cpp)
-target_link_libraries(SIMPLE_BENIGN_NODE NEWBLEEP)
 target_link_libraries(SIMPLE_BENIGN_NODE BLEEP)
 
 
 add_shadow_plugin(SYBIL_ATTACKER sybil-attacker.cpp)
-target_link_libraries(SYBIL_ATTACKER NEWBLEEP)
 target_link_libraries(SYBIL_ATTACKER BLEEP)
 
 # copy resulting plugins into source directory

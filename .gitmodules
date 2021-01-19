@@ -19,3 +19,6 @@
 [submodule "external/eosio/eos"]
 	path = external/eosio/eos
 	url = https://github.com/kaistshadow/eos.git
+[submodule "external/nodejs/15.6.0"]
+	path = external/nodejs/15.6.0
+	url = https://github.com/kaistshadow/node.git

@@ -15,7 +15,6 @@ enable_testing()
 
 
 add_shadow_plugin(NODE_BL_TEST node_bl_test.cpp)
-target_link_libraries(NODE_BL_TEST NEWBLEEP)
 target_link_libraries(NODE_BL_TEST BLEEP)
 
 # copy resulting plugins into source directory

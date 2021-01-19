@@ -47,9 +47,6 @@ option(BITCOIN_OPT "Bitcoin on build (default: OFF)" OFF)
 # Zcash option
 option(ZCASH_OPT "Zcash on build (default: OFF)" OFF)
 
-# Monero option
-option(MONERO_OPT "Monero on build (default: OFF)" OFF)
-
 # all option
 option(ALL_OPT "All on build (deafult : OFF)" OFF)
 
@@ -59,9 +56,6 @@ option(GIT_OPT "Only run on git action (deafult : OFF)" OFF)
 # litecoin option
 option(LITECOIN_OPT "Litecoin on build (default: OFF)" OFF)
 
-# EOS option
-option(EOS_OPT "EOS on build (default: OFF)" OFF)
-
 # bleep lib option
 option(BLEEPLIB_OPT "BLEEPLIB on build (default: ON)" ON)
 
@@ -69,9 +63,7 @@ option(BLEEPLIB_OPT "BLEEPLIB on build (default: ON)" ON)
 message("------------------------------------------------------------------------------------------------------")
 message("                                          BITCOIN_OPT : ${BITCOIN_OPT}")
 message("                                          ZCASH_OPT   : ${ZCASH_OPT}")
-message("                                          MONERO_OPT  : ${MONERO_OPT}")
 message("                                          LITECOIN_OPT: ${LITECOIN_OPT}")
-message("                                          EOS_OPT     : ${EOS_OPT}")
 message("")
 message("")
 message("                                            ALL_OPT   : ${ALL_OPT}")

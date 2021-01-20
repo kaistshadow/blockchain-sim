@@ -15,6 +15,13 @@ void update_log_map(const char prevblockhash[], const char blockhash[],const int
 int get_tx_total_count(void);
 int get_tx_count(const char blockhash[]);
 
+char* get_dat_file_path(int fileno);
+char* get_tmp_file_path();
+char* get_actual_path(int fileno);
+
+int copy_dat_files(int fileno);
+int compare_dat_files(int fileno);
+
 #ifdef __cplusplus
 }
 #endif

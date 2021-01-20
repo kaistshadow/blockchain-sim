@@ -107,7 +107,7 @@ void rpc_getblockchaininfo(char* ipport){
 void CalcTPS (char* result, char* simultime) {
     char *txcnt = strtok(result,":");
     txcnt = strtok(NULL,"");
-    int txcnt_int = atio(txcnt);
+    int txcnt_int = atoi(txcnt);
     int simultime_int = atoi(simultime);
     double tps = txcnt_int/simultime_int;
     printf("TPS : %f\n",tps);

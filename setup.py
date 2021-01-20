@@ -41,12 +41,6 @@ def prepare_nodejs():
     exec_shell_cmd("cd %s; npm install @maxmind/geoip2-node" % nodejs_serv_path)
     exec_shell_cmd("cd vis; npm install; npm run build; cd ..")
 
-def prepare_zcash_dependencies():
-    exec_shell_cmd("sudo apt-get install \
-                    build-essential pkg-config libc6-dev m4 g++-multilib \
-                    autoconf libtool ncurses-dev unzip git python3 python3-zmq \
-                    zlib1g-dev curl bsdmainutils automake libtinfo5")
-
 def prepare_rust():
     exec_shell_cmd("sudo apt-get install -y rustc")
 
@@ -146,7 +140,6 @@ if __name__ == '__main__':
         prepare_shadow()
         #prepare_nodejs()
         prepare_rust()
-        prepare_zcash_dependencies()
         prepare_shadow_dependencies()
 
         # ## install boost-lib
@@ -172,7 +165,6 @@ if __name__ == '__main__':
 
         prepare_shadow_dependencies()
         ### Until the complete tests are done, let's exclude following external modules from git all build
-        # prepare_zcash_dependencies()
 
         # ## install boost-lib
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")

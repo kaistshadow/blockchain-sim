@@ -224,6 +224,9 @@ void BL_PeerConnectivityLayer::PeerNotifyHandler(PeerId incomingPeerId,
                      "but number of incomining commection exceeds its limit. " <<
                   "LIMIT:" << MAX_INCOMINGPEER_NUM << "current number of incoming connection:"
                   << _peerManager.GetIncomingPeerNum() << "\n";
+
+        // Disconnect incoming socket, since we cannot make a peer connection due to limit
+        g_SocketLayer_API->DisconnectSocket(incomingSocket->GetFD());
         return;
     }
 

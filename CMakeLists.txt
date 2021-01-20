@@ -44,6 +44,9 @@ endif ()
 # Bitcoin option
 option(BITCOIN_OPT "Bitcoin on build (default: OFF)" OFF)
 
+# Bitcoin option
+option(ALETH_OPT "Aleth on build (default: OFF)" OFF)
+
 # all option
 option(ALL_OPT "All on build (deafult : OFF)" OFF)
 
@@ -56,6 +59,7 @@ option(BLEEPLIB_OPT "BLEEPLIB on build (default: ON)" ON)
 
 message("------------------------------------------------------------------------------------------------------")
 message("                                          BITCOIN_OPT : ${BITCOIN_OPT}")
+message("                                          ALETH_OPT : ${ALETH_OPT}")
 message("")
 message("")
 message("                                            ALL_OPT   : ${ALL_OPT}")
@@ -102,7 +106,7 @@ if(BLEEPLIB_OPT STREQUAL ON)
 endif(BLEEPLIB_OPT STREQUAL ON)
 
 # add_subdirectory(BLEEPapp)
-add_subdirectory(tests)
+# add_subdirectory(tests)
 
 ## add tests
 # set(SHADOW_ROOT "${CMAKE_INSTALL_PREFIX}")

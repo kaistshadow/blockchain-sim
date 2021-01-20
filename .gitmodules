@@ -4,3 +4,6 @@
 [submodule "external/bitcoin/0.19.1dev"]
 	path = external/bitcoin/0.19.1dev
 	url = https://github.com/kaistshadow/bitcoin.git
+[submodule "external/aleth/aleth"]
+	path = external/aleth/aleth
+	url = https://github.com/kaistshadow/aleth.git

@@ -24,6 +24,12 @@ if(BITCOIN_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
   add_subdirectory(shadow-bitcoin)
 
+elseif(BITCOIN_OPT STREQUAL ON)
+  message("------------------------------------------------------------------------------")
+  message("                           Aleth build start")
+  message("------------------------------------------------------------------------------")
+  message("성공!!")
+  
 elseif(ALL_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
   message("                           All build start")

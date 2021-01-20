@@ -149,7 +149,7 @@ void BL_PeerConnectivityLayer::RecvMsgHandler(PeerId sourcePeerId,
 
     MessageType msgType = msg->GetType();
     if (msgType == "notifyPeerId") {
-        // this is initial message, and already handled by separate event ('PeerNotifyRecv')
+        // this is initial message, and already handled by separate event ('PeerRecvNotifyPeerId')
         // thus do nothing
     }
     else if (msgType == "GETADDR") {
@@ -218,6 +218,17 @@ void BL_PeerConnectivityLayer::PeerNotifyHandler(PeerId incomingPeerId,
         return;
     }
 
+    // Check whether the number of incoming connection exceeds the limit.
+    if (_peerManager.GetIncomingPeerNum() >= MAX_INCOMINGPEER_NUM) {
+        std::cout << "PeerNotify requested (i.e., new incoming connection is established), "
+                     "but number of incomining commection exceeds its limit. " <<
+                  "LIMIT:" << MAX_INCOMINGPEER_NUM << "current number of incoming connection:"
+                  << _peerManager.GetIncomingPeerNum() << "\n";
+        return;
+    }
+
+
+
     // TODO : Can a peer be an outgoing peer and an incoming peer at the same time?
     // Currently, we ignore duplicated incoming peer.
     // However, duplicated socket can exist. 
@@ -247,22 +258,20 @@ void BL_PeerConnectivityLayer::SwitchAsyncEventHandler(AsyncEvent& event) {
             SocketCloseHandler(closedSocket);
             break;
         }
-    case AsyncEventEnum::PeerRecvMsg:
-        {
+        case AsyncEventEnum::PeerRecvMsg: {
             PeerId sourcePeerId = event.GetData().GetMsgSourceId();
             std::shared_ptr<Message> incomingMsg = event.GetData().GetMsg();
             RecvMsgHandler(sourcePeerId, incomingMsg);
             break;
         }
-    case AsyncEventEnum::PeerNotifyRecv:
-        {
+        case AsyncEventEnum::PeerRecvNotifyPeerId: {
             PeerId inPeerId = event.GetData().GetNeighborId();
             std::shared_ptr<DataSocket> incomingSocket = event.GetData().GetIncomingSocket();
             PeerNotifyHandler(inPeerId, incomingSocket);
             break;
         }
-    default:
-        break;        
+        default:
+            break;
     }
 }
 

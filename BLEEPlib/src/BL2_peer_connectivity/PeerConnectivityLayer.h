@@ -12,6 +12,8 @@
 #include "AdvertisementManager.h"
 #include "Message.h"
 
+#define MAX_OUTGOINGPEER_NUM 8
+#define MAX_INCOMINGPEER_NUM 10
 
 namespace libBLEEP_BL {
 

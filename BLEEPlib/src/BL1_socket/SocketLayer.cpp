@@ -156,7 +156,7 @@ void BL_SocketLayer::RecvHandler(int fd) {
 
                     // TODO : Each msg should be handled as separate event, and switched to proper layers
                     if (msg->GetType() == "notifyPeerId") {
-                        AsyncEvent event(AsyncEventEnum::PeerNotifyRecv);
+                        AsyncEvent event(AsyncEventEnum::PeerRecvNotifyPeerId);
                         event.GetData().SetNeighborId(msg->GetSource());
                         event.GetData().SetIncomingSocket(_socketManager.GetDataSocket(fd));
                         g_mainEventManager->PushAsyncEvent(event);

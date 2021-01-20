@@ -146,7 +146,6 @@ if __name__ == '__main__':
         prepare_shadow()
         #prepare_nodejs()
         prepare_rust()
-        prepare_golang()
         prepare_zcash_dependencies()
         prepare_shadow_dependencies()
 
@@ -170,7 +169,6 @@ if __name__ == '__main__':
         prepare_shadow()
         #prepare_nodejs()
         prepare_rust()
-        prepare_golang()
 
         prepare_shadow_dependencies()
         ### Until the complete tests are done, let's exclude following external modules from git all build

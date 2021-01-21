@@ -11,16 +11,19 @@ add_custom_target(aleth_dev ALL
     )
 
 add_custom_target(aleth_dev2 ALL
+    DEPENDS aleth_dev
     COMMAND mkdir -p build
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/aleth
     )    
 
 add_custom_target(aleth_dev3 ALL
+    DEPENDS aleth_dev2
     COMMAND cmake ..
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/aleth/build
     )  
 
 add_custom_target(aleth_dev4 ALL
+    DEPENDS aleth_dev3
     COMMAND make -j 6
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/aleth/build
     )  

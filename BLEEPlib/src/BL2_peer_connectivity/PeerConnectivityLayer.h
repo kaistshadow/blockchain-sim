@@ -45,13 +45,17 @@ namespace libBLEEP_BL {
                         if (peer && peer->IsActive()) 
                             continue;
                         else if (peer) {
-                            std::cout << "connect to existing peer " << addr->GetString() << "\n";
-                            // TODO : when it is happened? and what is the correct implementation?
-                            libBLEEP::M_Assert(0, "to be implemented");
+                            std::cout << "try connection to existing peer " << addr->GetString() << "\n";
+                            // when it is happened? and what is the correct implementation?
+                            // When the peer connection is tried but connection is not established,
+                            // peer exists but it is not active.
+
+                            // Retry connection
+                            ConnectPeer(PeerId(addr->GetString()));
                             break;
                         }
                         else {
-                            std::cout << "newly connect to peer " << addr->GetString() << "\n";
+                            std::cout << "try new connection to peer " << addr->GetString() << "\n";
                             ConnectPeer(PeerId(addr->GetString()));
                             break;
                         }
@@ -81,6 +85,8 @@ namespace libBLEEP_BL {
         virtual bool SendMsgToPeer(PeerId id, std::shared_ptr<Message> msg); 
         virtual bool Shutdown();
         virtual std::vector<PeerId> GetNeighborPeerIds();
+
+        virtual void StopOutgoingConnectionUpdate() { _timer.stop(); }
     };
 
 }

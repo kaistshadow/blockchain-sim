@@ -8,15 +8,19 @@ namespace libBLEEP_BL {
     public:
         BL_SocketLayer_API() {};
 
-        ~BL_SocketLayer_API() {};
-    
+        virtual ~BL_SocketLayer_API() { std::cout << "BL_SOcketLayer_API destructor" << "\n"; };
+
         /* Switch asynchronous event to proper handler */
-        virtual void SwitchAsyncEventHandler(AsyncEvent& event) = 0;
+        virtual void SwitchAsyncEventHandler(AsyncEvent &event) = 0;
 
         /* public API functions */
         virtual int ConnectSocket(std::string dest) = 0;
-        virtual void SendToSocket(int fd, const char* buf, int size) = 0;
+
+        virtual void SendToSocket(int fd, const char *buf, int size) = 0;
+
         virtual void DisconnectSocket(int fd) = 0;
+
+        virtual void CloseAllListenSocket() = 0;
 
         /* for managing Shadow IPs */
         virtual void CreateSocketForShadowIP(int port, const char* shadow_ip_addr);

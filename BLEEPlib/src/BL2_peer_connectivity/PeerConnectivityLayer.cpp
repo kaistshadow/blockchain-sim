@@ -303,9 +303,16 @@ bool BL_PeerConnectivityLayer::ConnectPeer(PeerId id) {
 bool BL_PeerConnectivityLayer::DisconnectPeer(PeerId id) {
     // check whether there's active peer (i.e., peer with valid data socket)    
     std::shared_ptr<Peer> peer = _peerManager.FindPeer(id);
+    std::cout << "Disconnect Peer(" << id.GetId() << ")\n";
     if (!peer) {
         std::cout << "DisconnectPeer is requested for invalid peer!" << "\n";
         return false;
+    }
+    if (!peer->IsActive()) {
+        std::cout << "DisconnectPeer is requested for inactive peer." << "\n";
+        std::cout << "Thus, just remove peer from peerManager." << "\n";
+        _peerManager.RemovePeer(peer);
+        return true;
     }
 
     // remove data socket

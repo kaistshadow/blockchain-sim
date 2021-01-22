@@ -22,6 +22,8 @@ namespace libBLEEP_BL {
         virtual bool SendMsgToPeer(PeerId id, std::shared_ptr<Message> msg) = 0; 
         virtual bool Shutdown() = 0;
         virtual std::vector<PeerId> GetNeighborPeerIds() = 0;
+
+        virtual void StopOutgoingConnectionUpdate() = 0;
     };
 
     extern std::unique_ptr<BL_PeerConnectivityLayer_API> g_PeerConnectivityLayer_API;

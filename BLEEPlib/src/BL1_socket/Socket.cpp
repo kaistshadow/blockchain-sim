@@ -94,9 +94,11 @@ int ListenSocket::DoAccept() {
 }
 
 ListenSocket::~ListenSocket() {
-    if ( close(_fd) == -1) {
+    if (close(_fd) == -1) {
         perror("close");
         libBLEEP::M_Assert(0, "error on close listen socket");
+    } else {
+        std::cout << "ListenSocket(" << _fd << ") closed" << "\n";
     }
 }
 

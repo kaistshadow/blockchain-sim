@@ -17,22 +17,30 @@ namespace libBLEEP_BL {
 
         /* handler functions for each asynchronous event */
         void AcceptHandler(int fd);
+
         void ConnectHandler(int fd);
+
         void RecvHandler(int fd);
+
         void WriteHandler(int fd);
 
     public:
         BL_SocketLayer();
 
+        virtual ~BL_SocketLayer() { std::cout << "BL_SocketLayer destructor called" << "\n"; };
+
         /* Switch asynchronous event to proper handler */
-        virtual void SwitchAsyncEventHandler(AsyncEvent& event);
+        virtual void SwitchAsyncEventHandler(AsyncEvent &event);
 
 
         /* public API functions */
         virtual int ConnectSocket(std::string dest); // return fd
-        
-        virtual void SendToSocket(int fd, const char* buf, int size);
+
+        virtual void SendToSocket(int fd, const char *buf, int size);
+
         virtual void DisconnectSocket(int fd);
+
+        virtual void CloseAllListenSocket() { _socketManager.CloseAllListenSocket(); };
     };
 
 }

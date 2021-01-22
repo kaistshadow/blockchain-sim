@@ -27,6 +27,11 @@ BL_PeerConnectivityLayer::BL_PeerConnectivityLayer(std::string myPeerId)
     : _peerManager(myPeerId), _adManager(Address(myPeerId)) {
     _startOutgoingConnectionUpdateTimer(10);
 
+    // Initiate timer for sending a ping message periodically.
+    _ping_timer.set<BL_PeerConnectivityLayer, &BL_PeerConnectivityLayer::_pingtimerCallback>(this);
+    _ping_timer.set(60, 60); // ping-pong for every minute (60 seconds)
+    _ping_timer.start();
+
     // append shadow log
     char buf[256];
     sprintf(buf, "InitPeerId,%s", myPeerId.c_str());
@@ -192,14 +197,24 @@ void BL_PeerConnectivityLayer::RecvMsgHandler(PeerId sourcePeerId,
                     if (relayedPeer->GetPeerId().GetId() != msg->GetSource().GetId()) {
                         std::cout << "Relay addr(" << addr.GetString() << ") to "
                                   << relayedPeer->GetPeerId().GetId() << "\n";
-                        
+
                         _adManager.PushAddr(relayedPeer->GetPeerId(), addr);
                     }
                 }
             }
         }
-    }
-    else {
+    } else if (msgType == "PING") {
+        // Reply a pong message when the peer receives ping message.
+        std::cout << "received PING" << "\n";
+
+        std::shared_ptr<Message> pongMsg = std::make_shared<Message>(_peerManager.GetMyPeerId(), sourcePeerId, "PONG");
+        SendMsgToPeer(sourcePeerId, pongMsg);
+    } else if (msgType == "PONG") {
+        // update ping received flag
+        auto peerPtr = _peerManager.FindPeer(sourcePeerId);
+        peerPtr->SetPongReceived(true);
+        std::cout << "receive PONG from " << sourcePeerId.GetId() << "\n";
+    } else {
         // Other (protocol) messages are handled by Layer3 event (ProtocolRecvMsg)
         AsyncEvent event(AsyncEventEnum::ProtocolRecvMsg);
         event.GetData().SetProtocolMsg(msg);

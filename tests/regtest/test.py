@@ -8,6 +8,10 @@ def exec_shell_cmd(cmd):
         print("error while executing '%s'" % cmd)
         exit(-1)
 
+# This function compare node init log
+# params 1 : target log data
+# params 2 : standard log data
+# return : 0 / -1 (True / False)
 def test_node_init(node_log, standard_log):
     result = []
     for i in range(0,len(standard_log)):
@@ -27,11 +31,14 @@ def test_node_init(node_log, standard_log):
     else:
         return -1
 
-# Different blockchain platforms have different paths
-# Such as bitcoin dir1/dir2/dir3/data,
-# Litecoin dir1/debug.log data  
-# So must be classified by platform
-# This function returns log data file path + file name 's list
+# This function get result log data returned shadow.
+# params 1 : blockchain network name (ex. bitcoin, monero, ethereum, ...)
+# params 2 : First path dir in the path (shadow.data/bcdnode1/stdout.bcdnode1.1000log) 
+# params 3 : Second path dir in the path (shadow.data/bcdnode1/stdout.bcdnode1.1000log)
+# params 4 : Thrid path dir in the path (shadow.data/bcdnode1/stdout.bcdnode1.1000log)
+# params 5 : The node count ran on shadow.
+# params 6 : Right absolute path
+# return : log datas returned shadow 
 def set_file_name(blockchain, first_dir_name, second_dir_name, thrid_dir_name, node_count, abs_path):
 
     return_list = []
@@ -46,6 +53,11 @@ def set_file_name(blockchain, first_dir_name, second_dir_name, thrid_dir_name, n
 
     return return_list
 
+# This function can compare Blockchain standard log and comparison of the results executed in shadow
+# params 1 : standard log list (ex. node initialization logs, peer connection logs. ...)
+# params 2 : target log list (the log data retunred shadow )
+# return -  0  : Match all logs
+#        - -1 : If even one doesn't match
 def compare_data(blockchain_standard_list, file_name_list):
     
     for i in range(0,len(file_name_list)):
@@ -56,6 +68,12 @@ def compare_data(blockchain_standard_list, file_name_list):
                 return -1
     return 0
 
+# This function start the comparing log data test
+# params 1 : standard log datas
+# params 2 : blockchain network (bitcoin, ethereum, monero , ....)
+# params 3 : The node count ran on shadow.
+# params 4 : Right absolute path
+# return : The result of comparing test. (True / False)
 def init_test_start(blockchain_standard_list, blockchain_network, node_count, abs_path):
 
     if blockchain_network == "Bitcoin":
@@ -66,9 +84,10 @@ def init_test_start(blockchain_standard_list, blockchain_network, node_count, ab
     return compare_data(blockchain_standard_list, file_list)
 
 
-# n parameter means the number of reading file such as node initialzation standard, peer connection standard, wallet standard etc ... 
-# n == 2 : node initialzation standard, peer connection standard
-# n == 3 : node initialzation standard, peer connection standard, wallet standard 
+# This function get file data from standard list
+# params 1 : Right absolute path
+# params 2 : The number of test case (node initialization, peer connection, wallet, mining, propagation ... )
+# return : The result of standard file data list.
 def file_read(abs_file_path, n):
     
     return_list = []
@@ -109,7 +128,7 @@ def file_read(abs_file_path, n):
 
     return return_list
 
-
+# TODO : Add node connection detail log, another blockchain platform 
 def main():
 
     parser = argparse.ArgumentParser(description='Script for installation and simulation')

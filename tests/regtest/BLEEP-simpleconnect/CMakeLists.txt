@@ -34,3 +34,9 @@ add_custom_command(TARGET NODE_BL_CLOSETEST
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:NODE_BL_CLOSETEST> ${CMAKE_CURRENT_SOURCE_DIR})
 
+add_shadow_plugin(NODE_BL_EXITTEST node_bl_exittest.cpp)
+target_link_libraries(NODE_BL_EXITTEST BLEEP)
+# copy resulting plugins into source directory
+add_custom_command(TARGET NODE_BL_EXITTEST
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:NODE_BL_EXITTEST> ${CMAKE_CURRENT_SOURCE_DIR})

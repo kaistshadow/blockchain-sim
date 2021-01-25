@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.5)
 set(This gtest-example)
 
 ###############################################
-#   Step2. compile and link execute file
+#   Step2. Compile and link executable file
 ###############################################
 set(SRCS
         test.cpp)

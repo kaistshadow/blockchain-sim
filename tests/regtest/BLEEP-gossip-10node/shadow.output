@@ -1,0 +1,90 @@
+00:00:00.000117 [thread-0] n/a [message] [n/a] [shd-logger.c:296] [_logger_logStartupMessage] logging system started at 2021-01-25 17:38:28
+00:00:00.000152 [thread-0] n/a [message] [n/a] [shd-main.c:352] [_main_helper] Starting Shadow v1.12.1-240-g9bdea5e6 2021-01-12 (built 2021-01-21) with GLib v2.56.4 and IGraph v0.7.1
+00:00:00.000238 [thread-0] n/a [message] [n/a] [shd-main.c:359] [_main_helper] For more information, visit https://shadow.github.io or https://github.com/shadow
+00:00:00.000240 [thread-0] n/a [message] [n/a] [shd-main.c:360] [_main_helper] logging current startup arguments and environment
+00:00:00.000270 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: shadow
+00:00:00.000274 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: -l
+00:00:00.000276 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: message
+00:00:00.000277 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: -w
+00:00:00.000278 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: 0
+00:00:00.000279 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: -d
+00:00:00.000280 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: datadir
+00:00:00.000281 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: 10node-txgossip.xml
+00:00:00.000297 [thread-0] n/a [message] [n/a] [shd-main.c:370] [_main_helper] shadow will automatically adjust environment and relaunch
+00:00:00.000301 [thread-0] n/a [message] [n/a] [shd-main.c:371] [_main_helper] loading shadow configuration file
+00:00:00.000615 [thread-0] n/a [message] [n/a] [shd-configuration.c:53] [_parser_findPathToFile] hello?
+00:00:00.000774 [thread-0] n/a [message] [n/a] [shd-main.c:394] [_main_helper] shadow configuration file loaded, parsed, and passed validation
+00:00:00.000798 [thread-0] n/a [message] [n/a] [shd-main.c:406] [_main_helper] setting up LD_PRELOAD environment
+00:00:00.000828 [thread-0] n/a [message] [n/a] [shd-main.c:594] [_main_helper] setting up LD_STATIC_TLS_EXTRA environment
+00:00:00.022830 [thread-0] n/a [message] [n/a] [shd-main.c:151] [_main_computeLoadSize] we need 144 bytes of static TLS per load of namespace with library at path '/home/mong/CLionProject/blockchain-sim_test/tests/regtest/BLEEP-gossip-10node/libNODE_BL_TEST_TX_10.so'
+00:00:00.023208 [thread-0] n/a [message] [n/a] [shd-main.c:151] [_main_computeLoadSize] we need 0 bytes of static TLS per load of namespace with library at path '/home/mong/blockchain-sim/shadow/../Install/lib/libshadow-interpose.so'
+00:00:00.023218 [thread-0] n/a [message] [n/a] [shd-main.c:303] [_main_getStaticTLSValue] finished checking TLS size required for 10 hosts; used dlmopen for 1 namespaces and cache for 9 namespaces
+00:00:00.023252 [thread-0] n/a [message] [n/a] [shd-main.c:601] [_main_helper] we need 1441 total bytes of static TLS storage
+00:00:00.023362 [thread-0] n/a [message] [n/a] [shd-main.c:642] [_main_helper] environment was updated; shadow is relaunching now with new environment
+00:00:00.023491 [thread-0] n/a [message] [n/a] [shd-logger.c:310] [_logger_logShutdownMessage] logging system stopped at 2021-01-25 17:38:28, run time was 00:00:00
+00:00:00.000070 [thread-0] n/a [message] [n/a] [shd-logger.c:296] [_logger_logStartupMessage] logging system started at 2021-01-25 17:38:28
+00:00:00.000094 [thread-0] n/a [message] [n/a] [shd-main.c:352] [_main_helper] Starting Shadow v1.12.1-240-g9bdea5e6 2021-01-12 (built 2021-01-21) with GLib v2.56.4 and IGraph v0.7.1
+00:00:00.000116 [thread-0] n/a [message] [n/a] [shd-main.c:359] [_main_helper] For more information, visit https://shadow.github.io or https://github.com/shadow
+00:00:00.000119 [thread-0] n/a [message] [n/a] [shd-main.c:360] [_main_helper] logging current startup arguments and environment
+00:00:00.000143 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: shadow
+00:00:00.000145 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: -l
+00:00:00.000146 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: message
+00:00:00.000147 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: -w
+00:00:00.000148 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: 0
+00:00:00.000149 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: -d
+00:00:00.000150 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: datadir
+00:00:00.000151 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: 10node-txgossip.xml
+00:00:00.000157 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: --preload=/home/mong/blockchain-sim/shadow/../Install/lib/libshadow-interpose.so
+00:00:00.000176 [thread-0] n/a [message] [n/a] [shd-main.c:328] [_main_logEnvironment] env: LD_STATIC_TLS_EXTRA=1441
+00:00:00.000178 [thread-0] n/a [message] [n/a] [shd-main.c:328] [_main_logEnvironment] env: SHADOW_SPAWNED=TRUE
+00:00:00.002587 [thread-0] n/a [message] [n/a] [shd-main.c:696] [_main_helper] startup checks passed, we are ready to start simulation
+00:00:01.004590 [thread-0] n/a [message] [n/a] [shd-master.c:95] [master_new] simulation master created
+00:00:01.004629 [thread-0] n/a [message] [n/a] [shd-master.c:418] [master_run] loading and initializing simulation data
+00:00:01.005142 [thread-0] n/a [message] [n/a] [shd-configuration.c:53] [_parser_findPathToFile] hello?
+00:00:01.005495 [thread-0] n/a [message] [n/a] [shd-master.c:171] [_master_loadConfiguration] successfully parsed Shadow XML input!
+00:00:01.006356 [thread-0] n/a [message] [n/a] [shd-topology.c:370] [_topology_loadGraph] reading graphml topology graph at '/tmp/shadow-topology-I63SX0.graphml.xml'...
+00:00:01.007444 [thread-0] n/a [message] [n/a] [shd-topology.c:381] [_topology_loadGraph] successfully read graphml topology graph at '/tmp/shadow-topology-I63SX0.graphml.xml'
+00:00:01.007471 [thread-0] n/a [message] [n/a] [shd-topology.c:713] [_topology_checkGraphProperties] checking graph properties...
+00:00:01.007479 [thread-0] n/a [message] [n/a] [shd-topology.c:555] [_topology_checkGraphAttributes] checking graph attributes...
+00:00:01.007576 [thread-0] n/a [warning] [n/a] [shd-topology.c:628] [_topology_checkGraphAttributes] vertex attribute 'geocode' has been renamed to 'countrycode' and is considered deprecated; please use 'countrycode' and/or 'citycode' instead
+00:00:01.007643 [thread-0] n/a [message] [n/a] [shd-topology.c:701] [_topology_checkGraphAttributes] successfully verified all graph, vertex, and edge attributes
+00:00:01.007862 [thread-0] n/a [message] [n/a] [shd-topology.c:782] [_topology_checkGraphProperties] topology graph is complete, undirected, and strongly connected with 1 cluster. It does not prefer direct paths.
+00:00:01.007892 [thread-0] n/a [message] [n/a] [shd-topology.c:1007] [_topology_checkGraphVertices] checking graph vertices...
+00:00:01.008034 [thread-0] n/a [message] [n/a] [shd-topology.c:1021] [_topology_checkGraphVertices] 1 graph vertices ok
+00:00:01.008059 [thread-0] n/a [message] [n/a] [shd-topology.c:1153] [_topology_checkGraphEdges] checking graph edges...
+00:00:01.008167 [thread-0] n/a [message] [n/a] [shd-topology.c:1167] [_topology_checkGraphEdges] 1 graph edges ok
+00:00:01.008194 [thread-0] n/a [message] [n/a] [shd-topology.c:1188] [_topology_checkGraph] successfully parsed graphml and validated topology: graph is strongly connected with 1 cluster, 1 vertex, and 1 edge
+00:00:01.008629 [thread-0] n/a [message] [n/a] [shd-scheduler.c:202] [scheduler_new] main scheduler thread will operate with 0 worker threads
+00:00:01.013068 [thread-0] n/a [message] [n/a] [shd-master.c:435] [master_run] registering plugins and hosts
+00:00:01.013104 [thread-0] n/a [message] [n/a] [shd-host.c:115] [host_new] Created host id '1' name 'bleep0'
+00:00:01.013282 [thread-0] n/a [message] [n/a] [shd-topology.c:2414] [topology_attach] attached address '11.0.0.1' to vertex 0 ('poi-1') with attributes (ip=0.0.0.0, citycode=(null), countrycode=(null), geocode=US, type=net) using hints (ip=(null), citycode=(null), countrycode=(null), geocode=(null), type=(null))
+00:00:01.013328 [thread-0] n/a [message] [n/a] [shd-host.c:180] [host_setup] Setup host id '1' name 'bleep0' with seed 1105148392, ip 11.0.0.1, 10000240 bwUpKiBps, 10000020000040 bwDownKiBps, 131072 initSockSendBufSize, 174760 initSockRecvBufSize, 4000000 cpuFrequency, 0 cpuThreshold, 200 cpuPrecision
+00:00:01.013393 [thread-0] n/a [message] [n/a] [shd-host.c:115] [host_new] Created host id '2' name 'bleep1'
+00:00:01.013547 [thread-0] n/a [message] [n/a] [shd-topology.c:2414] [topology_attach] attached address '11.0.0.2' to vertex 0 ('poi-1') with attributes (ip=0.0.0.0, citycode=(null), countrycode=(null), geocode=US, type=net) using hints (ip=(null), citycode=(null), countrycode=(null), geocode=(null), type=(null))
+00:00:01.013562 [thread-0] n/a [message] [n/a] [shd-host.c:180] [host_setup] Setup host id '2' name 'bleep1' with seed 2853875478, ip 11.0.0.2, 10000240 bwUpKiBps, 10000020000040 bwDownKiBps, 131072 initSockSendBufSize, 174760 initSockRecvBufSize, 4000000 cpuFrequency, 0 cpuThreshold, 200 cpuPrecision
+00:00:01.013579 [thread-0] n/a [message] [n/a] [shd-host.c:115] [host_new] Created host id '3' name 'bleep2'
+00:00:01.013737 [thread-0] n/a [message] [n/a] [shd-topology.c:2414] [topology_attach] attached address '11.0.0.3' to vertex 0 ('poi-1') with attributes (ip=0.0.0.0, citycode=(null), countrycode=(null), geocode=US, type=net) using hints (ip=(null), citycode=(null), countrycode=(null), geocode=(null), type=(null))
+00:00:01.013748 [thread-0] n/a [message] [n/a] [shd-host.c:180] [host_setup] Setup host id '3' name 'bleep2' with seed 645940202, ip 11.0.0.3, 10000240 bwUpKiBps, 10000020000040 bwDownKiBps, 131072 initSockSendBufSize, 174760 initSockRecvBufSize, 4000000 cpuFrequency, 0 cpuThreshold, 200 cpuPrecision
+00:00:01.013771 [thread-0] n/a [message] [n/a] [shd-host.c:115] [host_new] Created host id '4' name 'bleep3'
+00:00:01.013857 [thread-0] n/a [message] [n/a] [shd-topology.c:2414] [topology_attach] attached address '11.0.0.4' to vertex 0 ('poi-1') with attributes (ip=0.0.0.0, citycode=(null), countrycode=(null), geocode=US, type=net) using hints (ip=(null), citycode=(null), countrycode=(null), geocode=(null), type=(null))
+00:00:01.013867 [thread-0] n/a [message] [n/a] [shd-host.c:180] [host_setup] Setup host id '4' name 'bleep3' with seed 2059732742, ip 11.0.0.4, 10000240 bwUpKiBps, 10000020000040 bwDownKiBps, 131072 initSockSendBufSize, 174760 initSockRecvBufSize, 4000000 cpuFrequency, 0 cpuThreshold, 200 cpuPrecision
+00:00:01.013894 [thread-0] n/a [message] [n/a] [shd-host.c:115] [host_new] Created host id '5' name 'bleep4'
+00:00:01.013995 [thread-0] n/a [message] [n/a] [shd-topology.c:2414] [topology_attach] attached address '11.0.0.5' to vertex 0 ('poi-1') with attributes (ip=0.0.0.0, citycode=(null), countrycode=(null), geocode=US, type=net) using hints (ip=(null), citycode=(null), countrycode=(null), geocode=(null), type=(null))
+00:00:01.014016 [thread-0] n/a [message] [n/a] [shd-host.c:180] [host_setup] Setup host id '5' name 'bleep4' with seed 663466108, ip 11.0.0.5, 10000240 bwUpKiBps, 10000020000040 bwDownKiBps, 131072 initSockSendBufSize, 174760 initSockRecvBufSize, 4000000 cpuFrequency, 0 cpuThreshold, 200 cpuPrecision
+00:00:01.014035 [thread-0] n/a [message] [n/a] [shd-host.c:115] [host_new] Created host id '6' name 'bleep5'
+00:00:01.014157 [thread-0] n/a [message] [n/a] [shd-topology.c:2414] [topology_attach] attached address '11.0.0.6' to vertex 0 ('poi-1') with attributes (ip=0.0.0.0, citycode=(null), countrycode=(null), geocode=US, type=net) using hints (ip=(null), citycode=(null), countrycode=(null), geocode=(null), type=(null))
+00:00:01.014170 [thread-0] n/a [message] [n/a] [shd-host.c:180] [host_setup] Setup host id '6' name 'bleep5' with seed 2362317446, ip 11.0.0.6, 10000240 bwUpKiBps, 10000020000040 bwDownKiBps, 131072 initSockSendBufSize, 174760 initSockRecvBufSize, 4000000 cpuFrequency, 0 cpuThreshold, 200 cpuPrecision
+00:00:01.014197 [thread-0] n/a [message] [n/a] [shd-host.c:115] [host_new] Created host id '7' name 'bleep6'
+00:00:01.014304 [thread-0] n/a [message] [n/a] [shd-topology.c:2414] [topology_attach] attached address '11.0.0.7' to vertex 0 ('poi-1') with attributes (ip=0.0.0.0, citycode=(null), countrycode=(null), geocode=US, type=net) using hints (ip=(null), citycode=(null), countrycode=(null), geocode=(null), type=(null))
+00:00:01.014316 [thread-0] n/a [message] [n/a] [shd-host.c:180] [host_setup] Setup host id '7' name 'bleep6' with seed 2717698814, ip 11.0.0.7, 10000240 bwUpKiBps, 10000020000040 bwDownKiBps, 131072 initSockSendBufSize, 174760 initSockRecvBufSize, 4000000 cpuFrequency, 0 cpuThreshold, 200 cpuPrecision
+00:00:01.014345 [thread-0] n/a [message] [n/a] [shd-host.c:115] [host_new] Created host id '8' name 'bleep7'
+00:00:01.014440 [thread-0] n/a [message] [n/a] [shd-topology.c:2414] [topology_attach] attached address '11.0.0.8' to vertex 0 ('poi-1') with attributes (ip=0.0.0.0, citycode=(null), countrycode=(null), geocode=US, type=net) using hints (ip=(null), citycode=(null), countrycode=(null), geocode=(null), type=(null))
+00:00:01.014448 [thread-0] n/a [message] [n/a] [shd-host.c:180] [host_setup] Setup host id '8' name 'bleep7' with seed 742907270, ip 11.0.0.8, 10000240 bwUpKiBps, 10000020000040 bwDownKiBps, 131072 initSockSendBufSize, 174760 initSockRecvBufSize, 4000000 cpuFrequency, 0 cpuThreshold, 200 cpuPrecision
+00:00:01.014480 [thread-0] n/a [message] [n/a] [shd-host.c:115] [host_new] Created host id '9' name 'bleep8'
+00:00:01.014582 [thread-0] n/a [message] [n/a] [shd-topology.c:2414] [topology_attach] attached address '11.0.0.9' to vertex 0 ('poi-1') with attributes (ip=0.0.0.0, citycode=(null), countrycode=(null), geocode=US, type=net) using hints (ip=(null), citycode=(null), countrycode=(null), geocode=(null), type=(null))
+00:00:01.014593 [thread-0] n/a [message] [n/a] [shd-host.c:180] [host_setup] Setup host id '9' name 'bleep8' with seed 2430661882, ip 11.0.0.9, 10000240 bwUpKiBps, 10000020000040 bwDownKiBps, 131072 initSockSendBufSize, 174760 initSockRecvBufSize, 4000000 cpuFrequency, 0 cpuThreshold, 200 cpuPrecision
+00:00:01.014620 [thread-0] n/a [message] [n/a] [shd-host.c:115] [host_new] Created host id '10' name 'bleep9'
+00:00:01.014704 [thread-0] n/a [message] [n/a] [shd-topology.c:2414] [topology_attach] attached address '11.0.0.10' to vertex 0 ('poi-1') with attributes (ip=0.0.0.0, citycode=(null), countrycode=(null), geocode=US, type=net) using hints (ip=(null), citycode=(null), countrycode=(null), geocode=(null), type=(null))
+00:00:01.014721 [thread-0] n/a [message] [n/a] [shd-host.c:180] [host_setup] Setup host id '10' name 'bleep9' with seed 286595330, ip 11.0.0.10, 10000240 bwUpKiBps, 10000020000040 bwDownKiBps, 131072 initSockSendBufSize, 174760 initSockRecvBufSize, 4000000 cpuFrequency, 0 cpuThreshold, 200 cpuPrecision
+00:00:01.014744 [thread-0] n/a [message] [n/a] [shd-master.c:442] [master_run] running simulation
+00:00:01.014747 [thread-0] n/a [message] [n/a] [shd-master.c:446] [master_run] log message buffering is enabled for efficiency

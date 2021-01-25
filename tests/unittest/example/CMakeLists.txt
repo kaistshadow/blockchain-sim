@@ -1,7 +1,12 @@
 cmake_minimum_required(VERSION 3.5)
-
+###############################################
+#   Step1. Naming test 
+###############################################
 set(This gtest-example)
 
+###############################################
+#   Step2. compile and link execute file
+###############################################
 set(SRCS
         test.cpp)
 
@@ -14,6 +19,9 @@ target_link_libraries(${This} PUBLIC
 
 install(TARGETS ${This} DESTINATION unittest)
 
+###############################################
+#   Step3. Set command comment to commend gtest
+###############################################
 enable_testing()
 
 add_test(

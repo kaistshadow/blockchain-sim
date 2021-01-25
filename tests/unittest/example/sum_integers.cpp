@@ -1,5 +1,8 @@
+// ------------------------------------------------------------------
+// Define moudle you want to test
+// If the module needs some external library and customed, add like below
+// ------------------------------------------------------------------
 #include "sum_integers.hpp"
-
 #include <vector>
 
 int sum_integers(const std::vector<int> integers) {

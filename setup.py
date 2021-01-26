@@ -100,7 +100,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
     parser.add_argument("--all", action="store_true", help="Install the shadow simulator and BLEEP")
     parser.add_argument("--test", action="store_true", help="Run tests")
-    parser.add_argument("--unitest", action="store_true", help="Run Unit tests")
+    parser.add_argument("--unittest", action="store_true", help="Run Unit tests")
     parser.add_argument("--debug", action="store_true", help="Include debug symbols for shadow")
     parser.add_argument("--bitcoin", action="store_true", help="only bitcoin build")
     parser.add_argument("--git", action="store_true", help="Run on Git action")
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     OPT_DEBUG = args.debug
     OPT_TEST = args.test
 
-    OPT_UNITEST = args.unitest
+    OPT_UNITTEST = args.unittest
 
     cmake_bleeplib_opt = "-DBLEEPLIB_OPT=ON"
     cmake_debug_opt = "-DSHADOW_DEBUG=ON -DBLEEP_DEBUG=ON"
@@ -198,8 +198,8 @@ if __name__ == '__main__':
         cmake_test_opt = "-DTEST_OPT=ON"
         exec_shell_cmd("mkdir -p build; cd build; cmake %s ../; make -j8; make test" %(cmake_test_opt))
 
-    if OPT_UNITEST:
-        cmake_unitest_opt = "-DUNITEST_OPT=ON"
-        exec_shell_cmd("mkdir -p build; cd build; cmake %s ../; make -j8; make test" %(cmake_unitest_opt))
+    if OPT_UNITTEST:
+        cmake_unittest_opt = "-DUNITTEST_OPT=ON"
+        exec_shell_cmd("mkdir -p build; cd build; cmake %s ../; make -j8; make test" %(cmake_unittest_opt))
 
 

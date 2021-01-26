@@ -22,6 +22,10 @@ BL_SocketLayer::BL_SocketLayer() {
 
 }
 
+BL_SocketLayer::~BL_SocketLayer() {
+
+}
+
 void BL_SocketLayer::AcceptHandler(int fd) {
     std::shared_ptr<ListenSocket> listenSocket = _socketManager.GetListenSocket(fd);
 

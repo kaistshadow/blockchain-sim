@@ -99,6 +99,9 @@ add_subdirectory(shadow)
 
 
 
+# Unit test option
+option(UNITTEST_OPT "unittest on build (default : OFF) : OFF")
+
 ## add BLEEP
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/Install")
 enable_testing()

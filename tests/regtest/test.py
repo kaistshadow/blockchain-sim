@@ -135,11 +135,11 @@ def main():
     a = './'
     abs_path = os.path.abspath(a)
 
+
     # -------------------------------------------
 
     parser.add_argument("--bitcoinfirstrun", action="store_true", help="Bitcoin first_run test output log check")
     parser.add_argument("--bitcoinwallet", action="store_true", help="Bitcoin wallet test output log check")
-
 
     parser.add_argument("--litecoin", action="store_true", help="Install the shadow simulator and BLEEP")
     parser.add_argument("--monero", action="store_true", help="Install the shadow simulator and BLEEP")
@@ -167,14 +167,14 @@ def main():
 
     if OPT_BITCOIN_FIRSTRUN:
         abs_file_path = abs_path + "/shadow-bitcoin/1_firstrun"
-        blockchain_standard_list = file_read(abs_file_path,2)
+        blockchain_standard_list = file_read(abs_file_path, 2)
         abs_path = abs_path + "/shadow-bitcoin/1_firstrun/shadow.data/hosts/"
         node_count = len(os.walk(abs_path).next()[1])
         return init_test_start(blockchain_standard_list, "Bitcoin", node_count, abs_path)
     
     if OPT_BITCOIN_WALLET:
         abs_file_path = abs_path + "/shadow-bitcoin/2_with-wallet"
-        blockchain_standard_list = file_read(abs_file_path,3)
+        blockchain_standard_list = file_read(abs_file_path, 3)
         abs_path = abs_path + "/shadow-bitcoin/2_with-wallet/shadow.data/hosts/"
         node_count = len(os.walk(abs_path).next()[1])
         return init_test_start(blockchain_standard_list, "Bitcoin", node_count, abs_path)

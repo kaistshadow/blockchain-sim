@@ -6,7 +6,6 @@
 // 2. 계층화된 API 레이어 인터페이스를 가르키는 변수 정의
 using namespace libBLEEP;
 std::unique_ptr<libBLEEP_BL::MainEventManager> libBLEEP_BL::g_mainEventManager;
-std::unique_ptr<libBLEEP_BL::BL_SocketLayer_API> libBLEEP_BL::g_SocketLayer_API;
 std::unique_ptr<libBLEEP_BL::BL_PeerConnectivityLayer_API> libBLEEP_BL::g_PeerConnectivityLayer_API;
 
 // 3. 사용할 API 레이러 구현체에 대한 헤더파일들을 참조
@@ -24,8 +23,6 @@ int main(int argc, char *argv[]) {
     // API 레이어를 생성하여, 위에서 정의한 전역 변수인 API 레이어 인터페이스 변수에 할당한다
     libBLEEP_BL::g_mainEventManager = std::unique_ptr<libBLEEP_BL::MainEventManager>(
             new libBLEEP_BL::MainEventManager(libBLEEP_BL::AsyncEventEnum::AllEvent));
-    libBLEEP_BL::g_SocketLayer_API = std::unique_ptr<libBLEEP_BL::BL_SocketLayer_API>(
-            new libBLEEP_BL::BL_SocketLayer());
     libBLEEP_BL::g_PeerConnectivityLayer_API = std::unique_ptr<libBLEEP_BL::BL_PeerConnectivityLayer_API>(
             new libBLEEP_BL::BL_PeerConnectivityLayer(gArgs.GetArg("-id", "noid")));
 

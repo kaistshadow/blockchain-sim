@@ -20,10 +20,10 @@
 
 using namespace libBLEEP_BL;
 
+static BL_SocketLayer_Bitcoin the_BL_SocketLayer_Bitcoin;
 
 BL_SocketLayer_Bitcoin::BL_SocketLayer_Bitcoin() {
     _socketManager.CreateListenSocket(8333);
-
 }
 
 void BL_SocketLayer_Bitcoin::AcceptHandler(int fd) {

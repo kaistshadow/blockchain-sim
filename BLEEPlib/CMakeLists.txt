@@ -26,7 +26,7 @@ endif(BLEEP_DEBUG STREQUAL ON)
 set(SRCS
         src/BL_MainEventManager.cpp
         src/BL1_socket/Socket.cpp
-        src/BL1_socket/SocketLayer.cpp
+        src/BL1_socket/SocketLayer_API.cpp
         src/BL1_socket/SocketManager.cpp
         src/BL1_socket/RecvBufferManager.cpp
         src/BL1_socket/SocketLayer_Bitcoin.cpp

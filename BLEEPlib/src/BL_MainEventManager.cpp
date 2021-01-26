@@ -15,7 +15,7 @@ MainEventManager::MainEventManager(AsyncEventEnum internalEventEnum) {
 static void HandleAsyncEvent(AsyncEvent& event) {
     switch (event.GetType()) {
     case AsyncEventEnum::Layer1_Event_Start ... AsyncEventEnum::Layer1_Event_End:
-        g_SocketLayer_API->SwitchAsyncEventHandler(event);
+        BL_SocketLayer_API::Instance()->SwitchAsyncEventHandler(event);
         break;
     case AsyncEventEnum::Layer2_Event_Start ... AsyncEventEnum::Layer2_Event_End:
         g_PeerConnectivityLayer_API->SwitchAsyncEventHandler(event);

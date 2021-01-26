@@ -1,5 +1,4 @@
 #include "BL_MainEventManager.h"
-#include "BL1_socket/SocketLayer.h"
 #include "BL1_socket/SocketLayer_API.h"
 #include "BL2_peer_connectivity/PeerConnectivityLayer.h"
 #include "BL2_peer_connectivity/PeerConnectivityLayer_API.h"
@@ -21,7 +20,6 @@
 using namespace libBLEEP;
 
 
-std::unique_ptr<libBLEEP_BL::BL_SocketLayer_API> libBLEEP_BL::g_SocketLayer_API;
 std::unique_ptr<libBLEEP_BL::BL_PeerConnectivityLayer_API> libBLEEP_BL::g_PeerConnectivityLayer_API;
 std::unique_ptr<libBLEEP_BL::MainEventManager> libBLEEP_BL::g_mainEventManager;
 std::unique_ptr<libBLEEP_BL::ShadowLayer> libBLEEP_BL::g_ShadowLayer;
@@ -41,7 +39,6 @@ int main(int argc, char *argv[]) {
     /* allocate mainEventManager */
     libBLEEP_BL::g_mainEventManager = std::unique_ptr<libBLEEP_BL::MainEventManager>(new libBLEEP_BL::MainEventManager());
     /* allocate socketlayer */
-    libBLEEP_BL::g_SocketLayer_API = std::unique_ptr<libBLEEP_BL::BL_SocketLayer_API>(new libBLEEP_BL::BL_SocketLayer());
     /* allocate peerConnectivityLayer */
     std::string myId = gArgs.GetArg("-id", "noid");
     libBLEEP_BL::g_PeerConnectivityLayer_API = std::unique_ptr<libBLEEP_BL::BL_PeerConnectivityLayer_API>(new libBLEEP_BL::BL_PeerConnectivityLayer(myId));
@@ -74,7 +71,7 @@ int main(int argc, char *argv[]) {
         
         switch (event.GetType()) {
         case libBLEEP_BL::AsyncEventEnum::Layer1_Event_Start ... libBLEEP_BL::AsyncEventEnum::Layer1_Event_End:
-            libBLEEP_BL::g_SocketLayer_API->SwitchAsyncEventHandler(event);
+            libBLEEP_BL::BL_SocketLayer_API::Instance()->SwitchAsyncEventHandler(event);
             // if (event.GetType() == libBLEEP_BL::AsyncEventEnum::SocketConnect) {
             //     libBLEEP_BL::g_SocketLayer_API->SendToSocket(event.GetData().GetNewlyConnectedSocket(), "hello", 5);
             //     libBLEEP_BL::g_SocketLayer_API->SendToSocket(event.GetData().GetNewlyConnectedSocket(), "world", 5);

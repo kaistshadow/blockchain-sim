@@ -278,7 +278,7 @@ bool BL_PeerConnectivityLayer::ConnectPeer(PeerId id) {
 
 
     // Assign a new Peer while initializing a new connectSocket using SocketLayer API
-    int conn_socket = g_SocketLayer_API->ConnectSocket(id.GetId());
+    int conn_socket = BL_SocketLayer_API::Instance()->ConnectSocket(id.GetId());
     peer = std::make_shared<Peer>(id, PeerType::OutgoingPeer, conn_socket);
 
     // Add assigned peer to PeerManager
@@ -299,7 +299,7 @@ bool BL_PeerConnectivityLayer::DisconnectPeer(PeerId id) {
     // remove data socket
     int socketFD = peer->GetDataSocket()->GetFD();
     std::shared_ptr<DataSocket> dSocket = peer->GetDataSocket();
-    g_SocketLayer_API->DisconnectSocket(socketFD);
+    BL_SocketLayer_API::Instance()->DisconnectSocket(socketFD);
 
     if (peer->GetPeerType() == PeerType::IncomingPeer) {
         char buf[256];

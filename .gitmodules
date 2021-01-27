@@ -4,3 +4,6 @@
 [submodule "external/bitcoin/0.19.1dev"]
 	path = external/bitcoin/0.19.1dev
 	url = https://github.com/kaistshadow/bitcoin.git
+[submodule "tests/lib/Catch2"]
+	path = tests/lib/Catch2
+	url = https://github.com/catchorg/Catch2.git

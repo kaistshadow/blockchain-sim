@@ -1,2 +1,2 @@
-add_subdirectory(gtest)
-add_subdirectory(cppunit)
+# add_subdirectory(gtest)
+add_subdirectory(catch2)

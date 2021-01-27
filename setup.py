@@ -200,6 +200,6 @@ if __name__ == '__main__':
 
     if OPT_UNITTEST:
         cmake_unittest_opt = "-DUNITTEST_OPT=ON"
-        exec_shell_cmd("mkdir -p build; cd build; cmake %s ../; make -j8; make test" %(cmake_unittest_opt))
+        exec_shell_cmd("mkdir -p build; cd build; cmake %s ../; make -j8" %(cmake_unittest_opt))
 
 

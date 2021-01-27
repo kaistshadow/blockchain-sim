@@ -18,7 +18,7 @@ static void HandleAsyncEvent(AsyncEvent& event) {
         BL_SocketLayer_API::Instance()->SwitchAsyncEventHandler(event);
         break;
     case AsyncEventEnum::Layer2_Event_Start ... AsyncEventEnum::Layer2_Event_End:
-        g_PeerConnectivityLayer_API->SwitchAsyncEventHandler(event);
+        BL_PeerConnectivityLayer_API::Instance()->SwitchAsyncEventHandler(event);
         break;
     case AsyncEventEnum::Layer3_Event_Start ... AsyncEventEnum::Layer3_Event_End:
         g_ProtocolLayer_API->SwitchAsyncEventHandler(event);

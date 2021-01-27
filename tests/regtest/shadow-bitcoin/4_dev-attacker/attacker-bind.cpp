@@ -47,7 +47,6 @@ std::string hex_to_string(const std::string& hexstr)
 using namespace libBLEEP;
 
 
-std::unique_ptr<libBLEEP_BL::BL_SocketLayer_API> libBLEEP_BL::g_SocketLayer_API;
 std::unique_ptr<libBLEEP_BL::MainEventManager> libBLEEP_BL::g_mainEventManager;
 int bitcoin_msg_count = 0;
 

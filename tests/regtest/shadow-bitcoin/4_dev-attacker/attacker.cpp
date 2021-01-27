@@ -44,7 +44,6 @@ std::string hex_to_string(const std::string& hexstr)
 using namespace libBLEEP;
 
 
-std::unique_ptr<libBLEEP_BL::BL_SocketLayer_API> libBLEEP_BL::g_SocketLayer_API;
 std::unique_ptr<libBLEEP_BL::MainEventManager> libBLEEP_BL::g_mainEventManager;
 int bitcoin_msg_count = 0;
 
@@ -62,8 +61,6 @@ int main(int argc, char *argv[]) {
 
     /* allocate mainEventManager */
     libBLEEP_BL::g_mainEventManager = std::unique_ptr<libBLEEP_BL::MainEventManager>(new libBLEEP_BL::MainEventManager());
-    /* allocate socketlayer */
-    libBLEEP_BL::g_SocketLayer_API = std::unique_ptr<libBLEEP_BL::BL_SocketLayer_API>(new libBLEEP_BL::BL_SocketLayer_Bitcoin());
     /* allocate peerConnectivityLayer */
 //    std::string myId = gArgs.GetArg("-id", "noid");
 //    libBLEEP_BL::g_PeerConnectivityLayer_API = std::unique_ptr<libBLEEP_BL::BL_PeerConnectivityLayer_API>(new libBLEEP_BL::BL_PeerConnectivityLayer(myId));
@@ -80,7 +77,7 @@ int main(int argc, char *argv[]) {
 
         switch (event.GetType()) {
             case libBLEEP_BL::AsyncEventEnum::Layer1_Event_Start ... libBLEEP_BL::AsyncEventEnum::Layer1_Event_End:
-                libBLEEP_BL::g_SocketLayer_API->SwitchAsyncEventHandler(event);
+                libBLEEP_BL::BL_SocketLayer_API::Instance()->SwitchAsyncEventHandler(event);
                 break;
             case libBLEEP_BL::AsyncEventEnum::BitcoinRecvMsg:
                 std::string bitcoinCommand = event.GetData().GetBitcoinCommand();
@@ -106,7 +103,7 @@ int main(int argc, char *argv[]) {
                     // if it received version message from a victim, send a valid version reply.
                     std::string response_hex = "f9beb4d976657273696f6e000000000066000000dad86bee7f11010009040000000000000de10b5e00000000000000000000000000000000000000000000ffff0b000002a917090400000000000000000000000000000000000000000000000099783b985a421805102f5361746f7368693a302e31392e312f0000000001f9beb4d976657261636b000000000000000000005df6e0e2";
                     std::string response = hex_to_string(response_hex);
-                    libBLEEP_BL::g_SocketLayer_API->SendToSocket(fd, response.c_str(), response.size());
+                    libBLEEP_BL::BL_SocketLayer_API::Instance()->SendToSocket(fd, response.c_str(), response.size());
                 }
 
                 break;

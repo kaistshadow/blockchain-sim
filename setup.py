@@ -158,11 +158,7 @@ if __name__ == '__main__':
         prepare_shadow()
         #prepare_nodejs()
         prepare_rust()
-        prepare_golang()
-        prepare_zcash_dependencies()
         prepare_shadow_dependencies()
-        prepare_monero_dependencies()
-        prepare_eos_dependencies()
 
         # ## install boost-lib
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")

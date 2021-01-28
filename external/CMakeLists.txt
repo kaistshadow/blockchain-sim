@@ -23,35 +23,17 @@ add_subdirectory(libev)
 
 add_subdirectory(shadow_storage_manager)
 
-if(ZCASH_OPT STREQUAL ON)
+if(LITECOIN_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
-  message("                           Start Zcash build")
+  message("                           Start Litecoin build")
   message("--------------------------------------------------------------------------------------")
-  # add_subdirectory(zcash)
+  add_subdirectory(litecoin)
 
 elseif(BITCOIN_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
   message("                           Start Bitcoin build")
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(bitcoin)
-
-elseif(MONERO_OPT STREQUAL ON)
-  message("--------------------------------------------------------------------------------------")
-  message("                           Start Monero build")
-  message("--------------------------------------------------------------------------------------")
-  # add_subdirectory(monero)
-  
-elseif(LITECOIN_OPT STREQUAL ON)
-  message("--------------------------------------------------------------------------------------")
-  message("                           Start Litecoin build")
-  message("--------------------------------------------------------------------------------------")
-  add_subdirectory(litecoin)
-
-elseif(EOS_OPT STREQUAL ON)
-  message("--------------------------------------------------------------------------------------")
-  message("                           Start EOS build")
-  message("--------------------------------------------------------------------------------------")
-  # add_subdirectory(eosio)
 
 elseif(ALL_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
@@ -68,16 +50,11 @@ elseif(GIT_OPT STREQUAL ON)
   message("                           Git All build")
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(bitcoin)
-  ### currently, eosio induces problem for git Action tests.
-  ### Until the complete tests are done, let's exclude following external modules from git all build
-  #  add_subdirectory(zcash)
-  #  add_subdirectory(litecoin)
-  #  add_subdirectory(eosio)
 
-else(ZCASH_OPT STREQUAL ON)
+else(LITECOIN_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
   message("                           default (defalut = Bitcoin)")
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(bitcoin)
 
-endif(ZCASH_OPT STREQUAL ON)
+endif(LITECOIN_OPT STREQUAL ON)

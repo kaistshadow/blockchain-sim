@@ -1,3 +1,0 @@
-add_subdirectory(example_basic_Assertion)
-add_subdirectory(example_binomialComparison)
-add_subdirectory(example_stringComparison)

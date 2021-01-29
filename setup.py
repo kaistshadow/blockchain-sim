@@ -199,7 +199,8 @@ if __name__ == '__main__':
         exec_shell_cmd("mkdir -p build; cd build; cmake %s ../; make -j8; make test" %(cmake_test_opt))
 
     if OPT_UNITTEST:
+        exec_shell_cmd("git submodule update --init")
         cmake_unittest_opt = "-DUNITTEST_OPT=ON"
-        exec_shell_cmd("mkdir -p build; cd build; cmake %s ../; make -j8; make test" %(cmake_unittest_opt))
+        exec_shell_cmd("mkdir -p build; cd build; cmake %s ../; make -j8" %(cmake_unittest_opt))
 
 

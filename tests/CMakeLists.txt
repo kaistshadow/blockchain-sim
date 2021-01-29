@@ -5,7 +5,7 @@ else(BLEEP_DEBUG STREQUAL ON)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 endif(BLEEP_DEBUG STREQUAL ON)
 add_subdirectory(lib/googletest)
-
+add_subdirectory(lib/Catch2)
 if(UNITTEST_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
   message("                            Start Unit tests")

@@ -40,7 +40,7 @@ def prepare_nodejs():
     exec_shell_cmd("cd %s; npm install websocket finalhandler serve-static jsonpath" % nodejs_serv_path)
     exec_shell_cmd("cd %s; npm install @maxmind/geoip2-node" % nodejs_serv_path)
     exec_shell_cmd("cd vis; npm install; npm run build; cd ..")
-
+    
 def prepare_rust():
     exec_shell_cmd("sudo apt-get install -y rustc")
 
@@ -180,14 +180,8 @@ if __name__ == '__main__':
         prepare_shadow()
         #prepare_nodejs()
         prepare_rust()
-        prepare_golang()
 
         prepare_shadow_dependencies()
-        ### currently, eosio induces problem for git Action tests.
-        ### Until the complete tests are done, let's exclude following external modules from git all build
-        # prepare_zcash_dependencies()
-        # prepare_monero_dependencies()
-        # prepare_eos_dependencies()
 
         # ## install boost-lib
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")

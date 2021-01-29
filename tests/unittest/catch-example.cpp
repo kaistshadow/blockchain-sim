@@ -15,5 +15,8 @@ TEST_CASE("example1") {
 TEST_CASE("example2-BLEEP") {
     using namespace libBLEEP;
 
-    REQUIRE(gArgs.GetArg("test") == "");
+//    REQUIRE(gArgs.GetArg("test") == "");
+    REQUIRE("" == "");
+    REQUIRE(gArgs.GetArg("-id") == "noid");
+    // gArgs.GetArg("test");
 }

@@ -209,7 +209,7 @@ void BL_PeerConnectivityLayer_API::RecvMsgHandler(PeerId sourcePeerId,
         // Other (protocol) messages are handled by Layer3 event (ProtocolRecvMsg)
         AsyncEvent event(AsyncEventEnum::ProtocolRecvMsg);
         event.GetData().SetProtocolMsg(msg);
-        g_mainEventManager->PushAsyncEvent(event);
+        MainEventManager::Instance()->PushAsyncEvent(event);
     }
 }
 

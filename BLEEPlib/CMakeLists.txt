@@ -34,6 +34,7 @@ set(SRCS
         src/BL2_peer_connectivity/PeerManager.cpp
         src/BL2_peer_connectivity/AddrManager.cpp
         src/BL2_peer_connectivity/AdvertisementManager.cpp
+        src/BL3_protocol/ProtocolLayer_API.cpp
         src/BL3_protocol/ProtocolLayerEx1.cpp
         src/BL3_protocol/TxGossipProtocol.cpp
         src/BL3_protocol/TxPool.cpp

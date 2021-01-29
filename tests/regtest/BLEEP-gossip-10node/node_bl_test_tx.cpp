@@ -22,9 +22,6 @@
 using namespace libBLEEP;
 
 
-std::unique_ptr<libBLEEP_BL::BL_PeerConnectivityLayer_API> libBLEEP_BL::g_PeerConnectivityLayer_API;
-std::unique_ptr<libBLEEP_BL::BL_ProtocolLayer_API> libBLEEP_BL::g_ProtocolLayer_API;
-std::unique_ptr<libBLEEP_BL::MainEventManager> libBLEEP_BL::g_mainEventManager;
 std::unique_ptr<libBLEEP_BL::ShadowLayer> libBLEEP_BL::g_ShadowLayer;
 
 int main(int argc, char *argv[]) {
@@ -40,13 +37,14 @@ int main(int argc, char *argv[]) {
     std::cout << "main started" << "\n";
 
     /* allocate mainEventManager */
-    libBLEEP_BL::g_mainEventManager = std::unique_ptr<libBLEEP_BL::MainEventManager>(new libBLEEP_BL::MainEventManager(libBLEEP_BL::AsyncEventEnum::AllEvent));
-    /* allocate peerConnectivityLayer */
+    libBLEEP_BL::MainEventManager::InitInstance(libBLEEP_BL::AsyncEventEnum::AllEvent);
     std::string myId = gArgs.GetArg("-id", "noid");
-    libBLEEP_BL::g_PeerConnectivityLayer_API = std::unique_ptr<libBLEEP_BL::BL_PeerConnectivityLayer_API>(new libBLEEP_BL::BL_PeerConnectivityLayer(myId));
+    libBLEEP_BL::BL_PeerConnectivityLayer_API::InitInstance(myId);
+
+    libBLEEP_BL::BL_ProtocolLayer_API::InitInstance("Ex1");
+
     /* allocate protocol */
-    libBLEEP_BL::g_ProtocolLayer_API = std::unique_ptr<libBLEEP_BL::BL_ProtocolLayer_API>(new libBLEEP_BL::BL_ProtocolLayerEx1());
-    libBLEEP_BL::g_ProtocolLayer_API->InitiateProtocol();
+    libBLEEP_BL::BL_ProtocolLayer_API::Instance()->InitiateProtocol();
 
     /* allocate Consensus Protocol implementation */
     // Need to be filled
@@ -62,29 +60,29 @@ int main(int argc, char *argv[]) {
     std::cout << "before connect" << "\n";
     for (auto neighborPeerIdStr : gArgs.GetArgs("-connect"))
         // libBLEEP_BL::g_SocketLayer_API->ConnectSocket(neighborPeerIdStr);
-        libBLEEP_BL::g_PeerConnectivityLayer_API->ConnectPeer(libBLEEP_BL::PeerId(neighborPeerIdStr));
+        libBLEEP_BL::BL_PeerConnectivityLayer_API::Instance()->ConnectPeer(libBLEEP_BL::PeerId(neighborPeerIdStr));
 
     std::cout << "after connect" << "\n";
 
     while(true) {
         std::cout << "while" << "\n";
-        libBLEEP_BL::g_mainEventManager->Wait(); // main event loop (wait for next event)
+        libBLEEP_BL::MainEventManager::Instance()->Wait(); // main event loop (wait for next event)
 
         // loop returned
         PrintTimespec("mainEventManager.Wait returned");
 
-        libBLEEP_BL::AsyncEvent event = libBLEEP_BL::g_mainEventManager->PopAsyncEvent();
-        
+        libBLEEP_BL::AsyncEvent event = libBLEEP_BL::MainEventManager::Instance()->PopAsyncEvent();
+
         switch (event.GetType()) {
-        case libBLEEP_BL::AsyncEventEnum::Layer1_Event_Start ... libBLEEP_BL::AsyncEventEnum::Layer1_Event_End:
-            libBLEEP_BL::BL_SocketLayer_API::Instance()->SwitchAsyncEventHandler(event);
-            // if (event.GetType() == libBLEEP_BL::AsyncEventEnum::SocketConnect) {
+            case libBLEEP_BL::AsyncEventEnum::Layer1_Event_Start ... libBLEEP_BL::AsyncEventEnum::Layer1_Event_End:
+                libBLEEP_BL::BL_SocketLayer_API::Instance()->SwitchAsyncEventHandler(event);
+                // if (event.GetType() == libBLEEP_BL::AsyncEventEnum::SocketConnect) {
             //     libBLEEP_BL::g_SocketLayer_API->SendToSocket(event.GetData().GetNewlyConnectedSocket(), "hello", 5);
             //     libBLEEP_BL::g_SocketLayer_API->SendToSocket(event.GetData().GetNewlyConnectedSocket(), "world", 5);
             // }
             break;
         case libBLEEP_BL::AsyncEventEnum::Layer2_Event_Start ... libBLEEP_BL::AsyncEventEnum::Layer2_Event_End:
-            libBLEEP_BL::g_PeerConnectivityLayer_API->SwitchAsyncEventHandler(event);
+            libBLEEP_BL::BL_PeerConnectivityLayer_API::Instance()->SwitchAsyncEventHandler(event);
             break;
         }
     }

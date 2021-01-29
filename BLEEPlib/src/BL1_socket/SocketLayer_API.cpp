@@ -59,7 +59,7 @@ void BL_SocketLayer_API::ConnectHandler(int fd) {
             AsyncEvent event(AsyncEventEnum::SocketConnectFailed);
             event.GetData().SetFailedSocket(fd);
             event.GetData().SetFailedDomain(sock->GetDomain());
-            g_mainEventManager->PushAsyncEvent(event);
+            MainEventManager::Instance()->PushAsyncEvent(event);
         }
 
         _socketManager.RemoveConnectSocket(fd);
@@ -79,7 +79,7 @@ void BL_SocketLayer_API::ConnectHandler(int fd) {
     // TODO : push event 'PeerSocketConnect'
     AsyncEvent event(AsyncEventEnum::PeerSocketConnect);
     event.GetData().SetDataSocket(_socketManager.GetDataSocket(fd));
-    g_mainEventManager->PushAsyncEvent(event);
+    MainEventManager::Instance()->PushAsyncEvent(event);
 
 }
 
@@ -106,7 +106,7 @@ void BL_SocketLayer_API::RecvHandler(int fd) {
             // TODO : notify socketClose event?
             AsyncEvent event(AsyncEventEnum::PeerSocketClose);
             event.GetData().SetClosedSocket(_socketManager.GetDataSocket(fd));
-            g_mainEventManager->PushAsyncEvent(event);
+            MainEventManager::Instance()->PushAsyncEvent(event);
 
             _socketManager.RemoveDataSocket(fd);
             _recvBuffManager.RemoveRecvBuffer(fd);
@@ -159,7 +159,7 @@ void BL_SocketLayer_API::RecvHandler(int fd) {
                         AsyncEvent event(AsyncEventEnum::PeerNotifyRecv);
                         event.GetData().SetNeighborId(msg->GetSource());
                         event.GetData().SetIncomingSocket(_socketManager.GetDataSocket(fd));
-                        g_mainEventManager->PushAsyncEvent(event);
+                        MainEventManager::Instance()->PushAsyncEvent(event);
                     } else if (msg->GetType() == "GETADDR") {
                         // GETADDR message is handled by generic (Layer2) PeerRecvMsg event
                     } else if (msg->GetType() == "ADDR") {
@@ -176,7 +176,7 @@ void BL_SocketLayer_API::RecvHandler(int fd) {
                     AsyncEvent event(AsyncEventEnum::PeerRecvMsg);
                     event.GetData().SetMsgSourceId(msg->GetSource());
                     event.GetData().SetMsg(msg);
-                    g_mainEventManager->PushAsyncEvent(event);
+                    MainEventManager::Instance()->PushAsyncEvent(event);
 
                     // TODO : recvBuffer should be updated efficiently. (minimizing a duplication)
                     std::string remain = recvBuffer->recv_str.substr(BLEEP_MAGIC_SIZE + sizeof(int) + msg_size);

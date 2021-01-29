@@ -2,7 +2,8 @@
 
 using namespace libBLEEP_BL;
 
-BL_ProtocolLayerEx1::BL_ProtocolLayerEx1() : _txGossipProtocol(nullptr) {
+BL_ProtocolLayerEx1::BL_ProtocolLayerEx1() : BL_ProtocolLayer_API(),
+                                             _txGossipProtocol(nullptr) {
     std::shared_ptr<TxPool> txPool = std::make_shared<TxPool>();
     _txPool = txPool;
     _txGossipProtocol.SetTxPool(txPool);

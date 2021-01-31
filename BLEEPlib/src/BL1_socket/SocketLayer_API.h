@@ -15,8 +15,8 @@ namespace libBLEEP_BL {
     protected:
         BL_SocketLayer_API();
 
-    private:
         static BL_SocketLayer_API *_instance;
+
 
     public:
         virtual ~BL_SocketLayer_API() {};
@@ -31,18 +31,18 @@ namespace libBLEEP_BL {
 
         virtual void DisconnectSocket(int fd);
 
-    private:
+    protected:
         SocketManager _socketManager;
         RecvBufferManager _recvBuffManager;
 
         /* handler functions for each asynchronous event */
-        void AcceptHandler(int fd);
+        virtual void AcceptHandler(int fd);
 
-        void ConnectHandler(int fd);
+        virtual void ConnectHandler(int fd);
 
-        void RecvHandler(int fd);
+        virtual void RecvHandler(int fd);
 
-        void WriteHandler(int fd);
+        virtual void WriteHandler(int fd);
 
     };
 

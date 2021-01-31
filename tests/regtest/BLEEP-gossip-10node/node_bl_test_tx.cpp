@@ -1,9 +1,6 @@
 #include "BL_MainEventManager.h"
-#include "BL1_socket/SocketLayer.h"
 #include "BL1_socket/SocketLayer_API.h"
-#include "BL2_peer_connectivity/PeerConnectivityLayer.h"
 #include "BL2_peer_connectivity/PeerConnectivityLayer_API.h"
-#include "BL3_protocol/ProtocolLayerEx1.h"
 #include "BL3_protocol/ProtocolLayer_API.h"
 #include "BL_ShadowLayer.h"
 
@@ -45,6 +42,8 @@ int main(int argc, char *argv[]) {
 
     /* allocate protocol */
     libBLEEP_BL::BL_ProtocolLayer_API::Instance()->InitiateProtocol();
+
+    libBLEEP_BL::BL_SocketLayer_API::Instance();
 
     /* allocate Consensus Protocol implementation */
     // Need to be filled

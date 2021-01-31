@@ -5,6 +5,7 @@
 #include "BL_MainEventManager.h"
 #include "BL1_socket/SocketLayer_Bitcoin.h"
 #include "BL1_socket/SocketLayer_API.h"
+#include "BL2_peer_connectivity/PeerConnectivityLayer_API.h"
 
 
 #include "utility/ArgsManager.h"
@@ -61,8 +62,10 @@ int main(int argc, char *argv[]) {
     /* allocate mainEventManager */
     libBLEEP_BL::MainEventManager::InitInstance();
 
+    libBLEEP_BL::BL_SocketLayer_API::Instance();  // TODO: Without this line, MainEventManager instance stucks in infinite loop since there's no event for epoll_wait(?)
     /* allocate peerConnectivityLayer */
-//    std::string myId = gArgs.GetArg("-id", "noid");
+    std::string myId = gArgs.GetArg("-id", "noid");
+    libBLEEP_BL::BL_PeerConnectivityLayer_API::InitInstance(myId);
 //    libBLEEP_BL::g_PeerConnectivityLayer_API = std::unique_ptr<libBLEEP_BL::BL_PeerConnectivityLayer_API>(new libBLEEP_BL::BL_PeerConnectivityLayer(myId));
 
 

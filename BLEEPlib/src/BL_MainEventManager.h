@@ -13,24 +13,24 @@ namespace libBLEEP_BL {
     class DataSocket;
 
     enum class AsyncEventEnum {
-        Base,
-        Layer1_Event_Start,
-        SocketAccept,
-        SocketConnect,
-        SocketConnectFailed,
-        SocketRecv,
-        SocketWrite,
+        Base,                       //0
+        Layer1_Event_Start,         //1
+        SocketAccept,               //2
+        SocketConnect,              //3
+        SocketConnectFailed,        //4
+        SocketRecv,                 //5
+        SocketWrite,                //6
         Layer1_Event_End,
 
 
         Layer2_Event_Start,
-        BitcoinRecvMsg,
+        BitcoinRecvMsg,             //9
 
         //
-        PeerSocketConnect,
-        PeerSocketClose,
-        PeerRecvMsg,
-        PeerNotifyRecv,
+        PeerSocketConnect,          //10
+        PeerSocketClose,            //11
+        PeerRecvMsg,                //12
+        PeerNotifyRecv,             //13
         // CompleteAsyncConnectPeer,
         // ErrorAsyncConnectPeer,
         // NewPeerConnected,  /* connection estabilished by neighbor peer */
@@ -39,8 +39,12 @@ namespace libBLEEP_BL {
 
 
         Layer3_Event_Start,
-        ProtocolRecvMsg,
-        Layer3_Event_End,    
+        ProtocolRecvMsg,            //16
+        Layer3_Event_End,
+
+        UnitTest_Event_Start,
+        FinishTest,                 //19
+        UnitTest_Event_End,
 
         Layer5_Event_END,
         AllEvent,

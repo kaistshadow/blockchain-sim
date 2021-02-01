@@ -26,14 +26,15 @@ endif(BLEEP_DEBUG STREQUAL ON)
 set(SRCS
         src/BL_MainEventManager.cpp
         src/BL1_socket/Socket.cpp
-        src/BL1_socket/SocketLayer.cpp
+        src/BL1_socket/SocketLayer_API.cpp
         src/BL1_socket/SocketManager.cpp
         src/BL1_socket/RecvBufferManager.cpp
         src/BL1_socket/SocketLayer_Bitcoin.cpp
-        src/BL2_peer_connectivity/PeerConnectivityLayer.cpp
+        src/BL2_peer_connectivity/PeerConnectivityLayer_API.cpp
         src/BL2_peer_connectivity/PeerManager.cpp
         src/BL2_peer_connectivity/AddrManager.cpp
         src/BL2_peer_connectivity/AdvertisementManager.cpp
+        src/BL3_protocol/ProtocolLayer_API.cpp
         src/BL3_protocol/ProtocolLayerEx1.cpp
         src/BL3_protocol/TxGossipProtocol.cpp
         src/BL3_protocol/TxPool.cpp

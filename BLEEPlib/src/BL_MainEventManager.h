@@ -181,18 +181,29 @@ namespace libBLEEP_BL {
 
         /* Internal data structures
            for managing the triggered asynchronous event */
-        std::queue<AsyncEvent> _eventQueue;        
+        std::queue<AsyncEvent> _eventQueue;
 
         /* Internally handling async events whose value is less than _intervalHanldeEventEnum */
         AsyncEventEnum _internalHandleEventEnum;
 
+        /*********************************************************/
+        /* Singleton Pattern */
+        /*********************************************************/
+    public:
+        static MainEventManager *Instance();
 
+        static void InitInstance(AsyncEventEnum internalEventEnum = AsyncEventEnum::Base);
+
+    protected:
+        MainEventManager(AsyncEventEnum internalEventEnum = AsyncEventEnum::Base);
+
+    private:
+        static MainEventManager *_instance;
 
     public:
         /*********************************************************/
         /* Public API designed for main event loop controls */
         /*********************************************************/
-        MainEventManager(AsyncEventEnum internalEventEnum = AsyncEventEnum::Base);
 
         /* blocking API that awaits for next asynchronous event */
         void Wait();
@@ -203,7 +214,6 @@ namespace libBLEEP_BL {
         AsyncEvent PopAsyncEvent();
     };
 
-    extern std::unique_ptr<MainEventManager> g_mainEventManager;
 
 }
 

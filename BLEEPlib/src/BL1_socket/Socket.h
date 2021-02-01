@@ -45,7 +45,7 @@ namespace libBLEEP_BL {
 
                 AsyncEvent event(AsyncEventEnum::SocketAccept);
                 event.GetData().SetNewlyAcceptedSocket(w.fd);
-                g_mainEventManager->PushAsyncEvent(event);
+                MainEventManager::Instance()->PushAsyncEvent(event);
                 std::cout << "listen socket IO : event pushed!" << "\n";
             }
         public:
@@ -88,7 +88,7 @@ namespace libBLEEP_BL {
 
                 AsyncEvent event(AsyncEventEnum::SocketConnect);
                 event.GetData().SetNewlyConnectedSocket(w.fd);
-                g_mainEventManager->PushAsyncEvent(event);
+                MainEventManager::Instance()->PushAsyncEvent(event);
             }
         public:
             ConnectSocketWatcher(int fd) {
@@ -153,11 +153,11 @@ namespace libBLEEP_BL {
                 if (revents & EV_READ) {
                     AsyncEvent event(AsyncEventEnum::SocketRecv);
                     event.GetData().SetRecvSocket(w.fd);
-                    g_mainEventManager->PushAsyncEvent(event);
+                    MainEventManager::Instance()->PushAsyncEvent(event);
                 } else if (revents & EV_WRITE) {
                     AsyncEvent event(AsyncEventEnum::SocketWrite);
                     event.GetData().SetWriteSocket(w.fd);
-                    g_mainEventManager->PushAsyncEvent(event);
+                    MainEventManager::Instance()->PushAsyncEvent(event);
                 }
             }
         public:

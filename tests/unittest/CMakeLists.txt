@@ -30,20 +30,8 @@ target_link_libraries(catch-example
         Catch
         BLEEP)
 
-
-## include shadow
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../shadow/cmake") # Path for ShadowTool Module
-include(ShadowTools) # load ShadowTools Module
-
-## enable CTEST
-enable_testing()
-
-
-add_executable(NODE_BL_TEST2 node_bl_test.cpp)
-target_link_libraries(NODE_BL_TEST2 BLEEP)
-
-# copy resulting plugins into source directory
-add_custom_command(TARGET NODE_BL_TEST2
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:NODE_BL_TEST2> ${CMAKE_CURRENT_SOURCE_DIR})
+add_executable(catch-BLEEPlib catch-BLEEPlib.cpp)
+target_link_libraries(catch-BLEEPlib
+        Catch
+        BLEEP)
 

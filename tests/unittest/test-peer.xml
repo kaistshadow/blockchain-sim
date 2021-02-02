@@ -44,7 +44,7 @@
   </node>
 
   <node id="client">
-    <application plugin="NODE" time="13" arguments="ConnectPeer client"/>
+    <application plugin="NODE" time="6" arguments="ConnectPeer client"/>
   </node>
 
   <!-- <node id="bleep1"> -->

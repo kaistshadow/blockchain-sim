@@ -173,10 +173,14 @@ void BL_SocketLayer_API::RecvHandler(int fd) {
                         libBLEEP::M_Assert(0, "Unexpected message");
 
 
-                    AsyncEvent event(AsyncEventEnum::PeerRecvMsg);
-                    event.GetData().SetMsgSourceId(msg->GetSource());
-                    event.GetData().SetMsg(msg);
-                    MainEventManager::Instance()->PushAsyncEvent(event);
+                    if (msg->GetType() != "notifyPeerId") {
+                        /* For notifyPeerId message, it is handled by PeerNotifyRecv event
+                         * so PeerRecvMsg doesn't need to be triggered */
+                        AsyncEvent event(AsyncEventEnum::PeerRecvMsg);
+                        event.GetData().SetMsgSourceId(msg->GetSource());
+                        event.GetData().SetMsg(msg);
+                        MainEventManager::Instance()->PushAsyncEvent(event);
+                    }
 
                     // TODO : recvBuffer should be updated efficiently. (minimizing a duplication)
                     std::string remain = recvBuffer->recv_str.substr(BLEEP_MAGIC_SIZE + sizeof(int) + msg_size);

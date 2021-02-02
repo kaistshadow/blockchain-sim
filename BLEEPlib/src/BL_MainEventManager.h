@@ -28,9 +28,10 @@ namespace libBLEEP_BL {
 
         //
         PeerSocketConnect,          //10
-        PeerSocketClose,            //11
-        PeerRecvMsg,                //12
-        PeerNotifyRecv,             //13
+        PeerSocketConnectFailed,    //11
+        PeerSocketClose,            //12
+        PeerRecvMsg,                //13
+        PeerNotifyRecv,             //14
         // CompleteAsyncConnectPeer,
         // ErrorAsyncConnectPeer,
         // NewPeerConnected,  /* connection estabilished by neighbor peer */
@@ -39,11 +40,11 @@ namespace libBLEEP_BL {
 
 
         Layer3_Event_Start,
-        ProtocolRecvMsg,            //16
+        ProtocolRecvMsg,            //17
         Layer3_Event_End,
 
         UnitTest_Event_Start,
-        FinishTest,                 //19
+        FinishTest,                 //20
         UnitTest_Event_End,
 
         Layer5_Event_END,
@@ -137,24 +138,36 @@ namespace libBLEEP_BL {
 
         // data set function for PeerNotifyRecv
         void SetNeighborId(PeerId peerId) { _neighborId = peerId; }
+
         void SetIncomingSocket(std::shared_ptr<DataSocket> sock) { _incomingSocket = sock; }
+
         // data access function for PeerNotifyRecv
         PeerId GetNeighborId() { return _neighborId; }
+
         std::shared_ptr<DataSocket> GetIncomingSocket() { return _incomingSocket; }
-        
+
         // data set function for PeerSocketConnect
         void SetDataSocket(std::shared_ptr<DataSocket> sock) { _dataSocket = sock; }
+
         // data access function for PeerSocketConnect
         std::shared_ptr<DataSocket> GetDataSocket() { return _dataSocket; }
 
+        // data set function for PeerSocketConnectFailed
+        // SetFailedDomain
+        // data access function for PeerSocketConnectFailed
+        // GetFailedDomain
+
         // data set function for PeerSocketClose
         void SetClosedSocket(std::shared_ptr<DataSocket> sock) { _closedSocket = sock; }
+
         // data access function for PeerSocketClose
         std::shared_ptr<DataSocket> GetClosedSocket() { return _closedSocket; }
 
         // data set function for PeerNotifyRecv
         void SetMsgSourceId(PeerId peerId) { _sourceId = peerId; }
+
         void SetMsg(std::shared_ptr<Message> msg) { _message = msg; }
+
         // data access function for PeerNotifyRecv
         PeerId GetMsgSourceId() { return _sourceId; }
         std::shared_ptr<Message> GetMsg() { return _message; }

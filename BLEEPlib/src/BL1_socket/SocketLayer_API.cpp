@@ -83,6 +83,12 @@ void BL_SocketLayer_API::ConnectHandler(int fd) {
 
 }
 
+void BL_SocketLayer_API::ConnectFailedHandler(int fd, std::string domain) {
+    AsyncEvent event(AsyncEventEnum::PeerSocketConnectFailed);
+    event.GetData().SetFailedDomain(domain);
+    MainEventManager::Instance()->PushAsyncEvent(event);
+}
+
 void BL_SocketLayer_API::RecvHandler(int fd) {
     std::cout << "DoRecv!" << "\n";
 
@@ -214,6 +220,12 @@ void BL_SocketLayer_API::SwitchAsyncEventHandler(AsyncEvent &event) {
             ConnectHandler(fd);
             break;
         }
+        case AsyncEventEnum::SocketConnectFailed: {
+            int fd = event.GetData().GetFailedSocket();
+            std::string domain = event.GetData().GetFailedDomain();
+            ConnectFailedHandler(fd, domain);
+            break;
+        }
         case AsyncEventEnum::SocketRecv: {
             int fd = event.GetData().GetRecvSocket();
             RecvHandler(fd);
@@ -230,6 +242,12 @@ void BL_SocketLayer_API::SwitchAsyncEventHandler(AsyncEvent &event) {
 int BL_SocketLayer_API::ConnectSocket(std::string dest) {
     int conn_socket = _socketManager.CreateNonblockConnectSocket(dest);
     return conn_socket;
+}
+
+void BL_SocketLayer_API::AbandonConnectSocket(int fd) {
+    _socketManager.RemoveConnectSocket(fd);
+    close(fd);
+    return;
 }
 
 void BL_SocketLayer_API::SendToSocket(int fd, const char *buf, int size) {

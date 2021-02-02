@@ -27,6 +27,8 @@ namespace libBLEEP_BL {
         /* public API functions */
         virtual int ConnectSocket(std::string dest);
 
+        virtual void AbandonConnectSocket(int fd);
+
         virtual void SendToSocket(int fd, const char *buf, int size);
 
         virtual void DisconnectSocket(int fd);
@@ -44,6 +46,7 @@ namespace libBLEEP_BL {
 
         virtual void WriteHandler(int fd);
 
+        virtual void ConnectFailedHandler(int fd, std::string domain);
     };
 
 }

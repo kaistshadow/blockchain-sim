@@ -35,6 +35,7 @@ namespace libBLEEP_BL {
         virtual bool DisconnectPeer(PeerId id);
         virtual bool SendMsgToPeer(PeerId id, std::shared_ptr<Message> msg);
         virtual bool Shutdown();
+
         virtual std::vector<PeerId> GetNeighborPeerIds();
 
 
@@ -45,13 +46,19 @@ namespace libBLEEP_BL {
 
         /* handler functions for each asynchronous event */
         void SocketConnectHandler(std::shared_ptr<DataSocket> dataSocket);
+
+        void SocketConnectFailedHandler(std::string failedDomain);
+
         void SocketCloseHandler(std::shared_ptr<DataSocket> closedSocket);
+
         void PeerNotifyHandler(PeerId incomingPeerId, std::shared_ptr<DataSocket> socket);
+
         void RecvMsgHandler(PeerId sourcePeerId, std::shared_ptr<Message> msg);
 
     private:
         // periodic outgoing connection update
         ev::timer _timer;
+
         void _timerCallback(ev::timer &w, int revents) {
             std::cout << "periodic outgoing connection update" << "\n";
             if (_peerManager.GetOutgoingPeerNum() < MAX_OUTGOINGPEER_NUM) {

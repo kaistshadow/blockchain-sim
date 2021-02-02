@@ -139,6 +139,67 @@ static int testConnectPeer(Nodetype t) {
 }
 
 
+// Testcase for ConnectPeer API (for void target)
+static int testConnectPeerToVoid(Nodetype t) {
+    if (t == NODE_CLIENT) {
+        /* client-side test logic */
+
+        /* init BLEEP library components */
+        MainEventManager::InitInstance();
+        BL_SocketLayer_API::Instance();
+        BL_PeerConnectivityLayer_API::InitInstance("client");
+
+        /* client tries to connect to server using BLEEP libray API*/
+        BL_PeerConnectivityLayer_API::Instance()->ConnectPeer(PeerId("server"));
+
+        /* init finishing timer */
+        EndTimer(30);
+        /* init event buffer which records all asynchronous events */
+        std::vector<AsyncEventEnum> eventQueue;
+
+        while (true) {
+            MainEventManager::Instance()->Wait(); // main event loop (wait for next event)
+            // loop returned
+            AsyncEvent event = MainEventManager::Instance()->PopAsyncEvent();
+            eventQueue.push_back(event.GetType());
+
+            switch (event.GetType()) {
+                case AsyncEventEnum::Layer1_Event_Start ... AsyncEventEnum::Layer1_Event_End:
+                    BL_SocketLayer_API::Instance()->SwitchAsyncEventHandler(event);
+                    break;
+                case AsyncEventEnum::Layer2_Event_Start ... AsyncEventEnum::Layer2_Event_End:
+                    BL_PeerConnectivityLayer_API::Instance()->SwitchAsyncEventHandler(event);
+                    break;
+                case AsyncEventEnum::FinishTest:
+                    /* This event indicates that the test is over */
+                    /* Thus, tries to check whether the eventQueue contains a valid event sequence */
+                    auto new_end = std::remove_if(eventQueue.begin(), eventQueue.end(),
+                                                  [](AsyncEventEnum &event) {
+                                                      return event == AsyncEventEnum::SocketWrite;
+                                                  });
+                    /* Remove socketwrite event records for simplicity */
+                    eventQueue.erase(new_end, eventQueue.end());
+
+                    for (auto event : eventQueue) {
+                        std::cout << (int) event << "\n";
+                    }
+
+                    /* Verify the event sequence */
+                    if (eventQueue[0] != AsyncEventEnum::SocketConnectFailed) return -1;
+                    if (eventQueue[1] != AsyncEventEnum::FinishTest) return -1;
+
+                    /* Event sequence is valid, thus return 0 */
+                    return 0;
+            }
+        }
+
+    } else if (t == NODE_SERVER) {
+        // server do nothing and immediately terminated
+        return 0;
+    }
+}
+
+
 // Testcase for DisconnectPeer API
 static int testDisconnectPeer(Nodetype t) {
     if (t == NODE_CLIENT) {
@@ -496,6 +557,8 @@ int main(int argc, char *argv[]) {
     test_func testFunc;
     if (testcase == "ConnectPeer") {
         testFunc = testConnectPeer;
+    } else if (testcase == "ConnectPeerToVoid") {
+        testFunc = testConnectPeerToVoid;
     } else if (testcase == "DisconnectPeer") {
         testFunc = testDisconnectPeer;
     } else if (testcase == "PeerWithExit") {

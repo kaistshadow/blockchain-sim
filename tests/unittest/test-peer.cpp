@@ -537,7 +537,99 @@ static int testPeerWithCloseExit(Nodetype t) {
                     break;
             }
         }
-    }    
+    }
+}
+
+
+// Testcase for peer terminated with explicit stop(shadow's configuration)
+static int testPeerWithStop(Nodetype t) {
+    if (t == NODE_CLIENT) {
+        /* client-side test logic */
+
+        /* init BLEEP library components */
+        MainEventManager::InitInstance();
+        BL_SocketLayer_API::Instance();
+        BL_PeerConnectivityLayer_API::InitInstance("client");
+
+        /* client tries to connect to server using BLEEP libray API*/
+        if (!BL_PeerConnectivityLayer_API::Instance()->ConnectPeer(PeerId("server"))) {
+            std::cout << "ConnectPeer failed" << "\n";
+            return -1;
+        }
+
+
+        /* init finishing timer */
+        EndTimer(150);
+        /* init event buffer which records all asynchronous events */
+        std::vector<AsyncEventEnum> eventQueue;
+
+        while (true) {
+            MainEventManager::Instance()->Wait(); // main event loop (wait for next event)
+            // loop returned
+            AsyncEvent event = MainEventManager::Instance()->PopAsyncEvent();
+            eventQueue.push_back(event.GetType());
+
+            switch (event.GetType()) {
+                case AsyncEventEnum::Layer1_Event_Start ... AsyncEventEnum::Layer1_Event_End:
+                    BL_SocketLayer_API::Instance()->SwitchAsyncEventHandler(event);
+                    break;
+                case AsyncEventEnum::Layer2_Event_Start ... AsyncEventEnum::Layer2_Event_End:
+                    BL_PeerConnectivityLayer_API::Instance()->SwitchAsyncEventHandler(event);
+                    break;
+                case AsyncEventEnum::FinishTest:
+                    /* This event indicates that the test is over */
+                    /* Thus, tries to check whether the eventQueue contains a valid event sequence */
+                    auto new_end = std::remove_if(eventQueue.begin(), eventQueue.end(),
+                                                  [](AsyncEventEnum &event) {
+                                                      return event == AsyncEventEnum::SocketWrite;
+                                                  });
+                    /* Remove socketwrite event records for simplicity */
+                    eventQueue.erase(new_end, eventQueue.end());
+
+                    for (auto event : eventQueue) {
+                        std::cout << (int) event << "\n";
+                    }
+
+                    /* Verify the event sequence */
+                    if (eventQueue[0] != AsyncEventEnum::SocketConnect) return -1;
+                    if (eventQueue[1] != AsyncEventEnum::PeerSocketConnect) return -1;
+                    // disconnecting peer by ping-pong mechanism
+                    if (eventQueue[2] != AsyncEventEnum::FinishTest) return -1;
+
+                    /* Event sequence is valid, thus return 0 */
+                    return 0;
+            }
+        }
+
+    } else if (t == NODE_SERVER) {
+        /* server-side test logic */
+
+        /* init BLEEP library components */
+        MainEventManager::InitInstance();
+        BL_SocketLayer_API::Instance();
+        BL_PeerConnectivityLayer_API::InitInstance("server");
+
+
+        /* init event buffer which records all asynchronous events */
+        std::vector<AsyncEventEnum> eventQueue;
+
+        while (true) {
+            MainEventManager::Instance()->Wait(); // main event loop (wait for next event)
+
+            // loop returned
+            AsyncEvent event = MainEventManager::Instance()->PopAsyncEvent();
+            eventQueue.push_back(event.GetType());
+
+            switch (event.GetType()) {
+                case AsyncEventEnum::Layer1_Event_Start ... AsyncEventEnum::Layer1_Event_End:
+                    BL_SocketLayer_API::Instance()->SwitchAsyncEventHandler(event);
+                    break;
+                case AsyncEventEnum::Layer2_Event_Start ... AsyncEventEnum::Layer2_Event_End:
+                    BL_PeerConnectivityLayer_API::Instance()->SwitchAsyncEventHandler(event);
+                    break;
+            }
+        }
+    }
 }
 
 
@@ -565,6 +657,8 @@ int main(int argc, char *argv[]) {
         testFunc = testPeerWithExit;
     } else if (testcase == "PeerWithCloseExit") {
         testFunc = testPeerWithCloseExit;
+    } else if (testcase == "PeerWithStop") {
+        testFunc = testPeerWithStop;
     }
 
     /* select node type */

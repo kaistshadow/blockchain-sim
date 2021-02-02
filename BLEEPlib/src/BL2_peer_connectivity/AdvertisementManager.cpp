@@ -7,7 +7,6 @@
 using namespace libBLEEP_BL;
 
 void AdvertisementManager::SendAdToPeers() {
-    std::cout << "periodic address advertisement" << "\n";
     std::cout << "size of _addrToSend:" << _addrToSend.size() << "\n";
 
     for (auto const& pair : _addrToSend) {

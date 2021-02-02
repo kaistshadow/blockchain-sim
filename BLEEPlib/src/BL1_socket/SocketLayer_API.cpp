@@ -83,6 +83,12 @@ void BL_SocketLayer_API::ConnectHandler(int fd) {
 
 }
 
+void BL_SocketLayer_API::ConnectFailedHandler(int fd, std::string domain) {
+    AsyncEvent event(AsyncEventEnum::PeerSocketConnectFailed);
+    event.GetData().SetFailedDomain(domain);
+    MainEventManager::Instance()->PushAsyncEvent(event);
+}
+
 void BL_SocketLayer_API::RecvHandler(int fd) {
     std::cout << "DoRecv!" << "\n";
 
@@ -173,10 +179,14 @@ void BL_SocketLayer_API::RecvHandler(int fd) {
                         libBLEEP::M_Assert(0, "Unexpected message");
 
 
-                    AsyncEvent event(AsyncEventEnum::PeerRecvMsg);
-                    event.GetData().SetMsgSourceId(msg->GetSource());
-                    event.GetData().SetMsg(msg);
-                    MainEventManager::Instance()->PushAsyncEvent(event);
+                    if (msg->GetType() != "notifyPeerId") {
+                        /* For notifyPeerId message, it is handled by PeerNotifyRecv event
+                         * so PeerRecvMsg doesn't need to be triggered */
+                        AsyncEvent event(AsyncEventEnum::PeerRecvMsg);
+                        event.GetData().SetMsgSourceId(msg->GetSource());
+                        event.GetData().SetMsg(msg);
+                        MainEventManager::Instance()->PushAsyncEvent(event);
+                    }
 
                     // TODO : recvBuffer should be updated efficiently. (minimizing a duplication)
                     std::string remain = recvBuffer->recv_str.substr(BLEEP_MAGIC_SIZE + sizeof(int) + msg_size);
@@ -210,6 +220,12 @@ void BL_SocketLayer_API::SwitchAsyncEventHandler(AsyncEvent &event) {
             ConnectHandler(fd);
             break;
         }
+        case AsyncEventEnum::SocketConnectFailed: {
+            int fd = event.GetData().GetFailedSocket();
+            std::string domain = event.GetData().GetFailedDomain();
+            ConnectFailedHandler(fd, domain);
+            break;
+        }
         case AsyncEventEnum::SocketRecv: {
             int fd = event.GetData().GetRecvSocket();
             RecvHandler(fd);
@@ -226,6 +242,12 @@ void BL_SocketLayer_API::SwitchAsyncEventHandler(AsyncEvent &event) {
 int BL_SocketLayer_API::ConnectSocket(std::string dest) {
     int conn_socket = _socketManager.CreateNonblockConnectSocket(dest);
     return conn_socket;
+}
+
+void BL_SocketLayer_API::AbandonConnectSocket(int fd) {
+    _socketManager.RemoveConnectSocket(fd);
+    close(fd);
+    return;
 }
 
 void BL_SocketLayer_API::SendToSocket(int fd, const char *buf, int size) {

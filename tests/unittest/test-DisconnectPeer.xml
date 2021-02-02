@@ -31,21 +31,24 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="NODE" path="libNODE_BL_TEST.so"/>
-  <plugin id="NODE_EXIT" path="libNODE_BL_EXITTEST.so"/>
+  <plugin id="NODE" path="libshadow-plugin-test-peer.so"/>
 
 
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="300"/>
   <!-- our nodes -->
 
-  <node id="bleep0">
-    <application plugin="NODE" time="5" arguments="-id=bleep0"/>
+  <node id="server">
+    <application plugin="NODE" time="5" arguments="DisconnectPeer server"/>
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>
 
-  <node id="bleep1">
-    <application plugin="NODE_EXIT" time="13" arguments="-id=bleep1 -connect=bleep0"/>
+  <node id="client">
+    <application plugin="NODE" time="6" arguments="DisconnectPeer client"/>
   </node>
+
+  <!-- <node id="bleep1"> -->
+  <!--   <application plugin="PEER_NONBLOCK_IO" time="13" arguments="bleep0"/> -->
+  <!-- </node> -->
 
 </shadow>

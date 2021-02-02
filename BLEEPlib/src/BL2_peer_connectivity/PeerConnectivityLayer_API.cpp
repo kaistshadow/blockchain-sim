@@ -1,34 +1,41 @@
+//
+// Created by ilios on 21. 1. 26..
+//
+
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/archive/binary_oarchive.hpp>
-#include <boost/serialization/export.hpp>
 
-// it is needed.
-#include <boost/archive/binary_iarchive.hpp>
-//
-
-#include "../utility/Assert.h"
-#include "../utility/GlobalClock.h"
-#include "shadow_interface.h"
-
-#include "PeerConnectivityLayer.h"
 #include "../BL1_socket/SocketLayer_API.h"
-
+#include "PeerConnectivityLayer_API.h"
+#include "utility/Assert.h"
+#include <iostream>
 #include <random>
+
+#include "shadow_interface.h"
 
 using namespace libBLEEP_BL;
 
-// #include "AddrAdvertisement.h"
-// BOOST_CLASS_EXPORT(AddrAd); // to avoid unregistered class error. 
-// EXPORT is only needed for serialization part.
+BL_PeerConnectivityLayer_API *BL_PeerConnectivityLayer_API::_instance = 0;
+
+BL_PeerConnectivityLayer_API *BL_PeerConnectivityLayer_API::Instance() {
+    if (_instance == 0) {
+        libBLEEP::M_Assert(0, "Instance must be initialized first.");
+    }
+    return _instance;
+}
+void BL_PeerConnectivityLayer_API::InitInstance(std::string id) {
+    libBLEEP::M_Assert(_instance == 0, "Instance must be initialized once.");
+    _instance = new BL_PeerConnectivityLayer_API(id);
+}
 
 
-BL_PeerConnectivityLayer::BL_PeerConnectivityLayer(std::string myPeerId)
-    : _peerManager(myPeerId), _adManager(Address(myPeerId)) {
+BL_PeerConnectivityLayer_API::BL_PeerConnectivityLayer_API(std::string myPeerId)
+        : _peerManager(myPeerId), _adManager(Address(myPeerId)) {
     _startOutgoingConnectionUpdateTimer(10);
 
     // Initiate timer for sending a ping message periodically.
-    _ping_timer.set<BL_PeerConnectivityLayer, &BL_PeerConnectivityLayer::_pingtimerCallback>(this);
+    _ping_timer.set<BL_PeerConnectivityLayer_API, &BL_PeerConnectivityLayer_API::_pingtimerCallback>(this);
     _ping_timer.set(60, 60); // ping-pong for every minute (60 seconds)
     _ping_timer.start();
 
@@ -38,26 +45,27 @@ BL_PeerConnectivityLayer::BL_PeerConnectivityLayer(std::string myPeerId)
     shadow_push_eventlog(buf);
 }
 
-
-void BL_PeerConnectivityLayer::SocketConnectHandler(std::shared_ptr<DataSocket> dataSocket) {
+void BL_PeerConnectivityLayer_API::SocketConnectHandler(std::shared_ptr<DataSocket> dataSocket) {
     // The data socket is established for the requested peer connection,
     // thus, as a next step, need to proceed a peer establishment process (i.e., version handshaking).
     auto peers = _peerManager.GetPeers();
-    
+
     // First, find peer for given data socket
     auto it = std::find_if(peers.begin(), peers.end(),
-                           [dataSocket](const std::pair<PeerId, std::shared_ptr<Peer> > &t) -> bool 
-                           {
-                               return (t.second->GetConnSocket() == dataSocket->GetFD()); 
+                           [dataSocket](const std::pair<PeerId, std::shared_ptr<Peer> > &t) -> bool {
+                               return (t.second->GetConnSocket() == dataSocket->GetFD());
                            });
     if (it == peers.end()) {
         libBLEEP::M_Assert(0, "no proper peer exists for connected outgoing socket");
     }
 
-    // assign a given (valid) datasocket for the peer object
     std::shared_ptr<Peer> outgoingPeer = it->second;
+    // clearTryConnect flag
+    outgoingPeer->ClearTryConnect();
+
+    // assign a given (valid) datasocket for the peer object
     outgoingPeer->SetDataSocket(dataSocket);
-    
+
     // append shadow log for connection estabilishment
     // Currently, we replace bitcoin-like version handshaking with a single notifyPeerId Msg.
     // Since socket establishment is already 3-way handshaking, 
@@ -68,43 +76,56 @@ void BL_PeerConnectivityLayer::SocketConnectHandler(std::shared_ptr<DataSocket> 
             _peerManager.GetMyPeerId().GetId().c_str(),
             outgoingPeer->GetPeerId().GetId().c_str());
     shadow_push_eventlog(buf);
-    
+
 
 
     // proceed a version handshaking process
     // TODO : implementation of bitcoin-like full version handshaking protocol
-    std::shared_ptr<Message> message = std::make_shared<Message>(_peerManager.GetMyPeerId(), outgoingPeer->GetPeerId(), "notifyPeerId");
+    std::shared_ptr<Message> message = std::make_shared<Message>(_peerManager.GetMyPeerId(), outgoingPeer->GetPeerId(),
+                                                                 "notifyPeerId");
 
     // send notifyPeerId message
     std::cout << "Send notifyPeerId MSG" << "\n";
     SendMsgToPeer(outgoingPeer->GetPeerId(), message);
     std::cout << "Sent notifyPeerId MSG" << "\n";
     // send GETADDR protocol message
-    std::shared_ptr<Message> getAddrMsg = std::make_shared<Message>(_peerManager.GetMyPeerId(), outgoingPeer->GetPeerId(), "GETADDR");
+    std::shared_ptr<Message> getAddrMsg = std::make_shared<Message>(_peerManager.GetMyPeerId(),
+                                                                    outgoingPeer->GetPeerId(), "GETADDR");
     std::cout << "Send GETADDR MSG" << "\n";
     SendMsgToPeer(outgoingPeer->GetPeerId(), getAddrMsg);
 
     // Append a peer address information for new outgoing peer
     _addrManager.Add(Address(outgoingPeer->GetPeerId().GetId(), libBLEEP::GetGlobalClock()));
-    
+
     // Reserver advertisement of my address for new outgoing peer
     _adManager.AdvertiseLocal(outgoingPeer->GetPeerId());
 }
 
-void BL_PeerConnectivityLayer::SocketCloseHandler(std::shared_ptr<DataSocket> closedSocket) {
+void BL_PeerConnectivityLayer_API::SocketConnectFailedHandler(std::string failedDomain) {
+    // check whether there's already active peer (i.e., peer with valid data socket)
+    std::shared_ptr<Peer> peer = _peerManager.FindPeer(PeerId(failedDomain));
+    if (peer && peer->IsActive()) {
+        libBLEEP::M_Assert(0, "SocketConnectFailed for valid peer?!");
+    }
+    if (peer && peer->IsTryConnect()) {
+        // clearTryConnect flag
+        peer->ClearTryConnect();
+    }
+}
+
+void BL_PeerConnectivityLayer_API::SocketCloseHandler(std::shared_ptr<DataSocket> closedSocket) {
     // The data socket is closed.
     // thus, we need to disconnect corresponding peer if necessary
     auto peers = _peerManager.GetPeers();
 
     if (closedSocket == nullptr) {
         std::cout << "null" << "\n";
-    }
-    else 
+    } else
         std::cout << "fd:" << closedSocket->GetFD() << "\n";
-    
+
     // First, find peer for given data socket
     auto it = std::find_if(peers.begin(), peers.end(),
-                           [closedSocket](const std::pair<PeerId, std::shared_ptr<Peer> > &t) -> bool 
+                           [closedSocket](const std::pair<PeerId, std::shared_ptr<Peer> > &t) -> bool
                            {
                                if (t.second->GetDataSocket() &&
                                    (t.second->GetDataSocket()->GetFD() == closedSocket->GetFD()))
@@ -136,13 +157,13 @@ void BL_PeerConnectivityLayer::SocketCloseHandler(std::shared_ptr<DataSocket> cl
         shadow_push_eventlog(buf);
     }
 
-    _peerManager.RemovePeer(peer);    
+    _peerManager.RemovePeer(peer);
 }
 
 
 
-void BL_PeerConnectivityLayer::RecvMsgHandler(PeerId sourcePeerId, 
-                                                 std::shared_ptr<Message> msg) {
+void BL_PeerConnectivityLayer_API::RecvMsgHandler(PeerId sourcePeerId,
+                                              std::shared_ptr<Message> msg) {
     char buf[256];
     sprintf(buf, "RecvMessage,%s,%s,%s,%s",
             sourcePeerId.GetId().c_str(),
@@ -167,15 +188,15 @@ void BL_PeerConnectivityLayer::RecvMsgHandler(PeerId sourcePeerId,
     else if (msgType == "ADDR") {
         std::cout << "received ADDR" << "\n";
         std::shared_ptr<AddrAd> addrAd = std::static_pointer_cast<AddrAd>(msg->GetObject());
-        
+
         std::string myAddr = _peerManager.GetMyPeerId().GetId();
         std::vector<Address>& vAddr = addrAd->GetVAddr();
         int size = vAddr.size();
         for (auto &addr : vAddr) {
             std::cout << "loop" << "\n";
-            if (addr.GetString() != myAddr) 
+            if (addr.GetString() != myAddr)
                 _addrManager.Add(addr);
-            
+
             std::cout << "after add" << "\n";
             // relay address
             if (size <= 10) {
@@ -183,7 +204,7 @@ void BL_PeerConnectivityLayer::RecvMsgHandler(PeerId sourcePeerId,
                 std::mt19937 mt(rd());
                 std::uniform_int_distribution<> dist(1,2); // number of relay
                 int relayCount = dist(mt);
-                
+
                 std::map<PeerId, std::shared_ptr<Peer>, PeerIdCompare>& peers = _peerManager.GetPeers();
                 // std::set<int> indexset;
                 for (int i = 0; i < relayCount; i++) {
@@ -218,11 +239,11 @@ void BL_PeerConnectivityLayer::RecvMsgHandler(PeerId sourcePeerId,
         // Other (protocol) messages are handled by Layer3 event (ProtocolRecvMsg)
         AsyncEvent event(AsyncEventEnum::ProtocolRecvMsg);
         event.GetData().SetProtocolMsg(msg);
-        g_mainEventManager->PushAsyncEvent(event);
+        MainEventManager::Instance()->PushAsyncEvent(event);
     }
 }
 
-void BL_PeerConnectivityLayer::PeerNotifyHandler(PeerId incomingPeerId, 
+void BL_PeerConnectivityLayer_API::PeerNotifyHandler(PeerId incomingPeerId,
                                                  std::shared_ptr<DataSocket> incomingSocket) {
     // check whether there's already active peer (i.e., peer with valid data socket)    
     std::shared_ptr<Peer> peer = _peerManager.FindPeer(incomingPeerId);
@@ -236,12 +257,12 @@ void BL_PeerConnectivityLayer::PeerNotifyHandler(PeerId incomingPeerId,
     // Check whether the number of incoming connection exceeds the limit.
     if (_peerManager.GetIncomingPeerNum() >= MAX_INCOMINGPEER_NUM) {
         std::cout << "PeerNotify requested (i.e., new incoming connection is established), "
-                     "but number of incomining commection exceeds its limit. " <<
+                     "but number of incoming connection exceeds its limit. " <<
                   "LIMIT:" << MAX_INCOMINGPEER_NUM << "current number of incoming connection:"
                   << _peerManager.GetIncomingPeerNum() << "\n";
 
         // Disconnect incoming socket, since we cannot make a peer connection due to limit
-        g_SocketLayer_API->DisconnectSocket(incomingSocket->GetFD());
+        BL_SocketLayer_API::Instance()->DisconnectSocket(incomingSocket->GetFD());
         return;
     }
 
@@ -261,16 +282,18 @@ void BL_PeerConnectivityLayer::PeerNotifyHandler(PeerId incomingPeerId,
     _peerManager.AddPeer(peer);
 }
 
-void BL_PeerConnectivityLayer::SwitchAsyncEventHandler(AsyncEvent& event) {
+void BL_PeerConnectivityLayer_API::SwitchAsyncEventHandler(AsyncEvent& event) {
     switch (event.GetType()) {
-    case AsyncEventEnum::PeerSocketConnect:
-        {
+        case AsyncEventEnum::PeerSocketConnect: {
             std::shared_ptr<DataSocket> dataSocket = event.GetData().GetDataSocket();
             SocketConnectHandler(dataSocket);
             break;
         }
-    case AsyncEventEnum::PeerSocketClose:
-        {
+        case AsyncEventEnum::PeerSocketConnectFailed: {
+            std::string failedDomain = event.GetData().GetFailedDomain();
+            SocketConnectFailedHandler(failedDomain);
+        }
+        case AsyncEventEnum::PeerSocketClose: {
             std::cout << "PeerSocketClose" << "\n";
             std::shared_ptr<DataSocket> closedSocket = event.GetData().GetClosedSocket();
             SocketCloseHandler(closedSocket);
@@ -293,7 +316,7 @@ void BL_PeerConnectivityLayer::SwitchAsyncEventHandler(AsyncEvent& event) {
     }
 }
 
-bool BL_PeerConnectivityLayer::ConnectPeer(PeerId id) {
+bool BL_PeerConnectivityLayer_API::ConnectPeer(PeerId id) {
     // check whether there's active peer (i.e., peer with valid data socket)    
     std::shared_ptr<Peer> peer = _peerManager.FindPeer(id);
     if (peer && peer->IsActive()) {
@@ -305,8 +328,9 @@ bool BL_PeerConnectivityLayer::ConnectPeer(PeerId id) {
 
 
     // Assign a new Peer while initializing a new connectSocket using SocketLayer API
-    int conn_socket = g_SocketLayer_API->ConnectSocket(id.GetId());
+    int conn_socket = BL_SocketLayer_API::Instance()->ConnectSocket(id.GetId());
     peer = std::make_shared<Peer>(id, PeerType::OutgoingPeer, conn_socket);
+    peer->SetTryConnect();
 
     // Add assigned peer to PeerManager
     _peerManager.AddPeer(peer);
@@ -315,7 +339,7 @@ bool BL_PeerConnectivityLayer::ConnectPeer(PeerId id) {
     return true;
 }
 
-bool BL_PeerConnectivityLayer::DisconnectPeer(PeerId id) {
+bool BL_PeerConnectivityLayer_API::DisconnectPeer(PeerId id) {
     // check whether there's active peer (i.e., peer with valid data socket)    
     std::shared_ptr<Peer> peer = _peerManager.FindPeer(id);
     std::cout << "Disconnect Peer(" << id.GetId() << ")\n";
@@ -323,17 +347,25 @@ bool BL_PeerConnectivityLayer::DisconnectPeer(PeerId id) {
         std::cout << "DisconnectPeer is requested for invalid peer!" << "\n";
         return false;
     }
-    if (!peer->IsActive()) {
-        std::cout << "DisconnectPeer is requested for inactive peer." << "\n";
-        std::cout << "Thus, just remove peer from peerManager." << "\n";
-        _peerManager.RemovePeer(peer);
-        return true;
-    }
 
-    // remove data socket
-    int socketFD = peer->GetDataSocket()->GetFD();
-    std::shared_ptr<DataSocket> dSocket = peer->GetDataSocket();
-    g_SocketLayer_API->DisconnectSocket(socketFD);
+    // check whether there's ongoing connection try for the peer
+    if (peer->IsTryConnect()) {
+        // remove connect socket
+        BL_SocketLayer_API::Instance()->AbandonConnectSocket(peer->GetConnSocket());
+    } else {
+        libBLEEP::M_Assert(peer->GetDataSocket() != nullptr, "valid peer should have valid data socket");
+        // remove data socket
+        int socketFD = peer->GetDataSocket()->GetFD();
+        std::shared_ptr<DataSocket> dSocket = peer->GetDataSocket();
+        BL_SocketLayer_API::Instance()->DisconnectSocket(socketFD);
+    }
+//    if (!peer->IsActive()) {
+//        std::cout << "DisconnectPeer is requested for inactive peer." << "\n";
+//        std::cout << "Thus, just remove peer from peerManager." << "\n";
+//        _peerManager.RemovePeer(peer);
+//        return true;
+//    }
+
 
     if (peer->GetPeerType() == PeerType::IncomingPeer) {
         char buf[256];
@@ -341,24 +373,23 @@ bool BL_PeerConnectivityLayer::DisconnectPeer(PeerId id) {
                 _peerManager.GetMyPeerId().GetId().c_str(),
                 id.GetId().c_str());
         shadow_push_eventlog(buf);
-    }
-    else if (peer->GetPeerType() == PeerType::OutgoingPeer) {
+    } else if (peer->GetPeerType() == PeerType::OutgoingPeer) {
         char buf[256];
         sprintf(buf, "DisconnectOutgoingPeer,%s,%s",
                 _peerManager.GetMyPeerId().GetId().c_str(),
                 id.GetId().c_str());
         shadow_push_eventlog(buf);
     }
-    
+
     _peerManager.RemovePeer(peer);
 
     return true;
 }
 
 
-    
 
-bool BL_PeerConnectivityLayer::SendMsgToPeer(PeerId id, std::shared_ptr<Message> msg) {
+
+bool BL_PeerConnectivityLayer_API::SendMsgToPeer(PeerId id, std::shared_ptr<Message> msg) {
     // check whether the given destination peer is valid
     std::shared_ptr<Peer> dest = _peerManager.FindPeer(id);
     if (!dest || !dest->IsActive())
@@ -373,10 +404,10 @@ bool BL_PeerConnectivityLayer::SendMsgToPeer(PeerId id, std::shared_ptr<Message>
     boost::archive::binary_oarchive oa(s);
     oa << msg;
     s.flush();
-    
+
     // Before sending MSG, send the bleep magic value first.
     dest->GetDataSocket()->AppendToSendBuff(BLEEP_MAGIC, BLEEP_MAGIC_SIZE);
-    
+
     // Before sending MSG, send the length of the MSG
     int message_len = serial_str.size();
     dest->GetDataSocket()->AppendToSendBuff((const char*)&message_len, sizeof(int));
@@ -385,7 +416,7 @@ bool BL_PeerConnectivityLayer::SendMsgToPeer(PeerId id, std::shared_ptr<Message>
 
     const char *buf = serial_str.c_str();
     dest->GetDataSocket()->AppendToSendBuff(buf, message_len);
-    
+
     // append shadow log
     char logbuf[256];
     sprintf(logbuf, "UnicastMessage,%s,%s,%s,%s",
@@ -398,8 +429,8 @@ bool BL_PeerConnectivityLayer::SendMsgToPeer(PeerId id, std::shared_ptr<Message>
     return true;
 }
 
-bool BL_PeerConnectivityLayer::Shutdown() {
-    auto peers = _peerManager.GetPeerIds();    
+bool BL_PeerConnectivityLayer_API::Shutdown() {
+    auto peers = _peerManager.GetPeerIds();
     for ( auto peerId : peers) {
         DisconnectPeer(peerId);
         std::cout << "DisconnectPeer " << peerId.GetId() << "\n";
@@ -416,7 +447,7 @@ bool BL_PeerConnectivityLayer::Shutdown() {
     return true;
 }
 
-std::vector<PeerId> BL_PeerConnectivityLayer::GetNeighborPeerIds() {
+std::vector<PeerId> BL_PeerConnectivityLayer_API::GetNeighborPeerIds() {
     std::vector<PeerId> peerIds = _peerManager.GetPeerIds();
     std::vector<PeerId> results;
     for (auto peerId : peerIds) {

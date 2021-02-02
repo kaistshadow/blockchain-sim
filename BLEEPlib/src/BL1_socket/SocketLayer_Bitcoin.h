@@ -19,34 +19,22 @@
 namespace libBLEEP_BL {
 
     class BL_SocketLayer_Bitcoin: public BL_SocketLayer_API {
-    private:
-        SocketManager _socketManager;
-        RecvBufferManager _recvBuffManager;
 
-        /* handler functions for each asynchronous event */
-        void AcceptHandler(int fd);
-        void ConnectHandler(int fd);
-        void RecvHandler(int fd);
-        void WriteHandler(int fd);
-
-    public:
+    protected:
         BL_SocketLayer_Bitcoin();
 
-        /* Switch asynchronous event to proper handler */
-        virtual void SwitchAsyncEventHandler(AsyncEvent &event);
+    public:
+        static void RegisterInstance();
 
+        static BL_SocketLayer_Bitcoin *Instance();
 
         /* public API functions */
-        virtual int ConnectSocket(std::string dest); // return fd
+        void CreateSocketForShadowIP(int port, const char *shadow_ip_addr);
 
-        virtual void SendToSocket(int fd, const char *buf, int size);
 
-        virtual void DisconnectSocket(int fd);
+    protected:
+        void RecvHandler(int fd);
 
-        virtual void CloseAllListenSocket() { _socketManager.CloseAllListenSocket(); };
-
-        /* for managing Shadow IPs */
-        virtual void CreateSocketForShadowIP(int port, const char *shadow_ip_addr);
     };
 
 }

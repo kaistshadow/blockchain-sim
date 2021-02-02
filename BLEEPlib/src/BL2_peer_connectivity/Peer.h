@@ -57,6 +57,8 @@ namespace libBLEEP_BL {
         // If a peer is an outgoing peer, connecting socket is needed before peer initialization.
         int _connSocket;
 
+        bool tryConnect = false;
+
         // datasocket will be assigned after the initialization of the socket is accomplished.
         std::shared_ptr<DataSocket> _dataSocket = nullptr;
 
@@ -75,7 +77,6 @@ namespace libBLEEP_BL {
         Peer(PeerId id, PeerType type, std::shared_ptr<DataSocket> dataSocket)
                 : _id(id), _peerType(type), _dataSocket(dataSocket) {};
 
-
         PeerId &GetPeerId() { return _id; }
 
         int GetConnSocket() { return _connSocket; }
@@ -89,9 +90,17 @@ namespace libBLEEP_BL {
 
         bool IsActive() { return _dataSocket != nullptr; }
 
+
         void SetPongReceived(bool flag) { _pongReceived = flag; }
 
         bool IsPongReceived() { return _pongReceived; }
+
+        /* set connectSocket status */
+        void SetTryConnect() { tryConnect = true; }
+
+        void ClearTryConnect() { tryConnect = false; }
+
+        bool IsTryConnect() { return tryConnect; }
     };
 
 }

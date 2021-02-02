@@ -33,6 +33,8 @@ namespace libBLEEP_BL {
 
         virtual void DisconnectSocket(int fd);
 
+        virtual void CloseAllListenSocket() {_socketManager.CloseAllListenSocket();} ;
+
     protected:
         SocketManager _socketManager;
         RecvBufferManager _recvBuffManager;
@@ -47,6 +49,7 @@ namespace libBLEEP_BL {
         virtual void WriteHandler(int fd);
 
         virtual void ConnectFailedHandler(int fd, std::string domain);
+
     };
 
 }

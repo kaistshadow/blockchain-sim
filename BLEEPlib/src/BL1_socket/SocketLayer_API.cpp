@@ -162,7 +162,7 @@ void BL_SocketLayer_API::RecvHandler(int fd) {
 
                     // TODO : Each msg should be handled as separate event, and switched to proper layers
                     if (msg->GetType() == "notifyPeerId") {
-                        AsyncEvent event(AsyncEventEnum::PeerNotifyRecv);
+                        AsyncEvent event(AsyncEventEnum::PeerRecvNotifyPeerId);
                         event.GetData().SetNeighborId(msg->GetSource());
                         event.GetData().SetIncomingSocket(_socketManager.GetDataSocket(fd));
                         MainEventManager::Instance()->PushAsyncEvent(event);
@@ -172,6 +172,10 @@ void BL_SocketLayer_API::RecvHandler(int fd) {
                         // ADDR message is handled by generic (Layer2) PeerRecvMsg event
                     } else if (msg->GetType().find("TXGOSSIP", 0) == 0) {
                         // TXGOSSIP protocol message are handled by generic (Layer2) PeerRecvMsg event
+                    } else if (msg->GetType().find("PING", 0) == 0) {
+                        // PING message is handled by generic (Layer2) PeerRecvMsg event
+                    } else if (msg->GetType().find("PONG", 0) == 0) {
+                        // PONG message is handled by generic (Layer2) PeerRecvMsg event
                     }
                         // If any new message is added, new statement should be added here.
                         // (This is for integrity check)

@@ -7,6 +7,7 @@
 
 #include <list>
 #include <string.h>
+#include <sys/socket.h>
 
 #define DEFAULT_SOCKET_PORT 3456
 #define BACKLOG 100     /* how many pending connections queue will hold */
@@ -48,10 +49,16 @@ namespace libBLEEP_BL {
                 MainEventManager::Instance()->PushAsyncEvent(event);
                 std::cout << "listen socket IO : event pushed!" << "\n";
             }
+
         public:
             ListenSocketWatcher(int fd) {
-                _watcher.set<ListenSocketWatcher, &ListenSocketWatcher::_listenSocketIOCallback> (this);
+                _watcher.set<ListenSocketWatcher, &ListenSocketWatcher::_listenSocketIOCallback>(this);
                 _watcher.start(fd, ev::READ);
+            }
+
+            ~ListenSocketWatcher() {
+                std::cout << "ListenSocketWatcher destructor called" << "\n";
+                _watcher.stop();
             }
         };
 
@@ -85,20 +92,31 @@ namespace libBLEEP_BL {
                     std::cout << "invalid event is triggered for connecting socket. " << "\n";
                     exit(-1);
                 }
+                int error;
+                socklen_t len;
+                if (getsockopt(w.fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+                    std::cout << "connect socket error" << "\n";
+                    exit(-1);
+                }
 
                 AsyncEvent event(AsyncEventEnum::SocketConnect);
                 event.GetData().SetNewlyConnectedSocket(w.fd);
                 MainEventManager::Instance()->PushAsyncEvent(event);
             }
+
         public:
             ConnectSocketWatcher(int fd) {
-                _watcher.set<ConnectSocketWatcher, &ConnectSocketWatcher::_connectSocketIOCallback> (this);
+                _watcher.set<ConnectSocketWatcher, &ConnectSocketWatcher::_connectSocketIOCallback>(this);
                 _watcher.start(fd, ev::WRITE);
+            }
+
+            ~ConnectSocketWatcher() {
+                std::cout << "ConnectSocketWatcher destructor called" << "\n";
             }
         };
 
         std::unique_ptr<ConnectSocketWatcher> _watcher;
-        
+
     private:
         std::string _domain;
 
@@ -107,7 +125,14 @@ namespace libBLEEP_BL {
 
         std::string GetDomain() { return _domain; }
 
-        virtual ~ConnectSocket() {}; // should not be closed. (same fd can be used for dataSocket)
+        virtual ~ConnectSocket() {
+
+            // file descriptor should not be closed. (same fd can be used for dataSocket)
+            // But, watcher should be stop
+            // A class’s destructor (whether or not you explicitly define one) automatically invokes the destructors for member objects.
+            // They are destroyed in the reverse order they appear within the declaration for the class.
+        };
+
         virtual SocketTypeEnum GetType() { return SocketTypeEnum::ConnectSocket; }
     };
 

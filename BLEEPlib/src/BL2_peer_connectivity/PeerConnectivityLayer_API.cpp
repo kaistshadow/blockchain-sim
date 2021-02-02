@@ -34,6 +34,11 @@ BL_PeerConnectivityLayer_API::BL_PeerConnectivityLayer_API(std::string myPeerId)
         : _peerManager(myPeerId), _adManager(Address(myPeerId)) {
     _startOutgoingConnectionUpdateTimer(10);
 
+    // Initiate timer for sending a ping message periodically.
+    _ping_timer.set<BL_PeerConnectivityLayer_API, &BL_PeerConnectivityLayer_API::_pingtimerCallback>(this);
+    _ping_timer.set(60, 60); // ping-pong for every minute (60 seconds)
+    _ping_timer.start();
+
     // append shadow log
     char buf[256];
     sprintf(buf, "InitPeerId,%s", myPeerId.c_str());
@@ -170,7 +175,7 @@ void BL_PeerConnectivityLayer_API::RecvMsgHandler(PeerId sourcePeerId,
 
     MessageType msgType = msg->GetType();
     if (msgType == "notifyPeerId") {
-        // this is initial message, and already handled by separate event ('PeerNotifyRecv')
+        // this is initial message, and already handled by separate event ('PeerRecvNotifyPeerId')
         // thus do nothing
     }
     else if (msgType == "GETADDR") {
@@ -219,8 +224,18 @@ void BL_PeerConnectivityLayer_API::RecvMsgHandler(PeerId sourcePeerId,
                 }
             }
         }
-    }
-    else {
+    } else if (msgType == "PING") {
+        // Reply a pong message when the peer receives ping message.
+        std::cout << "received PING" << "\n";
+
+        std::shared_ptr<Message> pongMsg = std::make_shared<Message>(_peerManager.GetMyPeerId(), sourcePeerId, "PONG");
+        SendMsgToPeer(sourcePeerId, pongMsg);
+    } else if (msgType == "PONG") {
+        // update ping received flag
+        auto peerPtr = _peerManager.FindPeer(sourcePeerId);
+        peerPtr->SetPongReceived(true);
+        std::cout << "receive PONG from " << sourcePeerId.GetId() << "\n";
+    } else {
         // Other (protocol) messages are handled by Layer3 event (ProtocolRecvMsg)
         AsyncEvent event(AsyncEventEnum::ProtocolRecvMsg);
         event.GetData().SetProtocolMsg(msg);
@@ -238,6 +253,20 @@ void BL_PeerConnectivityLayer_API::PeerNotifyHandler(PeerId incomingPeerId,
         std::cout << "PeerNotify is requested for duplicated peer!" << "\n";
         return;
     }
+
+    // Check whether the number of incoming connection exceeds the limit.
+    if (_peerManager.GetIncomingPeerNum() >= MAX_INCOMINGPEER_NUM) {
+        std::cout << "PeerNotify requested (i.e., new incoming connection is established), "
+                     "but number of incoming connection exceeds its limit. " <<
+                  "LIMIT:" << MAX_INCOMINGPEER_NUM << "current number of incoming connection:"
+                  << _peerManager.GetIncomingPeerNum() << "\n";
+
+        // Disconnect incoming socket, since we cannot make a peer connection due to limit
+        BL_SocketLayer_API::Instance()->DisconnectSocket(incomingSocket->GetFD());
+        return;
+    }
+
+
 
     // TODO : Can a peer be an outgoing peer and an incoming peer at the same time?
     // Currently, we ignore duplicated incoming peer.
@@ -276,7 +305,7 @@ void BL_PeerConnectivityLayer_API::SwitchAsyncEventHandler(AsyncEvent& event) {
             RecvMsgHandler(sourcePeerId, incomingMsg);
             break;
         }
-        case AsyncEventEnum::PeerNotifyRecv: {
+        case AsyncEventEnum::PeerRecvNotifyPeerId: {
             PeerId inPeerId = event.GetData().GetNeighborId();
             std::shared_ptr<DataSocket> incomingSocket = event.GetData().GetIncomingSocket();
             PeerNotifyHandler(inPeerId, incomingSocket);
@@ -313,6 +342,7 @@ bool BL_PeerConnectivityLayer_API::ConnectPeer(PeerId id) {
 bool BL_PeerConnectivityLayer_API::DisconnectPeer(PeerId id) {
     // check whether there's active peer (i.e., peer with valid data socket)    
     std::shared_ptr<Peer> peer = _peerManager.FindPeer(id);
+    std::cout << "Disconnect Peer(" << id.GetId() << ")\n";
     if (!peer) {
         std::cout << "DisconnectPeer is requested for invalid peer!" << "\n";
         return false;
@@ -329,6 +359,12 @@ bool BL_PeerConnectivityLayer_API::DisconnectPeer(PeerId id) {
         std::shared_ptr<DataSocket> dSocket = peer->GetDataSocket();
         BL_SocketLayer_API::Instance()->DisconnectSocket(socketFD);
     }
+//    if (!peer->IsActive()) {
+//        std::cout << "DisconnectPeer is requested for inactive peer." << "\n";
+//        std::cout << "Thus, just remove peer from peerManager." << "\n";
+//        _peerManager.RemovePeer(peer);
+//        return true;
+//    }
 
 
     if (peer->GetPeerType() == PeerType::IncomingPeer) {

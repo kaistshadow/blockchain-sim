@@ -31,7 +31,7 @@ namespace libBLEEP_BL {
         PeerSocketConnectFailed,    //11
         PeerSocketClose,            //12
         PeerRecvMsg,                //13
-        PeerNotifyRecv,             //14
+        PeerRecvNotifyPeerId,       //14
         // CompleteAsyncConnectPeer,
         // ErrorAsyncConnectPeer,
         // NewPeerConnected,  /* connection estabilished by neighbor peer */
@@ -84,7 +84,7 @@ namespace libBLEEP_BL {
         // data for PeerSocketClose event
         std::shared_ptr<DataSocket> _closedSocket;
 
-        // data for PeerNotifyRecv event
+        // data for PeerRecvNotifyPeerId event
         PeerId _neighborId;
         std::shared_ptr<DataSocket> _incomingSocket;
 
@@ -136,12 +136,12 @@ namespace libBLEEP_BL {
         uint32_t GetBitcoinPayloadLen() { return _bitcoinPayloadLen; }
         uint32_t GetBitcoinPayloadChecksum() { return _bitcoinPayloadChecksum; }
 
-        // data set function for PeerNotifyRecv
+        // data set function for PeerRecvNotifyPeerId
         void SetNeighborId(PeerId peerId) { _neighborId = peerId; }
 
         void SetIncomingSocket(std::shared_ptr<DataSocket> sock) { _incomingSocket = sock; }
 
-        // data access function for PeerNotifyRecv
+        // data access function for PeerRecvNotifyPeerId
         PeerId GetNeighborId() { return _neighborId; }
 
         std::shared_ptr<DataSocket> GetIncomingSocket() { return _incomingSocket; }
@@ -163,12 +163,12 @@ namespace libBLEEP_BL {
         // data access function for PeerSocketClose
         std::shared_ptr<DataSocket> GetClosedSocket() { return _closedSocket; }
 
-        // data set function for PeerNotifyRecv
+        // data set function for PeerRecvNotifyPeerId
         void SetMsgSourceId(PeerId peerId) { _sourceId = peerId; }
 
         void SetMsg(std::shared_ptr<Message> msg) { _message = msg; }
 
-        // data access function for PeerNotifyRecv
+        // data access function for PeerRecvNotifyPeerId
         PeerId GetMsgSourceId() { return _sourceId; }
         std::shared_ptr<Message> GetMsg() { return _message; }
 

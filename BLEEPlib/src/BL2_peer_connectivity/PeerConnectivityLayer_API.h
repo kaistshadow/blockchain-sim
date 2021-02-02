@@ -10,6 +10,9 @@
 #include "AdvertisementManager.h"
 #include "../utility/Assert.h"
 
+#define MAX_OUTGOINGPEER_NUM 8
+#define MAX_INCOMINGPEER_NUM 10
+
 namespace libBLEEP_BL {
     class BL_PeerConnectivityLayer_API {
 
@@ -38,6 +41,7 @@ namespace libBLEEP_BL {
 
         virtual std::vector<PeerId> GetNeighborPeerIds();
 
+//        virtual void StopOutgoingConnectionUpdate();
 
     private:
         PeerManager _peerManager;
@@ -56,6 +60,36 @@ namespace libBLEEP_BL {
         void RecvMsgHandler(PeerId sourcePeerId, std::shared_ptr<Message> msg);
 
     private:
+        // periodic ping-pong check
+        ev::timer _ping_timer;
+
+        void _pingtimerCallback(ev::timer &w, int revents) {
+            // Ping-pong mechanism for liveness check
+            auto peers = _peerManager.GetPeers();
+            for (auto&[peerId, peerPtr] : peers) {
+                if (!peerPtr->IsPongReceived()) {
+                    // ping-pong did not worked for this peer
+                    // so, disconnect this peer.
+                    DisconnectPeer(peerId);
+                }
+            }
+
+
+            peers = _peerManager.GetPeers();
+            std::cout << "periodic ping" << "\n";
+            for (auto&[key, peerPtr] : peers) {
+                std::shared_ptr<Message> pingMsg = std::make_shared<Message>(_peerManager.GetMyPeerId(),
+                                                                             peerPtr->GetPeerId(), "PING");
+                std::cout << "send PING to " << peerPtr->GetPeerId().GetId() << "\n";
+                SendMsgToPeer(peerPtr->GetPeerId(), pingMsg);
+
+                // reset ping received flag
+                peerPtr->SetPongReceived(false);
+            }
+
+        }
+
+    private:
         // periodic outgoing connection update
         ev::timer _timer;
 
@@ -71,13 +105,14 @@ namespace libBLEEP_BL {
                         /* std::cout << "Addr:" << addr->GetString() << "\n"; */
                         if (peer && peer->IsActive())
                             continue;
+                        else if (peer && peer->IsTryConnect())
+                            continue;
                         else if (peer) {
                             std::cout << "connect to existing peer " << addr->GetString() << "\n";
                             // TODO : when it is happened? and what is the correct implementation?
                             libBLEEP::M_Assert(0, "to be implemented");
                             break;
-                        }
-                        else {
+                        } else {
                             std::cout << "newly connect to peer " << addr->GetString() << "\n";
                             ConnectPeer(PeerId(addr->GetString()));
                             break;

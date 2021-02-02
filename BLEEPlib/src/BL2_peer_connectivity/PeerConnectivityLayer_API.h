@@ -105,13 +105,14 @@ namespace libBLEEP_BL {
                         /* std::cout << "Addr:" << addr->GetString() << "\n"; */
                         if (peer && peer->IsActive())
                             continue;
+                        else if (peer && peer->IsTryConnect())
+                            continue;
                         else if (peer) {
                             std::cout << "connect to existing peer " << addr->GetString() << "\n";
                             // TODO : when it is happened? and what is the correct implementation?
                             libBLEEP::M_Assert(0, "to be implemented");
                             break;
-                        }
-                        else {
+                        } else {
                             std::cout << "newly connect to peer " << addr->GetString() << "\n";
                             ConnectPeer(PeerId(addr->GetString()));
                             break;

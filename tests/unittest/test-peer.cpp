@@ -499,8 +499,8 @@ static int testPeerWithCloseExit(Nodetype t) {
                     if (eventQueue[0] != AsyncEventEnum::SocketConnect) return -1;
                     if (eventQueue[1] != AsyncEventEnum::PeerSocketConnect) return -1;
                     if (eventQueue[2] != AsyncEventEnum::SocketRecv) return -1; 
-                    if (eventQueue[3] != AsyncEventEnum::PeerSocketClose) return -1;  
-                    if (eventQueue[2] != AsyncEventEnum::FinishTest) return -1; 
+                    if (eventQueue[3] != AsyncEventEnum::PeerSocketClose) return -1;
+                    if (eventQueue[4] != AsyncEventEnum::FinishTest) return -1;
 
                     /* Event sequence is valid, thus return 0 */
                     return 0;

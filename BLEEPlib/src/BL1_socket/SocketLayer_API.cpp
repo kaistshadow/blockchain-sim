@@ -1,28 +1,32 @@
-#include <iostream>
-#include <unistd.h>
-#include <fcntl.h> /* Added for the nonblocking socket */
+//
+// Created by ilios on 21. 1. 26..
+//
+
+#include "SocketLayer_API.h"
+#include "utility/Assert.h"
 #include <arpa/inet.h>
-
-#include "SocketLayer.h"
-#include "../utility/Assert.h"
-
-
-#include "../BL2_peer_connectivity/Message.h"
-
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/iostreams/stream.hpp>
-#include <boost/iostreams/device/back_inserter.hpp>
-#include <boost/serialization/export.hpp>
+#include <iostream>
+#include <unistd.h>
 
 using namespace libBLEEP_BL;
 
+BL_SocketLayer_API *BL_SocketLayer_API::_instance = 0;
 
-BL_SocketLayer::BL_SocketLayer() {
-    _socketManager.CreateListenSocket();
-
+BL_SocketLayer_API *BL_SocketLayer_API::Instance() {
+    if (_instance == 0) {
+        _instance = new BL_SocketLayer_API;
+    }
+    return _instance;
 }
 
-void BL_SocketLayer::AcceptHandler(int fd) {
+BL_SocketLayer_API::BL_SocketLayer_API() {
+    _socketManager.CreateListenSocket();
+}
+
+
+void BL_SocketLayer_API::AcceptHandler(int fd) {
     std::shared_ptr<ListenSocket> listenSocket = _socketManager.GetListenSocket(fd);
 
     while (1) {
@@ -37,11 +41,11 @@ void BL_SocketLayer::AcceptHandler(int fd) {
     }
 }
 
-void BL_SocketLayer::ConnectHandler(int fd) {
+void BL_SocketLayer_API::ConnectHandler(int fd) {
     // check status of socket
     int err = 0;
     socklen_t len = sizeof(err);
-    if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &err, &len) < 0 ) {
+    if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &err, &len) < 0) {
         perror("getsockopt"); // Solaris pending error?
         exit(-1);
     }
@@ -55,7 +59,7 @@ void BL_SocketLayer::ConnectHandler(int fd) {
             AsyncEvent event(AsyncEventEnum::SocketConnectFailed);
             event.GetData().SetFailedSocket(fd);
             event.GetData().SetFailedDomain(sock->GetDomain());
-            g_mainEventManager->PushAsyncEvent(event);
+            MainEventManager::Instance()->PushAsyncEvent(event);
         }
 
         _socketManager.RemoveConnectSocket(fd);
@@ -63,7 +67,7 @@ void BL_SocketLayer::ConnectHandler(int fd) {
 
         return;
     }
-            
+
     std::cout << "Socket is successfully connected" << "\n";
 
     // successfully connected, so create new data socket
@@ -75,11 +79,17 @@ void BL_SocketLayer::ConnectHandler(int fd) {
     // TODO : push event 'PeerSocketConnect'
     AsyncEvent event(AsyncEventEnum::PeerSocketConnect);
     event.GetData().SetDataSocket(_socketManager.GetDataSocket(fd));
-    g_mainEventManager->PushAsyncEvent(event);
-    
+    MainEventManager::Instance()->PushAsyncEvent(event);
+
 }
 
-void BL_SocketLayer::RecvHandler(int fd) {
+void BL_SocketLayer_API::ConnectFailedHandler(int fd, std::string domain) {
+    AsyncEvent event(AsyncEventEnum::PeerSocketConnectFailed);
+    event.GetData().SetFailedDomain(domain);
+    MainEventManager::Instance()->PushAsyncEvent(event);
+}
+
+void BL_SocketLayer_API::RecvHandler(int fd) {
     std::cout << "DoRecv!" << "\n";
 
     // recv from socket, and append received data into the buffer.
@@ -93,24 +103,21 @@ void BL_SocketLayer::RecvHandler(int fd) {
             std::cout << "received data:[" << string_read << "]" << "\n";
             memset(string_read, 0, 2000);
             continue;
-        }
-        else if (0 < n) {
+        } else if (0 < n) {
             _recvBuffManager.AppendToBuffer(fd, string_read, n);
             std::cout << "received data:[" << string_read << "]" << "\n";
             break;
-        }
-        else if (n == 0) {
+        } else if (n == 0) {
             std::cout << "connection closed while recv" << "\n";
             // TODO : notify socketClose event?
             AsyncEvent event(AsyncEventEnum::PeerSocketClose);
             event.GetData().SetClosedSocket(_socketManager.GetDataSocket(fd));
-            g_mainEventManager->PushAsyncEvent(event);
+            MainEventManager::Instance()->PushAsyncEvent(event);
 
             _socketManager.RemoveDataSocket(fd);
             _recvBuffManager.RemoveRecvBuffer(fd);
             break;
-        }
-        else if (n < 0) {
+        } else if (n < 0) {
             if (errno != EAGAIN && errno != EWOULDBLOCK) {
                 std::cout << "recv failed errno=" << errno << strerror(errno) << "\n";
                 exit(-1);
@@ -120,7 +127,7 @@ void BL_SocketLayer::RecvHandler(int fd) {
     }
 
     // TODO : parsing a msg
-    std::shared_ptr<SocketRecvBuffer> recvBuffer =  _recvBuffManager.GetRecvBuffer(fd);
+    std::shared_ptr<SocketRecvBuffer> recvBuffer = _recvBuffManager.GetRecvBuffer(fd);
     if (recvBuffer) {
         // strncmp(str, substr, strlen(substr)) will return 0 if str starts with substr.
         // Check if the received string starts with the bleep magic value.
@@ -133,10 +140,9 @@ void BL_SocketLayer::RecvHandler(int fd) {
                 // retrieve the size of the msg if possible
                 int msg_size = 0;
                 if (recvBuffer->recv_str.size() >= BLEEP_MAGIC_SIZE + sizeof(int)) {
-                    memcpy(&msg_size, recvBuf+BLEEP_MAGIC_SIZE, sizeof(int));
-                    std::cout << "msg length received : " << msg_size <<"\n";
-                }
-                else
+                    memcpy(&msg_size, recvBuf + BLEEP_MAGIC_SIZE, sizeof(int));
+                    std::cout << "msg length received : " << msg_size << "\n";
+                } else
                     break;
 
                 // recv entire msg if possible
@@ -156,75 +162,80 @@ void BL_SocketLayer::RecvHandler(int fd) {
 
                     // TODO : Each msg should be handled as separate event, and switched to proper layers
                     if (msg->GetType() == "notifyPeerId") {
-                        AsyncEvent event(AsyncEventEnum::PeerNotifyRecv);
+                        AsyncEvent event(AsyncEventEnum::PeerRecvNotifyPeerId);
                         event.GetData().SetNeighborId(msg->GetSource());
                         event.GetData().SetIncomingSocket(_socketManager.GetDataSocket(fd));
-                        g_mainEventManager->PushAsyncEvent(event);
-                    }
-                    else if (msg->GetType() == "GETADDR") {
+                        MainEventManager::Instance()->PushAsyncEvent(event);
+                    } else if (msg->GetType() == "GETADDR") {
                         // GETADDR message is handled by generic (Layer2) PeerRecvMsg event
-                    }
-                    else if (msg->GetType() == "ADDR") {
+                    } else if (msg->GetType() == "ADDR") {
                         // ADDR message is handled by generic (Layer2) PeerRecvMsg event
-                    }
-                    else if (msg->GetType().find("TXGOSSIP", 0) == 0) {
+                    } else if (msg->GetType().find("TXGOSSIP", 0) == 0) {
                         // TXGOSSIP protocol message are handled by generic (Layer2) PeerRecvMsg event
+                    } else if (msg->GetType().find("PING", 0) == 0) {
+                        // PING message is handled by generic (Layer2) PeerRecvMsg event
+                    } else if (msg->GetType().find("PONG", 0) == 0) {
+                        // PONG message is handled by generic (Layer2) PeerRecvMsg event
                     }
-                    // If any new message is added, new statement should be added here. 
-                    // (This is for integrity check)
-                    else 
+                        // If any new message is added, new statement should be added here.
+                        // (This is for integrity check)
+                    else
                         libBLEEP::M_Assert(0, "Unexpected message");
-                    
 
-                    AsyncEvent event(AsyncEventEnum::PeerRecvMsg);
-                    event.GetData().SetMsgSourceId(msg->GetSource());
-                    event.GetData().SetMsg(msg);
-                    g_mainEventManager->PushAsyncEvent(event);
+
+                    if (msg->GetType() != "notifyPeerId") {
+                        /* For notifyPeerId message, it is handled by PeerNotifyRecv event
+                         * so PeerRecvMsg doesn't need to be triggered */
+                        AsyncEvent event(AsyncEventEnum::PeerRecvMsg);
+                        event.GetData().SetMsgSourceId(msg->GetSource());
+                        event.GetData().SetMsg(msg);
+                        MainEventManager::Instance()->PushAsyncEvent(event);
+                    }
 
                     // TODO : recvBuffer should be updated efficiently. (minimizing a duplication)
                     std::string remain = recvBuffer->recv_str.substr(BLEEP_MAGIC_SIZE + sizeof(int) + msg_size);
                     recvBuffer->recv_str = remain;
-                }
-                else
+                } else
                     break;
-            }
-            else 
+            } else
                 break;
         }
     }
 }
 
-void BL_SocketLayer::WriteHandler(int fd) {
+void BL_SocketLayer_API::WriteHandler(int fd) {
     auto dataSocket = _socketManager.GetDataSocket(fd);
-    libBLEEP::M_Assert( dataSocket != nullptr, "dataSocket not exist for given (write) event");
-    
+    libBLEEP::M_Assert(dataSocket != nullptr, "dataSocket not exist for given (write) event");
+
     std::cout << "DoSend!" << "\n";
     dataSocket->DoSend();
 }
 
 
-void BL_SocketLayer::SwitchAsyncEventHandler(AsyncEvent& event) {
+void BL_SocketLayer_API::SwitchAsyncEventHandler(AsyncEvent &event) {
     switch (event.GetType()) {
-    case AsyncEventEnum::SocketAccept:
-        {
+        case AsyncEventEnum::SocketAccept: {
             int listenfd = event.GetData().GetNewlyAcceptedSocket();
             AcceptHandler(listenfd);
             break;
         }
-    case AsyncEventEnum::SocketConnect:
-        {
+        case AsyncEventEnum::SocketConnect: {
             int fd = event.GetData().GetNewlyConnectedSocket();
             ConnectHandler(fd);
             break;
         }
-    case AsyncEventEnum::SocketRecv:
-        {
+        case AsyncEventEnum::SocketConnectFailed: {
+            int fd = event.GetData().GetFailedSocket();
+            std::string domain = event.GetData().GetFailedDomain();
+            ConnectFailedHandler(fd, domain);
+            break;
+        }
+        case AsyncEventEnum::SocketRecv: {
             int fd = event.GetData().GetRecvSocket();
             RecvHandler(fd);
             break;
         }
-    case AsyncEventEnum::SocketWrite:
-        {
+        case AsyncEventEnum::SocketWrite: {
             int fd = event.GetData().GetWriteSocket();
             WriteHandler(fd);
             break;
@@ -232,20 +243,26 @@ void BL_SocketLayer::SwitchAsyncEventHandler(AsyncEvent& event) {
     }
 }
 
-int BL_SocketLayer::ConnectSocket(std::string dest) {
+int BL_SocketLayer_API::ConnectSocket(std::string dest) {
     int conn_socket = _socketManager.CreateNonblockConnectSocket(dest);
     return conn_socket;
 }
 
-void BL_SocketLayer::SendToSocket(int fd, const char* buf, int size) {
-    auto socket = _socketManager.GetDataSocket(fd);
-    if (socket == nullptr) 
-        libBLEEP::M_Assert(0, "No valid dataSocket exists for sending");
-
-    socket->AppendToSendBuff((const char*)buf, size);
+void BL_SocketLayer_API::AbandonConnectSocket(int fd) {
+    _socketManager.RemoveConnectSocket(fd);
+    close(fd);
+    return;
 }
 
-void BL_SocketLayer::DisconnectSocket(int fd) {
+void BL_SocketLayer_API::SendToSocket(int fd, const char *buf, int size) {
+    auto socket = _socketManager.GetDataSocket(fd);
+    if (socket == nullptr)
+        libBLEEP::M_Assert(0, "No valid dataSocket exists for sending");
+
+    socket->AppendToSendBuff((const char *) buf, size);
+}
+
+void BL_SocketLayer_API::DisconnectSocket(int fd) {
     _socketManager.RemoveDataSocket(fd);
     return;
 }

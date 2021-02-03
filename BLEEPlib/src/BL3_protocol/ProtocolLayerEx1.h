@@ -53,12 +53,12 @@ namespace libBLEEP_BL {
             for (auto tx : _txToBroadcast)
                 txids.push_back(tx.GetId());
 
-            std::vector<PeerId> neighborIds = g_PeerConnectivityLayer_API->GetNeighborPeerIds();
+            std::vector<PeerId> neighborIds = BL_PeerConnectivityLayer_API::Instance()->GetNeighborPeerIds();
             for (auto neighborId : neighborIds) {
                 std::cout << "send inv to " << neighborId.GetId() << "\n";
                 std::shared_ptr<MessageObject> ptrToObj = std::make_shared<TxGossipInventory>(txids);
                 std::shared_ptr<Message> message = std::make_shared<Message>(neighborId, "TXGOSSIP-INV", ptrToObj);
-                g_PeerConnectivityLayer_API->SendMsgToPeer(neighborId, message);
+                BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(neighborId, message);
             }
             _txToBroadcast.clear();
         }

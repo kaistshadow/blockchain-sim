@@ -6,7 +6,6 @@
 #include "Peer.h"
 #include "../BL1_socket/Socket.h"
 
-#define MAX_OUTGOINGPEER_NUM 8
 
 namespace libBLEEP_BL {
     class PeerManager {

@@ -55,29 +55,52 @@ namespace libBLEEP_BL {
         PeerType _peerType;
 
         // If a peer is an outgoing peer, connecting socket is needed before peer initialization.
-        int _connSocket; 
+        int _connSocket;
+
+        bool tryConnect = false;
 
         // datasocket will be assigned after the initialization of the socket is accomplished.
-        std::shared_ptr<DataSocket> _dataSocket = nullptr; 
+        std::shared_ptr<DataSocket> _dataSocket = nullptr;
+
+        // Is this peer is alive? check with ping-pong
+        // If pong message is received from this peer, set this peer as alive/
+        // Otherwise, set this peer as not alive.
+        bool _pongReceived = true;
 
     public:
         Peer(PeerId id, PeerType type)
-            : _id(id), _peerType(type) {};
+                : _id(id), _peerType(type) {};
+
         Peer(PeerId id, PeerType type, int connSocket)
-            : _id(id), _peerType(type), _connSocket(connSocket) {};
+                : _id(id), _peerType(type), _connSocket(connSocket) {};
+
         Peer(PeerId id, PeerType type, std::shared_ptr<DataSocket> dataSocket)
-            : _id(id), _peerType(type), _dataSocket(dataSocket) {};
+                : _id(id), _peerType(type), _dataSocket(dataSocket) {};
 
+        PeerId &GetPeerId() { return _id; }
 
-        PeerId& GetPeerId() { return _id; }
         int GetConnSocket() { return _connSocket; }
+
         PeerType GetPeerType() { return _peerType; }
 
         /* get set method for data socket */
         void SetDataSocket(std::shared_ptr<DataSocket> dataSocket) { _dataSocket = dataSocket; }
+
         std::shared_ptr<DataSocket> GetDataSocket() { return _dataSocket; }
 
         bool IsActive() { return _dataSocket != nullptr; }
+
+
+        void SetPongReceived(bool flag) { _pongReceived = flag; }
+
+        bool IsPongReceived() { return _pongReceived; }
+
+        /* set connectSocket status */
+        void SetTryConnect() { tryConnect = true; }
+
+        void ClearTryConnect() { tryConnect = false; }
+
+        bool IsTryConnect() { return tryConnect; }
     };
 
 }

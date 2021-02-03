@@ -20,67 +20,17 @@
 
 using namespace libBLEEP_BL;
 
-
 BL_SocketLayer_Bitcoin::BL_SocketLayer_Bitcoin() {
-    _socketManager.CreateListenSocket(8333);
-
 }
 
-void BL_SocketLayer_Bitcoin::AcceptHandler(int fd) {
-    std::shared_ptr<ListenSocket> listenSocket = _socketManager.GetListenSocket(fd);
-
-    while (1) {
-        int data_sfd = listenSocket->DoAccept();
-        if (data_sfd == -1)
-            break;
-
-        std::cout << "Socket is successfully accepted" << "\n";
-
-        // create new data socket
-        _socketManager.CreateDataSocket(data_sfd);
-    }
+void BL_SocketLayer_Bitcoin::RegisterInstance() {
+    _instance = new BL_SocketLayer_Bitcoin;
 }
 
-void BL_SocketLayer_Bitcoin::ConnectHandler(int fd) {
-    // check status of socket
-    int err = 0;
-    socklen_t len = sizeof(err);
-    if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &err, &len) < 0 ) {
-        perror("getsockopt"); // Solaris pending error?
-        exit(-1);
-    }
-
-    if (err) {
-        std::cout << "error for SocketConnect" << "\n";
-
-        // create event for connectSocket error
-        auto sock = _socketManager.GetConnectSocket(fd);
-        if (sock) {
-            AsyncEvent event(AsyncEventEnum::SocketConnectFailed);
-            event.GetData().SetFailedSocket(fd);
-            event.GetData().SetFailedDomain(sock->GetDomain());
-            g_mainEventManager->PushAsyncEvent(event);
-        }
-
-        _socketManager.RemoveConnectSocket(fd);
-        close(fd);
-
-        return;
-    }
-
-    std::cout << "Socket is successfully connected" << "\n";
-
-    // successfully connected, so create new data socket
-    _socketManager.CreateDataSocket(fd);
-
-    // remove ConnectSocket
-    _socketManager.RemoveConnectSocket(fd);
-
-    // TODO : push event 'PeerSocketConnect'
-    AsyncEvent event(AsyncEventEnum::PeerSocketConnect);
-    event.GetData().SetDataSocket(_socketManager.GetDataSocket(fd));
-    g_mainEventManager->PushAsyncEvent(event);
-
+BL_SocketLayer_Bitcoin *BL_SocketLayer_Bitcoin::Instance() {
+    BL_SocketLayer_Bitcoin* ptr = dynamic_cast<BL_SocketLayer_Bitcoin*>(_instance);
+    libBLEEP::M_Assert(ptr != nullptr, "dynamic cast failed");
+    return ptr;
 }
 
 void BL_SocketLayer_Bitcoin::RecvHandler(int fd) {
@@ -108,7 +58,7 @@ void BL_SocketLayer_Bitcoin::RecvHandler(int fd) {
             // TODO : notify socketClose event?
             AsyncEvent event(AsyncEventEnum::PeerSocketClose);
             event.GetData().SetClosedSocket(_socketManager.GetDataSocket(fd));
-            g_mainEventManager->PushAsyncEvent(event);
+            MainEventManager::Instance()->PushAsyncEvent(event);
 
             _socketManager.RemoveDataSocket(fd);
             _recvBuffManager.RemoveRecvBuffer(fd);
@@ -164,7 +114,7 @@ void BL_SocketLayer_Bitcoin::RecvHandler(int fd) {
                     event.GetData().SetBitcoinPayload(payload);
                     event.GetData().SetBitcoinPayloadLen(payload_size);
                     event.GetData().SetBitcoinPayloadChecksum(checksum);
-                    g_mainEventManager->PushAsyncEvent(event);
+                    MainEventManager::Instance()->PushAsyncEvent(event);
 
                     // TODO : recvBuffer should be updated efficiently. (minimizing a duplication)
                     std::string remain = recvBuffer->recv_str.substr(BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t)*2 + payload_size);
@@ -180,7 +130,7 @@ void BL_SocketLayer_Bitcoin::RecvHandler(int fd) {
                     event.GetData().SetBitcoinCommand(command);
                     event.GetData().SetBitcoinPayloadLen(payload_size);
                     event.GetData().SetBitcoinPayloadChecksum(checksum);
-                    g_mainEventManager->PushAsyncEvent(event);
+                    MainEventManager::Instance()->PushAsyncEvent(event);
 
                     // TODO : recvBuffer should be updated efficiently. (minimizing a duplication)
                     std::string remain = recvBuffer->recv_str.substr(BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t)*2);
@@ -193,62 +143,6 @@ void BL_SocketLayer_Bitcoin::RecvHandler(int fd) {
                 break;
         }
     }
-}
-
-void BL_SocketLayer_Bitcoin::WriteHandler(int fd) {
-    auto dataSocket = _socketManager.GetDataSocket(fd);
-    libBLEEP::M_Assert( dataSocket != nullptr, "dataSocket not exist for given (write) event");
-
-    std::cout << "DoSend!" << "\n";
-    dataSocket->DoSend();
-}
-
-
-void BL_SocketLayer_Bitcoin::SwitchAsyncEventHandler(AsyncEvent& event) {
-    switch (event.GetType()) {
-        case AsyncEventEnum::SocketAccept:
-        {
-            int listenfd = event.GetData().GetNewlyAcceptedSocket();
-            AcceptHandler(listenfd);
-            break;
-        }
-        case AsyncEventEnum::SocketConnect:
-        {
-            int fd = event.GetData().GetNewlyConnectedSocket();
-            ConnectHandler(fd);
-            break;
-        }
-        case AsyncEventEnum::SocketRecv:
-        {
-            int fd = event.GetData().GetRecvSocket();
-            RecvHandler(fd);
-            break;
-        }
-        case AsyncEventEnum::SocketWrite:
-        {
-            int fd = event.GetData().GetWriteSocket();
-            WriteHandler(fd);
-            break;
-        }
-    }
-}
-
-int BL_SocketLayer_Bitcoin::ConnectSocket(std::string dest) {
-    int conn_socket = _socketManager.CreateNonblockConnectSocket(dest);
-    return conn_socket;
-}
-
-void BL_SocketLayer_Bitcoin::SendToSocket(int fd, const char* buf, int size) {
-    auto socket = _socketManager.GetDataSocket(fd);
-    if (socket == nullptr)
-        libBLEEP::M_Assert(0, "No valid dataSocket exists for sending");
-
-    socket->AppendToSendBuff((const char*)buf, size);
-}
-
-void BL_SocketLayer_Bitcoin::DisconnectSocket(int fd) {
-    _socketManager.RemoveDataSocket(fd);
-    return;
 }
 
 void BL_SocketLayer_Bitcoin::CreateSocketForShadowIP(int port, const char *shadow_ip_addr) {

@@ -31,32 +31,46 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="SERVER" path="libSIMPLE_SERVER.so" />
-  <plugin id="BENIGN_NODE" path="libSIMPLE_BENIGN_NODE.so"/>
+  <plugin id="SIMPLE_NODE" path="libSIMPLE_NODE.so"/>
   <plugin id="ATTACKER" path="libSYBIL_ATTACKER.so"/>
 
 
   <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="300"/>
+  <kill time="500"/>
   <!-- our nodes -->
 
   <node id="server" iphint="1.0.0.1">
-    <application plugin="SERVER" time="5" arguments="-id=server"/>
+    <application plugin="SIMPLE_NODE" time="5" arguments="-id=server"/>
   </node>
 
   <node id="node1" iphint="1.0.0.2">
-    <application plugin="BENIGN_NODE" time="6" arguments="-id=node1 -connect=server"/>
+    <application plugin="SIMPLE_NODE" time="6" arguments="-id=node1 -connect=server"/>
   </node>
-
 
   <node id="node2" iphint="1.0.0.3">
-    <application plugin="BENIGN_NODE" time="6" stoptime="10" arguments="-id=node2 -connect=server"/>
+    <application plugin="SIMPLE_NODE" time="6" arguments="-id=node2 -connect=server"/>
+  </node>
+
+  <node id="node3" iphint="1.0.0.4">
+    <application plugin="SIMPLE_NODE" time="6" arguments="-id=node3 -connect=server"/>
+  </node>
+
+  <node id="node4" iphint="1.0.0.5">
+    <application plugin="SIMPLE_NODE" time="6" arguments="-id=node4 -connect=server"/>
+  </node>
+
+  <node id="node5" iphint="1.0.0.6">
+    <application plugin="SIMPLE_NODE" time="6" arguments="-id=node5 -connect=server"/>
+  </node>
+
+  <node id="node6" iphint="1.0.0.7">
+    <application plugin="SIMPLE_NODE" time="6" arguments="-id=node6 -connect=server"/>
   </node>
 
 
-  <node id="attacker">
-    <application plugin="ATTACKER" time="5" arguments="-id=attacker -connect=server"/>
-  </node>
+  <!--  <node id="attacker">-->
+  <!--    <application plugin="ATTACKER" time="5" arguments="-id=attacker -connect=server"/>-->
+  <!--  </node>-->
 
   <!-- <node id="bleep1"> -->
   <!--   <application plugin="PEER_NONBLOCK_IO" time="13" arguments="bleep0"/> -->

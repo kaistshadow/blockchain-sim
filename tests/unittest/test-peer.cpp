@@ -347,7 +347,7 @@ static int testPeerWithExit(Nodetype t) {
 
 
         /* init finishing timer */
-        EndTimer(50);
+        EndTimer(200);
         /* init event buffer which records all asynchronous events */
         std::vector<AsyncEventEnum> eventQueue;
 
@@ -464,7 +464,7 @@ static int testPeerWithCloseExit(Nodetype t) {
 
 
         /* init finishing timer */
-        EndTimer(50);
+        EndTimer(200);
         /* init event buffer which records all asynchronous events */
         std::vector<AsyncEventEnum> eventQueue;
 

@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
 
     gArgs.ParseParameters(argc, argv);
 
-    if (gArgs.IsArgSet("-?") || gArgs.IsArgSet("-h") ||  gArgs.IsArgSet("-help") || gArgs.IsArgSet("-version")) {
+    if (gArgs.IsArgSet("-?") || gArgs.IsArgSet("-h") || gArgs.IsArgSet("-help") || gArgs.IsArgSet("-version")) {
         std::string strUsage = gArgs.HelpMessage();
         gLog << strUsage << "\n";
         return 0;
@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
 
     /* allocate mainEventManager */
     libBLEEP_BL::MainEventManager::InitInstance();
+    libBLEEP_BL::BL_SocketLayer_API::Instance(); // SocketLayer should be initialized before PeerLayer
     std::string myId = gArgs.GetArg("-id", "noid");
     libBLEEP_BL::BL_PeerConnectivityLayer_API::InitInstance(myId);
     /* allocate Consensus Protocol implementation */

@@ -72,35 +72,35 @@
   </node>
 
   <node id="bleep8">
-    <application plugin="NODE" time="13" arguments="-id=bleep8 -connect=bleep0"/>
+    <application plugin="NODE" time="13" stoptime="110" arguments="-id=bleep8 -connect=bleep0"/>
   </node>
 
   <node id="bleep9">
-    <application plugin="NODE" time="13" arguments="-id=bleep9 -connect=bleep0"/>
+    <application plugin="NODE" time="13" stoptime="100" arguments="-id=bleep9 -connect=bleep0"/>
   </node>
 
   <node id="bleep10">
-    <application plugin="NODE" time="13" arguments="-id=bleep10 -connect=bleep0"/>
+    <application plugin="NODE" time="13" stoptime="60" arguments="-id=bleep10 -connect=bleep0"/>
   </node>
 
-  <node id="bleep11">
-    <application plugin="NODE" time="13" arguments="-id=bleep11 -connect=bleep0"/>
+  <node id="attacker1">
+    <application plugin="NODE" time="15" arguments="-id=attacker1 -connect=bleep0"/>
   </node>
 
-  <node id="bleep12">
-    <application plugin="NODE" time="13" arguments="-id=bleep12 -connect=bleep0"/>
+  <node id="attacker2">
+    <application plugin="NODE" time="15" arguments="-id=attacker2 -connect=bleep0"/>
   </node>
 
-  <node id="bleep13">
-    <application plugin="NODE" time="13" arguments="-id=bleep13 -connect=bleep0"/>
+  <node id="attacker3">
+    <application plugin="NODE" time="15" arguments="-id=attacker3 -connect=bleep0"/>
   </node>
 
-  <node id="bleep14">
-    <application plugin="NODE" time="13" arguments="-id=bleep14 -connect=bleep0"/>
+  <node id="attacker4">
+    <application plugin="NODE" time="15" arguments="-id=attacker4 -connect=bleep0"/>
   </node>
 
-  <node id="bleep15">
-    <application plugin="NODE" time="13" arguments="-id=bleep15 -connect=bleep0"/>
+  <node id="attacker5">
+    <application plugin="NODE" time="15" arguments="-id=attacker5 -connect=bleep0"/>
   </node>
 
 

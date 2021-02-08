@@ -27,7 +27,7 @@ add_test(NAME shadow-bitcoin-firstrun
   COMMAND shadow example.xml
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_test(NAME shadow-bitcoin-firstrun_node_log
-  COMMAND python test.py --bitcoinfirstrun
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../)
+# add_test(NAME shadow-bitcoin-firstrun_node_log
+#   COMMAND python test.py --bitcoinfirstrun
+#   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../)
 

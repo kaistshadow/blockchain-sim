@@ -8,7 +8,7 @@ def exec_shell_cmd(cmd):
         print("error while executing '%s'" % cmd)
         exit(-1)
 
-# This function compare node init log
+# This function compare node initialization log
 # params 1 : target log data
 # params 2 : standard log data
 # return : 0 / -1 (True / False)
@@ -33,9 +33,9 @@ def test_node_init(node_log, standard_log):
 
 # This function get result log data returned shadow.
 # params 1 : blockchain network name (ex. bitcoin, monero, ethereum, ...)
-# params 2 : First path dir in the path (shadow.data/bcdnode1/stdout.bcdnode1.1000log) 
-# params 3 : Second path dir in the path (shadow.data/bcdnode1/stdout.bcdnode1.1000log)
-# params 4 : Thrid path dir in the path (shadow.data/bcdnode1/stdout.bcdnode1.1000log)
+# params 2 : First path dir in the path (shadow.data/bcdnode1/stdout.bcdnode1.1000log) -> shadow.data
+# params 3 : Second path dir in the path (shadow.data/bcdnode1/stdout.bcdnode1.1000log) -> bcdnode1
+# params 4 : Thrid path dir in the path (shadow.data/bcdnode1/stdout.bcdnode1.1000log) -> stdout.bcdnode1.1000log
 # params 5 : The node count ran on shadow.
 # params 6 : Right absolute path
 # return : log datas returned shadow 
@@ -78,6 +78,8 @@ def init_test_start(blockchain_standard_list, blockchain_network, node_count, ab
 
     if blockchain_network == "Bitcoin":
         file_list = set_file_name("Bitcoin", "bcdnode", "/stdout-bcdnode", ".bitcoind.1000.log", node_count, abs_path)
+    
+    # another example 
     if blockchain_network == "Monero":
         pass
 
@@ -141,13 +143,6 @@ def main():
     parser.add_argument("--bitcoinfirstrun", action="store_true", help="Bitcoin first_run test output log check")
     parser.add_argument("--bitcoinwallet", action="store_true", help="Bitcoin wallet test output log check")
 
-    parser.add_argument("--litecoin", action="store_true", help="Install the shadow simulator and BLEEP")
-    parser.add_argument("--monero", action="store_true", help="Install the shadow simulator and BLEEP")
-    parser.add_argument("--eos", action="store_true", help="Install the shadow simulator and BLEEP")
-    parser.add_argument("--ethereum", action="store_true", help="Install the shadow simulator and BLEEP")
-    parser.add_argument("--zcash", action="store_true", help="Install the shadow simulator and BLEEP")
-    parser.add_argument("--ripple", action="store_true", help="Install the shadow simulator and BLEEP")
-
     args = parser.parse_args()
 
     # -------------------------------------------
@@ -178,24 +173,6 @@ def main():
         abs_path = abs_path + "/shadow-bitcoin/2_with-wallet/shadow.data/hosts/"
         node_count = len(os.walk(abs_path).next()[1])
         return init_test_start(blockchain_standard_list, "Bitcoin", node_count, abs_path)
-
-    if OPT_LITECOIN:
-        pass
-    
-    if OPT_MONERO:
-        pass
-
-    if OPT_EOS:
-        pass
-
-    if OPT_ETHEREUM:
-        pass
-    
-    if OPT_ZCASH:
-        pass
-
-    if OPT_RIPPLE:
-        pass
 
 if __name__ == '__main__':
     main()

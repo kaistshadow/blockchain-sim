@@ -42,9 +42,5 @@
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>
 
- 
-  <!-- <node id="bleep1"> -->
-  <!--   <application plugin="PEER_NONBLOCK_IO" time="13" arguments="bleep0"/> -->
-  <!-- </node> -->
 
 </shadow>

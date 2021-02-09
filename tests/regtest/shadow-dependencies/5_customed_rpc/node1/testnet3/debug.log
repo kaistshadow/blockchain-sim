@@ -1,0 +1,207 @@
+
+
+
+
+
+2020-01-01T00:00:01Z Bitcoin Core version v0.19.1.0-acd05f6cf (debug build)
+2020-01-01T00:00:01Z InitParameterInteraction: parameter interaction: -connect set -> setting -dnsseed=0
+2020-01-01T00:00:01Z Assuming ancestors of block 00000000000000b7ab6ce61eb6d571003fbe5fe892da4c9b740c49a07542462d have valid signatures.
+2020-01-01T00:00:01Z Setting nMinimumChainWork=00000000000000000000000000000000000000000000012b2a3a62424f21c918
+2020-01-01T00:00:01Z Using the 'sse4(1way),sse41(4way),avx2(8way)' SHA256 implementation
+2020-01-01T00:00:01Z Using RdSeed as additional entropy source
+2020-01-01T00:00:01Z Using RdRand as an additional entropy source
+2020-01-01T00:00:01Z Default data directory /home/mong/.bitcoin
+2020-01-01T00:00:01Z Using data directory /home/mong/CLionProject/blockchain-sim/tests/regtest/shadow-dependencies/5_customed_rpc/node1/testnet3
+2020-01-01T00:00:01Z Config file: /home/mong/CLionProject/blockchain-sim/tests/regtest/shadow-dependencies/5_customed_rpc/node1/bitcoin.conf (not found, skipping)
+2020-01-01T00:00:01Z Using at most 125 automatic connections (1024 file descriptors available)
+2020-01-01T00:00:01Z Warning: relative datadir option 'node1' specified, which will be interpreted relative to the current working directory '/home/mong/CLionProject/blockchain-sim/tests/regtest/shadow-dependencies/5_customed_rpc'. This is fragile, because if bitcoin is started in the future from a different location, it will be unable to locate the current data files. There could also be data loss if bitcoin is started while in a temporary directory.
+2020-01-01T00:00:01Z Using 16 MiB out of 32/2 requested for signature cache, able to store 524288 elements
+2020-01-01T00:00:01Z Using 16 MiB out of 32/2 requested for script execution cache, able to store 524288 elements
+2020-01-01T00:00:01Z Using 8 threads for script verification
+2020-01-01T00:00:01Z No wallet support compiled in!
+2020-01-01T00:00:01Z Allowing HTTP connections from: 127.0.0.0/8 0:0:0:0:0:0:0:0/128 89.247.167.117/32 
+2020-01-01T00:00:01Z libevent: event_add: event: 0x562cb4e7c5e0 (fd 18), EV_READ    call 0x7fc830847980
+2020-01-01T00:00:01Z libevent: Epoll ADD(1) on fd 18 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:01Z Binding RPC on address 213.145.108.101 port 18332
+2020-01-01T00:00:01Z libevent: event_add: event: 0x562cb4e7f268 (fd 19), EV_READ    call 0x7fc8308550d0
+2020-01-01T00:00:01Z libevent: Epoll ADD(1) on fd 19 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:01Z libevent: Bound to port 18332 - Awaiting connections ... 
+2020-01-01T00:00:01Z Initialized HTTP server
+2020-01-01T00:00:01Z HTTP: creating work queue of depth 16
+2020-01-01T00:00:01Z Starting RPC
+2020-01-01T00:00:01Z Starting HTTP RPC server
+2020-01-01T00:00:01Z Config options rpcuser and rpcpassword will soon be deprecated. Locally-run instances may remove rpcuser to use cookie-based auth, or may be replaced with rpcauth. Please see share/rpcauth for rpcauth auth generation.
+2020-01-01T00:00:01Z Registering HTTP handler for / (exactmatch 1)
+2020-01-01T00:00:01Z Registering HTTP handler for /rest/tx/ (exactmatch 0)
+2020-01-01T00:00:01Z Registering HTTP handler for /rest/block/notxdetails/ (exactmatch 0)
+2020-01-01T00:00:01Z Registering HTTP handler for /rest/block/ (exactmatch 0)
+2020-01-01T00:00:01Z Registering HTTP handler for /rest/chaininfo (exactmatch 0)
+2020-01-01T00:00:01Z Registering HTTP handler for /rest/mempool/info (exactmatch 0)
+2020-01-01T00:00:01Z Registering HTTP handler for /rest/mempool/contents (exactmatch 0)
+2020-01-01T00:00:01Z Registering HTTP handler for /rest/headers/ (exactmatch 0)
+2020-01-01T00:00:01Z Registering HTTP handler for /rest/getutxos (exactmatch 0)
+2020-01-01T00:00:01Z Registering HTTP handler for /rest/blockhashbyheight/ (exactmatch 0)
+2020-01-01T00:00:01Z Starting HTTP server
+2020-01-01T00:00:01Z HTTP: starting 4 worker threads
+2020-01-01T00:00:01Z init message: Loading banlist...
+2020-01-01T00:00:01Z ERROR: DeserializeFileDB: Failed to open file /home/mong/CLionProject/blockchain-sim/tests/regtest/shadow-dependencies/5_customed_rpc/node1/testnet3/banlist.dat
+2020-01-01T00:00:01Z Invalid or missing banlist.dat; recreating
+2020-01-01T00:00:01Z Flushed 0 banned node ips/subnets to banlist.dat  0ms
+2020-01-01T00:00:01Z net: setting try another outbound peer=false
+2020-01-01T00:00:01Z Cache configuration:
+2020-01-01T00:00:01Z * Using 2.0 MiB for block index database
+2020-01-01T00:00:01Z * Using 8.0 MiB for chain state database
+2020-01-01T00:00:01Z * Using 440.0 MiB for in-memory UTXO set (plus up to 286.1 MiB of unused mempool space)
+2020-01-01T00:00:01Z init message: Loading block index...
+2020-01-01T00:00:01Z LevelDB using max_open_files=1000 (default=1000)
+2020-01-01T00:00:01Z Opening LevelDB in /home/mong/CLionProject/blockchain-sim/tests/regtest/shadow-dependencies/5_customed_rpc/node1/testnet3/blocks/index
+2020-01-01T00:00:01Z leveldb: Delete type=3 #1
+2020-01-01T00:00:01Z Opened LevelDB successfully
+2020-01-01T00:00:01Z Using obfuscation key for /home/mong/CLionProject/blockchain-sim/tests/regtest/shadow-dependencies/5_customed_rpc/node1/testnet3/blocks/index: 0000000000000000
+2020-01-01T00:00:01Z LoadBlockIndexDB: last block file = 0
+2020-01-01T00:00:01Z LoadBlockIndexDB: last block file info: CBlockFileInfo(blocks=0, size=0, heights=0...0, time=1970-01-01...1970-01-01)
+2020-01-01T00:00:01Z Checking all blk files are present...
+2020-01-01T00:00:01Z Initializing databases...
+2020-01-01T00:00:01Z Pre-allocating up to position 0x1000000 in blk00000.dat
+2020-01-01T00:00:01Z LevelDB using max_open_files=1000 (default=1000)
+2020-01-01T00:00:01Z Opening LevelDB in /home/mong/CLionProject/blockchain-sim/tests/regtest/shadow-dependencies/5_customed_rpc/node1/testnet3/chainstate
+2020-01-01T00:00:01Z leveldb: Delete type=3 #1
+2020-01-01T00:00:01Z Opened LevelDB successfully
+2020-01-01T00:00:01Z WriteBatch memory usage: db=chainstate, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:01Z Wrote new obfuscate key for /home/mong/CLionProject/blockchain-sim/tests/regtest/shadow-dependencies/5_customed_rpc/node1/testnet3/chainstate: 91e3e3c66ca445cc
+2020-01-01T00:00:01Z Using obfuscation key for /home/mong/CLionProject/blockchain-sim/tests/regtest/shadow-dependencies/5_customed_rpc/node1/testnet3/chainstate: 91e3e3c66ca445cc
+2020-01-01T00:00:01Z init message: Rewinding blocks...
+2020-01-01T00:00:01Z  block index               0ms
+2020-01-01T00:00:01Z scheduler thread start
+2020-01-01T00:00:01Z Entering http event loop
+2020-01-01T00:00:01Z Failed to pthread_setschedparam: Function not implemented
+2020-01-01T00:00:01Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:01Z   - Connect total: 0.00ms [0.00s (-nanms/blk)]
+2020-01-01T00:00:01Z   - Flush: 0.00ms [0.00s (-nanms/blk)]
+2020-01-01T00:00:01Z   - Writing chainstate: 0.00ms [0.00s (-nanms/blk)]
+2020-01-01T00:00:01Z UpdateTip: new best=000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943 height=0 version=0x00000001 log2_work=32.000022 tx=1 date='2011-02-02T23:16:42Z' progress=0.000000 cache=0.0MiB(0txo)
+2020-01-01T00:00:01Z   - Connect postprocess: 0.00ms [0.00s (-nanms/blk)]
+2020-01-01T00:00:01Z - Connect block: 0.00ms [0.00s (-nanms/blk)]
+2020-01-01T00:00:01Z Failed to open mempool file from disk. Continuing anyway.
+2020-01-01T00:00:01Z block tree size = 1
+2020-01-01T00:00:01Z nBestHeight = 0
+2020-01-01T00:00:01Z libevent: event_add: event: 0x562cb4ea9530 (fd 33), EV_READ    call 0x7fc830847980
+2020-01-01T00:00:01Z libevent: Epoll ADD(1) on fd 33 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:01Z AddLocal(213.145.108.101:18333,1)
+2020-01-01T00:00:01Z Discover: IPv4 eth0: 213.145.108.101
+2020-01-01T00:00:01Z Error: Couldn't open socket for incoming connections (socket returned error Address family not supported by protocol (97))
+2020-01-01T00:00:01Z Bound to 0.0.0.0:18333
+2020-01-01T00:00:01Z init message: Loading P2P addresses...
+2020-01-01T00:00:01Z ERROR: DeserializeFileDB: Failed to open file /home/mong/CLionProject/blockchain-sim/tests/regtest/shadow-dependencies/5_customed_rpc/node1/testnet3/peers.dat
+2020-01-01T00:00:01Z Invalid or missing peers.dat; recreating
+2020-01-01T00:00:01Z Flushed 0 addresses to peers.dat  0ms
+2020-01-01T00:00:01Z init message: Starting network threads...
+2020-01-01T00:00:01Z DNS seeding disabled
+2020-01-01T00:00:01Z torcontrol thread start
+2020-01-01T00:00:01Z libevent: event_add: event: 0x562cb4eb2ff0 (fd -1), EV_READ    call 0x7fc830846d40
+2020-01-01T00:00:01Z libevent: event_add: event: 0x562cb4eb3070 (fd -1),  EV_WRITE   call 0x7fc830846920
+2020-01-01T00:00:01Z libevent: event_del: 0x562cb4eb2ff0 (fd -1), callback 0x7fc830846d40
+2020-01-01T00:00:01Z libevent: event_del: 0x562cb4eb3070 (fd -1), callback 0x7fc830846920
+2020-01-01T00:00:01Z libevent: event_add: event: 0x562cb4eb2ff0 (fd 35), EV_READ    call 0x7fc830846d40
+2020-01-01T00:00:01Z libevent: Epoll ADD(1) on fd 35 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:01Z libevent: event_add: event: 0x562cb4eb3070 (fd 35),  EV_WRITE   call 0x7fc830846920
+2020-01-01T00:00:01Z libevent: Epoll MOD(5) on fd 35 okay. Old events were 2; read change was 0 (none); write change was 1 (add); close change was 0 (none)
+2020-01-01T00:00:01Z libevent: event_add: event: 0x562cb4eb3070 (fd 35),  EV_WRITE   call 0x7fc830846920
+2020-01-01T00:00:01Z net thread start
+2020-01-01T00:00:01Z addcon thread start
+2020-01-01T00:00:01Z msghand thread start
+2020-01-01T00:00:01Z init message: Done loading
+2020-01-01T00:00:10Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:10Z libevent: event_active: 0x562cb4e7f268 (fd 19), res 2, callback 0x7fc8308550d0
+2020-01-01T00:00:10Z libevent: event_process_active: event: 0x562cb4e7f268, EV_READ   call 0x7fc8308550d0
+2020-01-01T00:00:10Z libevent: evhttp_get_request_connection: new request from 89.247.167.117:48465 on 43
+
+2020-01-01T00:00:10Z libevent: Attempting connection to 89.247.167.117:48465
+
+2020-01-01T00:00:10Z libevent: event_add: event: 0x562cb4ef5b90 (fd -1), EV_READ    call 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: event_del: 0x562cb4ef5c10 (fd -1), callback 0x7fc830846920
+2020-01-01T00:00:10Z libevent: event_del: 0x562cb4ef5b90 (fd -1), callback 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: event_del: 0x562cb4ef5c10 (fd -1), callback 0x7fc830846920
+2020-01-01T00:00:10Z libevent: event_add: event: 0x562cb4ef5b90 (fd 43), EV_READ    call 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: Epoll ADD(1) on fd 43 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:10Z libevent: event_add: event: 0x562cb4ef5b90 (fd 43), EV_READ   EV_TIMEOUT call 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: event_add: event 0x562cb4ef5b90, timeout in 30 seconds 0 useconds, call 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: event_del: 0x562cb4ef5c10 (fd 43), callback 0x7fc830846920
+2020-01-01T00:00:10Z libevent: event_add: event: 0x562cb4ef5b90 (fd 43), EV_READ   EV_TIMEOUT call 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: event_add: event 0x562cb4ef5b90, timeout in 30 seconds 0 useconds, call 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: timeout_next: event: 0x562cb4ef5b90, in 30 seconds, 0 useconds
+2020-01-01T00:00:10Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:10Z libevent: event_active: 0x562cb4ef5b90 (fd 43), res 2, callback 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: event_process_active: event: 0x562cb4ef5b90, EV_READ   call 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: event_add: event: 0x562cb4ef5b90 (fd 43), EV_READ   EV_TIMEOUT call 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: event_add: event 0x562cb4ef5b90, timeout in 1577836840 seconds 150000 useconds, call 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: evhttp_add_header: key: Host val: 213.145.108.101:18332
+
+2020-01-01T00:00:10Z libevent: evhttp_add_header: key: Authorization val: Basic bm9kZTE6MTIzNA==
+
+2020-01-01T00:00:10Z libevent: evhttp_add_header: key: Accept val: */*
+
+2020-01-01T00:00:10Z libevent: evhttp_add_header: key: content-type val: text/plain;
+
+2020-01-01T00:00:10Z libevent: evhttp_add_header: key: Content-Length val: 81
+
+2020-01-01T00:00:10Z libevent: evhttp_read_header: checking for post data on 43
+
+2020-01-01T00:00:10Z libevent: evhttp_get_body_length: bytes to read: 81 (in buffer 81)
+
+2020-01-01T00:00:10Z libevent: event_del: 0x562cb4ef5b90 (fd 43), callback 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: Epoll DEL(1) on fd 43 okay. Old events were 2; read change was 2 (del); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:10Z libevent: event_del: 0x562cb4ef5b90 (fd 43), callback 0x7fc830846d40
+2020-01-01T00:00:10Z Received a POST request for / from 89.247.167.117:48465
+2020-01-01T00:00:10Z ThreadRPCServer method=getblockchaininfo user=node1
+2020-01-01T00:00:10Z libevent: evhttp_add_header: key: Content-Type val: application/json
+
+2020-01-01T00:00:10Z libevent: event_active: 0x562cb4eb82a0 (fd -1), res 0, callback 0x7fc8328d6bc8
+2020-01-01T00:00:10Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:10Z libevent: event_active: 0x562cb4e7c5e0 (fd 18), res 2, callback 0x7fc830847980
+2020-01-01T00:00:10Z libevent: event_del: 0x562cb4eb82a0 (fd -1), callback 0x7fc8328d6bc8
+2020-01-01T00:00:10Z libevent: event_process_active: event: 0x562cb4eb82a0,    call 0x7fc8328d6bc8
+2020-01-01T00:00:10Z libevent: evhttp_add_header: key: Date val: Wed, 01 Jan 2020 00:00:10 GMT
+
+2020-01-01T00:00:10Z libevent: evhttp_add_header: key: Content-Length val: 699
+
+2020-01-01T00:00:10Z libevent: evhttp_write_buffer: preparing to write buffer
+
+2020-01-01T00:00:10Z libevent: event_add: event: 0x562cb4ef5c10 (fd 43),  EV_WRITE  EV_TIMEOUT call 0x7fc830846920
+2020-01-01T00:00:10Z libevent: Epoll ADD(4) on fd 43 okay. Old events were 0; read change was 0 (none); write change was 1 (add); close change was 0 (none)
+2020-01-01T00:00:10Z libevent: event_add: event 0x562cb4ef5c10, timeout in 30 seconds 0 useconds, call 0x7fc830846920
+2020-01-01T00:00:10Z libevent: event_add: event: 0x562cb4ef5b90 (fd 43), EV_READ   EV_TIMEOUT call 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: Epoll MOD(5) on fd 43 okay. Old events were 4; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:10Z libevent: event_add: event 0x562cb4ef5b90, timeout in 30 seconds 0 useconds, call 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: event_add: event: 0x562cb4ef5c10 (fd 43),  EV_WRITE  EV_TIMEOUT call 0x7fc830846920
+2020-01-01T00:00:10Z libevent: event_add: event 0x562cb4ef5c10, timeout in 30 seconds 0 useconds, call 0x7fc830846920
+2020-01-01T00:00:10Z libevent: event_del: 0x562cb4eb82a0 (fd -1), callback 0x7fc8328d6bc8
+2020-01-01T00:00:10Z libevent: event_process_active: event: 0x562cb4e7c5e0, EV_READ   call 0x7fc830847980
+2020-01-01T00:00:10Z libevent: timeout_next: event: 0x562cb4ef5b90, in 30 seconds, 0 useconds
+2020-01-01T00:00:10Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:10Z libevent: event_active: 0x562cb4ef5c10 (fd 43), res 4, callback 0x7fc830846920
+2020-01-01T00:00:10Z libevent: event_process_active: event: 0x562cb4ef5c10,  EV_WRITE  call 0x7fc830846920
+2020-01-01T00:00:10Z libevent: event_add: event: 0x562cb4ef5c10 (fd 43),  EV_WRITE  EV_TIMEOUT call 0x7fc830846920
+2020-01-01T00:00:10Z libevent: event_add: event 0x562cb4ef5c10, timeout in 1577836840 seconds 150000 useconds, call 0x7fc830846920
+2020-01-01T00:00:10Z libevent: event_del: 0x562cb4ef5c10 (fd 43), callback 0x7fc830846920
+2020-01-01T00:00:10Z libevent: Epoll MOD(1) on fd 43 okay. Old events were 6; read change was 0 (none); write change was 2 (del); close change was 0 (none)
+2020-01-01T00:00:10Z libevent: event_del: 0x562cb4ef5c10 (fd 43), callback 0x7fc830846920
+2020-01-01T00:00:10Z libevent: event_add: event: 0x562cb4ef5b90 (fd 43), EV_READ   EV_TIMEOUT call 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: event_add: event 0x562cb4ef5b90, timeout in 30 seconds 0 useconds, call 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: timeout_next: event: 0x562cb4ef5b90, in 30 seconds, 0 useconds
+2020-01-01T00:00:10Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:10Z libevent: event_active: 0x562cb4ef5b90 (fd 43), res 2, callback 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: event_process_active: event: 0x562cb4ef5b90, EV_READ   call 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: event_add: event: 0x562cb4ef5b90 (fd 43), EV_READ   EV_TIMEOUT call 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: event_add: event 0x562cb4ef5b90, timeout in 1577836840 seconds 250000 useconds, call 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: event_del: 0x562cb4ef5b90 (fd 43), callback 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: Epoll DEL(1) on fd 43 okay. Old events were 2; read change was 2 (del); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:10Z libevent: event_del: 0x562cb4ef5b90 (fd 43), callback 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: event_del: 0x562cb4ef5c10 (fd 43), callback 0x7fc830846920
+2020-01-01T00:00:10Z libevent: event_del: 0x562cb4ef5b90 (fd 43), callback 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: event_del: 0x562cb4ef5c10 (fd 43), callback 0x7fc830846920
+2020-01-01T00:00:10Z libevent: event_callback_finalize_many_: 3 events finalizing
+2020-01-01T00:00:10Z libevent: event_del: 0x562cb4ef5b90 (fd 43), callback 0x7fc830846d40
+2020-01-01T00:00:10Z libevent: event_del: 0x562cb4ef5c10 (fd 43), callback 0x7fc830846920
+2020-01-01T00:00:10Z libevent: event_process_active: event: 0x562cb4ef5b90, EV_READ   call 0x7fc830842b20
+2020-01-01T00:00:10Z libevent: epoll_dispatch: epoll_wait reports 0

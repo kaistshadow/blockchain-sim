@@ -21,7 +21,7 @@ void TxGossipProtocol::RecvInventoryHandler(std::shared_ptr<Message> msg) {
         // send getdata
         std::shared_ptr<MessageObject> ptrToObj = std::make_shared<TxGossipGetdata>(getdataIds);
         std::shared_ptr<Message> message = std::make_shared<Message>(msg->GetSource(), "TXGOSSIP-GETDATA", ptrToObj);
-        g_PeerConnectivityLayer_API->SendMsgToPeer(msg->GetSource(), message);
+        BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(msg->GetSource(), message);
     }
 }
 
@@ -41,7 +41,7 @@ void TxGossipProtocol::RecvGetdataHandler(std::shared_ptr<Message> msg) {
         // send txs
         std::shared_ptr<MessageObject> ptrToObj = std::make_shared<TxGossipTxs>(txs);
         std::shared_ptr<Message> message = std::make_shared<Message>(msg->GetSource(), "TXGOSSIP-TXS", ptrToObj);
-        g_PeerConnectivityLayer_API->SendMsgToPeer(msg->GetSource(), message);
+        BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(msg->GetSource(), message);
     }
 }
 
@@ -61,13 +61,13 @@ void TxGossipProtocol::RecvTxsHandler(std::shared_ptr<Message> msg) {
     for (auto tx : txs) {
         txids.push_back(tx.GetId());
     }
-    std::vector<PeerId> neighborIds = g_PeerConnectivityLayer_API->GetNeighborPeerIds();
+    std::vector<PeerId> neighborIds = BL_PeerConnectivityLayer_API::Instance()->GetNeighborPeerIds();
     for (auto neighborId : neighborIds) {
         if (neighborId.GetId() != msg->GetSource().GetId()) {
             std::cout << "send(relay) inv to " << neighborId.GetId() << "\n";
             std::shared_ptr<MessageObject> ptrToObj = std::make_shared<TxGossipInventory>(txids);
             std::shared_ptr<Message> message = std::make_shared<Message>(neighborId, "TXGOSSIP-INV", ptrToObj);
-            g_PeerConnectivityLayer_API->SendMsgToPeer(neighborId, message);
+            BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(neighborId, message);
         }
     }
 

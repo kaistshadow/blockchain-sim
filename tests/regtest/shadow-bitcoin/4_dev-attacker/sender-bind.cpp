@@ -47,8 +47,6 @@ std::string hex_to_string(const std::string& hexstr)
 using namespace libBLEEP;
 
 
-std::unique_ptr<libBLEEP_BL::BL_SocketLayer_API> libBLEEP_BL::g_SocketLayer_API;
-std::unique_ptr<libBLEEP_BL::MainEventManager> libBLEEP_BL::g_mainEventManager;
 int bitcoin_msg_count = 0;
 
 int main(int argc, char *argv[]) {
@@ -66,34 +64,35 @@ int main(int argc, char *argv[]) {
     puts_temp("test shadow_interface\n");
 
     /* allocate mainEventManager */
-    libBLEEP_BL::g_mainEventManager = std::unique_ptr<libBLEEP_BL::MainEventManager>(new libBLEEP_BL::MainEventManager());
+    libBLEEP_BL::MainEventManager::InitInstance();
+
     /* allocate socketlayer */
-    libBLEEP_BL::g_SocketLayer_API = std::unique_ptr<libBLEEP_BL::BL_SocketLayer_API>(new libBLEEP_BL::BL_SocketLayer_Bitcoin());
+    libBLEEP_BL::BL_SocketLayer_Bitcoin::RegisterInstance();
     /* allocate peerConnectivityLayer */
 //    std::string myId = gArgs.GetArg("-id", "noid");
 //    libBLEEP_BL::g_PeerConnectivityLayer_API = std::unique_ptr<libBLEEP_BL::BL_PeerConnectivityLayer_API>(new libBLEEP_BL::BL_PeerConnectivityLayer(myId));
 
 
-    int conn_fd = libBLEEP_BL::g_SocketLayer_API->ConnectSocket("11.0.0.10");
+    int conn_fd = libBLEEP_BL::BL_SocketLayer_Bitcoin::Instance()->ConnectSocket("11.0.0.10");
 
     while(true) {
         std::cout << "while" << "\n";
-        libBLEEP_BL::g_mainEventManager->Wait(); // main event loop (wait for next event)
+        libBLEEP_BL::MainEventManager::Instance()->Wait(); // main event loop (wait for next event)
 
         // loop returned
         PrintTimespec("mainEventManager.Wait returned");
 
-        libBLEEP_BL::AsyncEvent event = libBLEEP_BL::g_mainEventManager->PopAsyncEvent();
+        libBLEEP_BL::AsyncEvent event = libBLEEP_BL::MainEventManager::Instance()->PopAsyncEvent();
 
         switch (event.GetType()) {
             case libBLEEP_BL::AsyncEventEnum::Layer1_Event_Start ... libBLEEP_BL::AsyncEventEnum::Layer1_Event_End:
-                libBLEEP_BL::g_SocketLayer_API->SwitchAsyncEventHandler(event);
+                libBLEEP_BL::BL_SocketLayer_Bitcoin::Instance()->SwitchAsyncEventHandler(event);
                 break;
             case libBLEEP_BL::AsyncEventEnum::PeerSocketConnect:
                 std::shared_ptr<libBLEEP_BL::DataSocket> dataSocket = event.GetData().GetDataSocket();
                 int fd = dataSocket->GetFD();
                 std::string test = "test message for newly binded socket!!";
-                libBLEEP_BL::g_SocketLayer_API->SendToSocket(fd, test.c_str(), test.size());
+                libBLEEP_BL::BL_SocketLayer_Bitcoin::Instance()->SendToSocket(fd, test.c_str(), test.size());
                 break;
         }
     }

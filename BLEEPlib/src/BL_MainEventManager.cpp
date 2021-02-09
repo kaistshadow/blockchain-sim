@@ -7,21 +7,35 @@
 
 using namespace libBLEEP_BL;
 
+MainEventManager *MainEventManager::_instance = 0;
+
+MainEventManager *MainEventManager::Instance() {
+    if (_instance == 0) {
+        libBLEEP::M_Assert(0, "Instance must be initialized first.");
+    }
+    return _instance;
+}
+
+void MainEventManager::InitInstance(AsyncEventEnum internalEventEnum) {
+    libBLEEP::M_Assert(_instance == 0, "Instance must be initialized once.");
+    _instance = new MainEventManager(internalEventEnum);
+}
+
 MainEventManager::MainEventManager(AsyncEventEnum internalEventEnum) {
     _libev_loop = EV_DEFAULT;
     _internalHandleEventEnum = internalEventEnum;
 }
 
-static void HandleAsyncEvent(AsyncEvent& event) {
+static void HandleAsyncEvent(AsyncEvent &event) {
     switch (event.GetType()) {
-    case AsyncEventEnum::Layer1_Event_Start ... AsyncEventEnum::Layer1_Event_End:
-        g_SocketLayer_API->SwitchAsyncEventHandler(event);
+        case AsyncEventEnum::Layer1_Event_Start ... AsyncEventEnum::Layer1_Event_End:
+            BL_SocketLayer_API::Instance()->SwitchAsyncEventHandler(event);
         break;
     case AsyncEventEnum::Layer2_Event_Start ... AsyncEventEnum::Layer2_Event_End:
-        g_PeerConnectivityLayer_API->SwitchAsyncEventHandler(event);
+        BL_PeerConnectivityLayer_API::Instance()->SwitchAsyncEventHandler(event);
         break;
     case AsyncEventEnum::Layer3_Event_Start ... AsyncEventEnum::Layer3_Event_End:
-        g_ProtocolLayer_API->SwitchAsyncEventHandler(event);
+        BL_ProtocolLayer_API::Instance()->SwitchAsyncEventHandler(event);
         break;
     }
 

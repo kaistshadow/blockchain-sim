@@ -17,7 +17,6 @@ enable_testing()
 
 add_shadow_plugin(NODE_BL_TEST_TX_10 node_bl_test_tx.cpp)
 find_package(Libev_4_33 REQUIRED)
-target_link_libraries(NODE_BL_TEST_TX_10 NEWBLEEP)
 target_link_libraries(NODE_BL_TEST_TX_10 BLEEP)
 
 # copy resulting plugins into source directory
@@ -39,7 +38,6 @@ set_property(TEST regtest-BLEEP-gossip-10node APPEND
 ## test for peer connection (Node Discovery Protocol)
 add_shadow_plugin(NODE_BL_TEST_PEER node_bl_test_peerconnection.cpp)
 find_package(Libev_4_33 REQUIRED)
-target_link_libraries(NODE_BL_TEST_PEER NEWBLEEP)
 target_link_libraries(NODE_BL_TEST_PEER BLEEP)
 
 add_custom_command(TARGET NODE_BL_TEST_PEER

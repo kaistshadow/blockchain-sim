@@ -23,7 +23,7 @@ add_subdirectory(shadow_storage_manager)
 
 if(BITCOIN_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")
-  message("                           Start Zcash build")
+  message("                           Start Bitcoin build")
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(bitcoin)
 
@@ -38,9 +38,6 @@ elseif(GIT_OPT STREQUAL ON)
   message("                           Git All build")
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(bitcoin)
-  ### Until the complete tests are done, let's exclude following external modules from git all build
-  #  add_subdirectory(zcash)
-  #  add_subdirectory(litecoin)
 
 else(BITCOIN_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")

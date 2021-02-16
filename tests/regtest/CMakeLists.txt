@@ -35,7 +35,6 @@ elseif(ALL_OPT STREQUAL ON)
   add_subdirectory(shadow-syscalls)
   add_subdirectory(shadow-dependencies)
   add_subdirectory(shadow_storage_mgmt_test)
-  # add_subdirectory(shadow-ISP)
 
  elseif(GIT_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
@@ -47,13 +46,7 @@ elseif(ALL_OPT STREQUAL ON)
   add_subdirectory(BLEEP-gossip-10node)
   add_subdirectory(BLEEP-POW-consensus)
   add_subdirectory(shadow-syscalls)
-  # add_subdirectory(shadow-ISP)
-  # add_subdirectory(shadow-geth) # results in deadlock due to futex issue
-  # add_subdirectory(shadow-rust) # it works well on local machine, but does not work on github Action, so commentified.
 
-  ### Until the complete tests are done, let's exclude following external modules from git all build
-  # add_subdirectory(shadow-zcash)
-  # add_subdirectory(shadow-litecoin)
 
 else(BITCOIN_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
@@ -66,5 +59,4 @@ else(BITCOIN_OPT STREQUAL ON)
   add_subdirectory(native-bintest)
   add_subdirectory(shadow-bitcoin)
   add_subdirectory(shadow-syscalls)
-  # add_subdirectory(shadow-ISP)
-endif(ZCASH_OPT STREQUAL ON)
+endif(BITCOIN_OPT STREQUAL ON)

@@ -41,33 +41,6 @@ def prepare_nodejs():
     exec_shell_cmd("cd %s; npm install @maxmind/geoip2-node" % nodejs_serv_path)
     exec_shell_cmd("cd vis; npm install; npm run build; cd ..")
 
-def prepare_zcash_dependencies():
-    exec_shell_cmd("sudo apt-get install \
-                    build-essential pkg-config libc6-dev m4 g++-multilib \
-                    autoconf libtool ncurses-dev unzip git python3 python3-zmq \
-                    zlib1g-dev curl bsdmainutils automake libtinfo5")
-
-def prepare_rust():
-    exec_shell_cmd("sudo apt-get install -y rustc")
-
-    # Following script is available for rustup installation.
-    # However, shadow plugin is not compatible for rust library compiled by rustup-installed rustc
-    # So, we commentify following sciprt
-
-    # exec_shell_cmd("curl https://sh.rustup.rs -sSf | sh -s -- -y")
-    # exec_shell_cmd("rustup toolchain install 1.39.0")
-    # exec_shell_cmd("rustup default 1.39.0")
-    #
-    # rcFile = os.path.expanduser("~/.bashrc")
-    # f = open(rcFile, 'r')
-    # rustPath = "export PATH=$PATH:%s" % os.path.expanduser("~/.cargo/bin" )
-    # needWriteRustPath = True
-    # for line in f:
-    #     if rustPath in line:
-    #         needWriteRustPath = False
-    # if needWriteRustPath:
-    #     exec_shell_cmd("echo '%s' >> ~/.bashrc" % rustPath)
-
 def prepare_shadow_dependencies():
     exec_shell_cmd("sudo apt-get install -y libcurl4-openssl-dev")
     exec_shell_cmd("sudo apt-get update -y")

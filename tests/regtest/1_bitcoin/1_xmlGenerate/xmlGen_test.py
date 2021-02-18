@@ -10,11 +10,8 @@ def exec_shell_cmd(cmd):
 
 def main():
 
-    print("----------------TODO-------------------")
-    exec_shell_cmd("shadow output.xml")
-    print("---------------------------------------")
     path = os.path.abspath(".")
-    target_folder = path + "/shadow.data/hosts/bcdnode0/stdout-bcdnode0.bitcoind.1000.log"
+    target_folder = path + "/output.xml"
     if os.path.isfile(target_folder):
         sys.exit(0)
     else:

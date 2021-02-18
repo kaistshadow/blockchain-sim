@@ -9,10 +9,6 @@ def exec_shell_cmd(cmd):
         exit(-1)
 
 def main():
-
-    print("Input node id flag")
-    print("Input network flags")
-    print("Input application flags")
-
+    print("return xml")
 if __name__ == '__main__':
     main()

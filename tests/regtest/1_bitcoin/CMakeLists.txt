@@ -1,5 +1,5 @@
 add_subdirectory(1_xmlGenerate)
-# add_subdirectory(2_shadow)
+add_subdirectory(2_shadow)
 # add_subdirectory(3_blockchainApplication)
 # add_subdirectory(4_injector)
 # add_subdirectory(5_walletAddress)

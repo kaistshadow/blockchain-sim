@@ -11,7 +11,8 @@ def exec_shell_cmd(cmd):
 def main():
 
     print("----------------TODO-------------------")
-    print("1. Run cli xmlGenerator.py")
+    exec_shell_cmd("shadow output.xml")
+    print("---------------------------------------")
     path = os.path.abspath(".")
     target_folder = path + "/shadow.data/hosts/bcdnode0/stdout-bcdnode0.bitcoind.1000.log"
     if os.path.isfile(target_folder):

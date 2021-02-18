@@ -119,3 +119,5 @@ include_directories(${Boost_INCLUDE_DIRS})
 # add tests
 # enable_testing()
 # add_subdirectory(libtest)
+
+add_subdirectory(src/sybil)

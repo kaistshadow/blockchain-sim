@@ -20,7 +20,7 @@ def main():
             line = f.readline()
             if not line: break
             # "height=1" means mine is activated
-            result = line.find("height=1")
+            result = line.find("height=0")
             if result != -1:
                 sys.exit(0)
     else:

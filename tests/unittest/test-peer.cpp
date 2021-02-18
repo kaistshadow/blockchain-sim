@@ -8,7 +8,7 @@
 using namespace libBLEEP_BL;
 
 typedef enum _nodetype {
-    NODE_SERVER, NODE_CLIENT
+    NODE_SERVER, NODE_CLIENT, NODE_SERVER2
 } Nodetype;
 
 typedef int (*test_func)(Nodetype t);
@@ -633,6 +633,150 @@ static int testPeerWithStop(Nodetype t) {
 }
 
 
+// Testcase for peer terminated with explicit stop(shadow's configuration)
+// Also, This testcase is for the node having two processes
+// This test is not working well because current BLEEPlib doesn't support a SocketLayer with different port number.
+static int testPeerWithStop_TwoProc(Nodetype t) {
+    if (t == NODE_CLIENT) {
+        /* client-side test logic */
+
+        /* init BLEEP library components */
+        MainEventManager::InitInstance();
+        BL_SocketLayer_API::Instance();
+        BL_PeerConnectivityLayer_API::InitInstance("client");
+
+        /* client tries to connect to server using BLEEP libray API*/
+        if (!BL_PeerConnectivityLayer_API::Instance()->ConnectPeer(PeerId("server"))) {
+            std::cout << "ConnectPeer failed" << "\n";
+            return -1;
+        }
+
+
+        /* init finishing timer */
+        EndTimer(150);
+        /* init event buffer which records all asynchronous events */
+        std::vector<AsyncEventEnum> eventQueue;
+
+        while (true) {
+            MainEventManager::Instance()->Wait(); // main event loop (wait for next event)
+            // loop returned
+            AsyncEvent event = MainEventManager::Instance()->PopAsyncEvent();
+            eventQueue.push_back(event.GetType());
+
+            switch (event.GetType()) {
+                case AsyncEventEnum::Layer1_Event_Start ... AsyncEventEnum::Layer1_Event_End:
+                    BL_SocketLayer_API::Instance()->SwitchAsyncEventHandler(event);
+                    break;
+                case AsyncEventEnum::Layer2_Event_Start ... AsyncEventEnum::Layer2_Event_End:
+                    BL_PeerConnectivityLayer_API::Instance()->SwitchAsyncEventHandler(event);
+                    break;
+                case AsyncEventEnum::FinishTest:
+                    /* This event indicates that the test is over */
+                    /* Thus, tries to check whether the eventQueue contains a valid event sequence */
+                    auto new_end = std::remove_if(eventQueue.begin(), eventQueue.end(),
+                                                  [](AsyncEventEnum &event) {
+                                                      return event == AsyncEventEnum::SocketWrite;
+                                                  });
+                    /* Remove socketwrite event records for simplicity */
+                    eventQueue.erase(new_end, eventQueue.end());
+
+                    for (auto event : eventQueue) {
+                        std::cout << (int) event << "\n";
+                    }
+
+                    /* Verify the event sequence */
+                    if (eventQueue[0] != AsyncEventEnum::SocketConnect) return -1;
+                    if (eventQueue[1] != AsyncEventEnum::PeerSocketConnect) return -1;
+                    // disconnecting peer by ping-pong mechanism
+                    if (eventQueue[2] != AsyncEventEnum::FinishTest) return -1;
+
+                    /* Event sequence is valid, thus return 0 */
+                    return 0;
+            }
+        }
+
+    } else if (t == NODE_SERVER) {
+        /* server-side test logic */
+        std::cout << "node_server started" << "\n";
+
+        /* init BLEEP library components */
+        MainEventManager::InitInstance();
+        BL_SocketLayer_API::Instance();
+        BL_PeerConnectivityLayer_API::InitInstance("server");
+
+
+        /* init event buffer which records all asynchronous events */
+        std::vector<AsyncEventEnum> eventQueue;
+
+        while (true) {
+            MainEventManager::Instance()->Wait(); // main event loop (wait for next event)
+
+            // loop returned
+            AsyncEvent event = MainEventManager::Instance()->PopAsyncEvent();
+            eventQueue.push_back(event.GetType());
+
+            switch (event.GetType()) {
+                case AsyncEventEnum::Layer1_Event_Start ... AsyncEventEnum::Layer1_Event_End:
+                    BL_SocketLayer_API::Instance()->SwitchAsyncEventHandler(event);
+                    break;
+                case AsyncEventEnum::Layer2_Event_Start ... AsyncEventEnum::Layer2_Event_End:
+                    BL_PeerConnectivityLayer_API::Instance()->SwitchAsyncEventHandler(event);
+                    break;
+            }
+        }
+    } else if (t == NODE_SERVER2) {
+        /* server-side test logic */
+        std::cout << "node_server2 started" << "\n";
+
+        /* init BLEEP library components */
+        MainEventManager::InitInstance();
+        BL_SocketLayer_API::Instance(); // <- TODO: test failed here. It needs different port for listening socket.
+        BL_PeerConnectivityLayer_API::InitInstance("server");
+
+        /* init finishing timer */
+        EndTimer(150);
+
+        /* init event buffer which records all asynchronous events */
+        std::vector<AsyncEventEnum> eventQueue;
+
+        while (true) {
+            MainEventManager::Instance()->Wait(); // main event loop (wait for next event)
+
+            // loop returned
+            AsyncEvent event = MainEventManager::Instance()->PopAsyncEvent();
+            eventQueue.push_back(event.GetType());
+
+            switch (event.GetType()) {
+                case AsyncEventEnum::Layer1_Event_Start ... AsyncEventEnum::Layer1_Event_End:
+                    BL_SocketLayer_API::Instance()->SwitchAsyncEventHandler(event);
+                    break;
+                case AsyncEventEnum::Layer2_Event_Start ... AsyncEventEnum::Layer2_Event_End:
+                    BL_PeerConnectivityLayer_API::Instance()->SwitchAsyncEventHandler(event);
+                    break;
+                case AsyncEventEnum::FinishTest:
+                    /* This event indicates that the test is over */
+                    /* Thus, tries to check whether the eventQueue contains a valid event sequence */
+                    auto new_end = std::remove_if(eventQueue.begin(), eventQueue.end(),
+                                                  [](AsyncEventEnum &event) {
+                                                      return event == AsyncEventEnum::SocketRecv;
+                                                  });
+                    /* Remove socketRecv event records for simplicity */
+                    eventQueue.erase(new_end, eventQueue.end());
+                    for (auto event : eventQueue) {
+                        std::cout << (int) event << "\n";
+                    }
+
+                    /* Verify the event sequence */
+                    if (eventQueue[0] != AsyncEventEnum::FinishTest) return -1;
+
+                    /* Event sequence is valid, thus return 0 */
+                    return 0;
+            }
+        }
+    }
+}
+
+
 /* This test format is inspired from shadow test format (tcp) */
 int main(int argc, char *argv[]) {
     int result = -1;
@@ -659,6 +803,8 @@ int main(int argc, char *argv[]) {
         testFunc = testPeerWithCloseExit;
     } else if (testcase == "PeerWithStop") {
         testFunc = testPeerWithStop;
+    } else if (testcase == "PeerWithStop_TwoProc") {
+        testFunc = testPeerWithStop_TwoProc;
     }
 
     /* select node type */
@@ -666,6 +812,8 @@ int main(int argc, char *argv[]) {
         result = testFunc(NODE_SERVER);
     } else if (nodetype == "client") {
         result = testFunc(NODE_CLIENT);
+    } else if (nodetype == "server2") {
+        result = testFunc(NODE_SERVER2);
     }
 
     if (result == 0) {

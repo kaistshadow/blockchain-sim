@@ -45,12 +45,12 @@ def main():
 
     args_confirm = args.args
     args_list = args_confirm.split("-")
-
     ###############################
     ## make args standard (bitcoin application args)
     ###############################
-    args_xml_application, args_filter = filter_target_logs(args_list)        
-
+    args_xml_application, args_filter = filter_target_logs(args_list) 
+    
+           
     ################################
     ## make xml file (shadow xml file)
     ################################
@@ -76,14 +76,13 @@ def main():
         while True:
             line = f.readline()
             if not line: break
-            for i in range(0,len(args_filter)):
-                result = line.find(args_filter[i])
+            result = line.find("UpdateTip: new best")
+            if result != -1:
+                result = line.find("height=0")
                 if result != -1:
-                    count += 1
-        if count == len(args_filter):
-            sys.exit(0)
-        else:
-            sys.exit(1)
+                    sys.exit(0)
+                else:
+                    sys.exit(1)
 
         f.close()
     else:

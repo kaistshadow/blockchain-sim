@@ -25,6 +25,15 @@ namespace libBLEEP_sybil {
     class BenignNode : public Node, public NodePrimitives {
     public:
         BenignNode(std::string virtualIp) : Node(virtualIp), NodePrimitives(this) {
+            // Create virtual NIC for this node
+            struct sockaddr_in my_addr;    /* my address information */
+            my_addr.sin_family = AF_INET;         /* host byte order */
+            my_addr.sin_addr.s_addr = inet_addr(_myIP.c_str());
+            bzero(&(my_addr.sin_zero), 8);        /* zero the rest of the struct */
+            if (shadow_register_NIC((struct sockaddr *) &my_addr, sizeof(struct sockaddr)) == -1) {
+                std::cout << "shadow_register_NIC failed" << "\n";
+                exit(-1);
+            }
         }
 
         // move constructor
@@ -39,13 +48,12 @@ namespace libBLEEP_sybil {
             int conn_port = 30001; // Random port for connection. TODO: randomly assign?
 
             // bind a new fd to shadow's virtual NIC
-            // TODO : Within shadow_interface APIs, NIC-only registering API is needed.
             struct sockaddr_in my_addr;    /* my address information */
             my_addr.sin_family = AF_INET;         /* host byte order */
             my_addr.sin_port = htons(conn_port);     /* short, network byte order */
             my_addr.sin_addr.s_addr = inet_addr(_myIP.c_str());
             bzero(&(my_addr.sin_zero), 8);        /* zero the rest of the struct */
-            if (shadow_bind(conn_fd, (struct sockaddr *) &my_addr, sizeof(struct sockaddr)) == -1) {
+            if (bind(conn_fd, (struct sockaddr *) &my_addr, sizeof(struct sockaddr)) == -1) {
                 perror("bind");
                 std::cout << "shadow-bind failed" << "\n";
                 exit(1);

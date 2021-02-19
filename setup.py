@@ -129,6 +129,8 @@ if __name__ == '__main__':
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
         exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
         exec_shell_cmd("sudo apt-get install -y libssl-dev")
+        #rpc client dependency
+        exec_shell_cmd("sudo apt-get install -y libjsoncpp-dev")
         prepare_shadow()
         prepare_shadow_dependencies()
         exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_bleeplib_opt))

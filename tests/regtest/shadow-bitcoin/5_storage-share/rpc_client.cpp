@@ -6,12 +6,18 @@
  */
 
 #include <curl/curl.h>
+#include <jsoncpp/json/json.h>
 #include <string>
 #include <iostream>
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
 
+// json reader
+Json::Reader reader;
+Json::FastWriter writer;
+Json::Value json_req;
+Json::Value json_resp;
 // bitcoin rpc curl library
 std::string url;
 std::string id_pwd;
@@ -35,6 +41,7 @@ size_t rpc_callback(char *data, size_t size, size_t nmemb, void *userdata) {
 
     return realsize;
 }
+
 std::string request(std::string req){
     CURL *curl = curl_easy_init();
     struct curl_slist *headers = NULL;
@@ -54,28 +61,21 @@ std::string request(std::string req){
         std::string res = std::string(r.data, r.size);
         free(r.data);
         std::cout<<"-- result --\n";
-        std::cout<<res<<"\n";
+        std::cout<<res;
         return res;
     }
     return "";
 }
-void init_fixed_attr(char* argv[]) {
+void init_fixed_attr(int argc, char* argv[]) {
     if (argc != 4) {
         std::cout<<"argument not match\n";
-        return -1;
+        abort();
     }
     url = std::string(argv[1]);
     id_pwd = std::string(argv[2]);
 }
 
 // feature supports
-std::string getWalletAddress(std::string str) {
-    std::size_t found;
-    found = str.find("\"result\":\"");
-    std::string s = str.substr(found + 10, str.size());
-    found = s.find("\"");
-    return s.substr(0, found);
-}
 int getTxCount(std::string str) {
     std::size_t found;
     found = str.find("\"result\":");
@@ -87,39 +87,74 @@ int getTxCount(std::string str) {
 
 int main(int argc, char* argv[]) {
     // init
+    std::string req;
     std::string res;
-    init_fixed_attr(argv);
+    init_fixed_attr(argc, argv);
 
     // method 1: generate node's wallet
     std::cout<<"getnewaddress\n";
-    res = request("{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getnewaddress\", \"params\": []}");
+    json_req.clear();
+    json_resp.clear();
+    // request setup
+    json_req["jsonrpc"] = "1.0";
+    json_req["id"] = "rpc_client";
+    json_req["method"] = "getnewaddress";
+    json_req["params"] = Json::arrayValue;
+    // request
+    req = writer.write(json_req);
+    res = request(req);
+    reader.parse(res, json_resp);
     std::cout<<"-- wallet --\n";
-    std::string wallet_address = getWalletAddress(res);
+    std::string wallet_address = json_resp["result"].asString();
     std::cout<<wallet_address<<"\n";
     std::cout<<"\n";
 
     // method 2: setgeneratetoaddress
     std::cout<<"setgeneratetoaddress\n";
-    std::string request_str = "";
-    request_str += "{\"jsonrpc\": \"1.0\", ";
-    request_str += "\"id\":\"curltest\", ";
-    request_str += "\"method\": \"setgeneratetoaddress\", ";
-    request_str += "\"params\": [\""+wallet_address+"\"]}";
-    res = request(request_str);
+    json_req.clear();
+    json_resp.clear();
+    // request setup
+    json_req["jsonrpc"] = "1.0";
+    json_req["id"] = "rpc_client";
+    json_req["method"] = "setgeneratetoaddress";
+    json_req["params"] = Json::arrayValue;
+    json_req["params"].append(wallet_address);
+    // request
+    req = writer.write(json_req);
+    res = request(req);
     std::cout<<"\n";
 
     sleep(atoi(argv[3]));
 
     // method 3: getblockchaininfo
     std::cout<<"getblockchaininfo\n";
-    res = request("{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getblockchaininfo\", \"params\": []}");
+    json_req.clear();
+    json_resp.clear();
+    // request setup
+    json_req["jsonrpc"] = "1.0";
+    json_req["id"] = "rpc_client";
+    json_req["method"] = "getblockchaininfo";
+    json_req["params"] = Json::arrayValue;
+    // request
+    req = writer.write(json_req);
+    res = request(req);
     std::cout<<"\n";
 
     // method 4: gettxtotalcount
     std::cout<<"gettxtotalcount\n";
-    res = request("{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"gettxtotalcount\", \"params\": []}");
+    json_req.clear();
+    json_resp.clear();
+    // request setup
+    json_req["jsonrpc"] = "1.0";
+    json_req["id"] = "rpc_client";
+    json_req["method"] = "gettxtotalcount";
+    json_req["params"] = Json::arrayValue;
+    // request
+    req = writer.write(json_req);
+    res = request(req);
+    reader.parse(res, json_resp);
     std::cout<<"-- TPS --\n";
-    int txcnt = getTxCount(res);
+    int txcnt = json_resp["result"].asInt();
     std::cout<<txcnt<<"/"<<argv[3]<<"="<<(txcnt/(double)atoi(argv[3]))<<"\n";
     std::cout<<"\n";
 }

@@ -13,6 +13,8 @@ namespace libBLEEP_sybil {
     class EclipseIncomingAttackPolicy {
 
     public:
+        EclipseIncomingAttackPolicy() {}
+
         // step 1. construct virtual network using sybil nodes
         bool ConstructSybilNet(vector<pair<string, int>> vIP, std::string targetIP, int targetPort) {
             // Spawn network consisting of benign nodes

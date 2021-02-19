@@ -8,7 +8,7 @@
 #include <memory>
 #include <iostream>
 #include "ipdb/IPDatabase.h"
-#include "utility/Reactor.h"
+#include <ev++.h>
 
 namespace libBLEEP_sybil {
 
@@ -21,7 +21,11 @@ namespace libBLEEP_sybil {
         int _targetPort = -1;
         IPDB _ipDatabase;
 
+        struct ev_loop *libev_loop = nullptr;
+
     public:
+        AttackBox() : AttackPolicy<NodePrimitives>() { libev_loop = EV_DEFAULT; }
+
         void setTarget(std::string targetIP, int targetPort) {
             _targetIP = targetIP;
             _targetPort = targetPort;
@@ -40,7 +44,7 @@ namespace libBLEEP_sybil {
         }
 
         int startAttack() {
-            Reactor::Instance()->HandleEvents();
+            ev_run(libev_loop, 0);
             std::cout << "all watchers are removed" << "\n";
             return 0;
         }

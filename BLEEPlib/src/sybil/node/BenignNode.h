@@ -16,21 +16,19 @@
 #include <strings.h>
 
 #include "shadow_interface.h"
-#include "../utility/Reactor.h"
-#include "../utility/ReactorHandler.h"
 #include "Node.h"
 
 
 namespace libBLEEP_sybil {
 
     template<class NodePrimitives>
-    class BenignNode : public Node, public NodePrimitives {
+    class BenignNode : public Node<NodePrimitives> {
     public:
-        BenignNode(std::string virtualIp) : Node(virtualIp), NodePrimitives(this) {
+        BenignNode(std::string virtualIp) : Node<NodePrimitives>(virtualIp, NodeType::Benign) {
             // Create virtual NIC for this node
             struct sockaddr_in my_addr;    /* my address information */
             my_addr.sin_family = AF_INET;         /* host byte order */
-            my_addr.sin_addr.s_addr = inet_addr(_myIP.c_str());
+            my_addr.sin_addr.s_addr = inet_addr(Node<NodePrimitives>::_myIP.c_str());
             bzero(&(my_addr.sin_zero), 8);        /* zero the rest of the struct */
             if (shadow_register_NIC((struct sockaddr *) &my_addr, sizeof(struct sockaddr)) == -1) {
                 std::cout << "shadow_register_NIC failed" << "\n";
@@ -40,8 +38,6 @@ namespace libBLEEP_sybil {
 
         // move constructor
         BenignNode(BenignNode &&other) = default;
-
-        virtual std::string GetIP() override { return _myIP; }
 
         // API for connection to target
         int tryConnectToTarget(std::string targetIP, int targetPort) {
@@ -53,7 +49,7 @@ namespace libBLEEP_sybil {
             struct sockaddr_in my_addr;    /* my address information */
             my_addr.sin_family = AF_INET;         /* host byte order */
             my_addr.sin_port = htons(conn_port);     /* short, network byte order */
-            my_addr.sin_addr.s_addr = inet_addr(_myIP.c_str());
+            my_addr.sin_addr.s_addr = inet_addr(Node<NodePrimitives>::_myIP.c_str());
             bzero(&(my_addr.sin_zero), 8);        /* zero the rest of the struct */
             if (bind(conn_fd, (struct sockaddr *) &my_addr, sizeof(struct sockaddr)) == -1) {
                 perror("bind");
@@ -83,16 +79,15 @@ namespace libBLEEP_sybil {
                 exit(-1);
             }
 
+
             // assign an io event watcher for (connect) tried socket descriptor
             // and register an event watcher to monitor for the beginning of I/O operation (A.K.A reactor pattern)
-            Reactor *reactor = Reactor::Instance(); // singleton object
-            ev::io *iowatcher = new ev::io;
-            iowatcher->set<BenignNodeConnSocketIOHandler<NodePrimitives>, &BenignNodeConnSocketIOHandler<NodePrimitives>::execute>(
-                    new BenignNodeConnSocketIOHandler(reactor, this));
-            iowatcher->start(conn_fd, ev::WRITE);
-            if (!reactor->RegisterIOWatcher(iowatcher)) {
-                std::cout << "failed to register watcher" << "\n";
-                exit(-1);
+            auto[it, result] = Node<NodePrimitives>::_mConnSocketWatcher.try_emplace(conn_fd);
+            if (result) {
+                ev::io &watcher = it->second;
+                watcher.set<Node<NodePrimitives>, &Node<NodePrimitives>::conncb>(this);
+                watcher.set(conn_fd, ev::WRITE);
+                watcher.start();
             }
 
             return conn_fd;

@@ -11,14 +11,10 @@
 namespace libBLEEP_sybil {
     class TCPControl {
     private:
-        int _socketfd = -1;
         size_t _offset = 0;
-        ev::io *_watcher = nullptr;
         std::deque<std::vector<unsigned char>> _sendBuffer;
         std::string _recvBuffer;
     public:
-        TCPControl(int fd, ev::io *w) : _socketfd(fd), _watcher(w) {}
-
         TCPControl() = default;
 
         // move constructor
@@ -33,7 +29,7 @@ namespace libBLEEP_sybil {
 
         void setSendOffset(size_t offset) { _offset = offset; }
 
-        bool IsEmptySendBuffer() { return _sendBuffer.empty(); }
+        bool IsEmptySendBuffer() const { return _sendBuffer.empty(); }
 
         void RemoveFrontSendBuffer() { _sendBuffer.pop_front(); }
 
@@ -46,11 +42,6 @@ namespace libBLEEP_sybil {
 
         void SetRecvBuffer(std::string newstr) { _recvBuffer = newstr; }
 
-
-        // watcher management
-        void SetWrite() { _watcher->set(_socketfd, ev::READ | ev::WRITE); }
-
-        void UnsetWrite() { _watcher->set(_socketfd, ev::READ); }
     };
 }
 

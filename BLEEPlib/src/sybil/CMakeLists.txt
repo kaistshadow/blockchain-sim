@@ -16,12 +16,7 @@ target_sources(BLEEPsybil
         nodePrimitives/BLNodePrimitives.h
         nodePrimitives/BLNodePrimitives.cpp
         policy/EclipseIncomingAttackPolicy.h
-        utility/Reactor.cpp
-        utility/Reactor.h
-        utility/ReactorHandler.h
         utility/TCPControl.h
-        utility/TCPBufferManager.cpp  # Not used
-        utility/TCPBufferManager.h    # Not used
         )
 
 target_include_directories(BLEEPsybil

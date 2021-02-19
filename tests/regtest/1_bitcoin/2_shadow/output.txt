@@ -1,0 +1,393 @@
+00:00:00.000122 [thread-0] n/a [message] [n/a] [shd-logger.c:296] [_logger_logStartupMessage] logging system started at 2021-02-19 15:04:28
+00:00:00.000162 [thread-0] n/a [message] [n/a] [shd-main.c:352] [_main_helper] Starting Shadow v1.12.1-240-g9bdea5e6 2021-01-12 (built 2021-02-17) with GLib v2.56.4 and IGraph v0.7.1
+00:00:00.000199 [thread-0] n/a [message] [n/a] [shd-main.c:359] [_main_helper] For more information, visit https://shadow.github.io or https://github.com/shadow
+00:00:00.000201 [thread-0] n/a [message] [n/a] [shd-main.c:360] [_main_helper] logging current startup arguments and environment
+00:00:00.000226 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: shadow
+00:00:00.000228 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: output.xml
+00:00:00.000263 [thread-0] n/a [message] [n/a] [shd-main.c:370] [_main_helper] shadow will automatically adjust environment and relaunch
+00:00:00.000265 [thread-0] n/a [message] [n/a] [shd-main.c:371] [_main_helper] loading shadow configuration file
+00:00:00.000358 [thread-0] n/a [message] [n/a] [shd-configuration.c:53] [_parser_findPathToFile] hello?
+00:00:00.000384 [thread-0] n/a [message] [n/a] [shd-main.c:394] [_main_helper] shadow configuration file loaded, parsed, and passed validation
+00:00:00.000389 [thread-0] n/a [message] [n/a] [shd-main.c:406] [_main_helper] setting up LD_PRELOAD environment
+00:00:00.000402 [thread-0] n/a [message] [n/a] [shd-main.c:594] [_main_helper] setting up LD_STATIC_TLS_EXTRA environment
+00:00:00.021130 [thread-0] n/a [message] [n/a] [shd-main.c:151] [_main_computeLoadSize] we need 144 bytes of static TLS per load of namespace with library at path '/home/mong/CLionProject/blockchain-sim/tests/regtest/1_bitcoin/2_shadow/libBITCOIND_0.19.1DEV.so'
+00:00:00.021534 [thread-0] n/a [message] [n/a] [shd-main.c:151] [_main_computeLoadSize] we need 0 bytes of static TLS per load of namespace with library at path '/home/mong/CLionProject/blockchain-sim/shadow/../Install/lib/libshadow-interpose.so'
+00:00:00.021549 [thread-0] n/a [message] [n/a] [shd-main.c:303] [_main_getStaticTLSValue] finished checking TLS size required for 1 hosts; used dlmopen for 1 namespaces and cache for 0 namespaces
+00:00:00.021584 [thread-0] n/a [message] [n/a] [shd-main.c:601] [_main_helper] we need 1024 total bytes of static TLS storage
+00:00:00.021605 [thread-0] n/a [message] [n/a] [shd-main.c:642] [_main_helper] environment was updated; shadow is relaunching now with new environment
+00:00:00.021704 [thread-0] n/a [message] [n/a] [shd-logger.c:310] [_logger_logShutdownMessage] logging system stopped at 2021-02-19 15:04:28, run time was 00:00:00
+00:00:00.000089 [thread-0] n/a [message] [n/a] [shd-logger.c:296] [_logger_logStartupMessage] logging system started at 2021-02-19 15:04:28
+00:00:00.000115 [thread-0] n/a [message] [n/a] [shd-main.c:352] [_main_helper] Starting Shadow v1.12.1-240-g9bdea5e6 2021-01-12 (built 2021-02-17) with GLib v2.56.4 and IGraph v0.7.1
+00:00:00.000124 [thread-0] n/a [message] [n/a] [shd-main.c:359] [_main_helper] For more information, visit https://shadow.github.io or https://github.com/shadow
+00:00:00.000139 [thread-0] n/a [message] [n/a] [shd-main.c:360] [_main_helper] logging current startup arguments and environment
+00:00:00.000146 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: shadow
+00:00:00.000163 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: output.xml
+00:00:00.000164 [thread-0] n/a [message] [n/a] [shd-main.c:316] [_main_logEnvironment] arg: --preload=/home/mong/CLionProject/blockchain-sim/shadow/../Install/lib/libshadow-interpose.so
+00:00:00.000171 [thread-0] n/a [message] [n/a] [shd-main.c:328] [_main_logEnvironment] env: LD_STATIC_TLS_EXTRA=1024
+00:00:00.000185 [thread-0] n/a [message] [n/a] [shd-main.c:328] [_main_logEnvironment] env: SHADOW_SPAWNED=TRUE
+00:00:00.002198 [thread-0] n/a [message] [n/a] [shd-main.c:696] [_main_helper] startup checks passed, we are ready to start simulation
+00:00:01.003988 [thread-0] n/a [message] [n/a] [shd-master.c:95] [master_new] simulation master created
+00:00:01.004027 [thread-0] n/a [message] [n/a] [shd-master.c:418] [master_run] loading and initializing simulation data
+00:00:01.004380 [thread-0] n/a [message] [n/a] [shd-configuration.c:53] [_parser_findPathToFile] hello?
+00:00:01.004470 [thread-0] n/a [message] [n/a] [shd-master.c:171] [_master_loadConfiguration] successfully parsed Shadow XML input!
+00:00:01.005082 [thread-0] n/a [message] [n/a] [shd-topology.c:370] [_topology_loadGraph] reading graphml topology graph at '/tmp/shadow-topology-NZWSY0.graphml.xml'...
+00:00:01.005868 [thread-0] n/a [message] [n/a] [shd-topology.c:381] [_topology_loadGraph] successfully read graphml topology graph at '/tmp/shadow-topology-NZWSY0.graphml.xml'
+00:00:01.005891 [thread-0] n/a [message] [n/a] [shd-topology.c:713] [_topology_checkGraphProperties] checking graph properties...
+00:00:01.005900 [thread-0] n/a [message] [n/a] [shd-topology.c:555] [_topology_checkGraphAttributes] checking graph attributes...
+00:00:01.006008 [thread-0] n/a [warning] [n/a] [shd-topology.c:628] [_topology_checkGraphAttributes] vertex attribute 'geocode' has been renamed to 'countrycode' and is considered deprecated; please use 'countrycode' and/or 'citycode' instead
+00:00:01.006051 [thread-0] n/a [message] [n/a] [shd-topology.c:701] [_topology_checkGraphAttributes] successfully verified all graph, vertex, and edge attributes
+00:00:01.006159 [thread-0] n/a [message] [n/a] [shd-topology.c:782] [_topology_checkGraphProperties] topology graph is complete, undirected, and strongly connected with 1 cluster. It does not prefer direct paths.
+00:00:01.006175 [thread-0] n/a [message] [n/a] [shd-topology.c:1007] [_topology_checkGraphVertices] checking graph vertices...
+00:00:01.006253 [thread-0] n/a [message] [n/a] [shd-topology.c:1021] [_topology_checkGraphVertices] 1 graph vertices ok
+00:00:01.006261 [thread-0] n/a [message] [n/a] [shd-topology.c:1153] [_topology_checkGraphEdges] checking graph edges...
+00:00:01.006329 [thread-0] n/a [message] [n/a] [shd-topology.c:1167] [_topology_checkGraphEdges] 1 graph edges ok
+00:00:01.006334 [thread-0] n/a [message] [n/a] [shd-topology.c:1188] [_topology_checkGraph] successfully parsed graphml and validated topology: graph is strongly connected with 1 cluster, 1 vertex, and 1 edge
+00:00:01.006615 [thread-0] n/a [message] [n/a] [shd-scheduler.c:202] [scheduler_new] main scheduler thread will operate with 0 worker threads
+00:00:01.007398 [thread-0] n/a [message] [n/a] [shd-master.c:435] [master_run] registering plugins and hosts
+00:00:01.007487 [thread-0] n/a [message] [n/a] [shd-host.c:115] [host_new] Created host id '1' name 'bcdnode0'
+00:00:01.007832 [thread-0] n/a [message] [n/a] [shd-topology.c:2414] [topology_attach] attached address '11.0.0.1' to vertex 0 ('poi-1') with attributes (ip=0.0.0.0, citycode=(null), countrycode=(null), geocode=US, type=net) using hints (ip=(null), citycode=(null), countrycode=(null), geocode=(null), type=(null))
+00:00:01.007867 [thread-0] n/a [message] [n/a] [shd-host.c:180] [host_setup] Setup host id '1' name 'bcdnode0' with seed 1105148392, ip 11.0.0.1, 10000020000040 bwUpKiBps, 10000020000040 bwDownKiBps, 131072 initSockSendBufSize, 174760 initSockRecvBufSize, 4000000 cpuFrequency, 0 cpuThreshold, 200 cpuPrecision
+00:00:01.007932 [thread-0] n/a [message] [n/a] [shd-master.c:442] [master_run] running simulation
+00:00:01.007938 [thread-0] n/a [message] [n/a] [shd-master.c:446] [master_run] log message buffering is enabled for efficiency
+00:00:01.007989 [thread-0] n/a [message] [n/a] [shd-scheduler.c:67] [_scheduler_startHosts] starting to boot 1 hosts
+00:00:01.008005 [thread-0] 00:00:00.000000000 [message] [bcdnode0~11.0.0.1] [shd-tracker.c:417] [_tracker_logNode] [shadow-heartbeat] [node-header] interval-seconds,recv-bytes,send-bytes,cpu-percent,delayed-count,avgdelay-milliseconds;inbound-localhost-counters;outbound-localhost-counters;inbound-remote-counters;outbound-remote-counters where counters are: packets-total,bytes-total,packets-control,bytes-control-header,packets-control-retrans,bytes-control-header-retrans,packets-data,bytes-data-header,bytes-data-payload,packets-data-retrans,bytes-data-header-retrans,bytes-data-payload-retrans
+00:00:01.008048 [thread-0] 00:00:00.000000000 [message] [bcdnode0~11.0.0.1] [shd-tracker.c:440] [_tracker_logNode] [shadow-heartbeat] [node] 1,0,0,0.000000,0,0.000000;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0
+00:00:01.008070 [thread-0] n/a [message] [n/a] [shd-scheduler.c:69] [_scheduler_startHosts] 1 hosts are booted
+00:00:01.008115 [thread-0] 00:00:01.000000000 [message] [bcdnode0~11.0.0.1] [shd-tracker.c:440] [_tracker_logNode] [shadow-heartbeat] [node] 1,0,0,0.000000,0,0.000000;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0
+00:00:01.008135 [thread-0] 00:00:01.000000000 [message] [bcdnode0~11.0.0.1] [shd-process.c:1177] [_process_start] starting process 'bcdnode0.bitcoind.1000'
+00:00:01.026742 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.026748 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.026761 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.026769 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.026772 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.026802 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.026804 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.026969 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.026993 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027017 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027020 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027022 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027025 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027028 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027028 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027031 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027033 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027034 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027036 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027037 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027053 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027058 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027061 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027063 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027069 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027072 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027114 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027115 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027306 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027322 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027333 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027336 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027457 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027460 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027462 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027463 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027498 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027527 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027533 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027535 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027538 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027551 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027552 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027603 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027605 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027641 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027643 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027657 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027662 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027676 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027679 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027682 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027684 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027687 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027703 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027717 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027719 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027744 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027776 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027789 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027859 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027862 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027878 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027889 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027921 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027924 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027925 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027927 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027929 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027932 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027937 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027943 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027943 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027946 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027948 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027951 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027954 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027959 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027967 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027970 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.027970 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.028208 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.028216 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.028235 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.028240 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.028262 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.028267 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.028283 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.028294 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.028329 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.028334 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.028335 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.028337 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.028364 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.028383 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.028728 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.028737 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.029039 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.029042 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.029233 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.030027 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.030041 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.191427 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.191432 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.191435 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.191440 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.191446 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.191449 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.191451 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.191453 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.191457 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.191462 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.193899 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.193909 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.193958 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.193959 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.193961 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.193963 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.193966 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.195692 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197270 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197273 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197276 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197292 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197297 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197311 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197313 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197316 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197354 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197376 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197378 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197384 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197389 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197416 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197421 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197422 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197632 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197635 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197637 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197643 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197645 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197646 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197805 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197808 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197810 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197812 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197813 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197816 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197816 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197821 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197834 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197848 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197859 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197861 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197870 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197872 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197877 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197897 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197899 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197901 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197905 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197910 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197912 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197913 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197918 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197920 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197921 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197932 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197937 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197945 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197950 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197956 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197958 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197964 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197967 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197978 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197982 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197990 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.197991 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198078 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198090 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198099 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198258 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198261 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198269 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198287 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198288 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198290 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198302 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198318 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198328 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198331 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198333 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198334 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198336 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198337 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198339 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198341 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198342 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198344 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198345 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198349 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198350 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198352 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198353 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198355 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198356 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198358 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198361 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198363 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198363 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198366 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198368 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198369 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198379 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198383 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198385 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198391 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198393 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198398 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198399 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198417 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198420 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198426 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198431 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198437 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198445 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198447 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198452 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198464 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198485 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198668 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198669 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198671 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198673 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198679 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198682 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198685 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198687 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198687 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198690 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198692 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198695 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198723 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198728 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198731 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198735 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198741 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198742 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198747 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198749 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198749 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198752 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198754 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198755 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198757 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198758 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198760 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198762 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198763 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198766 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198766 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198769 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198771 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198774 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198777 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198779 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198782 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198784 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198785 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198787 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198789 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198793 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198847 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198868 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198871 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198873 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198876 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198879 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198881 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198882 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198884 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198887 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198906 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198909 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198911 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198912 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198914 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198917 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.198925 [thread-0] 00:00:01.000000000 [message] [bcdnode0~11.0.0.1] [shd-process.c:530] [_process_loadPlugin] process 'bcdnode0.bitcoind.1000' successfully loaded plugin 'bitcoind' at path '/home/mong/CLionProject/blockchain-sim/tests/regtest/1_bitcoin/2_shadow/libBITCOIND_0.19.1DEV.so' into new namespace '0x7f84e963c150' in 0.189917 seconds
+00:00:01.198955 [thread-0] 00:00:01.000000000 [message] [bcdnode0~11.0.0.1] [shd-process.c:598] [_process_loadPlugin] found '(null)' at 0x7f84d9a48a85
+00:00:01.199146 [thread-0] 00:00:01.000000000 [message] [bcdnode0~11.0.0.1] [shd-process.c:1110] [_process_executeMain] calling main() for process 'bcdnode0.bitcoind.1000'
+00:00:01.199419 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.204530 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.208009 [thread-0] 00:00:01.000000000 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.216647 [thread-0] 00:00:01.000000000 [message] [bcdnode0~11.0.0.1] [shd-process.c:1294] [_process_start] process 'bcdnode0.bitcoind.1000' initialized the pth threading system in 0.000851 seconds, initialized the plugin namespace in 0.190112 seconds, and ran the pth main thread until it blocked in 0.017528 seconds
+00:00:01.216655 [thread-0] 00:00:01.000000000 [message] [bcdnode0~11.0.0.1] [shd-process.c:1300] [_process_start] process 'bcdnode0.bitcoind.1000' has set up the main pth thread 'bcdnode0.bitcoind.1000.main' and is running
+00:00:01.250598 [thread-0] 00:00:01.001000001 [warning] [bcdnode0~11.0.0.1] [shd-process.c:7082] [process_emu_pthread_mutexattr_settype] pthread_mutexattr_settype() is not supported by pth or by shadow
+00:00:01.309838 [thread-0] 00:00:01.001000001 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:01.309849 [thread-0] 00:00:01.001000001 [warning] [bcdnode0~11.0.0.1] [shd-process.c:5223] [process_emu___cxa_atexit] atexit at library close is not currently supported
+00:00:03.894718 [thread-0] 00:00:01.001000001 [warning] [bcdnode0~11.0.0.1] [shd-process.c:6837] [process_emu_pthread_setschedparam] pthread_setschedparam() is not supported by pth or by shadow
+00:00:03.909635 [thread-0] 00:00:01.001000001 [warning] [bcdnode0~11.0.0.1] [shd-process.c:7082] [process_emu_pthread_mutexattr_settype] pthread_mutexattr_settype() is not supported by pth or by shadow
+00:00:03.911449 [thread-0] 00:00:01.001000001 [warning] [bcdnode0~11.0.0.1] [shd-process.c:2268] [process_emu_socket] trying to create socket with domain "10", we only support AF_INET and AF_UNIX
+00:00:03.911608 [thread-0] 00:00:01.001000001 [warning] [bcdnode0~11.0.0.1] [shd-process.c:2705] [process_emu_setsockopt] setsockopt level 6 not implemented
+00:00:03.931382 [thread-0] 00:00:01.001000001 [warning] [bcdnode0~11.0.0.1] [shd-dns.c:170] [dns_resolveNameToAddress] unable to find address from name 'x9.testnet-seed.bitcoin.jonasschnelli.ch'
+00:00:03.931519 [thread-0] 00:00:01.001000001 [warning] [bcdnode0~11.0.0.1] [shd-dns.c:170] [dns_resolveNameToAddress] unable to find address from name 'x9.testnet-seed.bluematt.me'
+00:00:03.931605 [thread-0] 00:00:01.001000001 [warning] [bcdnode0~11.0.0.1] [shd-dns.c:170] [dns_resolveNameToAddress] unable to find address from name 'x9.seed.testnet.bitcoin.sprovoost.nl'
+00:00:03.931689 [thread-0] 00:00:01.001000001 [warning] [bcdnode0~11.0.0.1] [shd-dns.c:170] [dns_resolveNameToAddress] unable to find address from name 'x9.seed.tbtc.petertodd.org'
+00:00:03.932589 [thread-0] 00:00:01.001000001 [warning] [bcdnode0~11.0.0.1] [shd-dns.c:170] [dns_resolveNameToAddress] unable to find address from name 'testnet-seed.bitcoin.jonasschnelli.ch'
+00:00:03.937567 [thread-0] 00:00:01.501000001 [warning] [bcdnode0~11.0.0.1] [shd-dns.c:170] [dns_resolveNameToAddress] unable to find address from name 'testnet-seed.bluematt.me'
+00:00:03.940402 [thread-0] 00:00:02.000000000 [message] [bcdnode0~11.0.0.1] [shd-tracker.c:440] [_tracker_logNode] [shadow-heartbeat] [node] 1,0,0,0.015426,0,0.000000;1,66,1,66,0,0,0,0,0,0,0,0;1,66,1,66,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0
+00:00:03.940976 [thread-0] 00:00:02.001000001 [warning] [bcdnode0~11.0.0.1] [shd-dns.c:170] [dns_resolveNameToAddress] unable to find address from name 'seed.testnet.bitcoin.sprovoost.nl'
+00:00:03.943913 [thread-0] 00:00:02.501000001 [warning] [bcdnode0~11.0.0.1] [shd-dns.c:170] [dns_resolveNameToAddress] unable to find address from name 'seed.tbtc.petertodd.org'
+00:00:03.946431 [thread-0] 00:00:03.000000000 [message] [bcdnode0~11.0.0.1] [shd-tracker.c:440] [_tracker_logNode] [shadow-heartbeat] [node] 1,0,0,0.000000,0,0.000000;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0
+00:00:03.991657 [thread-0] 00:00:04.000000000 [message] [bcdnode0~11.0.0.1] [shd-tracker.c:440] [_tracker_logNode] [shadow-heartbeat] [node] 1,0,0,0.000000,0,0.000000;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0
+00:00:04.003222 [thread-0] 00:00:05.000000000 [message] [bcdnode0~11.0.0.1] [shd-tracker.c:440] [_tracker_logNode] [shadow-heartbeat] [node] 1,0,0,0.000000,0,0.000000;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0
+00:00:04.011147 [thread-0] 00:00:06.000000000 [message] [bcdnode0~11.0.0.1] [shd-tracker.c:440] [_tracker_logNode] [shadow-heartbeat] [node] 1,0,0,0.000000,0,0.000000;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0
+00:00:04.017294 [thread-0] 00:00:07.000000000 [message] [bcdnode0~11.0.0.1] [shd-tracker.c:440] [_tracker_logNode] [shadow-heartbeat] [node] 1,0,0,0.000000,0,0.000000;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0
+00:00:04.022687 [thread-0] 00:00:08.000000000 [message] [bcdnode0~11.0.0.1] [shd-tracker.c:440] [_tracker_logNode] [shadow-heartbeat] [node] 1,0,0,0.000000,0,0.000000;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0
+00:00:04.027429 [thread-0] 00:00:09.000000000 [message] [bcdnode0~11.0.0.1] [shd-tracker.c:440] [_tracker_logNode] [shadow-heartbeat] [node] 1,0,0,0.000000,0,0.000000;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0
+00:00:04.031918 [thread-0] n/a [message] [n/a] [shd-scheduler.c:92] [_scheduler_stopHosts] starting to shut down 1 hosts
+00:00:04.031921 [thread-0] n/a [message] [bcdnode0~11.0.0.1] [shd-process.c:1432] [process_stop] terminating main thread of process 'bcdnode0.bitcoind.1000'
+00:00:04.031925 [thread-0] n/a [message] [bcdnode0~11.0.0.1] [shd-process.c:993] [_process_executeCleanup] cleaning up process 'bcdnode0.bitcoind.1000': aborting 20 auxiliary threads and calling 0 atexit functions
+00:00:04.038024 [thread-0] n/a [message] [bcdnode0~11.0.0.1] [shd-host.c:277] [host_shutdown] host 'bcdnode0' has been shut down, total execution time was 3.029010 seconds
+00:00:04.038039 [thread-0] n/a [message] [n/a] [shd-scheduler.c:94] [_scheduler_stopHosts] 1 hosts are shut down
+00:00:04.038044 [thread-0] n/a [message] [n/a] [shd-master.c:459] [master_run] log message buffering is disabled during cleanup
+00:00:04.038045 [thread-0] n/a [message] [n/a] [shd-master.c:463] [master_run] simulation finished, cleaning up now
+00:00:04.038054 [thread-0] n/a [message] [n/a] [shd-scheduler.c:218] [scheduler_shutdown] scheduler is shutting down now
+00:00:04.038057 [thread-0] n/a [message] [n/a] [shd-scheduler.c:228] [scheduler_shutdown] waiting for 0 worker threads to finish
+00:00:04.038062 [thread-0] n/a [message] [n/a] [shd-scheduler.c:299] [_scheduler_free] 0 worker threads finished
+00:00:04.038086 [thread-0] n/a [message] [n/a] [shd-slave.c:218] [slave_free] ObjectCounter: counter values: task_new=613 task_free=613 event_new=613 event_free=613 packet_new=1 packet_free=1 payload_new=0 payload_free=0 host_new=1 host_free=0 process_new=1 process_free=0 descriptor_new=574 descriptor_free=574 channel_new=6 channel_free=6 tcp_new=3 tcp_free=3 udp_new=0 udp_free=0 epoll_new=184 epoll_free=184 timer_new=381 timer_free=381 
+00:00:04.038090 [thread-0] n/a [message] [n/a] [shd-slave.c:219] [slave_free] ObjectCounter: counter diffs: task=0 event=0 packet=0 payload=0 host=1 process=1 descriptor=0 channel=0 tcp=0 udp=0 epoll=0 timer=0 
+00:00:04.038100 [thread-0] n/a [message] [n/a] [shd-topology.c:1265] [_topology_clearCache] path cache cleared, spent 0.000000 seconds computing 0 shortest paths with dijkstra, and 0.000000 seconds computing 0 shortest self paths
+00:00:04.038152 [thread-0] n/a [message] [n/a] [shd-master.c:118] [master_free] simulation master destroyed
+00:00:04.038153 [thread-0] n/a [message] [n/a] [shd-main.c:735] [_main_helper] Shadow v1.12.1-240-g9bdea5e6 2021-01-12 (built 2021-02-17) simulation was shut down cleanly, returning code 0
+00:00:04.038208 [thread-0] n/a [message] [n/a] [shd-logger.c:310] [_logger_logShutdownMessage] logging system stopped at 2021-02-19 15:04:32, run time was 00:00:04

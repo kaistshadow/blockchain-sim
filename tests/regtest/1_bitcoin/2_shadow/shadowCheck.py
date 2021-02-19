@@ -1,92 +1,127 @@
 import os
-from subprocess import check_output
+import subprocess
 import argparse
 import sys
+import shlex
 
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
         print("error while executing '%s'" % cmd)
         exit(-1)
 
-def filter_target_logs(args_list):
-    args_filter = []
-    args_xml_application = ""
-    for i in range(1,len(args_list)):
-        args_xml_application += " -"
-        args_xml_application += args_list[i]
-        result = args_list[i].find("datadir")
+# make shadow runtime format example of 00:00:09
+def get_time_form(runtime):
+    result = ""
+    hours, mins, sec = 0, 0, 0
+    target_time = int(runtime) - 1
+    if target_time > 3600:
+        hours = target_time/3600
+        mins = (target_time%3600)/60
+        sec = (target_time%3600)%60
+    elif target_time < 3600:
+        mins = (target_time%3600)/60
+        sec = (target_time%3600)%60
+
+    else:
+        hours = 1
+        sec = sec - 1
+
+    if len(str(hours)) == 2:
+        result = result + str(hours) + ":"
+    else:
+        result = "0" + str(hours) + ":"
+    if len(str(mins)) == 2:
+        result = result + str(mins) + ":"
+    else:
+        result = result + "0" + str(mins) + ":"
+    if len(str(sec)) == 2:
+        result = result + str(sec)
+    else:
+        result = result + "0" + str(sec)
+
+    return result
+
+# test1 : whether runtime setting worked or not 
+# test2 : whether plugin(node_id) worked or not
+def test_shadow(output_file, runtime, node_id):
+    f = open(output_file, "r")
+    # result_count more than 3 means success.
+    result_count = 0
+    return_time = get_time_form(runtime)
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("_process_start")
         if result != -1:
-            # datadir means the "datadir" flag is activated
-            args_filter.append("datadir")
-        result = args_list[i].find("port")
-        if result != -1:
-            result = args_list[i].find("rpc")
+            result = line.find("has set up the main pth thread")
             if result != -1:
-                # "Bound to port 11111" text means the rpcport flag is activated
-                args_filter.append("Bound to port 11111")
-            else:
-                # "AddLocal" text means the port flag is activated 
-                args_filter.append("AddLocal")
-    return args_xml_application, args_filter
-
-def main():
-
-    # difficulty setting
-    # mining algorithm option setting
-    parser = argparse.ArgumentParser(description='Script for installation and simulation')
-    parser.add_argument("--latency", metavar="latency", default="50.0", help="network latency")
-    parser.add_argument("--packetloss", metavar="packetloss", default="0.0", help="network packetloss")
-    parser.add_argument("--bandwidthup", metavar="bandwidthup", default="10000240", help="bandwidthup latency")
-    parser.add_argument("--bandwidthdown", metavar="bandwidthdown", default="10000020000040", help="bandwidthdown latency")
-    parser.add_argument("--runtime", metavar="runtime", default="10", help="simulation runtime")
-    parser.add_argument("--node", metavar="nodeid", help="blockchain plugin node id")
-    parser.add_argument("--args", metavar="applicationArgs", help="blockchain application args")
-    args = parser.parse_args()
-
-    args_confirm = args.args
-    args_list = args_confirm.split("-")
-
-    ###############################
-    ## make args standard (bitcoin application args)
-    ###############################
-    args_xml_application, args_filter = filter_target_logs(args_list)        
-
-    ################################
-    ## make xml file (shadow xml file)
-    ################################
-    args_xml = "--runtime" + args.runtime + " --latency=" +  args.latency + " --packetloss=" + args.packetloss + " --bandwidthup=" + args.bandwidthup + " --bandwidthdown=" + args.bandwidthdown + " --node=" + args.node
-    xml_command = "python xmlGenerator.py " + args_xml + args_xml_application
-    # exec_shell_cmd(xml_command)
-
-    ################################
-    ## run shadow with xml made above (shadow xml file and bitcoin filtered args)
-    ################################
-    exec_shell_cmd("shadow output.xml")
-    path = os.path.abspath(".")
-    target_folder = path + "/shadow.data/hosts/"
-    target_folder_sub = args.node + "/stdout-" + args.node + ".bitcoind.1000.log"
-    target_folder += target_folder_sub
-    count = 0
-
-    ################################
-    ## compare shadow output with args standard
-    ################################
-    if os.path.isfile(target_folder):
-        f = open(target_folder, "r")
-        while True:
-            line = f.readline()
-            if not line: break
-            for i in range(0,len(args_filter)):
-                result = line.find(args_filter[i])
+                result = line.find(node_id)
                 if result != -1:
-                    count += 1
-        if count == len(args_filter):
-            sys.exit(0)
-        else:
-            sys.exit(1)
+                    result_count = 1
+        result = line.find(return_time)
+        if result != -1:
+            if result_count == 1:
+                f.close()
+                sys.exit(0)
+            else:
+                f.close()
+                sys.exit(1)
 
-        f.close()
+
+# Get runtime, node_id from xml file
+def get_info(xml_file):
+    split_result = []
+    split_result2 = []
+    f = open(xml_file, "r")
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("kill time")
+        if result != -1:
+            split_result = line.split('"')
+        result = line.find("node id")
+        if result != -1:
+            result = line.find("poi")
+            if result == -1:
+                split_result2 = line.split('"')
+                break
+    f.close()
+    return split_result[1],split_result2[1]
+
+def subprocess_open(command):
+    popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    (stdoutdata, stderrdata) = popen.communicate()
+    return stdoutdata, stderrdata
+
+def test_xml_existence():
+    path = os.path.abspath(".")
+    target_folder_xml = path + "/output.xml"
+    if os.path.isfile(target_folder_xml):
+        return target_folder_xml
     else:
         sys.exit(1)
+
+def test_shadow_output_file_existence():
+    path = os.path.abspath(".")
+    target_folder_file = path + "/output.txt"
+    if os.path.isfile(target_folder_file):
+        return target_folder_file
+    else:
+        sys.exit(1)
+
+# Test process
+# 1. Test - xml file existence 
+# 2. Run shadow and get shadow.output
+# 3. Get infos such as simulation runtime, plugin id from xml file
+# 4. Test - shadow output file existence
+# 5. Test - shadow
+
+def main():
+    target_folder_xml = test_xml_existence()
+    subprocess_open('shadow output.xml > output.txt')
+    runtime, node_id = get_info(target_folder_xml)
+    target_folder_file = test_shadow_output_file_existence()
+    test_shadow(target_folder_file, runtime, node_id)
+
 if __name__ == '__main__':
     main()

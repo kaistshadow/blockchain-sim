@@ -3,7 +3,6 @@
 
 #include <list>
 
-#include "utility/Reactor.h"
 #include "../node/BenignNode.h"
 
 using namespace std;
@@ -26,14 +25,6 @@ namespace libBLEEP_sybil {
             // Make benign nodes to connect to the victim
             for (auto &_benignNode : _benignNodes) {
                 int conn_fd = _benignNode.tryConnectToTarget(targetIP, targetPort);
-
-                // assign an io event watcher for (connect) tried socket descriptor
-                // and register an event watcher to monitor for the beginning of I/O operation (A.K.A reactor pattern)
-                ev::io *iowatcher = new ev::io;
-                iowatcher->set<BenignNodeConnSocketIOHandler<NodePrimitives>, &BenignNodeConnSocketIOHandler<NodePrimitives>::execute>(
-                        new BenignNodeConnSocketIOHandler(&_reactor, &_benignNode));
-                iowatcher->start(conn_fd, ev::WRITE);
-                _reactor.RegisterIOWatcher(iowatcher);
             }
 
             // Spawn network consisting of sybil nodes
@@ -44,14 +35,9 @@ namespace libBLEEP_sybil {
         // step 2. Initiate malicious node's periodic connection
 
 
-        // step 3. Run event loop
-        void RunEventLoop() {
-            _reactor.HandleEvents();
-        }
 
     private:
         list <BenignNode<NodePrimitives>> _benignNodes;
-        Reactor _reactor;
     };
 }
 

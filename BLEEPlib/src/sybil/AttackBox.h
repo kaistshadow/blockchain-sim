@@ -8,6 +8,7 @@
 #include <memory>
 #include <iostream>
 #include "ipdb/IPDatabase.h"
+#include "utility/Reactor.h"
 
 namespace libBLEEP_sybil {
 
@@ -39,7 +40,7 @@ namespace libBLEEP_sybil {
         }
 
         int startAttack() {
-            AttackPolicy<NodePrimitives>::RunEventLoop();
+            Reactor::Instance()->HandleEvents();
             std::cout << "all watchers are removed" << "\n";
             return 0;
         }

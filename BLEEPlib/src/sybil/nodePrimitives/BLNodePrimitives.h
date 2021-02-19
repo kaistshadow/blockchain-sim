@@ -17,9 +17,9 @@ namespace libBLEEP_sybil {
     public:
         BLNodePrimitives(Node *node) : _node(node) {}
 
-        void OpAfterConnect();
+        void OpAfterConnect(int conn_fd);
 
-        void CallbackAfterReceive();
+        void OpAfterRecv(int data_fd, std::string recv_str);
     };
 }
 

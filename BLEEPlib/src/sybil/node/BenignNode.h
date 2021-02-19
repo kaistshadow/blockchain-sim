@@ -16,8 +16,10 @@
 #include <strings.h>
 
 #include "shadow_interface.h"
-#include "../utility/TCPBufferManager.h"
+#include "../utility/Reactor.h"
+#include "../utility/ReactorHandler.h"
 #include "Node.h"
+
 
 namespace libBLEEP_sybil {
 
@@ -81,6 +83,18 @@ namespace libBLEEP_sybil {
                 exit(-1);
             }
 
+            // assign an io event watcher for (connect) tried socket descriptor
+            // and register an event watcher to monitor for the beginning of I/O operation (A.K.A reactor pattern)
+            Reactor *reactor = Reactor::Instance(); // singleton object
+            ev::io *iowatcher = new ev::io;
+            iowatcher->set<BenignNodeConnSocketIOHandler<NodePrimitives>, &BenignNodeConnSocketIOHandler<NodePrimitives>::execute>(
+                    new BenignNodeConnSocketIOHandler(reactor, this));
+            iowatcher->start(conn_fd, ev::WRITE);
+            if (!reactor->RegisterIOWatcher(iowatcher)) {
+                std::cout << "failed to register watcher" << "\n";
+                exit(-1);
+            }
+
             return conn_fd;
         }
 
@@ -133,8 +147,6 @@ namespace libBLEEP_sybil {
             hSocket = -1;
             return ret != -1;
         }
-
-        TCPBufferManager _tcpManager;
     };
 }
 

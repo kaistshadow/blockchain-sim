@@ -14,6 +14,14 @@ using namespace libBLEEP_sybil;
 using namespace std;
 
 struct ev_loop *Reactor::libev_loop = nullptr;
+Reactor *Reactor::_instance = 0;
+
+Reactor *Reactor::Instance() {
+    if (_instance == 0) {
+        _instance = new Reactor();
+    }
+    return _instance;
+}
 
 void Reactor::HandleEvents() {
     // ask the operating system for any new events,

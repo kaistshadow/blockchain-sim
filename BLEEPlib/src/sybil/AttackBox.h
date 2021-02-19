@@ -38,7 +38,8 @@ namespace libBLEEP_sybil {
         bool setupAttack() {
             if (_targetIP == "" || _targetPort == -1)
                 return false;
-            if (!AttackPolicy<NodePrimitives>::ConstructSybilNet(_ipDatabase.GetVReachableIP(), _targetIP, _targetPort))
+            if (!AttackPolicy<NodePrimitives>::ConstructSybilNet(_ipDatabase.GetVReachableIP(),
+                                                                 _ipDatabase.GetVShadowIP(), _targetIP, _targetPort))
                 return false;
             return true;
         }

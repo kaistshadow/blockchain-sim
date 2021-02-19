@@ -14,10 +14,16 @@ namespace libBLEEP_sybil {
         IPDatabase();
 
         std::vector<std::pair<std::string, int>> &GetVReachableIP() { return _vReachableIP; };
+
+        std::vector<std::string> &GetVShadowIP() { return _vShadowIP; }
+
     private:
         void InsertReachableIP(std::string, int);
 
+        void InsertShadowIP(std::string);
+
         std::vector<std::pair<std::string, int>> _vReachableIP;
+        std::vector<std::string> _vShadowIP; // malicious IPs
 
     };
 }

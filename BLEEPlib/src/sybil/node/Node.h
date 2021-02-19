@@ -53,12 +53,17 @@ namespace libBLEEP_sybil {
                 // call Node's primitive operation
                 NodePrimitives::OpAfterRecv(w.fd, recv_str);
             } else if (nBytes == 0) {
-                std::cout << "connection closed while recv" << "\n";
+                std::cout << "connection closed while recv" << ", myIP=" << NodePrimitives::GetIP() << "\n";
 
                 // remove data structure for this socket
                 close(w.fd);
                 NodePrimitives::RemoveTCPControl(w.fd);
                 _mDataSocketWatcher.erase(w.fd);
+
+                if (NodePrimitives::_type == NodeType::Shadow) {
+                    // call Node's primitive operation
+                    NodePrimitives::OpAfterDisconnect();
+                }
             } else if (nBytes < 0) {
                 // error
                 std::cout << "Error while recv" << "\n";

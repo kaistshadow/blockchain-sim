@@ -4,6 +4,7 @@
 #include <list>
 
 #include "../node/BenignNode.h"
+#include "../node/ShadowActiveNode.h"
 
 using namespace std;
 
@@ -16,7 +17,8 @@ namespace libBLEEP_sybil {
         EclipseIncomingAttackPolicy() {}
 
         // step 1. construct virtual network using sybil nodes
-        bool ConstructSybilNet(vector<pair<string, int>> vIP, std::string targetIP, int targetPort) {
+        bool ConstructSybilNet(vector<pair<string, int>> vIP, vector<string> vShadowIP, std::string targetIP,
+                               int targetPort) {
             // Spawn network consisting of benign nodes
             for (auto &[ip, uptime] : vIP) {
                 _benignNodes.emplace_back(ip);
@@ -30,6 +32,14 @@ namespace libBLEEP_sybil {
             }
 
             // Spawn network consisting of sybil nodes
+            for (auto ip : vShadowIP) {
+                _shadowNodes.emplace_back(ip);
+            }
+
+            // Let sybil nodes try to connect to the victim 100 seconds later (i.e., after initializing benign networks)
+            for (auto &_shadowNode : _shadowNodes) {
+                _shadowNode.tryConnectToTarget(targetIP, targetPort, 100);
+            }
 
             return true;
         }
@@ -40,6 +50,7 @@ namespace libBLEEP_sybil {
 
     private:
         list <BenignNode<NodePrimitives>> _benignNodes;
+        list <ShadowActiveNode<NodePrimitives>> _shadowNodes;
     };
 }
 

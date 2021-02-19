@@ -10,11 +10,17 @@
 #include "../node/Node.h"
 
 namespace libBLEEP_sybil {
+
+
     class BLNodePrimitives {
     protected:
         std::string _myIP;
         NodeType _type;
         std::map<int, TCPControl> _mTCPControl;
+    protected:
+        // This function is only for shadow active node
+        virtual void tryReconnectToTarget() {};
+
     public:
         std::string GetIP() { return _myIP; }
 
@@ -46,6 +52,7 @@ namespace libBLEEP_sybil {
 
         void OpAfterRecv(int data_fd, std::string recv_str);
 
+        void OpAfterDisconnect();
     };
 }
 

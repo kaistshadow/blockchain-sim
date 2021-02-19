@@ -1,30 +1,67 @@
 //
-// Created by ilios on 21. 2. 15..
+// Created by ilios on 21. 2. 19..
 //
 
-#ifndef BLEEP_BENIGN_NODE_H
-#define BLEEP_BENIGN_NODE_H
-
-#include <iostream>
-#include <string>
-#include <memory>
-#include <arpa/inet.h>
-#include <fcntl.h> /* Added for the nonblocking socket */
-#include <unistd.h>
-#include <netinet/tcp.h>
-#include <errno.h>
-#include <strings.h>
-
-#include "shadow_interface.h"
-#include "Node.h"
-
+#ifndef BLEEP_SHADOWACTIVENODE_H
+#define BLEEP_SHADOWACTIVENODE_H
 
 namespace libBLEEP_sybil {
-
     template<class NodePrimitives>
-    class BenignNode : public Node<NodePrimitives> {
+    class ShadowActiveNode : public Node<NodePrimitives> {
+    protected:
+        void tryReconnectToTarget() override {
+            assert (_targetIP != "" && _targetPort != -1);
+            _connStartTimer.set<ShadowActiveNode<NodePrimitives>, &ShadowActiveNode<NodePrimitives>::_timercb>(this);
+            _connStartTimer.set(30, 0);
+            _connStartTimer.start();
+        }
+
+    private:
+        ev::timer _connStartTimer;
+        std::string _targetIP = "";
+        int _targetPort = -1;
+
+        void _timercb(ev::timer &w, int revents) {
+            // create new socket for a connection
+            int conn_fd = CreateNewSocket();
+
+            struct sockaddr_in targetaddr;
+            bzero(&targetaddr, sizeof(targetaddr));
+            targetaddr.sin_family = AF_INET;
+            targetaddr.sin_port = htons(_targetPort);
+            targetaddr.sin_addr.s_addr = inet_addr(_targetIP.c_str());
+
+            // call actual systemcall API for connect
+            // TODO : error-handling logic should be updated
+            int ret = connect(conn_fd, (struct sockaddr *) &targetaddr, sizeof(targetaddr));
+            if (ret < 0 && errno != EINPROGRESS) {
+                perror("connect");
+                std::cout << "Unable to connect to " << _targetIP << "\n";
+                exit(-1);
+            } else if (ret == 0) {
+                std::cout << "connection established" << "\n";
+                std::cout << "non-blocking socket is immediately established. is it possible?" << "\n";
+                exit(-1);
+            } else if (ret > 0) {
+                std::cout << "unexpected return value of non-blocking connect" << "\n";
+                exit(-1);
+            }
+
+            // assign an io event watcher for (connect) tried socket descriptor
+            // and register an event watcher to monitor for the beginning of I/O operation (A.K.A reactor pattern)
+            auto[it, result] = Node<NodePrimitives>::_mConnSocketWatcher.try_emplace(conn_fd);
+            if (result) {
+                ev::io &watcher = it->second;
+                watcher.set<Node<NodePrimitives>, &Node<NodePrimitives>::conncb>(this);
+                watcher.set(conn_fd, ev::WRITE);
+                watcher.start();
+            }
+
+            _connStartTimer.stop();
+        }
+
     public:
-        BenignNode(std::string virtualIp) : Node<NodePrimitives>(virtualIp, NodeType::Benign) {
+        ShadowActiveNode(std::string virtualIp) : Node<NodePrimitives>(virtualIp, NodeType::Shadow) {
             // Create virtual NIC for this node
             struct sockaddr_in my_addr;    /* my address information */
             my_addr.sin_family = AF_INET;         /* host byte order */
@@ -37,47 +74,16 @@ namespace libBLEEP_sybil {
         }
 
         // move constructor
-        BenignNode(BenignNode &&other) = default;
+        ShadowActiveNode(ShadowActiveNode &&other) = default;
 
         // API for connection to target
-        int tryConnectToTarget(std::string targetIP, int targetPort) {
-            // create new socket for a connection
-            int conn_fd = CreateNewSocket();
+        void tryConnectToTarget(std::string targetIP, int targetPort, double starttime) {
+            _connStartTimer.set<ShadowActiveNode<NodePrimitives>, &ShadowActiveNode<NodePrimitives>::_timercb>(this);
+            _connStartTimer.set(starttime, 0);
+            _connStartTimer.start();
 
-            struct sockaddr_in targetaddr;
-            bzero(&targetaddr, sizeof(targetaddr));
-            targetaddr.sin_family = AF_INET;
-            targetaddr.sin_port = htons(targetPort);
-            targetaddr.sin_addr.s_addr = inet_addr(targetIP.c_str());
-
-            // call actual systemcall API for connect
-            // TODO : error-handling logic should be updated
-            int ret = connect(conn_fd, (struct sockaddr *) &targetaddr, sizeof(targetaddr));
-            if (ret < 0 && errno != EINPROGRESS) {
-                perror("connect");
-                std::cout << "Unable to connect to " << targetIP << "\n";
-                exit(-1);
-            } else if (ret == 0) {
-                std::cout << "connection established" << "\n";
-                std::cout << "non-blocking socket is immediately established. is it possible?" << "\n";
-                exit(-1);
-            } else if (ret > 0) {
-                std::cout << "unexpected return value of non-blocking connect" << "\n";
-                exit(-1);
-            }
-
-
-            // assign an io event watcher for (connect) tried socket descriptor
-            // and register an event watcher to monitor for the beginning of I/O operation (A.K.A reactor pattern)
-            auto[it, result] = Node<NodePrimitives>::_mConnSocketWatcher.try_emplace(conn_fd);
-            if (result) {
-                ev::io &watcher = it->second;
-                watcher.set<Node<NodePrimitives>, &Node<NodePrimitives>::conncb>(this);
-                watcher.set(conn_fd, ev::WRITE);
-                watcher.start();
-            }
-
-            return conn_fd;
+            _targetIP = targetIP;
+            _targetPort = targetPort;
         }
 
     private:
@@ -98,7 +104,6 @@ namespace libBLEEP_sybil {
                 std::cout << "Setting socket to non-blocking failed" << "\n";
                 exit(-1);
             }
-
             return hSocket;
         }
 
@@ -132,5 +137,4 @@ namespace libBLEEP_sybil {
     };
 }
 
-#endif
-
+#endif //BLEEP_SHADOWACTIVENODE_H

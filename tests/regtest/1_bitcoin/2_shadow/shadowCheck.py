@@ -3,6 +3,8 @@ import subprocess
 import argparse
 import sys
 import shlex
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+import test_modules
 
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
@@ -43,7 +45,7 @@ def get_time_form(runtime):
 
 # test1 : whether runtime setting worked or not 
 # test2 : whether plugin(node_id) worked or not
-def test_shadow(output_file, runtime, node_id):
+def test_shadow(output_file, runtime, node_id_list):
     f = open(output_file, "r")
     # result_count more than 3 means success.
     result_count = 0
@@ -55,51 +57,29 @@ def test_shadow(output_file, runtime, node_id):
         if result != -1:
             result = line.find("has set up the main pth thread")
             if result != -1:
-                result = line.find(node_id)
-                if result != -1:
-                    result_count = 1
+                for i in range(0,len(node_id_list)):
+                    result = line.find(node_id_list[i])
+                    if result != -1:
+                        result_count = 1
+
         result = line.find(return_time)
         if result != -1:
             if result_count == 1:
                 f.close()
+                print("Success shadow test ...")
                 sys.exit(0)
             else:
                 f.close()
+                print("Fail shadow test] - runtime error ...")
                 sys.exit(1)
-
-
-# Get runtime, node_id from xml file
-def get_info(xml_file):
-    split_result = []
-    split_result2 = []
-    f = open(xml_file, "r")
-    while True:
-        line = f.readline()
-        if not line: break
-        result = line.find("kill time")
-        if result != -1:
-            split_result = line.split('"')
-        result = line.find("node id")
-        if result != -1:
-            result = line.find("poi")
-            if result == -1:
-                split_result2 = line.split('"')
-                break
-    f.close()
-    return split_result[1],split_result2[1]
-
+        else:
+            f.close()
+            print("[Fail shadow test] - plugin does not run ...")
+            sys.exit(1)
 def subprocess_open(command):
     popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     (stdoutdata, stderrdata) = popen.communicate()
     return stdoutdata, stderrdata
-
-def test_xml_existence():
-    path = os.path.abspath(".")
-    target_folder_xml = path + "/output.xml"
-    if os.path.isfile(target_folder_xml):
-        return target_folder_xml
-    else:
-        sys.exit(1)
 
 def test_shadow_output_file_existence():
     path = os.path.abspath(".")
@@ -107,6 +87,7 @@ def test_shadow_output_file_existence():
     if os.path.isfile(target_folder_file):
         return target_folder_file
     else:
+        print("Fail not existence shadow output file ... ")
         sys.exit(1)
 
 # Test process
@@ -117,11 +98,11 @@ def test_shadow_output_file_existence():
 # 5. Test - shadow
 
 def main():
-    target_folder_xml = test_xml_existence()
+    target_folder_xml = test_modules.test_xml_existence("output.xml")
     subprocess_open('shadow output.xml > output.txt')
-    runtime, node_id = get_info(target_folder_xml)
+    runtime, node_id_list, plugin_list = test_modules.get_xml_info(target_folder_xml)
     target_folder_file = test_shadow_output_file_existence()
-    test_shadow(target_folder_file, runtime, node_id)
+    test_shadow(target_folder_file, runtime, node_id_list)
 
 if __name__ == '__main__':
     main()

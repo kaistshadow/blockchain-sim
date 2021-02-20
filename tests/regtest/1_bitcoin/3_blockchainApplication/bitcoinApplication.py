@@ -2,54 +2,21 @@ import os
 from subprocess import check_output
 import argparse
 import sys
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+import test_modules
 
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
         print("error while executing '%s'" % cmd)
         exit(-1)
 
-def test_xml_existence():
-    path = os.path.abspath(".")
-    target_folder_xml = path + "/output.xml"
-    if os.path.isfile(target_folder_xml):
-        return target_folder_xml
-    else:
-        sys.exit(1)
-
-def get_info(xml_file):
-    split_result = []
-    split_result2 = []
-    f = open(xml_file, "r")
-    while True:
-        line = f.readline()
-        if not line: break
-        result = line.find("kill time")
-        if result != -1:
-            split_result = line.split('"')
-        result = line.find("node id")
-        if result != -1:
-            result = line.find("poi")
-            if result == -1:
-                split_result2 = line.split('"')
-                break
-    f.close()
-    return split_result[1],split_result2[1]
-
-# check log file
-# todo : rpc-client data filter
-def test_file_existence(node_id):
-    path = os.path.abspath(".")
-    target_folder_bitcoin = path + "/shadow.data/hosts/" + node_id + "/stdout-" + node_id + ".bitcoind.1000.log"
-    if os.path.isfile(target_folder_bitcoin):
-        return target_folder_bitcoin
-    else:
-        sys.exit(1)
-
 def test_args(args_standard):
     for i in range(0,len(args_standard)):
         if args_standard[i] is None:
             sys.exit(1)
-    
+
+# This test compares the shadow result log with standard args, 
+# and succeeds if all of the args are in the shadow result log.    
 def test_bitcoinApplication(output_file, args_standard):
     j = 0
     f = open(output_file, "r")
@@ -62,8 +29,10 @@ def test_bitcoinApplication(output_file, args_standard):
                 j += 1
     f.close()
     if j == len(args_standard):
+        print("Success bitcoin application test ...")
         sys.exit(0)
     else:
+        print("Fail bitcoin application test ...")
         sys.exit(1)
 
 def main():
@@ -85,6 +54,7 @@ def main():
     rpcpassword = args.rpcpassword
     rpcuser = args.rpcuser
 
+    # args standards
     rpcport = args.rpcport
     port = args.port
     datadir = args.datadir
@@ -94,12 +64,12 @@ def main():
     # args_standard.append(datadir)
 
     test_args(args_standard)
-    target_folder_xml = test_xml_existence()
+    target_folder_xml = test_modules.test_xml_existence()
     # todo - output.xml file must be made using above args.
     exec_shell_cmd("shadow output.xml")
-    runtime, node_id = get_info(target_folder_xml)
-    shadow_output_file = test_file_existence(node_id)
-    test_bitcoinApplication(shadow_output_file ,args_standard)
+    runtime, node_id_list, plugin_list = test_modules.get_xml_info(target_folder_xml)
+    simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
+    test_bitcoinApplication(simulation_output_file ,args_standard)
 
 if __name__ == '__main__':
     main()

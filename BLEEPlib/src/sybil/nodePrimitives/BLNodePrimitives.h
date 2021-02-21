@@ -9,10 +9,15 @@
 #include <memory>
 #include "../node/Node.h"
 
+#include "../utility/AttackStat.h"
+
 namespace libBLEEP_sybil {
 
 
     class BLNodePrimitives {
+    private:
+        // to inform attack results to the AttackStat object
+        AttackStat *_attackStat;
     protected:
         std::string _myIP;
         NodeType _type;

@@ -12,10 +12,12 @@ target_sources(BLEEPsybil
         ipdb/IPDatabase.cpp
         ipdb/IPDatabase.h
         node/BenignNode.h
+        node/ShadowActiveNode.h
         node/Node.h
         nodePrimitives/BLNodePrimitives.h
         nodePrimitives/BLNodePrimitives.cpp
         policy/EclipseIncomingAttackPolicy.h
+        utility/AttackStat.h
         utility/TCPControl.h
         )
 

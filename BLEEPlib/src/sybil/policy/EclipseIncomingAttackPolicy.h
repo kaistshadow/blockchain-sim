@@ -5,6 +5,7 @@
 
 #include "../node/BenignNode.h"
 #include "../node/ShadowActiveNode.h"
+#include "utility/AttackStat.h"
 
 using namespace std;
 

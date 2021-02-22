@@ -92,6 +92,26 @@ namespace libBLEEP_sybil {
             return conn_fd;
         }
 
+        // API for connection to target using timer
+        void tryConnectToTarget(std::string targetIP, int targetPort, double starttime) {
+            _connStartTimer.set<BenignNode<NodePrimitives>, &BenignNode<NodePrimitives>::_timercb>(this);
+            _connStartTimer.set(starttime, 0);
+            _connStartTimer.start();
+
+            _targetIP = targetIP;
+            _targetPort = targetPort;
+        }
+
+        void _timercb(ev::timer &w, int revents) {
+            tryConnectToTarget(_targetIP, _targetPort);
+            _connStartTimer.stop();
+        }
+
+    private:
+        std::string _targetIP;
+        int _targetPort;
+        ev::timer _connStartTimer;
+
     private:
 
         int CreateNewSocket() {

@@ -27,6 +27,18 @@ namespace libBLEEP_sybil {
             // create new socket for a connection
             int conn_fd = CreateNewSocket();
 
+            // bind to shadow's virtual NIC
+            struct sockaddr_in new_addr;    /* my address information */
+            new_addr.sin_family = AF_INET;         /* host byte order */
+            new_addr.sin_port = htons(0);     /* short, network byte order, use random port */
+            new_addr.sin_addr.s_addr = inet_addr(Node<NodePrimitives>::_myIP.c_str());
+            bzero(&(new_addr.sin_zero), 8);        /* zero the rest of the struct */
+            if (bind(conn_fd, (struct sockaddr *) &new_addr, sizeof(struct sockaddr)) == -1) {
+                perror("bind");
+                std::cout << "failed to bind" << "\n";
+                exit(1);
+            }
+
             struct sockaddr_in targetaddr;
             bzero(&targetaddr, sizeof(targetaddr));
             targetaddr.sin_family = AF_INET;

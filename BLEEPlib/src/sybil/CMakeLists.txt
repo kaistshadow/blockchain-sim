@@ -16,6 +16,7 @@ target_sources(BLEEPsybil
         node/Node.h
         nodePrimitives/BLNodePrimitives.h
         nodePrimitives/BLNodePrimitives.cpp
+        nodeParams/BLNodeParams.h
         policy/EclipseIncomingAttackPolicy.h
         utility/AttackStat.h
         utility/TCPControl.h

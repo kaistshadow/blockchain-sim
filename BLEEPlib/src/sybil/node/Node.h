@@ -15,6 +15,8 @@
 #include <unistd.h>
 #include <netinet/tcp.h>
 
+#include "../utility/AttackStat.h"
+
 
 namespace libBLEEP_sybil {
     enum class NodeType {
@@ -174,7 +176,7 @@ namespace libBLEEP_sybil {
         }
 
     public:
-        Node(std::string vIP, NodeType type) : NodePrimitives(vIP, type) {}
+        Node(AttackStat *stat, std::string vIP, NodeType type) : NodePrimitives(stat, vIP, type) {}
 
     };
 }

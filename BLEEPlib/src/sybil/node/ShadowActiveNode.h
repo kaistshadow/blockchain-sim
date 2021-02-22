@@ -5,6 +5,8 @@
 #ifndef BLEEP_SHADOWACTIVENODE_H
 #define BLEEP_SHADOWACTIVENODE_H
 
+#include "../utility/AttackStat.h"
+
 namespace libBLEEP_sybil {
     template<class NodePrimitives>
     class ShadowActiveNode : public Node<NodePrimitives> {
@@ -61,7 +63,8 @@ namespace libBLEEP_sybil {
         }
 
     public:
-        ShadowActiveNode(std::string virtualIp) : Node<NodePrimitives>(virtualIp, NodeType::Shadow) {
+        ShadowActiveNode(AttackStat *stat, std::string virtualIp) : Node<NodePrimitives>(stat, virtualIp,
+                                                                                         NodeType::Shadow) {
             // Create virtual NIC for this node
             struct sockaddr_in my_addr;    /* my address information */
             my_addr.sin_family = AF_INET;         /* host byte order */

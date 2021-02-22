@@ -11,18 +11,23 @@ using namespace std;
 
 namespace libBLEEP_sybil {
 
-    template<class NodePrimitives>
+    template<class NodePrimitives, class NodeParams>
     class EclipseIncomingAttackPolicy {
 
     public:
-        EclipseIncomingAttackPolicy() {}
+        EclipseIncomingAttackPolicy() {
+            libev_loop = EV_DEFAULT;
+            _checkWatcher.set<EclipseIncomingAttackPolicy, &EclipseIncomingAttackPolicy<NodePrimitives, NodeParams>::_checkAttack>(
+                    this);
+            _checkWatcher.start();
+        }
 
         // step 1. construct virtual network using sybil nodes
         bool ConstructSybilNet(vector<pair<string, int>> vIP, vector<string> vShadowIP, std::string targetIP,
                                int targetPort) {
             // Spawn network consisting of benign nodes
             for (auto &[ip, uptime] : vIP) {
-                _benignNodes.emplace_back(ip);
+                _benignNodes.emplace_back(&_attackStat, ip);
                 //TODO : should implement churnout
             }
             std::cout << "benign node objects are constructed" << "\n";
@@ -34,7 +39,7 @@ namespace libBLEEP_sybil {
 
             // Spawn network consisting of sybil nodes
             for (auto ip : vShadowIP) {
-                _shadowNodes.emplace_back(ip);
+                _shadowNodes.emplace_back(&_attackStat, ip);
             }
 
             // Let sybil nodes try to connect to the victim 100 seconds later (i.e., after initializing benign networks)
@@ -52,6 +57,24 @@ namespace libBLEEP_sybil {
     private:
         list <BenignNode<NodePrimitives>> _benignNodes;
         list <ShadowActiveNode<NodePrimitives>> _shadowNodes;
+        AttackStat _attackStat;
+
+    private:
+        void _checkAttack() {
+            // If we hijacked victim's incoming connection more than predefined target number,
+            // it means that attack is successful, so break the main loop.
+            if (_attackStat.GetHijackedIncomingConnNum() >= NodeParams::targetIncomingConnNum) {
+                std::cout << "The attack(Eclipsing Incoming Connection) is succeeded." << "\n";
+                std::cout << "Pre-defined target incoming connection num = " << NodeParams::targetIncomingConnNum
+                          << "\n";
+                std::cout << "Hijacked incoming connection num = " << _attackStat.GetHijackedIncomingConnNum() << "\n";
+                ev_break(libev_loop);
+            }
+        }
+
+    protected:
+        struct ev_loop *libev_loop = nullptr;
+        ev::check _checkWatcher;
     };
 }
 

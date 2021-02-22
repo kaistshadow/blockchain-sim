@@ -24,7 +24,7 @@ namespace libBLEEP_sybil {
     template<class NodePrimitives>
     class BenignNode : public Node<NodePrimitives> {
     public:
-        BenignNode(std::string virtualIp) : Node<NodePrimitives>(virtualIp, NodeType::Benign) {
+        BenignNode(AttackStat *stat, std::string virtualIp) : Node<NodePrimitives>(stat, virtualIp, NodeType::Benign) {
             // Create virtual NIC for this node
             struct sockaddr_in my_addr;    /* my address information */
             my_addr.sin_family = AF_INET;         /* host byte order */

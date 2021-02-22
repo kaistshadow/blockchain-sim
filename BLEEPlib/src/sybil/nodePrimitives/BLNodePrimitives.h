@@ -51,7 +51,7 @@ namespace libBLEEP_sybil {
         }
 
     public:
-        BLNodePrimitives(std::string ip, NodeType type) : _myIP(ip), _type(type) {}
+        BLNodePrimitives(AttackStat *stat, std::string ip, NodeType type) : _attackStat(stat), _myIP(ip), _type(type) {}
 
         void OpAfterConnect(int conn_fd);
 

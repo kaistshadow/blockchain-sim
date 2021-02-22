@@ -6,11 +6,12 @@
 #include "policy/EclipseIncomingAttackPolicy.h"
 #include "ipdb/IPDatabase.h"
 #include "nodePrimitives/BLNodePrimitives.h"
+#include "nodeParams/BLNodeParams.h"
 
 using namespace libBLEEP_sybil;
 
 int main() {
-    AttackBox<EclipseIncomingAttackPolicy, BLNodePrimitives, IPDatabase> attackBox;
+    AttackBox<EclipseIncomingAttackPolicy, BLNodePrimitives, BLNodeParams, IPDatabase> attackBox;
     attackBox.setTarget("1.0.0.1", 3456);
     if (!attackBox.setupAttack()) {
         std::cout << "setup attack failed" << "\n";

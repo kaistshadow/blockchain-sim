@@ -12,41 +12,39 @@
 
 namespace libBLEEP_sybil {
 
-    template<template<class> class AttackPolicy,
+    template<template<class, class> class AttackPolicy,
             class NodePrimitives,
+            class NodeParams,
             class IPDB>
-    class AttackBox : public AttackPolicy<NodePrimitives> {
+    class AttackBox : public AttackPolicy<NodePrimitives, NodeParams> {
     private:
         std::string _targetIP = "";
         int _targetPort = -1;
         IPDB _ipDatabase;
 
-        struct ev_loop *libev_loop = nullptr;
 
     public:
-        AttackBox() : AttackPolicy<NodePrimitives>() { libev_loop = EV_DEFAULT; }
+        AttackBox() : AttackPolicy<NodePrimitives, NodeParams>() {}
 
         void setTarget(std::string targetIP, int targetPort) {
             _targetIP = targetIP;
             _targetPort = targetPort;
         }
 
-        std::string getTargetIP() { return _targetIP; }
-
-        int getTargetPort() { return _targetPort; }
-
         bool setupAttack() {
             if (_targetIP == "" || _targetPort == -1)
                 return false;
-            if (!AttackPolicy<NodePrimitives>::ConstructSybilNet(_ipDatabase.GetVReachableIP(),
-                                                                 _ipDatabase.GetVShadowIP(), _targetIP, _targetPort))
+
+            if (!AttackPolicy<NodePrimitives, NodeParams>::ConstructSybilNet(_ipDatabase.GetVReachableIP(),
+                                                                             _ipDatabase.GetVShadowIP(), _targetIP,
+                                                                             _targetPort))
                 return false;
             return true;
         }
 
         int startAttack() {
-            ev_run(libev_loop, 0);
-            std::cout << "all watchers are removed" << "\n";
+            ev_run(AttackPolicy<NodePrimitives, NodeParams>::libev_loop, 0);
+            std::cout << "all watchers are removed or attack routine is finished" << "\n";
             return 0;
         }
     };

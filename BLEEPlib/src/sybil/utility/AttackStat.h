@@ -5,17 +5,29 @@
 #ifndef BLEEP_ATTACKPOLICY_H
 #define BLEEP_ATTACKPOLICY_H
 
+#include <ev++.h>
+
 namespace libBLEEP_sybil {
     class AttackStat {
     public:
         AttackStat() {}
 
-        void SetTargetIncomingConnNum(int num) { _targetIncomingConnectionNum = num; }
-        void SetTargetOutgoingConnNum(int num) { _targetOutgoingConnectionNum = num; }
+        int GetHijackedIncomingConnNum() { return _hijackedIncomingConnectionNum; }
+
+        int GetHijackedOutgoingConnNum() { return _hijackedOutgoingConnectionNum; }
+
     protected:
-        void IncrementSuccessNum() { _targetNum += 1; }
+        void IncrementHijackedIncomingConnNum() {
+            _hijackedIncomingConnectionNum += 1;
+        }
+
+        void IncrementHijackedOutgoingConnNum() {
+            _hijackedOutgoingConnectionNum += 1;
+        }
 
     private:
+        int _hijackedIncomingConnectionNum = 0;
+        int _hijackedOutgoingConnectionNum = 0;
         int _targetIncomingConnectionNum = -1;
         int _targetOutgoingConnectionNum = -1;
     };

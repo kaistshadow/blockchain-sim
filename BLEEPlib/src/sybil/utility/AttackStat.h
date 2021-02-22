@@ -16,7 +16,6 @@ namespace libBLEEP_sybil {
 
         int GetHijackedOutgoingConnNum() { return _hijackedOutgoingConnectionNum; }
 
-    protected:
         void IncrementHijackedIncomingConnNum() {
             _hijackedIncomingConnectionNum += 1;
         }

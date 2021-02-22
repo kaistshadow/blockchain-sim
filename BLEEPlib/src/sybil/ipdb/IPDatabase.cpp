@@ -15,9 +15,9 @@ IPDatabase::IPDatabase() {
     InsertReachableIP("1.0.0.6", 100);
     InsertReachableIP("1.0.0.7", 100);
     InsertReachableIP("1.0.0.8", 100);
-    InsertReachableIP("1.0.0.9", 100);
-    InsertReachableIP("1.0.0.10", 100);
-    InsertReachableIP("1.0.0.11", 100);
+    InsertReachableIP("1.0.0.9", 200);
+    InsertReachableIP("1.0.0.10", 300);
+    InsertReachableIP("1.0.0.11", 400);
 
     // 2. insert shadow IP into the database
     InsertShadowIP("2.0.0.1");

@@ -18,6 +18,7 @@ namespace libBLEEP_sybil {
     private:
         // to inform attack results to the AttackStat object
         AttackStat *_attackStat;
+        bool _informed = false;
     protected:
         std::string _myIP;
         NodeType _type;

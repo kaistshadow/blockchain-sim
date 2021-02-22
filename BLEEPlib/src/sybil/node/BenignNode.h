@@ -129,6 +129,27 @@ namespace libBLEEP_sybil {
             hSocket = -1;
             return ret != -1;
         }
+
+    private:
+        ev::timer _churnoutTimer;
+
+        void _churnoutcb(ev::timer &w, int revents) {
+            for (auto &[fd, watcher] : Node<NodePrimitives>::_mDataSocketWatcher) {
+                watcher.stop();
+                close(fd);
+            }
+            for (auto &[fd, watcher] : Node<NodePrimitives>::_mConnSocketWatcher) {
+                watcher.stop();
+                close(fd);
+            }
+        }
+
+    public:
+        void SetChurnOutTimer(int uptime) {
+            _churnoutTimer.set<BenignNode, &BenignNode<NodePrimitives>::_churnoutcb>(this);
+            _churnoutTimer.set(uptime, 0);
+            _churnoutTimer.start();
+        }
     };
 }
 

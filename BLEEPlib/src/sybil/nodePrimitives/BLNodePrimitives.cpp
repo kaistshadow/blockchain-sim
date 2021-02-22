@@ -79,11 +79,14 @@ void BLNodePrimitives::OpAfterRecv(int data_fd, std::string recv_str) {
                         std::cout << "OpAfterRecv: deserializing MSG complete, MSG type:" << msg->GetType() << "\n";
 
                         if (msg->GetType() == "PING") {
-                            if (_type == NodeType::Shadow) {
+                            if (_type == NodeType::Shadow && !_informed) {
                                 // print attack success message
                                 std::cout
                                         << "shadow node's interception of target node's incoming connection is confirmed"
                                         << ", shadowNodeIP:" << GetIP() << "\n";
+                                // update attack statistics
+                                _attackStat->IncrementHijackedIncomingConnNum();
+                                _informed = true;
                             }
 
                             // send PONG message

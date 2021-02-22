@@ -27,8 +27,10 @@ namespace libBLEEP_sybil {
                                int targetPort) {
             // Spawn network consisting of benign nodes
             for (auto &[ip, uptime] : vIP) {
-                _benignNodes.emplace_back(&_attackStat, ip);
-                //TODO : should implement churnout
+                auto &benignNode = _benignNodes.emplace_back(&_attackStat, ip);
+
+                // set a churnout timer for all the benign nodes
+                benignNode.SetChurnOutTimer(uptime);
             }
             std::cout << "benign node objects are constructed" << "\n";
 
@@ -40,6 +42,8 @@ namespace libBLEEP_sybil {
             // Spawn network consisting of sybil nodes
             for (auto ip : vShadowIP) {
                 _shadowNodes.emplace_back(&_attackStat, ip);
+                // The implementation of malicious node's periodic connection is dependent to node's behavior
+                // Thus, periodic connection should be implemented within NodePrimitives
             }
 
             // Let sybil nodes try to connect to the victim 100 seconds later (i.e., after initializing benign networks)
@@ -49,9 +53,6 @@ namespace libBLEEP_sybil {
 
             return true;
         }
-
-        // step 2. Initiate malicious node's periodic connection
-
 
 
     private:

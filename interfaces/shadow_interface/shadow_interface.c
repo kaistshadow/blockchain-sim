@@ -12,9 +12,14 @@ int puts_temp(const char *str) {
     return puts(str);
 }
 
-int shadow_bind(int fd, const struct sockaddr* addr, socklen_t len) {
+int shadow_bind(int fd, const struct sockaddr *addr, socklen_t len) {
     printf("local-shadow_bind called\n");
     return 0;
+}
+
+int shadow_register_NIC(const struct sockaddr *addr, socklen_t len) {
+    printf("shadow_register_NIC call should be intercepted and redirected to shadow");
+    exit(-1);
 }
 
 int shadow_pipe2(int pipefds[2], int flags) {

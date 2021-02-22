@@ -11,6 +11,8 @@ target_sources(BLEEPsybil
         AttackBox.h
         ipdb/IPDatabase.cpp
         ipdb/IPDatabase.h
+        ipdb/BitcoinIPDatabase.cpp
+        ipdb/BitcoinIPDatabase.h
         node/BenignNode.h
         node/ShadowActiveNode.h
         node/Node.h
@@ -18,6 +20,7 @@ target_sources(BLEEPsybil
         nodePrimitives/BLNodePrimitives.cpp
         nodeParams/BLNodeParams.h
         policy/EclipseIncomingAttackPolicy.h
+        policy/ErebusAttackPolicy.h
         utility/AttackStat.h
         utility/TCPControl.h
         )

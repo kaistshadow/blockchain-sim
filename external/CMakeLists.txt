@@ -19,7 +19,6 @@ add_subdirectory(bdb)
 add_subdirectory(curl)
 add_subdirectory(libev)
 
-add_subdirectory(shadow_storage_manager)
 
 if(BITCOIN_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")

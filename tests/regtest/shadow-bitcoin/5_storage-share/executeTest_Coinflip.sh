@@ -1,5 +1,5 @@
-#addexam.sh [node no.] [ simultime] [storageshare(disable/disable] [algorithm(pow/coinflip)]
-#executeTest.sh [node no.] [ simultime] [storageshare(disable/disable] [algorithm(pow/coinflip)] [executeNo]
+#addexam.sh [node no.] [ simultime] [algorithm(pow/coinflip)]
+#executeTest.sh [node no.] [ simultime] [algorithm(pow/coinflip)] [executeNo]
 
 #!/bin/bash
 

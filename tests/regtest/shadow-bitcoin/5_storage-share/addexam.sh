@@ -1,9 +1,9 @@
-# sh addexam.sh [node no.] [ simultime] [storageshare(disable/enable] [algorithm(pow/coinflip)] [transaction/normal]
+# sh addexam.sh [node no.] [ simultime] [algorithm(pow/coinflip)] [transaction/normal]
 
 #!/bin/bash
 
-if [ $# -ne 5 ]; then
- echo "Usage: $0 <node #> <simul. time> <storageshare(disable/enable)> <PoW abs. (pow/coinflip)> <tx inject(transaction/normal)>"
+if [ $# -ne 4 ]; then
+ echo "Usage: $0 <node #> <simul. time>  <PoW abs. (pow/coinflip)> <tx inject(transaction/normal)>"
  exit -1
 fi
 

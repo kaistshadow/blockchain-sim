@@ -10,41 +10,43 @@ def exec_shell_cmd(cmd):
         print("error while executing '%s'" % cmd)
         exit(-1)
 
-# check "getnewaddress" log in shadow output file. If done, check length of rpc_file contents. If the length is 35, the test is success.
-def test_walletAddress(simulation_output_file):
-    return_count = 0
+# count "sendtoaddress" rpc request in bitcoin log and get transaction counts in tx injector log.
+# If the two are the same, true
+def test_transaction_count(simulation_output_file):
+    count = 0
     f = open(simulation_output_file[0], "r")
     while True:
         line = f.readline()
         if not line: break
-        result = line.find("getnewaddress")
+        result = line.find("sendtoaddress")
         if result != -1:
-            return_count += 1
+            count += 1
     f.close()
-    if return_count == 0:
-        print("[Fail wallet test] - bitcoind didn't works about getnewaddress")
-        sys.exit(1)
+     
+    f = open(simulation_output_file[2], "r")
+    for line in f.readlines()[::-1]:
+        result = line.find("transaction")
+        if result != -1:
+            txs = int(line.split(" ")[0])
+            break
+    f.close()
 
-    f = open(simulation_output_file[1], "r")
-    line = f.readline().strip()
-    f.close()
-    if len(line) == 35:
-        print("Success wallet test ...")
+    if txs == count:
         sys.exit(0)
     else:
-        print("[Fail wallet test] - wallet address length is not 35")
         sys.exit(1)
 
-# test process
+# Test process
 # 1. test_xml_existence 
-# 2. shadow output existence test
-# 3. wallet log test
+# 2. shadow output existence test  
+# 3. Run test_transaction_existence function
 def main():
     target_folder_xml = test_modules.test_xml_existence("output.xml")
     exec_shell_cmd("shadow output.xml")
     runtime, node_id_list, plugin_list = test_modules.get_xml_info(target_folder_xml)
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
-    test_walletAddress(simulation_output_file)
+    test_modules.test_transaction_existence(simulation_output_file[1])
+    test_transaction_count(simulation_output_file)
 
 if __name__ == '__main__':
     main()

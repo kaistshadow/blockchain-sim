@@ -43,7 +43,7 @@ def test_MainChainInfo(shadow_output_file, rpc_output_file):
 # 2. shadow output existence test  
 # 3. Run test_MainChainInfo function
 def main():
-    target_folder_xml = test_modules.test_xml_existence()
+    target_folder_xml = test_modules.test_xml_existence("output.xml")
     exec_shell_cmd("shadow output.xml")
     runtime, node_id_list, plugin_list = test_modules.get_xml_info(target_folder_xml)
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)

@@ -61,7 +61,7 @@ def test_shadow(output_file, runtime, node_id_list):
                     result = line.find(node_id_list[i])
                     if result != -1:
                         result_count = 1
-
+              
         result = line.find(return_time)
         if result != -1:
             if result_count == 1:
@@ -72,10 +72,10 @@ def test_shadow(output_file, runtime, node_id_list):
                 f.close()
                 print("Fail shadow test] - runtime error ...")
                 sys.exit(1)
-        else:
-            f.close()
-            print("[Fail shadow test] - plugin does not run ...")
-            sys.exit(1)
+    f.close()
+    print("[Fail shadow test] - plugin does not run ...")
+    sys.exit(1)
+
 def subprocess_open(command):
     popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     (stdoutdata, stderrdata) = popen.communicate()

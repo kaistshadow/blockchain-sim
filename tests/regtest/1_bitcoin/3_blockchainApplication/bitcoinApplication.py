@@ -19,7 +19,7 @@ def test_args(args_standard):
 # and succeeds if all of the args are in the shadow result log.    
 def test_bitcoinApplication(output_file, args_standard):
     j = 0
-    f = open(output_file, "r")
+    f = open(output_file[0], "r")
     while True:
         line = f.readline()
         if not line: break
@@ -64,9 +64,9 @@ def main():
     # args_standard.append(datadir)
 
     test_args(args_standard)
-    target_folder_xml = test_modules.test_xml_existence()
+    target_folder_xml = test_modules.test_xml_existence("output.xml")
     # todo - output.xml file must be made using above args.
-    exec_shell_cmd("shadow output.xml")
+    # exec_shell_cmd("shadow output.xml")
     runtime, node_id_list, plugin_list = test_modules.get_xml_info(target_folder_xml)
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
     test_bitcoinApplication(simulation_output_file ,args_standard)

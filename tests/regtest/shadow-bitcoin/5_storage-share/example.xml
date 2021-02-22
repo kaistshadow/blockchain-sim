@@ -39,7 +39,7 @@
   <kill time="300" />
   <!-- our nodes -->
   <node id="bcdnode0">
-    <application plugin="bitcoind" time="1" arguments="-debug -testnet -datadir=data/bcdnode0 -port=11110 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=11.0.0.1/0 -rpcbind=11.0.0.1 -storageShare=disable -algorithm=pow" />
+    <application plugin="bitcoind" time="1" arguments="-debug -datadir=data/bcdnode0 -port=11110 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=11.0.0.1/0 -rpcbind=11.0.0.1 -storageShare=disable -algorithm=pow" />
   </node>
   <node id="client0">
     <application plugin="client" time="5" arguments="11.0.0.1:11111 294" />

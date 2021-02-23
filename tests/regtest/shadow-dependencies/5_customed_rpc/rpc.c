@@ -1,4 +1,11 @@
-// #include <stdlib.h>
+/*
+
+This is a test to see if custom curl works in bitcoin after testing for custom url.
+
+Input parameter : Anything bitcoin-rpc functions
+Output : The returnd data from bitcoin-rpc function you set
+
+*/
 #include <stdio.h>
 #include <curl/curl.h>
 #include <arpa/inet.h>

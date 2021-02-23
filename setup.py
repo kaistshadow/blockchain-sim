@@ -31,16 +31,6 @@ def prepare_shadow():
     else:
         exec_shell_cmd("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0v5 libigraph0-dev cmake make xz-utils")
 
-def prepare_nodejs():
-    nodejs_serv_path = "./BLEEPeval/web-gui"    
-    exec_shell_cmd("sudo apt-get install -y curl")
-    exec_shell_cmd("curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -")
-    exec_shell_cmd("sudo apt-get update")
-    exec_shell_cmd("sudo apt-get install -y nodejs")
-    exec_shell_cmd("cd %s; npm install websocket finalhandler serve-static jsonpath" % nodejs_serv_path)
-    exec_shell_cmd("cd %s; npm install @maxmind/geoip2-node" % nodejs_serv_path)
-    exec_shell_cmd("cd vis; npm install; npm run build; cd ..")
-
 def prepare_shadow_dependencies():
     exec_shell_cmd("sudo apt-get install -y libcurl4-openssl-dev")
     exec_shell_cmd("sudo apt-get update -y")
@@ -123,9 +113,6 @@ if __name__ == '__main__':
         # cloning shadow repository (submodule)
         exec_shell_cmd("git submodule update --init")
         prepare_shadow()
-        #prepare_nodejs()
-        prepare_rust()
-        prepare_zcash_dependencies()
         prepare_shadow_dependencies()
 
         # ## install boost-lib
@@ -146,12 +133,8 @@ if __name__ == '__main__':
          # cloning shadow repository (submodule)
         exec_shell_cmd("git submodule update --init")
         prepare_shadow()
-        #prepare_nodejs()
-        prepare_rust()
-
         prepare_shadow_dependencies()
         ### Until the complete tests are done, let's exclude following external modules from git all build
-        # prepare_zcash_dependencies()
 
         # ## install boost-lib
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")

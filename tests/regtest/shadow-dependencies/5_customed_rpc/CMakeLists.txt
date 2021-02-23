@@ -30,6 +30,9 @@ add_custom_command(TARGET CUSTOM_RPC
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:CUSTOM_RPC> ${CMAKE_CURRENT_SOURCE_DIR})
 
+# system curl이 아닌 별도의 curl을 설치하여, 설치한 curl를 활용하여 rpc request를 shadow 환경에서 수행하는 test
+# Input : Nothing
+# Output : 정상 종료 시 return 0, 아닐 경우 return -1
 add_test(NAME shadow-bitcoin-custom-rpc
         COMMAND shadow example.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

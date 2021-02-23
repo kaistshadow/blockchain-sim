@@ -38,6 +38,7 @@ elseif(ALL_OPT STREQUAL ON)
   # add_subdirectory(shadow_storage_mgmt_test)
   add_subdirectory(1_bitcoin)
 
+
  elseif(GIT_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")
   message("                           Git build start")
@@ -63,4 +64,6 @@ else(BITCOIN_OPT STREQUAL ON)
   # add_subdirectory(shadow-bitcoin)
   # add_subdirectory(shadow-syscalls)
   add_subdirectory(1_bitcoin)
+
+
 endif(BITCOIN_OPT STREQUAL ON)

@@ -221,7 +221,6 @@ int main(int args, char* argv[]) {
     }
 
     sleep(800);
-//    sleep(1500);
     int i=0;
     for(int i=0; i<100000; i++){
         int start = rand() % row;

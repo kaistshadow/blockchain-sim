@@ -99,3 +99,6 @@ external/eosio/install/*
 base*N*T.xml
 shadow.data
 
+BLEEPemul/*/datadir
+BLEEPemul/*/data
+BLEEPemul/*/target_example.xml

@@ -24,6 +24,9 @@ add_custom_command(TARGET simplecurl
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:simplecurl> ${CMAKE_CURRENT_SOURCE_DIR})
 
+# system curl이 아닌 별도의 curl을 설치하여, 설치한 curl를 shadow환경에서 test
+# Input : Nothing
+# Output : 정상 종료 시 return 0, 아닐 경우 return -1
 add_test(NAME shadow-custom-libcurl
         COMMAND shadow simplecurl.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

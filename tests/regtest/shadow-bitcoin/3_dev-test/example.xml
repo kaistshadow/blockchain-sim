@@ -44,4 +44,8 @@
   <node id="client0">
     <application plugin="client" time="5" arguments="11.0.0.1:11111 294" />
   </node>
+  <node id="client0">
+    <application plugin="client" time="5" arguments="11.0.0.1:11111 294" />
+  </node>
+
 </shadow>

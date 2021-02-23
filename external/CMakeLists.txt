@@ -37,7 +37,6 @@ elseif(GIT_OPT STREQUAL ON)
   message("                           Git All build")
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(bitcoin)
-  ### Until the complete tests are done, let's exclude following external modules from git all build
 
 else(BITCOIN_OPT STREQUAL ON)
   message("--------------------------------------------------------------------------------------")

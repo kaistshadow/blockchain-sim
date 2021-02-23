@@ -31,36 +31,6 @@ def prepare_shadow():
     else:
         exec_shell_cmd("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0v5 libigraph0-dev cmake make xz-utils")
 
-def prepare_nodejs():
-    nodejs_serv_path = "./BLEEPeval/web-gui"    
-    exec_shell_cmd("sudo apt-get install -y curl")
-    exec_shell_cmd("curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -")
-    exec_shell_cmd("sudo apt-get update")
-    exec_shell_cmd("sudo apt-get install -y nodejs")
-    exec_shell_cmd("cd %s; npm install websocket finalhandler serve-static jsonpath" % nodejs_serv_path)
-    exec_shell_cmd("cd %s; npm install @maxmind/geoip2-node" % nodejs_serv_path)
-    exec_shell_cmd("cd vis; npm install; npm run build; cd ..")
-
-def prepare_rust():
-    exec_shell_cmd("sudo apt-get install -y rustc")
-
-    # Following script is available for rustup installation.
-    # However, shadow plugin is not compatible for rust library compiled by rustup-installed rustc
-    # So, we commentify following sciprt
-
-    # exec_shell_cmd("curl https://sh.rustup.rs -sSf | sh -s -- -y")
-    # exec_shell_cmd("rustup toolchain install 1.39.0")
-    # exec_shell_cmd("rustup default 1.39.0")
-    #
-    # rcFile = os.path.expanduser("~/.bashrc")
-    # f = open(rcFile, 'r')
-    # rustPath = "export PATH=$PATH:%s" % os.path.expanduser("~/.cargo/bin" )
-    # needWriteRustPath = True
-    # for line in f:
-    #     if rustPath in line:
-    #         needWriteRustPath = False
-    # if needWriteRustPath:
-    #     exec_shell_cmd("echo '%s' >> ~/.bashrc" % rustPath)
 
 def prepare_shadow_dependencies():
     exec_shell_cmd("sudo apt-get install -y libcurl4-openssl-dev")
@@ -94,17 +64,23 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
     parser.add_argument("--all", action="store_true", help="Install the shadow simulator and BLEEP")
     parser.add_argument("--test", action="store_true", help="Run tests")
+    parser.add_argument("--unittest", action="store_true", help="Run Unit tests")
     parser.add_argument("--debug", action="store_true", help="Include debug symbols for shadow")
     parser.add_argument("--bitcoin", action="store_true", help="only bitcoin build")
     parser.add_argument("--git", action="store_true", help="Run on Git action")
     
 
     args = parser.parse_args()
-    OPT_ALL = args.all
-    OPT_TEST = args.test
-    OPT_DEBUG = args.debug
+
     OPT_BITCOIN = args.bitcoin
+
     OPT_GIT = args.git
+    OPT_ALL = args.all
+    OPT_DEBUG = args.debug
+    OPT_TEST = args.test
+
+    OPT_UNITTEST = args.unittest
+
     cmake_bleeplib_opt = "-DBLEEPLIB_OPT=ON"
     cmake_debug_opt = "-DSHADOW_DEBUG=ON -DBLEEP_DEBUG=ON"
 
@@ -140,8 +116,6 @@ if __name__ == '__main__':
         # cloning shadow repository (submodule)
         exec_shell_cmd("git submodule update --init")
         prepare_shadow()
-        #prepare_nodejs()
-        prepare_rust()
         prepare_shadow_dependencies()
 
         # ## install boost-lib
@@ -162,9 +136,6 @@ if __name__ == '__main__':
          # cloning shadow repository (submodule)
         exec_shell_cmd("git submodule update --init")
         prepare_shadow()
-        #prepare_nodejs()
-        prepare_rust()
-
         prepare_shadow_dependencies()
         ### Until the complete tests are done, let's exclude following external modules from git all build
 
@@ -183,6 +154,12 @@ if __name__ == '__main__':
 
 
     if OPT_TEST:
-        exec_shell_cmd("mkdir -p build; cd build; cmake ../; make -j8; make test")
+        cmake_test_opt = "-DTEST_OPT=ON"
+        exec_shell_cmd("mkdir -p build; cd build; cmake %s ../; make -j8; make test" %(cmake_test_opt))
+
+    if OPT_UNITTEST:
+        exec_shell_cmd("git submodule update --init")
+        cmake_unittest_opt = "-DUNITTEST_OPT=ON"
+        exec_shell_cmd("mkdir -p build; cd build; cmake %s ../; make -j8" %(cmake_unittest_opt))
 
 

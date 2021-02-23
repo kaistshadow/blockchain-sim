@@ -1,0 +1,4 @@
+Using wallet directory
+Wallet File Version
+Wallet completed loading
+Flushing wallet.dat

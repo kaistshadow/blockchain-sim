@@ -78,6 +78,10 @@ tests/regtest/shadow-bitcoin/*/target_example.xml
 tests/regtest/shadow_storage_mgmt_test/*.txt
 tests/regtest/shadow-eos/nodeos
 tests/regtest/shadow-monero/monero_exe/
+tests/regtest/1_bitcoin/*.pyc
+tests/regtest/1_bitcoin/2_shadow/output.txt
+tests/regtest/*/data
+tests/regtest/*/*/data
 
 external/bdb/4.8.30/build_unix
 external/libev/4.33/.deps/

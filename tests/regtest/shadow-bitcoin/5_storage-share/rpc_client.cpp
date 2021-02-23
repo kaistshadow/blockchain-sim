@@ -84,77 +84,84 @@ int getTxCount(std::string str) {
     return atoi(s.substr(0, found).c_str());
 }
 
+void bitcoin_rpc_request(std::string method, Json::Value params) {
+    std::cout<<method<<"\n";
+    json_req.clear();
+    json_resp.clear();
+    // request setup
+    json_req["jsonrpc"] = "1.0";
+    json_req["id"] = "rpc_client";
+    json_req["method"] = method;
+    json_req["params"] = params;
+    // request
+    std::string req = writer.write(json_req);
+    std::string res = request(req);
+    reader.parse(res, json_resp);
+}
 
 int main(int argc, char* argv[]) {
     // init
-    std::string req;
-    std::string res;
+    Json::Value params;
+    params.clear();
     init_fixed_attr(argc, argv);
 
     // method 1: generate node's wallet
-    std::cout<<"getnewaddress\n";
-    json_req.clear();
-    json_resp.clear();
-    // request setup
-    json_req["jsonrpc"] = "1.0";
-    json_req["id"] = "rpc_client";
-    json_req["method"] = "getnewaddress";
-    json_req["params"] = Json::arrayValue;
-    // request
-    req = writer.write(json_req);
-    res = request(req);
-    reader.parse(res, json_resp);
+    params = Json::arrayValue;
+    bitcoin_rpc_request("getnewaddress", params);
     std::cout<<"-- wallet --\n";
     std::string wallet_address = json_resp["result"].asString();
     std::cout<<wallet_address<<"\n";
-    std::cout<<"\n";
 
-    // method 2: setgeneratetoaddress
-    std::cout<<"setgeneratetoaddress\n";
-    json_req.clear();
-    json_resp.clear();
-    // request setup
-    json_req["jsonrpc"] = "1.0";
-    json_req["id"] = "rpc_client";
-    json_req["method"] = "setgeneratetoaddress";
-    json_req["params"] = Json::arrayValue;
-    json_req["params"].append(wallet_address);
-    // request
-    req = writer.write(json_req);
-    res = request(req);
-    std::cout<<"\n";
-
-    sleep(atoi(argv[3]));
+    // method 2: setgeneratetoaddressnotime
+    for(int i=0; i<101; i++) {
+        params = Json::arrayValue;
+        params.append(wallet_address);
+        bitcoin_rpc_request("setgeneratetoaddressnotime", params);
+        std::cout<<"\n";
+    }
 
     // method 3: getblockchaininfo
-    std::cout<<"getblockchaininfo\n";
-    json_req.clear();
-    json_resp.clear();
-    // request setup
-    json_req["jsonrpc"] = "1.0";
-    json_req["id"] = "rpc_client";
-    json_req["method"] = "getblockchaininfo";
-    json_req["params"] = Json::arrayValue;
-    // request
-    req = writer.write(json_req);
-    res = request(req);
+    params = Json::arrayValue;
+    bitcoin_rpc_request("getblockchaininfo", params);
     std::cout<<"\n";
 
-    // method 4: gettxtotalcount
-    std::cout<<"gettxtotalcount\n";
-    json_req.clear();
-    json_resp.clear();
-    // request setup
-    json_req["jsonrpc"] = "1.0";
-    json_req["id"] = "rpc_client";
-    json_req["method"] = "gettxtotalcount";
-    json_req["params"] = Json::arrayValue;
-    // request
-    req = writer.write(json_req);
-    res = request(req);
-    reader.parse(res, json_resp);
-    std::cout<<"-- TPS --\n";
-    int txcnt = json_resp["result"].asInt();
-    std::cout<<txcnt<<"/"<<argv[3]<<"="<<(txcnt/(double)atoi(argv[3]))<<"\n";
+    // method 4: getbalance
+    params = Json::arrayValue;
+    bitcoin_rpc_request("getbalance", params);
     std::cout<<"\n";
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
+//    // method 2: setgeneratetoaddress
+//    params = Json::arrayValue;
+//    params.append(wallet_address);
+//    bitcoin_rpc_request("setgeneratetoaddress", params);
+//    std::cout<<"\n";
+//
+//    sleep(atoi(argv[3]));
+//
+//    // method 3: getblockchaininfo
+//    params = Json::arrayValue;
+//    bitcoin_rpc_request("setgeneratetoaddress", params);
+//    std::cout<<"\n";
+//
+//    // method 4: gettxtotalcount
+//    params = Json::arrayValue;
+//    bitcoin_rpc_request("gettxtotalcount", params);
+//    std::cout<<"-- TPS --\n";
+//    int txcnt = json_resp["result"].asInt();
+//    std::cout<<txcnt<<"/"<<argv[3]<<"="<<(txcnt/(double)atoi(argv[3]))<<"\n";
+//    std::cout<<"\n";
+
 }

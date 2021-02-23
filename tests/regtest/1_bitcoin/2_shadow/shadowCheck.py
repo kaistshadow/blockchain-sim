@@ -11,6 +11,11 @@ def exec_shell_cmd(cmd):
         print("error while executing '%s'" % cmd)
         exit(-1)
 
+def subprocess_open(command):
+    popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    (stdoutdata, stderrdata) = popen.communicate()
+    return stdoutdata, stderrdata
+    
 # make shadow runtime format example of 00:00:09
 def get_time_form(runtime):
     result = ""
@@ -76,11 +81,6 @@ def test_shadow(output_file, runtime, node_id_list):
     print("[Fail shadow test] - plugin does not run ...")
     sys.exit(1)
 
-def subprocess_open(command):
-    popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    (stdoutdata, stderrdata) = popen.communicate()
-    return stdoutdata, stderrdata
-
 def test_shadow_output_file_existence():
     path = os.path.abspath(".")
     target_folder_file = path + "/output.txt"
@@ -96,8 +96,8 @@ def test_shadow_output_file_existence():
 # 3. Get infos such as simulation runtime, plugin id from xml file
 # 4. Test - shadow output file existence
 # 5. Test - shadow
-
 def main():
+    # add xml generator
     target_folder_xml = test_modules.test_xml_existence("output.xml")
     subprocess_open('shadow output.xml > output.txt')
     runtime, node_id_list, plugin_list = test_modules.get_xml_info(target_folder_xml)

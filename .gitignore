@@ -78,7 +78,8 @@ tests/regtest/shadow-bitcoin/*/target_example.xml
 tests/regtest/shadow_storage_mgmt_test/*.txt
 tests/regtest/shadow-eos/nodeos
 tests/regtest/shadow-monero/monero_exe/
-
+tests/regtest/1_bitcoin/*.pyc
+tests/regtest/1_bitcoin/2_shadow/output.txt
 tests/regtest/*/data
 tests/regtest/*/*/data
 

@@ -3,6 +3,7 @@ from subprocess import check_output
 import argparse
 import sys
 
+# xml existence test - If there is no file in the path, return fail
 def test_xml_existence(output):
     path = os.path.abspath(".")
     target_folder = path + "/" + output
@@ -12,7 +13,8 @@ def test_xml_existence(output):
     else:
         print("Fail xml existence test ...")
         sys.exit(1)
-# get node_id, kill time, plugins in xml file
+
+# Get node_id, kill time, plugins in xml file
 def get_xml_info(xml_file):
     split_result = []
     split_result2 = []

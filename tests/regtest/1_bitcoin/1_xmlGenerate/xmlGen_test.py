@@ -11,6 +11,7 @@ def exec_shell_cmd(cmd):
         exit(-1)
 
 def main():
+    # add xml generator
     exec_shell_cmd("python xmlGen.py")
     test_modules.test_xml_existence("output.xml")
 

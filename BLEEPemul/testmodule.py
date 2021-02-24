@@ -117,7 +117,7 @@ def get_xmlfile():
                 else:
                     try:
                         tx_condition_count = 1
-                        tx_sec = float(input("Input transaction interval (sec) : "))
+                        tx_sec = int(input("Input transaction interval (sec) : "))
                     except ValueError as e:
                         print("Must input only number ! ")
                         continue
@@ -125,20 +125,23 @@ def get_xmlfile():
                 try:
                     tx_condition_count = 2
                     number_bitcoins_transferred = float(input("input number of Bitcoins transferred (default : 0.001) : "))
+                    if str(number_bitcoins_transferred).split(".")[1] == "0":
+                        number_bitcoins_transferred = int(number_bitcoins_transferred)
+
                 except ValueError as e:
                     print("Must input only number !")
                     continue
-                xml_command = "./addexam.sh" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_sec) + " " + str(number_bitcoins_transferred)
+                xml_command = "python make_approximate_setmining_test.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_sec) + " " + str(number_bitcoins_transferred)
                 break
 
             elif tx_mode == "normal":
-                xml_command = "./addexam.sh" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty 
+                xml_command = "python make_approximate_setmining_test.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty 
                 break
             else:
                 print("Enter only one of them (transaction/normal) ")
                 continue
 
-    # exec_shell_cmd(xml_command)
+    exec_shell_cmd(xml_command)
 
 
 def subprocess_open(command):

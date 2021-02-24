@@ -4,6 +4,11 @@ import argparse
 import sys
 import math
 
+def exec_shell_cmd(cmd):
+    if os.system(cmd) != 0:
+        print("error while executing '%s'" % cmd)
+        exit(-1)
+
 # xml existence test - If there is no file in the path, return fail
 def test_xml_existence(output):
     path = os.path.abspath(".")
@@ -74,12 +79,66 @@ def test_transaction_existence(simulation_output_file):
 
 # get xml file 
 def get_xmlfile():
-    sim_time = input("Input simulation time : ")
-    algo = input("Input mining algorithm(pow/coinflip) : ")
-    tx_mode = str(input("Input transaction injector (transaction/normal) : "))
-    difficulty = input("Input difficulty(1/2/3) : ")
-    xml_command = "./addexam.sh" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty
-    exec_shell_cmd(xml_command)
+    tx_condition_count = 0
+    condition_count = 0
+    while(1):
+        if condition_count == 0:
+            sim_time = input("Input simulation time : ")    
+            if int(sim_time) > 0:
+                condition_count = 1
+            else:
+                print("simulation time not negative ... ")
+                continue
+
+        if condition_count == 1:
+            algo = str(input("Input mining algorithm(pow/coinflip) : "))
+            if (algo == "pow") | (algo == "coinflip"):
+                condition_count = 2
+            else:
+                print("Enter only one of them (pow/coninflip) ")
+                continue
+
+        if condition_count == 2:
+            difficulty = str(input("Input difficulty(1/2/3) : "))
+            if (difficulty == "1") | (difficulty == "2") | (difficulty == "3"):
+                condition_count = 3
+            else:
+                print("Enter only one of them(1/2/3)")
+                continue
+
+        if condition_count == 3:
+            if (tx_condition_count == 1) | (tx_condition_count == 2):
+                pass
+            else:
+                tx_mode = str(input("Input transaction injector (transaction/normal) : "))
+            if tx_mode == "transaction":
+                if tx_condition_count == 2:
+                    pass
+                else:
+                    try:
+                        tx_condition_count = 1
+                        tx_sec = float(input("Input transaction interval (sec) : "))
+                    except ValueError as e:
+                        print("Must input only number ! ")
+                        continue
+
+                try:
+                    tx_condition_count = 2
+                    number_bitcoins_transferred = float(input("input number of Bitcoins transferred (default : 0.001) : "))
+                except ValueError as e:
+                    print("Must input only number !")
+                    continue
+                xml_command = "./addexam.sh" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_sec) + " " + str(number_bitcoins_transferred)
+                break
+
+            elif tx_mode == "normal":
+                xml_command = "./addexam.sh" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty 
+                break
+            else:
+                print("Enter only one of them (transaction/normal) ")
+                continue
+
+    # exec_shell_cmd(xml_command)
 
 
 def subprocess_open(command):

@@ -50,7 +50,7 @@ def summary_result(node_list, node_output_file, sim_time):
     print("1. node 갯수 : %d" %len(node_list))
     print("2. simulation time : %s sec" %sim_time)
     for i in range(0,len(node_list)):
-        print("3. ")
+        print("3.  ")
         print("\t3-%d IP address : %s" %(i+1, node_list[i]))
     block_count = count_block(node_output_file[0])
     print("4. 생성된 블록 개수 : %d" %block_count)

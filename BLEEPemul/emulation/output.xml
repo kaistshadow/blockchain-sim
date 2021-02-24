@@ -36,13 +36,13 @@
   <plugin id="txInjector" path="transaction.so"/>
 
   <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="2200" />
+  <kill time="2000" />
   <!-- our nodes -->
   <node id="bcdnode0">
     <application plugin="bitcoind" time="1" arguments="-debug -testnet -datadir=data/bcdnode0 -port=11110 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=11.0.0.1/0 -rpcbind=11.0.0.1 -difficulty=3 -algorithm=coinflip" />
   </node>
   <node id="client0">
-    <application plugin="client" time="5" arguments="11.0.0.1:11111 2194" />
+    <application plugin="client" time="5" arguments="11.0.0.1:11111 496" />
   </node>
   <node id="client1">
     <application plugin="txInjector" time="1800" arguments="11.0.0.1:11111" />

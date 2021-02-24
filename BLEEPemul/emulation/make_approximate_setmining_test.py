@@ -1,7 +1,8 @@
 import sys
 import lxml.etree as ET
 
-def setup_multiple_node_xml(node_num, simultime, bool_, algorithm):
+def setup_multiple_node_xml(node_num, simultime, bool_, algorithm, tx_sec, transferred_bitcoin):
+
     base_xml = "example.xml"
     new_xml  = "base"+str(node_num)+"N"+str(simultime)+"T.xml"
 
@@ -21,11 +22,11 @@ def setup_multiple_node_xml(node_num, simultime, bool_, algorithm):
         node = ET.SubElement(shadow, "node", id=node_id, iphint=node_iphint)
         time = str(0)
         if i==0:
-            argument = "-debug -datadir=data/bcdnode%d -port=18333 -txindex=1 -fallbackfee=0.0002 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333 -algorithm=%s -difficulty=%s" % (i, (node_iphint), (node_iphint), (node_num-1)/256 + 1, (node_num-1)%256, (i+1)/256 + 1, (i+1)%256, algorithm, difficulty)
+            argument = "-debug -testnet -datadir=data/bcdnode%d -port=18333 -txindex=1 -fallbackfee=0.0002 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333 -algorithm=%s -difficulty=%s" % (i, (node_iphint), (node_iphint), (node_num-1)/256 + 1, (node_num-1)%256, (i+1)/256 + 1, (i+1)%256, algorithm, difficulty)
         elif i<(node_num-1):
-            argument = "-debug -datadir=data/bcdnode%d -port=18333 -txindex=1 -fallbackfee=0.0002 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333 -algorithm=%s -difficulty=%s" % (i, (node_iphint), (node_iphint), (i-1)/256 + 1, (i-1)%256, (i+1)/256 + 1, (i+1)%256, algorithm, difficulty)
+            argument = "-debug -testnet -datadir=data/bcdnode%d -port=18333 -txindex=1 -fallbackfee=0.0002 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333 -algorithm=%s -difficulty=%s" % (i, (node_iphint), (node_iphint), (i-1)/256 + 1, (i-1)%256, (i+1)/256 + 1, (i+1)%256, algorithm, difficulty)
         else:
-            argument = "-debug -datadir=data/bcdnode%d -port=18333 -txindex=1 -fallbackfee=0.0002 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333 -algorithm=%s -difficulty=%s" % (i, (node_iphint), (node_iphint), (i-1)/256 + 1, (i-1)%256, 1, 0, algorithm, difficulty)
+            argument = "-debug -testnet -datadir=data/bcdnode%d -port=18333 -txindex=1 -fallbackfee=0.0002 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333 -algorithm=%s -difficulty=%s" % (i, (node_iphint), (node_iphint), (i-1)/256 + 1, (i-1)%256, 1, 0, algorithm, difficulty)
         ET.SubElement(node,"application", plugin="bitcoind", time=time, arguments=argument)
 
     for i in range(0, node_num):
@@ -41,25 +42,21 @@ def setup_multiple_node_xml(node_num, simultime, bool_, algorithm):
         node_id = "injector"
         node = ET.SubElement(shadow, "node", id=node_id)
         time = str(150)
-        argument = "%s %d %d %d " % (nodeaddr, interval, txcnt, amount)
+        argument = "%d.%d.0.1:11111 %d %s %s" % (i/256 + 1, i%256, int(tx_sec), transferred_bitcoin, "amount")
         ET.SubElement(node,"application", plugin="txInjector", time=time, arguments=argument)
 
     tree.write(new_xml, pretty_print=True)
 
-def select_option(param1,node_count, sim_time, algorithm):
-    if param1 == "normal":
-        setup_multiple_node_xml(node_count, sim_time,True, algorithm)
-    elif param1 == "transaction":
-        setup_multiple_node_xml(node_count, sim_time,False, algorithm)
-
-
-
 if __name__ == '__main__':
-
-    node_count = int(sys.argv[2])
-    simulation_time = int(sys.argv[3])
-    algorithm = sys.argv[4]
+    node_count = int(sys.argv[1])
+    simulation_time = int(sys.argv[2])
+    algorithm = sys.argv[3]
+    tx_injector = sys.argv[4]
     difficulty = sys.argv[5]
-    txcnt = sys.args[6]
-
-    select_option(sys.argv[1], node_count, simulation_time,algorithm)
+    if tx_injector == "transaction":
+        tx_sec = sys.argv[6]
+        transferred_bitcoin = sys.argv[7]
+        setup_multiple_node_xml(node_count, simulation_time, False, algorithm, tx_sec, transferred_bitcoin)
+        
+    if tx_injector == "normal":
+        setup_multiple_node_xml(1, simulation_time, True, algorithm, "x", "x")

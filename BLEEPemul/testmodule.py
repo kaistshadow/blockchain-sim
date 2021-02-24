@@ -117,14 +117,19 @@ def get_xmlfile():
                 else:
                     try:
                         tx_condition_count = 1
-                        tx_sec = int(input("Input transaction interval (sec) : "))
+                        tx_sec = int(input("(To measure max tps, sec value is 0) Input transaction interval (sec) : "))
                     except ValueError as e:
                         print("Must input only number ! ")
                         continue
 
                 try:
                     tx_condition_count = 2
-                    number_bitcoins_transferred = float(input("input number of Bitcoins transferred (default : 0.001) : "))
+                    number_bitcoins_transferred = float(input("input number of Bitcoins transferred (minimum amount : 0.0000546) : "))
+
+                    if number_bitcoins_transferred < 0.0000546:
+                        print("The minimum transfer fee is '0.0000546' bitcoin ...")
+                        continue
+
                     if str(number_bitcoins_transferred).split(".")[1] == "0":
                         number_bitcoins_transferred = int(number_bitcoins_transferred)
 
@@ -140,7 +145,8 @@ def get_xmlfile():
             else:
                 print("Enter only one of them (transaction/normal) ")
                 continue
-
+        
+    print(xml_command)
     exec_shell_cmd(xml_command)
 
 

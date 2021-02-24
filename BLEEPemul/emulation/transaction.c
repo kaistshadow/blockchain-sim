@@ -1,4 +1,6 @@
 // #include <stdlib.h>
+
+// #include <stdlib.h>
 #include <stdlib.h>
 #include <string.h>
 #include <curl/curl.h>
@@ -62,7 +64,7 @@ void rpc_getnewaddress(char* wallet, char* ipport) {
     }
 }
 
-void rpc_sendtoaddress(char* IP, char* wallet, int amount , int i, int amount) {
+void rpc_sendtoaddress(char* IP, char* wallet, int i, char* amount) {
 
     char first[100] = "{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"sendtoaddress\", ";
     char input[250];
@@ -72,48 +74,11 @@ void rpc_sendtoaddress(char* IP, char* wallet, int amount , int i, int amount) {
     strcat(input, second);
     sprintf(last, "\"%s\"", wallet);
     strcat(input, last);
-    sprintf(last, "\"%d\"", amount);
+    strcat(input, ", ");
+    sprintf(last, "%s", amount);
     strcat(input, last);
+    strcat(input, " ]}");
     printf("%d transaction : ", i);
-
-    CURL *curl = curl_easy_init();
-    struct curl_slist *headers = NULL;
-
-
-    if (curl) {
-
-        headers = curl_slist_append(headers, "content-type: text/plain;");
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-        curl_easy_setopt(curl, CURLOPT_URL, IP);
-
-
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long) strlen(input));
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, input);
-
-        curl_easy_setopt(curl, CURLOPT_USERPWD,
-                         "a:1234");
-
-        curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_TRY);
-
-        curl_easy_perform(curl);
-    }
-}
-
-void rpc_test(char* IP) {
-
-    printf("------------------------------------------------------------- start sendtoaddress \n\n");
-    char first[100] = "{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getchaintxstats\", ";
-    char input[250];
-    char second[30] = "\"params\": [";
-    char last[50];
-    strcpy(input, first);
-    strcat(input, second);
-    sprintf(last, "");
-    strcat(input, last);
-    strcat(input, "]}");
-    printf("%s \n", input);
-
     CURL *curl = curl_easy_init();
     struct curl_slist *headers = NULL;
 
@@ -139,17 +104,18 @@ void rpc_test(char* IP) {
 
 int main(int argc, char* argv[]) {
 
-    int interval = int(argv[3]);
-    int txcnt = int(argv[2]);
-    int amount = int(argv[4]);
+    int interval = atoi(argv[2]);
+    int amount = atoi(argv[4]); // amount 용도 모르겠음 ...
 
     int i =0;
     char wallet[36];
     memset(wallet, 0, sizeof(char)*36);
     rpc_getnewaddress(wallet, argv[1]);
-    for(int i = 0; i < txcnt; i++) {
-        rpc_sendtoaddress(argv[1], wallet, i, amount);
+    while(1){
+        i += 1;
+        rpc_sendtoaddress(argv[1], wallet, i, argv[3]);
         sleep(interval);
+        
     }
     return 0;
 }

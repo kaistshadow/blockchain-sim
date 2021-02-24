@@ -32,6 +32,18 @@ def get_last_blockHash(node_output_file):
     f.close()
     return split_data
 
+def get_blockHash_list(node_output_file):
+    block_hash_list = []
+    f = open(node_output_file, "r")
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("UpdateTip")
+        if result != -1:
+            block_hash_list.append(line.split(" ")[3].split("=")[1])
+    f.close()
+    return block_hash_list
+
 def summary_result(node_list, node_output_file, sim_time):
     txs = testmodule.test_transaction_count(node_output_file)
     print("---------------------------------------------------------------------------------")
@@ -46,6 +58,11 @@ def summary_result(node_list, node_output_file, sim_time):
     print("6. 생성된 트랜잭션 개수 : %d" %txs)
     print("7. TPS : %s" %(txs/int(sim_time)))
     print("---------------------------------------------------------------------------------")
+    print("8. Blockhash list")
+    # print(node_output_file)
+    block_hash_list = get_blockHash_list(node_output_file[0])
+    for i in range(0,len(block_hash_list)):
+        print("%d blockhash : %s" %((i+1), block_hash_list[i]))
 
 def main():
 

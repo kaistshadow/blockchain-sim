@@ -48,9 +48,9 @@ def setup_multiple_node_xml(node_num, simultime, bool_, algorithm):
 
 def select_option(param1,node_count, sim_time, algorithm):
     if param1 == "normal":
-        setup_multiple_node_xml(node_count, sim_time,True, algorithm);
+        setup_multiple_node_xml(node_count, sim_time,True, algorithm)
     elif param1 == "transaction":
-        setup_multiple_node_xml(node_count, sim_time,False, algorithm);
+        setup_multiple_node_xml(node_count, sim_time,False, algorithm)
 
 
 

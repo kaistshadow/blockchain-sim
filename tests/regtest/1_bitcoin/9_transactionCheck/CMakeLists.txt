@@ -28,5 +28,5 @@ add_custom_target(shadow-bitcoin-dev-one-node-mine-plugin_tx_check ALL
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_test(NAME shadow-bitcoin-transaction_count-test
-        COMMAND shadow output.xml
+        COMMAND python transaction_count.py
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

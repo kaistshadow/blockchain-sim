@@ -76,6 +76,7 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/Install")
 enable_testing()
 add_subdirectory(interfaces)
 add_subdirectory(external)
+add_subdirectory(BLEEPemul)
 
 if(BLEEPLIB_OPT STREQUAL ON)
     add_subdirectory(BLEEPlib)

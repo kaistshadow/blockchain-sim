@@ -37,7 +37,10 @@ terraform.tfstate.backup
 .terraform
 
 test/BLEEP/internet_topology/atlas-ccs18.xml
-
+tests/regtest/shadow-dependencies/5_customed_rpc/node1/testnet*
+tests/regtest/shadow-syscalls/1_eventfd/test*-dir
+tests/regtest/shadow-syscalls/1_eventfd/timerfd-test*-dir
+tests/regtest/shadow-syscalls/1_eventfd/evenfd-test*
 *.tf_
 
 BLEEPlib/boost

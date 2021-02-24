@@ -7,6 +7,6 @@ if [ $# -ne 5 ]; then
  exit -1
 fi
 
-bash cleanup_data.sh $1
+# bash cleanup_data.sh $1
 python make_approximate_setmining_test.py $4 $1 $2 $3 $5
-mv base$1N$2T.xml target_example.xml
+mv base$1N$2T.xml output.xml

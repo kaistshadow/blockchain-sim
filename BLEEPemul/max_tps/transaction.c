@@ -106,7 +106,7 @@ void rpc_sendtoaddress(char* IP, char* wallet) {
     strcat(input, second);
     sprintf(last, "\"%s\"", wallet);
     strcat(input, last);
-    strcat(input, ", 0.00001 ]}");
+    strcat(input, ", 0.00000546 ]}");
     printf("%s \n", input);
 
     CURL *curl = curl_easy_init();
@@ -222,11 +222,10 @@ int main(int args, char* argv[]) {
 
     sleep(800);
     int i=0;
-    for(int i=0; i<100000; i++){
+    for(int i=0; i<100000000; i++){
         int start = rand() % row;
         int end = rand() % row;
         rpc_sendtoaddress(IP_array[start], wallet_array[end]);
-        sleep(1);
     }
     rpc_test(IP_array[0]);
 

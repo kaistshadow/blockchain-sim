@@ -1,7 +1,7 @@
 import sys
 import lxml.etree as ET
 
-def setup_multiple_node_xml(node_num, simultime, bool_, algorithm):
+def setup_multiple_node_xml(node_num, simultime, bool_, algorithm, txcnt, interval, amount):
     base_xml = "example.xml"
     new_xml  = "base"+str(node_num)+"N"+str(simultime)+"T.xml"
 
@@ -41,7 +41,7 @@ def setup_multiple_node_xml(node_num, simultime, bool_, algorithm):
         node_id = "injector"
         node = ET.SubElement(shadow, "node", id=node_id)
         time = str(150)
-        argument = "%d %d" % ((simultime-6), node_num)
+        argument = "%d %d %d %d %d " % ((simultime-6), node_num txcnt, interval, amount)
         ET.SubElement(node,"application", plugin="txInjector", time=time, arguments=argument)
 
     tree.write(new_xml, pretty_print=True)
@@ -60,5 +60,8 @@ if __name__ == '__main__':
     simulation_time = int(sys.argv[3])
     algorithm = sys.argv[4]
     difficulty = sys.argv[5]
+    txcnt = int(sys.argv[6])
+    interval =  int(sys.argv[7])
+    amount = int(sys.argv[8])
 
-    select_option(sys.argv[1], node_count, simulation_time,algorithm)
+    select_option(sys.argv[1], node_count, simulation_time, algorithm, txcnt, interval, amount)

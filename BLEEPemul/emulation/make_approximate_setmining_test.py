@@ -41,7 +41,7 @@ def setup_multiple_node_xml(node_num, simultime, bool_, algorithm):
         node_id = "injector"
         node = ET.SubElement(shadow, "node", id=node_id)
         time = str(150)
-        argument = "%d %d" % ((simultime-6), node_num)
+        argument = "%s %d %d %d " % (nodeaddr, interval, txcnt, amount)
         ET.SubElement(node,"application", plugin="txInjector", time=time, arguments=argument)
 
     tree.write(new_xml, pretty_print=True)
@@ -60,5 +60,6 @@ if __name__ == '__main__':
     simulation_time = int(sys.argv[3])
     algorithm = sys.argv[4]
     difficulty = sys.argv[5]
+    txcnt = sys.args[6]
 
     select_option(sys.argv[1], node_count, simulation_time,algorithm)

@@ -1,7 +1,6 @@
 <shadow>
   <!-- our network -->
-  <topology>
-    <![CDATA[<?xml version="1.0" encoding="utf-8"?><graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <topology><![CDATA[<?xml version="1.0" encoding="utf-8"?><graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
              <key attr.name="packetloss" attr.type="double" for="edge" id="d9" />
              <key attr.name="jitter" attr.type="double" for="edge" id="d8" />
              <key attr.name="latency" attr.type="double" for="edge" id="d7" />
@@ -27,17 +26,18 @@
                  <data key="d9">0.0</data>
                </edge>
              </graph>
-             </graphml>]]>
-  </topology>
-
+             </graphml>]]></topology>
   <!-- the plug-ins we will be using -->
-  <plugin id="bitcoind" path="libBITCOIND_0.19.1DEV.so" />
-  <!-- <plugin id="mining" path="mining.so"/> -->
-
+  <plugin id="bitcoind" path="libBITCOIND_0.19.1DEV.so"/>
+  <plugin id="client" path="rpc.so"/>
+  <plugin id="txInjector" path="transaction.so"/>
   <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="10" />
   <!-- our nodes -->
-  <node id="bcdnode0">
-    <application plugin="bitcoind" time="1" arguments="-debug -testnet -datadir=data/bcdnode0 -port=11110 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=11.0.0.1/0 -rpcbind=11.0.0.1" />
+  <kill time="100"/>
+  <node id="bcdnode0" iphint="1.0.0.1">
+    <application arguments="-debug -datadir=data/bcdnode0 -port=18333 -txindex=1 -fallbackfee=0.0002 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=1.0.0.1/0 -rpcbind=1.0.0.1 -addnode=1.0.0.1:18333 -addnode=1.1.0.1:18333 -algorithm=pow -difficulty=3" plugin="bitcoind" time="0"/>
+  </node>
+  <node id="client0">
+    <application arguments="1.0.0.1:11111 94 " plugin="client" time="5"/>
   </node>
 </shadow>

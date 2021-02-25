@@ -152,9 +152,7 @@ def get_xmlfile():
                 continue
 
     exec_shell_cmd(xml_command)
-    xml_command = "mv base1N" + sim_time + "T.xml output.xml"
-    exec_shell_cmd(xml_command)
-
+    return tx_mode
 
 def subprocess_open(command):
     popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)

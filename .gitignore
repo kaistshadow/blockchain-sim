@@ -111,3 +111,6 @@ shadow.data
 BLEEPemul/*/datadir
 BLEEPemul/*/data
 BLEEPemul/*/target_example.xml
+
+tests/regtest/shadow-syscalls/1_eventfd/eventfd-test*
+tests/regtest/shadow-syscalls/1_eventfd/timerfd-test*

@@ -148,6 +148,7 @@ int main(int argc, char* argv[]) {
     char wallet[35];
     memset(wallet, 0, sizeof(char)*35);
     rpc_getnewaddress(wallet, argv[1]);
+    if(txcnt == -1 ) txcnt = 100000000000000;
     for(int i = 0; i <= txcnt; i++) {
         rpc_sendtoaddress(argv[1], wallet, i, amount);
         sleep(interval);

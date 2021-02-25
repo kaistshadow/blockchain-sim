@@ -16,10 +16,6 @@ add_custom_target(xmlGenerator_test_prepare ALL
   COMMAND mkdir -p data/bcdnode0
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_custom_target(xmlGenerator_test_prepare3 ALL
-    COMMAND shadow output.xml
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
 add_custom_target(xmlGenerator_test_prepare2 ALL
   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1dev::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
 add_dependencies(xmlGenerator_test_prepare2 Bitcoin_0_19_1dev::Plugin)

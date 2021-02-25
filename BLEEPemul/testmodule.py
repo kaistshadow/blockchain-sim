@@ -143,7 +143,7 @@ def get_xmlfile():
                 xml_command = "python make_approximate_setmining_test.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred)
                 break
 
-            elif tx_mode == "normal":
+            elif tx_mode == "disable":
                 xml_command = "python make_approximate_setmining_test.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty 
                 break
                 
@@ -152,9 +152,7 @@ def get_xmlfile():
                 continue
 
     exec_shell_cmd(xml_command)
-    xml_command = "mv base1N" + sim_time + "T.xml output.xml"
-    exec_shell_cmd(xml_command)
-
+    return tx_mode
 
 def subprocess_open(command):
     popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)

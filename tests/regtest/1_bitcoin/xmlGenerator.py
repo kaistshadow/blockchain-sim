@@ -1,10 +1,16 @@
 import sys
 import lxml.etree as ET
 
-def setup_multiple_node_xml(node_num, simultime, bool_, algorithm, difficulty ):
+def setup_multiple_node_xml(node_num, simultime, bool_, algorithm, difficulty):
 
     base_xml = "example.xml"
     new_xml  = "output.xml"
+
+    if bool_ == True:
+        new_xml = sys.argv[6] + "/" + new_xml
+    else:
+        new_xml = sys.argv[9] + "/" + new_xml
+
 
     parser = ET.XMLParser(remove_blank_text=True, strip_cdata=False)
     tree   = ET.parse(base_xml, parser)
@@ -37,6 +43,7 @@ def setup_multiple_node_xml(node_num, simultime, bool_, algorithm, difficulty ):
         ET.SubElement(node,"application", plugin="client", time=time, arguments=argument)
 
     if bool_ == True:
+        
         tree.write(new_xml, pretty_print=True)
     else :
         node_id = "injector"
@@ -61,7 +68,6 @@ def select_option(param1,node_count, sim_time, algorithm, difficulty):
         print("enable is start  ")
         setup_multiple_node_xml(node_count, sim_time,False, algorithm, difficulty)
 
-
 if __name__ == '__main__':
     print("start make_approximate_setmining_test.py start ")
 
@@ -70,5 +76,5 @@ if __name__ == '__main__':
     algorithm = sys.argv[3]
     txmode = sys.argv[4]
     difficulty = sys.argv[5]
-
-    select_option(txmode, node_count, simulation_time,algorithm,difficulty)
+    
+    select_option(txmode, node_count, simulation_time, algorithm, difficulty)

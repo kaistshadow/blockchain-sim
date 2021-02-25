@@ -21,6 +21,10 @@ add_custom_target(bitcoinMining_shadow_test_prepare2 ALL
 
 add_dependencies(bitcoinMining_shadow_test_prepare2 Bitcoin_0_19_1dev::Plugin)
 
+add_custom_target(bitcoinMining_shadow_test_prepare3 ALL
+        COMMAND gcc -o rpc.so rpc.c -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -g -std=c99
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
 add_test(NAME bitcoinMining_shadow_test
         COMMAND python mining.py
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

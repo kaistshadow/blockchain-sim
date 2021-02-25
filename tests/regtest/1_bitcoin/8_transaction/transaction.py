@@ -21,19 +21,20 @@ def main():
 
     # xml 파일 생성
     tx_mode = test_modules.get_xmlfile(path)
-    print("---------------")
-    print(tx_mode)
-    print("---------------")
+
     # xml 파일 생성 확인
     target_folder_xml = test_modules.test_xml_existence("output.xml")
 
     # 생성된 xml 파일로 부터 runtime, node_id, plugin 들을 뽑아옴.
     runtime, node_id_list, plugin_list = test_modules.get_xml_info_new(target_folder_xml)
 
+    # bitcoind data dir 설정 파일 생성.
+    test_modules.set_plugin_file(len(node_id_list), path)
+
     # 지금 예제는 transaction injector를 사용 안하기에 별도의 xml파일을 만들어줌.
     # 기존 xml에는 transaction.so에 대한 정의가 있어서, 이를 삭제안해주면 shadow가 실행이 안됨.
     shadow_command = test_modules.renew_xml(tx_mode, target_folder_xml)
-    print(shadow_command)
+
     # shadow 실행
     print("shadow running ...")
     exec_shell_cmd(shadow_command)

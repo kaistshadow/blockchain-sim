@@ -35,7 +35,7 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s)
 }
 
 void getWalletaddress(char* wallet, char* string_info) {
-    for (int i = 11; i < 46; i++) { // 46
+    for (int i = 11; i < 45; i++) { // 46
         wallet[i - 11] = string_info[i];
     }
 }

@@ -35,7 +35,7 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s)
 }
 
 void getWalletaddress(char* wallet, char* string_info) {
-    for (int i = 11; i < 46; i++) { // 46
+    for (int i = 11; i < 45; i++) { // 46
         wallet[i - 11] = string_info[i];
     }
 }
@@ -57,12 +57,13 @@ void rpc_getnewaddress(char* wallet, char* ipport) {
         curl_easy_setopt(curl, CURLOPT_USERPWD,"a:1234");
         curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_TRY);
         curl_easy_perform(curl);
+        printf("getnewaddress  %s \n",getnewaddress);
         getWalletaddress(wallet, s.ptr);
         free(s.ptr);
     }
 }
 
-void rpc_sendtoaddress(char* IP, char* wallet, int i) {
+void rpc_sendtoaddress(char* IP, char* wallet, int i, char* amount) {
 
     char first[100] = "{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"sendtoaddress\", ";
     char input[250];
@@ -72,8 +73,48 @@ void rpc_sendtoaddress(char* IP, char* wallet, int i) {
     strcat(input, second);
     sprintf(last, "\"%s\"", wallet);
     strcat(input, last);
-    strcat(input, ", 0.01 ]}");
+    sprintf(last, ",\"%s\"]}", amount);
+    strcat(input, last);
     printf("%d transaction : ", i);
+
+    CURL *curl = curl_easy_init();
+    struct curl_slist *headers = NULL;
+
+
+    if (curl) {
+
+        headers = curl_slist_append(headers, "content-type: text/plain;");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+        curl_easy_setopt(curl, CURLOPT_URL, IP);
+
+
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long) strlen(input));
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, input);
+
+        curl_easy_setopt(curl, CURLOPT_USERPWD,
+                         "a:1234");
+
+        curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_TRY);
+
+        curl_easy_perform(curl);
+    }
+}
+
+void rpc_test(char* IP) {
+
+    printf("------------------------------------------------------------- start sendtoaddress \n\n");
+    char first[100] = "{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getchaintxstats\", ";
+    char input[250];
+    char second[30] = "\"params\": [";
+    char last[50];
+    strcpy(input, first);
+    strcat(input, second);
+    sprintf(last, "");
+    strcat(input, last);
+    strcat(input, "]}");
+    printf("%s \n", input);
+
     CURL *curl = curl_easy_init();
     struct curl_slist *headers = NULL;
 
@@ -98,14 +139,18 @@ void rpc_sendtoaddress(char* IP, char* wallet, int i) {
 }
 
 int main(int argc, char* argv[]) {
+
+    int interval = atoi(argv[3]);
+    int txcnt = atoi(argv[2]);
     int i =0;
+    printf("%s \n", argv[4]);
     char wallet[36];
-    memset(wallet, 0, sizeof(char)*36);
+    memset(wallet, 0, sizeof(char)*35);
     rpc_getnewaddress(wallet, argv[1]);
-    while(1) {
-        i += 1;
-        rpc_sendtoaddress(argv[1], wallet, i);
-        sleep(2);
+    if(txcnt == -1 ) txcnt = 100000000000000;
+    for(int i = 0; i <= txcnt; i++) {
+        rpc_sendtoaddress(argv[1], wallet, i, argv[4]);
+        sleep(interval);
     }
     return 0;
 }

@@ -46,6 +46,8 @@ def process_ENV():
     libPath = "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:%s" % os.path.abspath("./Install")
     needWritePath = True
     needWriteLibPath = True
+    exec_shell_cmd("sudo apt install python3-pip")
+    exec_shell_cmd("pip3 install --upgrade lxml")
     for line in f:
         if shadowPath in line:
             needWritePath = False

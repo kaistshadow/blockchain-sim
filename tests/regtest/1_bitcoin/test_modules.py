@@ -52,10 +52,15 @@ def set_plugin_file(node_count, path):
 def get_xmlfile(path):
     tx_condition_count = 0
     condition_count = 0
+    tx_injector_file = 0
+    tx_so_file = path + "/transaction.so"
+    if os.path.isfile(tx_so_file) == False:
+        tx_injector_file = 1
+
     while(1):
         if condition_count == 0:
             try: 
-                sim_time = input("Input simulation time : ")    
+                sim_time = input("Input simulation time (sec) : ")    
                 if int(sim_time) > 0:
                     condition_count = 1
                 else:
@@ -82,23 +87,38 @@ def get_xmlfile(path):
                 continue
 
         if condition_count == 3:
-            if (tx_condition_count == 1) | (tx_condition_count == 2):
-                pass
-            else:
+            if tx_condition_count == 0:
                 tx_mode = str(input("Input transaction injector (enable/disable) : "))
-            if tx_mode == "enable":
-                if tx_condition_count == 2:
-                    pass
+                if tx_mode == "enable":
+                    if tx_injector_file == 1:
+                        print("Sorry there is no transaction.so file. so you must choose disable ... ")
+                        continue
+                    else:
+                        tx_condition_count = 1               
+               
+                elif tx_mode == "disable":
+                    tx_condition_count = 1
+                    xml_command = "cd ..; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + path
+                    break
+                    
                 else:
-                    try:
-                        tx_condition_count = 1
-                        tx_sec = int(input("(To measure max tps, sec value is 0) Input transaction interval (sec) : "))
-                    except ValueError as e:
+                    print("Enter only one of them (enable/disable) ")
+                    continue
+
+            elif tx_condition_count == 1:
+                try:
+                    tx_sec = int(input("(To measure max tps, sec value is 0) Input transaction interval (sec) : "))
+                    if tx_sec > 0:
+                        tx_condition_count = 2
+                    else:
                         print("Must input only number ! ")
                         continue
-
+                except ValueError as e:
+                    print("Must input only number ! ")
+                    continue
+            
+            elif tx_condition_count == 2:
                 try:
-                    tx_condition_count = 2
                     number_bitcoins_transferred = float(input("input number of Bitcoins transferred (minimum amount : 0.0000546) : "))
                     if number_bitcoins_transferred < 0.0000546:
                         print("The minimum transfer fee is '0.0000546' bitcoin ...")
@@ -107,33 +127,27 @@ def get_xmlfile(path):
                         if str(number_bitcoins_transferred).split(".")[1] == "0":
                             number_bitcoins_transferred = int(number_bitcoins_transferred)
                         tx_condition_count = 3
-                        
                 except ValueError as e:
                     print("Must input only number !")
                     continue
-                                   
-                try:
-                    if tx_condition_count == 3:
-                        tx_cnt = int(input("input number of transcations ( -1 : infinite number ): "))
-                    else:
-                        continue
 
+            elif tx_condition_count == 3:
+                try:
+                    tx_cnt = int(input("input number of transcations ( -1 : infinite number ): "))
+                    if (tx_cnt == -1) | (tx_cnt > 0):
+                        xml_command = "cd ..; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
+                        break
+
+                    elif tx_cnt < 0:
+                        print("Must input only integer number !")
+                        continue
+                    
                 except ValueError as e:
                     print("Must input only integer number !")
                     continue
 
-                xml_command = "cd ..; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
-                break
-
-            elif tx_mode == "disable":
-                xml_command = "cd ..; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + path
-                break
-                
-            else:
-                print("Enter only one of them (enable/disable) ")
-                continue
-
     exec_shell_cmd(xml_command)
+    return tx_mode
 
 # After shadow, check output data
 def test_file_existence(node_id_list, plugin_list):
@@ -192,15 +206,13 @@ def remove_tx_plugin(tx_plugin):
     fr.close()
 
 def renew_xml(tx_mode, target_folder_xml):
-
     print(tx_mode)
-    if tx_mode == "enable":
-        set_plugin_file(len(node_id_list), path)
+    if tx_mode == "disable":
         remove_tx_plugin(target_folder_xml)
         target_folder_xml = target_folder_xml[:len(target_folder_xml)-4] + "2.xml"
         shadow_command = "shadow " + target_folder_xml
         return shadow_command
 
-    if tx_mode == "disable":  
+    if tx_mode == "enable":  
         shadow_command = "shadow output.xml"
         return shadow_command

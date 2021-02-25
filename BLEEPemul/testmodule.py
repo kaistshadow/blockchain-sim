@@ -143,7 +143,7 @@ def get_xmlfile():
                 xml_command = "python make_approximate_setmining_test.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred)
                 break
 
-            elif tx_mode == "normal":
+            elif tx_mode == "disable":
                 xml_command = "python make_approximate_setmining_test.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty 
                 break
                 

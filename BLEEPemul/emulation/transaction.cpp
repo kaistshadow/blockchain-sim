@@ -17,7 +17,7 @@ void rpc_getnewaddress(std::string wallet, char* ipport) {
     bitcoin_rpc_request("setgeneratetoaddress",params);
 }
 
-void rpc_sendtoaddress(std::string IP, std::string wallet, int i, int amount) {
+void rpc_sendtoaddress(std::string IP, std::string wallet, int i, std::string amount) {
 
     std::cout<<i<<" transaction : \n";
 
@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 
     int interval = atoi(argv[3]);
     int txcnt = atoi(argv[2]);
-    int amount = atoi(argv[4]);
+    std::string amount = argv[4];
     std::cout<<"start client \n";
     url = std::string(argv[1]);
     id_pwd = "a:1234";
@@ -42,16 +42,22 @@ int main(int argc, char* argv[]) {
     params.clear();
 
     // method 1: generate node's wallet
-    params = Json::arrayValue;
-    bitcoin_rpc_request("getnewaddress", params);
+    bitcoin_rpc_request("listaddressgroupings", params);
     std::cout<<"-- wallet --\n";
-    std::string wallet = json_resp["result"].asString();
+    std::string wallet = json_resp["result"][0][0][0].asString();
 
+    bitcoin_rpc_request("getblockchaininfo", params);
 
     if(txcnt == -1 ) txcnt = 100000000000000;
-    for(int i = 0; i <= txcnt; i++) {
-        rpc_sendtoaddress(argv[1], wallet, i, amount);
-        sleep(interval);
+//    for(int i = 0; i <= txcnt; i++) {
+//        rpc_sendtoaddress(argv[1], wallet, i, amount);
+//        sleep(interval);
+//    }
+    int i=0;
+    while(1)
+    {
+        rpc_sendtoaddress(argv[1],wallet, i, amount);
+        i++;
     }
     return 0;
 }

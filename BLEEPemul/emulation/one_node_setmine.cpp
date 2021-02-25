@@ -17,36 +17,18 @@ void rpc_generatetoaddress(std::string wallet, char* ipport) {
     bitcoin_rpc_request("setgeneratetoaddress",params);
 }
 
-void rpc_getblockchaininfo(char* ipport){
-    const char *data ="{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getblockchaininfo\", \"params\": [] }";
-    CURL *curl = curl_easy_init();
-    struct curl_slist *headers = NULL;
-    if (curl) {
-        headers = curl_slist_append(headers, "content-type: text/plain;");
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl, CURLOPT_URL, ipport);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long) strlen(data));
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
-        curl_easy_setopt(curl, CURLOPT_USERPWD, "a:1234");
-        curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_TRY);
-        curl_easy_perform(curl);
-    }
+void rpc_getblockchaininfo(){
+    Json::Value params;
+    params.clear();
+    bitcoin_rpc_request("getmempoolinfo",params);
 }
-void rpc_getmempoolinfo(char* ipport){
-    const char *data ="{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getmempoolinfo\", \"params\": [] }";
-    CURL *curl = curl_easy_init();
-    struct curl_slist *headers = NULL;
-    if (curl) {
-        headers = curl_slist_append(headers, "content-type: text/plain;");
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl, CURLOPT_URL, ipport);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long) strlen(data));
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
-        curl_easy_setopt(curl, CURLOPT_USERPWD, "a:1234");
-        curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_TRY);
-        curl_easy_perform(curl);
-    }
+
+void rpc_getmempoolinfo(){
+    Json::Value params;
+    params.clear();
+    bitcoin_rpc_request("getmempoolinfo",params);
 }
+
 void make100blocks(std::string wallet_address) {
     Json::Value params;
     params.append(wallet_address);
@@ -75,6 +57,7 @@ int main(int argc, char* argv[]) {
     rpc_generatetoaddress(wallet, argv[1]);
 
     sleep(atoi(argv[2]));
-    rpc_getmempoolinfo(argv[1]);
+    rpc_getmempoolinfo();
+    rpc_getblockchaininfo();
     return 0;
 }

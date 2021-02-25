@@ -35,7 +35,7 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s)
 }
 
 void getWalletaddress(char* wallet, char* string_info) {
-    for (int i = 11; i < 46; i++) { // 46
+    for (int i = 11; i < 45; i++) { // 46
         wallet[i - 11] = string_info[i];
     }
 }
@@ -57,12 +57,13 @@ void rpc_getnewaddress(char* wallet, char* ipport) {
         curl_easy_setopt(curl, CURLOPT_USERPWD,"a:1234");
         curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_TRY);
         curl_easy_perform(curl);
+        printf("getnewaddress  %s \n",getnewaddress);
         getWalletaddress(wallet, s.ptr);
         free(s.ptr);
     }
 }
 
-void rpc_sendtoaddress(char* IP, char* wallet, int amount , int i, int amount) {
+void rpc_sendtoaddress(char* IP, char* wallet, int i, int amount) {
 
     char first[100] = "{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"sendtoaddress\", ";
     char input[250];
@@ -72,7 +73,7 @@ void rpc_sendtoaddress(char* IP, char* wallet, int amount , int i, int amount) {
     strcat(input, second);
     sprintf(last, "\"%s\"", wallet);
     strcat(input, last);
-    sprintf(last, "\"%d\"", amount);
+    sprintf(last, ",\"%d\"]}", amount);
     strcat(input, last);
     printf("%d transaction : ", i);
 
@@ -139,15 +140,15 @@ void rpc_test(char* IP) {
 
 int main(int argc, char* argv[]) {
 
-    int interval = int(argv[3]);
-    int txcnt = int(argv[2]);
-    int amount = int(argv[4]);
+    int interval = atoi(argv[3]);
+    int txcnt = atoi(argv[2]);
+    int amount = atoi(argv[4]);
 
     int i =0;
-    char wallet[36];
-    memset(wallet, 0, sizeof(char)*36);
+    char wallet[35];
+    memset(wallet, 0, sizeof(char)*35);
     rpc_getnewaddress(wallet, argv[1]);
-    for(int i = 0; i < txcnt; i++) {
+    for(int i = 0; i <= txcnt; i++) {
         rpc_sendtoaddress(argv[1], wallet, i, amount);
         sleep(interval);
     }

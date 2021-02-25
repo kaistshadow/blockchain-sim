@@ -3,6 +3,7 @@ import subprocess
 import argparse
 import sys
 import math
+import xml.etree.ElementTree as ET
 
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
@@ -21,31 +22,23 @@ def test_xml_existence(output):
         sys.exit(1)
 
 # Get node_id, kill time, plugins in xml file
-def get_xml_info(xml_file):
-    split_result = []
-    split_result2 = []
-    node_id_list = []
-    plugin_list = []
+def get_xml_info_new(xml_file):
+    tree = ET.parse(xml_file)
+    root = tree.getroot()
 
-    f = open(xml_file, "r")
-    while True:
-        line = f.readline()
-        if not line: break
-        result = line.find("kill time")
-        if result != -1:
-            split_result = line.split('"')
-        result = line.find("node id")
-        if result != -1:
-            result = line.find("poi")
-            if result == -1:
-                split_result2 = line.split('"')
-                node_id_list.append(split_result2[1])
-        result = line.find("application plugin")
-        if result != -1:
-            plugin_list_target = line.split('"')
-            plugin_list.append(plugin_list_target[1])
-    f.close()
-    return split_result[1], node_id_list, plugin_list
+    plugin_list=[]
+    node_id_list =[]
+    kill = root.findall('kill')
+    runtime = kill[0].attrib['time']
+
+    nodes =  root.findall('node')
+    for node in nodes:
+        node_id_list.append(node.attrib['id'])
+        applications = node.findall('application')
+        for a in applications:
+            plugin_list.append(a.attrib['plugin'])
+
+    return runtime, node_id_list, plugin_list
 
 # After shadow, check output data
 def test_file_existence(node_id_list, plugin_list):
@@ -54,7 +47,7 @@ def test_file_existence(node_id_list, plugin_list):
     path = os.path.abspath(".")
     target_folder_list = []
     for i in range(0,len(node_id_list)):
-        target_path = path + "/shadow.data/hosts/" + node_id_list[i] + "/stdout-" + node_id_list[i] + "." + plugin_list[i] + ".1000.log"
+        target_path = path + "/datadir/hosts/" + node_id_list[i] + "/stdout-" + node_id_list[i] + "." + plugin_list[i] + ".1000.log"
         target_folder_list.append(target_path)
     for i in range(0,len(target_folder_list)):
         if os.path.isfile(target_folder_list[i]) == False:
@@ -110,8 +103,8 @@ def get_xmlfile():
             if (tx_condition_count == 1) | (tx_condition_count == 2):
                 pass
             else:
-                tx_mode = str(input("Input transaction injector (transaction/normal) : "))
-            if tx_mode == "transaction":
+                tx_mode = str(input("Input transaction injector (enable/disable) : "))
+            if tx_mode == "enable":
                 if tx_condition_count == 2:
                     pass
                 else:
@@ -124,23 +117,31 @@ def get_xmlfile():
 
                 try:
                     tx_condition_count = 2
+                    tx_cnt = input("input number of tx to send (default : 1) : ")
                     number_bitcoins_transferred = float(input("input number of Bitcoins transferred (default : 0.001) : "))
+
+                    if number_bitcoins_transferred < 0.0000546:
+                        print("The minimum transfer fee is '0.0000546' bitcoin ...")
+                        continue
+
                     if str(number_bitcoins_transferred).split(".")[1] == "0":
                         number_bitcoins_transferred = int(number_bitcoins_transferred)
 
                 except ValueError as e:
                     print("Must input only number !")
                     continue
-                xml_command = "python make_approximate_setmining_test.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_sec) + " " + str(number_bitcoins_transferred)
+                xml_command = "python make_approximate_setmining_test.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + tx_cnt +" " + str(tx_sec) + " " + str(number_bitcoins_transferred)
                 break
 
             elif tx_mode == "normal":
                 xml_command = "python make_approximate_setmining_test.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty 
                 break
             else:
-                print("Enter only one of them (transaction/normal) ")
+                print("Enter only one of them (enable/disable) ")
                 continue
 
+    exec_shell_cmd(xml_command)
+    xml_command = "mv base1N" + sim_time + "T.xml output.xml"
     exec_shell_cmd(xml_command)
 
 
@@ -247,32 +248,5 @@ def test_transaction_count(simulation_output_file):
             if txs_bitcoind != 0:
                 break    
     f.close()
-    txs_bitcoind = txs_bitcoind - blocks_count - 1
+    return txs_bitcoind
 
-    txs = 0
-    f = open(simulation_output_file[0], "r")
-    while True:
-        line = f.readline()
-        if not line: break
-        result = line.find("getmempoolinfo")
-        if result != -1:
-            break
-        result = line.find("sendtoaddress")
-        if result != -1:
-            txs += 1
-    f.close()
-
-    f = open(simulation_output_file[1], "r")
-    while True:
-        line = f.readline()
-        if not line: break
-        result = line.find("mempool")
-        if result != -1:
-            mempool_size = line.split(",")[1].split(":")[1]
-            break
-    f.close()
-
-    if txs_bitcoind + int(mempool_size) == txs:
-        return txs
-    else:
-        sys.exit(1)

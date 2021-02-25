@@ -76,6 +76,7 @@ def main():
     target_folder_xml = testmodule.test_xml_existence("output.xml")
 
     # shadow 실행
+    print("shadow running ... ")
     testmodule.subprocess_open('shadow -d datadir output.xml > output.txt')
 
     # shadow output file 생성 여부 검증

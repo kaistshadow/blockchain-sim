@@ -118,23 +118,35 @@ def get_xmlfile():
                 try:
                     tx_condition_count = 2
                     number_bitcoins_transferred = float(input("input number of Bitcoins transferred (minimum amount : 0.0000546) : "))
-
                     if number_bitcoins_transferred < 0.0000546:
                         print("The minimum transfer fee is '0.0000546' bitcoin ...")
                         continue
-
-                    if str(number_bitcoins_transferred).split(".")[1] == "0":
-                        number_bitcoins_transferred = int(number_bitcoins_transferred)
-
+                    else:
+                        if str(number_bitcoins_transferred).split(".")[1] == "0":
+                            number_bitcoins_transferred = int(number_bitcoins_transferred)
+                        tx_condition_count = 3
+                        
                 except ValueError as e:
                     print("Must input only number !")
                     continue
-                xml_command = "python make_approximate_setmining_test.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + tx_cnt +" " + str(tx_sec) + " " + str(number_bitcoins_transferred)
+                                   
+                try:
+                    if tx_condition_count == 3:
+                        tx_cnt = int(input("input number of transcations ( -1 : infinite number ): "))
+                    else:
+                        continue
+
+                except ValueError as e:
+                    print("Must input only integer number !")
+                    continue
+
+                xml_command = "python make_approximate_setmining_test.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred)
                 break
 
             elif tx_mode == "normal":
                 xml_command = "python make_approximate_setmining_test.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty 
                 break
+                
             else:
                 print("Enter only one of them (enable/disable) ")
                 continue

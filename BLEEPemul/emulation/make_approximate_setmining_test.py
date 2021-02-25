@@ -46,7 +46,7 @@ def setup_multiple_node_xml(node_num, simultime, bool_, algorithm, difficulty ):
         if txcnt > -1:
             txsec = sys.argv[7]
             amount = sys.argv[8]
-            argument = " %d.%d.0.1:11111 %s %s %s " % (i % 256 + 1, i % 256, txsec, txcnt, amount)
+            argument = " %d.%d.0.1:11111 %s %s %s " % (i % 256 + 1, i % 256, txcnt, txsec, amount)
         elif txcnt == "-1 ":
              argument= " %d.%d.0.1:11111 0 0 0 " %(i/256 + 1, i%256)
         ET.SubElement(node,"application", plugin="txInjector", time=time, arguments=argument)

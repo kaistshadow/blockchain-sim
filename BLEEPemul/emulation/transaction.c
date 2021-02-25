@@ -143,7 +143,6 @@ int main(int argc, char* argv[]) {
     int interval = atoi(argv[3]);
     int txcnt = atoi(argv[2]);
     int amount = atoi(argv[4]);
-
     int i =0;
     char wallet[35];
     memset(wallet, 0, sizeof(char)*35);

@@ -15,19 +15,20 @@ namespace libBLEEP_sybil {
     class EclipseIncomingAttackPolicy {
 
     public:
-        EclipseIncomingAttackPolicy() {
-            libev_loop = EV_DEFAULT;
+        EclipseIncomingAttackPolicy() : libev_loop(EV_DEFAULT) {
             _checkWatcher.set<EclipseIncomingAttackPolicy, &EclipseIncomingAttackPolicy<NodePrimitives, NodeParams>::_checkAttack>(
                     this);
             _checkWatcher.start();
         }
 
         // step 1. construct virtual network using sybil nodes
-        bool ConstructSybilNet(vector<pair<string, int>> vIP, vector<string> vShadowIP, std::string targetIP,
-                               int targetPort) {
+        bool ConstructSybilNet(IPDatabase &ipdb, std::string targetIP, int targetPort) {
+            vector<pair<string, int>> &vReachableIP = ipdb.GetVReachableIP();
+            vector<string> &vAttackerIP = ipdb.GetVAttackerIP();
+
             // Spawn network consisting of benign nodes
-            for (auto &[ip, uptime] : vIP) {
-                auto &benignNode = _benignNodes.emplace_back(&_attackStat, ip);
+            for (auto &[ip, uptime] : vReachableIP) {
+                auto &benignNode = _benignNodes.emplace_back(&_attackStat, &ipdb, ip);
 
                 // set a churnout timer for all the benign nodes
                 benignNode.SetChurnOutTimer(uptime);
@@ -40,15 +41,15 @@ namespace libBLEEP_sybil {
             }
 
             // Spawn network consisting of sybil nodes
-            for (auto ip : vShadowIP) {
-                _shadowNodes.emplace_back(&_attackStat, ip);
+            for (auto ip : vAttackerIP) {
+                _attackerNodes.emplace_back(&_attackStat, &ipdb, ip);
                 // The implementation of malicious node's periodic connection is dependent to node's behavior
                 // Thus, periodic connection should be implemented within NodePrimitives
             }
 
             // Let sybil nodes try to connect to the victim 100 seconds later (i.e., after initializing benign networks)
-            for (auto &_shadowNode : _shadowNodes) {
-                _shadowNode.tryConnectToTarget(targetIP, targetPort, 100);
+            for (auto &_attackerNode : _attackerNodes) {
+                _attackerNode.tryConnectToTarget(targetIP, targetPort, 100);
             }
 
             return true;
@@ -57,7 +58,7 @@ namespace libBLEEP_sybil {
 
     private:
         list <BenignNode<NodePrimitives>> _benignNodes;
-        list <ShadowActiveNode<NodePrimitives>> _shadowNodes;
+        list <ShadowActiveNode<NodePrimitives>> _attackerNodes;
         AttackStat _attackStat;
 
     private:

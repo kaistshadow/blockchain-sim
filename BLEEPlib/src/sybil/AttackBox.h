@@ -7,7 +7,7 @@
 
 #include <memory>
 #include <iostream>
-#include "ipdb/IPDatabase.h"
+#include "ipdb/SimpleIPDatabase.h"
 #include <ev++.h>
 
 namespace libBLEEP_sybil {
@@ -35,8 +35,7 @@ namespace libBLEEP_sybil {
             if (_targetIP == "" || _targetPort == -1)
                 return false;
 
-            if (!AttackPolicy<NodePrimitives, NodeParams>::ConstructSybilNet(_ipDatabase.GetVReachableIP(),
-                                                                             _ipDatabase.GetVShadowIP(), _targetIP,
+            if (!AttackPolicy<NodePrimitives, NodeParams>::ConstructSybilNet(_ipDatabase, _targetIP,
                                                                              _targetPort))
                 return false;
             return true;

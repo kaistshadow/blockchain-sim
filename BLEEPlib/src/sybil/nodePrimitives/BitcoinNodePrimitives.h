@@ -2,11 +2,13 @@
 // Created by ilios on 21. 2. 15..
 //
 
-#ifndef BLEEP_BL_NODE_PRIMITIVES_H
-#define BLEEP_BL_NODE_PRIMITIVES_H
+#ifndef BLEEP_BITCOIN_NODE_PRIMITIVES_H
+#define BLEEP_BITCOIN_NODE_PRIMITIVES_H
 
 #include <ev++.h>
 #include <memory>
+#include <chrono>
+#include <ipdb/IPDatabase.h>
 #include "../node/Node.h"
 
 #include "../utility/AttackStat.h"
@@ -14,7 +16,7 @@
 namespace libBLEEP_sybil {
 
 
-    class BLNodePrimitives {
+    class BitcoinNodePrimitives {
     private:
         // to inform attack results to the AttackStat object
         AttackStat *_attackStat;
@@ -29,6 +31,10 @@ namespace libBLEEP_sybil {
         std::map<int, TCPControl> _mTCPControl;
         std::string _targetIP = "";
         int _targetPort = -1;
+    private:
+        // Bitcoin-specific primitives
+        std::chrono::system_clock::time_point _setupTime;
+
     protected:
         // This function is only for shadow active node
         virtual void tryReconnectToTarget() {};
@@ -57,10 +63,18 @@ namespace libBLEEP_sybil {
             tcpBuffer.PushBackSendBuffer(charvec);
         }
 
+        void SendMsg(int data_fd, std::vector<unsigned char> &msg) {
+            TCPControl &tcpBuffer = _mTCPControl[data_fd];
+            tcpBuffer.PushBackSendBuffer(msg);
+        }
+
     public:
-        BLNodePrimitives(AttackStat *stat, IPDatabase *ipdb, std::string ip, NodeType type) : _attackStat(stat),
-                                                                                              _ipdb(ipdb), _myIP(ip),
-                                                                                              _type(type) {}
+        BitcoinNodePrimitives(AttackStat *stat, IPDatabase *ipdb, std::string ip, NodeType type) : _attackStat(stat),
+                                                                                                   _ipdb(ipdb),
+                                                                                                   _myIP(ip),
+                                                                                                   _type(type),
+                                                                                                   _setupTime(
+                                                                                                           std::chrono::system_clock::now()) {}
 
         void OpAfterConnect(int conn_fd);
 
@@ -69,7 +83,10 @@ namespace libBLEEP_sybil {
         void OpAfterRecv(int data_fd, std::string recv_str);
 
         void OpAfterDisconnect();
+
+        void OpAddrInjectionTimeout(std::chrono::system_clock::duration preparePhaseDuration, int periodLength,
+                                    double ipPerSec, double shadowRate);
     };
 }
 
-#endif //BLEEP_BL_NODE_PRIMITIVES_H
+#endif //BLEEP_BITCOIN_NODE_PRIMITIVES_H

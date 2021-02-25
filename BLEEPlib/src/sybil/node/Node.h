@@ -16,11 +16,13 @@
 #include <netinet/tcp.h>
 
 #include "../utility/AttackStat.h"
+#include "shadow_interface.h"
+#include "../ipdb/IPDatabase.h"
 
 
 namespace libBLEEP_sybil {
     enum class NodeType {
-        Benign, Shadow
+        Benign, Attacker, Shadow
     };
 
     template<class NodePrimitives>
@@ -28,6 +30,8 @@ namespace libBLEEP_sybil {
     protected:
         std::map<int, ev::io> _mDataSocketWatcher;
         std::map<int, ev::io> _mConnSocketWatcher;
+        ev::io _listen_watcher;
+        int _listen_sockfd;
 
         std::string string_to_hex(const std::string &input) {
             static const char hex_digits[] = "0123456789ABCDEF";
@@ -62,7 +66,7 @@ namespace libBLEEP_sybil {
                 NodePrimitives::RemoveTCPControl(w.fd);
                 _mDataSocketWatcher.erase(w.fd);
 
-                if (NodePrimitives::_type == NodeType::Shadow) {
+                if (NodePrimitives::_type == NodeType::Attacker) {
                     // call Node's primitive operation
                     NodePrimitives::OpAfterDisconnect();
                 }
@@ -175,9 +179,129 @@ namespace libBLEEP_sybil {
             }
         }
 
-    public:
-        Node(AttackStat *stat, std::string vIP, NodeType type) : NodePrimitives(stat, vIP, type) {}
+        void listencb(ev::io &w, int revents) {
+            struct sockaddr_in their_addr; /* connector's address information */
+            int sock_fd;
+            socklen_t sin_size;
 
+            sin_size = sizeof(struct sockaddr_in);
+            sock_fd = accept(w.fd, (struct sockaddr *) &their_addr, &sin_size);
+            if (sock_fd != -1) {
+                fcntl(sock_fd, F_SETFL, O_NONBLOCK);
+
+                // Add watcher for data socket
+                // assign an io event watcher for (connected) data socket descriptor
+                auto[it, result] = _mDataSocketWatcher.try_emplace(sock_fd);
+                if (result) {
+                    ev::io &watcher = it->second;
+                    watcher.set<Node, &Node::datacb>(this);
+                    watcher.set(sock_fd, ev::READ);
+                    watcher.start();
+                }
+                // allocate new TCPControl structure
+                NodePrimitives::NewTCPControl(sock_fd);
+
+                // call Node's primitive operation
+                NodePrimitives::OpAfterConnected(sock_fd);
+            } else {
+                if (errno != EAGAIN && errno != EWOULDBLOCK) {
+                    std::cout << "accept() failed errno=" << errno << strerror(errno) << "\n";
+                    exit(-1);
+                }
+            }
+        }
+
+    public:
+        Node(AttackStat *stat, IPDatabase *ipdb, std::string myIP, int listenPort, NodeType type) : NodePrimitives(stat,
+                                                                                                                   ipdb,
+                                                                                                                   myIP,
+                                                                                                                   type) {
+            // Create virtual NIC for this node
+            struct sockaddr_in my_addr;    /* my address information */
+            my_addr.sin_family = AF_INET;         /* host byte order */
+            my_addr.sin_addr.s_addr = inet_addr(myIP.c_str());
+            bzero(&(my_addr.sin_zero), 8);        /* zero the rest of the struct */
+            if (shadow_register_NIC((struct sockaddr *) &my_addr, sizeof(struct sockaddr)) == -1) {
+                std::cout << "shadow_register_NIC failed" << "\n";
+                exit(-1);
+            }
+
+            // create listen socket
+            if (listenPort == 0)
+                return;
+            int listenfd = CreateNewSocket();
+
+            // bind to shadow's virtual NIC
+            my_addr.sin_family = AF_INET;         /* host byte order */
+            my_addr.sin_port = htons(listenPort);     /* short, network byte order */
+            my_addr.sin_addr.s_addr = inet_addr(myIP.c_str());
+            bzero(&(my_addr.sin_zero), 8);        /* zero the rest of the struct */
+
+            if (bind(listenfd, (struct sockaddr *) &my_addr, sizeof(struct sockaddr)) == -1) {
+                perror("bind");
+                exit(1);
+            }
+
+            // listen
+            if (listen(listenfd, 10) == -1) {
+                perror("listen");
+                exit(1);
+            }
+
+            // register a watcher
+            _listen_sockfd = listenfd;
+            _listen_watcher.set<Node, &Node<NodePrimitives>::listencb>(this);
+            _listen_watcher.start(_listen_sockfd, ev::READ);
+        }
+
+    private:
+
+        int CreateNewSocket() {
+            // Create a TCP socket in the address family of the specified service.
+            unsigned int hSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+            if (hSocket == -1)
+                return -1;
+
+            // Set the no-delay option (disable Nagle's algorithm) on the TCP socket.
+            int set = 1;
+            setsockopt(hSocket, IPPROTO_TCP, TCP_NODELAY, (const char *) &set, sizeof(int));
+
+            // Set the non-blocking option on the socket.
+            if (!SetSocketNonBlocking(hSocket, true)) {
+                CloseSocket(hSocket);
+                std::cout << "Setting socket to non-blocking failed" << "\n";
+                exit(-1);
+            }
+            return hSocket;
+        }
+
+        bool SetSocketNonBlocking(const unsigned int &hSocket, bool fNonBlocking) {
+            if (fNonBlocking) {
+                int fFlags = fcntl(hSocket, F_GETFL, 0);
+                if (fcntl(hSocket, F_SETFL, fFlags | O_NONBLOCK) == -1) {
+                    return false;
+                }
+            } else {
+                int fFlags = fcntl(hSocket, F_GETFL, 0);
+                if (fcntl(hSocket, F_SETFL, fFlags & ~O_NONBLOCK) == -1) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        bool CloseSocket(unsigned int &hSocket) {
+            if (hSocket == -1)
+                return false;
+            int ret = close(hSocket);
+            if (ret) {
+                std::cout << "Socket close failed: " << hSocket << "\n";
+                exit(-1);
+            }
+            hSocket = -1;
+            return ret != -1;
+        }
     };
 }
 

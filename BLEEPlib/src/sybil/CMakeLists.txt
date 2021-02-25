@@ -6,18 +6,23 @@ target_link_libraries(BLEEPsybil SHADOW_INTERFACE)
 target_link_libraries(BLEEPsybil Libev_4_33::Libev)
 target_link_libraries(BLEEPsybil BLEEP)
 
+target_link_libraries(BLEEPsybil Bitcoin_0_19_1dev::Plugin)
+
 target_sources(BLEEPsybil
         PRIVATE
         AttackBox.h
-        ipdb/IPDatabase.cpp
-        ipdb/IPDatabase.h
-        ipdb/BitcoinIPDatabase.cpp
+        ipdb/SimpleIPDatabase.h
         ipdb/BitcoinIPDatabase.h
+        ipdb/IPDatabase.h
         node/BenignNode.h
         node/ShadowActiveNode.h
+        node/ShadowNode.h
         node/Node.h
         nodePrimitives/BLNodePrimitives.h
         nodePrimitives/BLNodePrimitives.cpp
+        nodePrimitives/BitcoinNodePrimitives.cpp
+        nodePrimitives/BitcoinNodePrimitives.h
+        nodeParams/BitcoinNodeParams.h
         nodeParams/BLNodeParams.h
         policy/EclipseIncomingAttackPolicy.h
         policy/ErebusAttackPolicy.h

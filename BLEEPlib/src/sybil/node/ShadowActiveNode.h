@@ -12,7 +12,7 @@ namespace libBLEEP_sybil {
     class ShadowActiveNode : public Node<NodePrimitives> {
     protected:
         void tryReconnectToTarget() override {
-            assert (_targetIP != "" && _targetPort != -1);
+            assert (Node<NodePrimitives>::_targetIP != "" && Node<NodePrimitives>::_targetPort != -1);
             _connStartTimer.set<ShadowActiveNode<NodePrimitives>, &ShadowActiveNode<NodePrimitives>::_timercb>(this);
             _connStartTimer.set(30, 0);
             _connStartTimer.start();
@@ -20,8 +20,6 @@ namespace libBLEEP_sybil {
 
     private:
         ev::timer _connStartTimer;
-        std::string _targetIP = "";
-        int _targetPort = -1;
 
         void _timercb(ev::timer &w, int revents) {
             // create new socket for a connection
@@ -42,15 +40,15 @@ namespace libBLEEP_sybil {
             struct sockaddr_in targetaddr;
             bzero(&targetaddr, sizeof(targetaddr));
             targetaddr.sin_family = AF_INET;
-            targetaddr.sin_port = htons(_targetPort);
-            targetaddr.sin_addr.s_addr = inet_addr(_targetIP.c_str());
+            targetaddr.sin_port = htons(Node<NodePrimitives>::_targetPort);
+            targetaddr.sin_addr.s_addr = inet_addr(Node<NodePrimitives>::_targetIP.c_str());
 
             // call actual systemcall API for connect
             // TODO : error-handling logic should be updated
             int ret = connect(conn_fd, (struct sockaddr *) &targetaddr, sizeof(targetaddr));
             if (ret < 0 && errno != EINPROGRESS) {
                 perror("connect");
-                std::cout << "Unable to connect to " << _targetIP << "\n";
+                std::cout << "Unable to connect to " << Node<NodePrimitives>::_targetIP << "\n";
                 exit(-1);
             } else if (ret == 0) {
                 std::cout << "connection established" << "\n";
@@ -75,18 +73,9 @@ namespace libBLEEP_sybil {
         }
 
     public:
-        ShadowActiveNode(AttackStat *stat, std::string virtualIp) : Node<NodePrimitives>(stat, virtualIp,
-                                                                                         NodeType::Shadow) {
-            // Create virtual NIC for this node
-            struct sockaddr_in my_addr;    /* my address information */
-            my_addr.sin_family = AF_INET;         /* host byte order */
-            my_addr.sin_addr.s_addr = inet_addr(Node<NodePrimitives>::_myIP.c_str());
-            bzero(&(my_addr.sin_zero), 8);        /* zero the rest of the struct */
-            if (shadow_register_NIC((struct sockaddr *) &my_addr, sizeof(struct sockaddr)) == -1) {
-                std::cout << "shadow_register_NIC failed" << "\n";
-                exit(-1);
-            }
-        }
+        ShadowActiveNode(AttackStat *stat, IPDatabase *ipdb, std::string virtualIp) : Node<NodePrimitives>(stat, ipdb,
+                                                                                                           virtualIp, 0,
+                                                                                                           NodeType::Attacker) {}
 
         // move constructor
         ShadowActiveNode(ShadowActiveNode &&other) = default;
@@ -97,8 +86,8 @@ namespace libBLEEP_sybil {
             _connStartTimer.set(starttime, 0);
             _connStartTimer.start();
 
-            _targetIP = targetIP;
-            _targetPort = targetPort;
+            Node<NodePrimitives>::_targetIP = targetIP;
+            Node<NodePrimitives>::_targetPort = targetPort;
         }
 
     private:

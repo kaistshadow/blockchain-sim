@@ -61,6 +61,8 @@ namespace libBLEEP_sybil {
             // Let attacker node to periodically call ADDR injection API
             _addrInjectTimer.set<ErebusAttackPolicy, &ErebusAttackPolicy::_timercb>(this);
             _addrInjectTimer.set(NodeParams::addrInjectionStartTime, NodeParams::addrInjectionDelay);
+            _addrInjectTimer.start();
+
 
             return true;
         }
@@ -71,6 +73,7 @@ namespace libBLEEP_sybil {
             _attackerNode->OpAddrInjectionTimeout(NodeParams::preparePhaseTimeLength, NodeParams::addrInjectionDelay,
                                                   NodeParams::addrInjectionIPPerSec,
                                                   NodeParams::addrInjectionShadowRate);
+            _attackerNode->UpdateDataSocketWatcher();
         }
 
         ev::timer _addrInjectTimer;

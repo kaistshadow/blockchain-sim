@@ -121,13 +121,7 @@ namespace libBLEEP_sybil {
                 writecb(w);
             }
 
-            for (auto const &[fd, tcpControl] : NodePrimitives::_mTCPControl) {
-                if (tcpControl.IsEmptySendBuffer()) {
-                    _mDataSocketWatcher[fd].set(ev::READ);
-                } else {
-                    _mDataSocketWatcher[fd].set(ev::READ | ev::WRITE);
-                }
-            }
+            UpdateDataSocketWatcher();
         }
 
         void conncb(ev::io &w, int revents) {
@@ -170,13 +164,7 @@ namespace libBLEEP_sybil {
                 _mConnSocketWatcher.erase(w.fd);
             }
 
-            for (auto const &[fd, tcpControl] : NodePrimitives::_mTCPControl) {
-                if (tcpControl.IsEmptySendBuffer()) {
-                    _mDataSocketWatcher[fd].set(ev::READ);
-                } else {
-                    _mDataSocketWatcher[fd].set(ev::READ | ev::WRITE);
-                }
-            }
+            UpdateDataSocketWatcher();
         }
 
         void listencb(ev::io &w, int revents) {
@@ -207,6 +195,18 @@ namespace libBLEEP_sybil {
                 if (errno != EAGAIN && errno != EWOULDBLOCK) {
                     std::cout << "accept() failed errno=" << errno << strerror(errno) << "\n";
                     exit(-1);
+                }
+            }
+
+            UpdateDataSocketWatcher();
+        }
+
+        void UpdateDataSocketWatcher() {
+            for (auto const &[fd, tcpControl] : NodePrimitives::_mTCPControl) {
+                if (tcpControl.IsEmptySendBuffer()) {
+                    _mDataSocketWatcher[fd].set(ev::READ);
+                } else {
+                    _mDataSocketWatcher[fd].set(ev::READ | ev::WRITE);
                 }
             }
         }

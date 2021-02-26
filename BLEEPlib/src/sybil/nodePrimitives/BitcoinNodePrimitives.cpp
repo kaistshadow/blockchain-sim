@@ -322,7 +322,7 @@ void BitcoinNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::du
 
     ServiceFlags nLocalNodeServices = ServiceFlags(NODE_NETWORK | NODE_WITNESS | NODE_NETWORK_LIMITED);
     std::vector<CAddress> vCAddr;
-    vAddr.reserve(vAddr.size());
+    vCAddr.reserve(vAddr.size());
     for (std::string ip : vAddr) {
         struct in_addr in_addr_ip;
         in_addr_ip.s_addr = inet_addr(ip.c_str());

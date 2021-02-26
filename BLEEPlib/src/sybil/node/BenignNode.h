@@ -165,12 +165,14 @@ namespace libBLEEP_sybil {
                 watcher.stop();
                 close(fd);
             }
+            Node<NodePrimitives>::_listen_watcher.stop();
+            close(Node<NodePrimitives>::_listen_sockfd);
         }
 
     public:
         void SetChurnOutTimer(int uptime) {
             _churnoutTimer.set<BenignNode, &BenignNode<NodePrimitives>::_churnoutcb>(this);
-            _churnoutTimer.set(uptime, 0);
+            _churnoutTimer.set(uptime, 0.);
             _churnoutTimer.start();
         }
     };

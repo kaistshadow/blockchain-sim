@@ -48,7 +48,7 @@ namespace libBLEEP_sybil {
             }
             std::cout << "benign node objects are constructed" << "\n";
             ipdb.SetVReachableIP(vReachableIPOnly);
-            std::cout << "size of reachable IP:" << ipdb.GetVReachableIP().size() << "\n";
+            std::cout << "size of reachable IP:" << ipdb.GetVReachableIPOnly().size() << "\n";
 
             // Spawn network consisting of sybil nodes
             for (auto ip : vShadowIP) {

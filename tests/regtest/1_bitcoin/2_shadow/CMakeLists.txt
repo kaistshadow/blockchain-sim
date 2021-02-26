@@ -26,8 +26,3 @@ add_custom_target(shadow_xmlGenerator_test_prepare3 ALL
 
 add_dependencies(shadow_xmlGenerator_test_prepare2 Bitcoin_0_19_1dev::Plugin)
 
-add_test(NAME shadow_xmlGenerator_test
-      COMMAND python shadowCheck.py --node=bcdnode0 --args=-debug-testnet-datadir=data/bcdnode0-port=11110-rpcuser=a-rpcpassword=1234-rpcport=11111-rpcallowip=11.0.0.1/0-rpcbind=11.0.0.1
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
-set_tests_properties(shadow_xmlGenerator_test PROPERTIES TIMEOUT 60)

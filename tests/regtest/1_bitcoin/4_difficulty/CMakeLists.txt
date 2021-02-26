@@ -24,9 +24,3 @@ add_custom_target(shadow_bitcoin_difficulty_rpc ALL
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_dependencies(shadow_bitcoin_difficulty_test2 Bitcoin_0_19_1dev::Plugin)
-
-add_test(NAME shadow_difficulty_test
-        COMMAND python difficulty.py
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
-set_tests_properties(shadow_difficulty_test PROPERTIES TIMEOUT 60)

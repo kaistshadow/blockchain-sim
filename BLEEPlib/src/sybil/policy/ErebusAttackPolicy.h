@@ -33,22 +33,27 @@ namespace libBLEEP_sybil {
 
 
             // Spawn network consisting of 100,000 benign nodes
-            int ipCount = 0;
-            for (auto &[ip, uptime] : vReachableIP) {
+            // Store only 100,000 IPs from database
+            // TODO : refactoring is needed (redesign reachableIP APIs)
+            vector<pair<string, int>> smallvReachableIP(vReachableIP.begin(), vReachableIP.begin() + 100000);
+
+            vector<string> vReachableIPOnly;
+            for (auto &[ip, uptime] : smallvReachableIP) {
                 auto &benignNode = _benignNodes.emplace_back(&_attackStat, &ipdb, ip, 8333);
+                benignNode.SetTarget(targetIP, targetPort);
 
                 // set a churnout timer for all the benign nodes
                 benignNode.SetChurnOutTimer(uptime);
-
-                ipCount++;
-                if (ipCount >= 100000)
-                    break;
+                vReachableIPOnly.push_back(ip);
             }
             std::cout << "benign node objects are constructed" << "\n";
+            ipdb.SetVReachableIP(vReachableIPOnly);
+            std::cout << "size of reachable IP:" << ipdb.GetVReachableIP().size() << "\n";
 
             // Spawn network consisting of sybil nodes
             for (auto ip : vShadowIP) {
-                _shadowNodes.emplace_back(&_attackStat, &ipdb, ip, 8333);
+                auto &shadowNode = _shadowNodes.emplace_back(&_attackStat, &ipdb, ip, 8333);
+                shadowNode.SetTarget(targetIP, targetPort);
             }
 
             // Spawn attacker node

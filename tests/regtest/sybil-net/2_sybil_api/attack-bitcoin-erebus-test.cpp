@@ -15,7 +15,7 @@ int main() {
     exported_main(); // initialize bitcoin
 
     AttackBox<ErebusAttackPolicy, BitcoinNodePrimitives, BitcoinNodeParams, BitcoinIPDatabase> attackBox;
-    attackBox.setTarget("1.0.0.1", 18333);
+    attackBox.setTarget("1.0.0.1", 8333);
     if (!attackBox.setupAttack()) {
         std::cout << "setup attack failed" << "\n";
         return -1;

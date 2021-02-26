@@ -19,7 +19,17 @@ namespace libBLEEP_sybil {
 
         std::vector<std::string> &GetVShadowIP() { return _vShadowIP; }
 
+        void SetVReachableIP(std::vector<std::string> vIP) {
+            _vReachableIPonly = vIP;
+        }
+
+        std::vector<std::string> &GetVReachableIPOnly() {
+            return _vReachableIPonly;
+        }
+
     protected:
+        std::vector<std::string> _vReachableIPonly;
+
         void InsertReachableIP(std::string ip, int uptimesec) {
             _vReachableIP.push_back({ip, uptimesec});
         }

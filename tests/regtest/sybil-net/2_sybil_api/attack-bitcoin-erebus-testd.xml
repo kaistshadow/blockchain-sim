@@ -32,7 +32,7 @@
 
   <!-- the plug-ins we will be using -->
   <plugin id="bitcoind" path="libBITCOIND_0.19.1DEV.so"/>
-  <plugin id="ATTACK_BITCOIN_EREBUS_TESTER" path="libATTACK_BITCOIN_EREBUS_TESTER.so"/>
+  <plugin id="ATTACK_BITCOIN_EREBUS_TESTER" path="libATTACK_BITCOIN_EREBUS_TESTERd.so"/>
 
   <kill time="7776000"/>
   <node id="bcdnode0" iphint="1.0.0.1">

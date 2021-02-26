@@ -22,6 +22,7 @@ void BitcoinNodePrimitives::OpAfterConnect(int conn_fd) {
             const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
 
             // their_addr
+            assert(_targetPort != -1 && _targetIP != "");
             CAddress their_addr;
             struct sockaddr_in new_addr;    /* my address information */
             new_addr.sin_family = AF_INET;         /* host byte order */
@@ -83,6 +84,8 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
     // get all received data stream
     string &recvbufstr = tcpControl.GetRecvBuffer();
 
+    cout << "opafterRecv" << "\n";
+
     while (recvbufstr.size() > 0) {
         // first, dump a message header
         CNetMessage msg(Params().MessageStart(), SER_NETWORK,
@@ -121,17 +124,6 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 exit(-1);
             }
 
-            // their_addr
-            CAddress their_addr;
-            struct sockaddr_in new_addr;    /* my address information */
-            new_addr.sin_family = AF_INET;         /* host byte order */
-            new_addr.sin_port = htons(_targetPort);     /* short, network byte order */
-            new_addr.sin_addr.s_addr = inet_addr(_targetIP.c_str());
-            bzero(&(new_addr.sin_zero), 8);        /* zero the rest of the struct */
-
-            if (!their_addr.SetSockAddr((const struct sockaddr *) &new_addr)) {
-                LogPrintf("Warning: Unknown socket family\n");
-            }
 
             // Read header
             CMessageHeader &hdr = msg.hdr;
@@ -176,11 +168,31 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                     uint64_t nonce = 0;
                     int myNodeStartingHeight = nStartingHeight;
 
+
+                    cout << "version is from " << addrFrom.ToString() << ", to " << addrMe.ToString() << "\n";
+                    // their_addr
+                    assert(_targetPort != -1 && _targetIP != "");
+                    CAddress their_addr;
+                    struct sockaddr_in new_addr;    /* my address information */
+                    new_addr.sin_family = AF_INET;         /* host byte order */
+                    new_addr.sin_port = htons(_targetPort);     /* short, network byte order */
+                    new_addr.sin_addr.s_addr = inet_addr(_targetIP.c_str());
+                    bzero(&(new_addr.sin_zero), 8);        /* zero the rest of the struct */
+                    if (!their_addr.SetSockAddr((const struct sockaddr *) &new_addr)) {
+                        LogPrintf("Warning: Unknown socket family\n");
+                    }
+                    cout << "their_addr:" << their_addr.ToString() << "\n";
+
+
+                    CAddress addrMeForVersionReply = CAddress(CService(), nLocalNodeServices);
+
+
                     CSerializedNetMsg replymsg = CNetMsgMaker(INIT_PROTO_VERSION).Make(NetMsgType::VERSION,
                                                                                        PROTOCOL_VERSION,
                                                                                        (uint64_t) nLocalNodeServices,
                                                                                        nTime,
-                                                                                       their_addr, addrFrom, nonce,
+                                                                                       their_addr,
+                                                                                       addrMeForVersionReply, nonce,
                                                                                        strSubVersion,
                                                                                        myNodeStartingHeight, true);
 

@@ -167,6 +167,7 @@ namespace libBLEEP_sybil {
             }
             Node<NodePrimitives>::_listen_watcher.stop();
             close(Node<NodePrimitives>::_listen_sockfd);
+            std::cout << "churn out timer is called at " << Node<NodePrimitives>::GetIP() << "\n";
         }
 
     public:

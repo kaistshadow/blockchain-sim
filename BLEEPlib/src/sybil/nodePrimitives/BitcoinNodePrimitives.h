@@ -40,6 +40,11 @@ namespace libBLEEP_sybil {
         virtual void tryReconnectToTarget() {};
 
     public:
+        void SetTarget(std::string targetIP, int targetPort) {
+            _targetIP = targetIP;
+            _targetPort = targetPort;
+        }
+
         std::string GetIP() { return _myIP; }
 
         TCPControl &GetTCPControl(int fd) { return _mTCPControl[fd]; }

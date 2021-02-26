@@ -8,6 +8,10 @@ endif ()
 ## enable CTEST
 enable_testing()
 
+if (NOT CMAKE_DEBUG_POSTFIX)
+    set(CMAKE_DEBUG_POSTFIX d)
+endif ()
+
 ####
 add_shadow_plugin(ATTACK_TESTER attack-test.cpp)
 add_dependencies(ATTACK_TESTER SIMPLE_NODE)
@@ -30,6 +34,7 @@ add_dependencies(sybil-API-bitcoin-copy-plugin Bitcoin_0_19_1dev::Plugin)
 
 add_shadow_plugin(ATTACK_BITCOIN_EREBUS_TESTER attack-bitcoin-erebus-test.cpp)
 target_link_libraries(ATTACK_BITCOIN_EREBUS_TESTER BLEEPsybil)
+add_dependencies(ATTACK_BITCOIN_EREBUS_TESTER BLEEPsybil)
 add_custom_command(TARGET ATTACK_BITCOIN_EREBUS_TESTER
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:ATTACK_BITCOIN_EREBUS_TESTER> ${CMAKE_CURRENT_SOURCE_DIR})

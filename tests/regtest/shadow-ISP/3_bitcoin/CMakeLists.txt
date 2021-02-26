@@ -3,9 +3,15 @@ cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
 if (NOT TARGET BLEEP) # check whether it's independent build
     list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/cmake") # Path for BLEEP Module
     find_package(BLEEP REQUIRED) # load BLEEP Module
-endif()
+endif ()
 ## enable CTEST
 enable_testing()
+
+
+if (NOT CMAKE_DEBUG_POSTFIX)
+    set(CMAKE_DEBUG_POSTFIX d)
+endif ()
+
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../../cmake")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/cmake")

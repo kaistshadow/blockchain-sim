@@ -15,6 +15,29 @@ def test_args(args_standard):
         if args_standard[i] is None:
             sys.exit(1)
 
+def get_plugin_args(plugin_infos):
+    result_list = []
+    f = open(plugin_infos, "r")
+    while True:
+        line = f.readline()
+        if not line:break
+        result = line.find('plugin="bitcoind"')
+        if result != -1:
+            split_list = line.split("arguments=")
+            break
+    
+    split_list = split_list[1].split(" ")
+    for i in range(0,len(split_list)):
+        result = split_list[i].find("port")
+        if result != -1:
+            result_list.append(split_list[i].split("=")[1])
+        result = split_list[i].find("datadir")
+        if result != -1:
+            result_list.append(split_list[i].split("=")[1])
+
+    print(result_list)
+    return result_list
+
 # This test compares the shadow result log with standard args, 
 # and succeeds if all of the args are in the shadow result log.    
 def test_bitcoinApplication(output_file, args_standard):
@@ -36,40 +59,38 @@ def test_bitcoinApplication(output_file, args_standard):
         sys.exit(1)
 
 def main():
-    # difficulty setting
-    # mining algorithm option setting
-    parser = argparse.ArgumentParser(description='Script for installation and simulation')
-    parser.add_argument("--rpcbind", metavar="rpcbind", help="blockchain application args")
-    parser.add_argument("--rpcallowip", metavar="rpcallowip", help="blockchain application args")
-    parser.add_argument("--rpcport", metavar="rpcport",  help="blockchain application args ")
-    parser.add_argument("--rpcpassword", metavar="rpcpassword", default="1234", help="simulblockchain plugin node rpcpassword ")
-    parser.add_argument("--rpcuser", metavar="rpcuser", default="a", help="simulblockchain plugin node rpcuser")
-    parser.add_argument("--port", metavar="port", help="blockchain plugin node port")
-    parser.add_argument("--datadir", metavar="datadirection", help="blockchain plugin node datadirection")
-    args = parser.parse_args()
-    args_standard = []
 
-    rpcbind = args.rpcbind
-    rpcallowip = args.rpcallowip
-    rpcpassword = args.rpcpassword
-    rpcuser = args.rpcuser
+    # xml 파일이 생성될 위치를 현재위치로 설정
+    path = os.path.abspath("./")
 
-    # args standards
-    rpcport = args.rpcport
-    port = args.port
-    datadir = args.datadir
-    
-    args_standard.append(rpcport)
-    args_standard.append(port)
-    # args_standard.append(datadir)
+    # xml 파일 생성
+    test_modules.get_xmlfile(path)
 
-    test_args(args_standard)
+    # xml 파일 생성 확인
     target_folder_xml = test_modules.test_xml_existence("output.xml")
-    # todo - output.xml file must be made using above args.
-    # exec_shell_cmd("shadow output.xml")
-    runtime, node_id_list, plugin_list = test_modules.get_xml_info(target_folder_xml)
-    simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
-    test_bitcoinApplication(simulation_output_file ,args_standard)
+
+    # # 생성된 xml 파일로 부터 runtime, node_id, plugin 들을 뽑아옴.
+    # runtime, node_id_list, plugin_list = test_modules.get_xml_info_new(target_folder_xml)
+
+    # # plugin arguments 가져오기.
+    # args_standard = get_plugin_args(target_folder_xml)
+
+    # # 지금 예제는 transaction injector를 사용 안하기에 별도의 xml파일을 만들어줌.
+    # # 기존 xml에는 transaction.so에 대한 정의가 있어서, 이를 삭제안해주면 shadow가 실행이 안됨.
+    # test_modules.set_plugin_file(len(node_id_list), path)
+    # test_modules.remove_tx_plugin(target_folder_xml)
+    # target_folder_xml = target_folder_xml[:len(target_folder_xml)-4] + "2.xml"
+    # shadow_command = "shadow " + target_folder_xml
+
+    # # shadow 실행
+    # print("shadow running ...")
+    # exec_shell_cmd(shadow_command)
+
+    # # shadow plugin의 결과 값 뽑아옴.
+    # simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
+
+    # # bitcoin application test 실행.
+    # test_bitcoinApplication(simulation_output_file ,args_standard)
 
 if __name__ == '__main__':
     main()

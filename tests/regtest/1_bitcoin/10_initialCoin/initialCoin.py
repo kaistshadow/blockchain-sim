@@ -12,13 +12,29 @@ def exec_shell_cmd(cmd):
 
 def test_initialCoin(simulation_output_file):
     f = open(simulation_output_file, "r")
-    line = f.readline()
-    f.close()
-    block_count = int(line.split(",")[1].split(":")[1])
+    block_count = 0
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("bestblockhash")
+        if result != -1:
+            f.close()
+            split_list = line.split(",")
+            for i in range(0,len(split_list)):
+                result = split_list[i].find("blocks")
+                if result != -1:
+                    block_count = int(split_list[i].split(":")[1])
+                    break
+        if block_count != 0:
+            f.close()
+            break
+            
     if block_count > 0:
+        print("block_count : %d" %block_count)
         print("Success InitalCoin test ...")
         sys.exit(0)
     else:
+        print("block_count : %d" %block_count)
         print("Fail InitalCoin test ...")
         sys.exit(1)
 

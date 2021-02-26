@@ -56,6 +56,8 @@ def get_xmlfile(path):
     tx_so_file = path + "/transaction.so"
     if os.path.isfile(tx_so_file) == False:
         tx_injector_file = 1
+    else:
+        tx_injector_file = 2
 
     while(1):
         if condition_count == 0:
@@ -97,7 +99,11 @@ def get_xmlfile(path):
                         tx_condition_count = 1               
                
                 elif tx_mode == "disable":
-                    tx_condition_count = 1
+                    if tx_injector_file == 2:
+                        print("sorry This test is tranasction test so you must set tx_mode = enable ... ")
+                        continue
+                    else:
+                        tx_condition_count = 1
                     xml_command = "cd ..; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + path
                     break
                     
@@ -171,14 +177,15 @@ def test_transaction_existence(simulation_output_file):
     while True:
         line = f.readline()
         if not line: break
-        result = line.find('result":null,"error')
+        result = line.find('"error":null')
         if result != -1:
             f.close()
-            print("Fail transaction test ...")
-            sys.exit(1)
+            print("Success transaction test ...")
+            sys.exit(0)
     f.close()
-    print("Success transaction test ...")
-
+    print("Fail transaction test ...")
+    sys.exit(1)
+    
 def test_shadow_output_file_existence():
     path = os.path.abspath(".")
     target_folder_file = path + "/output.txt"

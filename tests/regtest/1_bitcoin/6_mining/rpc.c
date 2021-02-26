@@ -70,7 +70,7 @@ void rpc_generatetoaddress(char* wallet, char* ipport) {
     char last[50];
     strcpy(input, first);
     strcat(input, second);
-    sprintf(last, "\"%s\"", wallet);
+    sprintf(last, "\"%s", wallet);
     strcat(input, last);
     strcat(input, "]}");
     printf("%s \n", input);

@@ -15,6 +15,7 @@ def exec_shell_cmd(cmd):
 def test_transaction_count(simulation_output_file):
     txs_bitcoind = 0
     blocks_count = 0
+    mempool_size = 0
     f = open(simulation_output_file[0], "r")
     for line in f.readlines()[::-1]:
         result = line.find("UpdateTip")
@@ -61,6 +62,9 @@ def test_transaction_count(simulation_output_file):
         print("Sucess transaction count test ... ")
         sys.exit(0)
     else:
+        print("txs_bitcoind : %d" %txs_bitcoind)
+        print("mempool_size : %d" %mempool_size)
+        print("txs : %d" %txs)
         print("Fail transaction count test ...")
         sys.exit(1)
 

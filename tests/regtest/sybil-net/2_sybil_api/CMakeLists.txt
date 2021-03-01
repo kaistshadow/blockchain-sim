@@ -41,9 +41,9 @@ add_custom_command(TARGET ATTACK_BITCOIN_EREBUS_TESTER
 
 
 #####temporary
-add_shadow_plugin(ATTACK_TESTER2 attack-bitcoin-erebus-test2.cpp)
-add_dependencies(ATTACK_TESTER2 SIMPLE_NODE)
-target_link_libraries(ATTACK_TESTER2 BLEEPsybil)
-add_custom_command(TARGET ATTACK_TESTER2
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:ATTACK_TESTER2> ${CMAKE_CURRENT_SOURCE_DIR})
+#add_shadow_plugin(ATTACK_TESTER2 attack-bitcoin-erebus-test2.cpp)
+#add_dependencies(ATTACK_TESTER2 SIMPLE_NODE)
+#target_link_libraries(ATTACK_TESTER2 BLEEPsybil)
+#add_custom_command(TARGET ATTACK_TESTER2
+#        POST_BUILD
+#        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:ATTACK_TESTER2> ${CMAKE_CURRENT_SOURCE_DIR})

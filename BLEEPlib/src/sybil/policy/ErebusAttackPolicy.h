@@ -99,7 +99,7 @@ namespace libBLEEP_sybil {
                 std::cout << "Pre-defined target outgoing connection num = " << NodeParams::targetOutgoingConnNum
                           << "\n";
                 std::cout << "Hijacked outgoing connection num = " << _attackStat.GetHijackedOutgoingConnNum() << "\n";
-                ev_break(libev_loop);
+                ev_break(libev_loop, EVBREAK_ONE);
             }
         }
 

@@ -18,7 +18,7 @@
                  <data key="d1">0.0.0.0</data>
                  <data key="d2">US</data>
                  <data key="d3">10000020000040</data>
-                 <data key="d4">10000240</data>
+                 <data key="d4">10000020000040</data>
                  <data key="d5">net</data>
                </node>
                <edge source="poi-1" target="poi-1">

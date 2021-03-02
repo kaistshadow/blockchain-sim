@@ -74,13 +74,25 @@ def test_transaction_existence(simulation_output_file):
 def get_xmlfile():
     tx_condition_count = 0
     condition_count = 0
+    tx_injector_file = 0
+    tx_so_file = path + "/transaction.so"
+    xml_command = ""
+    if os.path.isfile(tx_so_file) == False:
+        tx_injector_file = 1
+    else:
+        tx_injector_file = 2
+
     while(1):
         if condition_count == 0:
-            sim_time = input("Input simulation time : ")    
-            if int(sim_time) > 0:
-                condition_count = 1
-            else:
-                print("simulation time not negative ... ")
+            try:
+                sim_time = input("Input simulation time (sec) : ")
+                if int(sim_time) > 0:
+                    condition_count = 1
+                else:
+                    print("simulation time not negative ... ")
+                    continue
+            except ValueError as e:
+                print("input only integer ...")
                 continue
 
         if condition_count == 1:
@@ -100,23 +112,52 @@ def get_xmlfile():
                 continue
 
         if condition_count == 3:
-            if (tx_condition_count == 1) | (tx_condition_count == 2):
-                pass
-            else:
+            if tx_condition_count == 0:
                 tx_mode = str(input("Input transaction injector (enable/disable) : "))
-            if tx_mode == "enable":
-                if tx_condition_count == 2:
-                    pass
-                else:
-                    try:
-                        tx_condition_count = 1
-                        tx_sec = int(input("(To measure max tps, sec value is 0) Input transaction interval (sec) : "))
-                    except ValueError as e:
-                        print("Must input only number ! ")
+                if tx_mode == "enable":
+                    if tx_injector_file == 1:
+                        print("Sorry there is no transaction.so file. so you must choose disable ... ")
                         continue
+                    else:
+                        tx_condition_count = 1
+
+                elif tx_mode == "disable":
+                    if tx_injector_file == 2:
+                        print("sorry This test is tranasction test so you must set tx_mode = enable ... ")
+                        continue
+                    else:
+                        tx_condition_count = 1
+                    xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + path
+                    break
+
+                else:
+                    print("Enter only one of them (enable/disable) ")
+                    continue
+
+            elif tx_condition_count == 1:
 
                 try:
-                    tx_condition_count = 2
+                    tx_cnt = int(input("input number of transcations ( -1 : infinite number ): "))
+                    if tx_cnt > 0:
+                        tx_condition_count = 2
+
+                    elif tx_cnt == -1:
+                        number_bitcoins_transferred = 0.0000546
+                        tx_sec = 0
+                        xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
+                        break
+
+                    elif tx_cnt < 0:
+                        print("Must input only integer number !")
+                        continue
+
+                except ValueError as e:
+                    print("Must input only integer number !")
+                    continue
+
+            elif tx_condition_count == 2:
+
+                try:
                     number_bitcoins_transferred = float(input("input number of Bitcoins transferred (minimum amount : 0.0000546) : "))
                     if number_bitcoins_transferred < 0.0000546:
                         print("The minimum transfer fee is '0.0000546' bitcoin ...")
@@ -125,31 +166,24 @@ def get_xmlfile():
                         if str(number_bitcoins_transferred).split(".")[1] == "0":
                             number_bitcoins_transferred = int(number_bitcoins_transferred)
                         tx_condition_count = 3
-                        
                 except ValueError as e:
                     print("Must input only number !")
                     continue
-                                   
-                try:
-                    if tx_condition_count == 3:
-                        tx_cnt = int(input("input number of transcations ( -1 : infinite number ): "))
-                    else:
-                        continue
 
+            elif tx_condition_count == 3:
+
+                try:
+                    tx_sec = int(input("Input transaction interval (sec) : "))
+                    if tx_sec > 0:
+                        xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
+                        break
+                    else:
+                        print("Must input only number ! ")
+                        continue
                 except ValueError as e:
-                    print("Must input only integer number !")
+                    print("Must input only number ! ")
                     continue
 
-                xml_command = "python make_approximate_setmining_test.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred)
-                break
-
-            elif tx_mode == "disable":
-                xml_command = "python make_approximate_setmining_test.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty 
-                break
-                
-            else:
-                print("Enter only one of them (enable/disable) ")
-                continue
 
     exec_shell_cmd(xml_command)
     return tx_mode

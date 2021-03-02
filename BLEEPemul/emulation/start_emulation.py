@@ -73,7 +73,7 @@ def main():
     testmodule.get_xmlfile()
 
     # # xml file 생성 검증
-    target_folder_xml = testmodule.test_xml_existence("output.xml")
+    testmodule.test_xml_existence("output.xml")
 
     # # datadir 설정
     testmodule.set_plugin_file(1, os.path.abspath("./data"));

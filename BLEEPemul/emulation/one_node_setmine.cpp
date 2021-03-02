@@ -20,7 +20,7 @@ void rpc_generatetoaddress(std::string wallet, char* ipport) {
 void rpc_getblockchaininfo(){
     Json::Value params;
     params.clear();
-    bitcoin_rpc_request("getmempoolinfo",params);
+    bitcoin_rpc_request("getblockchaininfo",params);
 }
 
 void rpc_getmempoolinfo(){
@@ -53,7 +53,6 @@ int main(int argc, char* argv[]) {
     std::cout<<"-- wallet --\n";
     std::string wallet = json_resp["result"].asString();
 
-    make100blocks(wallet);
     rpc_generatetoaddress(wallet, argv[1]);
 
     sleep(atoi(argv[2]));

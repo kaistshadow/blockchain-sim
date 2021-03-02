@@ -69,15 +69,17 @@ def summary_result(node_list, node_output_file, sim_time):
 
 def main():
 
-    testmodule.set_plugin_file();
     # xml file 생성
     testmodule.get_xmlfile()
 
     # # xml file 생성 검증
     target_folder_xml = testmodule.test_xml_existence("output.xml")
 
+    # # datadir 설정
+    testmodule.set_plugin_file(1, os.path.abspath("./data"));
+
     # # shadow 실행
-    # print("shadow running ... ")
+    print("shadow running ... ")
     testmodule.subprocess_open('shadow -d datadir output.xml > output.txt')
 
     # # shadow output file 생성 여부 검증

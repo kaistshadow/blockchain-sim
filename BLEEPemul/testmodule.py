@@ -158,7 +158,17 @@ def subprocess_open(command):
     popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     (stdoutdata, stderrdata) = popen.communicate()
     return stdoutdata, stderrdata
-    
+
+def set_plugin_file(node_count, path):
+    if(os. path. isdir(path)):
+        the_command = "rm -rf data/*"
+        exec_shell_cmd(the_command)
+
+    for i in range(0,node_count):
+        the_command = "mkdir -p data/bcdnode" + str(i)
+        exec_shell_cmd(the_command)
+
+
 # make shadow runtime format example of 00:00:09
 def get_time_form(runtime):
     result = ""

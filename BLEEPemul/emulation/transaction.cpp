@@ -42,22 +42,30 @@ int main(int argc, char* argv[]) {
     params.clear();
 
     // method 1: generate node's wallet
-    bitcoin_rpc_request("listaddressgroupings", params);
     std::cout<<"-- wallet --\n";
-    std::string wallet = json_resp["result"][0][0][0].asString();
+    bitcoin_rpc_request("getnewaddress", params);
+    std::string wallet = json_resp["result"].asString();
 
-    bitcoin_rpc_request("getblockchaininfo", params);
+    sleep(1);
+    int blockcnt=0;
+    while(blockcnt <= 6) {
+        bitcoin_rpc_request("getblockchaininfo", params);
+        blockcnt = json_resp["result"]["blocks"].asInt();
+        sleep(1);
+    }
 
-    if(txcnt == -1 ) txcnt = 100000000000000;
-//    for(int i = 0; i <= txcnt; i++) {
-//        rpc_sendtoaddress(argv[1], wallet, i, amount);
-//        sleep(interval);
-//    }
-    int i=0;
-    while(1)
-    {
-        rpc_sendtoaddress(argv[1],wallet, i, amount);
-        i++;
+    if(txcnt == -1 ){
+        int i=0;
+        while(1) {
+            rpc_sendtoaddress(argv[1],wallet, i, amount);
+            sleep(0.1);
+            i++;
+        }
+    } else {
+        for(int i = 0; i <= txcnt; i++) {
+            rpc_sendtoaddress(argv[1], wallet, i, amount);
+            sleep(interval);
+        }
     }
     return 0;
 }

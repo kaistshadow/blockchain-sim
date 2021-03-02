@@ -75,12 +75,7 @@ def get_xmlfile():
     tx_condition_count = 0
     condition_count = 0
     tx_injector_file = 0
-    tx_so_file = path + "/transaction.so"
     xml_command = ""
-    if os.path.isfile(tx_so_file) == False:
-        tx_injector_file = 1
-    else:
-        tx_injector_file = 2
 
     while(1):
         if condition_count == 0:
@@ -127,7 +122,7 @@ def get_xmlfile():
                         continue
                     else:
                         tx_condition_count = 1
-                    xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + path
+                    xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty
                     break
 
                 else:
@@ -144,7 +139,7 @@ def get_xmlfile():
                     elif tx_cnt == -1:
                         number_bitcoins_transferred = 0.0000546
                         tx_sec = 0
-                        xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
+                        xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred)
                         break
 
                     elif tx_cnt < 0:
@@ -175,7 +170,7 @@ def get_xmlfile():
                 try:
                     tx_sec = int(input("Input transaction interval (sec) : "))
                     if tx_sec > 0:
-                        xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
+                        xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred)
                         break
                     else:
                         print("Must input only number ! ")

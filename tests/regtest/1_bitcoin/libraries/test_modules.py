@@ -43,19 +43,20 @@ def get_xml_info_new(xml_file):
     return runtime, node_id_list, plugin_list
 
 def set_plugin_file(node_count, path):
-    for i in range(0,node_count-1):
-        path_command = "cd " + path + ";"
-        the_command = path_command + "rm -rf data/bcdnode" + str(i)
-        exec_shell_cmd(the_command)
-        the_command = path_command + "mkdir -p data/bcdnode" + str(i)
+    if(os. path. isdir(path)):
+        the_command = "rm -rf data/*"
         exec_shell_cmd(the_command)
 
+    for i in range(0,node_count):
+        the_command = "mkdir -p data/bcdnode" + str(i)
+        exec_shell_cmd(the_command)
 
 def get_xmlfile(path):
     tx_condition_count = 0
     condition_count = 0
     tx_injector_file = 0
     tx_so_file = path + "/transaction.so"
+    xml_command = ""
     if os.path.isfile(tx_so_file) == False:
         tx_injector_file = 1
     else:
@@ -114,18 +115,28 @@ def get_xmlfile(path):
                     continue
 
             elif tx_condition_count == 1:
+
                 try:
-                    tx_sec = int(input("(To measure max tps, sec value is 0) Input transaction interval (sec) : "))
-                    if tx_sec > 0:
+                    tx_cnt = int(input("input number of transcations ( -1 : infinite number ): "))
+                    if tx_cnt > 0:
                         tx_condition_count = 2
-                    else:
-                        print("Must input only number ! ")
+
+                    elif tx_cnt == -1:
+                        number_bitcoins_transferred = 0.0000546
+                        tx_sec = 0
+                        xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
+                        break                            
+
+                    elif tx_cnt < 0:
+                        print("Must input only integer number !")
                         continue
+                    
                 except ValueError as e:
-                    print("Must input only number ! ")
+                    print("Must input only integer number !")
                     continue
             
             elif tx_condition_count == 2:
+
                 try:
                     number_bitcoins_transferred = float(input("input number of Bitcoins transferred (minimum amount : 0.0000546) : "))
                     if number_bitcoins_transferred < 0.0000546:
@@ -140,19 +151,19 @@ def get_xmlfile(path):
                     continue
 
             elif tx_condition_count == 3:
+               
                 try:
-                    tx_cnt = int(input("input number of transcations ( -1 : infinite number ): "))
-                    if (tx_cnt == -1) | (tx_cnt > 0):
+                    tx_sec = int(input("Input transaction interval (sec) : "))
+                    if tx_sec > 0:
                         xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
                         break
-
-                    elif tx_cnt < 0:
-                        print("Must input only integer number !")
+                    else:
+                        print("Must input only number ! ")
                         continue
-                    
                 except ValueError as e:
-                    print("Must input only integer number !")
+                    print("Must input only number ! ")
                     continue
+
 
     exec_shell_cmd(xml_command)
     return tx_mode

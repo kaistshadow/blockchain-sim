@@ -69,6 +69,7 @@ def summary_result(node_list, node_output_file, sim_time):
 
 def main():
 
+    testmodule.set_plugin_file();
     # xml file 생성
     testmodule.get_xmlfile()
 
@@ -77,28 +78,28 @@ def main():
 
     # # shadow 실행
     # print("shadow running ... ")
-    # testmodule.subprocess_open('shadow -d datadir output.xml > output.txt')
+    testmodule.subprocess_open('shadow -d datadir output.xml > output.txt')
 
     # # shadow output file 생성 여부 검증
-    # target_folder_file = testmodule.test_shadow_output_file_existence()
+    target_folder_file = testmodule.test_shadow_output_file_existence()
 
     # # xml file에서 plugin, simulation time 정보 추출
-    # runtime, node_id_list, plugin_list = testmodule.get_xml_info_new("output.xml")
+    runtime, node_id_list, plugin_list = testmodule.get_xml_info_new("output.xml")
 
     # # shadow output file이 제대로 생성된지 검증
-    # simulation_output_file = testmodule.test_file_existence(node_id_list, plugin_list)
+    simulation_output_file = testmodule.test_file_existence(node_id_list, plugin_list)
 
     # # Tx가 제대로 생성된지 검증.
-    # testmodule.test_transaction_existence(simulation_output_file[1])
+    testmodule.test_transaction_existence(simulation_output_file[1])
 
     # # shadow output 검증
-    # complete_node, runtime = testmodule.test_shadow(target_folder_file, runtime, node_id_list)
+    complete_node, runtime = testmodule.test_shadow(target_folder_file, runtime, node_id_list)
     
     # # result summary
-    # summary_result(complete_node, simulation_output_file, runtime)
+    summary_result(complete_node, simulation_output_file, runtime)
 
-    # print("emulation success!!")
-    # sys.exit(0)
+    print("emulation success!!")
+    sys.exit(0)
 
 if __name__ == '__main__':
     main()

@@ -4,6 +4,8 @@ import argparse
 import sys
 import os
 import lxml.etree as ET
+import subprocess
+import math
 
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
@@ -104,7 +106,7 @@ def get_xmlfile(path):
                         continue
                     else:
                         tx_condition_count = 1
-                    xml_command = "cd ..; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + path
+                    xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + path
                     break
                     
                 else:
@@ -141,7 +143,7 @@ def get_xmlfile(path):
                 try:
                     tx_cnt = int(input("input number of transcations ( -1 : infinite number ): "))
                     if (tx_cnt == -1) | (tx_cnt > 0):
-                        xml_command = "cd ..; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
+                        xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
                         break
 
                     elif tx_cnt < 0:
@@ -223,3 +225,78 @@ def renew_xml(tx_mode, target_folder_xml):
     if tx_mode == "enable":  
         shadow_command = "shadow output.xml"
         return shadow_command
+
+# make shadow runtime format example of 00:00:09
+def get_time_form(runtime):
+    result = ""
+    hours, mins, sec = 0, 0, 0
+    target_time = int(runtime) - 1
+    if target_time > 3600:
+        hours = math.trunc(target_time/3600)
+        mins = math.trunc((target_time%3600)/60)
+        sec = math.trunc((target_time%3600)%60)
+    elif target_time < 3600:
+        mins = math.trunc(math.trunc((target_time%3600)/60))
+        sec = math.trunc((target_time%3600)%60)
+    else:
+        hours = 1
+        sec = sec - 1
+
+    if len(str(hours)) == 2:
+        result = result + str(hours) + ":"
+    else:
+        result = "0" + str(hours) + ":"
+    if len(str(mins)) == 2:
+        result = result + str(mins) + ":"
+    else:
+        result = result + "0" + str(mins) + ":"
+    if len(str(sec)) == 2:
+        result = result + str(sec)
+    else:
+        result = result + "0" + str(sec)
+
+    return result
+
+# test1 : whether runtime setting worked or not 
+# test2 : whether plugin(node_id) worked or not
+def test_shadow(output_file, runtime, node_id_list):
+    f = open(output_file, "r")
+    # result_count more than 3 means success.
+    result_count = 0
+    return_count = 0
+    return_time = get_time_form(runtime)
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("_process_start")
+        if result != -1:
+            result = line.find("has set up the main pth thread")
+            if result != -1:
+                for i in range(0,len(node_id_list)):
+                    result = line.find(node_id_list[i])
+                    if result != -1:
+                        result_count = 1
+              
+        result = line.find(return_time)
+        if result != -1:
+            if result_count == 1:
+                f.close()
+                print("Success shadow test ...")
+                return_count = 1
+                break
+            else:
+                f.close()
+                print("Fail shadow test] - runtime error ...")
+                sys.exit(1)
+    if return_count == 0:            
+        f.close()
+        print("[Fail shadow test] - plugin does not run ... (check the logs)")
+        sys.exit(1)
+    else:
+        pass
+
+def subprocess_open(command):
+    popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    (stdoutdata, stderrdata) = popen.communicate()
+    return stdoutdata, stderrdata
+    

@@ -3,18 +3,14 @@ from subprocess import check_output
 import argparse
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-import test_modules
-
-def exec_shell_cmd(cmd):
-    if os.system(cmd) != 0:
-        print("error while executing '%s'" % cmd)
-        exit(-1)
+from libraries import test_modules
 
 def test_args(args_standard):
     for i in range(0,len(args_standard)):
         if args_standard[i] is None:
             sys.exit(1)
 
+# bitcoin 실행 로그로 부터, port, rpc port, datadir 정보를 가져옴.
 def get_plugin_args(plugin_infos):
     result_list = []
     f = open(plugin_infos, "r")
@@ -35,7 +31,6 @@ def get_plugin_args(plugin_infos):
         if result != -1:
             result_list.append(split_list[i].split("=")[1])
 
-    print(result_list)
     return result_list
 
 # This test compares the shadow result log with standard args, 
@@ -84,7 +79,13 @@ def main():
 
     # shadow 실행
     print("shadow running ...")
-    exec_shell_cmd(shadow_command)
+    test_modules.subprocess_open('shadow output2.xml > output.txt')
+
+    # shadow output 파일 존재 검사.
+    target_folder_file = test_modules.test_shadow_output_file_existence()
+
+    # shadow output 파일 내용 검사.
+    test_modules.test_shadow(target_folder_file, runtime, node_id_list)
 
     # shadow plugin의 결과 값 뽑아옴.
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)

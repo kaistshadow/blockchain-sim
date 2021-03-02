@@ -53,11 +53,5 @@ int main(int argc, char* argv[]) {
     std::cout<<"-- wallet --\n";
     std::string wallet = json_resp["result"].asString();
 
-    make100blocks(wallet);
-    rpc_generatetoaddress(wallet, argv[1]);
-
-    sleep(atoi(argv[2]));
-    rpc_getmempoolinfo();
-    rpc_getblockchaininfo();
     return 0;
 }

@@ -4,12 +4,7 @@ import argparse
 import sys
 import shlex
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-import test_modules
-
-def exec_shell_cmd(cmd):
-    if os.system(cmd) != 0:
-        print("error while executing '%s'" % cmd)
-        exit(-1)
+from libraries import test_modules
 
 def get_difficulty_info(xml_file):
     count = 0
@@ -56,9 +51,13 @@ def test_difficulty_compare(bitcoin_log, xml_difficulty):
             print("Fail difficulty test ...")
             sys.exit(1)
 
-
     elif str(xml_difficulty) == "2":
-        pass
+        if difficulty == "0.00390625":
+            print("Success difficulty test ...")
+            sys.exit(0)
+        else:
+            print("Fail difficulty test ...")
+            sys.exit(1)
         # error case                                
 
     elif str(xml_difficulty) == "3":
@@ -92,8 +91,13 @@ def main():
 
     # shadow 실행
     print("shadow running ...")
-    exec_shell_cmd(shadow_command)
+    test_modules.subprocess_open('shadow output2.xml > output.txt')
 
+    # shadow output 파일 존재 검사.
+    target_folder_file = test_modules.test_shadow_output_file_existence()
+
+    # shadow output 파일 내용 검사.
+    test_modules.test_shadow(target_folder_file, runtime, node_id_list)
     # xml로 부터 difficulty 정보 얻어옴.
     xml_difficulty = get_difficulty_info(target_folder_xml)
 

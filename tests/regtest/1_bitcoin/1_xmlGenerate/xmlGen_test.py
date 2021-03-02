@@ -3,7 +3,7 @@ from subprocess import check_output
 import argparse
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-import test_modules
+from libraries import test_modules
 
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:

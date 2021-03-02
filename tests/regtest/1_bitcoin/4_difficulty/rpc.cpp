@@ -47,17 +47,6 @@ int main(int argc, char* argv[]) {
     Json::Value params;
     params.clear();
 
-    // method 1: generate node's wallet
-    params = Json::arrayValue;
-    bitcoin_rpc_request("getnewaddress", params);
-    std::cout<<"-- wallet --\n";
-    std::string wallet = json_resp["result"].asString();
-
-    make100blocks(wallet);
-    rpc_generatetoaddress(wallet, argv[1]);
-
-    sleep(atoi(argv[2]));
-    rpc_getmempoolinfo();
     rpc_getblockchaininfo();
     return 0;
 }

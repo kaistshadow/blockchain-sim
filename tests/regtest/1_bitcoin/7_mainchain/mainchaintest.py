@@ -3,12 +3,7 @@ from subprocess import check_output
 import argparse
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-import test_modules
-
-def exec_shell_cmd(cmd):
-    if os.system(cmd) != 0:
-        print("error while executing '%s'" % cmd)
-        exit(-1)
+from libraries import test_modules
 
 # Get "bestblockchash" value info using rpc.output_file then check for the same value in bitcoin output log.
 def test_MainChainInfo(shadow_output_file, rpc_output_file):
@@ -65,7 +60,13 @@ def main():
 
     # shadow 실행
     print("shadow running ...")
-    exec_shell_cmd(shadow_command)
+    test_modules.subprocess_open('shadow output2.xml > output.txt')
+
+    # shadow output 파일 존재 검사.
+    target_folder_file = test_modules.test_shadow_output_file_existence()
+
+    # shadow output 파일 내용 검사.
+    test_modules.test_shadow(target_folder_file, runtime, node_id_list)
 
     # shadow plugin의 결과 값 뽑아옴.
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)

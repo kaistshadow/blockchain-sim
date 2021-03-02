@@ -6,7 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include "../rpc_client.h"
+#include "../libraries/rpc_client.h"
 
 void rpc_getnewaddress(std::string wallet, char* ipport) {
     Json::Value params;

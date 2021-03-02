@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <string>
 #include <jsoncpp/json/json.h>
-#include "../rpc_client.h"
+#include "../libraries/rpc_client.h"
 
 void rpc_generatetoaddress(std::string wallet, char* ipport) {
     Json::Value params;

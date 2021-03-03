@@ -3,19 +3,14 @@ from subprocess import check_output
 import argparse
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-import test_modules
-
-def exec_shell_cmd(cmd):
-    if os.system(cmd) != 0:
-        print("error while executing '%s'" % cmd)
-        exit(-1)
+from libraries import test_modules
 
 def test_initialCoin(simulation_output_file):
     f = open(simulation_output_file, "r")
     block_count = 0
-    while True:
-        line = f.readline()
-        if not line: break
+    
+    for line in f.readlines()[::-1]: 
+        
         result = line.find("bestblockhash")
         if result != -1:
             f.close()
@@ -65,7 +60,7 @@ def main():
 
     # shadow 실행
     print("shadow running ...")
-    exec_shell_cmd(shadow_command)
+    test_modules.subprocess_open('shadow output2.xml > output.txt')
 
     # shadow plugin의 결과 값 뽑아옴.
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
@@ -76,3 +71,8 @@ def main():
 
 if __name__ == '__main__':
     main()
+def exec_shell_cmd(cmd):
+    if os.system(cmd) != 0:
+        print("error while executing '%s'" % cmd)
+        exit(-1)
+    

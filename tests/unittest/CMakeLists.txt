@@ -1,2 +1,4 @@
+cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
+
 # add_subdirectory(gtest)
-add_subdirectory(catch2)
+# add_subdirectory(catch2)

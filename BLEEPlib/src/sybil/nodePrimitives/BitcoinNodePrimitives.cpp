@@ -287,9 +287,7 @@ void BitcoinNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::du
     auto now = chrono::system_clock::now();
     auto attack_start_time = _setupTime + preparePhaseDuration;
 
-    vector<string> &vReachableIP = _ipdb->GetVReachableIPOnly();
-//    for (auto &[ip, uptime] : _ipdb->GetVReachableIP())
-//        vReachableIP.push_back(ip);
+    vector<string> &vReachableIP = _ipdb->GetVReachableIP();
     vector<string> &vUnreachIP = _ipdb->GetVUnreachableIP();
     vector<string> &vShadowIP = _ipdb->GetVShadowIP();
 

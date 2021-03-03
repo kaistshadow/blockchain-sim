@@ -23,11 +23,11 @@ namespace libBLEEP_sybil {
 
         // step 1. construct virtual network using sybil nodes
         bool ConstructSybilNet(IPDatabase &ipdb, std::string targetIP, int targetPort) {
-            vector<pair<string, int>> &vReachableIP = ipdb.GetVReachableIP();
+            vector<pair<string, int>> &vIPDurationPair = ipdb.GetIPDurationpair();
             vector<string> &vAttackerIP = ipdb.GetVAttackerIP();
 
             // Spawn network consisting of benign nodes
-            for (auto &[ip, uptime] : vReachableIP) {
+            for (auto &[ip, uptime] : vIPDurationPair) {
                 auto &benignNode = _benignNodes.emplace_back(&_attackStat, &ipdb, ip);
 
                 // set a churnout timer for all the benign nodes

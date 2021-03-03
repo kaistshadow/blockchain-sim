@@ -14,16 +14,16 @@ namespace libBLEEP_sybil {
     public:
         SimpleIPDatabase() {
             // 1. initiate IP database
-            InsertReachableIP("1.0.0.2", 100);
-            InsertReachableIP("1.0.0.3", 100);
-            InsertReachableIP("1.0.0.4", 100);
-            InsertReachableIP("1.0.0.5", 100);
-            InsertReachableIP("1.0.0.6", 100);
-            InsertReachableIP("1.0.0.7", 100);
-            InsertReachableIP("1.0.0.8", 100);
-            InsertReachableIP("1.0.0.9", 200);
-            InsertReachableIP("1.0.0.10", 300);
-            InsertReachableIP("1.0.0.11", 400);
+            InsertIPDurationPair("1.0.0.2", 100);
+            InsertIPDurationPair("1.0.0.3", 100);
+            InsertIPDurationPair("1.0.0.4", 100);
+            InsertIPDurationPair("1.0.0.5", 100);
+            InsertIPDurationPair("1.0.0.6", 100);
+            InsertIPDurationPair("1.0.0.7", 100);
+            InsertIPDurationPair("1.0.0.8", 100);
+            InsertIPDurationPair("1.0.0.9", 200);
+            InsertIPDurationPair("1.0.0.10", 300);
+            InsertIPDurationPair("1.0.0.11", 400);
 
             // 2. insert shadow IP into the database
             InsertAttackerIP("2.0.0.1");
@@ -36,6 +36,10 @@ namespace libBLEEP_sybil {
             InsertAttackerIP("2.0.0.8");
             InsertAttackerIP("2.0.0.9");
             InsertAttackerIP("2.0.0.10");
+        }
+
+        void Initialize(int reachableIPNum, int unreachableIPNum, int shadowIPNum) {
+            // not used interface for this simple database
         }
     };
 }

@@ -2,6 +2,8 @@
 #define EREBUS_ATTACK_POLICY_H
 
 #include <list>
+#include <ctime>
+#include <chrono>
 
 #include "../node/BenignNode.h"
 #include "../node/ShadowActiveNode.h"
@@ -27,28 +29,26 @@ namespace libBLEEP_sybil {
         // step 1. construct virtual network using sybil nodes
         bool ConstructSybilNet(IPDatabase &ipdb, std::string targetIP,
                                int targetPort) {
-            vector<pair<string, int>> &vReachableIP = ipdb.GetVReachableIP();
+            vector<pair<string, int>> &vIPDurationPair = ipdb.GetIPDurationpair();
+            ipdb.Initialize(NodeParams::reachableIPNum, NodeParams::unreachableIPNum, NodeParams::shadowIPNum);
+
+            vector<string> &vReachableIP = ipdb.GetVReachableIP();
+            map<string, int> &mIPDuration = ipdb.GetMIPDuration();
             vector<string> &vAttackerIP = ipdb.GetVAttackerIP();
             vector<string> &vShadowIP = ipdb.GetVShadowIP();
 
 
-            // Spawn network consisting of 100,000 benign nodes
-            // Store only 100,000 IPs from database
-            // TODO : refactoring is needed (redesign reachableIP APIs)
-            vector<pair<string, int>> smallvReachableIP(vReachableIP.begin(), vReachableIP.begin() + 100000);
-
-            vector<string> vReachableIPOnly;
-            for (auto &[ip, uptime] : smallvReachableIP) {
+            // Spawn network consisting of pre-defined number of benign nodes
+            for (auto &ip : vReachableIP) {
                 auto &benignNode = _benignNodes.emplace_back(&_attackStat, &ipdb, ip, 8333);
                 benignNode.SetTarget(targetIP, targetPort);
 
                 // set a churnout timer for all the benign nodes
+                int uptime = mIPDuration[ip];
                 benignNode.SetChurnOutTimer(uptime);
-                vReachableIPOnly.push_back(ip);
             }
             std::cout << "benign node objects are constructed" << "\n";
-            ipdb.SetVReachableIP(vReachableIPOnly);
-            std::cout << "size of reachable IP:" << ipdb.GetVReachableIPOnly().size() << "\n";
+            std::cout << "size of reachable IP:" << vReachableIP.size() << "\n";
 
             // Spawn network consisting of sybil nodes
             for (auto ip : vShadowIP) {
@@ -99,6 +99,12 @@ namespace libBLEEP_sybil {
                 std::cout << "Pre-defined target outgoing connection num = " << NodeParams::targetOutgoingConnNum
                           << "\n";
                 std::cout << "Hijacked outgoing connection num = " << _attackStat.GetHijackedOutgoingConnNum() << "\n";
+
+                std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+                std::string s(30, '\0');
+                std::strftime(&s[0], s.size(), "%Y-%m-%d %H:%M:%S", std::localtime(&now));
+                std::cout << "End time:" << s << "\n";
+
                 ev_break(libev_loop, EVBREAK_ONE);
             }
         }

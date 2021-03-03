@@ -19,35 +19,47 @@ namespace libBLEEP_sybil {
     class BitcoinIPDatabase : public IPDatabase {
     public:
         BitcoinIPDatabase() {
-            // Load and store reachable IP address database from churn.txt
+            // Load and store IP address database from churn.txt
             std::ifstream read("churn.txt");
             if (read.fail()) {
                 std::cout << "failed to read churn.txt file" << "\n";
                 exit(-1);
             }
             std::regex re("\\d+\\.\\d+\\.\\d+\\.\\d+");
-            std::set<std::string> sLegiIP;
             for (std::string line; std::getline(read, line);) {
                 auto pos = line.find(' ');
                 std::string ip = line.substr(0, pos);
                 int duration = std::stoi(line.substr(pos));
 
                 if (duration > 0 && std::regex_match(ip, re)) {
-                    InsertReachableIP(ip, duration);
-                    sLegiIP.insert(ip);
+                    InsertIPDurationPair(ip, duration);
+                    _mIPDuration[ip] = duration;
                 }
             }
-
+        }
+        void Initialize(int reachableIPNum, int unreachableIPNum, int shadowIPNum) {
+            std::set<std::string> sLegiIP;
             std::set<std::string> sUnreachLegiIP;
             std::set<std::string> sShadowIP;
 
+            int reachableIPCount = 0;
+            for (auto&[ip, duration] : _vIPDurationPair) {
+                sLegiIP.insert(ip);
+                reachableIPCount++;
+                if (reachableIPCount == reachableIPNum)
+                    break;
+            }
+
+            if (reachableIPCount < reachableIPNum) {
+                std::cout << "not enough number of reachable IP" << "\n";
+                exit(-1);
+            }
+
             // Store unreachable IP address database
-            // Collect 1,000,000 unreachable non-duplicated legitimate IPs
-            int unreachableIPtotalcount = 1000000;
-            for (int i = 0; i < unreachableIPtotalcount; i++) {
+            // Collect unreachable non-duplicated legitimate IPs
+            for (int i = 0; i < unreachableIPNum; i++) {
                 while (true) {
                     std::string randIP = _generateRandomIP();
-
                     if (!sLegiIP.contains(randIP) && !sUnreachLegiIP.contains(randIP)) {
                         sUnreachLegiIP.insert(randIP);
                         break;
@@ -55,9 +67,8 @@ namespace libBLEEP_sybil {
                 }
             }
 
-            // Collect 200,000 shadow IPs
-            int shadowIPtotalcount = 200000;
-            for (int i = 0; i < shadowIPtotalcount; i++) {
+            // Collect shadow IPs
+            for (int i = 0; i < shadowIPNum; i++) {
                 while (true) {
                     std::string randIP = _generateRandomIP();
                     if (!sLegiIP.contains(randIP) && !sUnreachLegiIP.contains(randIP) && !sShadowIP.contains(randIP)) {
@@ -67,6 +78,7 @@ namespace libBLEEP_sybil {
                 }
             }
 
+            _vReachableIP = std::vector<std::string>(sLegiIP.begin(), sLegiIP.end());
             _vUnreachableIP = std::vector<std::string>(sUnreachLegiIP.begin(), sUnreachLegiIP.end());
             _vShadowIP = std::vector<std::string>(sShadowIP.begin(), sShadowIP.end());
 

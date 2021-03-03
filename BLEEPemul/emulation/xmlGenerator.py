@@ -58,7 +58,6 @@ def select_option(param1,node_count, sim_time, algorithm, difficulty):
     if param1 == "disable":
         setup_multiple_node_xml(node_count, sim_time,True, algorithm, difficulty)
     elif param1 == "enable":
-        print("enable is start  ")
         setup_multiple_node_xml(node_count, sim_time,False, algorithm, difficulty)
 
 

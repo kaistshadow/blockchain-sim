@@ -63,7 +63,7 @@ def select_option(param1,node_count, sim_time, algorithm, difficulty):
 
 
 if __name__ == '__main__':
-    print("start make_approximate_setmining_test.py start ")
+    print("xmlGenerator makes xml file... ")
 
     node_count = int(sys.argv[1])
     simulation_time = int(sys.argv[2])

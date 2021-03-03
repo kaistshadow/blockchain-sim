@@ -151,13 +151,6 @@ def main():
     OPT_BITCOIN_WALLET = args.bitcoinwallet
 
 
-    OPT_LITECOIN = args.litecoin
-    OPT_MONERO = args.monero
-    OPT_EOS = args.eos
-    OPT_ETHEREUM = args.ethereum
-    OPT_ZCASH = args.zcash
-    OPT_RIPPLE = args.ripple   
-
     # -------------------------------------------
 
     if OPT_BITCOIN_FIRSTRUN:

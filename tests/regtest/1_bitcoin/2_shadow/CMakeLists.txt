@@ -19,11 +19,10 @@ add_custom_target(shadow_xmlGenerator_test_prepare ALL
 add_custom_target(shadow_xmlGenerator_test_prepare2 ALL
   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1dev::Plugin> ${CMAKE_CURRENT_SOURCE_DIR}
   )
- 
+
+add_custom_target(shadow_xmlGenerator_test_prepare3 ALL
+  COMMAND gcc -o rpc.so rpc.cpp ../libraries/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -g -std=c99
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
 add_dependencies(shadow_xmlGenerator_test_prepare2 Bitcoin_0_19_1dev::Plugin)
 
-add_test(NAME shadow_xmlGenerator_test
-      COMMAND python shadowCheck.py --node=bcdnode0 --args=-debug-testnet-datadir=data/bcdnode0-port=11110-rpcuser=a-rpcpassword=1234-rpcport=11111-rpcallowip=11.0.0.1/0-rpcbind=11.0.0.1
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
-set_tests_properties(shadow_xmlGenerator_test PROPERTIES TIMEOUT 60)

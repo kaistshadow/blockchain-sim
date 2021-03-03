@@ -31,6 +31,7 @@ def prepare_shadow():
     else:
         exec_shell_cmd("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0v5 libigraph0-dev cmake make xz-utils")
 
+
 def prepare_shadow_dependencies():
     exec_shell_cmd("sudo apt-get install -y libcurl4-openssl-dev")
     exec_shell_cmd("sudo apt-get update -y")
@@ -45,6 +46,8 @@ def process_ENV():
     libPath = "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:%s" % os.path.abspath("./Install")
     needWritePath = True
     needWriteLibPath = True
+    exec_shell_cmd("sudo apt install python3-pip")
+    exec_shell_cmd("pip3 install --upgrade lxml")
     for line in f:
         if shadowPath in line:
             needWritePath = False
@@ -104,6 +107,8 @@ if __name__ == '__main__':
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
         exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
         exec_shell_cmd("sudo apt-get install -y libssl-dev")
+        #rpc client dependency
+        exec_shell_cmd("sudo apt-get install -y libjsoncpp-dev")
         prepare_shadow()
         prepare_shadow_dependencies()
         exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_bleeplib_opt))

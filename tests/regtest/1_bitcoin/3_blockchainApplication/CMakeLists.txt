@@ -21,8 +21,6 @@ add_custom_target(bitcoinApplication_shadow_test_prepare2 ALL
 
 add_dependencies(bitcoinApplication_shadow_test_prepare2 Bitcoin_0_19_1dev::Plugin)
 
-add_test(NAME bitcoinApplication_shadow_test
-        COMMAND python bitcoinApplication.py --rpcport=11111 --port=11110 --datadir=./data/bcdnode0
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
-set_tests_properties(bitcoinApplication_shadow_test PROPERTIES TIMEOUT 60)
+add_custom_target(bitcoinApplication_shadow_test_prepare3 ALL
+  COMMAND gcc -o rpc.so rpc.cpp ../libraries/rpc_client.cpp -ljsoncpp  -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -g -std=c99
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

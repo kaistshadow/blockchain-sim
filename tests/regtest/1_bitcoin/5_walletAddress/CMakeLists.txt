@@ -20,12 +20,6 @@ add_custom_target(bitcoinWallet_shadow_test_prepare2 ALL
   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1dev::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(shadow-bitcoin-dev-one-node-mine-plugin_wallet ALL
-  COMMAND gcc -o rpc.so rpc.c -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -g -std=c99
+  COMMAND gcc -o rpc.so rpc.cpp ../libraries/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -g -std=c99
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 add_dependencies(bitcoinWallet_shadow_test_prepare2 Bitcoin_0_19_1dev::Plugin)
-
-add_test(NAME bitcoinWallet_shadow_test
-        COMMAND python walletAddress.py --node=bcdnode0 --args=-debug-testnet-datadir=data/bcdnode0-port=11110-rpcuser=a-rpcpassword=1234-rpcport=11111-rpcallowip=11.0.0.1/0-rpcbind=11.0.0.1
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
-set_tests_properties(bitcoinWallet_shadow_test PROPERTIES TIMEOUT 60)

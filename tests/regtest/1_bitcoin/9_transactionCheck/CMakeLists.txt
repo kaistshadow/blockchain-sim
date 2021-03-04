@@ -26,3 +26,8 @@ add_custom_target(shadow-bitcoin-dev-one-node-mine-plugin_tx_check ALL
         COMMAND gcc -o rpc.so one_node_setmine.cpp ../libraries/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -g -std=c99
         COMMAND gcc -o transaction.so transaction.cpp ../libraries/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -g
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_test(NAME shadow-bitcoin-transaction_count-test
+COMMAND python3 transaction_count.py
+WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)

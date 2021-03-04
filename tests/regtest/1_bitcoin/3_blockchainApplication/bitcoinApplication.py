@@ -59,7 +59,7 @@ def main():
     path = os.path.abspath("./")
 
     # xml 파일 생성
-    test_modules.get_xmlfile(path)
+    # test_modules.get_xmlfile(path)
 
     # xml 파일 생성 확인
     target_folder_xml = test_modules.test_xml_existence("output.xml")

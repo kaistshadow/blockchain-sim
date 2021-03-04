@@ -47,7 +47,7 @@ def test_transaction_count(simulation_output_file):
     while True:
         line = f.readline()
         if not line: break
-        result = line.find("mempool")
+        result = line.find("mempoolminfee")
         if result != -1:
             mempool_size = line.split(",")[1].split(":")[1]
             break
@@ -60,7 +60,7 @@ def test_transaction_count(simulation_output_file):
         print("")
         print("--------------------------------------")
         print("txs_bitcoind : %d" %txs_bitcoind)
-        print("mempool_size : %d" %mempool_size)
+        print("mempool_size : %s" %mempool_size)
         print("txs : %d" %txs)
         print("Fail transaction count test ...")
         sys.exit(1)
@@ -75,7 +75,7 @@ def main():
     path = os.path.abspath("./")
 
     # xml 파일 생성
-    tx_mode = test_modules.get_xmlfile(path)
+    # tx_mode = test_modules.get_xmlfile(path)
 
     # xml 파일 생성 확인
     target_folder_xml = test_modules.test_xml_existence("output.xml")
@@ -88,11 +88,11 @@ def main():
 
     # 지금 예제는 transaction injector를 사용 안하기에 별도의 xml파일을 만들어줌.
     # 기존 xml에는 transaction.so에 대한 정의가 있어서, 이를 삭제안해주면 shadow가 실행이 안됨.
-    shadow_command = test_modules.renew_xml(tx_mode, target_folder_xml)
+    # shadow_command = test_modules.renew_xml(tx_mode, target_folder_xml)
 
     # shadow 실행
     print("shadow running ...")
-    shadow_command = shadow_command + ' > output.txt'
+    shadow_command = 'shadow output.xml' + ' > output.txt'
     test_modules.subprocess_open(shadow_command)
 
     # shadow output 파일 존재 검사.

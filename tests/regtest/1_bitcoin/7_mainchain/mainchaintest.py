@@ -7,17 +7,17 @@ from libraries import test_modules
 
 # Get "bestblockchash" value info using rpc.output_file then check for the same value in bitcoin output log.
 def test_MainChainInfo(shadow_output_file, rpc_output_file):
+    return_count = 0
     f = open(rpc_output_file , "r")
-    line = f.readline()
-    f.close()
-    line_list = line.split(":")
-    for i in range(0,len(line_list)):
-        result = line_list[i].find("bestblockhash")
+    for line in f.readlines()[::-1]:
+        line.rstrip()
+        result = line.find("bestblockhash")
         if result != -1:
+            line = line.split(",")[3].split(":")[1]
+            genesisHash = line[1:len(line)-1]
             return_count = 1
-            genesisHash_sub = line_list[i+1].split('"')
-            genesisHash = genesisHash_sub[1]
             break
+
     if return_count == 0:
         sys.exit(1)
     if os.path.isfile(shadow_output_file):
@@ -33,6 +33,7 @@ def test_MainChainInfo(shadow_output_file, rpc_output_file):
         print("Fail MainChain test ...")
         sys.exit(1)
 
+    
 # Test process
 # 1. test_xml_existence 
 # 2. shadow output existence test  
@@ -43,7 +44,7 @@ def main():
     path = os.path.abspath("./")
 
     # xml 파일 생성
-    test_modules.get_xmlfile(path)
+    # test_modules.get_xmlfile(path)
 
     # xml 파일 생성 확인
     target_folder_xml = test_modules.test_xml_existence("output.xml")
@@ -73,6 +74,7 @@ def main():
 
     # mainchain test 시작.
     test_MainChainInfo(simulation_output_file[0], simulation_output_file[1])
+    
 
 if __name__ == '__main__':
     main()

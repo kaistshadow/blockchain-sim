@@ -23,22 +23,6 @@ void rpc_getblockchaininfo(){
     bitcoin_rpc_request("getblockchaininfo",params);
 }
 
-void rpc_getmempoolinfo(){
-    Json::Value params;
-    params.clear();
-    bitcoin_rpc_request("getmempoolinfo",params);
-}
-
-void make100blocks(std::string wallet_address) {
-    Json::Value params;
-    params.append(wallet_address);
-    for (int i = 0; i < 101; i++) {
-        std::cout<<i;
-        bitcoin_rpc_request("setgeneratetoaddressnotime", params);
-        std::cout << "\n";
-    }
-}
-
 int main(int argc, char* argv[]) {
     // init
     std::cout<<"start client \n";

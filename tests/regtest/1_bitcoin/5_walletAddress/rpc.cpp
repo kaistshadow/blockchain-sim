@@ -51,7 +51,9 @@ int main(int argc, char* argv[]) {
     params = Json::arrayValue;
     bitcoin_rpc_request("getnewaddress", params);
     std::cout<<"-- wallet --\n";
+
     std::string wallet = json_resp["result"].asString();
+    std::cout<<wallet;
 
     return 0;
 }

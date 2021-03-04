@@ -12,6 +12,7 @@
 #include <fstream>
 #include <arpa/inet.h>
 #include <assert.h>
+#include <iostream>
 
 #include "IPDatabase.h"
 

@@ -5,6 +5,7 @@
 #ifndef BLEEP_NODE_H
 #define BLEEP_NODE_H
 
+#include <iostream>
 #include <map>
 #include <assert.h>
 #include "../utility/TCPControl.h"

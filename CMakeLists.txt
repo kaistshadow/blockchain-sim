@@ -82,6 +82,11 @@ if(BLEEPLIB_OPT STREQUAL ON)
     add_subdirectory(BLEEPlib)
 endif(BLEEPLIB_OPT STREQUAL ON)
 
+if(GIT_OPT STREQUAL ON)
+    add_subdirectory(BLEEPlib)
+endif(GIT_OPT STREQUAL ON)
+
+
 # add_subdirectory(BLEEPapp)
 add_subdirectory(tests)
 

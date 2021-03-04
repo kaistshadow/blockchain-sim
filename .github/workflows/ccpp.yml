@@ -19,7 +19,7 @@ jobs:
         sudo apt install python
         sudo apt-get update
     - name: install BLEEP
-      run: python setup.py --bitcoin
+      run: python setup.py --git
     - name: test BLEEP using script
       run: |
         export PATH=${PATH}:${GITHUB_WORKSPACE}/Install/bin

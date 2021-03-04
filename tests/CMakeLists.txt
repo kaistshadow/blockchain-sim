@@ -17,10 +17,6 @@ elseif(TEST_OPT STREQUAL ON)
   message("                            Start regression tests")
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(regtest)
-elseif(GIT_OPT STREQUAL ON)
-  message("--------------------------------------------------------------------------------------")
-  message("                            Start regression tests")
-  message("--------------------------------------------------------------------------------------")
-  add_subdirectory(regtest)
+
 endif()
 

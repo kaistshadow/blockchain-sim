@@ -1179,7 +1179,7 @@ static std::string _generateRandomIP() {
 //    double _periodTime;
 //    double _iprate; // IP per second
 //    double _reachablerate;
-//    std::vector<std::string> _vReachableIP;
+//    std::vector<std::string> _vIPDurationPair;
 //    std::vector<std::string> _vUnreachableIP;
 //    std::shared_ptr<ActiveNode<MSG, ReceiveMSG, ProcessMSG, ForgeAddrMSG, InitProtocol> > _attackerNode;
 //
@@ -1188,7 +1188,7 @@ static std::string _generateRandomIP() {
 //                        std::vector<std::string> vUnreachableIP,
 //                        std::shared_ptr<ActiveNode<MSG, ReceiveMSG, ProcessMSG, ForgeAddrMSG, InitProtocol>> node)
 //            : _periodTime(periodTime), _iprate(iprate), _reachablerate(reachablerate),
-//              _vReachableIP(std::move(vReachableIP)), _vUnreachableIP(std::move(vUnreachableIP)),
+//              _vIPDurationPair(std::move(vReachableIP)), _vUnreachableIP(std::move(vUnreachableIP)),
 //              _attackerNode(std::move(node)) {
 //
 //    }

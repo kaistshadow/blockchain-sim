@@ -24,17 +24,8 @@ namespace libBLEEP_sybil {
     template<class NodePrimitives>
     class BenignNode : public Node<NodePrimitives> {
     public:
-        BenignNode(AttackStat *stat, std::string virtualIp) : Node<NodePrimitives>(stat, virtualIp, NodeType::Benign) {
-            // Create virtual NIC for this node
-            struct sockaddr_in my_addr;    /* my address information */
-            my_addr.sin_family = AF_INET;         /* host byte order */
-            my_addr.sin_addr.s_addr = inet_addr(Node<NodePrimitives>::_myIP.c_str());
-            bzero(&(my_addr.sin_zero), 8);        /* zero the rest of the struct */
-            if (shadow_register_NIC((struct sockaddr *) &my_addr, sizeof(struct sockaddr)) == -1) {
-                std::cout << "shadow_register_NIC failed" << "\n";
-                exit(-1);
-            }
-        }
+        BenignNode(AttackStat *stat, IPDatabase *ipdb, std::string virtualIp, int listenPort = 0)
+                : Node<NodePrimitives>(stat, ipdb, virtualIp, listenPort, NodeType::Benign) {}
 
         // move constructor
         BenignNode(BenignNode &&other) = default;
@@ -88,6 +79,8 @@ namespace libBLEEP_sybil {
                 watcher.set(conn_fd, ev::WRITE);
                 watcher.start();
             }
+            Node<NodePrimitives>::_targetIP = targetIP;
+            Node<NodePrimitives>::_targetPort = targetPort;
 
             return conn_fd;
         }
@@ -98,18 +91,16 @@ namespace libBLEEP_sybil {
             _connStartTimer.set(starttime, 0);
             _connStartTimer.start();
 
-            _targetIP = targetIP;
-            _targetPort = targetPort;
+            Node<NodePrimitives>::_targetIP = targetIP;
+            Node<NodePrimitives>::_targetPort = targetPort;
         }
 
         void _timercb(ev::timer &w, int revents) {
-            tryConnectToTarget(_targetIP, _targetPort);
+            tryConnectToTarget(Node<NodePrimitives>::_targetIP, Node<NodePrimitives>::_targetPort);
             _connStartTimer.stop();
         }
 
     private:
-        std::string _targetIP;
-        int _targetPort;
         ev::timer _connStartTimer;
 
     private:
@@ -174,12 +165,15 @@ namespace libBLEEP_sybil {
                 watcher.stop();
                 close(fd);
             }
+            Node<NodePrimitives>::_listen_watcher.stop();
+            close(Node<NodePrimitives>::_listen_sockfd);
+            std::cout << "churn out timer is called at " << Node<NodePrimitives>::GetIP() << "\n";
         }
 
     public:
         void SetChurnOutTimer(int uptime) {
             _churnoutTimer.set<BenignNode, &BenignNode<NodePrimitives>::_churnoutcb>(this);
-            _churnoutTimer.set(uptime, 0);
+            _churnoutTimer.set(uptime, 0.);
             _churnoutTimer.start();
         }
     };

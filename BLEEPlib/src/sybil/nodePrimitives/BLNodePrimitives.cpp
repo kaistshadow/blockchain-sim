@@ -19,7 +19,7 @@ void BLNodePrimitives::OpAfterConnect(int conn_fd) {
     std::cout << "OpAfterConnect for node [" << GetIP() << "]" << "\n";
     switch (_type) {
         case NodeType::Benign:
-        case NodeType::Shadow: {
+        case NodeType::Attacker: {
             // send initializing message
             std::shared_ptr<libBLEEP_BL::Message> peerIDmsg = std::make_shared<libBLEEP_BL::Message>(
                     libBLEEP_BL::PeerId(GetIP()), libBLEEP_BL::PeerId(""), "notifyPeerId");
@@ -43,10 +43,15 @@ void BLNodePrimitives::OpAfterConnect(int conn_fd) {
     }
 }
 
+void BLNodePrimitives::OpAfterConnected(int data_fd) {
+    // do nothing
+}
+
+
 void BLNodePrimitives::OpAfterRecv(int data_fd, std::string recv_str) {
     switch (_type) {
         case NodeType::Benign:
-        case NodeType::Shadow: {
+        case NodeType::Attacker: {
             // recv to RecvBuffer
             TCPControl &tcpControl = GetTCPControl(data_fd);
             tcpControl.AppendToRecvBuffer(recv_str);
@@ -79,11 +84,11 @@ void BLNodePrimitives::OpAfterRecv(int data_fd, std::string recv_str) {
                         std::cout << "OpAfterRecv: deserializing MSG complete, MSG type:" << msg->GetType() << "\n";
 
                         if (msg->GetType() == "PING") {
-                            if (_type == NodeType::Shadow && !_informed) {
+                            if (_type == NodeType::Attacker && !_informed) {
                                 // print attack success message
                                 std::cout
-                                        << "shadow node's interception of target node's incoming connection is confirmed"
-                                        << ", shadowNodeIP:" << GetIP() << "\n";
+                                        << "Attacker node's interception of target node's incoming connection is confirmed"
+                                        << ", AttackerNodeIP:" << GetIP() << "\n";
                                 // update attack statistics
                                 _attackStat->IncrementHijackedIncomingConnNum();
                                 _informed = true;
@@ -120,8 +125,8 @@ void BLNodePrimitives::OpAfterRecv(int data_fd, std::string recv_str) {
 }
 
 void BLNodePrimitives::OpAfterDisconnect() {
-    assert (_type == NodeType::Shadow);
-    // This operation is only called for shadow active node when the shadow active node
+    assert (_type == NodeType::Attacker);
+    // This operation is only called for attacker(shadow active) node when the attacker node
     // is disconnected with target node.
     // So, try to reconnect to target node.
     std::cout << GetIP() << " tries to reconnect to target" << "\n";

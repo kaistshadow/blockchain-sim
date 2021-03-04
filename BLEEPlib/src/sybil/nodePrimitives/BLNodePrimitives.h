@@ -2,8 +2,8 @@
 // Created by ilios on 21. 2. 15..
 //
 
-#ifndef BLEEP_ASYNC_CALLBACKS_H
-#define BLEEP_ASYNC_CALLBACKS_H
+#ifndef BLEEP_BL_NODE_PRIMITIVES_H
+#define BLEEP_BL_NODE_PRIMITIVES_H
 
 #include <ev++.h>
 #include <memory>
@@ -19,10 +19,16 @@ namespace libBLEEP_sybil {
         // to inform attack results to the AttackStat object
         AttackStat *_attackStat;
         bool _informed = false;
+    private:
+        // to deal with entire IP database
+        IPDatabase *_ipdb;
+
     protected:
         std::string _myIP;
         NodeType _type;
         std::map<int, TCPControl> _mTCPControl;
+        std::string _targetIP = "";
+        int _targetPort = -1;
     protected:
         // This function is only for shadow active node
         virtual void tryReconnectToTarget() {};
@@ -52,9 +58,13 @@ namespace libBLEEP_sybil {
         }
 
     public:
-        BLNodePrimitives(AttackStat *stat, std::string ip, NodeType type) : _attackStat(stat), _myIP(ip), _type(type) {}
+        BLNodePrimitives(AttackStat *stat, IPDatabase *ipdb, std::string ip, NodeType type) : _attackStat(stat),
+                                                                                              _ipdb(ipdb), _myIP(ip),
+                                                                                              _type(type) {}
 
         void OpAfterConnect(int conn_fd);
+
+        void OpAfterConnected(int data_fd); // called when the socket connection is established by peer
 
         void OpAfterRecv(int data_fd, std::string recv_str);
 
@@ -62,4 +72,4 @@ namespace libBLEEP_sybil {
     };
 }
 
-#endif //ASYNC_CALLBACKS_H
+#endif //BLEEP_BL_NODE_PRIMITIVES_H

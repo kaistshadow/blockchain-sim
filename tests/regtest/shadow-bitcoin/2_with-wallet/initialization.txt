@@ -1,0 +1,7 @@
+scheduler thread start
+torcontrol thread start
+Starting network threads
+addcon thread start
+addcon thread start
+msghand thread start
+opencon thread start

@@ -1,3 +1,11 @@
+/*
+
+Shadow doesn't support TLS. So we implemented TLS mechanism. This test is to check if it works
+
+Input parameters : Nothing
+Output : To check if it is equal to local result
+
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>

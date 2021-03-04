@@ -88,7 +88,9 @@ endif(GIT_OPT STREQUAL ON)
 
 
 # add_subdirectory(BLEEPapp)
-add_subdirectory(tests)
+if(TEST_OPT STREQUAL ON)
+    add_subdirectory(tests)
+endif()
 
 ## add command for lauching BLEEP web interface
 add_custom_target(run-web-gui

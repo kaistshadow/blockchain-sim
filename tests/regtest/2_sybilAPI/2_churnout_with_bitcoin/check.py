@@ -9,39 +9,37 @@ def check_verack(bitcoin_log, tester_log):
     iterf = iter(f)
     check_flag = [False, False, False, False, False]
     for line in iterf:
-        # check whether the connection is established
-        if "Added connection peer=0" in line:
-            line = next(iterf)
-            if "connection from 2.0.0.1" in line:
-                check_flag[0] = True
-                print("CHECK : connection established")
+        # check whether the connection is tried
+        if not check_flag[0] and "trying connection 2.0.0.1" in line:
+            check_flag[0] = True
+            print("CHECK : connection requested")
 
-        # check whether the version message is received
-        if check_flag[0] and "receive version message" in line:
+        # check whether the connection is established
+        if check_flag[0] and "Added connection peer=0" in line:
+            check_flag[1] = True
+            print("CHECK : connection established")
+
+        # check whether the version message is sent
+        if check_flag[1] and "sending version" in line:
             if "peer=0" in line:
-                check_flag[1] = True
-                print("CHECK : receive version msg")
+                check_flag[2] = True
+                print("CHECK : sending version msg")
 
         # check whether the verack message is received
-        if check_flag[1] and "received: verack (0 bytes) peer=0" in line:
-            check_flag[2] = True
+        if check_flag[2] and "received: verack (0 bytes) peer=0" in line:
+            check_flag[3] = True
             print("CHECK : receive verack msg")
 
-        # check whether the ping message is sent
-        if check_flag[2] and "sending ping (8 bytes) peer=0" in line:
-            check_flag[3] = True
-            print("CHECK : send ping msg")
-
-        # check whether the pong message is received
-        if check_flag[3] and "received: pong (8 bytes) peer=0" in line:
+        # check whether the connection is disconnected
+        if check_flag[3] and "disconnecting peer=0" in line:
             check_flag[4] = True
-            print("CHECK : receive pong msg")
+            print("CHECK : peer disconnected")
 
     if all(check_flag):
-        print("Success checking output results of the experiment(verack) ...")
+        print("Success checking output results of the experiment(churnout) ...")
         return
     else:
-        print("Fail checking output results of the experiment(verack) ...")
+        print("Fail checking output results of the experiment(churnout) ...")
         exit(-1)
 
 

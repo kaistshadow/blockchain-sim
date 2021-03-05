@@ -19,6 +19,7 @@ int main() {
 
     // Initialize single benign node
     BenignNode<BitcoinNodePrimitives> benignNode(&attackStat, &dummyIPDatabase, "2.0.0.1", 8333);
+    benignNode.SetTarget("1.0.0.1", 8333);
     benignNode.SetChurnOutTimer(30);
 
     // Start attack

@@ -72,6 +72,10 @@ namespace libBLEEP_sybil {
             return true;
         }
 
+        list <BenignNode<NodePrimitives>> &GetBenignNodes() { return _benignNodes; }
+
+        list <ShadowNode<NodePrimitives>> &GetShadowNodes() { return _shadowNodes; }
+
 
     private:
         void _timercb(ev::timer &w, int revents) {

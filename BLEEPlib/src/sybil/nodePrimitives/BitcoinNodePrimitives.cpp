@@ -4,6 +4,7 @@
 #include <iostream>
 #include "BitcoinNodePrimitives.h"
 #include <random>
+#include <algorithm>
 
 // bitcoin-specific data management
 #include <net.h>
@@ -299,10 +300,14 @@ void BitcoinNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::du
         int legiIPcount = totalIPCount * 0.3;
         int unreLegiIPcount = totalIPCount * 0.7;
 
-        sample(vReachableIP.begin(), vReachableIP.end(), back_inserter(vAddr), legiIPcount,
-               mt19937{random_device{}()});
-        sample(vUnreachIP.begin(), vUnreachIP.end(), back_inserter(vAddr), unreLegiIPcount,
-               mt19937{random_device{}()});
+        legiIPcount = min(legiIPcount, (int) vReachableIP.size());
+        unreLegiIPcount = min(unreLegiIPcount, (int) vUnreachIP.size());
+        if (!vReachableIP.empty())
+            sample(vReachableIP.begin(), vReachableIP.end(), back_inserter(vAddr), legiIPcount,
+                   mt19937{random_device{}()});
+        if (!vUnreachIP.empty())
+            sample(vUnreachIP.begin(), vUnreachIP.end(), back_inserter(vAddr), unreLegiIPcount,
+                   mt19937{random_device{}()});
     } else {
         // if it's attack phase
         int totalIPCount = std::min(1000, (int) (periodLength * ipPerSec));
@@ -310,13 +315,19 @@ void BitcoinNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::du
         int unreLegiIPcount = totalIPCount * (1 - shadowRate) * 0.7;
         int shadowIPcount = totalIPCount * shadowRate;
 
+        legiIPcount = min(legiIPcount, (int) vReachableIP.size());
+        unreLegiIPcount = min(unreLegiIPcount, (int) vUnreachIP.size());
+        shadowIPcount = min(shadowIPcount, (int) vShadowIP.size());
 
-        std::sample(vReachableIP.begin(), vReachableIP.end(), std::back_inserter(vAddr), legiIPcount,
-                    std::mt19937{std::random_device{}()});
-        std::sample(vUnreachIP.begin(), vUnreachIP.end(), std::back_inserter(vAddr), unreLegiIPcount,
-                    std::mt19937{std::random_device{}()});
-        std::sample(vShadowIP.begin(), vShadowIP.end(), std::back_inserter(vAddr), shadowIPcount,
-                    std::mt19937{std::random_device{}()});
+        if (!vReachableIP.empty())
+            std::sample(vReachableIP.begin(), vReachableIP.end(), std::back_inserter(vAddr), legiIPcount,
+                        std::mt19937{std::random_device{}()});
+        if (!vUnreachIP.empty())
+            std::sample(vUnreachIP.begin(), vUnreachIP.end(), std::back_inserter(vAddr), unreLegiIPcount,
+                        std::mt19937{std::random_device{}()});
+        if (!vShadowIP.empty())
+            std::sample(vShadowIP.begin(), vShadowIP.end(), std::back_inserter(vAddr), shadowIPcount,
+                        std::mt19937{std::random_device{}()});
         std::cout << "debug print start (attack phase)" << "\n";
         std::cout << "legiIPcount:" << legiIPcount << ", unreachable legiIPCount:" << unreLegiIPcount
                   << ", shadowIPcount:" << shadowIPcount << "\n";

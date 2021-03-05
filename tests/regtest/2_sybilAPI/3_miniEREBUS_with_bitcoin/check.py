@@ -4,42 +4,32 @@ sys.path.append('../..')
 from libraries import test_modules
 
 
-def check_churnout(bitcoin_log, tester_log):
-    f = open(bitcoin_log, "r")
+def check_miniEREBUS(bitcoin_log, tester_log):
+    f = open(tester_log, "r")
     iterf = iter(f)
-    check_flag = [False, False, False, False, False]
+    check_flag = [False, False, False]
     for line in iterf:
         # check whether the connection is tried
-        if not check_flag[0] and "trying connection 2.0.0.1" in line:
+        if not check_flag[0] and "outgoing connection is confirmed" in line:
             check_flag[0] = True
-            print("CHECK : connection requested")
+            print("CHECK : Intercept 1st outgoing connection")
+            continue
 
         # check whether the connection is established
-        if check_flag[0] and "Added connection peer=0" in line:
+        if check_flag[0] and "outgoing connection is confirmed" in line:
             check_flag[1] = True
-            print("CHECK : connection established")
+            print("CHECK : Intercept 2nd outgoing connection")
 
         # check whether the version message is sent
-        if check_flag[1] and "sending version" in line:
-            if "peer=0" in line:
-                check_flag[2] = True
-                print("CHECK : sending version msg")
-
-        # check whether the verack message is received
-        if check_flag[2] and "received: verack (0 bytes) peer=0" in line:
-            check_flag[3] = True
-            print("CHECK : receive verack msg")
-
-        # check whether the connection is disconnected
-        if check_flag[3] and "disconnecting peer=0" in line:
-            check_flag[4] = True
-            print("CHECK : peer disconnected")
+        if check_flag[1] and "The EREBUS attack is succeeded." in line:
+            check_flag[2] = True
+            print("CHECK : EREBUS attack success message confirmed")
 
     if all(check_flag):
-        print("Success checking output results of the experiment(churnout) ...")
+        print("Success checking output results of the experiment(miniEREBUS) ...")
         return
     else:
-        print("Fail checking output results of the experiment(churnout) ...")
+        print("Fail checking output results of the experiment(miniEREBUS) ...")
         exit(-1)
 
 
@@ -63,8 +53,8 @@ def main(shadowpath):
     # shadow plugin의 결과 값 뽑아옴.
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
 
-    # churnout 실험 결과 체크 시작.
-    check_churnout(simulation_output_file[0], simulation_output_file[1])
+    # verack 실험 결과 체크 시작.
+    check_miniEREBUS(simulation_output_file[0], simulation_output_file[1])
 
 
 if __name__ == '__main__':

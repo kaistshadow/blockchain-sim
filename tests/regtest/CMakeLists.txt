@@ -37,7 +37,7 @@ elseif(ALL_OPT STREQUAL ON)
   # add_subdirectory(BLEEP-gossip-10node)
   # add_subdirectory(shadow-syscalls)
   # add_subdirectory(shadow-dependencies)
-  # add_subdirectory(1_bitcoin)
+  add_subdirectory(1_bitcoin)
 
  elseif(GIT_OPT STREQUAL ON)
   message("------------------------------------------------------------------------------")

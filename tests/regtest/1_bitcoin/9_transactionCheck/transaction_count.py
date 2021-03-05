@@ -30,39 +30,21 @@ def test_transaction_count(simulation_output_file):
     f.close()
     txs_bitcoind = txs_bitcoind - blocks_count - 1
 
-    txs = 0
-    f = open(simulation_output_file[0], "r")
-    while True:
-        line = f.readline()
-        if not line: break
-        result = line.find("getmempoolinfo")
+    f = open(simulation_output_file[2], "r")
+    for line in f.readlines()[::-1]:
+        result = line.find("transaction")
         if result != -1:
+            send_txs = int(line.split(" ")[0]) + 1
             break
-        result = line.find("sendtoaddress")
-        if result != -1:
-            txs += 1
-    f.close()
-
-    f = open(simulation_output_file[1], "r")
-    while True:
-        line = f.readline()
-        if not line: break
-        result = line.find("mempoolminfee")
-        if result != -1:
-            mempool_size = line.split(",")[1].split(":")[1]
-            break
-    f.close()
-
-    if txs_bitcoind + int(mempool_size) == txs:
-        print("Sucess transaction count test ... ")
+    if send_txs == txs_bitcoind:
+        print(send_txs)
+        print(txs_bitcoind)
+        print("Success transaction count test ... ")
         sys.exit(0)
     else:
-        print("")
-        print("--------------------------------------")
-        print("txs_bitcoind : %d" %txs_bitcoind)
-        print("mempool_size : %s" %mempool_size)
-        print("txs : %d" %txs)
-        print("Fail transaction count test ...")
+        print(send_txs)
+        print(txs_bitcoind)
+        print("Failed transaction count test ...")
         sys.exit(1)
 
 # Test process

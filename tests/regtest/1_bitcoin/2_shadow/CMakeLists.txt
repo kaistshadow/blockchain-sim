@@ -26,3 +26,7 @@ add_custom_target(shadow_xmlGenerator_test_prepare3 ALL
 
 add_dependencies(shadow_xmlGenerator_test_prepare2 Bitcoin_0_19_1dev::Plugin)
 
+add_test(NAME shadow_log_test
+  COMMAND python3 shadowCheck.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)

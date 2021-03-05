@@ -21,9 +21,11 @@ def test_walletAddress(simulation_output_file):
         sys.exit(1)
 
     f = open(simulation_output_file[1], "r")
-    line = f.readline().strip()
+
+    for line in f.readlines()[::-1]:
+        break
     f.close()
-    if len(line) == 35:
+    if len(line) == 34:
         print("Success wallet test ...")
         sys.exit(0)
     else:
@@ -40,7 +42,7 @@ def main():
     path = os.path.abspath("./")
 
     # xml 파일 생성
-    test_modules.get_xmlfile(path)
+    # test_modules.get_xmlfile(path)
 
     # xml 파일 생성 확인
     target_folder_xml = test_modules.test_xml_existence("output.xml")

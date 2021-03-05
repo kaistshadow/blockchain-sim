@@ -24,3 +24,7 @@ add_custom_target(bitcoinMainchain_shadow_plugin ALL
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   
 add_dependencies(bitcoinMainchain_shadow_test_prepare2 Bitcoin_0_19_1dev::Plugin)
+add_test(NAME bitcoinMainchain_shadow_test
+  COMMAND python3 mainchaintest.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)

@@ -30,22 +30,38 @@ def test_transaction_count(simulation_output_file):
     f.close()
     txs_bitcoind = txs_bitcoind - blocks_count - 1
 
+    txs = 0
     f = open(simulation_output_file[2], "r")
     for line in f.readlines()[::-1]:
-        result = line.find("transaction")
+        result = line.find('"error":null')
         if result != -1:
-            send_txs = int(line.split(" ")[0]) + 1
+            txs += 1
+        result = line.find('"result":null')
+        if result != -1:
             break
-    if send_txs == txs_bitcoind:
-        print(send_txs)
-        print(txs_bitcoind)
-        print("Success transaction count test ... ")
+
+    f = open(simulation_output_file[1], "r")
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("maxmempool")
+        if result != -1:
+            mempool_size = line.split(",")[1].split(":")[1]
+            break
+    f.close()
+
+    if txs_bitcoind + int(mempool_size) == txs:
+        print("Sucess transaction count test ... ")
         sys.exit(0)
     else:
-        print(send_txs)
-        print(txs_bitcoind)
-        print("Failed transaction count test ...")
+        print("")
+        print("--------------------------------------")
+        print("txs_bitcoind : %d" %txs_bitcoind)
+        print("mempool_size : %s" %mempool_size)
+        print("txs : %d" %txs)
+        print("Fail transaction count test ...")
         sys.exit(1)
+
 
 # Test process
 # 1. test_xml_existence 
@@ -56,8 +72,13 @@ def main():
     # xml 파일이 생성될 위치를 현재위치로 설정
     path = os.path.abspath("./")
 
-    # xml 파일 생성
-    # tx_mode = test_modules.get_xmlfile(path)
+    parser = argparse.ArgumentParser(description='Script for installation and simulation')
+    parser.add_argument("--regtest", action="store_true", help="Install the shadow simulator and BLEEP")
+    args = parser.parse_args()
+    OPT_REGTEST = args.regtest
+    
+    if OPT_REGTEST:
+        test_modules.get_xmlfile(path)
 
     # xml 파일 생성 확인
     target_folder_xml = test_modules.test_xml_existence("output.xml")

@@ -1,5 +1,4 @@
-## ensure cmake version
-cmake_minimum_required(VERSION 2.8)
+
 
 ## we use cmake files from shadow
 if(EXISTS "${CMAKE_MODULE_PATH}")

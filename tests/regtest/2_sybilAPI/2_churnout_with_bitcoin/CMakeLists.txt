@@ -22,7 +22,9 @@ add_dependencies(churnout-bitcoin-copy-bitcoin-plugin Bitcoin_0_19_1dev::Plugin)
 
 
 ######## compile node which uses sybil-API
-add_shadow_plugin(CHURNOUT_BITCOIN_TESTER test_churnout_with_bitcoin.cpp)
+add_shadow_plugin(CHURNOUT_BITCOIN_TESTER test_churnout_with_bitcoin.cpp
+        BitcoinNodePrimitives.cpp
+        BitcoinNodePrimitives.h)
 target_link_libraries(CHURNOUT_BITCOIN_TESTER BLEEPsybil)
 add_dependencies(CHURNOUT_BITCOIN_TESTER BLEEPsybil)
 

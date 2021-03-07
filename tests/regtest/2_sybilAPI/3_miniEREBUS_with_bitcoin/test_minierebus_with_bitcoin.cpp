@@ -4,13 +4,12 @@
 
 #include <bitcoind.h>
 
-#include "AttackBox.h"
-#include "policy/ErebusAttackPolicy.h"
-#include "ipdb/BitcoinIPDatabase.h"
-#include "nodePrimitives/BitcoinNodePrimitives.h"
-#include "nodeParams/BitcoinNodeParams.h"
+#include <AttackBox.h>
+#include <policy/ErebusAttackPolicy.h>
+#include <ipdb/BitcoinIPDatabase.h>
+#include "BitcoinNodePrimitives.h"
 
-using namespace libBLEEP_sybil;
+using namespace sybiltest;
 
 struct MiniBitcoinNodeParams {
     //============================== parameters related to EREBUS attack test ======================================

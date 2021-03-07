@@ -116,8 +116,3 @@ target_link_libraries(BLEEP ${Boost_LIBRARIES})
 include_directories(${CMAKE_ROOT_SOURCE_DIR}/interfaces/shadow_interface)
 include_directories(${Boost_INCLUDE_DIRS})
 
-# add tests
-# enable_testing()
-# add_subdirectory(libtest)
-
-add_subdirectory(src/sybil)

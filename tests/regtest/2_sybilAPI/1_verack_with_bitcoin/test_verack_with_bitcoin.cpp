@@ -4,11 +4,14 @@
 
 #include <bitcoind.h>
 
-#include "ipdb/SimpleIPDatabase.h"
-#include "nodePrimitives/BitcoinNodePrimitives.h"
-#include "node/ShadowActiveNode.h"
 
-using namespace libBLEEP_sybil;
+#include "BitcoinNodePrimitives.h"
+
+#include <ipdb/SimpleIPDatabase.h>
+#include <node/ShadowActiveNode.h>
+
+
+using namespace sybiltest;
 
 int main() {
     exported_main(); // initialize bitcoin : This is necessary for using Bitcoin's benign/shadow node

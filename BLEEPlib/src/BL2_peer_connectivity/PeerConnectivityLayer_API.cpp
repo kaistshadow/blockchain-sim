@@ -329,6 +329,11 @@ bool BL_PeerConnectivityLayer_API::ConnectPeer(PeerId id) {
 
     // Assign a new Peer while initializing a new connectSocket using SocketLayer API
     int conn_socket = BL_SocketLayer_API::Instance()->ConnectSocket(id.GetId());
+    if (conn_socket == -1) {
+        std::cout << "ConnectSocket is not working for given peer id." << "\n";
+        return false;
+    }
+
     peer = std::make_shared<Peer>(id, PeerType::OutgoingPeer, conn_socket);
     peer->SetTryConnect();
 

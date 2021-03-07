@@ -185,8 +185,7 @@ static int testConnectPeerToVoid(Nodetype t) {
                     }
 
                     /* Verify the event sequence */
-                    if (eventQueue[0] != AsyncEventEnum::SocketConnectFailed) return -1;
-                    if (eventQueue[1] != AsyncEventEnum::FinishTest) return -1;
+                    if (eventQueue[0] != AsyncEventEnum::FinishTest) return -1;
 
                     /* Event sequence is valid, thus return 0 */
                     return 0;

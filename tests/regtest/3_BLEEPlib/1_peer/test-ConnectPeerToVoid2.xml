@@ -31,7 +31,7 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="NODE" path="libshadow-plugin-test-peer.so"/>
+  <plugin id="NODE" path="libBLEEPlib-test-peer.so"/>
 
 
   <!-- the length of our experiment in seconds  1404101800-->

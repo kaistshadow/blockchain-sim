@@ -1,3 +1,13 @@
+/*
+
+Since bitcoin-cli cannot be run in shadow, bitcoin rpc call is implemented using curl. 
+The curl used here is the curl of the custom library.
+
+Input parameter : nothing
+Output : The data you want to receive using curl.
+
+*/
+
 #include <stdio.h>
 #include <curl/curl.h>
  

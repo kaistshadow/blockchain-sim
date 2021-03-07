@@ -1,3 +1,13 @@
+/*
+
+Bitcoin uses openssl's library. The openssl installed in the system uses 1.1.1, which is not compatible with shadow.
+In shadow, it is compatible with openssl 1.1.0h version, so you should use custom openssl(1.1.0h), not system openssl.
+This test is to run a test before running custom openssl on Bitcoin.
+
+Input parameter : Nothing
+Output : The datas to check if it works 
+
+*/
 #include <errno.h>
 #include <unistd.h>
 #include <malloc.h>

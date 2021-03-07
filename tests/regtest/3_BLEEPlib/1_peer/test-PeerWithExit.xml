@@ -31,7 +31,7 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="NODE" path="libshadow-plugin-test-peer.so"/>
+  <plugin id="NODE" path="libBLEEPlib-test-peer.so"/>
 
 
   <!-- the length of our experiment in seconds  1404101800-->
@@ -39,13 +39,12 @@
   <!-- our nodes -->
 
   <node id="server">
-    <application plugin="NODE" time="5" stoptime="10" arguments="PeerWithStop_TwoProc server"/>
+    <application plugin="NODE" time="5" arguments="PeerWithExit server"/>
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
-    <application plugin="NODE" time="5" arguments="PeerWithStop_TwoProc server2"/>
   </node>
 
   <node id="client">
-    <application plugin="NODE" time="6" arguments="PeerWithStop_TwoProc client"/>
+    <application plugin="NODE" time="6" arguments="PeerWithExit client"/>
   </node>
 
   <!-- <node id="bleep1"> -->

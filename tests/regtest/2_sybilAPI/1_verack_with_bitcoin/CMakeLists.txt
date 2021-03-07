@@ -22,11 +22,9 @@ add_dependencies(verack-bitcoin-copy-bitcoin-plugin Bitcoin_0_19_1dev::Plugin)
 
 
 ######## compile node which uses sybil-API
-add_shadow_plugin(VERACK_BITCOIN_TESTER test_verack_with_bitcoin.cpp
-        BitcoinNodePrimitives.cpp
-        BitcoinNodePrimitives.h)
+add_shadow_plugin(VERACK_BITCOIN_TESTER test_verack_with_bitcoin.cpp)
 target_link_libraries(VERACK_BITCOIN_TESTER BLEEPsybil)
-add_dependencies(VERACK_BITCOIN_TESTER BLEEPsybil)
+target_link_libraries(VERACK_BITCOIN_TESTER BitcoinSybilAdapter)
 
 ######## prepare(copy) node which uses sybil-API
 add_custom_command(TARGET VERACK_BITCOIN_TESTER

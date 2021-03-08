@@ -45,4 +45,4 @@ If following message is printed at screen, the simulation of the bitcoin was suc
 1/5 Test #1: bitcoin-version-handshake ........   Passed
 ```
 After running tests, you can check the result of bitcoin test (stdout, stderr for each node) in the directory `test/plugin-bitcoin/`.
-
+.

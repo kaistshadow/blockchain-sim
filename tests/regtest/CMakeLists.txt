@@ -1,5 +1,4 @@
-## ensure cmake version
-cmake_minimum_required(VERSION 2.8)
+
 
 ## we use cmake files from shadow
 if(EXISTS "${CMAKE_MODULE_PATH}")
@@ -38,7 +37,6 @@ elseif(ALL_OPT STREQUAL ON)
   # add_subdirectory(BLEEP-gossip-10node)
   # add_subdirectory(shadow-syscalls)
   # add_subdirectory(shadow-dependencies)
-  # add_subdirectory(shadow_storage_mgmt_test)
   add_subdirectory(1_bitcoin)
 
  elseif(GIT_OPT STREQUAL ON)

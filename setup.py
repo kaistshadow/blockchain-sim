@@ -122,16 +122,16 @@ if __name__ == '__main__':
 
         # ## install boost-lib
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
+        exec_shell_cmd("sudo apt-get install -y libjsoncpp-dev")
 
         ## install bitcoin dependencies
         exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
         ## bitcoin first run (without wallet enabled) dependencies
         exec_shell_cmd("sudo apt-get install -y libssl-dev")
         cmake_all_opt = "-DALL_OPT=ON"
-        cmake_bitcoin_opt = "-DBITCOIN_OPT=OFF"
 
         ## install
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (cmake_debug_opt, cmake_all_opt, cmake_bleeplib_opt, cmake_bitcoin_opt))
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (cmake_debug_opt, cmake_all_opt, cmake_bleeplib_opt))
         process_ENV()
     
     if OPT_GIT:

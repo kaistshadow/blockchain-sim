@@ -18,7 +18,14 @@ def main():
     path = os.path.abspath("./")
 
     # xml 파일 생성
-    # test_modules.get_xmlfile(path)
+
+    parser = argparse.ArgumentParser(description='Script for installation and simulation')
+    parser.add_argument("--regtest", action="store_true", help="Install the shadow simulator and BLEEP")
+    args = parser.parse_args()
+    OPT_REGTEST = args.regtest
+    
+    if OPT_REGTEST:
+        test_modules.get_xmlfile(path)
 
     # xml 파일 생성 확인
     target_folder_xml = test_modules.test_xml_existence("output.xml")

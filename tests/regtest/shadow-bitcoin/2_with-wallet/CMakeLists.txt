@@ -1,5 +1,5 @@
 ## required for independent build
-cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8...3.13)
 
 
 # ExternalProject_Add_Step(bitcoin-with-wallet PATCH_FOR_PIC

@@ -74,6 +74,7 @@ def process_ENV():
     f = open(rcFile, 'r')
     shadowPath = "export PATH=$PATH:%s" % os.path.abspath("./Install/bin" )
     libPath = "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:%s" % os.path.abspath("./Install")
+    exec_shell_cmd("sudo apt-get install -y libjsoncpp-dev")
     needWritePath = True
     needWriteLibPath = True
     for line in f:

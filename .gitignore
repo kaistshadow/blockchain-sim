@@ -99,4 +99,4 @@ external/eosio/install/*
 base*N*T.xml
 shadow.data
 
-tests/regtest/shadow-litecoin/node*/testnet4
+tests/regtest/shadow-litecoin/*/node*/testnet4

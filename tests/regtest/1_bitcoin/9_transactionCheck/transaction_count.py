@@ -95,7 +95,7 @@ def main():
 
     # shadow 실행
     print("shadow running ...")
-    shadow_command = 'shadow output.xml' + ' > output.txt'
+    shadow_command = 'shadow output.xml -w 2' + ' > output.txt'
     test_modules.subprocess_open(shadow_command)
 
     # shadow output 파일 존재 검사.

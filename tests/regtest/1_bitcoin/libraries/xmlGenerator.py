@@ -48,7 +48,7 @@ def setup_multiple_node_xml(node_num, simultime, bool_, algorithm, difficulty):
     else :
         node_id = "injector"
         node = ET.SubElement(shadow, "node", id=node_id)
-        time = str(int(simultime) * 0.7)
+        time = str(5)
         txcnt = sys.argv[6]
         if txcnt > -1:
             txsec = sys.argv[7]

@@ -7,6 +7,9 @@
 namespace libBLEEP_BL {
 
     class SocketManager {
+    public:
+        ~SocketManager() { std::cout << "SocketManager Destructor called" << "\n"; }
+
     private:
         std::map<int, std::shared_ptr<ListenSocket> > _listenSockets;  // map fd -> ListenSocket structure        
 
@@ -14,10 +17,12 @@ namespace libBLEEP_BL {
         // create listening socket + create IO watcher for it
         int CreateListenSocket(int port = DEFAULT_SOCKET_PORT);
 
-        int CreateListenSocketForShadowIP(int port, const char* shadow_ip_addr);
+        int CreateListenSocketForShadowIP(int port, const char *shadow_ip_addr);
 
         /* get ListenSocket method */
         std::shared_ptr<ListenSocket> GetListenSocket(int fd);
+
+        void CloseAllListenSocket() { _listenSockets.clear(); }
 
     private:
         std::map<int, std::shared_ptr<ConnectSocket> > _connectSockets;  // map fd -> ConnectSocket structure

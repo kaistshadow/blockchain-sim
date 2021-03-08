@@ -24,6 +24,5 @@ add_custom_command(TARGET NODE_BL_TEST
 
 
 add_test(NAME regtest-BLEEP-simpleconnect
-  COMMAND shadow simple-connect.xml
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
+        COMMAND shadow simple-connect.xml
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

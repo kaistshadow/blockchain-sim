@@ -11,7 +11,7 @@ def exec_shell_cmd(cmd):
         exit(-1)
 
 def main():
-
+    
     # xml 파일이 생성될 위치를 현재위치로 설정
     path = os.path.abspath("./")
 

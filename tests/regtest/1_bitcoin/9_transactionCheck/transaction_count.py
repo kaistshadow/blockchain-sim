@@ -31,23 +31,20 @@ def test_transaction_count(simulation_output_file):
     txs_bitcoind = txs_bitcoind - blocks_count - 1
 
     txs = 0
-    f = open(simulation_output_file[0], "r")
-    while True:
-        line = f.readline()
-        if not line: break
-        result = line.find("getmempoolinfo")
-        if result != -1:
-            break
-        result = line.find("sendtoaddress")
+    f = open(simulation_output_file[2], "r")
+    for line in f.readlines()[::-1]:
+        result = line.find('"error":null')
         if result != -1:
             txs += 1
-    f.close()
+        result = line.find('"result":null')
+        if result != -1:
+            break
 
     f = open(simulation_output_file[1], "r")
     while True:
         line = f.readline()
         if not line: break
-        result = line.find("mempoolminfee")
+        result = line.find("maxmempool")
         if result != -1:
             mempool_size = line.split(",")[1].split(":")[1]
             break
@@ -65,6 +62,7 @@ def test_transaction_count(simulation_output_file):
         print("Fail transaction count test ...")
         sys.exit(1)
 
+
 # Test process
 # 1. test_xml_existence 
 # 2. shadow output existence test  
@@ -74,8 +72,13 @@ def main():
     # xml 파일이 생성될 위치를 현재위치로 설정
     path = os.path.abspath("./")
 
-    # xml 파일 생성
-    # tx_mode = test_modules.get_xmlfile(path)
+    parser = argparse.ArgumentParser(description='Script for installation and simulation')
+    parser.add_argument("--regtest", action="store_true", help="Install the shadow simulator and BLEEP")
+    args = parser.parse_args()
+    OPT_REGTEST = args.regtest
+    
+    if OPT_REGTEST:
+        test_modules.get_xmlfile(path)
 
     # xml 파일 생성 확인
     target_folder_xml = test_modules.test_xml_existence("output.xml")

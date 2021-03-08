@@ -122,6 +122,7 @@ if __name__ == '__main__':
 
         # ## install boost-lib
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
+        exec_shell_cmd("sudo apt-get install -y libjsoncpp-dev")
 
         ## install bitcoin dependencies
         exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")

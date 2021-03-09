@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
     std::cout<<"-- wallet --\n";
 
     std::string wallet = json_resp["result"].asString();
-    std::cout<<wallet;
+    std::cout<<wallet<<std::endl;
 
     return 0;
 }

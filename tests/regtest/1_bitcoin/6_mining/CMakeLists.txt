@@ -29,3 +29,6 @@ add_test(NAME bitcoinMining_shadow_test
   COMMAND python3 mining.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
+set_property(TEST bitcoinMining_shadow_test APPEND
+        PROPERTY
+        ENVIRONMENT PATH=$ENV{PATH}:$<TARGET_FILE_DIR:shadow>) # add path environment in order to run this test on CLion

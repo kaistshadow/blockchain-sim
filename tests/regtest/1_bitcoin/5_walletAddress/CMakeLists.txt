@@ -28,3 +28,6 @@ add_test(NAME bitcoinWallet_shadow_test
   COMMAND python3 walletAddress.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
+set_property(TEST bitcoinWallet_shadow_test APPEND
+        PROPERTY
+        ENVIRONMENT PATH=$ENV{PATH}:$<TARGET_FILE_DIR:shadow>) # add path environment in order to run this test on CLion

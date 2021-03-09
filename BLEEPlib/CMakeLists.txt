@@ -1,8 +1,8 @@
 ## ensure cmake version
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
-# cmake_policy(SET CMP0048 NEW)
-# project(BLEEPlib VERSION 1.0 LANGUAGES CXX)
+cmake_policy(SET CMP0048 NEW)
+project(BLEEPlib VERSION 1.0 LANGUAGES CXX)
 
 project(BLEEPlib)
 
@@ -24,52 +24,28 @@ else(BLEEP_DEBUG STREQUAL ON)
 endif(BLEEP_DEBUG STREQUAL ON)
 
 set(SRCS
-  src/datamodules/Block.cpp
-  src/datamodules/ShadowPipe.cpp
-  src/datamodules/Pipe.cpp
-  src/datamodules/Socket.cpp
-  src/datamodules/Message.cpp
-  src/datamodules/Inventory.cpp
-  src/datamanagermodules/TxPool.cpp
-  src/datamanagermodules/ShadowPipeManager.cpp
-  src/datamanagermodules/PipeManager.cpp
-  src/datamanagermodules/SocketManager.cpp
-  src/datamanagermodules/PeerManager.cpp
-  src/mainmodules/MainEventManager.cpp
-  src/mainmodules/BasicNetworkModule.cpp
-  src/mainmodules/RandomGossipNetworkModule.cpp
-  src/mainmodules/EstimateRTTModule.cpp
-  src/mainmodules/TxGeneratorModule.cpp
-  src/mainmodules/POWModule.cpp
-  src/utility/UInt256.cpp
-  src/utility/Assert.cpp
-  src/utility/Random.cpp
-  src/utility/ArgsManager.cpp
-  src/utility/tinyxml2.cpp
-  src/utility/Logger.cpp
-  src/datamodules/Socket_v2.cpp
-  src/datamanagermodules/SocketManager_v2.cpp
-  src/datamodules/POWBlock.cpp
-  src/crypto/SHA256.cpp
-  src/utility/GlobalClock.cpp
-  # 
-)
-
-set(NEW_SRCS
-  src/BL_MainEventManager.cpp
-  src/BL1_socket/Socket.cpp
-  src/BL1_socket/SocketLayer.cpp
-  src/BL1_socket/SocketManager.cpp
-  src/BL1_socket/RecvBufferManager.cpp
+        src/BL_MainEventManager.cpp
+        src/BL1_socket/Socket.cpp
+        src/BL1_socket/SocketLayer_API.cpp
+        src/BL1_socket/SocketManager.cpp
+        src/BL1_socket/RecvBufferManager.cpp
         src/BL1_socket/SocketLayer_Bitcoin.cpp
-  src/BL2_peer_connectivity/PeerConnectivityLayer.cpp
-  src/BL2_peer_connectivity/PeerManager.cpp
-  src/BL2_peer_connectivity/AddrManager.cpp
-  src/BL2_peer_connectivity/AdvertisementManager.cpp
-  src/BL3_protocol/ProtocolLayerEx1.cpp
-  src/BL3_protocol/TxGossipProtocol.cpp
-  src/BL3_protocol/TxPool.cpp
-)
+        src/BL2_peer_connectivity/PeerConnectivityLayer_API.cpp
+        src/BL2_peer_connectivity/PeerManager.cpp
+        src/BL2_peer_connectivity/AddrManager.cpp
+        src/BL2_peer_connectivity/AdvertisementManager.cpp
+        src/BL3_protocol/ProtocolLayer_API.cpp
+        src/BL3_protocol/ProtocolLayerEx1.cpp
+        src/BL3_protocol/TxGossipProtocol.cpp
+        src/BL3_protocol/TxPool.cpp
+        src/utility/UInt256.cpp
+        src/utility/Assert.cpp
+        src/utility/Random.cpp
+        src/utility/ArgsManager.cpp
+        src/utility/tinyxml2.cpp
+        src/utility/Logger.cpp
+        src/crypto/SHA256.cpp
+        src/utility/GlobalClock.cpp)
 
 
 include(GNUInstallDirs)
@@ -83,20 +59,11 @@ set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:${CMAKE_INSTALL_PREFIX}/lib:${CM
 
 add_library(BLEEP SHARED ${SRCS})
 
-# target_include_directories(BLEEP
-#   PRIVATE src
-#   INTERFACE src)
+
 target_include_directories(BLEEP
   PUBLIC 
   $<INSTALL_INTERFACE:include> 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>)
-
-add_library(NEWBLEEP SHARED ${NEW_SRCS})
-target_include_directories(NEWBLEEP
-  PUBLIC 
-  $<INSTALL_INTERFACE:include> 
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>)
-
 
 
 # use 3rd party library (boost_1_58)
@@ -131,60 +98,19 @@ install(TARGETS BLEEP
 install(EXPORT FindBLEEP 
   FILE FindBLEEP.cmake
   DESTINATION cmake)
-# install(FILES "src/datamanagermodules/LedgerManager.h"
-#   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datamanagermodules)
-install(DIRECTORY "src/datamanagermodules"
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-  FILES_MATCHING
-  PATTERN
-  "*.h")
-install(DIRECTORY "src/datamodules"
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-  FILES_MATCHING
-  PATTERN
-  "*.h")
-install(DIRECTORY "src/mainmodules"
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-  FILES_MATCHING
-  PATTERN
-  "*.h")
-install(DIRECTORY "src/utility"
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-  FILES_MATCHING
-  PATTERN
-  "*.h")
-install(DIRECTORY "src/crypto"
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-  FILES_MATCHING
-  PATTERN
-  "*.h")
 
-set_target_properties(NEWBLEEP PROPERTIES 
-  SOVERSION 1)
-install(TARGETS NEWBLEEP
-  EXPORT FindBLEEP
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(DIRECTORY "src/"
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   FILES_MATCHING
   PATTERN
   "*.h")
-install(DIRECTORY "src/BL1_socket"
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-  FILES_MATCHING
-  PATTERN
-  "*.h")
+
 
 find_package(Libev_4_33 REQUIRED)
 target_link_libraries(BLEEP Libev_4_33::Libev)
 #target_link_libraries(BLEEP -lev)
 target_link_libraries(BLEEP SHADOW_INTERFACE)
 target_link_libraries(BLEEP ${Boost_LIBRARIES})
-
-target_link_libraries(NEWBLEEP Libev_4_33::Libev)
-#target_link_libraries(NEWBLEEP -lev)
-target_link_libraries(NEWBLEEP SHADOW_INTERFACE)
-target_link_libraries(NEWBLEEP ${Boost_LIBRARIES})
 
 
 include_directories(${CMAKE_ROOT_SOURCE_DIR}/interfaces/shadow_interface)

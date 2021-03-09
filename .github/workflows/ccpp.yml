@@ -2,9 +2,9 @@ name: C/C++ CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, develop ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, develop ]
 
 jobs:
   build:
@@ -19,7 +19,7 @@ jobs:
         sudo apt install python
         sudo apt-get update
     - name: install BLEEP
-      run: python setup.py --git
+      run: python setup.py --all
     - name: test BLEEP using script
       run: |
         export PATH=${PATH}:${GITHUB_WORKSPACE}/Install/bin

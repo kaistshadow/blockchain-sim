@@ -1,5 +1,5 @@
 ## required for independent build
-cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8...3.13)
 
 
 # ExternalProject_Add_Step(bitcoin-with-wallet PATCH_FOR_PIC
@@ -48,6 +48,10 @@ add_test(NAME shadow-bitcoin-with-wallet
 add_test(NAME shadow-bitcoin-with-wallet-check-pwrite-bug
         COMMAND shadow example-reproduce-logerr.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+# add_test(NAME shadow-bitcoin-with-wallet_node_log
+#         COMMAND python test.py --bitcoinwallet
+#         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../)        
 
 set_tests_properties(shadow-bitcoin-with-wallet PROPERTIES DEPENDS shadow-bitcoin-with-wallet-prepare)
 set_tests_properties(shadow-bitcoin-with-wallet PROPERTIES TIMEOUT 60)

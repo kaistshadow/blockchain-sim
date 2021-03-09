@@ -28,3 +28,6 @@ add_test(NAME bitcoinMainchain_shadow_test
   COMMAND python3 mainchaintest.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
+set_property(TEST bitcoinMainchain_shadow_test APPEND
+        PROPERTY
+        ENVIRONMENT PATH=$ENV{PATH}:$<TARGET_FILE_DIR:shadow>) # add path environment in order to run this test on CLion

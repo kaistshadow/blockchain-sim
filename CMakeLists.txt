@@ -35,6 +35,7 @@ option(SHADOW_DEBUG "turn on debugging for verbose program output (default: ON f
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BLEEP_DEBUG ON)
     set(SHADOW_DEBUG ON)
+    set(SHADOW_PROFILE ON)
 elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
     set(BLEEP_DEBUG OFF)
     set(SHADOW_DEBUG OFF)
@@ -83,6 +84,8 @@ if(BLEEPLIB_OPT STREQUAL ON)
 endif(BLEEPLIB_OPT STREQUAL ON)
 
 # add_subdirectory(BLEEPapp)
+add_subdirectory(BLEEPeval)
+
 if(TEST_OPT STREQUAL ON)
     add_subdirectory(tests)
 endif()

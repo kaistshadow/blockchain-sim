@@ -13,7 +13,8 @@ extern "C"
 int puts_temp(const char *str);
 
 // adaptive IP&host matching
-int shadow_bind(int fd, const struct sockaddr* addr, socklen_t len);
+int shadow_bind(int fd, const struct sockaddr *addr, socklen_t len);
+int shadow_register_NIC(const struct sockaddr *addr, socklen_t len);
 
 int shadow_pipe2(int pipefds[2], int flags);
 

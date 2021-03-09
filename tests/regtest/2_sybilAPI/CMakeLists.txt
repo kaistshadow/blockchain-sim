@@ -1,0 +1,4 @@
+
+add_subdirectory(1_verack_with_bitcoin)
+add_subdirectory(2_churnout_with_bitcoin)
+add_subdirectory(3_miniEREBUS_with_bitcoin)

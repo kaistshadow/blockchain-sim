@@ -1,5 +1,5 @@
 ## required for independent build
-cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8...3.13)
 
 
 ## enable CTEST
@@ -27,4 +27,7 @@ add_test(NAME shadow-bitcoin-firstrun
   COMMAND shadow example.xml
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
+# add_test(NAME shadow-bitcoin-firstrun_node_log
+#   COMMAND python test.py --bitcoinfirstrun
+#   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../)
 

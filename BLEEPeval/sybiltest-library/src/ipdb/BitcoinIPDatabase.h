@@ -61,7 +61,7 @@ namespace sybiltest {
             for (int i = 0; i < unreachableIPNum; i++) {
                 while (true) {
                     std::string randIP = _generateRandomIP();
-                    if (!sLegiIP.contains(randIP) && !sUnreachLegiIP.contains(randIP)) {
+                    if (sLegiIP.find(randIP) == sLegiIP.end() && sUnreachLegiIP.find(randIP) == sUnreachLegiIP.end()) {
                         sUnreachLegiIP.insert(randIP);
                         break;
                     }
@@ -72,7 +72,8 @@ namespace sybiltest {
             for (int i = 0; i < shadowIPNum; i++) {
                 while (true) {
                     std::string randIP = _generateRandomIP();
-                    if (!sLegiIP.contains(randIP) && !sUnreachLegiIP.contains(randIP) && !sShadowIP.contains(randIP)) {
+                    if (sLegiIP.find(randIP) == sLegiIP.end() && sUnreachLegiIP.find(randIP) == sUnreachLegiIP.end() &&
+                        sShadowIP.find(randIP) == sShadowIP.end()) {
                         sShadowIP.insert(randIP);
                         break;
                     }
@@ -85,7 +86,8 @@ namespace sybiltest {
 
             while (true) {
                 std::string randIP = _generateRandomIP();
-                if (!sLegiIP.contains(randIP) && !sUnreachLegiIP.contains(randIP) && !sShadowIP.contains(randIP)) {
+                if (sLegiIP.find(randIP) == sLegiIP.end() && sUnreachLegiIP.find(randIP) == sUnreachLegiIP.end() &&
+                    sShadowIP.find(randIP) == sShadowIP.end()) {
                     _vAttackerIP.push_back(randIP);
                     break;
                 }

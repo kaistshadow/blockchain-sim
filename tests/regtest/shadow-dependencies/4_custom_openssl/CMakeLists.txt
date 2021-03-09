@@ -24,6 +24,9 @@ add_custom_command(TARGET sslrand
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:sslrand> ${CMAKE_CURRENT_SOURCE_DIR})
 
+# system openssl 아닌 별도의 curl을 설치하여, 설치한 openssl shadow환경에서 test
+# Input : Nothing
+# Output : 정상 종료 시 return 0, 아닐 경우 return -1
 add_test(NAME shadow-custom-openssl-librand
         COMMAND shadow ssl_rand.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

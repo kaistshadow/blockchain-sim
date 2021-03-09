@@ -37,7 +37,7 @@
   <kill time="17776000"/>
   <node id="bcdnode0" iphint="1.0.0.1">
     <application
-            arguments="-debug -datadir=data/bcdnode0 -port=8333 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=1.0.0.1/0 -rpcbind=1.0.0.1"
+            arguments="-debug -datadir=data/bcdnode0 -port=8333 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=1.0.0.1/0 -rpcbind=1.0.0.1 -erebustest"
             plugin="bitcoind" time="0"/>
   </node>
 

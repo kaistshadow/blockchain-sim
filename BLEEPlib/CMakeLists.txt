@@ -1,8 +1,8 @@
 ## ensure cmake version
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
-# cmake_policy(SET CMP0048 NEW)
-# project(BLEEPlib VERSION 1.0 LANGUAGES CXX)
+cmake_policy(SET CMP0048 NEW)
+project(BLEEPlib VERSION 1.0 LANGUAGES CXX)
 
 project(BLEEPlib)
 

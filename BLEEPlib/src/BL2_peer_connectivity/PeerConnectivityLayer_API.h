@@ -77,7 +77,8 @@ namespace libBLEEP_BL {
 
             peers = _peerManager.GetPeers();
             std::cout << "periodic ping" << "\n";
-            for (auto&[key, peerPtr] : peers) {
+            for (auto const &pair : peers) {
+                auto peerPtr = pair.second;
                 std::shared_ptr<Message> pingMsg = std::make_shared<Message>(_peerManager.GetMyPeerId(),
                                                                              peerPtr->GetPeerId(), "PING");
                 std::cout << "send PING to " << peerPtr->GetPeerId().GetId() << "\n";

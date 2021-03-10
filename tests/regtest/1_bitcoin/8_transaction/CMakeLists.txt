@@ -17,15 +17,20 @@ add_custom_target(shadow-bitcoin-transaction-prepare ALL
   COMMAND mkdir -p data/bcdnode0
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-# TODO : unresolved dependency problem during full build is still remaining.
 add_custom_target(shadow-bitcoin-transaction-copy-plugin ALL
-  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1dev::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
-add_dependencies(shadow-bitcoin-transaction-copy-plugin Bitcoin_0_19_1dev::Plugin)
+        DEPENDS Bitcoin_0_19_1dev::Plugin
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/rpc.so
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/transaction.so
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1dev::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_custom_target(shadow-bitcoin-dev-one-node-mine-plugin_tx ALL
+add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/rpc.so
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/transaction.so
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/one_node_setmine.cpp
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../libraries/rpc_client.cpp
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/transaction.cpp
         COMMAND gcc -o rpc.so one_node_setmine.cpp ../libraries/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -g -std=c99
         COMMAND gcc -o transaction.so transaction.cpp ../libraries/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -g
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_test(NAME shadow-bitcoin-transaction-test
   COMMAND python3 transaction.py

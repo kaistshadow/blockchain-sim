@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
 enable_testing()
 
 add_custom_target(future ALL
-        COMMAND g++ -o future.so future.c -lpthread -shared -fPIC -g -std=c++11
+        COMMAND g++ -o future.so future.c -lpthread -shared -fPIC -g
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 # futex test

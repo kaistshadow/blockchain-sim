@@ -19,30 +19,11 @@ Blockchain-sim is now under development on top of the open-source discrete-event
 
 # How to run
 
-Please use Ubuntu 16.04 LTS or Ubuntu 18.04 LTS.
+Please use Ubuntu 18.04 LTS.
 
 Setup and Usage Instructions:
 
 * https://github.com/kaistshadow/blockchain-sim/wiki
 
 
-# For bitcoin simulation (Deprecated)
-
-Currently, we only support bitcoin (v0.16.0, v0.15.0) and the simulation for its basic P2P network connection. Arbitrary generation of the transactions or blocks and its propagation are not yet tested.
-
-To install the necessary parts (Shadow network simulator and bitcoin parts) and to run the basic experiments (P2P network connection of the bitcoin nodes), we built a python script.
-
-Run the following commands.
-```
-git clone https://github.com/kaistshadow/blockchain-sim
-cd blockchain-sim
-python setup.py --install
-python setup.py --test
-```
-
-If following message is printed at screen, the simulation of the bitcoin was successful.
-```
-1/5 Test #1: bitcoin-version-handshake ........   Passed
-```
-After running tests, you can check the result of bitcoin test (stdout, stderr for each node) in the directory `test/plugin-bitcoin/`.
 

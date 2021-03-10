@@ -17,13 +17,15 @@ add_custom_target(bitcoin_initialCoin_test_prepare ALL
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(bitcoin_initialCoin_test_prepare2 ALL
-  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1dev::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
+        DEPENDS Bitcoin_0_19_1dev::Plugin
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/rpc.so
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1dev::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_custom_target(bitcoin_initialCoin_test_prepare_plugin ALL
-  COMMAND gcc -o rpc.so rpc.cpp ../libraries/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -g -std=c99
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-add_dependencies(bitcoin_initialCoin_test_prepare2 Bitcoin_0_19_1dev::Plugin)
-
+add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/rpc.so
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/rpc.cpp
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../libraries/rpc_client.cpp
+        COMMAND gcc -o rpc.so rpc.cpp ../libraries/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -g -std=c99
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_test(NAME bitcoin_initialCoin_test
   COMMAND python3 initialCoin.py

@@ -1,5 +1,5 @@
 ## required for independent build
-cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8...3.13)
 if (NOT TARGET BLEEP) # check whether it's independent build
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../Install/cmake") # Path for BLEEP Module
   find_package(BLEEP REQUIRED) # load BLEEP Module
@@ -17,7 +17,6 @@ enable_testing()
 
 add_shadow_plugin(NODE_BL_TEST_TX_10 node_bl_test_tx.cpp)
 find_package(Libev_4_33 REQUIRED)
-target_link_libraries(NODE_BL_TEST_TX_10 NEWBLEEP)
 target_link_libraries(NODE_BL_TEST_TX_10 BLEEP)
 
 # copy resulting plugins into source directory
@@ -39,7 +38,6 @@ set_property(TEST regtest-BLEEP-gossip-10node APPEND
 ## test for peer connection (Node Discovery Protocol)
 add_shadow_plugin(NODE_BL_TEST_PEER node_bl_test_peerconnection.cpp)
 find_package(Libev_4_33 REQUIRED)
-target_link_libraries(NODE_BL_TEST_PEER NEWBLEEP)
 target_link_libraries(NODE_BL_TEST_PEER BLEEP)
 
 add_custom_command(TARGET NODE_BL_TEST_PEER

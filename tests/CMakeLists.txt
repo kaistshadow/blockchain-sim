@@ -1,11 +1,24 @@
+cmake_minimum_required(VERSION 2.8...3.13)
+
 if(BLEEP_DEBUG STREQUAL ON)
   message(STATUS "Debug enabled.")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
 else(BLEEP_DEBUG STREQUAL ON)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 endif(BLEEP_DEBUG STREQUAL ON)
-
-add_subdirectory(regtest)
 add_subdirectory(lib/googletest)
-# add_subdirectory(unittest)
+
+if(UNITTEST_OPT STREQUAL ON)
+  message("--------------------------------------------------------------------------------------")
+  message("                            Start Unit tests")
+  message("--------------------------------------------------------------------------------------")
+  add_subdirectory(unittest)
+elseif(TEST_OPT STREQUAL ON)
+  message("--------------------------------------------------------------------------------------")
+  message("                            Start regression tests")
+  message("--------------------------------------------------------------------------------------")
+  add_subdirectory(regtest)
+
+endif()
+
 

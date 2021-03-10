@@ -5,22 +5,33 @@
 
 namespace libBLEEP_BL {
     class BL_ProtocolLayer_API {
+        // singleton pattern
     public:
-        BL_ProtocolLayer_API() {};
-        
+        static BL_ProtocolLayer_API *Instance();
+
+        static void InitInstance(std::string protocolType);
+
+    protected:
+        BL_ProtocolLayer_API();
+
+    private:
+        static BL_ProtocolLayer_API *_instance;
+
+    public:
+
         ~BL_ProtocolLayer_API() {};
-        
+
         /* Switch asynchronous event to proper handler */
-        virtual void SwitchAsyncEventHandler(AsyncEvent& event) = 0;
+        virtual void SwitchAsyncEventHandler(AsyncEvent &event) = 0;
 
 
         /* public API functions */
         virtual bool InitiateProtocol() = 0;
+
         virtual bool StopProtocol() = 0;
 
     };
 
-    extern std::unique_ptr<BL_ProtocolLayer_API> g_ProtocolLayer_API;
 }
 
 

@@ -109,7 +109,7 @@ namespace libBLEEP_BL {
 
                 // TODO: Execute received shadow command,
                 if (cmd_id == "shutdown") {
-                    g_PeerConnectivityLayer_API->Shutdown();
+                    BL_PeerConnectivityLayer_API::Instance()->Shutdown();
                 }
             }
         public:

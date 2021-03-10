@@ -11,10 +11,6 @@ extern "C"
 void shadow_bitcoin_register_hash(const char hash[]);
 int shadow_bitcoin_check_hash(const char hash[]);
 
-void update_log_map(const char prevblockhash[], const char blockhash[],const int txcount, const int height);
-int get_tx_total_count(void);
-int get_tx_count(const char blockhash[]);
-
 #ifdef __cplusplus
 }
 #endif

@@ -40,7 +40,7 @@ def parse_output(output, datadir):
 
     return eventlogs_filename
 
-def run_experiment(configfile, LOGLEVEL):
+def run_experiment(configfile, LOGLEVEL, forcerun):
     # Datadir is signed with pid to differenciate experiments currently running on
     # different ports
     datadir = "visualize-datadir.%d" % os.getpid()
@@ -68,12 +68,17 @@ def run_experiment(configfile, LOGLEVEL):
     shadow_returnCode = shadow.returncode
     for line in shadow_stdout_file:
         if "critical" in line:
-            print "critical error occurred during shadow simulation"
-            sys.exit(-1)
+            print
+            "critical error occurred during shadow simulation"
+            if not forcerun:
+                sys.exit(-1)
 
     if shadow_returnCode != 0:
-        print "experiment failed. Try again."
-        sys.exit(-1)
+        print("experiment failed")
+        if forcerun:
+            pass
+        else:
+            sys.exit(-1)
 
     eventlogs_filename = parse_output("./%s/%s" % (datadir, shadow_stdout_filename), datadir)
     
@@ -115,6 +120,7 @@ if __name__ == '__main__':
     parser.add_argument("--background", action="store_true", help="Run server as background daemon.")
     parser.add_argument("--log", help="Shadow Log LEVEL above which to filter messages ('error' < 'critical' < 'warning' < 'message' < 'info' < 'debug') ['message']")
     parser.add_argument("--noserver", action="store_true", help="Don't run visualization server")
+    parser.add_argument("--force", action="store_true", help="Run visualization even if the test is failed ['false']")
     # --no server
 
     args = parser.parse_args()
@@ -122,6 +128,7 @@ if __name__ == '__main__':
     port = args.port
     OPT_BACKGROUND = args.background
     OPT_NOSERVER = args.noserver
+    OPT_FORCE = args.force
 
     if not args.log:
         LOGLEVEL = "message"
@@ -130,7 +137,7 @@ if __name__ == '__main__':
 
     print "Execute shadow experiment"
     start = datetime.datetime.now()
-    output = run_experiment(configfile, LOGLEVEL)
+    output = run_experiment(configfile, LOGLEVEL, OPT_FORCE)
     end = datetime.datetime.now()
 
     elapsed_time = end - start

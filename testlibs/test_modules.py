@@ -226,8 +226,11 @@ def test_transaction_existence(simulation_output_file):
     else:
         pass
          
-def test_shadow_output_file_existence():
-    path = os.path.abspath("./shadow.data")
+def test_shadow_output_file_existence(condition_number):
+    if condition_number == "regtest":
+        path = os.path.abspath(".")
+    else:
+        path = os.path.abspath("./shadow.data")
     target_folder_file = path + "/output.txt"
     if os.path.isfile(target_folder_file):
         return target_folder_file

@@ -86,7 +86,7 @@ def main():
     exec_shell_cmd('mv output.txt shadow.data')
     
     # # shadow output file 생성 여부 검증
-    target_folder_file = test_modules.test_shadow_output_file_existence()
+    target_folder_file = test_modules.test_shadow_output_file_existence("emulation")
 
     # # xml file에서 plugin, simulation time 정보 추출
     runtime, node_id_list, plugin_list = test_modules.get_xml_info_new("output.xml")

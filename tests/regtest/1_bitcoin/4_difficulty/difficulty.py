@@ -3,8 +3,8 @@ import subprocess
 import argparse
 import sys
 import shlex
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from libraries import test_modules
+sys.path.append("./../../../../")
+from testlibs import test_modules
 
 def get_difficulty_info(xml_file):
     count = 0

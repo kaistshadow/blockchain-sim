@@ -2,8 +2,8 @@ import os
 from subprocess import check_output
 import argparse
 import sys
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from libraries import test_modules
+sys.path.append("./../../../../")
+from testlibs import test_modules
 
 # Get "bestblockchash" value info using rpc.output_file then check for the same value in bitcoin output log.
 def test_MainChainInfo(shadow_output_file, rpc_output_file):

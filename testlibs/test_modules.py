@@ -12,6 +12,24 @@ def exec_shell_cmd(cmd):
         print("error while executing '%s'" % cmd)
         exit(-1)
 
+def path_filter(path):
+    the_path_command = ""
+    path_list = path.split("/")
+    path_abs = path_list[len(path_list)-2]
+    if path_abs == "BLEEPemul":
+        the_path_command = "cd ../../testlibs"
+        return 1, the_path_command
+    elif path_abs == "1_bitcoin":
+        the_path_command = "cd ../../../../testlibs"
+        return 0, the_path_command
+
+    elif path_abs == "2_sybilAPI":
+        the_path_command = "cd ../../../../testlibs"
+        return 0, the_path_command
+    else:
+        print("Fail setting path ... ")
+        sys.exit(1)
+
 # xml existence test - If there is no file in the path, return fail
 def test_xml_existence(output):
     path = os.path.abspath(".")
@@ -52,15 +70,20 @@ def set_plugin_file(node_count, path):
         exec_shell_cmd(the_command)
 
 def get_xmlfile(path):
+    emulation_start, path_abs = path_filter(path)
+    the_command = path_abs + "; python xmlGenerator.py"
     tx_condition_count = 0
     condition_count = 0
     tx_injector_file = 0
     tx_so_file = path + "/transaction.so"
     xml_command = ""
-    if os.path.isfile(tx_so_file) == False:
-        tx_injector_file = 1
-    else:
-        tx_injector_file = 2
+    if emulation_start == 1:
+        tx_injector_file = 3
+    else: 
+        if os.path.isfile(tx_so_file) == False:
+            tx_injector_file = 1
+        else:
+            tx_injector_file = 2
 
     while(1):
         if condition_count == 0:
@@ -107,7 +130,7 @@ def get_xmlfile(path):
                         continue
                     else:
                         tx_condition_count = 1
-                    xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + path
+                    xml_command = the_command + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + path
                     break
                     
                 else:
@@ -124,7 +147,7 @@ def get_xmlfile(path):
                     elif tx_cnt == -1:
                         number_bitcoins_transferred = 0.0000546
                         tx_sec = 0
-                        xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
+                        xml_command = the_command + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
                         break                            
 
                     elif tx_cnt < 0:
@@ -155,7 +178,7 @@ def get_xmlfile(path):
                 try:
                     tx_sec = int(input("Input transaction interval (sec) : "))
                     if tx_sec > 0:
-                        xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
+                        xml_command = the_command + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
                         break
                     else:
                         print("Must input only number ! ")

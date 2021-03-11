@@ -2,8 +2,8 @@ import os
 from subprocess import check_output
 import argparse
 import sys
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from libraries import test_modules
+sys.path.append("./../../../../")
+from testlibs import test_modules
 
 # check "getnewaddress" log in shadow output file. If done, check length of rpc_file contents. If the length is 35, the test is success.
 def test_walletAddress(simulation_output_file):

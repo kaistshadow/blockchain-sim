@@ -1,8 +1,8 @@
 import sys
 import os
 
-sys.path.append('../..')
-from libraries import test_modules
+sys.path.append('../../../../')
+from testlibs import test_modules
 
 
 def check_verack(bitcoin_log, tester_log):

@@ -116,4 +116,6 @@ BLEEPemul/*/target_example.xml
 tests/regtest/shadow-syscalls/1_eventfd/eventfd-test*
 tests/regtest/shadow-syscalls/1_eventfd/timerfd-test*
 BLEEPemul/emulation/output.xml
-tests/regtest/1_bitcoin/*/__pycache__/
+testlibs/__pycache__
+tests/regtest/2_sybilAPI/*/output.txt
+testlibs/__pycache__/test_modules.cpython-36.pyc

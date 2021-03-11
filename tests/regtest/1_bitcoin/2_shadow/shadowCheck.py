@@ -3,8 +3,8 @@ import subprocess
 import argparse
 import sys
 import shlex
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from libraries import test_modules
+sys.path.append("./../../../../")
+from testlibs import test_modules
 
 # Test process
 # 1. Test - xml file existence 

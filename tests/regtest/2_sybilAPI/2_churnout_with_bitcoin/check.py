@@ -1,7 +1,7 @@
 import sys
 
-sys.path.append('../..')
-from libraries import test_modules
+sys.path.append('../../../../')
+from testlibs import test_modules
 
 
 def check_churnout(bitcoin_log, tester_log):

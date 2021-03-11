@@ -51,6 +51,7 @@ def main():
 
     # transaction test 시작.
     test_modules.test_transaction_existence(simulation_output_file[1])
-
+    sys.exit(0)
+    
 if __name__ == '__main__':
     main()

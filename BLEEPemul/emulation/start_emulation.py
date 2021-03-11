@@ -46,7 +46,7 @@ def get_blockHash_list(node_output_file):
     return block_hash_list
 
 def summary_result(node_list, node_output_file, sim_time):
-    path = "./datadir/result_"+time.strftime('%H:%M:%S')+".log"
+    path = "./shadow.data/result_"+time.strftime('%H:%M:%S')+".log"
     f = open(path, "w")
     txs = test_modules.test_transaction_count(node_output_file)
     f.write("---------------------------------------------------------------------------------\n")
@@ -83,7 +83,8 @@ def main():
     # # shadow 실행
     print("shadow running ... ")
     test_modules.subprocess_open('shadow output.xml > output.txt')
-
+    exec_shell_cmd('mv output.txt shadow.data')
+    
     # # shadow output file 생성 여부 검증
     target_folder_file = test_modules.test_shadow_output_file_existence()
 
@@ -97,7 +98,7 @@ def main():
     test_modules.test_transaction_existence(simulation_output_file[1])
 
     # # shadow output 검증
-    complete_node, runtime = test_modules.test_shadow(target_folder_file, runtime, node_id_list)
+    complete_node, runtime = test_modules.emul_test_shadow(target_folder_file, runtime, node_id_list)
     
     # # result summary
     summary_result(complete_node, simulation_output_file, runtime)

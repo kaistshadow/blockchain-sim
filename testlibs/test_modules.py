@@ -159,8 +159,8 @@ def get_xmlfile(path):
                     continue
             
             elif tx_condition_count == 2:
-
-                try:
+                try:                    
+                    print("Enter only one of them (enable/disable) ")
                     number_bitcoins_transferred = float(input("input number of Bitcoins transferred (minimum amount : 0.0000546) : "))
                     if number_bitcoins_transferred < 0.0000546:
                         print("The minimum transfer fee is '0.0000546' bitcoin ...")
@@ -226,7 +226,18 @@ def test_transaction_existence(simulation_output_file):
     else:
         pass
          
-def test_shadow_output_file_existence(condition_number):
+def test_shadow_output_file_existence(condition_number, node_id_list):
+    # plugin output check
+    for i in range(0,len(node_id_list)):
+        path_ = os.path.abspath(".")
+        path_ = path_ + "/shadow.data/hosts/" + node_id_list[i]
+        if os.path.isdir(path_):
+            pass
+        else:
+            print("%s file not existence shadow output file ... " %node_id_list[i])
+            sys.exit(1)
+
+    # shadow output.txt
     if condition_number == "regtest":
         path = os.path.abspath(".")
     else:
@@ -298,9 +309,25 @@ def get_time_form(runtime):
 
     return result
 
+def filter_fail_shadow_test(output_file):
+    f = open(output_file, "r")
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find('error')
+        if result != -1:
+            result = line.find('Shadow XML parsing error')
+            if result != -1:
+                result_split = line.split(":")[6]
+                print("----------------------Error content------------------------\n")
+                print(result_split)
+                print("--------------------------------------------------------------")
+                break
+    f.close()
+
 # test1 : whether runtime setting worked or not 
 # test2 : whether plugin(node_id) worked or not
-def test_shadow(output_file, runtime, node_id_list):
+def test_shadow(output_file, runtime, node_id_list, shadow_output):
     f = open(output_file, "r")
     # result_count more than 3 means success.
     result_count = 0
@@ -329,9 +356,11 @@ def test_shadow(output_file, runtime, node_id_list):
                 f.close()
                 print("Fail shadow test] - runtime error ...")
                 sys.exit(1)
+
     if return_count == 0:            
         f.close()
-        print("[Fail shadow test] - plugin does not run ... (check the logs)")
+        print("[Fail shadow test] - plugin does not run ... ")
+        filter_fail_shadow_test(shadow_output)
         sys.exit(1)
     else:
         pass

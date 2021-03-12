@@ -1,2 +1,6 @@
+add_compile_options(
+        $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,9.3.0>>:-std=c++2a>
+        $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.3.0>>:-std=c++17>)
+
 add_subdirectory(sybiltest-library/src)
 add_subdirectory(sybiltest-app)

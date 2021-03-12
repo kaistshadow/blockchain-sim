@@ -4,13 +4,13 @@ if (NOT TARGET shadow_monero_daemon) # check whether it's independent build
 endif ()
 ## required for independent build end
 
-add_custom_target(start-monero-copy-monero-plugin ALL
+add_custom_target(handshaking-monero-copy-monero-plugin ALL
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:shadow_monero_daemon> ${CMAKE_CURRENT_SOURCE_DIR})
-add_dependencies(start-monero-copy-monero-plugin shadow_monero_daemon)
+add_dependencies(handshaking-monero-copy-monero-plugin shadow_monero_daemon)
 
 
 ######## run test
 ### Run monero plugin and check standard output of the plugin
-add_test(NAME test_start_monero
-        COMMAND python3 check.py $<TARGET_FILE:shadow>
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+#add_test(NAME test_handshaking_monero
+#        COMMAND python3 check.py $<TARGET_FILE:shadow>
+#        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

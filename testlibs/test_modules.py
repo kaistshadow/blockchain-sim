@@ -397,3 +397,19 @@ def test_transaction_count(simulation_output_file):
                 break    
     f.close()
     return txs_bitcoind
+
+def test_walletAddress(simulation_output_file):
+    the_wallet_address = ""
+    f = open(simulation_output_file[1], "r")
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("isvalid")
+        if result != -1:
+            the_wallet_validation = line.split(",")[0].split('"')[4].split(":")[1]
+            if the_wallet_validation == "true":
+                print("Success wallet validation test ... ")
+                break
+            else:
+                print("Fail wallet validation test ... ")
+                sys.exit(1)

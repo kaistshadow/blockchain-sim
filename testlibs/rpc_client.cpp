@@ -85,3 +85,11 @@ void bitcoin_rpc_request(std::string method, Json::Value params) {
     std::string res = request(req);
     reader.parse(res, json_resp);
 }
+
+void rpc_validateaddress(std::string wallet, char* ipport){
+    Json::Value params;
+    params.clear();
+    params = Json::arrayValue;
+    params.append(wallet);
+    bitcoin_rpc_request("validateaddress",params);
+}

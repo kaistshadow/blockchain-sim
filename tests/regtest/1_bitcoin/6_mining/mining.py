@@ -65,6 +65,9 @@ def main():
     # shadow plugin의 결과 값 뽑아옴.
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
 
+    # wallet test 시작.
+    test_modules.test_walletAddress(simulation_output_file)
+    
     # mining test 시작.
     test_mining(simulation_output_file)
 

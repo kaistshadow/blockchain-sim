@@ -101,6 +101,10 @@ def main():
     complete_node, runtime = test_modules.emul_test_shadow(target_folder_file, runtime, node_id_list)
     
     # # result summary
+
+    # wallet test
+    test_modules.test_walletAddress(simulation_output_file)
+
     summary_result(complete_node, simulation_output_file, runtime)
 
     print("emulation success!!")

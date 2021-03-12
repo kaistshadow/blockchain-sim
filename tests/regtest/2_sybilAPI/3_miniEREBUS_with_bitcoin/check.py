@@ -1,7 +1,7 @@
 import sys
 
-sys.path.append('../..')
-from libraries import test_modules
+sys.path.append('../../../../')
+from testlibs import test_modules
 
 
 def check_miniEREBUS(bitcoin_log, tester_log):
@@ -45,7 +45,7 @@ def main(shadowpath):
     test_modules.subprocess_open('%s topology.xml > output.txt' % shadowpath)
 
     # shadow output 파일 존재 검사.
-    target_folder_file = test_modules.test_shadow_output_file_existence()
+    target_folder_file = test_modules.test_shadow_output_file_existence("regtest")
 
     # shadow output 파일 내용 검사.
     test_modules.test_shadow(target_folder_file, runtime, node_id_list)

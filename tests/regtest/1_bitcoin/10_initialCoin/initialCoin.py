@@ -2,8 +2,8 @@ import os
 from subprocess import check_output
 import argparse
 import sys
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from libraries import test_modules
+sys.path.append("./../../../../")
+from testlibs import test_modules
 
 def test_initialCoin(simulation_output_file):
     f = open(simulation_output_file, "r")

@@ -2,7 +2,7 @@ import sys
 import os
 
 sys.path.append('../../../../')
-from testlibs import test_modules
+from testlibs import test_modules, utils, xml_modules
 
 
 def check_churnout(bitcoin_log, tester_log):
@@ -52,11 +52,11 @@ def main(shadowpath):
     target_folder_xml = test_modules.test_xml_existence("topology.xml")
 
     # 생성된 xml 파일로 부터 runtime, node_id, plugin 들을 뽑아옴.
-    runtime, node_id_list, plugin_list = test_modules.get_xml_info_new(target_folder_xml)
+    runtime, node_id_list, plugin_list = xml_modules.get_xml_info_new(target_folder_xml)
 
     # shadow 실행
     print("shadow running ...")
-    test_modules.subprocess_open('%s topology.xml > output.txt' % shadowpath)
+    utils.subprocess_open('%s topology.xml > output.txt' % shadowpath)
     output_file = path + "/output.txt" 
 
     # shadow output 파일 존재 검사.

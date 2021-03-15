@@ -72,7 +72,7 @@ def main():
     path = os.path.abspath("./")
 
     # xml file 생성
-    test_modules.get_xmlfile(path)
+    tx_mode = test_modules.get_xmlfile(path)
 
     # # xml file 생성 검증
     test_modules.test_xml_existence("output.xml")
@@ -85,20 +85,22 @@ def main():
     test_modules.subprocess_open('shadow output.xml > output.txt')
     exec_shell_cmd('mv output.txt shadow.data')
     
-    # # shadow output file 생성 여부 검증
-    target_folder_file = test_modules.test_shadow_output_file_existence("emulation")
-
     # # xml file에서 plugin, simulation time 정보 추출
     runtime, node_id_list, plugin_list = test_modules.get_xml_info_new("output.xml")
+    output_file = path + "/output.txt" 
+
+    # # shadow output file 생성 여부 검증
+    target_folder_file = test_modules.test_shadow_output_file_existence("emulation", node_id_list)
 
     # # shadow output file이 제대로 생성된지 검증
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
 
-    # # Tx가 제대로 생성된지 검증.
-    test_modules.test_transaction_existence(simulation_output_file[1])
+    if tx_mode == "enable":
+        # # Tx가 제대로 생성된지 검증.
+        test_modules.test_transaction_existence(simulation_output_file[1])
 
     # # shadow output 검증
-    complete_node, runtime = test_modules.emul_test_shadow(target_folder_file, runtime, node_id_list)
+    complete_node, runtime = test_modules.emul_test_shadow(target_folder_file, runtime, node_id_list, output_file)
     
     # # result summary
 

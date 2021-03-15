@@ -70,6 +70,7 @@ def set_plugin_file(node_count, path):
         exec_shell_cmd(the_command)
 
 def get_xmlfile(path):
+    tx_mode = ""
     emulation_start, path_abs = path_filter(path)
     the_command = path_abs + "; python xmlGenerator.py"
     tx_condition_count = 0
@@ -309,6 +310,8 @@ def get_time_form(runtime):
 
     return result
 
+
+# xml parsing error : 플러그인 파일이 없을 때 발생하는 에러로서, shadow error 필터링 기준 중 하나임.
 def filter_fail_shadow_test(output_file):
     f = open(output_file, "r")
     while True:
@@ -365,7 +368,7 @@ def test_shadow(output_file, runtime, node_id_list, shadow_output):
     else:
         pass
 
-def emul_test_shadow(output_file, runtime, node_id_list):
+def emul_test_shadow(output_file, runtime, node_id_list, shadow_output):
     complete_node = []
     f = open(output_file, "r")
     # result_count more than 3 means success.
@@ -395,6 +398,7 @@ def emul_test_shadow(output_file, runtime, node_id_list):
             else:
                 f.close()
                 print("Fail shadow test] - runtime error ...")
+                filter_fail_shadow_test(shadow_output)
                 sys.exit(1)
     f.close()
     print("[Fail shadow test] - plugin does not run ...")
@@ -427,6 +431,8 @@ def test_transaction_count(simulation_output_file):
     f.close()
     return txs_bitcoind
 
+# bitcoin-cli validateaddress call
+# Return information about the given bitcoin address.
 def test_walletAddress(simulation_output_file):
     the_wallet_address = ""
     f = open(simulation_output_file[1], "r")

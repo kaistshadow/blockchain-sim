@@ -4,7 +4,7 @@ import argparse
 import sys
 import time
 sys.path.append('../../')
-from testlibs import test_modules
+from testlibs import test_modules, utils, xml_modules
 
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
@@ -72,21 +72,21 @@ def main():
     path = os.path.abspath("./")
 
     # xml file 생성
-    tx_mode = test_modules.get_xmlfile(path)
+    tx_mode = xml_modules.get_xmlfile(path)
 
     # # xml file 생성 검증
     test_modules.test_xml_existence("output.xml")
 
     # # datadir 설정
-    test_modules.set_plugin_file(1, os.path.abspath("./data"))
+    utils.set_plugin_file(1, os.path.abspath("./data"))
 
     # # shadow 실행
     print("shadow running ... ")
-    test_modules.subprocess_open('shadow output.xml > output.txt')
+    utils.subprocess_open('shadow output.xml > output.txt')
     exec_shell_cmd('mv output.txt shadow.data')
     
     # # xml file에서 plugin, simulation time 정보 추출
-    runtime, node_id_list, plugin_list = test_modules.get_xml_info_new("output.xml")
+    runtime, node_id_list, plugin_list = xml_modules.get_xml_info_new("output.xml")
     output_file = path + "/output.txt" 
 
     # # shadow output file 생성 여부 검증

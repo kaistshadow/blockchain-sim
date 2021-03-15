@@ -3,7 +3,7 @@ from subprocess import check_output
 import argparse
 import sys
 sys.path.append("./../../../../")
-from testlibs import test_modules
+from testlibs import test_modules, utils, xml_modules
 
 # Test process
 # 1. test_xml_existence 
@@ -20,21 +20,21 @@ def main():
     OPT_REGTEST = args.regtest
     
     if OPT_REGTEST:
-        test_modules.get_xmlfile(path)
+        xml_modules.get_xmlfile(path)
 
     # xml 파일 생성 확인
     target_folder_xml = test_modules.test_xml_existence("output.xml")
 
     # 생성된 xml 파일로 부터 runtime, node_id, plugin 들을 뽑아옴.
-    runtime, node_id_list, plugin_list = test_modules.get_xml_info_new(target_folder_xml)
+    runtime, node_id_list, plugin_list = xml_modules.get_xml_info_new(target_folder_xml)
 
     # bitcoind data dir 설정 파일 생성.
-    test_modules.set_plugin_file(len(node_id_list), path)
+    utils.set_plugin_file(len(node_id_list), path)
 
     # shadow 실행
     print("shadow running ...")
     shadow_command = 'shadow output.xml > output.txt'
-    test_modules.subprocess_open(shadow_command)
+    utils.subprocess_open(shadow_command)
     output_file = path + "/output.txt" 
 
     # shadow output 파일 존재 검사.

@@ -5,38 +5,6 @@ import sys
 sys.path.append("./../../../../")
 from testlibs import test_modules, utils, xml_modules
 
-def test_initialCoin(simulation_output_file):
-    f = open(simulation_output_file, "r")
-    block_count = 0
-    
-    for line in f.readlines()[::-1]: 
-        
-        result = line.find("bestblockhash")
-        if result != -1:
-            f.close()
-            split_list = line.split(",")
-            for i in range(0,len(split_list)):
-                result = split_list[i].find("blocks")
-                if result != -1:
-                    block_count = int(split_list[i].split(":")[1])
-                    break
-        if block_count != 0:
-            f.close()
-            break
-            
-    if block_count > 0:
-        print("block_count : %d" %block_count)
-        print("Success InitalCoin test ...")
-        sys.exit(0)
-    else:
-        print("block_count : %d" %block_count)
-        print("Fail InitalCoin test ...")
-        sys.exit(1)
-
-# test process
-# 1. test_xml_existence 
-# 2. shadow output existence test
-# 3. wallet log test
 def main():
 
     # xml 파일이 생성될 위치를 현재위치로 설정
@@ -77,7 +45,7 @@ def main():
     test_modules.test_walletAddress(simulation_output_file)
     
     # Initial coin test 실행.
-    test_initialCoin(simulation_output_file[1])
+    test_modules.test_initialCoin(simulation_output_file[1])
    
 
 if __name__ == '__main__':

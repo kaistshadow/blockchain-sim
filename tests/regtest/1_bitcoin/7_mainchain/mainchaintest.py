@@ -5,39 +5,6 @@ import sys
 sys.path.append("./../../../../")
 from testlibs import test_modules, utils, xml_modules
 
-# Get "bestblockchash" value info using rpc.output_file then check for the same value in bitcoin output log.
-def test_MainChainInfo(shadow_output_file, rpc_output_file):
-    return_count = 0
-    f = open(rpc_output_file , "r")
-    for line in f.readlines()[::-1]:
-        line.rstrip()
-        result = line.find("bestblockhash")
-        if result != -1:
-            line = line.split(",")[3].split(":")[1]
-            genesisHash = line[1:len(line)-1]
-            return_count = 1
-            break
-
-    if return_count == 0:
-        sys.exit(1)
-    if os.path.isfile(shadow_output_file):
-        f = open(shadow_output_file, "r")
-        while True:
-            line = f.readline()
-            if not line: break
-            result = line.find(genesisHash)
-            if result != -1:
-                print("Success MainChain test ...")
-                sys.exit(0)
-    else:
-        print("Fail MainChain test ...")
-        sys.exit(1)
-
-    
-# Test process
-# 1. test_xml_existence 
-# 2. shadow output existence test  
-# 3. Run test_MainChainInfo function
 def main():
 
     # xml 파일이 생성될 위치를 현재위치로 설정
@@ -79,7 +46,7 @@ def main():
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
 
     # mainchain test 시작.
-    test_MainChainInfo(simulation_output_file[0], simulation_output_file[1])
+    test_modules.test_MainChainInfo(simulation_output_file[0], simulation_output_file[1])
     
 
 if __name__ == '__main__':

@@ -1,3 +1,9 @@
+#
+# 2021-03-15
+# created by hong joon
+#
+
+# test 스크립트 작성을 위해 필요한 함수들을 구현해 놓음.
 import os
 from subprocess import check_output
 import argparse
@@ -30,18 +36,7 @@ def remove_tx_plugin(tx_plugin):
     fw.close()
     fr.close()
 
-def renew_xml(tx_mode, target_folder_xml):
-    print(tx_mode)
-    if tx_mode == "disable":
-        remove_tx_plugin(target_folder_xml)
-        target_folder_xml = target_folder_xml[:len(target_folder_xml)-4] + "2.xml"
-        shadow_command = "shadow " + target_folder_xml
-        return shadow_command
-
-    if tx_mode == "enable":  
-        shadow_command = "shadow output.xml"
-        return shadow_command
-
+# Description : blockchain plugin의 data dir를 설정해줘야할 디렉토리로서, 플러그인 개수만큼 제거하고 생성을 해줌.
 def set_plugin_file(node_count, path):
     if(os. path. isdir(path)):
         the_command = "rm -rf data/*"
@@ -71,7 +66,7 @@ def path_filter(path):
         print("Fail setting path ... ")
         sys.exit(1)
 
-
+# Description : shadow output.txt 를 만들기 위한 함수.
 def subprocess_open(command):
     popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     (stdoutdata, stderrdata) = popen.communicate()
@@ -125,3 +120,50 @@ def filter_fail_shadow_test(output_file):
                 print("--------------------------------------------------------------")
                 break
     f.close()
+
+# bitcoin 실행 로그로 부터, port, rpc port, datadir 정보를 가져옴.
+def get_plugin_args(plugin_infos):
+    result_list = []
+    f = open(plugin_infos, "r")
+    while True:
+        line = f.readline()
+        if not line:break
+        result = line.find('plugin="bitcoind"')
+        if result != -1:
+            split_list = line.split("arguments=")
+            break
+    
+    split_list = split_list[1].split(" ")
+    for i in range(0,len(split_list)):
+        result = split_list[i].find("port")
+        if result != -1:
+            result_list.append(split_list[i].split("=")[1])
+        result = split_list[i].find("datadir")
+        if result != -1:
+            result_list.append(split_list[i].split("=")[1])
+
+    return result_list
+
+# bitcoin log로 부터 difficulty 정보를 가져옴.
+def get_difficulty_info(xml_file):
+    count = 0
+    f = open(xml_file, "r")
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("difficulty")
+        if result != -1:
+            split_list = line.split(' ')
+            for i in range(0,len(split_list)):
+                result = split_list[i].find("difficulty")
+                if result != -1:
+                    for i in range(0,len(split_list)):
+                        result = split_list[i].find("difficulty")
+                        if result != -1:
+                            difficulty = split_list[i].split("=")[1]
+                            break
+                    break
+        if count != 0:
+            break
+    f.close()
+    return difficulty[0]

@@ -47,11 +47,11 @@ def main():
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
 
     # wallet test 시작.
-    test_modules.test_walletAddress(simulation_output_file)
+    test_modules.test_walletAddress(simulation_output_file, int(len(plugin_list)/2))
     
     # transaction test 시작.
-    test_modules.test_transaction_existence(simulation_output_file[1])
+    test_modules.test_transaction_existence(simulation_output_file, int(len(plugin_list)/2))
     sys.exit(0)
-    
+
 if __name__ == '__main__':
     main()

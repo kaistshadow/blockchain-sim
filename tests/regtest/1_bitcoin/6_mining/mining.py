@@ -46,10 +46,10 @@ def main():
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
 
     # wallet test 시작.
-    test_modules.test_walletAddress(simulation_output_file)
+    test_modules.test_walletAddress(simulation_output_file, int(len(plugin_list)/2))
     
     # mining test 시작.
-    test_modules.test_mining(simulation_output_file)
+    test_modules.test_mining(simulation_output_file, int(len(plugin_list)/2))
 
 if __name__ == '__main__':
     main()

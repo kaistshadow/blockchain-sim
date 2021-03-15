@@ -45,11 +45,13 @@ def main():
 
     # shadow output 파일 내용 검사.
     test_modules.test_shadow(target_folder_file, runtime, node_id_list, output_file)
+
     # shadow plugin의 결과 값 뽑아옴.
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
 
     # wallet test 시작.
-    test_modules.test_walletAddress(simulation_output_file)
+    test_modules.test_walletAddress(simulation_output_file, int(len(plugin_list)/2))
+    sys.exit(0)
 
 if __name__ == '__main__':
     main()

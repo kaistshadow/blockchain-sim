@@ -46,7 +46,7 @@ def main():
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
 
     # mainchain test 시작.
-    test_modules.test_MainChainInfo(simulation_output_file[0], simulation_output_file[1])
+    test_modules.test_MainChainInfo(simulation_output_file, simulation_output_file, int(len(plugin_list)/2))
     
 
 if __name__ == '__main__':

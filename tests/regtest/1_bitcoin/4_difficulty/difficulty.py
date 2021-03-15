@@ -50,7 +50,7 @@ def main():
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
 
     # difficulty test 시작.
-    test_modules.test_difficulty_compare(simulation_output_file[1], xml_difficulty)
+    test_modules.test_difficulty_compare(simulation_output_file, xml_difficulty, int(len(plugin_list)/2))
 
 if __name__ == '__main__':
     main()

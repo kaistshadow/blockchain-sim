@@ -105,7 +105,7 @@ def main():
     # # result summary
 
     # wallet test
-    test_modules.test_walletAddress(simulation_output_file)
+    test_modules.test_walletAddress(simulation_output_file, int(len(plugin_list)/2))
 
     summary_result(complete_node, simulation_output_file, runtime)
 

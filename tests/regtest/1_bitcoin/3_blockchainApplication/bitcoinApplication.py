@@ -46,9 +46,9 @@ def main():
 
     # shadow plugin의 결과 값 뽑아옴.
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
-
+    
     # bitcoin application test 실행.
-    test_modules.test_bitcoinApplication(simulation_output_file ,args_standard)
+    test_modules.test_bitcoinApplication(simulation_output_file ,args_standard, len(node_id_list)/2)
 
 if __name__ == '__main__':
     main()

@@ -43,12 +43,13 @@ def main():
     # shadow 실행
     print("shadow running ...")
     test_modules.subprocess_open('shadow output2.xml > output.txt')
+    output_file = path + "/output.txt" 
 
     # shadow output 파일 존재 검사.
-    target_folder_file = test_modules.test_shadow_output_file_existence("regtest")
+    target_folder_file = test_modules.test_shadow_output_file_existence("regtest", node_id_list)
 
     # shadow output 파일 내용 검사.
-    test_modules.test_shadow(target_folder_file, runtime, node_id_list)
+    test_modules.test_shadow(target_folder_file, runtime, node_id_list, output_file)
 
     # 성공하면
     sys.exit(0)

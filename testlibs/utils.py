@@ -167,3 +167,19 @@ def get_difficulty_info(xml_file):
             break
     f.close()
     return difficulty[0]
+
+# 시뮬레이션된 노드들의 ip address 가져오기
+def get_address_list(xml_file):
+    ip_list = []
+    f = open(xml_file, "r")
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("iphint")
+        if result != -1:
+            IP_address = line.split("iphint")[1].split("=")[1].split(">")[0]
+            ip_list.append(IP_address[1:len(IP_address)-1])
+    f.close()
+    return ip_list
+
+        

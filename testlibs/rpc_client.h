@@ -34,5 +34,4 @@ std::string request(std::string req);
 int getTxCount(std::string str) ;
 void bitcoin_rpc_request(std::string method, Json::Value params) ;
 void rpc_validateaddress(std::string wallet, char* ipport);
-
 #endif

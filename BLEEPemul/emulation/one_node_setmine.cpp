@@ -29,6 +29,12 @@ void rpc_getmempoolinfo(){
     bitcoin_rpc_request("getmempoolinfo",params);
 }
 
+void rpc_getpeerinfo(){
+    Json::Value params;
+    params.clear();
+    bitcoin_rpc_request("getpeerinfo",params);
+}
+
 int main(int argc, char* argv[]) {
     // init
     std::cout<<"start client \n";
@@ -53,5 +59,7 @@ int main(int argc, char* argv[]) {
     sleep(atoi(argv[2]));
     rpc_getmempoolinfo();
     rpc_getblockchaininfo();
+    rpc_getpeerinfo();
+    
     return 0;
 }

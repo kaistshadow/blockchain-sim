@@ -1,3 +1,7 @@
+#
+# 2021-03-15
+# created by hong joon
+#
 import os
 from subprocess import check_output
 import argparse
@@ -281,7 +285,7 @@ def test_mining(shadow_output_file, node_count):
             result = line.find("height=1")
             if result != -1:
                 condition_count += 1
-                
+
     test_result(condition_count, node_count, "mining test")
     sys.exit(0)
 
@@ -435,3 +439,43 @@ def test_initialCoin(simulation_output_file):
     else:
         print("Fail InitalCoin test ...")
         sys.exit(1)
+
+# param1 : shadow plugin output log
+# param2 : plugin ip list
+# 설명 : 시뮬레이션한 노드들의 shadow plugin output log 중 "connection from" 로그를 기준으로 connection 여부를 필터링함.
+#       필터링된 로그들에 ip address가 일치하는지 확인하며, 일치하지 않을 경우 sys.exit(1) 종료. 
+def FF01_test_peerConnection(simulation_output_file, ip_list):
+    result_list = []
+    final_result_list = []
+    for i in range(0, len(ip_list)):
+        conncet_list = []
+        f = open(simulation_output_file[i], "r")
+        while True:
+            line = f.readline()
+            if not line: break
+            result = line.find('connection from')
+            if result != -1:
+                conncet_list.append(line)
+        result_list.append(conncet_list)
+        f.close()
+    
+    for i in range(0,len(result_list)):
+        the_count = 0
+        for j in range(0,len(result_list[i])):
+            for z in range(0, len(ip_list)):
+                result = result_list[i][j].find(ip_list[z])
+                if result != -1:
+                    the_count += 1
+                    break
+
+        if the_count == len(ip_list)-1:
+            continue
+        else:
+            print(the_count)
+            print(len(ip_list))
+            print("Fail peer connection test ...")
+            sys.exit(1)
+            break 
+
+    print("Success peer connection test ...")
+            

@@ -11,8 +11,8 @@ def main():
     # xml 파일이 생성될 위치를 현재위치로 설정
     path = os.path.abspath("./")
 
-    parser = argparse.ArgumentParser(description='Script for installation and simulation')
-    parser.add_argument("--regtest", action="store_true", help="Install the shadow simulator and BLEEP")
+    parser = argparse.ArgumentParser(description='Script to reset xml file')
+    parser.add_argument("--regtest", action="store_true", help="Make xml file.")
     args = parser.parse_args()
     OPT_REGTEST = args.regtest
     
@@ -50,7 +50,7 @@ def main():
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
 
     # difficulty test 시작.
-    test_modules.test_difficulty_compare(simulation_output_file[1], xml_difficulty)
+    test_modules.test_difficulty_compare(simulation_output_file, xml_difficulty, int(len(plugin_list)/2))
 
 if __name__ == '__main__':
     main()

@@ -19,8 +19,8 @@ def main():
 
     # xml 파일 생성
 
-    parser = argparse.ArgumentParser(description='Script for installation and simulation')
-    parser.add_argument("--regtest", action="store_true", help="Install the shadow simulator and BLEEP")
+    parser = argparse.ArgumentParser(description='Script to reset xml file')
+    parser.add_argument("--regtest", action="store_true", help="Make xml file.")
     args = parser.parse_args()
     OPT_REGTEST = args.regtest
     
@@ -32,7 +32,6 @@ def main():
 
     # 생성된 xml 파일로 부터 runtime, node_id, plugin 들을 뽑아옴.
     runtime, node_id_list, plugin_list = xml_modules.get_xml_info_new(target_folder_xml)
-    
     # 지금 예제는 transaction injector를 사용 안하기에 별도의 xml파일을 만들어줌.
     # 기존 xml에는 transaction.so에 대한 정의가 있어서, 이를 삭제안해주면 shadow가 실행이 안됨.
     utils.set_plugin_file(len(node_id_list), path)

@@ -10,8 +10,8 @@ def main():
     # xml 파일이 생성될 위치를 현재위치로 설정
     path = os.path.abspath("./")
 
-    parser = argparse.ArgumentParser(description='Script for installation and simulation')
-    parser.add_argument("--regtest", action="store_true", help="Install the shadow simulator and BLEEP")
+    parser = argparse.ArgumentParser(description='Script to reset xml file')
+    parser.add_argument("--regtest", action="store_true", help="Make xml file.")
     args = parser.parse_args()
     OPT_REGTEST = args.regtest
     
@@ -46,10 +46,10 @@ def main():
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
 
     # wallet test 시작.
-    test_modules.test_walletAddress(simulation_output_file)
+    test_modules.test_walletAddress(simulation_output_file, int(len(plugin_list)/2))
     
     # mining test 시작.
-    test_modules.test_mining(simulation_output_file)
+    test_modules.test_mining(simulation_output_file, int(len(plugin_list)/2))
 
 if __name__ == '__main__':
     main()

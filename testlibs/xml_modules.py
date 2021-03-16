@@ -20,9 +20,10 @@ def exec_shell_cmd(cmd):
 def get_xmlfile(path):
     tx_mode = ""
     emulation_start, path_abs = utils.path_filter(path)
+    node_count = 0
     the_command = path_abs + "; python xmlGenerator.py"
     tx_condition_count = 0
-    condition_count = 0
+    condition_count = -1
     tx_injector_file = 0
     tx_so_file = path + "/transaction.so"
     xml_command = ""
@@ -35,6 +36,19 @@ def get_xmlfile(path):
             tx_injector_file = 2
 
     while(1):
+        
+        if condition_count == -1:
+            try:
+                node_count = int(input("Input node count (only integer more than 1) : "))
+                if (node_count < 0) | (node_count == 0):
+                    print("Only input integer ... (more than 1)")
+                else:
+                    node_count = str(node_count)
+                    condition_count = 0
+            except:
+                print("Only input integer ... (more than 1) ")
+                continue
+            
         if condition_count == 0:
             try: 
                 sim_time = input("Input simulation time (sec) : ")    
@@ -79,7 +93,7 @@ def get_xmlfile(path):
                         continue
                     else:
                         tx_condition_count = 1
-                    xml_command = the_command + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + path
+                    xml_command = the_command + " " + node_count + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + path
                     break
                     
                 else:
@@ -127,7 +141,7 @@ def get_xmlfile(path):
                 try:
                     tx_sec = int(input("Input transaction interval (sec) : "))
                     if tx_sec > 0:
-                        xml_command = the_command + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
+                        xml_command = the_command + " " + node_count + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
                         break
                     else:
                         print("Must input only number ! ")
@@ -136,8 +150,8 @@ def get_xmlfile(path):
                     print("Must input only number ! ")
                     continue
 
-
     exec_shell_cmd(xml_command)
+    print("-----------------------------------------------------------------------------------------------------------------------------")
     return tx_mode
 
 # Get node_id, kill time, plugins in xml file

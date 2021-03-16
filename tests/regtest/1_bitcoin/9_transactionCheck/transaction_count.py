@@ -9,9 +9,8 @@ def main():
 
     # xml 파일이 생성될 위치를 현재위치로 설정
     path = os.path.abspath("./")
-
-    parser = argparse.ArgumentParser(description='Script for installation and simulation')
-    parser.add_argument("--regtest", action="store_true", help="Install the shadow simulator and BLEEP")
+    parser = argparse.ArgumentParser(description='Script to reset xml file')
+    parser.add_argument("--regtest", action="store_true", help="Make xml file.")
     args = parser.parse_args()
     OPT_REGTEST = args.regtest
     

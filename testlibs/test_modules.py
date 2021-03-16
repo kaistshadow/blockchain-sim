@@ -161,13 +161,35 @@ def test_file_existence(node_id_list, plugin_list):
         sys.exit(1)
     path = os.path.abspath(".")
     target_folder_list = []
+    target_error_list = []
+    error_list = []
     for i in range(0,len(node_id_list)):
         target_path = path + "/shadow.data/hosts/" + node_id_list[i] + "/stdout-" + node_id_list[i] + "." + plugin_list[i] + ".1000.log"
         target_folder_list.append(target_path)
+        target_path = path + "/shadow.data/hosts/" + node_id_list[i] + "/stderr-" + node_id_list[i] + "." + plugin_list[i] + ".1000.log"
+        target_error_list.append(target_path)
+    
     for i in range(0,len(target_folder_list)):
         if os.path.isfile(target_folder_list[i]) == False:
-            print("Fail not existence file - %s" %(target_folder_list[i]))
+            print("Fail not existence shadow plugin output file - %s" %(target_folder_list[i]))
             sys.exit(1)
+        # 에러 파일이 존재하면 그 파일의 path를 error_list에 append.
+        if os.path.isfile(target_error_list[i]) == True:
+            error_list.append(target_error_list[i])
+
+    # 에러 파일이 존재하는 경우
+    if len(error_list) != 0:
+        print("Fail shadow plugin running ...")
+        print("-------------- shadow plugin error contents --------------")
+        for i in range(0,len(error_list)):
+            f = open(error_list[i], "r")
+            while True:
+                line = f.readline().strip()
+                print(line)
+                if not line: break
+            f.close()
+        sys.exit(1)
+
     print("Success blockchain test output file existence ...")
     return target_folder_list
 

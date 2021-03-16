@@ -76,18 +76,18 @@ def main():
 
     # # xml file 생성 검증
     test_modules.test_xml_existence("output.xml")
+ 
+    # # xml file에서 plugin, simulation time 정보 추출
+    runtime, node_id_list, plugin_list = xml_modules.get_xml_info_new("output.xml")
+    output_file = path + "/output.txt" 
 
     # # datadir 설정
-    utils.set_plugin_file(1, os.path.abspath("./data"))
+    utils.set_plugin_file(len(node_id_list), os.path.abspath("./data"))
 
     # # shadow 실행
     print("shadow running ... ")
     utils.subprocess_open('shadow output.xml > output.txt')
     exec_shell_cmd('mv output.txt shadow.data')
-    
-    # # xml file에서 plugin, simulation time 정보 추출
-    runtime, node_id_list, plugin_list = xml_modules.get_xml_info_new("output.xml")
-    output_file = path + "/output.txt" 
 
     # # shadow output file 생성 여부 검증
     target_folder_file = test_modules.test_shadow_output_file_existence("emulation", node_id_list)
@@ -97,13 +97,11 @@ def main():
 
     if tx_mode == "enable":
         # # Tx가 제대로 생성된지 검증.
-        test_modules.test_transaction_existence(simulation_output_file[1])
+        test_modules.test_transaction_existence(simulation_output_file, int(len(plugin_list)/2))
 
     # # shadow output 검증
     complete_node, runtime = test_modules.emul_test_shadow(target_folder_file, runtime, node_id_list, output_file)
     
-    # # result summary
-
     # wallet test
     test_modules.test_walletAddress(simulation_output_file, int(len(plugin_list)/2))
 

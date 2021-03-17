@@ -55,9 +55,6 @@ def main():
     # result 
     test_result.summary_result(complete_node, simulation_output_file, runtime)
 
-    # peer conncetion test
-    test_modules.FF01_test_peerConnection(simulation_output_file, IP_list)
-
     print("emulation success!!")
     sys.exit(0)
 

@@ -27,7 +27,9 @@ def test_result(condition_count, node_count, test_name):
         print("test result : %d/%d " %(condition_count,node_count))
         sys.exit(1)
 
-# Regression test-01 - xmlGenerate test
+# --------------------------------------------------------------------------------------------------------------
+#                                   Regression test-01 - xmlGenerate test        
+# --------------------------------------------------------------------------------------------------------------
 # xml existence test - If there is no file in the path, return fail
 def test_xml_existence(output):
     path = os.path.abspath(".")
@@ -39,7 +41,9 @@ def test_xml_existence(output):
         print("Fail xml existence test ...")
         sys.exit(1)
 
-# Regression test-02-1 - shadow test         
+# --------------------------------------------------------------------------------------------------------------
+#                                   Regression test-02-1 - shadow test         
+# --------------------------------------------------------------------------------------------------------------
 def test_shadow_output_file_existence(condition_number, node_id_list):
     # plugin output check
     for i in range(0,len(node_id_list)):
@@ -61,7 +65,9 @@ def test_shadow_output_file_existence(condition_number, node_id_list):
     else:
         print("Fail not existence shadow output file ... ")
 
-# Regression test-02-2 - shadow test
+# --------------------------------------------------------------------------------------------------------------
+#                                   Regression test-02-2 - shadow test
+# --------------------------------------------------------------------------------------------------------------
 # test1 : whether runtime setting worked or not 
 # test2 : whether plugin(node_id) worked or not
 def test_shadow(output_file, runtime, node_id_list, shadow_output):
@@ -117,8 +123,9 @@ def test_shadow(output_file, runtime, node_id_list, shadow_output):
             sys.exit(1)
         pass
 
-
-# Regression test-02-2 - shadow test (emulation ver)
+# --------------------------------------------------------------------------------------------------------------
+#                                   Regression test-02-2 - shadow test (emulation ver)
+# --------------------------------------------------------------------------------------------------------------
 # test1 : whether runtime setting worked or not 
 # test2 : whether plugin(node_id) worked or not'
 def emul_test_shadow(output_file, runtime, node_id_list, shadow_output):
@@ -157,8 +164,9 @@ def emul_test_shadow(output_file, runtime, node_id_list, shadow_output):
     print("[Fail shadow test] - plugin does not run ...")
     sys.exit(1)
 
-
-# Regression test-03-1 - bitcoinApplication file existence test.
+# --------------------------------------------------------------------------------------------------------------
+#                                   Regression test-03-1 - bitcoinApplication file existence test.
+# --------------------------------------------------------------------------------------------------------------
 # After shadow, check output data
 def test_file_existence(node_id_list, plugin_list):
     if len(node_id_list) != len(plugin_list):
@@ -197,7 +205,9 @@ def test_file_existence(node_id_list, plugin_list):
     print("Success blockchain test output file existence ...")
     return target_folder_list
 
-# Regression test-03-2 - bitcoinApplication test
+# --------------------------------------------------------------------------------------------------------------
+#                                   Regression test-03-2 - bitcoinApplication test
+# --------------------------------------------------------------------------------------------------------------
 # This test compares the shadow result log with standard args, 
 # and succeeds if all of the args are in the shadow result log.    
 def test_bitcoinApplication(output_file, args_standard, node_count):
@@ -219,7 +229,9 @@ def test_bitcoinApplication(output_file, args_standard, node_count):
     test_result(condition_count, node_count, "test_bitcoinApplication")
     sys.exit(0)
 
-# Regression test-04 - bitcoin difficulty test
+# --------------------------------------------------------------------------------------------------------------
+#                                   Regression test-04 - bitcoin difficulty test
+# --------------------------------------------------------------------------------------------------------------
 # 설정한 난이도와 시뮬레이션된 비트코인 난이도가 일치한지 테스트
 def test_difficulty_compare(bitcoin_log, xml_difficulty, node_count):
     condition_count = 0
@@ -251,7 +263,9 @@ def test_difficulty_compare(bitcoin_log, xml_difficulty, node_count):
     test_result(condition_count, node_count, "test_difficulty_compare test")
     sys.exit(0)
 
-# Regression test-05 - wallet address test
+# --------------------------------------------------------------------------------------------------------------
+#                                   Regression test-05 - wallet address test
+# --------------------------------------------------------------------------------------------------------------
 # bitcoin-cli validateaddress call
 # Return information about the given bitcoin address.
 def test_walletAddress(simulation_output_file, node_count):
@@ -270,8 +284,9 @@ def test_walletAddress(simulation_output_file, node_count):
 
     test_result(condition_count, node_count, "test_walletAddress ")
 
-
-# Regression test-06 - mining test
+# --------------------------------------------------------------------------------------------------------------
+#                                   Regression test-06 - mining test
+# --------------------------------------------------------------------------------------------------------------
 # "height>0" means mining is activated and works good.
 # If "height>0" is found at bitcoin log, mining works. 
 def test_mining(shadow_output_file, node_count):
@@ -285,11 +300,14 @@ def test_mining(shadow_output_file, node_count):
             result = line.find("height=1")
             if result != -1:
                 condition_count += 1
+                break
 
     test_result(condition_count, node_count, "mining test")
     sys.exit(0)
 
-# Regression test-07 - bitcoin mainchain test
+# --------------------------------------------------------------------------------------------------------------
+#                           Regression test-07 - bitcoin mainchain test
+# --------------------------------------------------------------------------------------------------------------
 # Get "bestblockchash" value info using rpc.output_file then check for the same value in bitcoin output log.
 def test_MainChainInfo(shadow_output_file, rpc_output_file, node_count):
     condition_count = 0
@@ -315,8 +333,9 @@ def test_MainChainInfo(shadow_output_file, rpc_output_file, node_count):
     test_result(condition_count, node_count, "mainchain test")
     sys.exit(0)
 
-
-# Regression test-08 - transaction test
+# --------------------------------------------------------------------------------------------------------------
+#                           Regression test-08 - transaction test
+# --------------------------------------------------------------------------------------------------------------
 # If rpc output file has error log, the transaction is not created properlys
 def test_transaction_existence(simulation_output_file, node_count):
     condition_count = 0
@@ -334,8 +353,9 @@ def test_transaction_existence(simulation_output_file, node_count):
 
     test_result(condition_count, node_count, "transaction test")
 
-
-# Regression test-09 - transaction count test (emulation ver)
+# --------------------------------------------------------------------------------------------------------------
+#                           Regression test-09 - transaction count test (emulation ver)
+# --------------------------------------------------------------------------------------------------------------
 # 설정한 트랜잭션의 개수와 생성되 트랜잭션의 개수를 비교하는 테스트
 def test_transaction_count(simulation_output_file):
     txs_bitcoind = 0
@@ -359,7 +379,9 @@ def test_transaction_count(simulation_output_file):
     f.close()
     return txs_bitcoind
 
-# Regression test-09 - transaction count test (regtest ver)
+# --------------------------------------------------------------------------------------------------------------
+#                           Regression test-09 - transaction count test (regtest ver)
+# --------------------------------------------------------------------------------------------------------------
 # count "sendtoaddress" rpc request in bitcoin log and get transaction counts in tx injector log.
 # If the two are the same, true
 def test_transaction_count_regtest(simulation_output_file, node_count):
@@ -412,7 +434,9 @@ def test_transaction_count_regtest(simulation_output_file, node_count):
 
     test_result(condition_count, node_count, "transaction count test")
 
-# Regression test-10 - initial coin test 
+# --------------------------------------------------------------------------------------------------------------
+#                                       Regression test-10 - initial coin test 
+# --------------------------------------------------------------------------------------------------------------
 # initial coin이 생성된지 확인하기 위한 테스트.
 def test_initialCoin(simulation_output_file):
     f = open(simulation_output_file, "r")
@@ -440,36 +464,28 @@ def test_initialCoin(simulation_output_file):
         print("Fail InitalCoin test ...")
         sys.exit(1)
 
-def FF01_test_peerConnection(simulation_output_file, ip_list):
-    node_peerconnection_list = []
-    for i in range(0,len(ip_list)):
-        f = open(simulation_output_file[len(ip_list) + i], "r")
-        peer_detail_list = []
-        while True:
-            line = f.readline()
-            if not line: break
-            result = line.find("addrlocal")
-            if result != -1:
-                peer_detail_list = line.split("id")
-                node_peerconnection_list.append(peer_detail_list)  
-        f.close()
-    
-    final_list = []
-    for i in range(0,len(ip_list)):
-        f = open(simulation_output_file[len(ip_list) + i], "r")
-        result_list = []
-        while True:
-            line = f.readline()
-            if not line: break
-            result = line.find("addrlocal")
-            if result != -1:
-                for j in range(0,len(ip_list)):
-                    if i == j:
-                        continue
-                    result = line.find(ip_list[j])
-                    if result != -1:
-                        result_list.append(ip_list[j])
-                final_list.append(result_list)
-        f.close()
-        
-    return final_list
+# --------------------------------------------------------------------------------------------------------------
+#                                       Regression test-11 - peer connection test
+# --------------------------------------------------------------------------------------------------------------
+# bitcoin 기준으로 테스트를 한다고 할 경우, xml에 "addnode" 플래그 값으로 connection할 peer를 설정을 해주고, 설정해준 ip주소와
+# "getpeerinfo"를 통해 시뮬레이션 상에서 connection된 peer ip와 일치하는지 확인하는 테스트. 
+def test_peer_connection(plugin_output_files, IP_list, xml_file):
+    addnode_list = utils.get_addnode_list(IP_list, xml_file)
+    getpeerinfo_list = utils.get_peerinfo(plugin_output_files, IP_list)
+    result_count = 0
+    con_count = 0
+
+    for i in range(0,len(addnode_list)):
+        for j in range(0,len(addnode_list[i])):
+            if addnode_list[i][j] in getpeerinfo_list[i]:
+                con_count += 1
+        if len(addnode_list[i]) == con_count:
+            result_count += 1
+        con_count = 0
+
+    if result_count == len(addnode_list):
+        print("Success peer connection test ...")
+        sys.exit(0)
+    else:
+        print("fail peer connection test ...")
+        sys.exit(1)

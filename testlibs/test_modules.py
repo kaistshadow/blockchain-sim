@@ -440,42 +440,36 @@ def test_initialCoin(simulation_output_file):
         print("Fail InitalCoin test ...")
         sys.exit(1)
 
-# param1 : shadow plugin output log
-# param2 : plugin ip list
-# 설명 : 시뮬레이션한 노드들의 shadow plugin output log 중 "connection from" 로그를 기준으로 connection 여부를 필터링함.
-#       필터링된 로그들에 ip address가 일치하는지 확인하며, 일치하지 않을 경우 sys.exit(1) 종료. 
 def FF01_test_peerConnection(simulation_output_file, ip_list):
-    result_list = []
-    final_result_list = []
-    for i in range(0, len(ip_list)):
-        conncet_list = []
-        f = open(simulation_output_file[i], "r")
+    node_peerconnection_list = []
+    for i in range(0,len(ip_list)):
+        f = open(simulation_output_file[len(ip_list) + i], "r")
+        peer_detail_list = []
         while True:
             line = f.readline()
             if not line: break
-            result = line.find('connection from')
+            result = line.find("addrlocal")
             if result != -1:
-                conncet_list.append(line)
-        result_list.append(conncet_list)
+                peer_detail_list = line.split("id")
+                node_peerconnection_list.append(peer_detail_list)  
         f.close()
     
-    for i in range(0,len(result_list)):
-        the_count = 0
-        for j in range(0,len(result_list[i])):
-            for z in range(0, len(ip_list)):
-                result = result_list[i][j].find(ip_list[z])
-                if result != -1:
-                    the_count += 1
-                    break
-
-        if the_count == len(ip_list)-1:
-            continue
-        else:
-            print(the_count)
-            print(len(ip_list))
-            print("Fail peer connection test ...")
-            sys.exit(1)
-            break 
-
-    print("Success peer connection test ...")
-            
+    final_list = []
+    for i in range(0,len(ip_list)):
+        f = open(simulation_output_file[len(ip_list) + i], "r")
+        result_list = []
+        while True:
+            line = f.readline()
+            if not line: break
+            result = line.find("addrlocal")
+            if result != -1:
+                for j in range(0,len(ip_list)):
+                    if i == j:
+                        continue
+                    result = line.find(ip_list[j])
+                    if result != -1:
+                        result_list.append(ip_list[j])
+                final_list.append(result_list)
+        f.close()
+        
+    return final_list

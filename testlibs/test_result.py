@@ -7,7 +7,7 @@ import subprocess
 import argparse
 import sys
 import time
-from testlibs import test_modules
+from testlibs import test_modules, utils
 
 def count_block(node_output_file):
     block_count = 0
@@ -40,7 +40,10 @@ def get_blockHash_list(node_output_file):
         result = line.find("UpdateTip")
         if result != -1:
             block_hash_list.append(line.split(" ")[3].split("=")[1])
+                        
     f.close()
+    set_list = set(block_hash_list)
+    block_hash_list = list(set_list)
     return block_hash_list
 
 def summary_result(node_list, node_output_file, sim_time):
@@ -65,23 +68,32 @@ def summary_result(node_list, node_output_file, sim_time):
         last_blockHash_list.append(get_last_blockHash(node_output_file[z]))
         f.write("6. 생성된 트랜잭션 개수 : %d\n" %txs)
         f.write("7. TPS : %s\n" %(txs/int(sim_time)))
+        filter_duplicate_value = set(last_blockHash_list)
+        last_blockHash_list = list(filter_duplicate_value)
+        filter_duplicate_value = set(block_count_list)
+        block_count_list = list(filter_duplicate_value)
+        # n개의 노드의 output 데이터들 담은 list에 중복 제거를 통해 list에 담긴 값이 1개면, 동기화가 잘 이루어졌다는 상황.
+        if 1 == len(last_blockHash_list):
+            f.write("8. Last block hash match rate : %d/%d\n" %(len(node_list),len(node_list)))
+        else:
+            f.write("8. Last block hash match rate : %d/%d\n" %(len(last_blockHash_list), len(node_list)))
+
         f.write("---------------------------------------------------------------------------------\n")
-        f.write("8. Blockhash list\n")
+        f.write("9. Blockhash list\n")
         block_hash_list = get_blockHash_list(node_output_file[z])
         for i in range(0,len(block_hash_list)):
-            f.write("%d blockhash : %s\n" %((i+1), block_hash_list[i]))
+            f.write("\t9-%d blockhash : %s\n" %((i+1), block_hash_list[i]))
         f.close()
     
-    path = "./shadow.data/total_summary.txt"
+    path = "./shadow.data/peer_connection_result.txt"
     f = open(path, "w")
-    filter_duplicate_value = set(last_blockHash_list)
-    last_blockHash_list = list(filter_duplicate_value)
-    filter_duplicate_value = set(block_count_list)
-    block_count_list = list(filter_duplicate_value)
-    f.write("------- Total summary --------\n")
-    if 1 == len(last_blockHash_list):
-        f.write("Last block hash match rate : %d/%d" %(len(node_list),len(node_list)))
-    else:
-        f.write("Last block hash match rate : %d/%d" %(len(last_blockHash_list), len(node_list)))
-    print(block_count_list)
+    IP_list = utils.get_address_list("output.xml")
+    peer_connection_result = test_modules.FF01_test_peerConnection(node_output_file, IP_list)
+
+    f.write("peer connection status : \n\n")
+    for i in range(0,len(peer_connection_result)):
+        f.write("\t node : %s  ---------- connection match rate : %d/%d \n" %(IP_list[i], len(peer_connection_result[i]), len(IP_list)-1))
+        for j in range(0,len(peer_connection_result[i])):
+            f.write("\t\t\t - %s \n" %peer_connection_result[i][j])
     f.close()
+

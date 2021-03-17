@@ -39,7 +39,7 @@ def setup_multiple_node_xml(node_num, simultime, bool_, algorithm, difficulty):
         node_id = "client%d" % (i)
         node = ET.SubElement(shadow, "node", id=node_id)
         time = str(5)
-        argument = "%d.%d.0.1:11111 %d " % (i/256 + 1, i%256, (simultime-6))
+        argument = "%d.%d.0.1:11111 %d " % (i/256 + 1, i%256, (simultime-7))
         ET.SubElement(node,"application", plugin="client", time=time, arguments=argument)
 
     if bool_ == True:

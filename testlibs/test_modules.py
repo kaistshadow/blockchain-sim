@@ -1,3 +1,7 @@
+#
+# 2021-03-15
+# created by hong joon
+#
 import os
 from subprocess import check_output
 import argparse
@@ -281,7 +285,7 @@ def test_mining(shadow_output_file, node_count):
             result = line.find("height=1")
             if result != -1:
                 condition_count += 1
-                
+
     test_result(condition_count, node_count, "mining test")
     sys.exit(0)
 
@@ -435,3 +439,37 @@ def test_initialCoin(simulation_output_file):
     else:
         print("Fail InitalCoin test ...")
         sys.exit(1)
+
+def FF01_test_peerConnection(simulation_output_file, ip_list):
+    node_peerconnection_list = []
+    for i in range(0,len(ip_list)):
+        f = open(simulation_output_file[len(ip_list) + i], "r")
+        peer_detail_list = []
+        while True:
+            line = f.readline()
+            if not line: break
+            result = line.find("addrlocal")
+            if result != -1:
+                peer_detail_list = line.split("id")
+                node_peerconnection_list.append(peer_detail_list)  
+        f.close()
+    
+    final_list = []
+    for i in range(0,len(ip_list)):
+        f = open(simulation_output_file[len(ip_list) + i], "r")
+        result_list = []
+        while True:
+            line = f.readline()
+            if not line: break
+            result = line.find("addrlocal")
+            if result != -1:
+                for j in range(0,len(ip_list)):
+                    if i == j:
+                        continue
+                    result = line.find(ip_list[j])
+                    if result != -1:
+                        result_list.append(ip_list[j])
+                final_list.append(result_list)
+        f.close()
+        
+    return final_list

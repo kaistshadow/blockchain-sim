@@ -181,5 +181,49 @@ def get_address_list(xml_file):
             ip_list.append(IP_address[1:len(IP_address)-1])
     f.close()
     return ip_list
-
         
+# xml 파일에서 플러그인마다 peer connection을 위해 addnode로 명시된 ip 주소들을 리스트 형식으로 뽑아옴.
+def get_addnode_list(IP_list, xml_file):
+    add_node_list = []
+    f = open(xml_file, "r")
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("addnode")
+        if result != -1:
+            split_list = line.split(" ")
+            target_list = []
+            for i in range(0,len(split_list)):
+                result = split_list[i].find("addnode")
+                if result != -1:
+                    print(split_list[i])
+                    mapping_ip = split_list[i].split("=")[1].split(":")[0]
+                    target_list.append(mapping_ip)
+                    
+            add_node_list.append(target_list)        
+        
+    
+    f.close()
+    return add_node_list
+
+# plugin-client output 파일에서 "getpeerinfo" rpc response 값에서 각 노드마다 peer 들을 list를 통해 가져오기. (노드 순서 == 리스트 인덱스 순서)
+def get_peerinfo(simulation_output_file, IP_list):
+    final_list = []
+    for i in range(0,len(IP_list)):
+        f = open(simulation_output_file[len(IP_list) + i], "r")
+        result_list = []
+        while True:
+            line = f.readline()
+            if not line: break
+            result = line.find("addrlocal")
+            if result != -1:
+                for j in range(0,len(IP_list)):
+                    if i == j:
+                        continue
+                    result = line.find(IP_list[j])
+                    if result != -1:
+                        result_list.append(IP_list[j])
+                final_list.append(result_list)
+        f.close()
+
+    return final_list

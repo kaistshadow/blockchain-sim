@@ -16,7 +16,7 @@ def main():
     path = os.path.abspath("./")
 
     # xml file 생성
-    tx_mode = xml_modules.get_xmlfile(path)
+    tx_mode, algo = xml_modules.get_xmlfile(path)
 
     # # xml file 생성 검증
     test_modules.test_xml_existence("output.xml")
@@ -54,7 +54,7 @@ def main():
 
     # result 
     output_txt = path + "/shadow.data/output.txt"
-    test_result.summary_result(complete_node, simulation_output_file, runtime, output_txt)
+    test_result.summary_result(complete_node, simulation_output_file, runtime, output_txt, algo)
 
     print("emulation success!!")
     sys.exit(0)

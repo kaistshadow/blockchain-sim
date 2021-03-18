@@ -1,3 +1,7 @@
+#
+# 2021-03-18
+# created by hong joon
+#
 import os
 from subprocess import check_output
 import argparse
@@ -49,6 +53,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+    
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
         print("error while executing '%s'" % cmd)

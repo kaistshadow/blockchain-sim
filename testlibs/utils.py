@@ -227,3 +227,14 @@ def get_peerinfo(simulation_output_file, IP_list):
         f.close()
 
     return final_list
+
+def get_runtime_shadow(output_txt):
+    run_time = ""
+    f = open(output_txt, "r")
+    for line in f.readlines()[::-1]:
+        result = line.find("run time was")
+        if result != -1:
+            run_time = line.split(" ")[16]
+            break
+    f.close()
+    return run_time

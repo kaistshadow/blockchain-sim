@@ -53,7 +53,8 @@ def main():
     test_modules.test_walletAddress(simulation_output_file, int(len(plugin_list)/2))
 
     # result 
-    test_result.summary_result(complete_node, simulation_output_file, runtime)
+    output_txt = path + "/shadow.data/output.txt"
+    test_result.summary_result(complete_node, simulation_output_file, runtime, output_txt)
 
     print("emulation success!!")
     sys.exit(0)

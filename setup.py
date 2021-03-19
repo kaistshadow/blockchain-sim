@@ -147,9 +147,9 @@ if __name__ == '__main__':
         process_ENV()
     
     if OPT_GIT:
-         # cloning shadow repository (submodule)
-         exec_shell_cmd("git submodule update --init --recursive")
-         prepare_shadow()
+        # cloning shadow repository (submodule)
+        exec_shell_cmd("git submodule update --init --recursive")
+        prepare_shadow()
         prepare_shadow_dependencies()
         ### Until the complete tests are done, let's exclude following external modules from git all build
 

@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <string>
 #include <jsoncpp/json/json.h>
-#include "../../testlibs/rpc_client.h"
+#include "../../../../testlibs/rpc_client.h"
 
 void rpc_generatetoaddress(std::string wallet, char* ipport) {
     Json::Value params;
@@ -35,6 +35,7 @@ void rpc_getpeerinfo(){
     bitcoin_rpc_request("getpeerinfo",params);
 }
 
+
 int main(int argc, char* argv[]) {
     // init
     std::cout<<"start client \n";
@@ -50,16 +51,14 @@ int main(int argc, char* argv[]) {
     std::cout<<"wallet:";
     std::cout<<wallet;
     std::cout<<"\n";
+
     params.clear();
     params = Json::arrayValue;
     rpc_validateaddress(wallet, argv[1]);
-    
     rpc_generatetoaddress(wallet, argv[1]);
 
     sleep(atoi(argv[2]));
-    rpc_getmempoolinfo();
     rpc_getblockchaininfo();
     rpc_getpeerinfo();
-    
     return 0;
 }

@@ -1,3 +1,7 @@
+#
+# 2021-03-15
+# created by hong joon
+#
 import os
 from subprocess import check_output
 import argparse
@@ -6,30 +10,26 @@ import os
 import lxml.etree as ET
 import subprocess
 import math
+sys.path.append("")
+from testlibs import utils
 
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
         print("error while executing '%s'" % cmd)
         exit(-1)
 
-def path_filter(path):
-    the_path_command = ""
-    path_list = path.split("/")
-    path_abs = path_list[len(path_list)-2]
-    if path_abs == "BLEEPemul":
-        the_path_command = "cd ../../testlibs"
-        return 1, the_path_command
-    elif path_abs == "1_bitcoin":
-        the_path_command = "cd ../../../../testlibs"
-        return 0, the_path_command
-
-    elif path_abs == "2_sybilAPI":
-        the_path_command = "cd ../../../../testlibs"
-        return 0, the_path_command
+def test_result(condition_count, node_count, test_name):
+    if condition_count == node_count:
+        print("Success %s ... " %test_name)
+        print("test result : %d/%d " %(condition_count,node_count))
     else:
-        print("Fail setting path ... ")
+        print("Fail %s ..." %test_name)
+        print("test result : %d/%d " %(condition_count,node_count))
         sys.exit(1)
 
+# --------------------------------------------------------------------------------------------------------------
+#                                   Regression test-01 - xmlGenerate test        
+# --------------------------------------------------------------------------------------------------------------
 # xml existence test - If there is no file in the path, return fail
 def test_xml_existence(output):
     path = os.path.abspath(".")
@@ -41,192 +41,20 @@ def test_xml_existence(output):
         print("Fail xml existence test ...")
         sys.exit(1)
 
-# Get node_id, kill time, plugins in xml file
-def get_xml_info_new(xml_file):
-    tree = ET.parse(xml_file)
-    root = tree.getroot()
-
-    plugin_list=[]
-    node_id_list =[]
-    kill = root.findall('kill')
-    runtime = kill[0].attrib['time']
-
-    nodes =  root.findall('node')
-    for node in nodes:
-        node_id_list.append(node.attrib['id'])
-        applications = node.findall('application')
-        for a in applications:
-            plugin_list.append(a.attrib['plugin'])
-
-    return runtime, node_id_list, plugin_list
-
-def set_plugin_file(node_count, path):
-    if(os. path. isdir(path)):
-        the_command = "rm -rf data/*"
-        exec_shell_cmd(the_command)
-
-    for i in range(0,node_count):
-        the_command = "mkdir -p data/bcdnode" + str(i)
-        exec_shell_cmd(the_command)
-
-def get_xmlfile(path):
-    emulation_start, path_abs = path_filter(path)
-    the_command = path_abs + "; python xmlGenerator.py"
-    tx_condition_count = 0
-    condition_count = 0
-    tx_injector_file = 0
-    tx_so_file = path + "/transaction.so"
-    xml_command = ""
-    if emulation_start == 1:
-        tx_injector_file = 3
-    else: 
-        if os.path.isfile(tx_so_file) == False:
-            tx_injector_file = 1
-        else:
-            tx_injector_file = 2
-
-    while(1):
-        if condition_count == 0:
-            try: 
-                sim_time = input("Input simulation time (sec) : ")    
-                if int(sim_time) > 0:
-                    condition_count = 1
-                else:
-                    print("simulation time not negative ... ")
-                    continue
-            except ValueError as e:
-                print("input only integer ...")
-                continue
-
-        if condition_count == 1:
-            algo = str(input("Input mining algorithm(pow/coinflip) : "))
-            if (algo == "pow") | (algo == "coinflip"):
-                condition_count = 2
-            else:
-                print("Enter only one of them (pow/coninflip) ")
-                continue
-
-        if condition_count == 2:
-            difficulty = str(input("Input difficulty(1/2/3) : "))
-            if (difficulty == "1") | (difficulty == "2") | (difficulty == "3"):
-                condition_count = 3
-            else:
-                print("Enter only one of them(1/2/3)")
-                continue
-
-        if condition_count == 3:
-            if tx_condition_count == 0:
-                tx_mode = str(input("Input transaction injector (enable/disable) : "))
-                if tx_mode == "enable":
-                    if tx_injector_file == 1:
-                        print("Sorry there is no transaction.so file. so you must choose disable ... ")
-                        continue
-                    else:
-                        tx_condition_count = 1               
-               
-                elif tx_mode == "disable":
-                    if tx_injector_file == 2:
-                        print("sorry This test is tranasction test so you must set tx_mode = enable ... ")
-                        continue
-                    else:
-                        tx_condition_count = 1
-                    xml_command = the_command + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + path
-                    break
-                    
-                else:
-                    print("Enter only one of them (enable/disable) ")
-                    continue
-
-            elif tx_condition_count == 1:
-
-                try:
-                    tx_cnt = int(input("input number of transcations ( -1 : infinite number ): "))
-                    if tx_cnt > 0:
-                        tx_condition_count = 2
-
-                    elif tx_cnt == -1:
-                        number_bitcoins_transferred = 0.0000546
-                        tx_sec = 0
-                        xml_command = the_command + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
-                        break                            
-
-                    elif tx_cnt < 0:
-                        print("Must input only integer number !")
-                        continue
-                    
-                except ValueError as e:
-                    print("Must input only integer number !")
-                    continue
-            
-            elif tx_condition_count == 2:
-
-                try:
-                    number_bitcoins_transferred = float(input("input number of Bitcoins transferred (minimum amount : 0.0000546) : "))
-                    if number_bitcoins_transferred < 0.0000546:
-                        print("The minimum transfer fee is '0.0000546' bitcoin ...")
-                        continue
-                    else:
-                        if str(number_bitcoins_transferred).split(".")[1] == "0":
-                            number_bitcoins_transferred = int(number_bitcoins_transferred)
-                        tx_condition_count = 3
-                except ValueError as e:
-                    print("Must input only number !")
-                    continue
-
-            elif tx_condition_count == 3:
-               
-                try:
-                    tx_sec = int(input("Input transaction interval (sec) : "))
-                    if tx_sec > 0:
-                        xml_command = the_command + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
-                        break
-                    else:
-                        print("Must input only number ! ")
-                        continue
-                except ValueError as e:
-                    print("Must input only number ! ")
-                    continue
-
-
-    exec_shell_cmd(xml_command)
-    return tx_mode
-
-# After shadow, check output data
-def test_file_existence(node_id_list, plugin_list):
-    if len(node_id_list) != len(plugin_list):
-        sys.exit(1)
-    path = os.path.abspath(".")
-    target_folder_list = []
+# --------------------------------------------------------------------------------------------------------------
+#                                   Regression test-02-1 - shadow test         
+# --------------------------------------------------------------------------------------------------------------
+def test_shadow_output_file_existence(condition_number, node_id_list):
+    # plugin output check
     for i in range(0,len(node_id_list)):
-        target_path = path + "/shadow.data/hosts/" + node_id_list[i] + "/stdout-" + node_id_list[i] + "." + plugin_list[i] + ".1000.log"
-        target_folder_list.append(target_path)
-    for i in range(0,len(target_folder_list)):
-        if os.path.isfile(target_folder_list[i]) == False:
-            print("Fail not existence file - %s" %(target_folder_list[i]))
-            sys.exit(1)
-    print("Success blockchain test output file existence ...")
-    return target_folder_list
+        path_ = os.path.abspath(".")
+        path_ = path_ + "/shadow.data/hosts/" + node_id_list[i]
+        if os.path.isdir(path_):
+            pass
+        else:
+            print("%s file not existence shadow output file ... " %node_id_list[i])
 
-# If rpc output file has error log, the transaction is not created properlys
-def test_transaction_existence(simulation_output_file):
-    return_count = 0
-    f = open(simulation_output_file, "r")
-    while True:
-        line = f.readline()
-        if not line: break
-        result = line.find('"error":null')
-        if result != -1:
-            print("Success transaction test ...")
-            return_count = 1
-            break
-    f.close()
-    if return_count == 0:
-        print("Fail transaction test ...")
-        sys.exit(1)
-    else:
-        pass
-         
-def test_shadow_output_file_existence(condition_number):
+    # shadow output.txt
     if condition_number == "regtest":
         path = os.path.abspath(".")
     else:
@@ -236,112 +64,76 @@ def test_shadow_output_file_existence(condition_number):
         return target_folder_file
     else:
         print("Fail not existence shadow output file ... ")
-        sys.exit(1)
 
-# xml 생성 시, injector 사용이 필요없는 테스트가 있음. 이럴 경우 xml 파일에 transcation.so 파일에 
-# 대한 정의가 되어있으면 안됨. 하지만 example.xml에는 되어 있기에, 이 함수를 통해 그에 대한 정의를 삭제를 해주고, 수정된 xml 파일을 return함
-def remove_tx_plugin(tx_plugin):
-    target_length = len(tx_plugin)
-    update_file = tx_plugin[:target_length-4] + "2.xml" 
-    fr = open(tx_plugin, "r")
-    fw = open(update_file, "w")
-    while True:
-        line = fr.readline()
-        if not line: break
-        result = line.find("transaction.so")
-        if result != -1:
-            continue
-        fw.write(line)
-    fw.close()
-    fr.close()
-
-def renew_xml(tx_mode, target_folder_xml):
-    print(tx_mode)
-    if tx_mode == "disable":
-        remove_tx_plugin(target_folder_xml)
-        target_folder_xml = target_folder_xml[:len(target_folder_xml)-4] + "2.xml"
-        shadow_command = "shadow " + target_folder_xml
-        return shadow_command
-
-    if tx_mode == "enable":  
-        shadow_command = "shadow output.xml"
-        return shadow_command
-
-# make shadow runtime format example of 00:00:09
-def get_time_form(runtime):
-    result = ""
-    hours, mins, sec = 0, 0, 0
-    target_time = int(runtime) - 1
-    if target_time > 3600:
-        hours = math.trunc(target_time/3600)
-        mins = math.trunc((target_time%3600)/60)
-        sec = math.trunc((target_time%3600)%60)
-    elif target_time < 3600:
-        mins = math.trunc(math.trunc((target_time%3600)/60))
-        sec = math.trunc((target_time%3600)%60)
-    else:
-        hours = 1
-        sec = sec - 1
-
-    if len(str(hours)) == 2:
-        result = result + str(hours) + ":"
-    else:
-        result = "0" + str(hours) + ":"
-    if len(str(mins)) == 2:
-        result = result + str(mins) + ":"
-    else:
-        result = result + "0" + str(mins) + ":"
-    if len(str(sec)) == 2:
-        result = result + str(sec)
-    else:
-        result = result + "0" + str(sec)
-
-    return result
-
+# --------------------------------------------------------------------------------------------------------------
+#                                   Regression test-02-2 - shadow test
+# --------------------------------------------------------------------------------------------------------------
 # test1 : whether runtime setting worked or not 
 # test2 : whether plugin(node_id) worked or not
-def test_shadow(output_file, runtime, node_id_list):
+def test_shadow(output_file, runtime, node_id_list, shadow_output):
     f = open(output_file, "r")
     # result_count more than 3 means success.
     result_count = 0
     return_count = 0
-    return_time = get_time_form(runtime)
+    condition_runtime = 0
+    return_time = utils.get_time_form(runtime)
     while True:
         line = f.readline()
         if not line: break
-        result = line.find("_process_start")
+        result = line.find("has set up the main pth thread")
         if result != -1:
-            result = line.find("has set up the main pth thread")
+            result = line.find("_process_start")
             if result != -1:
                 for i in range(0,len(node_id_list)):
                     result = line.find(node_id_list[i])
                     if result != -1:
-                        result_count = 1
-              
-        result = line.find(return_time)
+                        result_count += 1
+                        break
+        
+        # 설정한 runtime 동작 확인.
+        if condition_runtime == 0:
+            result = line.find(runtime)
+            if result != -1:
+                condition_runtime = 1
+
+        result = line.find("starting to shut down")
         if result != -1:
-            if result_count == 1:
+            if result_count == len(node_id_list):
                 f.close()
                 print("Success shadow test ...")
                 return_count = 1
                 break
             else:
                 f.close()
-                print("Fail shadow test] - runtime error ...")
+                print("shadow plugin error...")
                 sys.exit(1)
+
     if return_count == 0:            
         f.close()
-        print("[Fail shadow test] - plugin does not run ... (check the logs)")
-        sys.exit(1)
+        if result_count == len(node_id_list):
+            print("[shadow test] - runtime over ...  ")
+            pass
+        else:
+            print("shadow runtime error .... ")
+            utils.filter_fail_shadow_test(shadow_output)
+            sys.exit(1)
     else:
+        if condition_runtime != 1:
+            print("Fail shadow test - runtime fail ... ")
+            sys.exit(1)
         pass
 
-def emul_test_shadow(output_file, runtime, node_id_list):
+# --------------------------------------------------------------------------------------------------------------
+#                                   Regression test-02-2 - shadow test (emulation ver)
+# --------------------------------------------------------------------------------------------------------------
+# test1 : whether runtime setting worked or not 
+# test2 : whether plugin(node_id) worked or not'
+def emul_test_shadow(output_file, runtime, node_id_list, shadow_output):
     complete_node = []
     f = open(output_file, "r")
     # result_count more than 3 means success.
     result_count = 0
-    return_time = get_time_form(runtime)
+    return_time = utils.get_time_form(runtime)
     while True:
         line = f.readline()
         if not line: break
@@ -366,16 +158,205 @@ def emul_test_shadow(output_file, runtime, node_id_list):
             else:
                 f.close()
                 print("Fail shadow test] - runtime error ...")
+                utils.filter_fail_shadow_test(shadow_output)
                 sys.exit(1)
     f.close()
     print("[Fail shadow test] - plugin does not run ...")
     sys.exit(1)
 
-def subprocess_open(command):
-    popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    (stdoutdata, stderrdata) = popen.communicate()
-    return stdoutdata, stderrdata
+# --------------------------------------------------------------------------------------------------------------
+#                                   Regression test-03-1 - bitcoinApplication file existence test.
+# --------------------------------------------------------------------------------------------------------------
+# After shadow, check output data
+def test_file_existence(node_id_list, plugin_list):
+    if len(node_id_list) != len(plugin_list):
+        sys.exit(1)
+    path = os.path.abspath(".")
+    target_folder_list = []
+    target_error_list = []
+    error_list = []
+    for i in range(0,len(node_id_list)):
+        target_path = path + "/shadow.data/hosts/" + node_id_list[i] + "/stdout-" + node_id_list[i] + "." + plugin_list[i] + ".1000.log"
+        target_folder_list.append(target_path)
+        target_path = path + "/shadow.data/hosts/" + node_id_list[i] + "/stderr-" + node_id_list[i] + "." + plugin_list[i] + ".1000.log"
+        target_error_list.append(target_path)
     
+    for i in range(0,len(target_folder_list)):
+        if os.path.isfile(target_folder_list[i]) == False:
+            print("Fail not existence shadow plugin output file - %s" %(target_folder_list[i]))
+            sys.exit(1)
+        # 에러 파일이 존재하면 그 파일의 path를 error_list에 append.
+        if os.path.isfile(target_error_list[i]) == True:
+            error_list.append(target_error_list[i])
+
+    # 에러 파일이 존재하는 경우
+    if len(error_list) != 0:
+        print("Fail shadow plugin running ...")
+        print("-------------- shadow plugin error contents --------------")
+        for i in range(0,len(error_list)):
+            f = open(error_list[i], "r")
+            while True:
+                line = f.readline().strip()
+                print(line)
+                if not line: break
+            f.close()
+        sys.exit(1)
+
+    print("Success blockchain test output file existence ...")
+    return target_folder_list
+
+# --------------------------------------------------------------------------------------------------------------
+#                                   Regression test-03-2 - bitcoinApplication test
+# --------------------------------------------------------------------------------------------------------------
+# This test compares the shadow result log with standard args, 
+# and succeeds if all of the args are in the shadow result log.    
+def test_bitcoinApplication(output_file, args_standard, node_count):
+    j = 0
+    condition_count = 0
+    for z in range(0,int(node_count)):
+        f = open(output_file[z], "r")
+        while True:
+            line = f.readline()
+            if not line: break
+            for i in range(j,len(args_standard)):
+                result = line.find(args_standard[i])
+                if result != -1:
+                    j += 1
+        f.close()
+        if j == len(args_standard):
+            condition_count += 1
+        
+    test_result(condition_count, node_count, "test_bitcoinApplication")
+    sys.exit(0)
+
+# --------------------------------------------------------------------------------------------------------------
+#                                   Regression test-04 - bitcoin difficulty test
+# --------------------------------------------------------------------------------------------------------------
+# 설정한 난이도와 시뮬레이션된 비트코인 난이도가 일치한지 테스트
+def test_difficulty_compare(bitcoin_log, xml_difficulty, node_count):
+    condition_count = 0
+    for z in range(0,node_count):
+        difficulty = ""
+        f = open(bitcoin_log[z + node_count], "r")
+        while True:
+            line = f.readline()
+            if not line: break
+            result = line.find("difficulty")
+            if result != -1:
+                split_list = line.split(",")[4]
+                difficulty = split_list.split(":")[1]
+                break
+        f.close()
+
+        if str(xml_difficulty) == "1":
+            if difficulty == "1":
+                condition_count += 1
+
+        elif str(xml_difficulty) == "2":
+            if difficulty == "0.00390625":
+                condition_count += 1
+
+        elif str(xml_difficulty) == "3":
+            if difficulty == "0.0002441371325370145":
+                condition_count += 1
+
+    test_result(condition_count, node_count, "test_difficulty_compare test")
+    sys.exit(0)
+
+# --------------------------------------------------------------------------------------------------------------
+#                                   Regression test-05 - wallet address test
+# --------------------------------------------------------------------------------------------------------------
+# bitcoin-cli validateaddress call
+# Return information about the given bitcoin address.
+def test_walletAddress(simulation_output_file, node_count):
+    condition_count = 0
+    for z in range(0,node_count):
+        f = open(simulation_output_file[z+node_count], "r")
+        while True:
+            line = f.readline()
+            if not line: break
+            result = line.find("isvalid")
+            if result != -1:
+                the_wallet_validation = line.split(",")[0].split('"')[4].split(":")[1]
+                if the_wallet_validation == "true":
+                    condition_count += 1
+                    continue
+
+    test_result(condition_count, node_count, "test_walletAddress ")
+
+# --------------------------------------------------------------------------------------------------------------
+#                                   Regression test-06 - mining test
+# --------------------------------------------------------------------------------------------------------------
+# "height>0" means mining is activated and works good.
+# If "height>0" is found at bitcoin log, mining works. 
+def test_mining(shadow_output_file, node_count):
+    condition_count = 0
+    for z in range(0,node_count):
+        f = open(shadow_output_file[z], "r")
+        while True:
+            line = f.readline()
+            if not line: break
+            # height=1 means mining activated.
+            result = line.find("height=1")
+            if result != -1:
+                condition_count += 1
+                break
+
+    test_result(condition_count, node_count, "mining test")
+    sys.exit(0)
+
+# --------------------------------------------------------------------------------------------------------------
+#                           Regression test-07 - bitcoin mainchain test
+# --------------------------------------------------------------------------------------------------------------
+# Get "bestblockchash" value info using rpc.output_file then check for the same value in bitcoin output log.
+def test_MainChainInfo(shadow_output_file, rpc_output_file, node_count):
+    condition_count = 0
+    for z in range(0,node_count):
+        f = open(rpc_output_file[z+node_count] , "r")
+        for line in f.readlines()[::-1]:
+            line.rstrip()
+            result = line.find("bestblockhash")
+            if result != -1:
+                line = line.split(",")[3].split(":")[1]
+                genesisHash = line[1:len(line)-1]
+                break
+
+        if os.path.isfile(shadow_output_file[z]):
+            f = open(shadow_output_file[z], "r")
+            while True:
+                line = f.readline()
+                if not line: break
+                result = line.find(genesisHash)
+                if result != -1:
+                    condition_count += 1
+
+    test_result(condition_count, node_count, "mainchain test")
+    sys.exit(0)
+
+# --------------------------------------------------------------------------------------------------------------
+#                           Regression test-08 - transaction test
+# --------------------------------------------------------------------------------------------------------------
+# If rpc output file has error log, the transaction is not created properlys
+def test_transaction_existence(simulation_output_file, node_count):
+    condition_count = 0
+    for z in range(0,node_count):
+        f = open(simulation_output_file[z+node_count], "r")
+        while True:
+            line = f.readline()
+            if not line: break
+            result = line.find('"error":null')
+            if result != -1:
+                print("Success transaction test ...")
+                condition_count += 1
+                break
+        f.close()
+
+    test_result(condition_count, node_count, "transaction test")
+
+# --------------------------------------------------------------------------------------------------------------
+#                           Regression test-09 - transaction count test (emulation ver)
+# --------------------------------------------------------------------------------------------------------------
+# 설정한 트랜잭션의 개수와 생성되 트랜잭션의 개수를 비교하는 테스트
 def test_transaction_count(simulation_output_file):
     txs_bitcoind = 0
     blocks_count = 0
@@ -397,3 +378,114 @@ def test_transaction_count(simulation_output_file):
                 break    
     f.close()
     return txs_bitcoind
+
+# --------------------------------------------------------------------------------------------------------------
+#                           Regression test-09 - transaction count test (regtest ver)
+# --------------------------------------------------------------------------------------------------------------
+# count "sendtoaddress" rpc request in bitcoin log and get transaction counts in tx injector log.
+# If the two are the same, true
+def test_transaction_count_regtest(simulation_output_file, node_count):
+    txs_bitcoind = 0
+    blocks_count = 0
+    mempool_size = 0
+    condition_count = 0
+    for z in range(0,node_count):
+        f = open(simulation_output_file[0], "r")
+        for line in f.readlines()[::-1]:
+            result = line.find("UpdateTip")
+            if result != -1:
+                split_list = line.split(" ")
+                for i in range(0,len(split_list)):
+                    result = split_list[i].find("height=")
+                    if result != -1:
+                        blocks_count = int(split_list[i].split("=")[1])
+                        continue
+                    result = split_list[i].find("tx=")
+                    if result != -1:
+                        txs_bitcoind = int(split_list[i].split("=")[1])
+                        break
+                if txs_bitcoind != 0:
+                    break    
+        f.close()
+        txs_bitcoind = txs_bitcoind - blocks_count - 1
+
+        txs = 0
+        f = open(simulation_output_file[(node_count*2)], "r")
+        for line in f.readlines()[::-1]:
+            result = line.find('"error":null')
+            if result != -1:
+                txs += 1
+            result = line.find('"result":null')
+            if result != -1:
+                break
+
+        f = open(simulation_output_file[z + node_count], "r")
+        while True:
+            line = f.readline()
+            if not line: break
+            result = line.find("maxmempool")
+            if result != -1:
+                mempool_size = line.split(",")[1].split(":")[1]
+                break
+        f.close()
+
+        if txs_bitcoind + int(mempool_size) == txs:
+            condition_count += 1
+
+    test_result(condition_count, node_count, "transaction count test")
+
+# --------------------------------------------------------------------------------------------------------------
+#                                       Regression test-10 - initial coin test 
+# --------------------------------------------------------------------------------------------------------------
+# initial coin이 생성된지 확인하기 위한 테스트.
+def test_initialCoin(simulation_output_file):
+    f = open(simulation_output_file, "r")
+    block_count = 0
+    
+    for line in f.readlines()[::-1]: 
+        
+        result = line.find("bestblockhash")
+        if result != -1:
+            f.close()
+            split_list = line.split(",")
+            for i in range(0,len(split_list)):
+                result = split_list[i].find("blocks")
+                if result != -1:
+                    block_count = int(split_list[i].split(":")[1])
+                    break
+        if block_count != 0:
+            f.close()
+            break
+            
+    if block_count > 0:
+        print("Success InitalCoin test ...")
+        sys.exit(0)
+    else:
+        print("Fail InitalCoin test ...")
+        sys.exit(1)
+
+# --------------------------------------------------------------------------------------------------------------
+#                                       Regression test-11 - peer connection test
+# --------------------------------------------------------------------------------------------------------------
+# bitcoin 기준으로 테스트를 한다고 할 경우, xml에 "addnode" 플래그 값으로 connection할 peer를 설정을 해주고, 설정해준 ip주소와
+# "getpeerinfo"를 통해 시뮬레이션 상에서 connection된 peer ip와 일치하는지 확인하는 테스트. 
+def test_peer_connection(plugin_output_files, IP_list, xml_file):
+    addnode_list = utils.get_addnode_list(IP_list, xml_file)
+    getpeerinfo_list = utils.get_peerinfo(plugin_output_files, IP_list)
+    result_count = 0
+    con_count = 0
+
+    for i in range(0,len(addnode_list)):
+        for j in range(0,len(addnode_list[i])):
+            if addnode_list[i][j] in getpeerinfo_list[i]:
+                con_count += 1
+        if len(addnode_list[i]) == con_count:
+            result_count += 1
+        con_count = 0
+
+    if result_count == len(addnode_list):
+        print("Success peer connection test ...")
+        sys.exit(0)
+    else:
+        print("fail peer connection test ...")
+        sys.exit(1)

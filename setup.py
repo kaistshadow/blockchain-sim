@@ -113,8 +113,6 @@ if __name__ == '__main__':
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
         exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
         exec_shell_cmd("sudo apt-get install -y libssl-dev")
-        # monero dependency
-        prepare_monero_dependencies()
         # rpc client dependency
         exec_shell_cmd("sudo apt-get install -y libjsoncpp-dev")
         prepare_shadow()
@@ -155,6 +153,8 @@ if __name__ == '__main__':
 
         # ## install boost-lib
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
+        # rpc client dependency
+        exec_shell_cmd("sudo apt-get install -y libjsoncpp-dev")
 
         ## install bitcoin dependencies
         exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
@@ -163,7 +163,8 @@ if __name__ == '__main__':
         cmake_git_opt = "-DGIT_OPT=ON"
 
         ## install
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (cmake_debug_opt, cmake_git_opt, cmake_bleeplib_opt))
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (
+        cmake_debug_opt, cmake_git_opt, cmake_bleeplib_opt))
         process_ENV()
 
 

@@ -12,6 +12,24 @@ def exec_shell_cmd(cmd):
         print("error while executing '%s'" % cmd)
         exit(-1)
 
+def path_filter(path):
+    the_path_command = ""
+    path_list = path.split("/")
+    path_abs = path_list[len(path_list)-2]
+    if path_abs == "BLEEPemul":
+        the_path_command = "cd ../../testlibs"
+        return 1, the_path_command
+    elif path_abs == "1_bitcoin":
+        the_path_command = "cd ../../../../testlibs"
+        return 0, the_path_command
+
+    elif path_abs == "2_sybilAPI":
+        the_path_command = "cd ../../../../testlibs"
+        return 0, the_path_command
+    else:
+        print("Fail setting path ... ")
+        sys.exit(1)
+
 # xml existence test - If there is no file in the path, return fail
 def test_xml_existence(output):
     path = os.path.abspath(".")
@@ -52,15 +70,20 @@ def set_plugin_file(node_count, path):
         exec_shell_cmd(the_command)
 
 def get_xmlfile(path):
+    emulation_start, path_abs = path_filter(path)
+    the_command = path_abs + "; python xmlGenerator.py"
     tx_condition_count = 0
     condition_count = 0
     tx_injector_file = 0
     tx_so_file = path + "/transaction.so"
     xml_command = ""
-    if os.path.isfile(tx_so_file) == False:
-        tx_injector_file = 1
-    else:
-        tx_injector_file = 2
+    if emulation_start == 1:
+        tx_injector_file = 3
+    else: 
+        if os.path.isfile(tx_so_file) == False:
+            tx_injector_file = 1
+        else:
+            tx_injector_file = 2
 
     while(1):
         if condition_count == 0:
@@ -107,7 +130,7 @@ def get_xmlfile(path):
                         continue
                     else:
                         tx_condition_count = 1
-                    xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + path
+                    xml_command = the_command + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + path
                     break
                     
                 else:
@@ -124,7 +147,7 @@ def get_xmlfile(path):
                     elif tx_cnt == -1:
                         number_bitcoins_transferred = 0.0000546
                         tx_sec = 0
-                        xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
+                        xml_command = the_command + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
                         break                            
 
                     elif tx_cnt < 0:
@@ -155,7 +178,7 @@ def get_xmlfile(path):
                 try:
                     tx_sec = int(input("Input transaction interval (sec) : "))
                     if tx_sec > 0:
-                        xml_command = "cd ../libraries; python xmlGenerator.py" + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
+                        xml_command = the_command + " " + "1" + " " + sim_time + " " + algo + " " + tx_mode + " " + difficulty + " " + str(tx_cnt) +" " + str(tx_sec) + " " + str(number_bitcoins_transferred) + " " + path
                         break
                     else:
                         print("Must input only number ! ")
@@ -186,21 +209,28 @@ def test_file_existence(node_id_list, plugin_list):
 
 # If rpc output file has error log, the transaction is not created properlys
 def test_transaction_existence(simulation_output_file):
+    return_count = 0
     f = open(simulation_output_file, "r")
     while True:
         line = f.readline()
         if not line: break
         result = line.find('"error":null')
         if result != -1:
-            f.close()
             print("Success transaction test ...")
-            sys.exit(0)
+            return_count = 1
+            break
     f.close()
-    print("Fail transaction test ...")
-    sys.exit(1)
-    
-def test_shadow_output_file_existence():
-    path = os.path.abspath(".")
+    if return_count == 0:
+        print("Fail transaction test ...")
+        sys.exit(1)
+    else:
+        pass
+         
+def test_shadow_output_file_existence(condition_number):
+    if condition_number == "regtest":
+        path = os.path.abspath(".")
+    else:
+        path = os.path.abspath("./shadow.data")
     target_folder_file = path + "/output.txt"
     if os.path.isfile(target_folder_file):
         return target_folder_file
@@ -306,8 +336,64 @@ def test_shadow(output_file, runtime, node_id_list):
     else:
         pass
 
+def emul_test_shadow(output_file, runtime, node_id_list):
+    complete_node = []
+    f = open(output_file, "r")
+    # result_count more than 3 means success.
+    result_count = 0
+    return_time = get_time_form(runtime)
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("_process_start")
+        if result != -1:
+            result = line.find("has set up the main pth thread")
+            if result != -1:
+                result = line.find("bitcoind")
+                if result != -1:
+                    complete_node.append(line.split(" ")[4].split("~")[1][:-1])
+                for i in range(0,len(node_id_list)):
+                    result = line.find(node_id_list[i])
+                    if result != -1:
+                        result_count = 1
+              
+        result = line.find(return_time)
+        if result != -1:
+            if result_count == 1:
+                f.close()
+                print("Success shadow test ...")
+                return complete_node, runtime
+            else:
+                f.close()
+                print("Fail shadow test] - runtime error ...")
+                sys.exit(1)
+    f.close()
+    print("[Fail shadow test] - plugin does not run ...")
+    sys.exit(1)
+
 def subprocess_open(command):
     popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     (stdoutdata, stderrdata) = popen.communicate()
     return stdoutdata, stderrdata
     
+def test_transaction_count(simulation_output_file):
+    txs_bitcoind = 0
+    blocks_count = 0
+    f = open(simulation_output_file[0], "r")
+    for line in f.readlines()[::-1]:
+        result = line.find("UpdateTip")
+        if result != -1:
+            split_list = line.split(" ")
+            for i in range(0,len(split_list)):
+                result = split_list[i].find("height=")
+                if result != -1:
+                    blocks_count = int(split_list[i].split("=")[1])
+                    continue
+                result = split_list[i].find("tx=")
+                if result != -1:
+                    txs_bitcoind = int(split_list[i].split("=")[1])
+                    break
+            if txs_bitcoind != 0:
+                break    
+    f.close()
+    return txs_bitcoind

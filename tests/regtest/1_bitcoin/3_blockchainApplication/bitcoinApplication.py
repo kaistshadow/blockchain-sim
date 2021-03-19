@@ -2,8 +2,8 @@ import os
 from subprocess import check_output
 import argparse
 import sys
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from libraries import test_modules
+sys.path.append("./../../../../")
+from testlibs import test_modules
 
 def test_args(args_standard):
     for i in range(0,len(args_standard)):
@@ -57,7 +57,6 @@ def main():
 
     # xml 파일이 생성될 위치를 현재위치로 설정
     path = os.path.abspath("./")
-
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
     parser.add_argument("--regtest", action="store_true", help="Install the shadow simulator and BLEEP")
     args = parser.parse_args()
@@ -87,7 +86,7 @@ def main():
     test_modules.subprocess_open('shadow output2.xml > output.txt')
 
     # shadow output 파일 존재 검사.
-    target_folder_file = test_modules.test_shadow_output_file_existence()
+    target_folder_file = test_modules.test_shadow_output_file_existence("regtest")
 
     # shadow output 파일 내용 검사.
     test_modules.test_shadow(target_folder_file, runtime, node_id_list)

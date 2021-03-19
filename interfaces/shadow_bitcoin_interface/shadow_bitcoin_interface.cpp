@@ -14,3 +14,7 @@ int shadow_bitcoin_check_hash(const char hash[]) {
     int res = (got != t.end());
     return res;
 }
+
+void shadow_bitcoin_load_hash(){
+  printf("start shadow_bitcoin_load_hash\n");
+}

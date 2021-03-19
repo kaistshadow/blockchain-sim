@@ -12,9 +12,9 @@ find_package(Bitcoin_0_19_1dev REQUIRED)
 
 add_custom_target(release0.1.0-regtest01-prepare ALL
   COMMAND rm -rf data/bcdnode0
-  COMMAND rm -rf data/bcdnode1
   COMMAND mkdir -p data/bcdnode0
-  COMMAND mkdir -p data/bcdnode1
+  COMMAND cp -r datadir_dump/bcdnode0/* data/bcdnode0/
+  COMMAND cp datadir_dump/coinflip_hash.txt ./data
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(release0.1.0-regtest01-copy-plugin ALL

@@ -10,6 +10,7 @@ extern "C"
 
 void shadow_bitcoin_register_hash(const char hash[]);
 int shadow_bitcoin_check_hash(const char hash[]);
+void shadow_bitcoin_load_hash();
 
 #ifdef __cplusplus
 }

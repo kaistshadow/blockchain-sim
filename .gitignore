@@ -114,6 +114,7 @@ BLEEPemul/*/data
 BLEEPemul/*/target_example.xml
 
 BLEEPeval/tpstest-app/*/initial_tx_data.txt
+BLEEPeval/tpstest-app/*/private_key.txt
 
 tests/regtest/shadow-syscalls/1_eventfd/eventfd-test*
 tests/regtest/shadow-syscalls/1_eventfd/timerfd-test*

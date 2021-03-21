@@ -5,7 +5,11 @@
 #ifndef BLEEP_BITCOINKEY_H
 #define BLEEP_BITCOINKEY_H
 
+#include <key.h>
+
 class BitcoinKey {
+private:
+    CKey secret;
 public:
     BitcoinKey(const char* filename);
 };

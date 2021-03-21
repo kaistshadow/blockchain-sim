@@ -5,11 +5,13 @@
 #ifndef BLEEP_BITCOINSTATE_H
 #define BLEEP_BITCOINSTATE_H
 
+#include <primitives/transaction.h>
+
 #include <stdio.h>
 
 class BitcoinState {
 private:
-
+    CTransaction* sourceTx;
 public:
     BitcoinState(const char* filename);
     ~BitcoinState();

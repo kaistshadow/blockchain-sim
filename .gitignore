@@ -113,6 +113,8 @@ BLEEPemul/*/datadir
 BLEEPemul/*/data
 BLEEPemul/*/target_example.xml
 
+BLEEPeval/tpstest-app/*/initial_tx_data.txt
+
 tests/regtest/shadow-syscalls/1_eventfd/eventfd-test*
 tests/regtest/shadow-syscalls/1_eventfd/timerfd-test*
 BLEEPemul/emulation/output.xml

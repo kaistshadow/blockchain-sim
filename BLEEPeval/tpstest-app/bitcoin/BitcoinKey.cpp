@@ -3,3 +3,7 @@
 //
 
 #include "BitcoinKey.h"
+
+BitcoinKey::BitcoinKey(const char *filename) {
+
+}

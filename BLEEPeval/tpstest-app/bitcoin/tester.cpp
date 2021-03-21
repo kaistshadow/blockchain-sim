@@ -58,13 +58,13 @@ int main(int argc, char* argv[]) {
     TxBox<BitcoinTxgen, BitcoinState, BitcoinKey> txBox;
     txBox.bootstrap("initial_tx_data.txt", "private_key.txt");
 
-    while (true) {
-        for(int i=0; i<_TEST_TX_PER_PERIOD; i++) {
-            size_t streamsize = 0;
-            unsigned char* txdatastream = txBox.getNextTxStream(streamsize);
-//            broadcastMessenger.send(txdatastream, streamsize);
-        }
-        sleep(_TEST_TIME_PER_PERIOD);
-    }
+//    while (true) {
+//        for(int i=0; i<_TEST_TX_PER_PERIOD; i++) {
+//            size_t streamsize = 0;
+//            unsigned char* txdatastream = txBox.getNextTxStream(streamsize);
+////            broadcastMessenger.send(txdatastream, streamsize);
+//        }
+//        sleep(_TEST_TIME_PER_PERIOD);
+//    }
     return 0;
 }

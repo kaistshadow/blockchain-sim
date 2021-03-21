@@ -5,7 +5,9 @@ target_link_libraries(BITCOINTPS_TESTER1 Bitcoin_0_19_1dev::Plugin)
 
 target_sources(BITCOINTPS_TESTER1
         PRIVATE
+        BitcoinKey.cpp
         BitcoinState.cpp
+        BitcoinTxGen.cpp
         tester.cpp)
 
 add_custom_command(TARGET BITCOINTPS_TESTER1

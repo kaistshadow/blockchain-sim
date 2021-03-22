@@ -30,6 +30,7 @@ def get_xmlfile(path):
     condition_count = -1
     tx_injector_file = 0
     tx_so_file = path + "/transaction.so"
+    algo = ""
     xml_command = ""
     if emulation_start == 1:
         tx_injector_file = 3
@@ -156,7 +157,7 @@ def get_xmlfile(path):
 
     exec_shell_cmd(xml_command)
     print("-----------------------------------------------------------------------------------------------------------------------------")
-    return tx_mode
+    return tx_mode,algo
 
 # Get node_id, kill time, plugins in xml file
 def get_xml_info_new(xml_file):

@@ -228,6 +228,7 @@ def get_peerinfo(simulation_output_file, IP_list):
 
     return final_list
 
+# shadow 시뮬레이션 시간 출력.
 def get_runtime_shadow(output_txt):
     run_time = ""
     f = open(output_txt, "r")

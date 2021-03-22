@@ -51,9 +51,7 @@ def filter_overlap_height(node_output_file):
                 result_list.pop()
     return result_list
 
-
 def summary_result(node_list, node_output_file, sim_time, output_txt):
-
     exec_shell_cmd("mkdir -p ./shadow.data/peers")
     last_blockHash_list = []
     block_count_list = []

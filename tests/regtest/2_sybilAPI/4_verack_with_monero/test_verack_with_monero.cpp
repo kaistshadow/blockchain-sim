@@ -20,7 +20,7 @@ int main() {
 
     // Initialize single benign node
     ShadowActiveNode<MoneroNodePrimitives> activeMoneroNode(&attackStat, &dummyIPDatabase, "2.0.0.1");
-    activeMoneroNode.tryConnectToTarget("1.0.0.1", 8333, 5);
+    activeMoneroNode.tryConnectToTarget("1.0.0.1", 28080, 5);
 
     // Start attack
     struct ev_loop *libev_loop = EV_DEFAULT;

@@ -119,3 +119,6 @@ BLEEPemul/emulation/output.xml
 testlibs/__pycache__
 tests/regtest/2_sybilAPI/*/output.txt
 testlibs/__pycache__/test_modules.cpython-36.pyc
+
+tests/regtest/*/bcdnode0
+tests/regtest/*/coinflip_hash.txt

@@ -22,10 +22,6 @@ endif(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 set(CMAKE_ROOT_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 set(CMAKE_ROOT_BINARY_DIR ${CMAKE_BINARY_DIR})
 
-add_compile_options(
-        $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,9.3.0>>:-std=c++2a>
-        $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.3.0>>:-std=c++17>)
-
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 
@@ -88,9 +84,11 @@ endif(BLEEPLIB_OPT STREQUAL ON)
 # add_subdirectory(BLEEPapp)
 add_subdirectory(BLEEPeval)
 
-if(TEST_OPT STREQUAL ON)
+if (TEST_OPT STREQUAL ON)
     add_subdirectory(tests)
-endif()
+elseif (UNITTEST_OPT STREQUAL ON)
+    add_subdirectory(tests)
+endif ()
 
 ## add command for lauching BLEEP web interface
 add_custom_target(run-web-gui

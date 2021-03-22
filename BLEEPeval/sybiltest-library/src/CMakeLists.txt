@@ -5,7 +5,6 @@ set_target_properties(BLEEPsybil PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(BLEEPsybil SHADOW_INTERFACE)
 target_link_libraries(BLEEPsybil Libev_4_33::Libev)
 
-target_link_libraries(BLEEPsybil Bitcoin_0_19_1dev::Plugin)
 
 target_sources(BLEEPsybil
         PRIVATE

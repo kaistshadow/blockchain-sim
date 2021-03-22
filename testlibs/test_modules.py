@@ -297,7 +297,7 @@ def test_mining(shadow_output_file, node_count):
             line = f.readline()
             if not line: break
             # height=1 means mining activated.
-            result = line.find("height=1")
+            result = line.find("height=8")
             if result != -1:
                 condition_count += 1
                 break
@@ -485,3 +485,64 @@ def test_peer_connection(plugin_output_files, IP_list, xml_file):
     else:
         print("fail peer connection test ...")
         sys.exit(1)
+
+# --------------------------------------------------------------------------------------------------------------
+#                                       Regression test-12 - load data file test
+# --------------------------------------------------------------------------------------------------------------
+# 1. 플러그인 로그에서 "Reindexing finished" 로그가 없으면 test 실패
+# 2. coinlip_hash.txt 파일에서 블록 hash 값들을 읽어서, 플러그인의 로그에서 1~7번의 블록 hash 값과 비교
+def test_dumpfile_load(plugin_output_files, abs_path):
+    print("dump test start ... ")
+    condition_count = 0
+    the_path = ""
+    ready_hash_list = []
+    f = open(plugin_output_files, "r")
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("Reindexing finished")
+        if result != -1:
+            condition_count = 1
+            f.close()
+            break
+    
+    if condition_count == 1:
+        the_path = utils.get_datadirDumpfile_path(abs_path)
+        the_path = the_path + "/coinflip_hash.txt"
+        f = open(the_path, "r")
+        while True:
+            line = f.readline()
+            if not line: break
+            ready_hash_list.append(line.strip())
+        f.close()
+
+        i = 0
+        result_hash_list = []
+        f = open(plugin_output_files, "r")
+        while True:
+            line = f.readline()
+            if not line:break
+            result = line.find("UpdateTip")
+            if result != -1:
+                if ready_hash_list[i] == line.split(" ")[3].split("=")[1]:
+                    i += 1
+                    pass
+                # 0번째는 제네시스 블록이라 스킵.
+                elif i == 0:
+                    continue
+                else:
+                    print("Fail test dump file load ... ")
+                    f.close()
+                    sys.exit(1)
+            if i == 7:
+                print("Success test dump file load test ... ")
+                f.close()
+                break
+
+    else:
+        print("Fail load data file test ... (Not Reindexing finished)")
+        f.close()
+        sys.exit(1)
+
+
+

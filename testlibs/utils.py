@@ -45,6 +45,10 @@ def set_plugin_file(node_count, path):
     for i in range(0,node_count):
         the_command = "mkdir -p data/bcdnode" + str(i)
         exec_shell_cmd(the_command)
+    
+    target_command = get_datadirDumpfile_path(path)
+    command = "cp -r " + target_command + "/* " + path + "/data"
+    exec_shell_cmd(command)
 
 # Description : xml 파일을 생성하기 위해, 현재 실행되는 함수의 경로에서 xml파일을 생성하기 위한 command를 생성하여 반환함.
 # input param : 현재 경로
@@ -267,3 +271,14 @@ def get_last_hashValue(shadow_output_file, rpc_output_file, node_count, pork_cou
                     condition_count += 1
 
     return condition_count
+
+  def get_datadirDumpfile_path(abs_path):
+    the_list = abs_path.split("/")
+    the_command = ""
+    for i in range(0,len(the_list)):
+        the_command = the_command + the_list[i] + "/"
+        if the_list[i] == "blockchain-sim":
+            the_command = the_command + "/testlibs/datadir_dump"
+            break
+
+    return the_command

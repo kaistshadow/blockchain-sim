@@ -306,29 +306,25 @@ def test_mining(shadow_output_file, node_count):
     sys.exit(0)
 
 # --------------------------------------------------------------------------------------------------------------
-#                           Regression test-07 - bitcoin mainchain test
+#                           Regression test-07 - bitcoin mainchain test 
 # --------------------------------------------------------------------------------------------------------------
 # Get "bestblockchash" value info using rpc.output_file then check for the same value in bitcoin output log.
 def test_MainChainInfo(shadow_output_file, rpc_output_file, node_count):
-    condition_count = 0
-    for z in range(0,node_count):
-        f = open(rpc_output_file[z+node_count] , "r")
-        for line in f.readlines()[::-1]:
-            line.rstrip()
-            result = line.find("bestblockhash")
-            if result != -1:
-                line = line.split(",")[3].split(":")[1]
-                genesisHash = line[1:len(line)-1]
-                break
+    pork_count = 0
+    while True:
+        condition_count = utils.get_last_hashValue(shadow_output_file, rpc_output_file, node_count, pork_count)    
+        if condition_count == node_count:
+            break
+        else:
+            pork_count += 1
 
-        if os.path.isfile(shadow_output_file[z]):
-            f = open(shadow_output_file[z], "r")
-            while True:
-                line = f.readline()
-                if not line: break
-                result = line.find(genesisHash)
-                if result != -1:
-                    condition_count += 1
+    if pork_count > 6:
+        print("Fail mainchain test ... (network separation) ")
+    elif pork_count == 0:
+        pass
+    else:
+        print("There is a fork ...")
+        condition_count = node_count
 
     test_result(condition_count, node_count, "mainchain test")
     sys.exit(0)

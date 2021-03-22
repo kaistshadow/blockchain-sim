@@ -239,3 +239,31 @@ def get_runtime_shadow(output_txt):
             break
     f.close()
     return run_time
+
+def get_last_hashValue(shadow_output_file, rpc_output_file, node_count, pork_count):
+    condition_count = 0
+    i = 0
+    for z in range(0,node_count):
+        f = open(rpc_output_file[z+node_count] , "r")
+        for line in f.readlines()[::-1]:
+            line.rstrip()
+            result = line.find("bestblockhash")
+            if result != -1:
+                line = line.split(",")[3].split(":")[1]
+                genesisHash = line[1:len(line)-1]
+                i += 1
+                if i == (pork_count+1):
+                    break
+                else:
+                    continue
+
+        if os.path.isfile(shadow_output_file[z]):
+            f = open(shadow_output_file[z], "r")
+            while True:
+                line = f.readline()
+                if not line: break
+                result = line.find(genesisHash)
+                if result != -1:
+                    condition_count += 1
+
+    return condition_count

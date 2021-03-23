@@ -9,28 +9,20 @@
 
 namespace tpstest {
 
-        template<class NodeTxgen, class NodeState, class NodeKey>
+        template<class NodeTxgen>
         class TxBox {
             private:
-            NodeState* state;
-            NodeKey* key;
-            NodeTxgen generator;
+            NodeTxgen* generator;
 
             public:
             TxBox() {}
 
             bool bootstrap(const char* statefile, const char* keyfile) {
-                state = new NodeState(statefile);
-                key = new NodeKey(keyfile);
+                generator = new NodeTxgen(statefile, keyfile);
             }
-            unsigned char* getNextTxStream(size_t& streamsize) {
-                unsigned char* data = nullptr;
-                NodeState* prevState = state;
-                NodeKey* prevKey = key;
-                data = generator.generate(&state, &key, streamsize);
-                delete prevState;
-                delete prevKey;
-                return data;
+            // return data with hex string format
+            std::string getNextTxStream() {
+                return generator->generate();
             }
         };
 }

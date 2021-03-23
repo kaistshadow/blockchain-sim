@@ -2,11 +2,10 @@
 add_executable(BITCOINTPS_TESTER1)
 target_link_libraries(BITCOINTPS_TESTER1 BLEEPtps)
 target_link_libraries(BITCOINTPS_TESTER1 Bitcoin_0_19_1dev::Plugin)
+target_link_libraries(BITCOINTPS_TESTER1 boost_system)
 
 target_sources(BITCOINTPS_TESTER1
         PRIVATE
-        BitcoinKey.cpp
-        BitcoinState.cpp
         BitcoinTxGen.cpp
         tester.cpp)
 

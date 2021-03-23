@@ -5,11 +5,15 @@
 #ifndef BLEEP_BITCOINTXGEN_H
 #define BLEEP_BITCOINTXGEN_H
 
-#include "BitcoinKey.h"
-#include "BitcoinState.h"
+#include <key.h>
+#include <primitives/transaction.h>
 
 class BitcoinTxgen {
+private:
+    CKey secret;
+    CTransaction* sourceTx;
 public:
-    unsigned char* generate(BitcoinState** state, BitcoinKey** key, size_t& streamsize);
+    BitcoinTxgen(const char* statefile, const char* keyfile);
+    std::string generate();
 };
 #endif //BLEEP_BITCOINTXGEN_H

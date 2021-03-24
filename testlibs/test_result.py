@@ -51,7 +51,7 @@ def filter_overlap_height(node_output_file):
                 result_list.pop()
     return result_list
 
-def summary_result(node_list, node_output_file, sim_time, output_txt):
+def summary_result(node_list, node_output_file, sim_time, output_txt, algo):
     exec_shell_cmd("mkdir -p ./shadow.data/peers")
     last_blockHash_list = []
     block_count_list = []
@@ -92,6 +92,7 @@ def summary_result(node_list, node_output_file, sim_time, output_txt):
 
     f.write("\t2. real runtime : %s \n" %utils.get_runtime_shadow(output_txt))
     f.write("\t3. simulation runtime : %s sec\n" %sim_time)
+    f.write("\t4. Algorithm : %s \n" %algo)
 
     IP_list = utils.get_address_list("output.xml")
     # peer_connection_result 리스트에는 각 peer들의 "getpeerinfo" rpc response 로그의 "ipaddr" 속성값들을 가져옴.

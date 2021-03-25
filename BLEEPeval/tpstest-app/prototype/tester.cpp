@@ -11,16 +11,16 @@
 
 using namespace tpstest;
 int main() {
-//    exported_main(); // initialize bitcoin
+    exported_main(); // initialize bitcoin
 
   TxBox<TPSPolicy, BitcoinNodePrimitives,BitcoinTxgen> tpsBox;
   tpsBox.setTarget("1.0.0.1", 18333);
-    if (!tpsBox.setupAttack()) {
-        std::cout << "setup attack failed" << "\n";
+    if (!tpsBox.setupNetwork()) {
+        std::cout << "setup network failed" << "\n";
         return -1;
     }
-  tpsBox.startAttack();
-    std::cout << "attack finished" << "\n";
+  tpsBox.startNetwork();
+    std::cout << "connection finished" << "\n";
 
     return 0;
 }

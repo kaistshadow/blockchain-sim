@@ -34,7 +34,7 @@ namespace tpstest {
               _targetPort = targetPort;
             }
 
-            bool setupAttack() {
+            bool setupNetwork() {
               if (_targetIP == "" || _targetPort == -1)
                 return false;
 
@@ -44,8 +44,8 @@ namespace tpstest {
               return true;
             }
 
-            int startAttack() {
-//              ev_run(TPSPolicy<NodePrimitives>::libev_loop, 0);
+            int startNetwork() {
+              ev_run(TPSPolicy<NodePrimitives>::libev_loop, 0);
               std::cout << "all watchers are removed or attack routine is finished" << "\n";
               return 0;
             }

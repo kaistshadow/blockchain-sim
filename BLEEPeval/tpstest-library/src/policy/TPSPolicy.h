@@ -26,8 +26,6 @@ namespace tpstest {
         bool ConstructNet(std::string targetIP,
                                int targetPort) {
 
-        std::cout<<"tpspolicy construct net method is start22!\n";
-
             // Spawn network consisting of pre-defined number of benign nodes
 
                 auto &benignNode = _benignNodes.emplace_back("99.99.0.1", 18333);

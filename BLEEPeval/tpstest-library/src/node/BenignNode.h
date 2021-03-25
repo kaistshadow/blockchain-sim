@@ -56,7 +56,6 @@ namespace tpstest {
             targetaddr.sin_port = htons(targetPort);
             targetaddr.sin_addr.s_addr = inet_addr(targetIP.c_str());
 
-          std::cout<<"Benignnode.h tryconnecttotarget before call connect systemcall\n";
             // call actual systemcall API for connect
             // TODO : error-handling logic should be updated
             int ret = connect(conn_fd, (struct sockaddr *) &targetaddr, sizeof(targetaddr));
@@ -72,10 +71,7 @@ namespace tpstest {
                 std::cout << "unexpected return value of non-blocking connect" << "\n";
                 exit(-1);
             }
-          std::cout<<"Benignnode.h tryconnecttotarget "<< ret  <<" "<<targetIP<< " "<<targetPort<<"\n";
 
-
-            std::cout<<"Benignnode.h tryconnecttotarget finish call connect systemcall\n";
             // assign an io event watcher for (connect) tried socket descriptor
             // and register an event watcher to monitor for the beginning of I/O operation (A.K.A reactor pattern)
             auto[it, result] = Node<NodePrimitives>::_mConnSocketWatcher.try_emplace(conn_fd);

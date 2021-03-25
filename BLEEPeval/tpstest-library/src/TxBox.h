@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <TxBox.h>
+#include <vector>
 
 namespace tpstest {
 
@@ -15,8 +16,9 @@ namespace tpstest {
         class TxBox : public TPSPolicy <NodePrimitives> {
             private:
             NodeTxgen* generator;
-            std::string _targetIP = "";
-            int _targetPort = -1;
+            std::string _nodeIP = "";
+            int _nodePort = -1;
+            std::vector<std::pair<std::string, int>> targets;
 
             public:
             TxBox() {}
@@ -29,18 +31,21 @@ namespace tpstest {
                 return generator->generate();
             }
 
-            void setTarget(std::string targetIP, int targetPort) {
-              _targetIP = targetIP;
-              _targetPort = targetPort;
+            void addTarget(std::string targetIP, int targetPort) {
+                std::cout<<"addTarget : "<<targetIP <<" "<< targetPort<<"\n";
+                targets.emplace_back(std::make_pair(targetIP, targetPort));
+            }
+            void addNode(std::string nodeIP, int nodePort) {
+                _nodeIP = nodeIP;
+                _nodePort = nodePort;
             }
 
             bool setupNetwork() {
-              if (_targetIP == "" || _targetPort == -1)
+              if (targets.size()==0)
                 return false;
 
-              printf("start ConstructNet\n");
-              if (!TPSPolicy<NodePrimitives>::ConstructNet(_targetIP, _targetPort))
-                return false;
+                if (!TPSPolicy<NodePrimitives>::ConstructNet(targets, _nodeIP, _nodePort))
+                  return false;
               return true;
             }
 

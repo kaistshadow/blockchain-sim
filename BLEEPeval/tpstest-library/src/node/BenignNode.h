@@ -33,8 +33,6 @@ namespace tpstest {
         // API for connection to target
         int tryConnectToTarget(std::string targetIP, int targetPort) {
 
-            std::cout<<"BenignNode.h try ConnectTotarget \n";
-
             // create new socket for a connection
             int conn_fd = CreateNewSocket();
 

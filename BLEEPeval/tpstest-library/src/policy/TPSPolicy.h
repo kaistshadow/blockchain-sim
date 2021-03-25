@@ -17,31 +17,27 @@ namespace tpstest {
 
     public:
       TPSPolicy() : libev_loop(EV_DEFAULT) {
-            _checkWatcher.set<TPSPolicy, &TPSPolicy<NodePrimitives>::_checkAttack>(
-                    this);
+            _checkWatcher.set<TPSPolicy, &TPSPolicy<NodePrimitives>::_checkAttack>(this);
             _checkWatcher.start();
         }
 
         // step 1. construct virtual network using sybil nodes
-        bool ConstructNet(std::string targetIP,
-                               int targetPort) {
+        bool ConstructNet (std::vector<pair<std::string,int>> targets, std::string NodeIP, int nodeport) {
 
             // Spawn network consisting of pre-defined number of benign nodes
+            auto &benignNode = _benignNodes.emplace_back(NodeIP, nodeport);
 
-                auto &benignNode = _benignNodes.emplace_back("99.99.0.1", 18333);
-                benignNode.SetTarget(targetIP, targetPort);
-
-            std::cout << "benign node objects are constructed" << "\n";
-
+            std::cout << "benign node objects are constructed " << _benignNodes.size() << "\n";
           for (auto &_benignNode : _benignNodes) {
-            int conn_fd = _benignNode.tryConnectToTarget(targetIP, targetPort);
+            for (auto &[_targetIP, _targetPort] : targets){
+                int conn_fd = _benignNode.tryConnectToTarget(_targetIP, _targetPort);
+            }
           }
 
 
           // Let attacker node to periodically call ADDR injection API
             _addrInjectTimer.set<TPSPolicy, &TPSPolicy::_timercb>(this);
             _addrInjectTimer.start();
-
 
             return true;
         }

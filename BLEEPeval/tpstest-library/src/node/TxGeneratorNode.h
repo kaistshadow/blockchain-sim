@@ -1,9 +1,10 @@
 //
-// Created by ilios on 21. 2. 15..
+// Created by csrc on 21. 3. 25..
 //
 
-#ifndef BLEEP_BENIGN_NODE_H
-#define BLEEP_BENIGN_NODE_H
+#ifndef BLEEP_TXGENERATORNODE_H
+#define BLEEP_TXGENERATORNODE_H
+
 
 #include <iostream>
 #include <string>
@@ -18,17 +19,17 @@
 #include "shadow_interface.h"
 #include "Node.h"
 
-
 namespace tpstest {
 
     template<class NodePrimitives>
-    class BenignNode : public Node<NodePrimitives> {
+    class TxGeneratorNode : public Node<NodePrimitives> {
     public:
-        BenignNode(std::string virtualIp, int listenPort = 0)
-                : Node<NodePrimitives>( virtualIp, listenPort, NodeType::Benign) {}
+        TxGeneratorNode(std::string virtualIp, int listenPort = 0)
+                : Node<NodePrimitives>( virtualIp, listenPort, NodeType::TxGenerator) {
+        }
 
         // move constructor
-        BenignNode(BenignNode &&other) = default;
+        TxGeneratorNode(TxGeneratorNode &&other) = default;
 
         // API for connection to target
         int tryConnectToTarget(std::string targetIP, int targetPort) {
@@ -87,7 +88,7 @@ namespace tpstest {
 
         // API for connection to target using timer
         void tryConnectToTarget(std::string targetIP, int targetPort, double starttime) {
-            _connStartTimer.set<BenignNode<NodePrimitives>, &BenignNode<NodePrimitives>::_timercb>(this);
+            _connStartTimer.set<TxGeneratorNode<NodePrimitives>, &TxGeneratorNode<NodePrimitives>::_timercb>(this);
             _connStartTimer.set(starttime, 0);
             _connStartTimer.start();
 
@@ -154,30 +155,22 @@ namespace tpstest {
         }
 
     private:
-        ev::timer _churnoutTimer;
+        ev::timer _txgenerateTimer;
+        int tx_per_tick;
 
-        void _churnoutcb(ev::timer &w, int revents) {
-            for (auto &[fd, watcher] : Node<NodePrimitives>::_mDataSocketWatcher) {
-                watcher.stop();
-                close(fd);
-            }
-            for (auto &[fd, watcher] : Node<NodePrimitives>::_mConnSocketWatcher) {
-                watcher.stop();
-                close(fd);
-            }
-            Node<NodePrimitives>::_listen_watcher.stop();
-            close(Node<NodePrimitives>::_listen_sockfd);
-            std::cout << "churn out timer is called at " << Node<NodePrimitives>::GetIP() << "\n";
+        // make a transaction, broadcast to targets
+        void _txgeneratecb(ev::timer &w, int revents) {
+            TxGeneratorNode<NodePrimitives>::generate();
         }
 
     public:
-        void SetChurnOutTimer(int uptime) {
-            _churnoutTimer.set<BenignNode, &BenignNode<NodePrimitives>::_churnoutcb>(this);
-            _churnoutTimer.set(uptime, 0.);
-            _churnoutTimer.start();
+        void SetTxGenerateTimer(int tx_per_tick, int uptime) {
+            this->tx_per_tick = tx_per_tick;
+            _txgenerateTimer.set<TxGeneratorNode, &TxGeneratorNode<NodePrimitives>::_txgeneratecb>(this);
+            _txgenerateTimer.set(uptime, 0.);
+            _txgenerateTimer.start();
         }
     };
 }
 
-#endif
-
+#endif //BLEEP_TXGENERATORNODE_H

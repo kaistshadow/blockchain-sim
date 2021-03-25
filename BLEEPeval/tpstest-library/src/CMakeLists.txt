@@ -7,7 +7,7 @@ target_link_libraries(BLEEPtps Bitcoin_0_19_1dev::Plugin)
 target_sources(BLEEPtps
         PRIVATE
         TxBox.h
-        node/BenignNode.h
+        node/TxGeneratorNode.h
         node/Node.h
         policy/TPSPolicy.h
         )

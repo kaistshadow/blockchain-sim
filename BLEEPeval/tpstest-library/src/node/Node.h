@@ -21,7 +21,7 @@
 
 namespace tpstest {
     enum class NodeType {
-        Benign, Attacker, Shadow
+        Benign, Attacker, Shadow, TxGenerator
     };
 
     template<class NodePrimitives>

@@ -7,14 +7,13 @@
 #include <policy/TPSPolicy.h>
 
 #include "BitcoinNodePrimitives.h"
-#include "BitcoinTxGen.h"
 
 using namespace tpstest;
 int main(int argc, char* argv[]) {
   int targetNum = atoi(argv[1]);
   exported_main(); // initialize bitcoin
 
-  TxBox<TPSPolicy, BitcoinNodePrimitives,BitcoinTxgen> tpsBox;
+  TxBox<TPSPolicy, BitcoinNodePrimitives> tpsBox;
   tpsBox.addNode("99.99.0.1",18333);
 
   for(int i=0; i<targetNum; i++){

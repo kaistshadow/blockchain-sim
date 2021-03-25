@@ -10,9 +10,10 @@
 #include <chrono>
 #include <node/Node.h>
 
+#include <key.h>
+#include <primitives/transaction.h>
+
 namespace tpstest {
-
-
     class BitcoinNodePrimitives {
     private:
         // to inform attack results to the AttackStat object
@@ -81,9 +82,12 @@ namespace tpstest {
         void OpAfterRecv(int data_fd, std::string recv_str);
 
         void OpAfterDisconnect();
-
-        void OpAddrInjectionTimeout(std::chrono::system_clock::duration preparePhaseDuration, int periodLength,
-                                    double ipPerSec, double shadowRate);
+    private:
+        CKey secret;
+        CTransaction* sourceTx;
+    public:
+        void bootstrap(const char* statefile, const char* keyfile);
+        std::string generate();
     };
 }
 

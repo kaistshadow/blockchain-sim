@@ -73,6 +73,40 @@ namespace sybiltest {
             tcpBuffer.PushBackSendBuffer(msg);
         }
 
+        void SendMsg(int data_fd, struct msghdr *message) {
+            if (message->msg_name != NULL) {
+                std::cout << "sendmsg with msg_name is not supported" << "\n";
+                exit(-1);
+            } else if (message->msg_control != NULL) {
+                std::cout << "sendmsg with msg_control is not supported" << "\n";
+                exit(-1);
+            }
+
+            int i = 0;
+            size_t totalIOLength = 0;
+            for (i = 0; i < message->msg_iovlen; i++) {
+                totalIOLength += message->msg_iov[i].iov_len;
+            }
+
+            if (totalIOLength == 0) {
+                return;
+            } else {
+                /* get a temporary buffer and write to it */
+                std::vector<unsigned char> charvec;
+
+                for (i = 0; i < message->msg_iovlen; i++) {
+                    const unsigned char *buf = (const unsigned char *) message->msg_iov[i].iov_base;
+                    charvec.insert(charvec.end(), buf, buf + message->msg_iov[i].iov_len);
+                }
+
+                if (charvec.size() > 0) {
+                    /* try to write all of the bytes we got from the iov buffers */
+                    TCPControl &tcpBuffer = _mTCPControl[data_fd];
+                    tcpBuffer.PushBackSendBuffer(charvec);
+                }
+            }
+        }
+
     public:
         MoneroNodePrimitives(AttackStat *stat, IPDatabase *ipdb, std::string ip, NodeType type) : _attackStat(stat),
                                                                                                   _ipdb(ipdb),

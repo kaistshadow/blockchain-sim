@@ -7,6 +7,8 @@
 #include "BitcoinTxGen.h"
 
 #include <bitcoind.h>
+
+#include <bitcoind.h>
 #include <iostream>
 #include <unistd.h>
 
@@ -56,7 +58,7 @@ int main(int argc, char* argv[]) {
 //    broadcastMessenger.connect(xxx.xxx.xxx.xxx, xxx);
 //    broadcastMessenger.connect(xxx.xxx.xxx.xxx, xxx);
 
-    TxBox<BitcoinTxgen> txBox;
+    TxBox<BitcoinTxgen, TPSPolicy ,BitcoinPrimitives> txBox;
 //    Messager<BitcoinNodePrimitives> msgr("1.0.0.1", 8333);
     txBox.bootstrap("initial_tx_data.txt", "private_key.txt");
 

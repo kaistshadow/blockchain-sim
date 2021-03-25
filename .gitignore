@@ -32,6 +32,9 @@ BLEEPeval/web-gui/vis/yarn-error.log
 
 BLEEPeval/web-gui/.tern-port
 
+BLEEPeval/*-app/*/datadir
+BLEEPeval/*-app/*/data
+
 terraform.tfstate
 terraform.tfstate.backup
 .terraform

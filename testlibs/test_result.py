@@ -101,7 +101,7 @@ def summary_result(node_list, node_output_file, sim_time, output_txt, algo):
 
     f.write("\t4. peer connection status : \n\n")
     for i in range(0,len(peer_connection_result)):
-        f.write("\t\t node : %s  ---------- connection match rate : %d/%d \n" %(IP_list[i], len(peer_connection_result[i]), len(IP_list)-1))
+        f.write("\t\t node : %s  ---------- connection match rate : %d/%d \n" %(IP_list[i], len(peer_connection_result[i]), len(IP_list)))
         for j in range(0,len(peer_connection_result[i])):
             f.write("\t\t\t\t - %s \n" %peer_connection_result[i][j])
     f.close()

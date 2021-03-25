@@ -29,7 +29,8 @@ def main():
     runtime, node_id_list, plugin_list = xml_modules.get_xml_info_new(target_folder_xml)
 
     # bitcoind data dir 설정 파일 생성.
-    utils.set_plugin_file(len(node_id_list), path)
+    target_path = path + "/data"
+    utils.set_plugin_file(len(node_id_list), target_path)
 
     # shadow 실행
     print("shadow running ...")

@@ -14,7 +14,6 @@ find_package(Bitcoin_0_19_1dev REQUIRED)
 add_custom_target(bitcoin_dumpefile_test_prepare ALL
   COMMAND rm -rf data/bcdnode0
   COMMAND mkdir -p data/bcdnode0
-  COMMAND cp -r ${CMAKE_SOURCE_DIR}/testlibs/datadir_dump ${CMAKE_CURRENT_SOURCE_DIR}/data/bcdnode0
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(bitcoin_dumpefile_test_prepare2 ALL

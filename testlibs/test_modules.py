@@ -495,7 +495,7 @@ def test_peer_connection(plugin_output_files, IP_list, xml_file):
 # --------------------------------------------------------------------------------------------------------------
 # 1. 플러그인 로그에서 "Reindexing finished" 로그가 없으면 test 실패
 # 2. coinlip_hash.txt 파일에서 블록 hash 값들을 읽어서, 플러그인의 로그에서 1~7번의 블록 hash 값과 비교
-def test_dumpfile_load(plugin_output_files, abs_path):
+def test_dumpfile_load(plugin_output_files, abs_path, difficulty):
     print("dump test start ... ")
     condition_count = 0
     the_path = ""
@@ -511,7 +511,7 @@ def test_dumpfile_load(plugin_output_files, abs_path):
             break
     
     if condition_count == 1:
-        the_path = utils.get_datadirDumpfile_path(abs_path)
+        the_path = utils.get_datadirDumpfile_path(abs_path, difficulty)
         the_path = the_path + "/coinflip_hash.txt"
         f = open(the_path, "r")
         while True:

@@ -19,7 +19,7 @@ def main():
     OPT_REGTEST = args.regtest
     
     if OPT_REGTEST:
-        xml_modules.get_xmlfile(path)
+        tx_mode, algo, difficulty = xml_modules.get_xmlfile(path)
 
     # xml 파일 생성 확인
     target_folder_xml = test_modules.test_xml_existence("output.xml")
@@ -29,7 +29,7 @@ def main():
 
     # bitcoind data dir 설정 파일 생성.
     target_path = path + "/data"
-    utils.set_plugin_file(len(node_id_list), target_path)
+    utils.set_plugin_file(len(node_id_list), os.path.abspath("./data"), difficulty)
     # shadow 실행
     print("shadow running ...")
     shadow_command = 'shadow output.xml -w 2' + ' > output.txt'

@@ -37,17 +37,18 @@ def remove_tx_plugin(tx_plugin):
     fr.close()
 
 # Description : blockchain plugin의 data dir를 설정해줘야할 디렉토리로서, 플러그인 개수만큼 제거하고 생성을 해줌.
-def set_plugin_file(node_count, path):
+def set_plugin_file(node_count, path, difficulty):
     if(os. path. isdir(path)):
         the_command = "rm -rf data/*"
         exec_shell_cmd(the_command)
-
+    command = ""
     for i in range(0,node_count):
         the_command = "mkdir -p data/bcdnode" + str(i)
         exec_shell_cmd(the_command)
-    
-    target_command = get_datadirDumpfile_path(path)
-    command = "cp -r " + target_command + "/* " + path + "/bcdnode0"
+
+    target_command = get_datadirDumpfile_path(path, difficulty)
+    command = "cp -r " + target_command + "/* " + path 
+       
     exec_shell_cmd(command)
 
 # Description : xml 파일을 생성하기 위해, 현재 실행되는 함수의 경로에서 xml파일을 생성하기 위한 command를 생성하여 반환함.
@@ -244,13 +245,20 @@ def get_runtime_shadow(output_txt):
     f.close()
     return run_time
 
-def get_datadirDumpfile_path(abs_path):
+def get_datadirDumpfile_path(abs_path, difficulty):
     the_list = abs_path.split("/")
     the_command = ""
     for i in range(0,len(the_list)):
         the_command = the_command + the_list[i] + "/"
         if the_list[i] == "blockchain-sim":
-            the_command = the_command + "testlibs/datadir_dump"
+            if difficulty == "1":
+                the_command = the_command + "testlibs/dump/difficulty_1"
+            elif difficulty == "2":
+                the_command = the_command + "testlibs/dump/difficulty_2"
+            elif difficulty == "3":
+                the_command = the_command + "testlibs/dump/difficulty_3"
+            else:
+                print("Fail load dump file ...")
+            
             break
-
     return the_command

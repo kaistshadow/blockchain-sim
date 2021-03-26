@@ -6,12 +6,11 @@
 #define BLEEP_TXBOX_H
 
 #include <iostream>
-#include <TxBox.h>
 #include <vector>
 
 namespace tpstest {
-        template< template<class> class TPSPolicy, class NodePrimitives>
-        class TxBox : public TPSPolicy <NodePrimitives> {
+        template< template<class> class TestPolicy, class NodePrimitives>
+        class TxBox : public TestPolicy <NodePrimitives> {
             private:
             std::string _nodeIP = "";
             int _nodePort = -1;
@@ -30,16 +29,17 @@ namespace tpstest {
             }
 
             bool setupNetwork() {
+              std::cout<<"start setupnetwork "<<targets.size()<<"\n";
                 if (targets.size()==0)
                     return false;
 
-                if (!TPSPolicy<NodePrimitives>::ConstructNet(targets, _nodeIP, _nodePort))
+                if (!TestPolicy<NodePrimitives>::ConstructNet(targets, _nodeIP, _nodePort))
                     return false;
                 return true;
             }
 
             int startNetwork() {
-                ev_run(TPSPolicy<NodePrimitives>::libev_loop, 0);
+                ev_run(TestPolicy<NodePrimitives>::libev_loop, 0);
                 std::cout << "all watchers are removed or attack routine is finished" << "\n";
                 return 0;
             }

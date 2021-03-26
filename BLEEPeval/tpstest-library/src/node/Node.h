@@ -21,7 +21,7 @@
 
 namespace tpstest {
     enum class NodeType {
-        Benign, Attacker, Shadow, TxGenerator
+        TxGenerator, MonitoringNode
     };
 
     template<class NodePrimitives>
@@ -65,9 +65,8 @@ namespace tpstest {
                 NodePrimitives::RemoveTCPControl(w.fd);
                 _mDataSocketWatcher.erase(w.fd);
 
-                if (NodePrimitives::_type == NodeType::Attacker) {
-                    // call Node's primitive operation
-                    NodePrimitives::OpAfterDisconnect();
+                if (NodePrimitives::_type == NodeType::MonitoringNode) {
+                    std::cout<<"NodeType is MonitoringNode\n";
                 }
             } else if (nBytes < 0) {
                 // error

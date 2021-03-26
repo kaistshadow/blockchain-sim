@@ -27,9 +27,7 @@ using namespace std;
 void BitcoinNodePrimitives::OpAfterConnect(int conn_fd) {
     cout << "OpAfterConnect for node [" << GetIP() << "]" << "\n";
     switch (_type) {
-        case NodeType::Attacker:
-
-        case NodeType::Benign:{
+        case NodeType::MonitoringNode: {
           // send initializing version message
           const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
 
@@ -75,10 +73,6 @@ void BitcoinNodePrimitives::OpAfterConnect(int conn_fd) {
           }
 
           break;
-        }
-        case NodeType::Shadow: {
-            assert(-1);
-            break;
         }
     }
 }
@@ -172,7 +166,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 if (!vRecv.empty())
                     vRecv >> fRelay;
 
-                if (_type == NodeType::Benign || _type == NodeType::Shadow) {
+                if (_type == NodeType::TxGenerator) {
                     // VERSION message from inbound connection
                     // send version message (reply)
                     ServiceFlags nLocalNodeServices = ServiceFlags(NODE_NETWORK | NODE_WITNESS | NODE_NETWORK_LIMITED);
@@ -267,15 +261,6 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 if (nMessageSize)
                     SendMsg(data_fd, replymsg.data);
 
-                if (_type == NodeType::Shadow && !_informed) {
-
-                    // print attack success message
-                    cout
-                            << "Interception of target node's outgoing connection is confirmed"
-                            << ", Shadow NodeIP:" << GetIP() << "\n";
-                    // update attack statistics
-                    _informed = true;
-                }
             }
 
             // Maybe, recvBuffer can be updated more efficiently. (minimizing a duplication)

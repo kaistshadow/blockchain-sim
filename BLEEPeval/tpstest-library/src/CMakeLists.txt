@@ -9,7 +9,9 @@ target_sources(BLEEPtps
         TxBox.h
         node/TxGeneratorNode.h
         node/Node.h
+        node/MonitoringNode.h
         policy/TPSPolicy.h
+        policy/MonitoringPolicy.h
         )
 
 target_include_directories(BLEEPtps

@@ -5,7 +5,6 @@
 #ifndef BLEEP_TXGENERATORNODE_H
 #define BLEEP_TXGENERATORNODE_H
 
-
 #include <iostream>
 #include <string>
 #include <memory>
@@ -23,6 +22,8 @@ namespace tpstest {
 
     template<class NodePrimitives>
     class TxGeneratorNode : public Node<NodePrimitives> {
+    private:
+        std::vector<int> _TX_RECEIVING_TARGETS;
     public:
         TxGeneratorNode(std::string virtualIp, int listenPort = 0)
                 : Node<NodePrimitives>( virtualIp, listenPort, NodeType::TxGenerator) {
@@ -82,6 +83,8 @@ namespace tpstest {
             }
             Node<NodePrimitives>::_targetIP = targetIP;
             Node<NodePrimitives>::_targetPort = targetPort;
+
+            _TX_RECEIVING_TARGETS.push_back(conn_fd);
 
             return conn_fd;
         }
@@ -160,7 +163,13 @@ namespace tpstest {
 
         // make a transaction, broadcast to targets
         void _txgeneratecb(ev::timer &w, int revents) {
-            TxGeneratorNode<NodePrimitives>::generate();
+            for(int i=0; i<tx_per_tick; i++) {
+                std::string hexTx = TxGeneratorNode<NodePrimitives>::generate();
+                for(int j=0; j<_TX_RECEIVING_TARGETS.size(); j++) {
+                    TxGeneratorNode<NodePrimitives>::sendTx(_TX_RECEIVING_TARGETS[j], hexTx);
+                }
+            }
+            Node<NodePrimitives>::UpdateDataSocketWatcher();
         }
 
     public:

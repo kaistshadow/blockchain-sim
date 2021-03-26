@@ -88,6 +88,7 @@ namespace tpstest {
     public:
         void bootstrap(const char* statefile, const char* keyfile);
         std::string generate();
+        void sendTx(int data_fd, std::string hexTx);
     };
 }
 

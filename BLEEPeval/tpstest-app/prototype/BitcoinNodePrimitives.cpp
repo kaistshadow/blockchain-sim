@@ -27,6 +27,7 @@ using namespace std;
 void BitcoinNodePrimitives::OpAfterConnect(int conn_fd) {
     cout << "OpAfterConnect for node [" << GetIP() << "]" << "\n";
     switch (_type) {
+        case NodeType::TxGenerator:
         case NodeType::MonitoringNode: {
           // send initializing version message
           const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9

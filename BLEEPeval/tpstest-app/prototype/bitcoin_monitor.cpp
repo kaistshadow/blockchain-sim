@@ -10,9 +10,11 @@
 
 using namespace tpstest;
 int main(int argc, char* argv[]) {
-  std::string ipaddr = argv[1];
-  int targetNum = atoi(argv[2]);
+    std::string ipaddr = argv[1];
+    int targetNum = atoi(argv[2]);
   exported_main(); // initialize bitcoin
+  ECC_Start();
+  ECCVerifyHandle* ecc = new ECCVerifyHandle();
 
   TxBox<MonitoringPolicy, BitcoinNodePrimitives> MonitorBox;
   MonitorBox.addNode(ipaddr,18333);

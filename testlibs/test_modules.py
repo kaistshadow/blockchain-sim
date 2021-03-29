@@ -510,7 +510,30 @@ def test_dumpfile_load(plugin_output_files, abs_path, difficulty):
             f.close()
             break
     
+    # check pork
+    event_value = 0
     if condition_count == 1:
+        f = open(plugin_output_files, "r")
+        while True:
+            line = f.readline()
+            if not line: break
+            result = line.find("Disconnect block")
+            if result != -1:
+                event_value = 1
+                continue
+            if event_value == 1:
+                result = line.find("height=6")
+                if result != -1:
+                    print("Fail dump file load ... ")
+                    print("There are problems about initial block hashes ... ")
+                    f.close()
+                    sys.exit(1)
+
+        condition_count = 2
+        f.close()
+
+
+    if condition_count == 2:
         the_path = utils.get_datadirDumpfile_path(abs_path, difficulty)
         the_path = the_path + "/coinflip_hash.txt"
         f = open(the_path, "r")

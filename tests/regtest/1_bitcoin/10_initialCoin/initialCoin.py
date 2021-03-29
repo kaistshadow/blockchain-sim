@@ -19,8 +19,13 @@ def main():
     args = parser.parse_args()
     OPT_REGTEST = args.regtest
     
+    difficulty = ""
+
     if OPT_REGTEST:
         tx_mode, algo, difficulty = xml_modules.get_xmlfile(path)
+    else:
+        present_path = path + "/output2.xml"
+        difficulty = utils.get_difficulty_fromXML(present_path)
 
     # xml 파일 생성 확인
     target_folder_xml = test_modules.test_xml_existence("output2.xml")

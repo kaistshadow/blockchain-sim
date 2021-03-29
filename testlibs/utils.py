@@ -262,3 +262,19 @@ def get_datadirDumpfile_path(abs_path, difficulty):
             
             break
     return the_command
+
+def get_difficulty_fromXML(xmlfile):
+    f = open(xmlfile, "r")
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("difficulty")
+        if result != -1:
+            line_result = line.split(" ")
+            for i in range(0,len(line_result)):
+                result = line_result[i].find("difficulty")
+                if result != -1:
+                    return_difficulty = line_result[i].split("=")[1]
+                    break
+    f.close()
+    return return_difficulty[0]

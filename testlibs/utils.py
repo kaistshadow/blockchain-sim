@@ -37,17 +37,18 @@ def remove_tx_plugin(tx_plugin):
     fr.close()
 
 # Description : blockchain plugin의 data dir를 설정해줘야할 디렉토리로서, 플러그인 개수만큼 제거하고 생성을 해줌.
-def set_plugin_file(node_count, path):
+def set_plugin_file(node_count, path, difficulty):
     if(os. path. isdir(path)):
         the_command = "rm -rf data/*"
         exec_shell_cmd(the_command)
-
+    command = ""
     for i in range(0,node_count):
         the_command = "mkdir -p data/bcdnode" + str(i)
         exec_shell_cmd(the_command)
-    
-    target_command = get_datadirDumpfile_path(path)
-    command = "cp -r " + target_command + "/* " + path + "/data"
+
+    target_command = get_datadirDumpfile_path(path, difficulty)
+    command = "cp -r " + target_command + "/* " + path 
+       
     exec_shell_cmd(command)
 
 # Description : xml 파일을 생성하기 위해, 현재 실행되는 함수의 경로에서 xml파일을 생성하기 위한 command를 생성하여 반환함.
@@ -244,41 +245,36 @@ def get_runtime_shadow(output_txt):
     f.close()
     return run_time
 
-def get_last_hashValue(shadow_output_file, rpc_output_file, node_count, pork_count):
-    condition_count = 0
-    i = 0
-    for z in range(0,node_count):
-        f = open(rpc_output_file[z+node_count] , "r")
-        for line in f.readlines()[::-1]:
-            line.rstrip()
-            result = line.find("bestblockhash")
-            if result != -1:
-                line = line.split(",")[3].split(":")[1]
-                genesisHash = line[1:len(line)-1]
-                i += 1
-                if i == (pork_count+1):
-                    break
-                else:
-                    continue
-
-        if os.path.isfile(shadow_output_file[z]):
-            f = open(shadow_output_file[z], "r")
-            while True:
-                line = f.readline()
-                if not line: break
-                result = line.find(genesisHash)
-                if result != -1:
-                    condition_count += 1
-
-    return condition_count
-
-  def get_datadirDumpfile_path(abs_path):
+def get_datadirDumpfile_path(abs_path, difficulty):
     the_list = abs_path.split("/")
     the_command = ""
     for i in range(0,len(the_list)):
         the_command = the_command + the_list[i] + "/"
         if the_list[i] == "blockchain-sim":
-            the_command = the_command + "/testlibs/datadir_dump"
+            if difficulty == "1":
+                the_command = the_command + "testlibs/dump/difficulty_1"
+            elif difficulty == "2":
+                the_command = the_command + "testlibs/dump/difficulty_2"
+            elif difficulty == "3":
+                the_command = the_command + "testlibs/dump/difficulty_3"
+            else:
+                print("Fail load dump file ...")
+            
             break
-
     return the_command
+
+def get_difficulty_fromXML(xmlfile):
+    f = open(xmlfile, "r")
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("difficulty")
+        if result != -1:
+            line_result = line.split(" ")
+            for i in range(0,len(line_result)):
+                result = line_result[i].find("difficulty")
+                if result != -1:
+                    return_difficulty = line_result[i].split("=")[1]
+                    break
+    f.close()
+    return return_difficulty[0]

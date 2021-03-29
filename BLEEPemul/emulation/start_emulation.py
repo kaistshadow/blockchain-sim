@@ -16,7 +16,7 @@ def main():
     path = os.path.abspath("./")
 
     # xml file 생성
-    tx_mode, algo = xml_modules.get_xmlfile(path)
+    tx_mode, algo, difficulty = xml_modules.get_xmlfile(path)
 
     # # xml file 생성 검증
     test_modules.test_xml_existence("output.xml")
@@ -29,7 +29,7 @@ def main():
     IP_list = utils.get_address_list("output.xml")
 
     # # datadir 설정
-    utils.set_plugin_file(len(node_id_list), os.path.abspath("./data"))
+    utils.set_plugin_file(len(node_id_list), os.path.abspath("./data"), difficulty)
 
     # # shadow 실행
     print("shadow running ... ")

@@ -14,9 +14,6 @@ find_package(Bitcoin_0_19_1dev REQUIRED)
 add_custom_target(bitcoin_dum_test_prepare ALL
   COMMAND rm -rf data/bcdnode0
   COMMAND mkdir -p data/bcdnode0
-  COMMAND cp -r ${CMAKE_SOURCE_DIR}/datadir_dump/bcdnode0/* ${CMAKE_CURRENT_SOURCE_DIR}/data/bcdnode0/
-  COMMAND cp  ${CMAKE_SOURCE_DIR}/datadir_dump/coinflip_hash.txt ${CMAKE_CURRENT_SOURCE_DIR}/data
-
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(bitcoin_dump_test_prepare2 ALL

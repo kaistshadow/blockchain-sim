@@ -19,8 +19,13 @@ def main():
     args = parser.parse_args()
     OPT_REGTEST = args.regtest
     
+    difficulty = ""
+
     if OPT_REGTEST:
-        xml_modules.get_xmlfile(path)
+        tx_mode, algo, difficulty = xml_modules.get_xmlfile(path)
+    else:
+        present_path = path + "/output2.xml"
+        difficulty = utils.get_difficulty_fromXML(present_path)
 
     # xml 파일 생성 확인
     target_folder_xml = test_modules.test_xml_existence("output2.xml")
@@ -29,8 +34,9 @@ def main():
     runtime, node_id_list, plugin_list = xml_modules.get_xml_info_new(target_folder_xml)
 
     # bitcoind data dir 설정 파일 생성.
-    utils.set_plugin_file(len(node_id_list), path)
-
+    target_path = path + "/data"
+    utils.set_plugin_file(len(node_id_list), os.path.abspath("./data"), difficulty)
+    
     # shadow 실행
     print("shadow running ...")
     utils.subprocess_open('shadow output2.xml > output.txt')

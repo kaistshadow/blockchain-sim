@@ -90,7 +90,6 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
     // get all received data stream
     string &recvbufstr = tcpControl.GetRecvBuffer();
 
-    cout << "opafterRecv" << "\n";
 
     while (recvbufstr.size() > 0) {
         // first, dump a message header
@@ -139,6 +138,8 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
             }
             string strCommand = hdr.GetCommand();
             CDataStream &vRecv = msg.vRecv;
+
+            std::cout<<"OpafterRecv : <<" <<strCommand <<"\n";
 
             if (strCommand == NetMsgType::VERSION) {
                 int64_t nTime;

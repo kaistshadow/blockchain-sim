@@ -6,6 +6,7 @@ add_custom_target(tps-API-bitcoin-prepare ALL
         COMMAND mkdir -p data/bcdnode1
         COMMAND cp -r ../../../BLEEPemul/emulation/datadir_dump/bcdnode0/* data/bcdnode0
         COMMAND cp -r ../../../BLEEPemul/emulation/datadir_dump/bcdnode0/* data/bcdnode1
+        COMMAND cp -r ../../../BLEEPemul/emulation/datadir_dump/coinflip_hash.txt data/
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 # compile bitcoin P2P tester

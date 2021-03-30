@@ -1,12 +1,6 @@
 #prepare bitcoin experiment
 add_custom_target(tps-API-bitcoin-prepare ALL
-        COMMAND rm -rf data/bcdnode0
-        COMMAND mkdir -p data/bcdnode0
-        COMMAND rm -rf data/bcdnode1
-        COMMAND mkdir -p data/bcdnode1
-        COMMAND cp -r ../../../testlibs/dump/difficulty_3/bcdnode0/* data/bcdnode0
-        COMMAND cp -r ../../../testlibs/dump/difficulty_3/bcdnode0/* data/bcdnode1
-        COMMAND cp -r ../../../testlibs/dump/difficulty_3/coinflip_hash.txt data/
+        COMMAND sh clean_data.sh 2
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 # compile bitcoin P2P tester

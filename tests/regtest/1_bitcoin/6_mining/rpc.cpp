@@ -40,8 +40,14 @@ int main(int argc, char* argv[]) {
     // method 1: generate node's wallet
     params = Json::arrayValue;
     bitcoin_rpc_request("getnewaddress", params);
-    std::cout<<"-- wallet --\n";
     std::string wallet = json_resp["result"].asString();
+    std::cout<<"wallet:";
+    std::cout<<wallet;
+    std::cout<<"\n";
+
+    params.clear();
+    params = Json::arrayValue;
+    rpc_validateaddress(wallet, argv[1]);
 
     rpc_generatetoaddress(wallet, argv[1]);
 

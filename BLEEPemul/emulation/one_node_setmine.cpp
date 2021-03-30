@@ -29,6 +29,12 @@ void rpc_getmempoolinfo(){
     bitcoin_rpc_request("getmempoolinfo",params);
 }
 
+void rpc_getpeerinfo(){
+    Json::Value params;
+    params.clear();
+    bitcoin_rpc_request("getpeerinfo",params);
+}
+
 int main(int argc, char* argv[]) {
     // init
     std::cout<<"start client \n";
@@ -40,13 +46,20 @@ int main(int argc, char* argv[]) {
     // method 1: generate node's wallet
     params = Json::arrayValue;
     bitcoin_rpc_request("getnewaddress", params);
-    std::cout<<"-- wallet --\n";
     std::string wallet = json_resp["result"].asString();
-
+    std::cout<<"wallet:";
+    std::cout<<wallet;
+    std::cout<<"\n";
+    params.clear();
+    params = Json::arrayValue;
+    rpc_validateaddress(wallet, argv[1]);
+    
     rpc_generatetoaddress(wallet, argv[1]);
 
     sleep(atoi(argv[2]));
     rpc_getmempoolinfo();
     rpc_getblockchaininfo();
+    rpc_getpeerinfo();
+    
     return 0;
 }

@@ -14,5 +14,5 @@ for  i in $(seq 0 $1); do
 	cp -r ../../../testlibs/dump/difficulty_3/bcdnode0/* ./data/bcdnode$i
 done
 
-cp -r ../../../testlibs/dump/difficulty_3/coinflip_hash.txt ./data
+cp -r ../../../testlibs/dump/difficulty_3/coinflip_hash.txt key.txt state.txt ./data
 echo "Datadir Bootstrapping success!"

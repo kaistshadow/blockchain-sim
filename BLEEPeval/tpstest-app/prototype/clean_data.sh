@@ -8,11 +8,18 @@ fi
 echo "cleanup data start!"
 
 rm -rf data/*
-
-for  i in $(seq 0 $1); do
+i=0
+while [ $i -lt $1 ]; do
+	echo "$i"
 	mkdir -p data/bcdnode$i
 	cp -r ../../../testlibs/dump/difficulty_3/bcdnode0/* ./data/bcdnode$i
+	i=$(($i+1))
 done
 
-cp -r ../../../testlibs/dump/difficulty_3/coinflip_hash.txt key.txt state.txt ./data
+path="../../../testlibs/dump/difficulty_3"
+
+cp -r $path/coinflip_hash.txt ./data
+cp -r $path/key.txt ./data
+cp -r $path/state.txt ./data
+
 echo "Datadir Bootstrapping success!"

@@ -5,7 +5,7 @@
 
 std::unordered_set<std::string> t;
 
-void shadow_bitcoin_register_hash(const char hash[]) {
+void shadow_bitcoin_register_hash(const char hash[],int reindex) {
     t.insert(hash);
     return;
 }

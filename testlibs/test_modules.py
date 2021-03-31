@@ -567,5 +567,66 @@ def test_dumpfile_load(plugin_output_files, abs_path, difficulty):
         f.close()
         sys.exit(1)
 
+# --------------------------------------------------------------------------------------------------------------
+#                                       Regression test-13 - monitor node connection test
+# --------------------------------------------------------------------------------------------------------------
+# 이 테스트를 통해 실행될 플러그인 중에 monitor node 플러그인에 대한 테스트임.
+# monitor 노드는 시뮬레이션되는 블록체인의 모든 노드의 블록 전파를 관장함.
+# 현재 테스트에서는 시뮬레이션되는 블록체인의 노드와 monitor node와의 conncetion test임. 
+def monitor_connection_test(plugin_output_files, abs_path, node_count):
+    condition_count = 0
+    # 실행되는 node 수 + 
+    node_count = int(node_count) + 1
+    for i in range(0,len(plugin_output_files)):
+        result = plugin_output_files[i].find("monitor")
+        if result != -1:
+            f = open(plugin_output_files[i], "r")
+            while True:
+                line = f.readline()
+                if not line: break
+                result = line.find("Socket is successfully connected")
+                if result != -1:
+                    condition_count += 1
+                    if condition_count == node_count:
+                        f.close()
+                        break
+            f.close()
 
+        if condition_count == node_count:
+            print("Success monitor connection test ... ")
+            sys.exit(0)
+
+    print("Fail monitor conncetion test ... ")
+    print("only %d node connection ... " %condition_count)
+    sys.exit(1)
+
+# --------------------------------------------------------------------------------------------------------------
+#                                       Regression test-15 - TxGenerator connection test
+# --------------------------------------------------------------------------------------------------------------
+def TxGenerator_connection_test(plugin_output_files, xmlfile, node_count):
+    IP_list = utils.get_address_list(xmlfile)
+    condition_count = 0
+    for i in range(0,len(plugin_output_files)):
+        result = plugin_output_files[i].find("txgenerator/stdout-txgenerator.BITCOINTPS_TESTER.1000.log")
+        if result != -1:
+            f = open(plugin_output_files[i], "r")
+            while True:
+                line = f.readline()
+                if not line: break
+                result = line.find("addTarget")
+                if result != -1:
+                    for i in range(0,len(IP_list)):
+                        result = line.find(IP_list[i])
+                        if result != -1:
+                            condition_count += 1
+                            if condition_count == 2:
+                                f.close()
+                                print("Success txGenrator connection test ...")
+                                sys.exit(0)
+                            else:
+                                break
+            f.close()
+    print(condition_count)
+    print("Fail txGenerator connection test ... ")
+    sys.exit(1)
 

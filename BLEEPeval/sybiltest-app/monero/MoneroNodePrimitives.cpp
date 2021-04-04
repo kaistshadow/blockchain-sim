@@ -111,12 +111,15 @@ void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
 
         if (LEVIN_SIGNATURE != phead.m_signature)
             return;
-        m_cache_in_buffer.erase(sizeof(epee::levin::bucket_head2));
+        int headerReadSize = sizeof(epee::levin::bucket_head2);
+        m_cache_in_buffer.erase(headerReadSize);
+
 
         if (m_cache_in_buffer.size() < phead.m_cb) {
             // body is not fully received
             return;
         }
+        int msgReadSize = phead.m_cb;
         epee::span<const uint8_t> buff_to_invoke = m_cache_in_buffer.carve((std::string::size_type) phead.m_cb);
 
         if (!(phead.m_flags & (LEVIN_PACKET_REQUEST | LEVIN_PACKET_RESPONSE))) {
@@ -136,8 +139,73 @@ void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 // command needs a reply, so we need to handle the command
                 // For example, node might receive following commands
                 // P2P_COMMANDS_POOL_BASE + 7 : COMMAND_REQUEST_SUPPORT_FLAGS (1007)
+                // P2P_COMMANDS_POOL_BASE + 2 : COMMAND_TIMED_SYNC_T (1002)
                 std::string return_buff;
                 switch (command) {
+                    case P2P_COMMANDS_POOL_BASE + 2 : {
+                        typedef nodetool::COMMAND_TIMED_SYNC_T<cryptonote::CORE_SYNC_DATA> COMMAND_TIMED_SYNC;
+                        typedef COMMAND_TIMED_SYNC::request t_req;
+                        typedef COMMAND_TIMED_SYNC::response t_resp;
+                        epee::serialization::portable_storage strg;
+                        if (!strg.load_from_binary(buff_to_invoke)) {
+                            std::cout << "Failed to load_from_binary in command " << command << "\n";
+                            exit(-1);
+                        }
+                        boost::value_initialized<t_req> in_struct;
+                        boost::value_initialized<t_resp> out_struct;
+                        if (!static_cast<t_req &>(in_struct).load(strg)) {
+                            std::cout << "Failed to load in_struct in command " << command << "\n";
+                            exit(-1);
+                        }
+
+                        // fill response
+                        // std::vector<nodetool::peerlist_entry> local_peerlist_new;
+                        // local_peerlist_new.reserve(1);
+                        // static_cast<t_resp &>(out_struct).local_peerlist_new.
+                        t_resp &rsp = static_cast<t_resp &>(out_struct);
+                        rsp.payload_data.current_height = 1;
+                        rsp.payload_data.top_id = {72, -54, 124, -45, -56, -34, 91, 106, 77, 83, -46, -122, 31, -67,
+                                                   -82, -36, -95,
+                                                   65, 85, 53, 89, -7, -66, -107, 32, 6, -128, 83, -51, -88, 67, 11};
+                        rsp.payload_data.cumulative_difficulty = 1;
+                        rsp.payload_data.cumulative_difficulty_top64 = 0;
+                        rsp.payload_data.pruning_seed = 0;
+
+                        epee::serialization::portable_storage strg_out;
+                        rsp.store(strg_out);
+                        // fill response end
+
+                        if (!strg_out.store_to_binary(return_buff)) {
+                            std::cout << "Failed to store_to_binary in command " << command << "\n";
+                            exit(-1);
+                        }
+
+                        epee::levin::bucket_head2 head = epee::levin::make_header(command, return_buff.size(),
+                                                                                  LEVIN_PACKET_RESPONSE, false);
+                        head.m_return_code = SWAP32LE(1); // return value of invoke function for this command
+                        return_buff.insert(0, reinterpret_cast<const char *>(&head), sizeof(head));
+
+                        epee::byte_slice bytes{std::move(return_buff)};
+                        // message_data : "\001!\001\001\001\001\001\001\035"
+                        // message_size : 62
+
+                        struct msghdr msg;
+                        struct iovec iov;
+
+                        iov.iov_base = (void *) bytes.data();
+                        iov.iov_len = bytes.size();
+
+                        msg.msg_name = NULL;
+                        msg.msg_namelen = 0;
+                        msg.msg_iov = &iov;
+                        msg.msg_iovlen = 1;
+                        msg.msg_control = NULL;
+                        msg.msg_controllen = 0;
+
+                        // int sendmsg_flag = MSG_NOSIGNAL; // ignore flag (shadow does not support it)
+                        SendMsg(data_fd, &msg);
+                        break;
+                    }
                     case P2P_COMMANDS_POOL_BASE + 7 : {
                         typedef nodetool::COMMAND_REQUEST_SUPPORT_FLAGS::request t_req;
                         typedef nodetool::COMMAND_REQUEST_SUPPORT_FLAGS::response t_resp;
@@ -187,6 +255,7 @@ void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
 
                         // int sendmsg_flag = MSG_NOSIGNAL; // ignore flag (shadow does not support it)
                         SendMsg(data_fd, &msg);
+                        break;
                     }
 //                    case nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA>::ID:
 //                    {
@@ -248,6 +317,10 @@ void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
         // second, dump a message
 
         // third, parse a message
+
+        // Maybe, recvBuffer can be updated more efficiently. (minimizing a duplication)
+        std::string remain = recvbufstr.substr(headerReadSize + msgReadSize);
+        tcpControl.SetRecvBuffer(remain);
 
         // repeating the process until there is remaining data stream in RecvBuffer
         recvbufstr = tcpControl.GetRecvBuffer();

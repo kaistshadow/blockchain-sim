@@ -34,7 +34,7 @@
   <plugin id="monerod" path="libmonerod.so"/>
   <plugin id="VERACK_MONERO_TESTER" path="libVERACK_MONERO_TESTERd.so"/>
 
-  <kill time="50"/>
+  <kill time="200"/>
 
   <node id="moneronode0" iphint="1.0.0.1">
     <application

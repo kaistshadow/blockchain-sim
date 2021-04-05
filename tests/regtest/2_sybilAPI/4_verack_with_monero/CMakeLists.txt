@@ -27,8 +27,22 @@ add_custom_command(TARGET VERACK_MONERO_TESTER
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:VERACK_MONERO_TESTER> ${CMAKE_CURRENT_SOURCE_DIR})
 
-######## run test
-### step 1. Run experiment and check result of the experiment
+######## run test : Run experiment and check result of the experiment
 add_test(NAME test_verack_monero
-        COMMAND python3 check.py $<TARGET_FILE:shadow>
+        COMMAND python3 check.py $<TARGET_FILE:shadow> $<$<CONFIG:Debug>:topologyd.xml>$<$<CONFIG:Release>:topology.xml>
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+############### For 2 monero nodes ################
+######## compile node which uses sybil-API
+add_shadow_plugin(VERACK_MONERO_TESTER_TWO test_verack_with_twomonero.cpp)
+target_link_libraries(VERACK_MONERO_TESTER_TWO BLEEPsybil)
+target_link_libraries(VERACK_MONERO_TESTER_TWO MoneroSybilAdapter)
+
+######## prepare(copy) node which uses sybil-API
+add_custom_command(TARGET VERACK_MONERO_TESTER_TWO
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:VERACK_MONERO_TESTER_TWO> ${CMAKE_CURRENT_SOURCE_DIR})
+######## run test
+add_test(NAME test_verack_twomonero
+        COMMAND python3 check_two.py $<TARGET_FILE:shadow> $<$<CONFIG:Debug>:topology_twod.xml>$<$<CONFIG:Release>:topology_two.xml>
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

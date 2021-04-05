@@ -284,19 +284,15 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
 
                 std::string pblock_hash = pblock->GetHash().ToString();
 
-                cout<<"received block "<<pblock_hash<<" peer="<<data_fd<<" \n";
                 std::string vin_hash = pblock->vtx[0]->vin[0].prevout.hash.ToString();
-                int vin_n = pblock->vtx[0]->vin[0].prevout.n;
-                int vout_amount = pblock->vtx[0]->vout[0].nValue;
+//                int vin_n = pblock->vtx[0]->vin[0].prevout.n;
+//                int vout_amount = pblock->vtx[0]->vout[0].nValue;
                 CScript vout_script = pblock->vtx[0]->vout[0].scriptPubKey;
 
                 struct BlockInfo newBlockInfo;
+                std::cout<<"MSGBLOCK : blockhash = "<<pblock->GetHash().ToString()<<" tx = "<<pblock->vtx.size()<<"\n";
                 newBlockInfo = MakeBlockInfo(pblock->GetHash(), pblock->hashPrevBlock, pblock->nTime, pblock->vtx.size());
                 RegisterBlock(newBlockInfo);
-
-                if(prevblocktimestamp==0) prevblocktimestamp=pblock->nTime;
-                int32_t block_interval = pblock->nTime - prevblocktimestamp;
-                UpdateTPS(pblock->vtx.size(), block_interval);
             }
 
             // Maybe, recvBuffer can be updated more efficiently. (minimizing a duplication)

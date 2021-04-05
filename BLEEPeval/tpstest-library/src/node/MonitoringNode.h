@@ -31,7 +31,7 @@ class MonitoringNode : public Node<NodePrimitives> {
 
     //variable for monitoring node
     unsigned int mainchain_total_tx_cnt = 0;
-    double mainchain_avg_time = 0;
+    double mainchain_total_time = 0;
     double mainchain_tps;
     typedef typename Node<NodePrimitives>::BlockInfo BlockInfo;
     std::map<std::string, BlockInfo> block_table;
@@ -151,26 +151,32 @@ class MonitoringNode : public Node<NodePrimitives> {
 
     void UpdateTxCnt(unsigned int block_tx) {
       mainchain_total_tx_cnt += block_tx;
-      std::cout<<"Updatetxcnt "<<mainchain_total_tx_cnt<<"\n";
     }
 
     void UpdateTPSTime(unsigned int blocktime) {
-        mainchain_avg_time = (mainchain_avg_time+blocktime)/2;
-        std::cout<<"UpdateTPStime : "<<blocktime<<" avg : "<<mainchain_avg_time<<"\n";
+        mainchain_total_time += blocktime;
     }
 
     void UpdateTPS(unsigned int txcnt, unsigned int time) {
         UpdateTxCnt(txcnt);
         UpdateTPSTime(time);
-        mainchain_tps = mainchain_total_tx_cnt/mainchain_avg_time;
-        std::cout<<"updateTPS : "<<mainchain_tps<<"\n";
+        mainchain_tps = mainchain_total_tx_cnt/mainchain_total_time;
+        std::cout<<"updateTPS : "<<mainchain_tps<<" tx = "<<mainchain_total_tx_cnt<<" time = "<<mainchain_total_time<<"\n";
     }
-
-    void RegisterBlock(BlockInfo  newblock) {
+     bool RegisterBlock(BlockInfo  newblock) {
       auto result = block_table.emplace(newblock.blockhash, newblock);
-      if(!result.second){
-          std::cout<<"blockhash "<<newblock.blockhash<<" is already exist in block_table!\n";
+      if(!result.second) {
+          std::cout << "blockhash " << newblock.blockhash << " is already exist in block_table!\n";\
+          return false;
       }
+
+      if(mainchain_total_tx_cnt == 0) {
+          UpdateTPS(newblock.txcount,0);
+          return true;
+      }
+      int32_t prevtimestamp = block_table[newblock.prevblockhash].timestamp;
+      UpdateTPS(newblock.txcount, newblock.timestamp - prevtimestamp);
+      return true;
 
   }
 

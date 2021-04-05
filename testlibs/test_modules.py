@@ -342,7 +342,6 @@ def test_transaction_existence(simulation_output_file, node_count):
             if not line: break
             result = line.find('"error":null')
             if result != -1:
-                print("Success transaction test ...")
                 condition_count += 1
                 break
         f.close()

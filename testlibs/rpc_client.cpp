@@ -12,6 +12,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <list>
 #include "rpc_client.h"
 
 Json::Reader reader;
@@ -86,10 +87,31 @@ void bitcoin_rpc_request(std::string method, Json::Value params) {
     reader.parse(res, json_resp);
 }
 
-void rpc_validateaddress(std::string wallet, char* ipport){
+// example : setgeneratetoaddress rpc function
+void rpc_reqeust_with_params(std::string rpc_function, std::list<std::string> params_list) {
     Json::Value params;
     params.clear();
     params = Json::arrayValue;
-    params.append(wallet);
-    bitcoin_rpc_request("validateaddress",params);
+    for(auto const& i: params_list) {
+        params.append(i);
+    }
+    bitcoin_rpc_request(rpc_function, params);
+}
+
+// example : getnewaddress rpc function
+std::string rpc_request_with_no_params(std::string rpc_function) {
+    Json::Value params;
+    params.clear();
+    params = Json::arrayValue;
+    bitcoin_rpc_request(rpc_function, params);
+    std::string wallet = json_resp["result"].asString();
+    return wallet;
+}
+
+// example : getblockchaininfo rpc function
+void rpc_request_no_return_no_params(std::string rpc_function) {
+    Json::Value params;
+    params.clear();
+    params = Json::arrayValue;
+    bitcoin_rpc_request(rpc_function, params);
 }

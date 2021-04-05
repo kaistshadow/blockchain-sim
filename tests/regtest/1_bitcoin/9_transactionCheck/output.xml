@@ -95,6 +95,6 @@
     <application arguments="1.9.0.1:11111 53 " plugin="client" time="5"/>
   </node>
   <node id="injector">
-    <application arguments=" 10.9.0.1:11111 1 1 1 " plugin="txInjector" time="5"/>
+    <application arguments=" 1.1.0.1:11111 1 1 1 " plugin="txInjector" time="5"/>
   </node>
 </shadow>

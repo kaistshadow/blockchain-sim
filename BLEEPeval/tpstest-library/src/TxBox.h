@@ -29,7 +29,6 @@ namespace tpstest {
             }
 
             bool setupNetwork() {
-              std::cout<<"start setupnetwork "<<targets.size()<<"\n";
                 if (targets.size()==0)
                     return false;
 

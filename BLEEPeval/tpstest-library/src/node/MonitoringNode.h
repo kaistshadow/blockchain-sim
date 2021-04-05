@@ -23,17 +23,26 @@ namespace tpstest {
 
 template<class NodePrimitives>
 class MonitoringNode : public Node<NodePrimitives> {
- public:
-  MonitoringNode(std::string virtualIp, int listenPort = 0)
+    public:
+    MonitoringNode(std::string virtualIp, int listenPort = 0)
       : Node<NodePrimitives>( virtualIp, listenPort, NodeType::MonitoringNode) {
-  }
+    }
+
+
+    //variable for monitoring node
+    unsigned int mainchain_total_tx_cnt = 0;
+    double mainchain_avg_time = 0;
+    double mainchain_tps;
+    typedef typename Node<NodePrimitives>::BlockInfo BlockInfo;
+    std::map<std::string, BlockInfo> block_table;
+//  tree
+
 
   // move constructor
   MonitoringNode(MonitoringNode &&other) = default;
 
   // API for connection to target
   int tryConnectToTarget(std::string targetIP, int targetPort) {
-
     // create new socket for a connection
     int conn_fd = CreateNewSocket();
 
@@ -45,7 +54,6 @@ class MonitoringNode : public Node<NodePrimitives> {
     bzero(&(new_addr.sin_zero), 8);        /* zero the rest of the struct */
     if (bind(conn_fd, (struct sockaddr *) &new_addr, sizeof(struct sockaddr)) == -1) {
       perror("bind");
-      std::cout << "failed to bind" << "\n";
       exit(1);
     }
 
@@ -71,7 +79,6 @@ class MonitoringNode : public Node<NodePrimitives> {
       exit(-1);
     }
 
-    std::cout<<"start tryconnecttotarget "<<targetIP<<" \n";
     // assign an io event watcher for (connect) tried socket descriptor
     // and register an event watcher to monitor for the beginning of I/O operation (A.K.A reactor pattern)
     auto[it, result] = Node<NodePrimitives>::_mConnSocketWatcher.try_emplace(conn_fd);
@@ -90,22 +97,7 @@ class MonitoringNode : public Node<NodePrimitives> {
     return conn_fd;
   }
 
-  // API for connection to target using timer
-  void startReceivingNode(int starttime) {
-    _connStartTimer.set<MonitoringNode<NodePrimitives>, &MonitoringNode<NodePrimitives>::_timercb>(this);
-    _connStartTimer.set(starttime, 0);
-    _connStartTimer.start();
-
-  }
-
-  void _timercb(ev::timer &w, int revents) {
-    std::cout<<"MonitoringNode.h _timercb, called tryConnectToTarget\n";
-    tryConnectToTarget(Node<NodePrimitives>::_targetIP, Node<NodePrimitives>::_targetPort);
-    _connStartTimer.stop();
-  }
-
  private:
-  ev::timer _connStartTimer;
 
  private:
 
@@ -155,6 +147,31 @@ class MonitoringNode : public Node<NodePrimitives> {
     }
     hSocket = -1;
     return ret != -1;
+  }
+
+    void UpdateTxCnt(unsigned int block_tx) {
+      mainchain_total_tx_cnt += block_tx;
+      std::cout<<"Updatetxcnt "<<mainchain_total_tx_cnt<<"\n";
+    }
+
+    void UpdateTPSTime(unsigned int blocktime) {
+        mainchain_avg_time = (mainchain_avg_time+blocktime)/2;
+        std::cout<<"UpdateTPStime : "<<blocktime<<" avg : "<<mainchain_avg_time<<"\n";
+    }
+
+    void UpdateTPS(unsigned int txcnt, unsigned int time) {
+        UpdateTxCnt(txcnt);
+        UpdateTPSTime(time);
+        mainchain_tps = mainchain_total_tx_cnt/mainchain_avg_time;
+        std::cout<<"updateTPS : "<<mainchain_tps<<"\n";
+    }
+
+    void RegisterBlock(BlockInfo  newblock) {
+      auto result = block_table.emplace(newblock.blockhash, newblock);
+      if(!result.second){
+          std::cout<<"blockhash "<<newblock.blockhash<<" is already exist in block_table!\n";
+      }
+
   }
 
  private:

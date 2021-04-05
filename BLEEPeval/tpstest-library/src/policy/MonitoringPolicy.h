@@ -23,15 +23,11 @@ namespace tpstest {
             // Spawn network consisting of pre-defined number of transaction generator nodes
             auto &monitoringNode = _monitoringNodes.emplace_back(NodeIP, nodeport);
 
-            std::cout << "monitoring nodes objects are constructed " << _monitoringNodes.size() << "\n";
             for (auto &_monitoringNode : _monitoringNodes) {
                 for (auto &[_targetIP, _targetPort] : targets){
                     int conn_fd = _monitoringNode.tryConnectToTarget(_targetIP, _targetPort);
                 }
-                std::cout<<"constructNet!! is started and before start startRecevingNode\n";
-                _monitoringNode.startReceivingNode(0);
             }
-
             return true;
         }
 

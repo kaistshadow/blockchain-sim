@@ -16,10 +16,8 @@
 namespace tpstest {
     class BitcoinNodePrimitives {
     private:
-        // to inform attack results to the AttackStat object
-        bool _informed = false;
+
     private:
-        // to deal with entire IP database
 
     protected:
         std::string _myIP;
@@ -36,6 +34,15 @@ namespace tpstest {
         virtual void tryReconnectToTarget() {};
 
     public:
+        //struct for monitoring node
+        struct BlockInfo {
+            std::string blockhash;
+            std::string prevblockhash;
+            uint32_t timestamp;
+            unsigned long txcount;
+        };
+
+
         void SetTarget(std::string targetIP, int targetPort) {
             _targetIP = targetIP;
             _targetPort = targetPort;
@@ -70,10 +77,8 @@ namespace tpstest {
         }
 
     public:
-        BitcoinNodePrimitives(std::string ip, NodeType type) :                                     _myIP(ip),
-                                                                                                   _type(type),
-                                                                                                   _setupTime(
-                                                                                                           std::chrono::system_clock::now()) {}
+        BitcoinNodePrimitives(std::string ip, NodeType type)
+                : _myIP(ip), _type(type), _setupTime(std::chrono::system_clock::now()) {}
 
         void OpAfterConnect(int conn_fd);
 
@@ -82,14 +87,26 @@ namespace tpstest {
         void OpAfterRecv(int data_fd, std::string recv_str);
 
         void OpAfterDisconnect();
+
+        //methods for monitoring node
+        virtual void UpdateTPS(unsigned int txcnt, unsigned int block_interval) {};
+        virtual void RegisterBlock(struct BlockInfo newblock) {};
     private:
+        // variable for Txgenerator
         CKey secret;
-        CTransaction* sourceTx;
+        CTransaction *sourceTx;
+
+        //variable for monitoring node
+        int32_t prevblocktimestamp = 0;
+
     public:
-        void bootstrap(const char* statefile, const char* keyfile);
+        // method for Txgenerator
+        void bootstrap(const char *statefile, const char *keyfile);
         std::string generate();
         void sendTx(int data_fd, std::string hexTx);
+        struct BlockInfo MakeBlockInfo(uint256 _blockhash, uint256 _prevblockhash, uint32_t _timestamp, unsigned long _txcount);
     };
 }
+
 
 #endif //BLEEP_BITCOIN_NODE_PRIMITIVES_H

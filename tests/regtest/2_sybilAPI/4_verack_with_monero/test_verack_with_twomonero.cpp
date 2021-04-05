@@ -1,5 +1,5 @@
 //
-// Created by ilios on 21. 3. 4..
+// Created by ilios on 21. 4. 5..
 //
 
 #include "MoneroNodePrimitives.h"
@@ -18,9 +18,13 @@ int main() {
     AttackStat attackStat; // kind of logger
     SimpleIPDatabase dummyIPDatabase;
 
-    // Initialize single benign node
+    // Initialize first benign node
     ShadowActiveNode<MoneroNodePrimitives> activeMoneroNode(&attackStat, &dummyIPDatabase, "2.0.0.1");
     activeMoneroNode.tryConnectToTarget("1.0.0.1", 28080, 5);
+
+    // Initialize second benign node
+    ShadowActiveNode<MoneroNodePrimitives> activeMoneroNode2(&attackStat, &dummyIPDatabase, "3.0.0.1");
+    activeMoneroNode2.tryConnectToTarget("1.0.0.1", 28080, 6);
 
     // Start attack
     struct ev_loop *libev_loop = EV_DEFAULT;

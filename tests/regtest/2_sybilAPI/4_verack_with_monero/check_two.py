@@ -5,7 +5,7 @@ sys.path.append('../../../../')
 from testlibs import test_modules
 
 
-def check_verack(monero_log, tester_log):
+def check_verack_withip(monero_log, tester_log, ip):
     f = open(monero_log, "r")
     iterf = iter(f)
     check_flag = [False, False, False, False, False, False]
@@ -18,26 +18,31 @@ def check_verack(monero_log, tester_log):
 
         # check whether the COMMAND_HANDSHAKE message is received
         if check_flag[0] and not check_flag[1] and "243 bytes sent for category command-1001 initiated by peer" in line:
-            check_flag[1] = True
-            print("CHECK : receive COMMAND_HANDSHAKE msg from peer")
+            if ip in line:
+                check_flag[1] = True
+                print("CHECK : receive COMMAND_HANDSHAKE msg from peer for %s" % ip)
 
         # check whether the first COMMAND_TIMED_SYNC message is sent and received a valid response
         if check_flag[1] and not check_flag[2] and "172 bytes sent for category command-1002 initiated by us" in line:
-            check_flag[2] = True
-            print("CHECK : first COMMAND_TIMED_SYNC req is sent")
+            if ip in line:
+                check_flag[2] = True
+                print("CHECK : first COMMAND_TIMED_SYNC req is sent for %s" % ip)
 
         if check_flag[2] and not check_flag[3] and "bytes received for category command-1002 initiated by us" in line:
-            check_flag[3] = True
-            print("CHECK : first COMMAND_TIMED_SYNC response is received")
+            if ip in line:
+                check_flag[3] = True
+                print("CHECK : first COMMAND_TIMED_SYNC response is received for %s" % ip)
 
         # check whether the second COMMAND_TIMED_SYNC (ping) message is sent and received
         if check_flag[3] and not check_flag[4] and "172 bytes sent for category command-1002 initiated by us" in line:
-            check_flag[4] = True
-            print("CHECK : second COMMAND_TIMED_SYNC req is sent")
+            if ip in line:
+                check_flag[4] = True
+                print("CHECK : second COMMAND_TIMED_SYNC req is sent for %s" % ip)
 
         if check_flag[4] and not check_flag[5] and "bytes received for category command-1002 initiated by us" in line:
-            check_flag[5] = True
-            print("CHECK : second COMMAND_TIMED_SYNC response is received")
+            if ip in line:
+                check_flag[5] = True
+                print("CHECK : second COMMAND_TIMED_SYNC response is received for %s" % ip)
 
 
     if all(check_flag):
@@ -69,7 +74,8 @@ def main(shadowpath, configpath):
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
 
     # verack 실험 결과 체크 시작.
-    check_verack(simulation_output_file[0], simulation_output_file[1])
+    check_verack_withip(simulation_output_file[0], simulation_output_file[1], "2.0.0.1")
+    check_verack_withip(simulation_output_file[0], simulation_output_file[1], "3.0.0.1")
 
 
 if __name__ == '__main__':

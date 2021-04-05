@@ -4,6 +4,7 @@ add_library(MoneroSybilAdapter SHARED
         MoneroNodePrimitives.cpp
         MoneroNodePrimitives.h)
 target_link_libraries(MoneroSybilAdapter BLEEPsybil)
+target_link_libraries(MoneroSybilAdapter shadow_monero_daemon)
 target_include_directories(MoneroSybilAdapter
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR})

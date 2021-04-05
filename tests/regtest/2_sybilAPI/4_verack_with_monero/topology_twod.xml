@@ -1,7 +1,7 @@
 <shadow>
-    <!-- our network -->
-    <topology>
-        <![CDATA[<?xml version="1.0" encoding="utf-8"?><graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <!-- our network -->
+  <topology>
+    <![CDATA[<?xml version="1.0" encoding="utf-8"?><graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
              <key attr.name="packetloss" attr.type="double" for="edge" id="d9" />
              <key attr.name="jitter" attr.type="double" for="edge" id="d8" />
              <key attr.name="latency" attr.type="double" for="edge" id="d7" />
@@ -28,25 +28,22 @@
                </edge>
              </graph>
              </graphml>]]>
-    </topology>
+  </topology>
 
-    <!-- the plug-ins we will be using -->
-    <plugin id="monerod" path="libmonerod.so"/>
+  <!-- the plug-ins we will be using -->
+  <plugin id="monerod" path="libmonerod.so"/>
+  <plugin id="VERACK_MONERO_TESTER_TWO" path="libVERACK_MONERO_TESTER_TWOd.so"/>
 
-    <!-- the length of our experiment in seconds  1404101800-->
-    <kill time="200"/>
-    <!-- our nodes -->
+  <kill time="200"/>
 
-    <node id="moneronode1" iphint="11.0.0.1">
-        <application plugin="monerod" time="2" arguments="--non-interactive --config-file=./node1.conf"/>
-    </node>
+  <node id="moneronode0" iphint="1.0.0.1">
+    <application
+            arguments="--non-interactive --config-file=./node1.conf"
+            plugin="monerod" time="0"/>
+  </node>
 
-    <node id="moneronode2" iphint="11.0.0.2">
-        <application plugin="monerod" time="5" arguments="--non-interactive --config-file=./node2.conf"/>
-    </node>
-
-    <!--    <node id="bcdnode2">-->
-    <!--        <application plugin="monerod" time="4" arguments="&#45;&#45;non-interactive &#45;&#45;config-file=./node2.conf" />-->
-    <!--    </node>-->
+  <node id="tester" iphint="99.99.0.1">
+    <application plugin="VERACK_MONERO_TESTER_TWO" time="5" arguments=""/>
+  </node>
 
 </shadow>

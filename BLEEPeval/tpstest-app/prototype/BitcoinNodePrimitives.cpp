@@ -284,7 +284,7 @@ void BitcoinNodePrimitives::bootstrap(const char* statefile, const char* keyfile
     std::string txstr((std::istreambuf_iterator<char>(state_ifs)), (std::istreambuf_iterator<char>()));
     CMutableTransaction mtx;
     DecodeHexTx(mtx, txstr, true);
-    sourceTx = new CTransaction(mtx);
+    CTransaction* tx = new CTransaction(mtx);
 
 
 //    CDataStream stream(ParseHex(txstr), SER_NETWORK, CLIENT_VERSION);
@@ -292,7 +292,9 @@ void BitcoinNodePrimitives::bootstrap(const char* statefile, const char* keyfile
 
     std::ifstream key_ifs(keyfile);
     std::string keystr((std::istreambuf_iterator<char>(key_ifs)), (std::istreambuf_iterator<char>()));
-    secret = DecodeSecret(keystr);
+    CKey key = DecodeSecret(keystr);
+
+    unspent_keyvalues.push({key, tx, 0});
 }
 #define COMPRESSED_KEY
 CKey _generateKey() {
@@ -309,30 +311,32 @@ CKey _generateKey() {
 }
 // from state and key, make next state and key, return serialized tx with size
 std::string BitcoinNodePrimitives::generate() {
-    // CKey::Sign(const uint256 &hash, std::vector<unsigned char>& vchSig, bool grind, uint32_t test_case)
-    // -> hash, vchSig만 있어도 되긴 함.
+    int dividing_factor = 2;
+
     // step 1, 12
     CMutableTransaction txNew;  // version and locktime is automatically set
 
+    auto source = unspent_keyvalues.front();
+    CKey sourceKey = source.sourceKey;
+    CTransaction* sourceTx = source.sourceTx;
+    uint32_t sourceIn = source.nIn;
+    CAmount fee = 1000;
+    CAmount voutValue = (sourceTx->vout[sourceIn].nValue - fee) / dividing_factor;
+
     // step 2, 3, 4, 5, 6, 7
-    CTxIn txin_proto(COutPoint(sourceTx->GetHash(), 0), sourceTx->vout[0].scriptPubKey, 0xffffffff);
+    CTxIn txin_proto(COutPoint(sourceTx->GetHash(), sourceIn), sourceTx->vout[sourceIn].scriptPubKey, 0xffffffff);
     txNew.vin.push_back(txin_proto);
 
     // txout build
-    CTxDestination receiveDest = GetDestinationForKey(secret.GetPubKey(), OutputType::LEGACY);
-    CScript scriptReceive = GetScriptForDestination(receiveDest);
-    CTxOut receive_prototype_txout(0, scriptReceive);
-    size_t nSize = GetSerializeSize(receive_prototype_txout);
-//    CTxOut receive_txout(CFeeRate(DUST_RELAY_TX_FEE).GetFee(nSize) + 1, scriptReceive);
-    CTxOut receive_txout(547, scriptReceive);   // debug
-    txNew.vout.push_back(receive_txout);
-
-    // dummy txchange build
-    CKey changer = _generateKey();
-    CTxDestination changeDest = GetDestinationForKey(changer.GetPubKey(), OutputType::LEGACY);
-    CScript scriptChange = GetScriptForDestination(changeDest);
-    CTxOut change_prototype_txout(0, scriptChange);
-    txNew.vout.push_back(change_prototype_txout);
+    std::vector<CKey> predata;
+    for(int i=0; i<dividing_factor; i++) {
+        CKey dest = _generateKey();
+        CTxDestination receiveDest = GetDestinationForKey(dest.GetPubKey(), OutputType::LEGACY);
+        CScript scriptReceive = GetScriptForDestination(receiveDest);
+        CTxOut receive_txout(voutValue, scriptReceive);
+        txNew.vout.push_back(receive_txout);
+        predata.push_back(dest);
+    }
 
     // get hash
     CHashWriter txhasher(SER_GETHASH, 0);
@@ -340,56 +344,21 @@ std::string BitcoinNodePrimitives::generate() {
     uint256 hash = txhasher.GetHash();
     // sign
     std::vector<unsigned char> vchSig;
-    secret.Sign(hash, vchSig);
+    sourceKey.Sign(hash, vchSig);
     // add hashtype
     vchSig.push_back((unsigned char)SIGHASH_ALL);
     txNew.vin.clear();
-    CTxIn txin_proto2(COutPoint(sourceTx->GetHash(), 0), CScript() << vchSig << ToByteVector(secret.GetPubKey()), 0xffffffff);
+    CTxIn txin_proto2(COutPoint(sourceTx->GetHash(), sourceIn), CScript() << vchSig << ToByteVector(sourceKey.GetPubKey()), 0xffffffff);
     txNew.vin.push_back(txin_proto2);
 
-    // recalculate changes
-    CTransaction tx(txNew);
-    CAmount nBytes = tx.GetTotalSize();
-//    CAmount nFeeNeeded = CFeeRate(DEFAULT_FALLBACK_FEE).GetFee(nBytes);
-//    CAmount change = sourceTx->vout[0].nValue - nFeeNeeded - 1;
-    CAmount nFeeNeeded = CFeeRate(DEFAULT_FALLBACK_FEE).GetFee(nBytes) + 547;   // debug
-    CAmount change = sourceTx->vout[0].nValue - nFeeNeeded - 1000;                 // debug
-    CTxOut change_txout(change, scriptChange);
-    txNew.vout.pop_back();
-    txNew.vout.insert(txNew.vout.begin(), change_txout);
+    tx_logs.push(sourceTx);
+    unspent_keyvalues.pop();
+    CTransaction* tx = new CTransaction(txNew);
+    for(uint32_t i=0; i<dividing_factor; i++) {
+        unspent_keyvalues.push({predata[i], tx, i});
+    }
 
-    // do signing again
-    txNew.vin.clear();
-    CTxIn txin_proto3(COutPoint(sourceTx->GetHash(), 0), sourceTx->vout[0].scriptPubKey, 0xffffffff);
-    txNew.vin.push_back(txin_proto3);
-    // get hash
-    CHashWriter txhasher2(SER_GETHASH, 0);
-    txhasher2 << txNew << (uint32_t)SIGHASH_ALL;
-    uint256 hash2 = txhasher2.GetHash();
-    // sign
-    std::vector<unsigned char> vchSig2;
-    secret.Sign(hash2, vchSig2);
-    // add hashtype
-    vchSig2.push_back((unsigned char)SIGHASH_ALL);
-
-    txNew.vin.clear();
-    CTxIn txin_proto4(COutPoint(sourceTx->GetHash(), 0), CScript() << vchSig2 << ToByteVector(secret.GetPubKey()), 0xffffffff);
-    txNew.vin.push_back(txin_proto4);
-
-    // swap states
-    CPubKey pubkey = secret.GetPubKey();
-    uint160 pubkeyHash;
-    CHash160().Write(pubkey.begin(), pubkey.size()).Finalize(pubkeyHash.begin());
-    std::cout<<"Debug - pub:"<<pubkeyHash.GetHex()<<"\n";
-    secret = changer;
-    CTransaction* prev = sourceTx;
-    sourceTx = new CTransaction(txNew);
-    delete prev;
-    std::cout<<"Debug - in script:"<<FormatScript(sourceTx->vin[0].scriptSig)<<"\n";
-    std::cout<<"Debug - out script:"<<FormatScript(sourceTx->vout[0].scriptPubKey)<<"\n";
-    std::cout<<"Debug - out script:"<<FormatScript(sourceTx->vout[1].scriptPubKey)<<"\n\n";
-
-    return EncodeHexTx(*sourceTx);
+    return EncodeHexTx(*tx);
 }
 
 void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {

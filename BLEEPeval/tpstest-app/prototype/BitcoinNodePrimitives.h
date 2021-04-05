@@ -12,8 +12,16 @@
 
 #include <key.h>
 #include <primitives/transaction.h>
+#include <queue>
 
 namespace tpstest {
+
+    struct spend_data {
+        CKey sourceKey;
+        CTransaction* sourceTx;
+        uint32_t nIn;
+    };
+
     class BitcoinNodePrimitives {
     private:
         // to inform attack results to the AttackStat object
@@ -83,8 +91,8 @@ namespace tpstest {
 
         void OpAfterDisconnect();
     private:
-        CKey secret;
-        CTransaction* sourceTx;
+        std::queue<spend_data> unspent_keyvalues;
+        std::queue<CTransaction*> tx_logs;
     public:
         void bootstrap(const char* statefile, const char* keyfile);
         std::string generate();

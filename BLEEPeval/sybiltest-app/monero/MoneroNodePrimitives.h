@@ -12,6 +12,7 @@
 #include <node/Node.h>
 
 #include <utility/AttackStat.h>
+#include <p2p/net_peerlist.h>
 
 namespace sybiltest {
 
@@ -24,6 +25,9 @@ namespace sybiltest {
     private:
         // to deal with entire IP database
         IPDatabase *_ipdb;
+    private:
+        // to deal with peerlist_entry
+        std::vector<nodetool::peerlist_entry> _addr_ip_list;
 
     protected:
         std::string _myIP;

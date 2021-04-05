@@ -32,7 +32,7 @@
 
   <!-- the plug-ins we will be using -->
   <plugin id="monerod" path="libmonerod.so"/>
-  <plugin id="VERACK_MONERO_TESTER" path="libVERACK_MONERO_TESTER.so"/>
+  <plugin id="SHADOWNODE_MONERO_TESTER" path="libSHADOWNODE_MONERO_TESTERd.so"/>
 
   <kill time="200"/>
 
@@ -43,7 +43,7 @@
   </node>
 
   <node id="tester" iphint="99.99.0.1">
-    <application plugin="VERACK_MONERO_TESTER" time="5" arguments=""/>
+    <application plugin="SHADOWNODE_MONERO_TESTER" time="5" arguments=""/>
   </node>
 
 </shadow>

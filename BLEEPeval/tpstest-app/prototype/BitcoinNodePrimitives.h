@@ -98,13 +98,10 @@ namespace tpstest {
 
         //methods for monitoring node
         virtual void UpdateTPS(unsigned int txcnt, unsigned int block_interval) {};
-        virtual void RegisterBlock(struct BlockInfo newblock) {};
+        virtual bool RegisterBlock(struct BlockInfo newblock) {};
     private:
         std::queue<spend_data> unspent_keyvalues;
         std::queue<CTransaction*> tx_logs;
-
-        //variable for monitoring node
-        int32_t prevblocktimestamp = 0;
 
     public:
         // method for Txgenerator

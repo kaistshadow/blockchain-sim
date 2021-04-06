@@ -23,6 +23,7 @@ def exec_shell_cmd(cmd):
 # output : tx_mode (enable/disable) 
 def get_xmlfile(path):
     tx_mode = ""
+    my_path = os.getcwd()
     emulation_start, path_abs = utils.path_filter(path)
     node_count = 0
     the_command = path_abs + "; python xmlGenerator.py"
@@ -33,6 +34,7 @@ def get_xmlfile(path):
     algo = ""
     xml_command = ""
     difficulty = ""
+    node_count = 0
 
     if emulation_start == 1:
         tx_injector_file = 3
@@ -80,6 +82,12 @@ def get_xmlfile(path):
             difficulty = str(input("Input difficulty(1/2/3) : "))
             if (difficulty == "1") | (difficulty == "2") | (difficulty == "3"):
                 condition_count = 3
+                # --------------------------------------------------------------------------------------------------------------
+                # data/bcdnode* 들은 여기 로직에 의해 생성됨.
+                # --------------------------------------------------------------------------------------------------------------
+                my_path = utils.filter_testlibs_path(my_path)
+                my_commnad = "cd " + my_path + "; python clean_data.py " + str(node_count) + " " + difficulty + " " + path
+                exec_shell_cmd(my_commnad)
             else:
                 print("Enter only one of them(1/2/3)")
                 continue

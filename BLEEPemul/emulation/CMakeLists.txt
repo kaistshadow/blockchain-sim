@@ -22,6 +22,8 @@ add_custom_target(emulation-copy-plugin ALL
 add_custom_target(emulation-one-node-mine-plugin ALL
         COMMAND g++ -o rpc.so one_node_setmine.cpp ../../testlibs/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -g
         COMMAND cp rpc.so ${CMAKE_SOURCE_DIR}/BLEEPeval/tpstest-app/prototype
+        COMMAND cp rpc.so ${CMAKE_SOURCE_DIR}/tests/regtest/1_bitcoin/14_monitorNode_blockReceive
+        COMMAND cp rpc.so ${CMAKE_SOURCE_DIR}/tests/regtest/1_bitcoin/16_txGen_txPropagation
         COMMAND g++ -o transaction.so transaction.cpp  ../../testlibs/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -g
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 

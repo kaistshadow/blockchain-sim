@@ -36,21 +36,6 @@ def remove_tx_plugin(tx_plugin):
     fw.close()
     fr.close()
 
-# Description : blockchain plugin의 data dir를 설정해줘야할 디렉토리로서, 플러그인 개수만큼 제거하고 생성을 해줌.
-def set_plugin_file(node_count, path, difficulty):
-    if(os. path. isdir(path)):
-        the_command = "rm -rf data/*"
-        exec_shell_cmd(the_command)
-    command = ""
-    for i in range(0,node_count):
-        the_command = "mkdir -p data/bcdnode" + str(i)
-        exec_shell_cmd(the_command)
-
-    target_command = get_datadirDumpfile_path(path, difficulty)
-    command = "cp -r " + target_command + "/* " + path 
-       
-    exec_shell_cmd(command)
-
 # Description : xml 파일을 생성하기 위해, 현재 실행되는 함수의 경로에서 xml파일을 생성하기 위한 command를 생성하여 반환함.
 # input param : 현재 경로
 # output return value : emulation_mode, path_command
@@ -306,3 +291,17 @@ def get_last_hashValue(shadow_output_file, rpc_output_file, node_count, pork_cou
                     condition_count += 1
 
     return condition_count
+
+def filter_testlibs_path(target_path):
+    the_path = ""
+    split_path = target_path.split("/")
+    for i in range(0,len(split_path)):
+        if split_path[i] == "blockchain-sim":
+            the_path += split_path[i]
+            the_path += "/"
+            break
+        the_path += split_path[i]
+        the_path += "/"
+
+    the_path += "/testlibs"
+    return the_path

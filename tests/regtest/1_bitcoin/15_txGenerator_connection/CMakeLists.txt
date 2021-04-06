@@ -1,18 +1,3 @@
-#prepare bitcoin experiment
-add_custom_target(TxGenerator_connection-prepare ALL
-        COMMAND rm -rf data/bcdnode0
-        COMMAND mkdir -p data/bcdnode0
-        COMMAND rm -rf data/bcdnode1
-        COMMAND mkdir -p data/bcdnode1
-        COMMAND cp -r ../../../../testlibs/dump/difficulty_3/bcdnode0/* data/bcdnode0
-        COMMAND cp -r ../../../../testlibs/dump/difficulty_3/bcdnode0/* data/bcdnode1
-        COMMAND cp -r ../../../../testlibs/dump/difficulty_3/coinflip_hash.txt data/
-
-        # copy rpc.so from BLEEPemul
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/BLEEPemul/emulation/rpc.so ${CMAKE_CURRENT_SOURCE_DIR}
-
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
 # compile bitcoin P2P tester
 add_library(BitcoinTPSAdapter_TxGenerator SHARED
         BitcoinNodePrimitives.cpp

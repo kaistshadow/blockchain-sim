@@ -19,9 +19,6 @@ int main(int argc, char* argv[]) {
     // method 1: generate node's wallet
     params = Json::arrayValue;
     std::string wallet = rpc_request_with_no_params("getnewaddress");
-    std::cout<<"wallet:";
-    std::cout<<wallet;
-    std::cout<<"\n";
 
     params.clear();
     params = Json::arrayValue;

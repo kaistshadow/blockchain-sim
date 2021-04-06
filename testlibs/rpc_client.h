@@ -31,8 +31,6 @@ struct response {
 size_t rpc_callback(char *data, size_t size, size_t nmemb, void *userdata);
 std::string request(std::string req);
 
-// feature supports
-int getTxCount(std::string str) ;
 void bitcoin_rpc_request(std::string method, Json::Value params) ;
 void rpc_reqeust_with_params(std::string rpc_function, std::list<std::string> params_list);
 std::string rpc_request_with_no_params(std::string rpc_function);

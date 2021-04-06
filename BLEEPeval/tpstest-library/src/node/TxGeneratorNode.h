@@ -176,7 +176,7 @@ namespace tpstest {
         void SetTxGenerateTimer(int tx_per_tick, int uptime) {
             this->tx_per_tick = tx_per_tick;
             _txgenerateTimer.set<TxGeneratorNode, &TxGeneratorNode<NodePrimitives>::_txgeneratecb>(this);
-            _txgenerateTimer.set(uptime, 0.);
+            _txgenerateTimer.set(1, uptime);
             _txgenerateTimer.start();
         }
     };

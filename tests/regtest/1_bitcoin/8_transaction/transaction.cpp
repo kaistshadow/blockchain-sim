@@ -8,50 +8,35 @@
 #include <stdlib.h>
 #include "../../../../testlibs/rpc_client.h"
 
-void rpc_getnewaddress(std::string wallet, char* ipport) {
-    Json::Value params;
-    params.clear();
-
-    params = Json::arrayValue;
-    params.append(wallet);
-    bitcoin_rpc_request("setgeneratetoaddress",params);
-}
-
-void rpc_sendtoaddress(std::string IP, std::string wallet, std::string amount, int i) {
-
-    std::cout<<i<<" transaction : \n";
-
-    Json::Value params;
-    params.clear();
-
-    params = Json::arrayValue;
-    params.append(wallet);
-    params.append(amount);
-    bitcoin_rpc_request("sendtoaddress",params);
-}
-
 int main(int argc, char* argv[]) {
 
     int interval = atoi(argv[3]);
     int txcnt = atoi(argv[2]);
-    std::string amount = argv[4];
-    std::cout<<"start client \n";
     url = std::string(argv[1]);
+    std::string amount = argv[4];
     id_pwd = "a:1234";
     Json::Value params;
     params.clear();
 
     // method 1: generate node's wallet
-    bitcoin_rpc_request("listaddressgroupings", params);
-    std::cout<<"-- wallet --\n";
-    std::string wallet = json_resp["result"][0][0][0].asString();
+    params = Json::arrayValue;
+    std::string wallet = rpc_request_with_no_params("getnewaddress");
+    std::cout<<"wallet:";
+    std::cout<<wallet;
+    std::cout<<"\n";
 
     int i=0;
+    std::list<std::string> params_list;
     while(1)
     {
         sleep(interval);
-        rpc_sendtoaddress(argv[1],wallet, amount, i);
+        params_list.push_front(wallet);
+        params_list.push_front(amount);
+        std::cout << i << " : ";
+        rpc_reqeust_with_params("sendtoaddress", params_list);
         i++;
+        params_list.clear();
     }
     return 0;
 }
+

@@ -342,7 +342,6 @@ def test_transaction_existence(simulation_output_file, node_count):
             if not line: break
             result = line.find('"error":null')
             if result != -1:
-                print("Success transaction test ...")
                 condition_count += 1
                 break
         f.close()
@@ -603,6 +602,7 @@ def monitor_connection_test(plugin_output_files, abs_path, node_count):
 # --------------------------------------------------------------------------------------------------------------
 #                                       Regression test-15 - TxGenerator connection test
 # --------------------------------------------------------------------------------------------------------------
+# TxGenerator 가 node connection 과정에서 xml파일로부터 정의된 노드의 IP 주소를 기준으로 필터링 시작.
 def TxGenerator_connection_test(plugin_output_files, xmlfile, node_count):
     IP_list = utils.get_address_list(xmlfile)
     condition_count = 0

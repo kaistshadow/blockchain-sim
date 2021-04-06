@@ -15,6 +15,7 @@
 #include <netinet/tcp.h>
 #include <errno.h>
 #include <strings.h>
+#include <set>
 
 #include "shadow_interface.h"
 #include "Node.h"
@@ -35,6 +36,7 @@ class MonitoringNode : public Node<NodePrimitives> {
     double mainchain_tps;
     typedef typename Node<NodePrimitives>::BlockInfo BlockInfo;
     std::map<std::string, BlockInfo> block_table;
+    std::set<std::string> tx_table;
 
 
   // move constructor
@@ -167,7 +169,7 @@ class MonitoringNode : public Node<NodePrimitives> {
           return false;
       }
 
-         std::cout << "blockhash " << newblock.blockhash << " registered\n";
+//         std::cout << "[Block_table] blockhash " << newblock.blockhash << " registered\n";
       if(mainchain_total_tx_cnt == 0) {
           UpdateTPS(newblock.txcount,0);
           return true;
@@ -176,6 +178,15 @@ class MonitoringNode : public Node<NodePrimitives> {
       UpdateTPS(newblock.txcount, newblock.timestamp - prevtimestamp);
       return true;
 
+  }
+
+    bool RegisterTx(std::string hash){
+        auto result = tx_table.insert(hash);
+        if(!result.second){
+            return false;
+        }
+//        std::cout<<"[Tx table] tx "<<hash<<" registered\n";
+        return true;
   }
 
  private:

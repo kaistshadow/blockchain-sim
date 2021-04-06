@@ -151,7 +151,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
             string strCommand = hdr.GetCommand();
             CDataStream &vRecv = msg.vRecv;
 
-            std::cout<<"OpafterRecv : <<" <<strCommand <<" "<<data_fd<<"\n";
+//            std::cout<<"OpafterRecv : <<" <<strCommand <<" "<<data_fd<<"\n";
 
             if (strCommand == NetMsgType::VERSION) {
                 int64_t nTime;
@@ -229,11 +229,12 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 {
 
                     if (inv.type == MSG_TX) {
-                        std::string invhash3 = inv.hash.ToString();
-                        cout<<"inv msg MSG_TX "<<invhash3<<" \n";
+//                        cout<<"inv msg MSG_TX from "<<data_fd<<" \n";
+                        std::cout<<"[INV] MSGTX: hash = "<<inv.hash.ToString()<<" from = "<<data_fd<<"\n";
+                        RegisterTx(inv.hash.ToString());
+
                     } else if (inv.type == MSG_BLOCK) {
                         std::string block_hash = inv.hash.ToString();
-                         cout<< "inv msg MSG_BLOCK "<< vInv[0].type << " / "<<vInv[0].hash.ToString() <<"\n";
 
                          //send block message
                         CSerializedNetMsg replymsg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::GETDATA, vInv);
@@ -262,20 +263,20 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
             }else if(strCommand == NetMsgType::VERACK) {
 
                 //send sendheader message (But it is not working)
-                CSerializedNetMsg verack_msg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::SENDHEADERS);
-                size_t nMessageSize = verack_msg.data.size();
-
-                vector<unsigned char> verack_serializedHeader;
-                verack_serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
-                uint256 hash = Hash(verack_msg.data.data(), verack_msg.data.data() + nMessageSize);
-                CMessageHeader verack_hdr(MessageStartChars, verack_msg.command.c_str(), nMessageSize);
-                memcpy(verack_hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
-
-                CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, verack_serializedHeader, 0, verack_hdr};
-
-                SendMsg(data_fd, verack_serializedHeader);
-                if (nMessageSize)
-                    SendMsg(data_fd, verack_msg.data);
+//                CSerializedNetMsg verack_msg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::SENDHEADERS);
+//                size_t nMessageSize = verack_msg.data.size();
+//
+//                vector<unsigned char> verack_serializedHeader;
+//                verack_serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
+//                uint256 hash = Hash(verack_msg.data.data(), verack_msg.data.data() + nMessageSize);
+//                CMessageHeader verack_hdr(MessageStartChars, verack_msg.command.c_str(), nMessageSize);
+//                memcpy(verack_hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
+//
+//                CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, verack_serializedHeader, 0, verack_hdr};
+//
+//                SendMsg(data_fd, verack_serializedHeader);
+//                if (nMessageSize)
+//                    SendMsg(data_fd, verack_msg.data);
 
                 BitcoinNodePrimitives::LoadBlock(data_fd);
 
@@ -292,7 +293,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 CScript vout_script = pblock->vtx[0]->vout[0].scriptPubKey;
 
                 struct BlockInfo newBlockInfo;
-                std::cout<<"MSGBLOCK : blockhash = "<<pblock->GetHash().ToString()<<" tx = "<<pblock->vtx.size()<<"\n";
+                std::cout<<"[INV] MSGBLOCK : blockhash = "<<pblock->GetHash().ToString()<<" tx = "<<pblock->vtx.size()<<" from = "<<data_fd<<"\n";
                 newBlockInfo = MakeBlockInfo(pblock->GetHash(), pblock->hashPrevBlock, pblock->nTime, pblock->vtx.size());
                 RegisterBlock(newBlockInfo);
             }
@@ -412,7 +413,7 @@ void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {
 
 }
 
-void BitcoinNodePrimitives::LoadBlock(int data_fd){
+void BitcoinNodePrimitives::LoadBlock(int data_fd) {
     //load block message in coinflip_hash.txt
     std::string path = "./data/coinflip_hash.txt";
     std::cout<<"path is load block "<<path<<" \n";

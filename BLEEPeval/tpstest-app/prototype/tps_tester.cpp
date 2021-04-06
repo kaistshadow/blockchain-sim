@@ -17,22 +17,22 @@ int main(int argc, char* argv[]) {
     ECC_Start();
     ECCVerifyHandle* ecc = new ECCVerifyHandle();
 
-  TxBox<TPSPolicy, BitcoinNodePrimitives> tpsBox;
-  tpsBox.addNode(ipaddr,18333);
+    TxBox<TPSPolicy, BitcoinNodePrimitives> tpsBox;
+    tpsBox.addNode(ipaddr,18333);
 
-  for(int i=0; i<targetNum; i++){
+    for(int i=0; i<targetNum; i++){
     std::string address;
     int port = 18333;
     sprintf(&address[0], "1.%d.0.1", i);
     tpsBox.addTarget(address.c_str(), port);
-  }
+    }
 
     if (!tpsBox.setupNetwork()) {
         std::cout << "setup network failed" << "\n";
         return -1;
     }
-  tpsBox.startNetwork();
+    tpsBox.startNetwork();
     std::cout << "connection finished" << "\n";
 
     return 0;
-}
+    }

@@ -151,7 +151,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
             string strCommand = hdr.GetCommand();
             CDataStream &vRecv = msg.vRecv;
 
-            std::cout<<"OpafterRecv : <<" <<strCommand <<" "<<data_fd<< "/ Msg : "<<recv <<"\n";
+            std::cout<<"OpafterRecv : <<" <<strCommand <<" "<<data_fd<<"\n";
 
             if (strCommand == NetMsgType::VERSION) {
                 int64_t nTime;
@@ -233,7 +233,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                         cout<<"inv msg MSG_TX "<<invhash3<<" \n";
                     } else if (inv.type == MSG_BLOCK) {
                         std::string block_hash = inv.hash.ToString();
-                         cout<< "inv msg MSG_BLOCK "<< block_hash <<"\n";
+                         cout<< "inv msg MSG_BLOCK "<< vInv[0].type << " / "<<vInv[0].hash.ToString() <<"\n";
 
                          //send block message
                         CSerializedNetMsg replymsg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::GETDATA, vInv);
@@ -276,6 +276,8 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 SendMsg(data_fd, verack_serializedHeader);
                 if (nMessageSize)
                     SendMsg(data_fd, verack_msg.data);
+
+                BitcoinNodePrimitives::LoadBlock(data_fd);
 
             } else if (strCommand == NetMsgType::BLOCK) {
 
@@ -406,6 +408,48 @@ void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {
     SendMsg(data_fd, serializedHeader);
     if (nMessageSize) {
         SendMsg(data_fd, msg.data);
+    }
+
+}
+
+void BitcoinNodePrimitives::LoadBlock(int data_fd){
+    //load block message in coinflip_hash.txt
+    std::string path = "./data/coinflip_hash.txt";
+    std::cout<<"path is load block "<<path<<" \n";
+
+    const unsigned char MessageStartChars2[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
+    ifstream file (path);
+    std::string line;
+    if (file.is_open())
+    {
+        while ( getline (file,line) )
+        {
+
+            std::vector<CInv> vInv2(1);
+            uint256 block_hash2 = uint256S(line);
+            vInv2[0] = CInv(2, block_hash2);
+
+            //send block message
+            CSerializedNetMsg replymsg2 = CNetMsgMaker(PROTOCOL_VERSION).Make(SERIALIZE_TRANSACTION_NO_WITNESS,NetMsgType::GETDATA, vInv2);
+
+            size_t nMessageSize2 = replymsg2.data.size();
+//            std::cout<<"sending %s (%d bytes) "<<block_hash2.ToString()<<" \n";
+
+
+            vector<unsigned char> serializedHeader2;
+            serializedHeader2.reserve(CMessageHeader::HEADER_SIZE);
+            uint256 hash2 = Hash(replymsg2.data.data(), replymsg2.data.data() + nMessageSize2);
+            CMessageHeader replymsghdr2(MessageStartChars2, replymsg2.command.c_str(), nMessageSize2);
+            memcpy(replymsghdr2.pchChecksum, hash2.begin(), CMessageHeader::CHECKSUM_SIZE);
+
+            CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, serializedHeader2, 0, replymsghdr2};
+
+            SendMsg(data_fd, serializedHeader2);
+            if (nMessageSize2)
+                SendMsg(data_fd, replymsg2.data);
+
+        }
+        file.close();
     }
 
 }

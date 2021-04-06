@@ -109,6 +109,7 @@ namespace tpstest {
         std::string generate();
         void sendTx(int data_fd, std::string hexTx);
         struct BlockInfo MakeBlockInfo(uint256 _blockhash, uint256 _prevblockhash, uint32_t _timestamp, unsigned long _txcount);
+        void LoadBlock(int data_fd);
     };
 }
 

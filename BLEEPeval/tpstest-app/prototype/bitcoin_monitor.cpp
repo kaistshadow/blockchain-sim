@@ -19,6 +19,7 @@ int main(int argc, char* argv[]) {
   TxBox<MonitoringPolicy, BitcoinNodePrimitives> MonitorBox;
   MonitorBox.addNode(ipaddr,18333);
 
+  //make ip list for targets
   for(int i=0; i<targetNum; i++){
     std::string address;
     int port = 18333;

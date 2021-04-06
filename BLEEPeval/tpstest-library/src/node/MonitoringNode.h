@@ -35,7 +35,6 @@ class MonitoringNode : public Node<NodePrimitives> {
     double mainchain_tps;
     typedef typename Node<NodePrimitives>::BlockInfo BlockInfo;
     std::map<std::string, BlockInfo> block_table;
-//  tree
 
 
   // move constructor
@@ -96,8 +95,6 @@ class MonitoringNode : public Node<NodePrimitives> {
 
     return conn_fd;
   }
-
- private:
 
  private:
 
@@ -166,10 +163,11 @@ class MonitoringNode : public Node<NodePrimitives> {
      bool RegisterBlock(BlockInfo  newblock) {
       auto result = block_table.emplace(newblock.blockhash, newblock);
       if(!result.second) {
-          std::cout << "blockhash " << newblock.blockhash << " is already exist in block_table!\n";\
+//          std::cout << "blockhash " << newblock.blockhash << " is already exist in block_table!\n";
           return false;
       }
 
+         std::cout << "blockhash " << newblock.blockhash << " registered\n";
       if(mainchain_total_tx_cnt == 0) {
           UpdateTPS(newblock.txcount,0);
           return true;

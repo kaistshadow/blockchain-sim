@@ -39,7 +39,6 @@ namespace tpstest {
 
             int startNetwork() {
                 ev_run(TestPolicy<NodePrimitives>::libev_loop, 0);
-                std::cout << "all watchers are removed or attack routine is finished" << "\n";
                 return 0;
             }
         };

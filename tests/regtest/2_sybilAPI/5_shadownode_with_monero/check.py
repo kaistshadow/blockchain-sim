@@ -53,40 +53,34 @@ def check_shadownode(monero_log, tester_log):
 def check_verack_withip(monero_log, tester_log, ip):
     f = open(monero_log, "r")
     iterf = iter(f)
-    check_flag = [False, False, False, False, False, False]
+    check_flag = [False, False, False, False, False]
     for line in iterf:
         # check whether the connection is established
         if "NEW CONNECTION" in line:
-            if "INC" in line:
+            if "OUT" in line and ip in line:
                 check_flag[0] = True
-                print("CHECK : incoming connection established")
-
-        # check whether the COMMAND_HANDSHAKE message is received
-        if check_flag[0] and not check_flag[1] and "243 bytes sent for category command-1001 initiated by peer" in line:
-            if ip in line:
-                check_flag[1] = True
-                print("CHECK : receive COMMAND_HANDSHAKE msg from peer for %s" % ip)
+                print("CHECK : outgoing connection established")
 
         # check whether the first COMMAND_TIMED_SYNC message is sent and received a valid response
-        if check_flag[1] and not check_flag[2] and "172 bytes sent for category command-1002 initiated by us" in line:
+        if check_flag[0] and not check_flag[1] and "bytes sent for category command-1002 initiated by us" in line:
             if ip in line:
-                check_flag[2] = True
+                check_flag[1] = True
                 print("CHECK : first COMMAND_TIMED_SYNC req is sent for %s" % ip)
 
-        if check_flag[2] and not check_flag[3] and "bytes received for category command-1002 initiated by us" in line:
+        if check_flag[1] and not check_flag[2] and "bytes received for category command-1002 initiated by us" in line:
             if ip in line:
-                check_flag[3] = True
+                check_flag[2] = True
                 print("CHECK : first COMMAND_TIMED_SYNC response is received for %s" % ip)
 
         # check whether the second COMMAND_TIMED_SYNC (ping) message is sent and received
-        if check_flag[3] and not check_flag[4] and "172 bytes sent for category command-1002 initiated by us" in line:
+        if check_flag[2] and not check_flag[3] and "172 bytes sent for category command-1002 initiated by us" in line:
             if ip in line:
-                check_flag[4] = True
+                check_flag[3] = True
                 print("CHECK : second COMMAND_TIMED_SYNC req is sent for %s" % ip)
 
-        if check_flag[4] and not check_flag[5] and "bytes received for category command-1002 initiated by us" in line:
+        if check_flag[3] and not check_flag[4] and "bytes received for category command-1002 initiated by us" in line:
             if ip in line:
-                check_flag[5] = True
+                check_flag[4] = True
                 print("CHECK : second COMMAND_TIMED_SYNC response is received for %s" % ip)
 
 

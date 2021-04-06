@@ -77,6 +77,24 @@ namespace sybiltest {
             tcpBuffer.PushBackSendBuffer(msg);
         }
 
+        void SendMsgUsingMsgHdr(int data_fd, std::string msgstr) {
+            struct msghdr msg;
+            struct iovec iov;
+
+            iov.iov_base = (void *) msgstr.c_str();
+            iov.iov_len = msgstr.size();
+
+            msg.msg_name = NULL;
+            msg.msg_namelen = 0;
+            msg.msg_iov = &iov;
+            msg.msg_iovlen = 1;
+            msg.msg_control = NULL;
+            msg.msg_controllen = 0;
+
+            // int sendmsg_flag = MSG_NOSIGNAL; // ignore flag (shadow does not support it)
+            SendMsg(data_fd, &msg);
+        }
+
         void SendMsg(int data_fd, struct msghdr *message) {
             if (message->msg_name != NULL) {
                 std::cout << "sendmsg with msg_name is not supported" << "\n";

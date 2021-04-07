@@ -1,3 +1,7 @@
+#prepare bitcoin experiment
+add_custom_target(tps-API-bitcoin-prepare ALL
+        COMMAND sh clean_data.sh 2
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 # compile bitcoin P2P tester
 add_library(BitcoinTPSAdapter SHARED
         BitcoinNodePrimitives.cpp

@@ -40,7 +40,6 @@ def main():
 
     # IP address 가져오기
     IP_list = utils.get_address_list("output.xml")
-
     # 생성된 xml 파일로 부터 runtime, node_id, plugin 들을 뽑아옴.
     runtime, node_id_list, plugin_list = xml_modules.get_xml_info_new(target_folder_xml)
     # 지금 예제는 transaction injector를 사용 안하기에 별도의 xml파일을 만들어줌.

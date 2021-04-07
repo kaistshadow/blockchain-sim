@@ -1,0 +1,1195 @@
+
+
+
+
+
+2020-01-01T00:00:00Z Bitcoin Core version v0.19.1.0-3a336509d (debug build)
+2020-01-01T00:00:00Z Assuming ancestors of block 00000000000000000005f8920febd3925f8272a6a71237563d78c2edfdd09ddf have valid signatures.
+2020-01-01T00:00:00Z Setting nMinimumChainWork=0000000000000000000000000000000000000000000000000000000000000000
+2020-01-01T00:00:00Z Using the 'sse4(1way),sse41(4way),avx2(8way)' SHA256 implementation
+2020-01-01T00:00:00Z Using RdSeed as additional entropy source
+2020-01-01T00:00:00Z Using RdRand as an additional entropy source
+2020-01-01T00:00:00Z Default data directory /home/mong/.bitcoin
+2020-01-01T00:00:00Z Using data directory /home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck/data/bcdnode0
+2020-01-01T00:00:00Z Config file: /home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck/data/bcdnode0/bitcoin.conf (not found, skipping)
+2020-01-01T00:00:00Z Using at most 125 automatic connections (4096 file descriptors available)
+2020-01-01T00:00:00Z Warning: relative datadir option 'data/bcdnode0' specified, which will be interpreted relative to the current working directory '/home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck'. This is fragile, because if bitcoin is started in the future from a different location, it will be unable to locate the current data files. There could also be data loss if bitcoin is started while in a temporary directory.
+2020-01-01T00:00:00Z Using 16 MiB out of 32/2 requested for signature cache, able to store 524288 elements
+2020-01-01T00:00:00Z Using 16 MiB out of 32/2 requested for script execution cache, able to store 524288 elements
+2020-01-01T00:00:00Z Using 8 threads for script verification
+2020-01-01T00:00:00Z Allowing HTTP connections from: 127.0.0.0/8 0:0:0:0:0:0:0:0/128 0.0.0.0/0 
+2020-01-01T00:00:00Z libevent: event_add: event: 0x7f30211ff0a0 (fd 18), EV_READ    call 0x7f3028601980
+2020-01-01T00:00:00Z libevent: Epoll ADD(1) on fd 18 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:00Z Binding RPC on address 1.0.0.1 port 11111
+2020-01-01T00:00:00Z libevent: event_add: event: 0x7f3021201798 (fd 19), EV_READ    call 0x7f302860f0d0
+2020-01-01T00:00:00Z libevent: Epoll ADD(1) on fd 19 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:00Z libevent: Bound to port 11111 - Awaiting connections ... 
+2020-01-01T00:00:00Z Initialized HTTP server
+2020-01-01T00:00:00Z HTTP: creating work queue of depth 16
+2020-01-01T00:00:00Z Starting RPC
+2020-01-01T00:00:00Z Starting HTTP RPC server
+2020-01-01T00:00:00Z Config options rpcuser and rpcpassword will soon be deprecated. Locally-run instances may remove rpcuser to use cookie-based auth, or may be replaced with rpcauth. Please see share/rpcauth for rpcauth auth generation.
+2020-01-01T00:00:00Z Registering HTTP handler for / (exactmatch 1)
+2020-01-01T00:00:00Z Registering HTTP handler for /wallet/ (exactmatch 0)
+2020-01-01T00:00:00Z Starting HTTP server
+2020-01-01T00:00:00Z HTTP: starting 4 worker threads
+2020-01-01T00:00:00Z Using wallet directory /home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck/data/bcdnode0
+2020-01-01T00:00:00Z init message: Verifying wallet(s)...
+2020-01-01T00:00:00Z Using BerkeleyDB version Berkeley DB 4.8.30: (April  9, 2010)
+2020-01-01T00:00:00Z Using wallet /home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck/data/bcdnode0
+2020-01-01T00:00:00Z BerkeleyEnvironment::Open: LogDir=/home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck/data/bcdnode0/database ErrorFile=/home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck/data/bcdnode0/db.log
+2020-01-01T00:00:00Z init message: Loading banlist...
+2020-01-01T00:00:00Z Loaded 0 banned node ips/subnets from banlist.dat  0ms
+2020-01-01T00:00:00Z net: setting try another outbound peer=false
+2020-01-01T00:00:00Z Cache configuration:
+2020-01-01T00:00:00Z * Using 2.0 MiB for block index database
+2020-01-01T00:00:00Z * Using 56.0 MiB for transaction index database
+2020-01-01T00:00:00Z * Using 8.0 MiB for chain state database
+2020-01-01T00:00:00Z * Using 384.0 MiB for in-memory UTXO set (plus up to 286.1 MiB of unused mempool space)
+2020-01-01T00:00:00Z init message: Loading block index...
+2020-01-01T00:00:00Z LevelDB using max_open_files=1000 (default=1000)
+2020-01-01T00:00:00Z Wiping LevelDB in /home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck/data/bcdnode0/blocks/index
+2020-01-01T00:00:00Z Opening LevelDB in /home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck/data/bcdnode0/blocks/index
+2020-01-01T00:00:00Z leveldb: Delete type=3 #1
+2020-01-01T00:00:00Z Opened LevelDB successfully
+2020-01-01T00:00:00Z Using obfuscation key for /home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck/data/bcdnode0/blocks/index: 0000000000000000
+2020-01-01T00:00:00Z WriteBatch memory usage: db=index, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:00Z Initializing databases...
+2020-01-01T00:00:00Z LevelDB using max_open_files=1000 (default=1000)
+2020-01-01T00:00:00Z Wiping LevelDB in /home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck/data/bcdnode0/chainstate
+2020-01-01T00:00:00Z Opening LevelDB in /home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck/data/bcdnode0/chainstate
+2020-01-01T00:00:00Z leveldb: Delete type=3 #1
+2020-01-01T00:00:00Z Opened LevelDB successfully
+2020-01-01T00:00:00Z WriteBatch memory usage: db=chainstate, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:00Z Wrote new obfuscate key for /home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck/data/bcdnode0/chainstate: f562ca68d68c694a
+2020-01-01T00:00:00Z Using obfuscation key for /home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck/data/bcdnode0/chainstate: f562ca68d68c694a
+2020-01-01T00:00:00Z  block index               0ms
+2020-01-01T00:00:00Z LevelDB using max_open_files=1000 (default=1000)
+2020-01-01T00:00:00Z Wiping LevelDB in /home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck/data/bcdnode0/indexes/txindex
+2020-01-01T00:00:00Z Opening LevelDB in /home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck/data/bcdnode0/indexes/txindex
+2020-01-01T00:00:00Z leveldb: Delete type=3 #1
+2020-01-01T00:00:00Z Opened LevelDB successfully
+2020-01-01T00:00:00Z Using obfuscation key for /home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck/data/bcdnode0/indexes/txindex: 0000000000000000
+2020-01-01T00:00:00Z init message: Loading wallet...
+2020-01-01T00:00:00Z BerkeleyEnvironment::Open: LogDir=/home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck/data/bcdnode0/database ErrorFile=/home/mong/dependency/power/blockchain-sim/tests/regtest/1_bitcoin/9_transactionCheck/data/bcdnode0/db.log
+2020-01-01T00:00:00Z [default wallet] Wallet File Version = 169900
+2020-01-01T00:00:00Z [default wallet] Keys: 2001 plaintext, 0 encrypted, 2001 w/ metadata, 2001 total. Unknown wallet records: 0
+2020-01-01T00:00:00Z [default wallet] Wallet completed loading in               0ms
+2020-01-01T00:00:00Z [default wallet] keypool added 1 keys (0 internal), size=2000 (1000 internal)
+2020-01-01T00:00:00Z [default wallet] setKeyPool.size() = 2000
+2020-01-01T00:00:00Z [default wallet] mapWallet.size() = 7
+2020-01-01T00:00:00Z [default wallet] mapAddressBook.size() = 1
+2020-01-01T00:00:00Z scheduler thread start
+2020-01-01T00:00:00Z Entering http event loop
+2020-01-01T00:00:00Z txindex thread start
+2020-01-01T00:00:00Z txindex is enabled
+2020-01-01T00:00:00Z txindex thread exit
+2020-01-01T00:00:00Z Failed to pthread_setschedparam: Function not implemented
+2020-01-01T00:00:00Z Reindexing block file blk00000.dat...
+2020-01-01T00:00:00Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:00Z   - Connect total: 0.00ms [0.00s (-nanms/blk)]
+2020-01-01T00:00:00Z   - Flush: 0.00ms [0.00s (-nanms/blk)]
+2020-01-01T00:00:00Z   - Writing chainstate: 0.00ms [0.00s (-nanms/blk)]
+2020-01-01T00:00:00Z UpdateTip: new best=000006d66f3cd0f0e2bf5ff0f3aa66bf4deec8eff96b7bc13fc7622532b10ad8 height=0 version=0x00000001 log2_work=20.000001 tx=1 date='2009-01-03T18:15:05Z' progress=0.000000 cache=0.0MiB(0txo)
+2020-01-01T00:00:00Z   - Connect postprocess: 0.00ms [0.00s (-nanms/blk)]
+2020-01-01T00:00:00Z - Connect block: 0.00ms [0.00s (-nanms/blk)]
+2020-01-01T00:00:00Z Loaded 8 blocks from external file in 0ms
+2020-01-01T00:00:00Z WriteBatch memory usage: db=index, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:00Z Reindexing finished
+2020-01-01T00:00:00Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:00Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z Pre-allocating up to position 0x100000 in rev00000.dat
+2020-01-01T00:00:00Z     - Index writing: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Callbacks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Connect total: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Flush: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Writing chainstate: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z Blockpolicy estimates updated by 0 of 0 block txs, since last block 0 of 0 tracked, mempool map size 0, max target 0 from current
+2020-01-01T00:00:00Z UpdateTip: new best=0000047938f197e94de2c667d7e9ea0035cce155322c19b1a7abfd915ac1adc9 height=1 version=0x20000000 log2_work=21.000001 tx=2 date='2020-01-01T00:00:05Z' progress=0.000000 cache=0.0MiB(1txo)
+2020-01-01T00:00:00Z   - Connect postprocess: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z - Connect block: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:00Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Index writing: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Callbacks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Connect total: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Flush: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Writing chainstate: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z Blockpolicy estimates updated by 0 of 0 block txs, since last block 0 of 0 tracked, mempool map size 0, max target 0 from current
+2020-01-01T00:00:00Z UpdateTip: new best=00000b9a87dca92e17557e8fd5bcc4b25311dab40b1f1f6c68bc76d867932633 height=2 version=0x20000000 log2_work=21.584964 tx=3 date='2020-01-01T00:00:06Z' progress=0.000000 cache=0.0MiB(2txo)
+2020-01-01T00:00:00Z   - Connect postprocess: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z - Connect block: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:00Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Index writing: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Callbacks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Connect total: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Flush: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Writing chainstate: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z Blockpolicy estimates updated by 0 of 0 block txs, since last block 0 of 0 tracked, mempool map size 0, max target 0 from current
+2020-01-01T00:00:00Z UpdateTip: new best=000005850c115c511fc0e223d975c3f4b49999fc170daeec37552c535bb6a896 height=3 version=0x20000000 log2_work=22.000001 tx=4 date='2020-01-01T00:00:06Z' progress=0.000000 cache=0.0MiB(3txo)
+2020-01-01T00:00:00Z   - Connect postprocess: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z - Connect block: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:00Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Index writing: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Callbacks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Connect total: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Flush: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Writing chainstate: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z Blockpolicy estimates updated by 0 of 0 block txs, since last block 0 of 0 tracked, mempool map size 0, max target 0 from current
+2020-01-01T00:00:00Z UpdateTip: new best=000005f49d2c6bf6169c321c21337ec3406dd5c3f00ce9796fed99fa889005e2 height=4 version=0x20000000 log2_work=22.321929 tx=5 date='2020-01-01T00:00:07Z' progress=0.000000 cache=0.0MiB(4txo)
+2020-01-01T00:00:00Z   - Connect postprocess: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z - Connect block: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:00Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Index writing: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Callbacks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Connect total: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Flush: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Writing chainstate: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z Blockpolicy estimates updated by 0 of 0 block txs, since last block 0 of 0 tracked, mempool map size 0, max target 0 from current
+2020-01-01T00:00:00Z UpdateTip: new best=000004c71fe4d4604f6306d012f027c6192ad3af4c74c50801696bebbd16f8e9 height=5 version=0x20000000 log2_work=22.584964 tx=6 date='2020-01-01T00:00:07Z' progress=0.000000 cache=0.0MiB(5txo)
+2020-01-01T00:00:00Z   - Connect postprocess: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z - Connect block: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z block tree size = 8
+2020-01-01T00:00:00Z nBestHeight = 5
+2020-01-01T00:00:00Z libevent: event_add: event: 0x7f3023309520 (fd 40), EV_READ    call 0x7f3028601980
+2020-01-01T00:00:00Z libevent: Epoll ADD(1) on fd 40 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:00Z AddLocal(1.0.0.1:18333,1)
+2020-01-01T00:00:00Z Discover: IPv4 eth0: 1.0.0.1
+2020-01-01T00:00:00Z Error: Couldn't open socket for incoming connections (socket returned error Address family not supported by protocol (97))
+2020-01-01T00:00:00Z Bound to 0.0.0.0:18333
+2020-01-01T00:00:00Z init message: Loading P2P addresses...
+2020-01-01T00:00:00Z Loaded 675 addresses from peers.dat  0ms
+2020-01-01T00:00:00Z init message: Starting network threads...
+2020-01-01T00:00:00Z init message: Done loading
+2020-01-01T00:00:00Z torcontrol thread start
+2020-01-01T00:00:00Z libevent: event_add: event: 0x7f3023935280 (fd -1), EV_READ    call 0x7f3028600d40
+2020-01-01T00:00:00Z libevent: event_add: event: 0x7f3023935300 (fd -1),  EV_WRITE   call 0x7f3028600920
+2020-01-01T00:00:00Z libevent: event_del: 0x7f3023935280 (fd -1), callback 0x7f3028600d40
+2020-01-01T00:00:00Z libevent: event_del: 0x7f3023935300 (fd -1), callback 0x7f3028600920
+2020-01-01T00:00:00Z libevent: event_add: event: 0x7f3023935280 (fd 43), EV_READ    call 0x7f3028600d40
+2020-01-01T00:00:00Z libevent: Epoll ADD(1) on fd 43 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:00Z libevent: event_add: event: 0x7f3023935300 (fd 43),  EV_WRITE   call 0x7f3028600920
+2020-01-01T00:00:00Z libevent: Epoll MOD(5) on fd 43 okay. Old events were 2; read change was 0 (none); write change was 1 (add); close change was 0 (none)
+2020-01-01T00:00:00Z libevent: event_add: event: 0x7f3023935300 (fd 43),  EV_WRITE   call 0x7f3028600920
+2020-01-01T00:00:00Z net thread start
+2020-01-01T00:00:00Z dnsseed thread start
+2020-01-01T00:00:00Z addcon thread start
+2020-01-01T00:00:00Z trying connection 1.9.0.1:18333 lastseen=0.0hrs
+2020-01-01T00:00:00Z opencon thread start
+2020-01-01T00:00:00Z msghand thread start
+2020-01-01T00:00:00Z WriteBatch memory usage: db=txindex, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:00Z [default wallet] AddToWallet 4aed6f4d7ad7205f953b2b6684677a8bb00ad54317d6faf7e20903b981c3e97e  update
+2020-01-01T00:00:00Z WriteBatch memory usage: db=txindex, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:00Z [default wallet] AddToWallet 0c3831eefaea55021f5be366f1fe003de1ec4bb965eee97c5c83d96600655d61  update
+2020-01-01T00:00:00Z WriteBatch memory usage: db=txindex, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:00Z [default wallet] AddToWallet e9ec0562d8a15f82c0f6aae688ace09bf05368e2d4cab05f17744363f855576d  update
+2020-01-01T00:00:00Z WriteBatch memory usage: db=txindex, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:00Z [default wallet] AddToWallet 4ad4deeb41f8948f34305c19f70c765135c55acc6c6ee7a69aa06c2813b67b38  update
+2020-01-01T00:00:00Z WriteBatch memory usage: db=txindex, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:00Z [default wallet] AddToWallet c1cd79ddbc0f91ef1d27cab9c9320cc96f2b4abff0c5ca797bac7b021655cde8  update
+2020-01-01T00:00:00Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:00Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Index writing: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Callbacks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Connect total: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Flush: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Writing chainstate: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z Blockpolicy estimates updated by 0 of 0 block txs, since last block 0 of 0 tracked, mempool map size 0, max target 0 from current
+2020-01-01T00:00:00Z UpdateTip: new best=00000aa274a3aa14a2b9931a954e968716f5fe343a40350cd058712d97c64cf6 height=6 version=0x20000000 log2_work=22.807356 tx=7 date='2020-01-01T00:00:07Z' progress=0.000000 cache=0.0MiB(6txo)
+2020-01-01T00:00:00Z   - Connect postprocess: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z - Connect block: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:00Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Index writing: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z     - Callbacks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Connect total: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Flush: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z   - Writing chainstate: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z Blockpolicy estimates updated by 0 of 0 block txs, since last block 0 of 0 tracked, mempool map size 0, max target 0 from current
+2020-01-01T00:00:00Z UpdateTip: new best=000001de35c42042e8ca11c1c8a2ab2dca8127cdfb4a1b6bda8db0b111f9bfbb height=7 version=0x20000000 log2_work=23.000001 tx=8 date='2020-01-01T00:00:07Z' progress=0.000000 cache=0.0MiB(7txo)
+2020-01-01T00:00:00Z   - Connect postprocess: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z - Connect block: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:00Z Failed to open mempool file from disk. Continuing anyway.
+2020-01-01T00:00:00Z WriteBatch memory usage: db=txindex, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:00Z [default wallet] AddToWallet da4eb3fa72b847e990726226eaf5c37cf189ccef0c08a3130600d70bf3a6dfe6  update
+2020-01-01T00:00:00Z WriteBatch memory usage: db=txindex, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:00Z [default wallet] AddToWallet b4115b1c6bdfb2f279a75f6de504c86faee05166be6db5a936ea5ea508b0cad0  update
+2020-01-01T00:00:00Z Added connection peer=0
+2020-01-01T00:00:00Z sending version (102 bytes) peer=0
+2020-01-01T00:00:00Z send version message: version 70015, blocks=7, us=[0:0:0:0:0:0:0:0]:0, peer=0
+2020-01-01T00:00:00Z Added connection peer=1
+2020-01-01T00:00:00Z connection from 1.1.0.1:10737 accepted
+2020-01-01T00:00:00Z received: version (102 bytes) peer=1
+2020-01-01T00:00:00Z sending version (102 bytes) peer=1
+2020-01-01T00:00:00Z send version message: version 70015, blocks=7, us=[0:0:0:0:0:0:0:0]:0, peer=1
+2020-01-01T00:00:00Z sending verack (0 bytes) peer=1
+2020-01-01T00:00:00Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=7, us=1.0.0.1:18333, peer=1
+2020-01-01T00:00:00Z added time data, samples 2, offset +0 (+0 minutes)
+2020-01-01T00:00:00Z received: version (102 bytes) peer=0
+2020-01-01T00:00:00Z sending verack (0 bytes) peer=0
+2020-01-01T00:00:00Z Leaving InitialBlockDownload (latching to false)
+2020-01-01T00:00:00Z ProcessMessages: advertising address 1.0.0.1:18333
+2020-01-01T00:00:00Z sending getaddr (0 bytes) peer=0
+2020-01-01T00:00:00Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=7, us=1.0.0.1:18875, peer=0
+2020-01-01T00:00:00Z added time data, samples 3, offset +0 (+0 minutes)
+2020-01-01T00:00:00Z received: verack (0 bytes) peer=0
+2020-01-01T00:00:00Z New outbound peer connected: version: 70015, blocks=7, peer=0 (full-relay)
+2020-01-01T00:00:00Z sending sendheaders (0 bytes) peer=0
+2020-01-01T00:00:00Z sending sendcmpct (9 bytes) peer=0
+2020-01-01T00:00:00Z sending sendcmpct (9 bytes) peer=0
+2020-01-01T00:00:00Z sending ping (8 bytes) peer=0
+2020-01-01T00:00:00Z AdvertiseLocal: advertising address 1.0.0.1:18333
+2020-01-01T00:00:00Z sending addr (31 bytes) peer=0
+2020-01-01T00:00:00Z initial getheaders (6) to peer=0 (startheight:7)
+2020-01-01T00:00:00Z sending getheaders (261 bytes) peer=0
+2020-01-01T00:00:00Z sending feefilter (8 bytes) peer=0
+2020-01-01T00:00:00Z received: verack (0 bytes) peer=1
+2020-01-01T00:00:00Z sending sendheaders (0 bytes) peer=1
+2020-01-01T00:00:00Z sending sendcmpct (9 bytes) peer=1
+2020-01-01T00:00:00Z sending sendcmpct (9 bytes) peer=1
+2020-01-01T00:00:00Z sending ping (8 bytes) peer=1
+2020-01-01T00:00:00Z AdvertiseLocal: advertising address 1.0.0.1:18333
+2020-01-01T00:00:00Z sending addr (31 bytes) peer=1
+2020-01-01T00:00:00Z initial getheaders (6) to peer=1 (startheight:7)
+2020-01-01T00:00:00Z sending getheaders (261 bytes) peer=1
+2020-01-01T00:00:00Z sending feefilter (8 bytes) peer=1
+2020-01-01T00:00:00Z received: getaddr (0 bytes) peer=1
+2020-01-01T00:00:00Z received: sendheaders (0 bytes) peer=1
+2020-01-01T00:00:00Z trying connection 94.72.143.28:8333 lastseen=183.4hrs
+2020-01-01T00:00:00Z connect() to 94.72.143.28:8333 failed: Connection refused (111)
+2020-01-01T00:00:00Z received: sendheaders (0 bytes) peer=0
+2020-01-01T00:00:00Z received: sendcmpct (9 bytes) peer=0
+2020-01-01T00:00:00Z received: sendcmpct (9 bytes) peer=1
+2020-01-01T00:00:00Z received: sendcmpct (9 bytes) peer=1
+2020-01-01T00:00:00Z received: ping (8 bytes) peer=1
+2020-01-01T00:00:00Z sending pong (8 bytes) peer=1
+2020-01-01T00:00:00Z trying connection 1.1.0.1:18333 lastseen=0.0hrs
+2020-01-01T00:00:00Z received: sendcmpct (9 bytes) peer=0
+2020-01-01T00:00:00Z received: ping (8 bytes) peer=0
+2020-01-01T00:00:00Z sending pong (8 bytes) peer=0
+2020-01-01T00:00:00Z received: addr (31 bytes) peer=0
+2020-01-01T00:00:00Z Added 1 addresses from 1.9.0.1: 0 tried, 676 new
+2020-01-01T00:00:00Z received: getheaders (261 bytes) peer=0
+2020-01-01T00:00:00Z getheaders 7 to end from peer=0
+2020-01-01T00:00:00Z sending headers (82 bytes) peer=0
+2020-01-01T00:00:00Z received: addr (31 bytes) peer=1
+2020-01-01T00:00:00Z Added 1 addresses from 1.1.0.1: 0 tried, 677 new
+2020-01-01T00:00:00Z received: getheaders (261 bytes) peer=1
+2020-01-01T00:00:00Z getheaders 7 to end from peer=1
+2020-01-01T00:00:00Z sending headers (82 bytes) peer=1
+2020-01-01T00:00:00Z received: feefilter (8 bytes) peer=1
+2020-01-01T00:00:00Z received: feefilter of 0.00001000 BTC/kB from peer=1
+2020-01-01T00:00:00Z received: pong (8 bytes) peer=1
+2020-01-01T00:00:00Z received: headers (82 bytes) peer=1
+2020-01-01T00:00:00Z Added connection peer=2
+2020-01-01T00:00:00Z sending version (102 bytes) peer=2
+2020-01-01T00:00:00Z send version message: version 70015, blocks=7, us=[0:0:0:0:0:0:0:0]:0, peer=2
+2020-01-01T00:00:00Z received: feefilter (8 bytes) peer=0
+2020-01-01T00:00:00Z received: feefilter of 0.00001000 BTC/kB from peer=0
+2020-01-01T00:00:00Z received: pong (8 bytes) peer=0
+2020-01-01T00:00:00Z received: headers (82 bytes) peer=0
+2020-01-01T00:00:00Z Added connection peer=3
+2020-01-01T00:00:00Z connection from 1.9.0.1:48007 accepted
+2020-01-01T00:00:00Z received: version (102 bytes) peer=3
+2020-01-01T00:00:00Z sending version (102 bytes) peer=3
+2020-01-01T00:00:00Z send version message: version 70015, blocks=7, us=[0:0:0:0:0:0:0:0]:0, peer=3
+2020-01-01T00:00:00Z sending verack (0 bytes) peer=3
+2020-01-01T00:00:00Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=7, us=1.0.0.1:18333, peer=3
+2020-01-01T00:00:01Z trying connection 67.40.207.169:8333 lastseen=278.9hrs
+2020-01-01T00:00:01Z connect() to 67.40.207.169:8333 failed: Connection refused (111)
+2020-01-01T00:00:01Z received: addr (31 bytes) peer=1
+2020-01-01T00:00:01Z Added 1 addresses from 1.1.0.1: 0 tried, 678 new
+2020-01-01T00:00:01Z received: version (102 bytes) peer=2
+2020-01-01T00:00:01Z sending verack (0 bytes) peer=2
+2020-01-01T00:00:01Z ProcessMessages: advertising address 1.0.0.1:18333
+2020-01-01T00:00:01Z sending getaddr (0 bytes) peer=2
+2020-01-01T00:00:01Z Moving 1.1.0.1:18333 to tried
+2020-01-01T00:00:01Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=7, us=1.0.0.1:17266, peer=2
+2020-01-01T00:00:01Z received: verack (0 bytes) peer=2
+2020-01-01T00:00:01Z New outbound peer connected: version: 70015, blocks=7, peer=2 (full-relay)
+2020-01-01T00:00:01Z sending sendheaders (0 bytes) peer=2
+2020-01-01T00:00:01Z sending sendcmpct (9 bytes) peer=2
+2020-01-01T00:00:01Z sending sendcmpct (9 bytes) peer=2
+2020-01-01T00:00:01Z sending ping (8 bytes) peer=2
+2020-01-01T00:00:01Z AdvertiseLocal: advertising address 1.0.0.1:18333
+2020-01-01T00:00:01Z sending addr (31 bytes) peer=2
+2020-01-01T00:00:01Z initial getheaders (6) to peer=2 (startheight:7)
+2020-01-01T00:00:01Z sending getheaders (261 bytes) peer=2
+2020-01-01T00:00:01Z sending feefilter (8 bytes) peer=2
+2020-01-01T00:00:01Z received: verack (0 bytes) peer=3
+2020-01-01T00:00:01Z sending sendheaders (0 bytes) peer=3
+2020-01-01T00:00:01Z sending sendcmpct (9 bytes) peer=3
+2020-01-01T00:00:01Z sending sendcmpct (9 bytes) peer=3
+2020-01-01T00:00:01Z sending ping (8 bytes) peer=3
+2020-01-01T00:00:01Z AdvertiseLocal: advertising address 1.0.0.1:18333
+2020-01-01T00:00:01Z sending addr (31 bytes) peer=3
+2020-01-01T00:00:01Z initial getheaders (6) to peer=3 (startheight:7)
+2020-01-01T00:00:01Z sending getheaders (261 bytes) peer=3
+2020-01-01T00:00:01Z sending feefilter (8 bytes) peer=3
+2020-01-01T00:00:01Z received: getaddr (0 bytes) peer=3
+2020-01-01T00:00:01Z received: sendheaders (0 bytes) peer=3
+2020-01-01T00:00:01Z received: sendheaders (0 bytes) peer=2
+2020-01-01T00:00:01Z received: sendcmpct (9 bytes) peer=2
+2020-01-01T00:00:01Z received: sendcmpct (9 bytes) peer=3
+2020-01-01T00:00:01Z received: sendcmpct (9 bytes) peer=3
+2020-01-01T00:00:01Z received: ping (8 bytes) peer=3
+2020-01-01T00:00:01Z sending pong (8 bytes) peer=3
+2020-01-01T00:00:01Z received: sendcmpct (9 bytes) peer=2
+2020-01-01T00:00:01Z received: ping (8 bytes) peer=2
+2020-01-01T00:00:01Z sending pong (8 bytes) peer=2
+2020-01-01T00:00:01Z received: addr (31 bytes) peer=2
+2020-01-01T00:00:01Z received: getheaders (261 bytes) peer=2
+2020-01-01T00:00:01Z getheaders 7 to end from peer=2
+2020-01-01T00:00:01Z sending headers (82 bytes) peer=2
+2020-01-01T00:00:01Z received: addr (31 bytes) peer=3
+2020-01-01T00:00:01Z received: getheaders (261 bytes) peer=3
+2020-01-01T00:00:01Z getheaders 7 to end from peer=3
+2020-01-01T00:00:01Z sending headers (82 bytes) peer=3
+2020-01-01T00:00:01Z received: feefilter (8 bytes) peer=3
+2020-01-01T00:00:01Z received: feefilter of 0.00001000 BTC/kB from peer=3
+2020-01-01T00:00:01Z received: pong (8 bytes) peer=3
+2020-01-01T00:00:01Z received: headers (82 bytes) peer=3
+2020-01-01T00:00:01Z received: feefilter (8 bytes) peer=2
+2020-01-01T00:00:01Z received: feefilter of 0.00001000 BTC/kB from peer=2
+2020-01-01T00:00:01Z received: pong (8 bytes) peer=2
+2020-01-01T00:00:01Z received: headers (82 bytes) peer=2
+2020-01-01T00:00:01Z trying connection [2402:7340:1:56:0:0:0:d0d]:8333 lastseen=196.5hrs
+2020-01-01T00:00:02Z trying connection 71.237.255.140:8333 lastseen=265.3hrs
+2020-01-01T00:00:02Z connect() to 71.237.255.140:8333 failed: Connection refused (111)
+2020-01-01T00:00:02Z Flushing wallet.dat
+2020-01-01T00:00:02Z Flushed wallet.dat 0ms
+2020-01-01T00:00:02Z trying connection 193.41.78.125:8333 lastseen=241.7hrs
+2020-01-01T00:00:02Z connect() to 193.41.78.125:8333 failed: Connection refused (111)
+2020-01-01T00:00:02Z sending addr (4651 bytes) peer=3
+2020-01-01T00:00:03Z trying connection 195.56.63.10:8333 lastseen=315.3hrs
+2020-01-01T00:00:03Z connect() to 195.56.63.10:8333 failed: Connection refused (111)
+2020-01-01T00:00:03Z trying connection 193.194.163.53:8333 lastseen=212.7hrs
+2020-01-01T00:00:03Z connect() to 193.194.163.53:8333 failed: Connection refused (111)
+2020-01-01T00:00:04Z trying connection 193.84.116.22:8333 lastseen=173.8hrs
+2020-01-01T00:00:04Z connect() to 193.84.116.22:8333 failed: Connection refused (111)
+2020-01-01T00:00:04Z trying connection 5.188.187.130:8333 lastseen=321.4hrs
+2020-01-01T00:00:04Z connect() to 5.188.187.130:8333 failed: Connection refused (111)
+2020-01-01T00:00:05Z trying connection 119.207.78.152:8333 lastseen=241.0hrs
+2020-01-01T00:00:05Z connect() to 119.207.78.152:8333 failed: Connection refused (111)
+2020-01-01T00:00:05Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:05Z libevent: event_active: 0x7f3021201798 (fd 19), res 2, callback 0x7f302860f0d0
+2020-01-01T00:00:05Z libevent: event_process_active: event: 0x7f3021201798, EV_READ   call 0x7f302860f0d0
+2020-01-01T00:00:05Z libevent: evhttp_get_request_connection: new request from 11.0.0.1:45143 on 101
+
+2020-01-01T00:00:05Z libevent: Attempting connection to 11.0.0.1:45143
+
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f3020885030 (fd -1), EV_READ    call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_del: 0x7f30208850b0 (fd -1), callback 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_del: 0x7f3020885030 (fd -1), callback 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_del: 0x7f30208850b0 (fd -1), callback 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f3020885030 (fd 101), EV_READ    call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: Epoll ADD(1) on fd 101 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f3020885030 (fd 101), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f3020885030, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_del: 0x7f30208850b0 (fd 101), callback 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f3020885030 (fd 101), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f3020885030, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: timeout_next: event: 0x7f3020885030, in 30 seconds, 0 useconds
+2020-01-01T00:00:05Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:05Z libevent: event_active: 0x7f3020885030 (fd 101), res 2, callback 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_process_active: event: 0x7f3020885030, EV_READ   call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f3020885030 (fd 101), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f3020885030, timeout in 1577836835 seconds 150000 useconds, call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Host val: 1.0.0.1:11111
+
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Authorization val: Basic YToxMjM0
+
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Accept val: */*
+
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: content-type val: text/plain;
+
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Content-Length val: 73
+
+2020-01-01T00:00:05Z libevent: evhttp_read_header: checking for post data on 101
+
+2020-01-01T00:00:05Z libevent: evhttp_get_body_length: bytes to read: 73 (in buffer 73)
+
+2020-01-01T00:00:05Z libevent: event_del: 0x7f3020885030 (fd 101), callback 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: Epoll DEL(1) on fd 101 okay. Old events were 2; read change was 2 (del); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:05Z libevent: event_del: 0x7f3020885030 (fd 101), callback 0x7f3028600d40
+2020-01-01T00:00:05Z Received a POST request for / from 11.0.0.1:45143
+2020-01-01T00:00:05Z ThreadRPCServer method=getnewaddress user=a
+2020-01-01T00:00:05Z [default wallet] keypool reserve 2
+2020-01-01T00:00:05Z [default wallet] keypool keep 2
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Content-Type val: application/json
+
+2020-01-01T00:00:05Z libevent: event_active: 0x7f301491b9d0 (fd -1), res 0, callback 0x7f302c35e683
+2020-01-01T00:00:05Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:05Z libevent: event_active: 0x7f30211ff0a0 (fd 18), res 2, callback 0x7f3028601980
+2020-01-01T00:00:05Z libevent: event_del: 0x7f301491b9d0 (fd -1), callback 0x7f302c35e683
+2020-01-01T00:00:05Z libevent: event_process_active: event: 0x7f301491b9d0,    call 0x7f302c35e683
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Date val: Wed, 01 Jan 2020 00:00:05 GMT
+
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Content-Length val: 79
+
+2020-01-01T00:00:05Z libevent: evhttp_write_buffer: preparing to write buffer
+
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f30208850b0 (fd 101),  EV_WRITE  EV_TIMEOUT call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: Epoll ADD(4) on fd 101 okay. Old events were 0; read change was 0 (none); write change was 1 (add); close change was 0 (none)
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f30208850b0, timeout in 30 seconds 0 useconds, call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f3020885030 (fd 101), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: Epoll MOD(5) on fd 101 okay. Old events were 4; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f3020885030, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f30208850b0 (fd 101),  EV_WRITE  EV_TIMEOUT call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f30208850b0, timeout in 30 seconds 0 useconds, call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_del: 0x7f301491b9d0 (fd -1), callback 0x7f302c35e683
+2020-01-01T00:00:05Z libevent: event_process_active: event: 0x7f30211ff0a0, EV_READ   call 0x7f3028601980
+2020-01-01T00:00:05Z libevent: timeout_next: event: 0x7f3020885030, in 30 seconds, 0 useconds
+2020-01-01T00:00:05Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:05Z libevent: event_active: 0x7f30208850b0 (fd 101), res 4, callback 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_process_active: event: 0x7f30208850b0,  EV_WRITE  call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f30208850b0 (fd 101),  EV_WRITE  EV_TIMEOUT call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f30208850b0, timeout in 1577836835 seconds 150000 useconds, call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_del: 0x7f30208850b0 (fd 101), callback 0x7f3028600920
+2020-01-01T00:00:05Z libevent: Epoll MOD(1) on fd 101 okay. Old events were 6; read change was 0 (none); write change was 2 (del); close change was 0 (none)
+2020-01-01T00:00:05Z libevent: event_del: 0x7f30208850b0 (fd 101), callback 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f3020885030 (fd 101), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f3020885030, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: timeout_next: event: 0x7f3020885030, in 30 seconds, 0 useconds
+2020-01-01T00:00:05Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:05Z libevent: event_active: 0x7f3021201798 (fd 19), res 2, callback 0x7f302860f0d0
+2020-01-01T00:00:05Z libevent: event_process_active: event: 0x7f3021201798, EV_READ   call 0x7f302860f0d0
+2020-01-01T00:00:05Z libevent: evhttp_get_request_connection: new request from 11.0.0.1:58027 on 107
+
+2020-01-01T00:00:05Z libevent: Attempting connection to 11.0.0.1:58027
+
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f3014abcb20 (fd -1), EV_READ    call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_del: 0x7f3014abcba0 (fd -1), callback 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_del: 0x7f3014abcb20 (fd -1), callback 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_del: 0x7f3014abcba0 (fd -1), callback 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f3014abcb20 (fd 107), EV_READ    call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: Epoll ADD(1) on fd 107 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f3014abcb20 (fd 107), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f3014abcb20, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_del: 0x7f3014abcba0 (fd 107), callback 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f3014abcb20 (fd 107), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f3014abcb20, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: timeout_next: event: 0x7f3020885030, in 29 seconds, 800000 useconds
+2020-01-01T00:00:05Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:05Z libevent: event_active: 0x7f3014abcb20 (fd 107), res 2, callback 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_process_active: event: 0x7f3014abcb20, EV_READ   call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f3014abcb20 (fd 107), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f3014abcb20, timeout in 1577836835 seconds 350000 useconds, call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Host val: 1.0.0.1:11111
+
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Authorization val: Basic YToxMjM0
+
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Accept val: */*
+
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: content-type val: text/plain;
+
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Content-Length val: 111
+
+2020-01-01T00:00:05Z libevent: evhttp_read_header: checking for post data on 107
+
+2020-01-01T00:00:05Z libevent: evhttp_get_body_length: bytes to read: 111 (in buffer 111)
+
+2020-01-01T00:00:05Z libevent: event_del: 0x7f3014abcb20 (fd 107), callback 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: Epoll DEL(1) on fd 107 okay. Old events were 2; read change was 2 (del); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:05Z libevent: event_del: 0x7f3014abcb20 (fd 107), callback 0x7f3028600d40
+2020-01-01T00:00:05Z Received a POST request for / from 11.0.0.1:58027
+2020-01-01T00:00:05Z libevent: timeout_next: event: 0x7f3020885030, in 29 seconds, 800000 useconds
+2020-01-01T00:00:05Z ThreadRPCServer method=validateaddress user=a
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Content-Type val: application/json
+
+2020-01-01T00:00:05Z libevent: event_active: 0x7f3014a69060 (fd -1), res 0, callback 0x7f302c35e683
+2020-01-01T00:00:05Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:05Z libevent: event_active: 0x7f30211ff0a0 (fd 18), res 2, callback 0x7f3028601980
+2020-01-01T00:00:05Z libevent: event_del: 0x7f3014a69060 (fd -1), callback 0x7f302c35e683
+2020-01-01T00:00:05Z libevent: event_process_active: event: 0x7f3014a69060,    call 0x7f302c35e683
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Date val: Wed, 01 Jan 2020 00:00:05 GMT
+
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Content-Length val: 204
+
+2020-01-01T00:00:05Z libevent: evhttp_write_buffer: preparing to write buffer
+
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f3014abcba0 (fd 107),  EV_WRITE  EV_TIMEOUT call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: Epoll ADD(4) on fd 107 okay. Old events were 0; read change was 0 (none); write change was 1 (add); close change was 0 (none)
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f3014abcba0, timeout in 30 seconds 0 useconds, call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f3014abcb20 (fd 107), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: Epoll MOD(5) on fd 107 okay. Old events were 4; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f3014abcb20, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f3014abcba0 (fd 107),  EV_WRITE  EV_TIMEOUT call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f3014abcba0, timeout in 30 seconds 0 useconds, call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_del: 0x7f3014a69060 (fd -1), callback 0x7f302c35e683
+2020-01-01T00:00:05Z libevent: event_process_active: event: 0x7f30211ff0a0, EV_READ   call 0x7f3028601980
+2020-01-01T00:00:05Z libevent: timeout_next: event: 0x7f3020885030, in 29 seconds, 800000 useconds
+2020-01-01T00:00:05Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:05Z libevent: event_active: 0x7f3014abcba0 (fd 107), res 4, callback 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_process_active: event: 0x7f3014abcba0,  EV_WRITE  call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f3014abcba0 (fd 107),  EV_WRITE  EV_TIMEOUT call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f3014abcba0, timeout in 1577836835 seconds 350000 useconds, call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_del: 0x7f3014abcba0 (fd 107), callback 0x7f3028600920
+2020-01-01T00:00:05Z libevent: Epoll MOD(1) on fd 107 okay. Old events were 6; read change was 0 (none); write change was 2 (del); close change was 0 (none)
+2020-01-01T00:00:05Z libevent: event_del: 0x7f3014abcba0 (fd 107), callback 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f3014abcb20 (fd 107), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f3014abcb20, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: timeout_next: event: 0x7f3020885030, in 29 seconds, 800000 useconds
+2020-01-01T00:00:05Z trying connection 178.128.39.110:8333 lastseen=275.1hrs
+2020-01-01T00:00:05Z connect() to 178.128.39.110:8333 failed: Connection refused (111)
+2020-01-01T00:00:05Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:05Z libevent: event_active: 0x7f3021201798 (fd 19), res 2, callback 0x7f302860f0d0
+2020-01-01T00:00:05Z libevent: event_process_active: event: 0x7f3021201798, EV_READ   call 0x7f302860f0d0
+2020-01-01T00:00:05Z libevent: evhttp_get_request_connection: new request from 11.0.0.1:13963 on 112
+
+2020-01-01T00:00:05Z libevent: Attempting connection to 11.0.0.1:13963
+
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f300cbbbb30 (fd -1), EV_READ    call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_del: 0x7f300cbbbbb0 (fd -1), callback 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_del: 0x7f300cbbbb30 (fd -1), callback 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_del: 0x7f300cbbbbb0 (fd -1), callback 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f300cbbbb30 (fd 112), EV_READ    call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: Epoll ADD(1) on fd 112 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f300cbbbb30 (fd 112), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f300cbbbb30, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_del: 0x7f300cbbbbb0 (fd 112), callback 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f300cbbbb30 (fd 112), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f300cbbbb30, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: timeout_next: event: 0x7f3020885030, in 29 seconds, 600000 useconds
+2020-01-01T00:00:05Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:05Z libevent: event_active: 0x7f300cbbbb30 (fd 112), res 2, callback 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_process_active: event: 0x7f300cbbbb30, EV_READ   call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f300cbbbb30 (fd 112), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f300cbbbb30, timeout in 1577836835 seconds 550000 useconds, call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Host val: 1.0.0.1:11111
+
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Authorization val: Basic YToxMjM0
+
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Accept val: */*
+
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: content-type val: text/plain;
+
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Content-Length val: 116
+
+2020-01-01T00:00:05Z libevent: evhttp_read_header: checking for post data on 112
+
+2020-01-01T00:00:05Z libevent: evhttp_get_body_length: bytes to read: 116 (in buffer 116)
+
+2020-01-01T00:00:05Z libevent: event_del: 0x7f300cbbbb30 (fd 112), callback 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: Epoll DEL(1) on fd 112 okay. Old events were 2; read change was 2 (del); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:05Z libevent: event_del: 0x7f300cbbbb30 (fd 112), callback 0x7f3028600d40
+2020-01-01T00:00:05Z Received a POST request for / from 11.0.0.1:13963
+2020-01-01T00:00:05Z libevent: timeout_next: event: 0x7f3020885030, in 29 seconds, 600000 useconds
+2020-01-01T00:00:05Z ThreadRPCServer method=setgeneratetoaddress user=a
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Content-Type val: application/json
+
+2020-01-01T00:00:05Z libevent: event_active: 0x7f307c15aeb0 (fd -1), res 0, callback 0x7f302c35e683
+2020-01-01T00:00:05Z CreateNewBlock(): block weight: 888 txs: 0 fees: 0 sigops 400
+2020-01-01T00:00:05Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:05Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:05Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:05Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:05Z CreateNewBlock() packages: 0.00ms (0 packages, 0 updated descendants), validity: 0.00ms (total 0.00ms)
+2020-01-01T00:00:05Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:05Z libevent: event_active: 0x7f30211ff0a0 (fd 18), res 2, callback 0x7f3028601980
+2020-01-01T00:00:05Z libevent: event_del: 0x7f307c15aeb0 (fd -1), callback 0x7f302c35e683
+2020-01-01T00:00:05Z libevent: event_process_active: event: 0x7f307c15aeb0,    call 0x7f302c35e683
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Date val: Wed, 01 Jan 2020 00:00:05 GMT
+
+2020-01-01T00:00:05Z libevent: evhttp_add_header: key: Content-Length val: 47
+
+2020-01-01T00:00:05Z libevent: evhttp_write_buffer: preparing to write buffer
+
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f300cbbbbb0 (fd 112),  EV_WRITE  EV_TIMEOUT call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: Epoll ADD(4) on fd 112 okay. Old events were 0; read change was 0 (none); write change was 1 (add); close change was 0 (none)
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f300cbbbbb0, timeout in 30 seconds 0 useconds, call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f300cbbbb30 (fd 112), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: Epoll MOD(5) on fd 112 okay. Old events were 4; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f300cbbbb30, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f300cbbbbb0 (fd 112),  EV_WRITE  EV_TIMEOUT call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f300cbbbbb0, timeout in 30 seconds 0 useconds, call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_del: 0x7f307c15aeb0 (fd -1), callback 0x7f302c35e683
+2020-01-01T00:00:05Z libevent: event_process_active: event: 0x7f30211ff0a0, EV_READ   call 0x7f3028601980
+2020-01-01T00:00:05Z libevent: timeout_next: event: 0x7f3020885030, in 29 seconds, 600000 useconds
+2020-01-01T00:00:05Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:05Z libevent: event_active: 0x7f300cbbbbb0 (fd 112), res 4, callback 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_process_active: event: 0x7f300cbbbbb0,  EV_WRITE  call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f300cbbbbb0 (fd 112),  EV_WRITE  EV_TIMEOUT call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f300cbbbbb0, timeout in 1577836835 seconds 550000 useconds, call 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_del: 0x7f300cbbbbb0 (fd 112), callback 0x7f3028600920
+2020-01-01T00:00:05Z libevent: Epoll MOD(1) on fd 112 okay. Old events were 6; read change was 0 (none); write change was 2 (del); close change was 0 (none)
+2020-01-01T00:00:05Z libevent: event_del: 0x7f300cbbbbb0 (fd 112), callback 0x7f3028600920
+2020-01-01T00:00:05Z libevent: event_add: event: 0x7f300cbbbb30 (fd 112), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: event_add: event 0x7f300cbbbb30, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:05Z libevent: timeout_next: event: 0x7f3020885030, in 29 seconds, 600000 useconds
+2020-01-01T00:00:06Z trying connection 96.47.122.171:8333 lastseen=316.5hrs
+2020-01-01T00:00:06Z connect() to 96.47.122.171:8333 failed: Connection refused (111)
+2020-01-01T00:00:06Z trying connection 83.58.134.138:8333 lastseen=254.6hrs
+2020-01-01T00:00:06Z connect() to 83.58.134.138:8333 failed: Connection refused (111)
+2020-01-01T00:00:06Z received: headers (82 bytes) peer=1
+2020-01-01T00:00:06Z Requesting block a263cd3ed47dfed01bc5b0e2196cd9b67a1c5944db84ed1adb2a04dda3e5ff0f from  peer=1
+2020-01-01T00:00:06Z sending getdata (37 bytes) peer=1
+2020-01-01T00:00:06Z received: headers (82 bytes) peer=2
+2020-01-01T00:00:06Z received: cmpctblock (260 bytes) peer=1
+2020-01-01T00:00:06Z Initialized PartiallyDownloadedBlock for block a263cd3ed47dfed01bc5b0e2196cd9b67a1c5944db84ed1adb2a04dda3e5ff0f using a cmpctblock of size 260
+2020-01-01T00:00:06Z received: blocktxn (33 bytes) peer=1
+2020-01-01T00:00:06Z Successfully reconstructed block a263cd3ed47dfed01bc5b0e2196cd9b67a1c5944db84ed1adb2a04dda3e5ff0f with 1 txn prefilled, 0 txn from mempool (incl at least 0 from extra pool) and 0 txn requested
+2020-01-01T00:00:06Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:06Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:06Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:06Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:06Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:06Z     - Index writing: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:06Z     - Callbacks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:06Z sending sendcmpct (9 bytes) peer=1
+2020-01-01T00:00:06Z   - Connect total: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:06Z   - Flush: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:06Z   - Writing chainstate: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:06Z Blockpolicy estimates updated by 0 of 0 block txs, since last block 0 of 0 tracked, mempool map size 0, max target 0 from current
+2020-01-01T00:00:06Z UpdateTip: new best=a263cd3ed47dfed01bc5b0e2196cd9b67a1c5944db84ed1adb2a04dda3e5ff0f height=8 version=0x20000000 log2_work=23.169926 tx=9 date='2020-01-01T00:00:08Z' progress=0.000000 cache=0.0MiB(8txo)
+2020-01-01T00:00:06Z   - Connect postprocess: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:06Z - Connect block: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:06Z WriteBatch memory usage: db=txindex, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:06Z [default wallet] AddToWallet d6702f8f248e81b7761c91d96ae95d999d9471e63f403a6416146098676a0eee  new
+2020-01-01T00:00:06Z SendMessages: sending header a263cd3ed47dfed01bc5b0e2196cd9b67a1c5944db84ed1adb2a04dda3e5ff0f to peer=0
+2020-01-01T00:00:06Z sending headers (82 bytes) peer=0
+2020-01-01T00:00:06Z SendMessages: sending header a263cd3ed47dfed01bc5b0e2196cd9b67a1c5944db84ed1adb2a04dda3e5ff0f to peer=3
+2020-01-01T00:00:06Z sending headers (82 bytes) peer=3
+2020-01-01T00:00:07Z trying connection 92.63.197.245:8333 lastseen=212.3hrs
+2020-01-01T00:00:07Z connect() to 92.63.197.245:8333 failed: Connection refused (111)
+2020-01-01T00:00:07Z CreateNewBlock(): block weight: 888 txs: 0 fees: 0 sigops 400
+2020-01-01T00:00:07Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z CreateNewBlock() packages: 0.00ms (0 packages, 0 updated descendants), validity: 0.00ms (total 0.00ms)
+2020-01-01T00:00:07Z received: headers (82 bytes) peer=0
+2020-01-01T00:00:07Z Requesting block 794f5a2ef442e594b3c83a8fcc11694d3b6511bc47d08fd596cf5ad0a36db996 from  peer=0
+2020-01-01T00:00:07Z sending getdata (37 bytes) peer=0
+2020-01-01T00:00:07Z received: headers (82 bytes) peer=3
+2020-01-01T00:00:07Z received: cmpctblock (260 bytes) peer=0
+2020-01-01T00:00:07Z Initialized PartiallyDownloadedBlock for block 794f5a2ef442e594b3c83a8fcc11694d3b6511bc47d08fd596cf5ad0a36db996 using a cmpctblock of size 260
+2020-01-01T00:00:07Z received: blocktxn (33 bytes) peer=0
+2020-01-01T00:00:07Z Successfully reconstructed block 794f5a2ef442e594b3c83a8fcc11694d3b6511bc47d08fd596cf5ad0a36db996 with 1 txn prefilled, 0 txn from mempool (incl at least 0 from extra pool) and 0 txn requested
+2020-01-01T00:00:07Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:07Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z     - Index writing: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z     - Callbacks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z sending sendcmpct (9 bytes) peer=0
+2020-01-01T00:00:07Z   - Connect total: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z   - Flush: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z   - Writing chainstate: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z Blockpolicy estimates updated by 0 of 0 block txs, since last block 0 of 0 tracked, mempool map size 0, max target 0 from current
+2020-01-01T00:00:07Z UpdateTip: new best=794f5a2ef442e594b3c83a8fcc11694d3b6511bc47d08fd596cf5ad0a36db996 height=9 version=0x20000000 log2_work=23.321929 tx=10 date='2020-01-01T00:00:08Z' progress=0.000000 cache=0.0MiB(9txo)
+2020-01-01T00:00:07Z   - Connect postprocess: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z - Connect block: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z WriteBatch memory usage: db=txindex, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:07Z [default wallet] AddToWallet 783dc74bf2f842d9ce44f3d5a761f4a85c3d81e8125e010a7131e87663229434  new
+2020-01-01T00:00:07Z SendMessages: sending header 794f5a2ef442e594b3c83a8fcc11694d3b6511bc47d08fd596cf5ad0a36db996 to peer=1
+2020-01-01T00:00:07Z sending headers (82 bytes) peer=1
+2020-01-01T00:00:07Z SendMessages: sending header 794f5a2ef442e594b3c83a8fcc11694d3b6511bc47d08fd596cf5ad0a36db996 to peer=2
+2020-01-01T00:00:07Z sending headers (82 bytes) peer=2
+2020-01-01T00:00:07Z received: cmpctblock (260 bytes) peer=1
+2020-01-01T00:00:07Z received: headers (82 bytes) peer=2
+2020-01-01T00:00:07Z trying connection 94.242.255.31:8333 lastseen=247.4hrs
+2020-01-01T00:00:07Z connect() to 94.242.255.31:8333 failed: Connection refused (111)
+2020-01-01T00:00:07Z CreateNewBlock(): block weight: 888 txs: 0 fees: 0 sigops 400
+2020-01-01T00:00:07Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:07Z CreateNewBlock() packages: 0.00ms (0 packages, 0 updated descendants), validity: 0.00ms (total 0.00ms)
+2020-01-01T00:00:08Z trying connection 94.19.128.204:8333 lastseen=175.4hrs
+2020-01-01T00:00:08Z connect() to 94.19.128.204:8333 failed: Connection refused (111)
+2020-01-01T00:00:08Z trying connection [2001:8003:d136:1001:0:0:11:ffd1]:8333 lastseen=317.6hrs
+2020-01-01T00:00:08Z sending addr (4681 bytes) peer=1
+2020-01-01T00:00:09Z trying connection 130.185.77.105:8333 lastseen=237.0hrs
+2020-01-01T00:00:09Z connect() to 130.185.77.105:8333 failed: Connection refused (111)
+2020-01-01T00:00:09Z Flushing wallet.dat
+2020-01-01T00:00:09Z Flushed wallet.dat 0ms
+2020-01-01T00:00:09Z received: cmpctblock (260 bytes) peer=0
+2020-01-01T00:00:09Z Initialized PartiallyDownloadedBlock for block fad78a374e74b38602199d52e323bc41e282767f5470feee7bc744e3796eead8 using a cmpctblock of size 260
+2020-01-01T00:00:09Z received: blocktxn (33 bytes) peer=0
+2020-01-01T00:00:09Z Successfully reconstructed block fad78a374e74b38602199d52e323bc41e282767f5470feee7bc744e3796eead8 with 1 txn prefilled, 0 txn from mempool (incl at least 0 from extra pool) and 0 txn requested
+2020-01-01T00:00:09Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:09Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z     - Index writing: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z     - Callbacks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z   - Connect total: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z   - Flush: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z   - Writing chainstate: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z Blockpolicy estimates updated by 0 of 0 block txs, since last block 0 of 0 tracked, mempool map size 0, max target 0 from current
+2020-01-01T00:00:09Z UpdateTip: new best=fad78a374e74b38602199d52e323bc41e282767f5470feee7bc744e3796eead8 height=10 version=0x20000000 log2_work=23.459433 tx=11 date='2020-01-01T00:00:08Z' progress=0.000000 cache=0.0MiB(10txo)
+2020-01-01T00:00:09Z   - Connect postprocess: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z - Connect block: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z WriteBatch memory usage: db=txindex, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:09Z [default wallet] AddToWallet cf96f3a0f9b6f4d96ed359cbab54d0f6d68d8d6288524e6bd0802b1b8f6a510e  new
+2020-01-01T00:00:09Z SendMessages: sending header fad78a374e74b38602199d52e323bc41e282767f5470feee7bc744e3796eead8 to peer=1
+2020-01-01T00:00:09Z sending headers (82 bytes) peer=1
+2020-01-01T00:00:09Z SendMessages: sending header fad78a374e74b38602199d52e323bc41e282767f5470feee7bc744e3796eead8 to peer=2
+2020-01-01T00:00:09Z sending headers (82 bytes) peer=2
+2020-01-01T00:00:09Z received: headers (82 bytes) peer=3
+2020-01-01T00:00:09Z received: getdata (37 bytes) peer=1
+2020-01-01T00:00:09Z received getdata (1 invsz) peer=1
+2020-01-01T00:00:09Z received getdata for: cmpctblock fad78a374e74b38602199d52e323bc41e282767f5470feee7bc744e3796eead8 peer=1
+2020-01-01T00:00:09Z sending cmpctblock (260 bytes) peer=1
+2020-01-01T00:00:09Z received: sendcmpct (9 bytes) peer=1
+2020-01-01T00:00:09Z trying connection 194.71.225.55:8333 lastseen=304.1hrs
+2020-01-01T00:00:09Z connect() to 194.71.225.55:8333 failed: Connection refused (111)
+2020-01-01T00:00:09Z CreateNewBlock(): block weight: 888 txs: 0 fees: 0 sigops 400
+2020-01-01T00:00:09Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z CreateNewBlock() packages: 0.00ms (0 packages, 0 updated descendants), validity: 0.00ms (total 0.00ms)
+2020-01-01T00:00:09Z received: cmpctblock (260 bytes) peer=0
+2020-01-01T00:00:09Z Initialized PartiallyDownloadedBlock for block 0b5e14a7a24b983ba9b91551984909a7d85f6c9d9999702d8f05ae44dab96ac6 using a cmpctblock of size 260
+2020-01-01T00:00:09Z received: blocktxn (33 bytes) peer=0
+2020-01-01T00:00:09Z Successfully reconstructed block 0b5e14a7a24b983ba9b91551984909a7d85f6c9d9999702d8f05ae44dab96ac6 with 1 txn prefilled, 0 txn from mempool (incl at least 0 from extra pool) and 0 txn requested
+2020-01-01T00:00:09Z PeerLogicValidation::NewPoWValidBlock sending header-and-ids 0b5e14a7a24b983ba9b91551984909a7d85f6c9d9999702d8f05ae44dab96ac6 to peer=1
+2020-01-01T00:00:09Z sending cmpctblock (260 bytes) peer=1
+2020-01-01T00:00:09Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:09Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z     - Index writing: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z     - Callbacks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z   - Connect total: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z   - Flush: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z   - Writing chainstate: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z Blockpolicy estimates updated by 0 of 0 block txs, since last block 0 of 0 tracked, mempool map size 0, max target 0 from current
+2020-01-01T00:00:09Z UpdateTip: new best=0b5e14a7a24b983ba9b91551984909a7d85f6c9d9999702d8f05ae44dab96ac6 height=11 version=0x20000000 log2_work=23.584964 tx=12 date='2020-01-01T00:00:09Z' progress=0.000000 cache=0.0MiB(11txo)
+2020-01-01T00:00:09Z   - Connect postprocess: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z - Connect block: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:09Z WriteBatch memory usage: db=txindex, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:09Z [default wallet] AddToWallet 76384dd25201b8742a33e1f7a893e683e94a6b8cad78efa775c3acd32a5a5a64  new
+2020-01-01T00:00:09Z SendMessages: sending header 0b5e14a7a24b983ba9b91551984909a7d85f6c9d9999702d8f05ae44dab96ac6 to peer=2
+2020-01-01T00:00:09Z sending headers (82 bytes) peer=2
+2020-01-01T00:00:09Z received: headers (82 bytes) peer=3
+2020-01-01T00:00:10Z trying connection 178.143.50.8:8333 lastseen=310.3hrs
+2020-01-01T00:00:10Z connect() to 178.143.50.8:8333 failed: Connection refused (111)
+2020-01-01T00:00:10Z CreateNewBlock(): block weight: 888 txs: 0 fees: 0 sigops 400
+2020-01-01T00:00:10Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:10Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:10Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:10Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:10Z CreateNewBlock() packages: 0.00ms (0 packages, 0 updated descendants), validity: 0.00ms (total 0.00ms)
+2020-01-01T00:00:10Z trying connection 209.173.25.140:8333 lastseen=275.9hrs
+2020-01-01T00:00:10Z connect() to 209.173.25.140:8333 failed: Connection refused (111)
+2020-01-01T00:00:10Z received: cmpctblock (260 bytes) peer=0
+2020-01-01T00:00:10Z Initialized PartiallyDownloadedBlock for block 1a5bfc903dcab8194046ecb28bf209d7f2c545f355f4f0e194862ba7d6a4a468 using a cmpctblock of size 260
+2020-01-01T00:00:10Z received: blocktxn (33 bytes) peer=0
+2020-01-01T00:00:10Z Successfully reconstructed block 1a5bfc903dcab8194046ecb28bf209d7f2c545f355f4f0e194862ba7d6a4a468 with 1 txn prefilled, 0 txn from mempool (incl at least 0 from extra pool) and 0 txn requested
+2020-01-01T00:00:10Z PeerLogicValidation::NewPoWValidBlock sending header-and-ids 1a5bfc903dcab8194046ecb28bf209d7f2c545f355f4f0e194862ba7d6a4a468 to peer=1
+2020-01-01T00:00:10Z sending cmpctblock (260 bytes) peer=1
+2020-01-01T00:00:10Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:10Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:10Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:10Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:10Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:10Z     - Index writing: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:10Z     - Callbacks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:10Z   - Connect total: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:10Z   - Flush: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:10Z   - Writing chainstate: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:10Z Blockpolicy estimates updated by 0 of 0 block txs, since last block 0 of 0 tracked, mempool map size 0, max target 0 from current
+2020-01-01T00:00:10Z UpdateTip: new best=1a5bfc903dcab8194046ecb28bf209d7f2c545f355f4f0e194862ba7d6a4a468 height=12 version=0x20000000 log2_work=23.700441 tx=13 date='2020-01-01T00:00:10Z' progress=0.000000 cache=0.0MiB(12txo)
+2020-01-01T00:00:10Z   - Connect postprocess: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:10Z - Connect block: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:10Z WriteBatch memory usage: db=txindex, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:10Z [default wallet] AddToWallet b139f23b42d01fd2f4a573beeccd2cf5a1562400616ee7353bb950dcb00732eb  new
+2020-01-01T00:00:10Z SendMessages: sending header 1a5bfc903dcab8194046ecb28bf209d7f2c545f355f4f0e194862ba7d6a4a468 to peer=2
+2020-01-01T00:00:10Z sending headers (82 bytes) peer=2
+2020-01-01T00:00:10Z received: headers (82 bytes) peer=3
+2020-01-01T00:00:11Z Loading addresses from DNS seed seed.bitcoin.jonasschnelli.ch
+2020-01-01T00:00:11Z Loading addresses from DNS seed dnsseed.emzy.de
+2020-01-01T00:00:11Z Loading addresses from DNS seed seed.bitcoin.sipa.be
+2020-01-01T00:00:11Z trying connection [2a01:7a0:2:137a:0:0:0:11]:8333 lastseen=264.8hrs
+2020-01-01T00:00:11Z trying connection seed.bitcoin.jonasschnelli.ch lastseen=0.0hrs
+2020-01-01T00:00:11Z CreateNewBlock(): block weight: 888 txs: 0 fees: 0 sigops 400
+2020-01-01T00:00:11Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:11Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:11Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:11Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:11Z CreateNewBlock() packages: 0.00ms (0 packages, 0 updated descendants), validity: 0.00ms (total 0.00ms)
+2020-01-01T00:00:11Z trying connection 80.211.191.11:8333 lastseen=285.3hrs
+2020-01-01T00:00:11Z connect() to 80.211.191.11:8333 failed: Connection refused (111)
+2020-01-01T00:00:11Z trying connection dnsseed.emzy.de lastseen=0.0hrs
+2020-01-01T00:00:12Z trying connection [2a00:7b80:454:2000:0:0:0:101]:8333 lastseen=239.5hrs
+2020-01-01T00:00:12Z trying connection seed.bitcoin.sipa.be lastseen=0.0hrs
+2020-01-01T00:00:12Z trying connection [2001:638:a000:4140:0:0:ffff:191]:8333 lastseen=214.8hrs
+2020-01-01T00:00:13Z trying connection 97.99.13.150:8333 lastseen=175.4hrs
+2020-01-01T00:00:13Z connect() to 97.99.13.150:8333 failed: Connection refused (111)
+2020-01-01T00:00:13Z Flushing wallet.dat
+2020-01-01T00:00:13Z Flushed wallet.dat 0ms
+2020-01-01T00:00:13Z received: cmpctblock (260 bytes) peer=0
+2020-01-01T00:00:13Z Initialized PartiallyDownloadedBlock for block 43a058fe75692d4d01919fd4ecbf4ba7411d61cf56ca0c27b0d24fd61b80ae9e using a cmpctblock of size 260
+2020-01-01T00:00:13Z received: blocktxn (33 bytes) peer=0
+2020-01-01T00:00:13Z Successfully reconstructed block 43a058fe75692d4d01919fd4ecbf4ba7411d61cf56ca0c27b0d24fd61b80ae9e with 1 txn prefilled, 0 txn from mempool (incl at least 0 from extra pool) and 0 txn requested
+2020-01-01T00:00:13Z PeerLogicValidation::NewPoWValidBlock sending header-and-ids 43a058fe75692d4d01919fd4ecbf4ba7411d61cf56ca0c27b0d24fd61b80ae9e to peer=1
+2020-01-01T00:00:13Z sending cmpctblock (260 bytes) peer=1
+2020-01-01T00:00:13Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:13Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:13Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:13Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:13Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:13Z     - Index writing: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:13Z     - Callbacks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:13Z   - Connect total: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:13Z   - Flush: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:13Z   - Writing chainstate: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:13Z Blockpolicy estimates updated by 0 of 0 block txs, since last block 0 of 0 tracked, mempool map size 0, max target 0 from current
+2020-01-01T00:00:13Z UpdateTip: new best=43a058fe75692d4d01919fd4ecbf4ba7411d61cf56ca0c27b0d24fd61b80ae9e height=13 version=0x20000000 log2_work=23.807356 tx=14 date='2020-01-01T00:00:11Z' progress=0.000000 cache=0.0MiB(13txo)
+2020-01-01T00:00:13Z   - Connect postprocess: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:13Z - Connect block: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:13Z WriteBatch memory usage: db=txindex, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:13Z [default wallet] AddToWallet cb5d5e1c1226a4bee255c854e719825aa389dab13f268d80b228c722ea8579a6  new
+2020-01-01T00:00:13Z SendMessages: sending header 43a058fe75692d4d01919fd4ecbf4ba7411d61cf56ca0c27b0d24fd61b80ae9e to peer=2
+2020-01-01T00:00:13Z sending headers (82 bytes) peer=2
+2020-01-01T00:00:13Z received: headers (82 bytes) peer=3
+2020-01-01T00:00:13Z trying connection 89.212.9.96:8333 lastseen=286.7hrs
+2020-01-01T00:00:13Z connect() to 89.212.9.96:8333 failed: Connection refused (111)
+2020-01-01T00:00:13Z CreateNewBlock(): block weight: 888 txs: 0 fees: 0 sigops 400
+2020-01-01T00:00:13Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:13Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:13Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:13Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:13Z CreateNewBlock() packages: 0.00ms (0 packages, 0 updated descendants), validity: 0.00ms (total 0.00ms)
+2020-01-01T00:00:13Z sending addr (61 bytes) peer=0
+2020-01-01T00:00:14Z trying connection 13.125.188.128:8333 lastseen=245.9hrs
+2020-01-01T00:00:14Z connect() to 13.125.188.128:8333 failed: Connection refused (111)
+2020-01-01T00:00:14Z received: cmpctblock (260 bytes) peer=0
+2020-01-01T00:00:14Z Initialized PartiallyDownloadedBlock for block 524ab1848225bb5ddf4dd3c9341cd0a1707f70e85e8c8444295239a565169049 using a cmpctblock of size 260
+2020-01-01T00:00:14Z received: blocktxn (33 bytes) peer=0
+2020-01-01T00:00:14Z Successfully reconstructed block 524ab1848225bb5ddf4dd3c9341cd0a1707f70e85e8c8444295239a565169049 with 1 txn prefilled, 0 txn from mempool (incl at least 0 from extra pool) and 0 txn requested
+2020-01-01T00:00:14Z PeerLogicValidation::NewPoWValidBlock sending header-and-ids 524ab1848225bb5ddf4dd3c9341cd0a1707f70e85e8c8444295239a565169049 to peer=1
+2020-01-01T00:00:14Z sending cmpctblock (260 bytes) peer=1
+2020-01-01T00:00:14Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:14Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:14Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:14Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:14Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:14Z     - Index writing: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:14Z     - Callbacks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:14Z   - Connect total: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:14Z   - Flush: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:14Z   - Writing chainstate: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:14Z Blockpolicy estimates updated by 0 of 0 block txs, since last block 0 of 0 tracked, mempool map size 0, max target 0 from current
+2020-01-01T00:00:14Z UpdateTip: new best=524ab1848225bb5ddf4dd3c9341cd0a1707f70e85e8c8444295239a565169049 height=14 version=0x20000000 log2_work=23.906892 tx=15 date='2020-01-01T00:00:13Z' progress=0.000000 cache=0.0MiB(14txo)
+2020-01-01T00:00:14Z   - Connect postprocess: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:14Z - Connect block: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:14Z WriteBatch memory usage: db=txindex, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:14Z [default wallet] AddToWallet 78c8da90e5b04e827738e5931b687472a712d34efb0a397f7b95ec751dbf7522  new
+2020-01-01T00:00:14Z SendMessages: sending header 524ab1848225bb5ddf4dd3c9341cd0a1707f70e85e8c8444295239a565169049 to peer=2
+2020-01-01T00:00:14Z sending headers (82 bytes) peer=2
+2020-01-01T00:00:14Z received: headers (82 bytes) peer=3
+2020-01-01T00:00:14Z trying connection 67.220.22.78:8333 lastseen=235.0hrs
+2020-01-01T00:00:14Z connect() to 67.220.22.78:8333 failed: Connection refused (111)
+2020-01-01T00:00:14Z CreateNewBlock(): block weight: 888 txs: 0 fees: 0 sigops 400
+2020-01-01T00:00:14Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:14Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:14Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:14Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:14Z CreateNewBlock() packages: 0.00ms (0 packages, 0 updated descendants), validity: 0.00ms (total 0.00ms)
+2020-01-01T00:00:15Z trying connection 88.86.116.140:8333 lastseen=187.0hrs
+2020-01-01T00:00:15Z connect() to 88.86.116.140:8333 failed: Connection refused (111)
+2020-01-01T00:00:15Z trying connection 185.25.60.199:8333 lastseen=226.9hrs
+2020-01-01T00:00:15Z connect() to 185.25.60.199:8333 failed: Connection refused (111)
+2020-01-01T00:00:15Z received: cmpctblock (260 bytes) peer=0
+2020-01-01T00:00:15Z Initialized PartiallyDownloadedBlock for block dbc0c8f6a751981bb7b049cfc1c1d1fe1bb7ed347ff2605921af74c9a05b32bd using a cmpctblock of size 260
+2020-01-01T00:00:15Z received: blocktxn (33 bytes) peer=0
+2020-01-01T00:00:15Z Successfully reconstructed block dbc0c8f6a751981bb7b049cfc1c1d1fe1bb7ed347ff2605921af74c9a05b32bd with 1 txn prefilled, 0 txn from mempool (incl at least 0 from extra pool) and 0 txn requested
+2020-01-01T00:00:15Z PeerLogicValidation::NewPoWValidBlock sending header-and-ids dbc0c8f6a751981bb7b049cfc1c1d1fe1bb7ed347ff2605921af74c9a05b32bd to peer=1
+2020-01-01T00:00:15Z sending cmpctblock (260 bytes) peer=1
+2020-01-01T00:00:15Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:15Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:15Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:15Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:15Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:15Z     - Index writing: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:15Z     - Callbacks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:15Z   - Connect total: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:15Z   - Flush: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:15Z   - Writing chainstate: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:15Z Blockpolicy estimates updated by 0 of 0 block txs, since last block 0 of 0 tracked, mempool map size 0, max target 0 from current
+2020-01-01T00:00:15Z UpdateTip: new best=dbc0c8f6a751981bb7b049cfc1c1d1fe1bb7ed347ff2605921af74c9a05b32bd height=15 version=0x20000000 log2_work=24.000001 tx=16 date='2020-01-01T00:00:14Z' progress=0.000000 cache=0.0MiB(15txo)
+2020-01-01T00:00:15Z   - Connect postprocess: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:15Z - Connect block: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:15Z WriteBatch memory usage: db=txindex, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:15Z [default wallet] AddToWallet cc74db9a2a68dc34ed248f057f561675c5beeaba708caca7b1b8a0e764cdf49a  new
+2020-01-01T00:00:15Z SendMessages: sending header dbc0c8f6a751981bb7b049cfc1c1d1fe1bb7ed347ff2605921af74c9a05b32bd to peer=2
+2020-01-01T00:00:15Z sending headers (82 bytes) peer=2
+2020-01-01T00:00:15Z received: headers (82 bytes) peer=3
+2020-01-01T00:00:16Z trying connection 195.201.33.0:8333 lastseen=241.5hrs
+2020-01-01T00:00:16Z connect() to 195.201.33.0:8333 failed: Connection refused (111)
+2020-01-01T00:00:16Z CreateNewBlock(): block weight: 888 txs: 0 fees: 0 sigops 400
+2020-01-01T00:00:16Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:16Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:16Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:16Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:16Z CreateNewBlock() packages: 0.00ms (0 packages, 0 updated descendants), validity: 0.00ms (total 0.00ms)
+2020-01-01T00:00:16Z trying connection 95.211.189.3:8333 lastseen=254.0hrs
+2020-01-01T00:00:16Z connect() to 95.211.189.3:8333 failed: Connection refused (111)
+2020-01-01T00:00:17Z trying connection [2a00:1b60:2:4:40d0:eff:fe88:ebd4]:8333 lastseen=271.3hrs
+2020-01-01T00:00:17Z trying connection 192.254.89.134:8333 lastseen=334.8hrs
+2020-01-01T00:00:17Z connect() to 192.254.89.134:8333 failed: Connection refused (111)
+2020-01-01T00:00:17Z PeerLogicValidation::NewPoWValidBlock sending header-and-ids 10ce03e6cb6739f3754f764b05761964571a8ae5706ac5d84b1af2c3a04e43e1 to peer=1
+2020-01-01T00:00:17Z sending cmpctblock (260 bytes) peer=1
+2020-01-01T00:00:17Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:17Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:17Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:17Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:17Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:17Z     - Index writing: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:17Z     - Callbacks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:17Z   - Connect total: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:17Z   - Flush: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:17Z   - Writing chainstate: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:17Z Blockpolicy estimates updated by 0 of 0 block txs, since last block 0 of 0 tracked, mempool map size 0, max target 0 from current
+2020-01-01T00:00:17Z UpdateTip: new best=10ce03e6cb6739f3754f764b05761964571a8ae5706ac5d84b1af2c3a04e43e1 height=16 version=0x20000000 log2_work=24.087464 tx=17 date='2020-01-01T00:00:16Z' progress=0.000000 cache=0.0MiB(16txo)
+2020-01-01T00:00:17Z   - Connect postprocess: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:17Z - Connect block: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:17Z CreateNewBlock(): block weight: 892 txs: 0 fees: 0 sigops 400
+2020-01-01T00:00:17Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:17Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:17Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:17Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:17Z CreateNewBlock() packages: 0.00ms (0 packages, 0 updated descendants), validity: 0.00ms (total 0.00ms)
+2020-01-01T00:00:17Z WriteBatch memory usage: db=txindex, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:17Z [default wallet] AddToWallet 83463cf5bda2a8d178f81359c276aef83831fde120c93639ab95700e1a235da4  new
+2020-01-01T00:00:17Z SendMessages: sending header 10ce03e6cb6739f3754f764b05761964571a8ae5706ac5d84b1af2c3a04e43e1 to peer=0
+2020-01-01T00:00:17Z sending headers (82 bytes) peer=0
+2020-01-01T00:00:17Z SendMessages: sending header 10ce03e6cb6739f3754f764b05761964571a8ae5706ac5d84b1af2c3a04e43e1 to peer=2
+2020-01-01T00:00:17Z sending headers (82 bytes) peer=2
+2020-01-01T00:00:17Z SendMessages: sending header 10ce03e6cb6739f3754f764b05761964571a8ae5706ac5d84b1af2c3a04e43e1 to peer=3
+2020-01-01T00:00:17Z sending headers (82 bytes) peer=3
+2020-01-01T00:00:17Z received: getdata (37 bytes) peer=0
+2020-01-01T00:00:17Z received getdata (1 invsz) peer=0
+2020-01-01T00:00:17Z received getdata for: cmpctblock 10ce03e6cb6739f3754f764b05761964571a8ae5706ac5d84b1af2c3a04e43e1 peer=0
+2020-01-01T00:00:17Z sending cmpctblock (260 bytes) peer=0
+2020-01-01T00:00:17Z received: sendcmpct (9 bytes) peer=0
+2020-01-01T00:00:17Z received: addr (4651 bytes) peer=0
+2020-01-01T00:00:18Z trying connection 78.42.12.201:8333 lastseen=278.0hrs
+2020-01-01T00:00:18Z connect() to 78.42.12.201:8333 failed: Connection refused (111)
+2020-01-01T00:00:18Z trying connection 85.119.83.25:8333 lastseen=325.9hrs
+2020-01-01T00:00:18Z connect() to 85.119.83.25:8333 failed: Connection refused (111)
+2020-01-01T00:00:18Z received: cmpctblock (261 bytes) peer=0
+2020-01-01T00:00:18Z Initialized PartiallyDownloadedBlock for block d4067f1e82d4369cf3c039bf7c749fce6e13f8c3ebf12cd5bdc78ceac81721f1 using a cmpctblock of size 261
+2020-01-01T00:00:18Z received: blocktxn (33 bytes) peer=0
+2020-01-01T00:00:18Z Successfully reconstructed block d4067f1e82d4369cf3c039bf7c749fce6e13f8c3ebf12cd5bdc78ceac81721f1 with 1 txn prefilled, 0 txn from mempool (incl at least 0 from extra pool) and 0 txn requested
+2020-01-01T00:00:18Z PeerLogicValidation::NewPoWValidBlock sending header-and-ids d4067f1e82d4369cf3c039bf7c749fce6e13f8c3ebf12cd5bdc78ceac81721f1 to peer=1
+2020-01-01T00:00:18Z sending cmpctblock (261 bytes) peer=1
+2020-01-01T00:00:18Z   - Load block from disk: 0.00ms [0.00s]
+2020-01-01T00:00:18Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:18Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:18Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:18Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:18Z     - Index writing: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:18Z     - Callbacks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:18Z   - Connect total: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:18Z   - Flush: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:18Z   - Writing chainstate: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:18Z Blockpolicy estimates updated by 0 of 0 block txs, since last block 0 of 0 tracked, mempool map size 0, max target 0 from current
+2020-01-01T00:00:18Z UpdateTip: new best=d4067f1e82d4369cf3c039bf7c749fce6e13f8c3ebf12cd5bdc78ceac81721f1 height=17 version=0x20000000 log2_work=24.169926 tx=18 date='2020-01-01T00:00:18Z' progress=0.000000 cache=0.0MiB(17txo)
+2020-01-01T00:00:18Z   - Connect postprocess: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:18Z - Connect block: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:18Z WriteBatch memory usage: db=txindex, before=0.0MiB, after=0.0MiB
+2020-01-01T00:00:18Z [default wallet] AddToWallet 89d9dd29e1a59111e588bae7aa8b857456c76e9068a8a18dbd797da34659e4f5  new
+2020-01-01T00:00:18Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:18Z libevent: event_active: 0x7f3021201798 (fd 19), res 2, callback 0x7f302860f0d0
+2020-01-01T00:00:18Z libevent: event_process_active: event: 0x7f3021201798, EV_READ   call 0x7f302860f0d0
+2020-01-01T00:00:18Z libevent: evhttp_get_request_connection: new request from 11.0.0.1:17598 on 178
+
+2020-01-01T00:00:18Z libevent: Attempting connection to 11.0.0.1:17598
+
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce28980 (fd -1), EV_READ    call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_del: 0x7f300ce28a00 (fd -1), callback 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_del: 0x7f300ce28980 (fd -1), callback 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_del: 0x7f300ce28a00 (fd -1), callback 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce28980 (fd 178), EV_READ    call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: Epoll ADD(1) on fd 178 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce28980 (fd 178), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_add: event 0x7f300ce28980, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_del: 0x7f300ce28a00 (fd 178), callback 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce28980 (fd 178), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_add: event 0x7f300ce28980, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: timeout_next: event: 0x7f3020885030, in 16 seconds, 400000 useconds
+2020-01-01T00:00:18Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:18Z libevent: event_active: 0x7f300ce28980 (fd 178), res 2, callback 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_process_active: event: 0x7f300ce28980, EV_READ   call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce28980 (fd 178), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_add: event 0x7f300ce28980, timeout in 1577836848 seconds 750000 useconds, call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: evhttp_add_header: key: Host val: 1.0.0.1:11111
+
+2020-01-01T00:00:18Z libevent: evhttp_add_header: key: Authorization val: Basic YToxMjM0
+
+2020-01-01T00:00:18Z libevent: evhttp_add_header: key: Accept val: */*
+
+2020-01-01T00:00:18Z libevent: evhttp_add_header: key: content-type val: text/plain;
+
+2020-01-01T00:00:18Z libevent: evhttp_add_header: key: Content-Length val: 74
+
+2020-01-01T00:00:18Z libevent: evhttp_read_header: checking for post data on 178
+
+2020-01-01T00:00:18Z libevent: evhttp_get_body_length: bytes to read: 74 (in buffer 74)
+
+2020-01-01T00:00:18Z libevent: event_del: 0x7f300ce28980 (fd 178), callback 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: Epoll DEL(1) on fd 178 okay. Old events were 2; read change was 2 (del); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:18Z libevent: event_del: 0x7f300ce28980 (fd 178), callback 0x7f3028600d40
+2020-01-01T00:00:18Z Received a POST request for / from 11.0.0.1:17598
+2020-01-01T00:00:18Z SendMessages: sending header d4067f1e82d4369cf3c039bf7c749fce6e13f8c3ebf12cd5bdc78ceac81721f1 to peer=2
+2020-01-01T00:00:18Z sending headers (82 bytes) peer=2
+2020-01-01T00:00:18Z received: headers (82 bytes) peer=3
+2020-01-01T00:00:18Z libevent: timeout_next: event: 0x7f3020885030, in 16 seconds, 400000 useconds
+2020-01-01T00:00:18Z ThreadRPCServer method=getmempoolinfo user=a
+2020-01-01T00:00:18Z libevent: evhttp_add_header: key: Content-Type val: application/json
+
+2020-01-01T00:00:18Z libevent: event_active: 0x7f3035a074e0 (fd -1), res 0, callback 0x7f302c35e683
+2020-01-01T00:00:18Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:18Z libevent: event_active: 0x7f30211ff0a0 (fd 18), res 2, callback 0x7f3028601980
+2020-01-01T00:00:18Z libevent: event_del: 0x7f3035a074e0 (fd -1), callback 0x7f302c35e683
+2020-01-01T00:00:18Z libevent: event_process_active: event: 0x7f3035a074e0,    call 0x7f302c35e683
+2020-01-01T00:00:18Z libevent: evhttp_add_header: key: Date val: Wed, 01 Jan 2020 00:00:18 GMT
+
+2020-01-01T00:00:18Z libevent: evhttp_add_header: key: Content-Length val: 164
+
+2020-01-01T00:00:18Z libevent: evhttp_write_buffer: preparing to write buffer
+
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce28a00 (fd 178),  EV_WRITE  EV_TIMEOUT call 0x7f3028600920
+2020-01-01T00:00:18Z libevent: Epoll ADD(4) on fd 178 okay. Old events were 0; read change was 0 (none); write change was 1 (add); close change was 0 (none)
+2020-01-01T00:00:18Z libevent: event_add: event 0x7f300ce28a00, timeout in 30 seconds 0 useconds, call 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce28980 (fd 178), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: Epoll MOD(5) on fd 178 okay. Old events were 4; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:18Z libevent: event_add: event 0x7f300ce28980, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce28a00 (fd 178),  EV_WRITE  EV_TIMEOUT call 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_add: event 0x7f300ce28a00, timeout in 30 seconds 0 useconds, call 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_del: 0x7f3035a074e0 (fd -1), callback 0x7f302c35e683
+2020-01-01T00:00:18Z libevent: event_process_active: event: 0x7f30211ff0a0, EV_READ   call 0x7f3028601980
+2020-01-01T00:00:18Z libevent: timeout_next: event: 0x7f3020885030, in 16 seconds, 400000 useconds
+2020-01-01T00:00:18Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:18Z libevent: event_active: 0x7f300ce28a00 (fd 178), res 4, callback 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_process_active: event: 0x7f300ce28a00,  EV_WRITE  call 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce28a00 (fd 178),  EV_WRITE  EV_TIMEOUT call 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_add: event 0x7f300ce28a00, timeout in 1577836848 seconds 750000 useconds, call 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_del: 0x7f300ce28a00 (fd 178), callback 0x7f3028600920
+2020-01-01T00:00:18Z libevent: Epoll MOD(1) on fd 178 okay. Old events were 6; read change was 0 (none); write change was 2 (del); close change was 0 (none)
+2020-01-01T00:00:18Z libevent: event_del: 0x7f300ce28a00 (fd 178), callback 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce28980 (fd 178), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_add: event 0x7f300ce28980, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: timeout_next: event: 0x7f3020885030, in 16 seconds, 400000 useconds
+2020-01-01T00:00:18Z received: cmpctblock (261 bytes) peer=1
+2020-01-01T00:00:18Z received: headers (82 bytes) peer=2
+2020-01-01T00:00:18Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:18Z libevent: event_active: 0x7f3021201798 (fd 19), res 2, callback 0x7f302860f0d0
+2020-01-01T00:00:18Z libevent: event_process_active: event: 0x7f3021201798, EV_READ   call 0x7f302860f0d0
+2020-01-01T00:00:18Z libevent: evhttp_get_request_connection: new request from 11.0.0.1:30598 on 192
+
+2020-01-01T00:00:18Z libevent: Attempting connection to 11.0.0.1:30598
+
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce78db0 (fd -1), EV_READ    call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_del: 0x7f300ce78e30 (fd -1), callback 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_del: 0x7f300ce78db0 (fd -1), callback 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_del: 0x7f300ce78e30 (fd -1), callback 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce78db0 (fd 192), EV_READ    call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: Epoll ADD(1) on fd 192 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce78db0 (fd 192), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_add: event 0x7f300ce78db0, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_del: 0x7f300ce78e30 (fd 192), callback 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce78db0 (fd 192), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_add: event 0x7f300ce78db0, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: timeout_next: event: 0x7f3020885030, in 16 seconds, 200000 useconds
+2020-01-01T00:00:18Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:18Z libevent: event_active: 0x7f300ce78db0 (fd 192), res 2, callback 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_process_active: event: 0x7f300ce78db0, EV_READ   call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce78db0 (fd 192), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_add: event 0x7f300ce78db0, timeout in 1577836848 seconds 950000 useconds, call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: evhttp_add_header: key: Host val: 1.0.0.1:11111
+
+2020-01-01T00:00:18Z libevent: evhttp_add_header: key: Authorization val: Basic YToxMjM0
+
+2020-01-01T00:00:18Z libevent: evhttp_add_header: key: Accept val: */*
+
+2020-01-01T00:00:18Z libevent: evhttp_add_header: key: content-type val: text/plain;
+
+2020-01-01T00:00:18Z libevent: evhttp_add_header: key: Content-Length val: 77
+
+2020-01-01T00:00:18Z libevent: evhttp_read_header: checking for post data on 192
+
+2020-01-01T00:00:18Z libevent: evhttp_get_body_length: bytes to read: 77 (in buffer 77)
+
+2020-01-01T00:00:18Z libevent: event_del: 0x7f300ce78db0 (fd 192), callback 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: Epoll DEL(1) on fd 192 okay. Old events were 2; read change was 2 (del); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:18Z libevent: event_del: 0x7f300ce78db0 (fd 192), callback 0x7f3028600d40
+2020-01-01T00:00:18Z Received a POST request for / from 11.0.0.1:30598
+2020-01-01T00:00:18Z libevent: timeout_next: event: 0x7f3020885030, in 16 seconds, 200000 useconds
+2020-01-01T00:00:18Z ThreadRPCServer method=getblockchaininfo user=a
+2020-01-01T00:00:18Z libevent: evhttp_add_header: key: Content-Type val: application/json
+
+2020-01-01T00:00:18Z libevent: event_active: 0x7f300cbbb560 (fd -1), res 0, callback 0x7f302c35e683
+2020-01-01T00:00:18Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:18Z libevent: event_active: 0x7f30211ff0a0 (fd 18), res 2, callback 0x7f3028601980
+2020-01-01T00:00:18Z libevent: event_del: 0x7f300cbbb560 (fd -1), callback 0x7f302c35e683
+2020-01-01T00:00:18Z libevent: event_process_active: event: 0x7f300cbbb560,    call 0x7f302c35e683
+2020-01-01T00:00:18Z libevent: evhttp_add_header: key: Date val: Wed, 01 Jan 2020 00:00:18 GMT
+
+2020-01-01T00:00:18Z libevent: evhttp_add_header: key: Content-Length val: 720
+
+2020-01-01T00:00:18Z libevent: evhttp_write_buffer: preparing to write buffer
+
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce78e30 (fd 192),  EV_WRITE  EV_TIMEOUT call 0x7f3028600920
+2020-01-01T00:00:18Z libevent: Epoll ADD(4) on fd 192 okay. Old events were 0; read change was 0 (none); write change was 1 (add); close change was 0 (none)
+2020-01-01T00:00:18Z libevent: event_add: event 0x7f300ce78e30, timeout in 30 seconds 0 useconds, call 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce78db0 (fd 192), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: Epoll MOD(5) on fd 192 okay. Old events were 4; read change was 1 (add); write change was 0 (none); close change was 0 (none)
+2020-01-01T00:00:18Z libevent: event_add: event 0x7f300ce78db0, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce78e30 (fd 192),  EV_WRITE  EV_TIMEOUT call 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_add: event 0x7f300ce78e30, timeout in 30 seconds 0 useconds, call 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_del: 0x7f300cbbb560 (fd -1), callback 0x7f302c35e683
+2020-01-01T00:00:18Z libevent: event_process_active: event: 0x7f30211ff0a0, EV_READ   call 0x7f3028601980
+2020-01-01T00:00:18Z libevent: timeout_next: event: 0x7f3020885030, in 16 seconds, 200000 useconds
+2020-01-01T00:00:18Z libevent: epoll_dispatch: epoll_wait reports 1
+2020-01-01T00:00:18Z libevent: event_active: 0x7f300ce78e30 (fd 192), res 4, callback 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_process_active: event: 0x7f300ce78e30,  EV_WRITE  call 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce78e30 (fd 192),  EV_WRITE  EV_TIMEOUT call 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_add: event 0x7f300ce78e30, timeout in 1577836848 seconds 950000 useconds, call 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_del: 0x7f300ce78e30 (fd 192), callback 0x7f3028600920
+2020-01-01T00:00:18Z libevent: Epoll MOD(1) on fd 192 okay. Old events were 6; read change was 0 (none); write change was 2 (del); close change was 0 (none)
+2020-01-01T00:00:18Z libevent: event_del: 0x7f300ce78e30 (fd 192), callback 0x7f3028600920
+2020-01-01T00:00:18Z libevent: event_add: event: 0x7f300ce78db0 (fd 192), EV_READ   EV_TIMEOUT call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: event_add: event 0x7f300ce78db0, timeout in 30 seconds 0 useconds, call 0x7f3028600d40
+2020-01-01T00:00:18Z libevent: timeout_next: event: 0x7f3020885030, in 16 seconds, 200000 useconds
+2020-01-01T00:00:19Z trying connection 78.108.108.162:8333 lastseen=260.0hrs
+2020-01-01T00:00:19Z connect() to 78.108.108.162:8333 failed: Connection refused (111)
+2020-01-01T00:00:19Z CreateNewBlock(): block weight: 892 txs: 0 fees: 0 sigops 400
+2020-01-01T00:00:19Z     - Sanity checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:19Z     - Fork checks: 0.00ms [0.00s (0.00ms/blk)]
+2020-01-01T00:00:19Z       - Connect 1 transactions: 0.00ms (0.000ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:19Z     - Verify 0 txins: 0.00ms (0.000ms/txin) [0.00s (0.00ms/blk)]
+2020-01-01T00:00:19Z CreateNewBlock() packages: 0.00ms (0 packages, 0 updated descendants), validity: 0.00ms (total 0.00ms)
+2020-01-01T00:00:19Z trying connection [2001:1ba8:401:32:b842:3891:5915:c68f]:8333 lastseen=305.4hrs

@@ -118,6 +118,19 @@ void MoneroNodePrimitives::OpAfterConnect(int conn_fd) {
 
 void MoneroNodePrimitives::OpAfterConnected(int data_fd) {
     // do nothing
+    if (_type == NodeType::Benign) {
+        _attackStat->benignNodeConnNum++;
+    }
+    else if (_type == NodeType::Shadow) {
+        _attackStat->shadowNodeConnNum++;
+    }
+    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    auto tm = *std::localtime(&now);
+    std::ostringstream oss;
+    oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
+    std::string timestr = oss.str();
+    std::cout << timestr << ",Node (socket) connected : " << GetIP() << ", benignNodeConnNum=" << _attackStat->benignNodeConnNum
+              << ", shadowNodeConnNum=" << _attackStat->shadowNodeConnNum << "\n";
 }
 
 void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
@@ -190,6 +203,14 @@ void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                             // update attack statistics
                             _attackStat->IncrementHijackedOutgoingConnNum();
                             _informed = true;
+
+                            std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+                            auto tm = *std::localtime(&now);
+                            std::ostringstream oss;
+                            oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
+                            std::string timestr = oss.str();
+                            std::cout << timestr << ",outgoing connection hijacked : " << GetIP()
+                                      << ", hijackedOutgoingNum=" << _attackStat->GetHijackedOutgoingConnNum() << "\n";
                         }
 
                         boost::value_initialized<t_req> in_struct = parse_rawstream_into_struct<t_req>(buff_to_invoke);
@@ -338,7 +359,34 @@ void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
 }
 
 void MoneroNodePrimitives::OpAfterDisconnect() {
-    // do nothing
+    if (_type == NodeType::Shadow && _informed) {
+        // update attack statistics
+        _attackStat->DecrementHijackedOutgoingConnNum();
+        _informed = false;
+
+        std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+        auto tm = *std::localtime(&now);
+        std::ostringstream oss;
+        oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
+        std::string timestr = oss.str();
+        std::cout << timestr << ",outgoing connection hijacked disconnected : " << GetIP()
+                  << ", hijackedOutgoingNum=" << _attackStat->GetHijackedOutgoingConnNum() << "\n";
+    }
+
+    if (_type == NodeType::Benign) {
+        _attackStat->benignNodeConnNum--;
+    }
+    else if (_type == NodeType::Shadow) {
+        _attackStat->shadowNodeConnNum--;
+    }
+    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    auto tm = *std::localtime(&now);
+    std::ostringstream oss;
+    oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
+    std::string timestr = oss.str();
+
+    std::cout << timestr << ",Node (socket) disconnected : " << GetIP() << ", benignNodeConnNum=" << _attackStat->benignNodeConnNum
+              << ", shadowNodeConnNum=" << _attackStat->shadowNodeConnNum << "\n";
 }
 
 void MoneroNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::duration preparePhaseDuration,

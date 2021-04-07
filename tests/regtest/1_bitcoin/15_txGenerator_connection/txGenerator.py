@@ -24,6 +24,7 @@ def main():
     if OPT_REGTEST:
         tx_mode, algo, difficulty = xml_modules.get_xmlfile(path)
     else:
+        utils.exec_shell_cmd("sh clean_data.sh 2")
         present_path = path + "/test-BitcoinP2P.xml"
         difficulty = utils.get_difficulty_fromXML(present_path)
 
@@ -56,9 +57,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
-def exec_shell_cmd(cmd):
-    if os.system(cmd) != 0:
-        print("error while executing '%s'" % cmd)
-        exit(-1)
-    

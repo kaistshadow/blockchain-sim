@@ -99,3 +99,4 @@ external/eosio/install/*
 base*N*T.xml
 shadow.data
 
+storage_share_datadir

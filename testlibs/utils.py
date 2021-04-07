@@ -305,3 +305,28 @@ def filter_testlibs_path(target_path):
 
     the_path += "/testlibs"
     return the_path
+
+def filter_block_hash(plugin_output_files, node_count):
+    node_list = []
+    for i in range(node_count):
+        line = []
+        node_list.append(line)
+
+    for i in range(0,len(plugin_output_files)):
+        result = plugin_output_files[i].find("stdout-monitor.BITCOIN_MONITOR.1000")
+        if result != -1:
+            f = open(plugin_output_files[i], "r")
+            while True:
+                line = f.readline()
+                if not line: break
+                result = line.find("[INV] MSGBLOCK : blockhash =")
+                if result != -1:
+                    split_result = line.split("=")
+                    block_hash = split_result[1].split("tx")[0].strip()
+                    from_node = split_result[3].strip()
+                    node_list[int(from_node)-16].append(block_hash)
+
+            f.close()
+    
+    return node_list
+

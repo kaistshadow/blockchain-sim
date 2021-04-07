@@ -99,6 +99,7 @@ namespace tpstest {
         //methods for monitoring node
         virtual void UpdateTPS(unsigned int txcnt, unsigned int block_interval) {};
         virtual bool RegisterBlock(struct BlockInfo newblock) {};
+        virtual bool RegisterTx(std::string hash);
     private:
         std::queue<spend_data> unspent_keyvalues;
         std::queue<CTransaction*> tx_logs;
@@ -108,7 +109,10 @@ namespace tpstest {
         void bootstrap(const char *statefile, const char *keyfile);
         std::string generate();
         void sendTx(int data_fd, std::string hexTx);
+
+        //method for Monitoring node
         struct BlockInfo MakeBlockInfo(uint256 _blockhash, uint256 _prevblockhash, uint32_t _timestamp, unsigned long _txcount);
+        void LoadBlock(int data_fd);
     };
 }
 

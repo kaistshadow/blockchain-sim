@@ -13,6 +13,7 @@ using namespace sybiltest;
 
 struct MiniBitcoinNodeParams {
     //============================== parameters related to EREBUS attack test ======================================
+    static constexpr int targetPort = 8333;
     static constexpr int targetOutgoingConnNum = 2;
     static constexpr int reachableIPNum = 10;
     static constexpr int unreachableIPNum = 0;

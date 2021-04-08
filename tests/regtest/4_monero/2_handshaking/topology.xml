@@ -34,7 +34,7 @@
     <plugin id="monerod" path="libmonerod.so"/>
 
     <!-- the length of our experiment in seconds  1404101800-->
-    <kill time="200"/>
+    <kill time="2000"/>
     <!-- our nodes -->
 
     <node id="moneronode1" iphint="11.0.0.1">

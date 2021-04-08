@@ -115,7 +115,7 @@ def main(shadowpath, configpath):
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
 
     # shadownode 실험 결과 체크 시작.
-    check_shadownode(simulation_output_file[0], simulation_output_file[1])
+    # check_shadownode(simulation_output_file[0], simulation_output_file[1])
 
     check_verack_withip(simulation_output_file[0], simulation_output_file[1], "3.0.0.1")
 

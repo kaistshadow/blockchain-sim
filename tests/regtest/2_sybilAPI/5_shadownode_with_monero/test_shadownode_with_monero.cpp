@@ -20,8 +20,8 @@ int main() {
     SimpleIPDatabase dummyIPDatabase;
 
     // Initialize single benign node
-    ShadowActiveNode<MoneroNodePrimitives> activeMoneroNode(&attackStat, &dummyIPDatabase, "2.0.0.1");
-    activeMoneroNode.tryConnectToTarget("1.0.0.1", 28080, 5);
+//    ShadowActiveNode<MoneroNodePrimitives> activeMoneroNode(&attackStat, &dummyIPDatabase, "2.0.0.1");
+//    activeMoneroNode.tryConnectToTarget("1.0.0.1", 28080, 5);
 
     ShadowNode<MoneroNodePrimitives> passiveMoneroNode(&attackStat, &dummyIPDatabase, "3.0.0.1", 28080);
     passiveMoneroNode.SetTarget("1.0.0.1", 28080);

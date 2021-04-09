@@ -11,9 +11,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../shadow/cmake")
 find_package(Bitcoin_0_19_1dev REQUIRED)
 
 add_custom_target(emulation-prepare2 ALL
-  COMMAND rm -rf data/
-  COMMAND mkdir -p data/bcdnode0
-  # COMMAND cp -r ../../testlibs/datadir_dump/* ./data
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(emulation-copy-plugin2 ALL

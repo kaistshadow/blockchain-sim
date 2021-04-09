@@ -11,10 +11,10 @@ fi
 
 #1. remove the  data file and make new bcdnode
 CreateDIR=./data
-if [ ! -d $CreateDIR ]; then
-  rm data/
-  mkdir -p data/bcdnode0
+if [ -d $CreateDIR ]; then
+  rm -rf data/
 fi
+mkdir -p data/bcdnode0
 
 #2-0. generate xml file
 SHELL_PATH=`pwd -P`
@@ -28,5 +28,11 @@ shadow output.xml
 python parsing_txt.py
 
 #4. move to testlibs/dumpdata
-rm -rf ../../testlibs/dump/difficulty_$1/*
-cp -r data/* ../../testlibs/dump/difficulty_$1/
+DUMPPATH=../../testlibs/dump/difficulty_$1
+echo $dumppath
+if [ -d $DUMPPATH ]; then
+  rm -rf ../../testlibs/dump/difficulty_$1/*
+fi
+mkdir -p ../../testlibs/dump/difficulty_$1/bcdnode0/blocks
+cp -r ./data/bcdnode0/blocks ../../testlibs/dump/difficulty_$1/bcdnode0/
+cp -r ./data/*.txt  ../../testlibs/dump/difficulty_$1/

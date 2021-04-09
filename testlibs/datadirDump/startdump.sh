@@ -23,6 +23,7 @@ python xmlGenerator.py 1 100 pow disable $1 $SHELL_PATH
 #2. execute shadow
 SHELL_PATH=`pwd -P`
 echo $SHELL_PATH
+source ~/.bashrc
 shadow output.xml
 
 #3. making key.txt and state.txt

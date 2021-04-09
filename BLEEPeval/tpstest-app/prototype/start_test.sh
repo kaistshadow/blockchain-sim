@@ -8,4 +8,4 @@ if [ $1 -gt 3 ]; then
 fi
 
 sh clean_data.sh $1
-#shadow test-BitcoinP2P.xml
+shadow test-BitcoinP2P.xml

@@ -18,21 +18,22 @@ mkdir -p data/bcdnode0
 
 #2-0. generate xml file
 SHELL_PATH=`pwd -P`
-echo $SHELL_PATH
 python xmlGenerator.py 1 100 pow disable $1 $SHELL_PATH
 
 #2. execute shadow
+SHELL_PATH=`pwd -P`
+echo $SHELL_PATH
 shadow output.xml
 
 #3. making key.txt and state.txt
 python parsing_txt.py
 
 #4. move to testlibs/dumpdata
-DUMPPATH=../../testlibs/dump/difficulty_$1
+DUMPPATH=../dump/difficulty_$1
 echo $dumppath
 if [ -d $DUMPPATH ]; then
-  rm -rf ../../testlibs/dump/difficulty_$1/*
+  rm -rf $DUMPPATH/*
 fi
-mkdir -p ../../testlibs/dump/difficulty_$1/bcdnode0/blocks
-cp -r ./data/bcdnode0/blocks ../../testlibs/dump/difficulty_$1/bcdnode0/
-cp -r ./data/*.txt  ../../testlibs/dump/difficulty_$1/
+mkdir -p  $DUMPPATH/bcdnode0/blocks
+cp -r ./data/bcdnode0/blocks  $DUMPPATH/bcdnode0/
+cp -r ./data/*.txt $DUMPPATH

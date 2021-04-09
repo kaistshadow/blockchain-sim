@@ -40,7 +40,7 @@ namespace sybiltest {
 
             // Spawn network consisting of pre-defined number of benign nodes
             for (auto &ip : vReachableIP) {
-                auto &benignNode = _benignNodes.emplace_back(&_attackStat, &ipdb, ip, 8333);
+                auto &benignNode = _benignNodes.emplace_back(&_attackStat, &ipdb, ip, NodeParams::targetPort);
                 benignNode.SetTarget(targetIP, targetPort);
 
                 // set a churnout timer for all the benign nodes
@@ -52,7 +52,7 @@ namespace sybiltest {
 
             // Spawn network consisting of sybil nodes
             for (auto ip : vShadowIP) {
-                auto &shadowNode = _shadowNodes.emplace_back(&_attackStat, &ipdb, ip, 8333);
+                auto &shadowNode = _shadowNodes.emplace_back(&_attackStat, &ipdb, ip, NodeParams::targetPort);
                 shadowNode.SetTarget(targetIP, targetPort);
             }
 

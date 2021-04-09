@@ -125,10 +125,11 @@ void BLNodePrimitives::OpAfterRecv(int data_fd, std::string recv_str) {
 }
 
 void BLNodePrimitives::OpAfterDisconnect() {
-    assert (_type == NodeType::Attacker);
-    // This operation is only called for attacker(shadow active) node when the attacker node
-    // is disconnected with target node.
-    // So, try to reconnect to target node.
-    std::cout << GetIP() << " tries to reconnect to target" << "\n";
-    tryReconnectToTarget();
+    if (_type == NodeType::Attacker) {
+        // This operation is called for attacker(shadow active) node when the attacker node
+        // is disconnected with target node.
+        // So, try to reconnect to target node.
+        std::cout << GetIP() << " tries to reconnect to target" << "\n";
+        tryReconnectToTarget();
+    }
 }

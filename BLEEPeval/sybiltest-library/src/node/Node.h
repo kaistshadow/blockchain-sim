@@ -20,6 +20,9 @@
 #include "shadow_interface.h"
 #include "../ipdb/IPDatabase.h"
 
+#include <ctime>
+#include <chrono>
+
 
 namespace sybiltest {
     enum class NodeType {
@@ -60,6 +63,10 @@ namespace sybiltest {
                 // call Node's primitive operation
                 NodePrimitives::OpAfterRecv(w.fd, recv_str);
             } else if (nBytes == 0) {
+                std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+                std::string s(30, '\0');
+                std::strftime(&s[0], s.size(), "%Y-%m-%d %H:%M:%S", std::localtime(&now));
+                std::cout << "connection closed time:" << s << "\n";
                 std::cout << "connection closed while recv" << ", myIP=" << NodePrimitives::GetIP() << "\n";
 
                 // remove data structure for this socket
@@ -67,10 +74,10 @@ namespace sybiltest {
                 NodePrimitives::RemoveTCPControl(w.fd);
                 _mDataSocketWatcher.erase(w.fd);
 
-                if (NodePrimitives::_type == NodeType::Attacker) {
-                    // call Node's primitive operation
-                    NodePrimitives::OpAfterDisconnect();
-                }
+
+                // call Node's primitive operation
+                NodePrimitives::OpAfterDisconnect();
+
             } else if (nBytes < 0) {
                 // error
                 std::cout << "Error while recv" << "\n";

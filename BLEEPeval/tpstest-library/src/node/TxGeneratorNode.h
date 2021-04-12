@@ -104,6 +104,9 @@ namespace tpstest {
             _connStartTimer.stop();
         }
 
+        bool _temp_isMointor() {
+            return false;
+        }
     private:
         ev::timer _connStartTimer;
 

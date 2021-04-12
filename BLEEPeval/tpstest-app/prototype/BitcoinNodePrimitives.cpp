@@ -281,13 +281,33 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 BitcoinNodePrimitives::LoadBlock(data_fd);
 
             } else if (strCommand == NetMsgType::BLOCK) {
-                std::shared_ptr<CBlock> pblock = std::make_shared<CBlock>();
-                vRecv >> *pblock;
+                if (_temp_isMointor()) {
+                    std::shared_ptr<CBlock> pblock = std::make_shared<CBlock>();
+                    vRecv >> *pblock;
 
-                struct BlockInfo newBlockInfo;
-                std::cout<<"[INV] MSGBLOCK : blockhash = "<<pblock->GetHash().ToString()<<" tx = "<<pblock->vtx.size()<<" from = "<<data_fd<<"\n";
-                newBlockInfo = MakeBlockInfo(pblock->GetHash(), pblock->hashPrevBlock, pblock->nTime, pblock->vtx.size());
-                RegisterBlock(newBlockInfo);
+                    // create block structure
+                    block* bp = new block(pblock->GetHash().GetHex(), pblock->hashPrevBlock.GetHex(), pblock->nTime);
+                    for (int i = 0; i<pblock->vtx.size(); i++) {
+                        bp->pushTxHash(pblock->vtx[i]->GetHash().GetHex());
+                    }
+                    // add block to forest
+                    if (!bf.add_block(bp)) {
+                        delete bp;  // if already exists, free allocated memory
+                    }
+
+                    // get besttip, calculate tps
+                    bp = bf.get_besttip();
+                    if (bp && bp->getParent()) {
+                        uint32_t besttime = bp->getTime();
+                        size_t txcount = 0;
+                        while(bp->getParent()) {
+                            txcount += bp->getTxCount();
+                            bp = bp->getParent();
+                        }
+                        uint32_t timebase = bp->getTime();
+                        std::cout << "TPS = " << (txcount / ((double)besttime - timebase)) << "\n";
+                    }
+                }
             }
 
             // Maybe, recvBuffer can be updated more efficiently. (minimizing a duplication)

@@ -12,6 +12,7 @@
 
 #include <key.h>
 #include <primitives/transaction.h>
+#include <utility/blocks.h>
 #include <queue>
 
 namespace tpstest {
@@ -100,7 +101,11 @@ namespace tpstest {
         virtual void UpdateTPS(unsigned int txcnt, unsigned int block_interval) {};
         virtual bool RegisterBlock(struct BlockInfo newblock) {};
         virtual bool RegisterTx(std::string hash);
+        virtual bool _temp_isMointor();
     private:
+        // monitor
+        blockforest bf;
+        // keygen
         std::queue<spend_data> unspent_keyvalues;
         std::queue<CTransaction*> tx_logs;
 

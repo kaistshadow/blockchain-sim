@@ -188,6 +188,9 @@ class MonitoringNode : public Node<NodePrimitives> {
 //        std::cout<<"[Tx table] tx "<<hash<<" registered\n";
         return true;
   }
+  bool _temp_isMointor() {
+      return true;
+  }
 
  private:
 

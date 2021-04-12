@@ -12,6 +12,8 @@ target_sources(BLEEPtps
         node/MonitoringNode.h
         policy/TPSPolicy.h
         policy/MonitoringPolicy.h
+        utility/blocks.h
+        utility/blocks.cpp
         )
 
 target_include_directories(BLEEPtps

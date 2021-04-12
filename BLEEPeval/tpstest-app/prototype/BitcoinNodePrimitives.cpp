@@ -430,7 +430,6 @@ void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {
 void BitcoinNodePrimitives::LoadBlock(int data_fd) {
     //load block message in coinflip_hash.txt
     std::string path = "./data/coinflip_hash.txt";
-    std::cout<<"path is load block "<<path<<" \n";
 
     const unsigned char MessageStartChars2[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
     ifstream file (path);

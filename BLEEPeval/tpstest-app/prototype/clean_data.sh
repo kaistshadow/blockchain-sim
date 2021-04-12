@@ -5,23 +5,12 @@ if [ $# -lt 1 ]; then
   exit
 fi
 
-if [ ! -e rpc.so ]; then
-  echo "start to dump!"
-  cp ../../../BLEEPemul/emulation/rpc.so ./
-fi
 
 echo "cleanup data start!"
 SHELL_PATH=`pwd -P`
 
-path=../../../testlibs/dump/difficulty_$1
-if [ ! -e $path/coinflip.txt ]; then
-  echo "start to dump!"
-  cd ../../../testlibs/datadirDump/
-  sh startdump.sh $1
-fi
 
 cd $SHELL_PATH
-
 CreateDIR=./data
 if [ -d $CreateDIR ]; then
   rm -rf data/

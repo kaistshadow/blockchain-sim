@@ -669,3 +669,12 @@ def TxGenerator_connection_test(plugin_output_files, xmlfile, node_count):
     print("Fail txGenerator connection test ... ")
     sys.exit(1)
 
+# --------------------------------------------------------------------------------------------------------------
+#                                       Regression test-16 - TxGenerator Tx propagation test
+# --------------------------------------------------------------------------------------------------------------
+def TxGenerator_propagation_test(plugin_output_files, node_count):
+    
+    block_hash_list = utils.get_plugin_tx_hash_list(plugin_output_files, node_count)
+
+    for i in range(len(block_hash_list)):
+        print(len(block_hash_list[i]))

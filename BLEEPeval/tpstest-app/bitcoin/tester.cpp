@@ -44,7 +44,7 @@ void _debug_hex_print(void* a, size_t streamsize, int endianess_swap) {
     }
 }
 
-#define _TEST_TX_PER_PERIOD  1000
+#define _TEST_TX_PER_PERIOD  10
 #define _TEST_TIME_PER_PERIOD   1
 int main(int argc, char* argv[]) {
     exported_main(); // initialize bitcoin

@@ -329,3 +329,62 @@ def filter_block_hash(plugin_output_files, node_count):
     
     return node_list
 
+def get_plugin_tx_hash_list(plugin_output_files, node_count):
+    block_hash_list = []
+    for i in range(node_count):
+        line = []
+        block_hash_list.append(line)
+
+    j = 0
+    for i in range(len(plugin_output_files)):
+        result = plugin_output_files[i].find("stdout-client")
+        if result != -1:
+            continue
+        else:
+            
+            # 마이닝 노드
+            result = plugin_output_files[i].find('stdout-bcdnode')
+            if result != -1:
+                f = open(plugin_output_files[i], "r")
+                while True:
+                    line = f.readline()
+                    if not line: break
+                    result = line.find('AcceptToMemoryPool')
+                    if result != -1:
+                        Input_data = line.split(" ")[4]
+                        block_hash_list[j].append(Input_data)
+                f.close()
+                j += 1
+                continue
+
+            # Trnasaction generator
+            result = plugin_output_files[i].find('stdout-txgenerator.BITCOINTPS_TESTER.1000')
+            if result != -1:
+                f = open(plugin_output_files[i], "r")
+                while True:
+                    line = f.readline()
+                    if not line: break
+                    result = line.find("created tx's hash")
+                    if result != -1:
+                        Input_data = line.split(":")[1]
+                        block_hash_list[j].append(Input_data[:-1])
+                f.close()
+                j += 1
+                continue
+
+            # 모니터 노드 
+            result = plugin_output_files[i].find('stdout-monitor')
+            if result != -1:
+                f = open(plugin_output_files[i], "r")
+                while True:
+                    line = f.readline()
+                    if not line: break
+                    result = line.find('MSGTX: hash')
+                    if result != -1:
+                        Input_data = line.split("=")[1].split(" ")[1]
+                        block_hash_list[j].append(Input_data)
+                f.close()
+                j += 1
+                continue
+
+    return block_hash_list

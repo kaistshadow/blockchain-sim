@@ -1,3 +1,7 @@
+if (NOT CMAKE_INSTALL_PREFIX OR
+CMAKE_INSTALL_PREFIX STREQUAL "/usr/local")
+set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/../../../Install")
+endif()
 ## required for independent build
 cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
 
@@ -11,20 +15,24 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../shadow/cmake")
 find_package(Bitcoin_0_19_1dev REQUIRED)
 
 add_custom_target(emulation-prepare ALL
-#  COMMAND rm -rf data/
   COMMAND mkdir -p data/
-  # COMMAND cp -r ../../testlibs/datadir_dump/* ./data
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(emulation-copy-plugin ALL
   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1dev::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(emulation-one-node-mine-plugin ALL
-        COMMAND g++ -o rpc.so one_node_setmine.cpp ../../testlibs/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -g
-        COMMAND cp rpc.so ${CMAKE_SOURCE_DIR}/BLEEPeval/tpstest-app/prototype
-        COMMAND cp rpc.so ${CMAKE_SOURCE_DIR}/tests/regtest/1_bitcoin/13_monitorNode
-        COMMAND cp rpc.so ${CMAKE_SOURCE_DIR}/tests/regtest/1_bitcoin/14_propagationBlock
-        COMMAND cp rpc.so ${CMAKE_SOURCE_DIR}/tests/regtest/1_bitcoin/16_TG_tx_propagation
+        COMMAND g++ -o minerNode_rpc.so one_node_setmine.cpp ../../testlibs/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -g
+        COMMAND ${CMAKE_COMMAND} -E copy minerNode_rpc.so ${CMAKE_INSTALL_PREFIX}/plugins
         COMMAND g++ -o transaction.so transaction.cpp  ../../testlibs/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -g
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+# Define targets that can be used in same build-tree
+add_library(MinerNodeRPC::Plugin SHARED IMPORTED GLOBAL)
+add_dependencies(MinerNodeRPC::Plugin bitcoin_0.19.1dev)
+set_target_properties(MinerNodeRPC::Plugin PROPERTIES
+  IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+  IMPORTED_LOCATION ${CMAKE_INSTALL_PREFIX}/plugins/minerNode_rpc.so
+  INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set_property(TARGET MinerNodeRPC::Plugin PROPERTY IMPORTED_NO_SONAME 1)
 

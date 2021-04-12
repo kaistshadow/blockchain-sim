@@ -49,6 +49,7 @@ def filter_overlap_height(node_output_file):
             if block_hash_list[i][1] in result_list[j][1]:
                 result_list[j][0] = block_hash_list[i][0]
                 result_list.pop()
+
     return result_list
 
 def summary_result(node_list, node_output_file, sim_time, output_txt, algo):
@@ -105,4 +106,3 @@ def summary_result(node_list, node_output_file, sim_time, output_txt, algo):
         for j in range(0,len(peer_connection_result[i])):
             f.write("\t\t\t\t - %s \n" %peer_connection_result[i][j])
     f.close()
-

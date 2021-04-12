@@ -22,6 +22,7 @@ def main():
     if OPT_REGTEST:
         tx_mode, algo, difficulty = xml_modules.get_xmlfile(path)
     else:
+        utils.exec_shell_cmd("sh clean_data.sh 10")
         present_path = path + "/output.xml"
         difficulty = utils.get_difficulty_fromXML(present_path)
 
@@ -33,7 +34,6 @@ def main():
 
     # bitcoind data dir 설정 파일 생성.
     target_path = path + "/data"
-    utils.set_plugin_file(len(node_id_list), os.path.abspath("./data"), difficulty)
     # shadow 실행
     print("shadow running ...")
     shadow_command = 'shadow output.xml -w 2' + ' > output.txt'

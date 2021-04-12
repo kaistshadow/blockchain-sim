@@ -65,9 +65,6 @@ namespace tpstest {
                 NodePrimitives::RemoveTCPControl(w.fd);
                 _mDataSocketWatcher.erase(w.fd);
 
-                if (NodePrimitives::_type == NodeType::MonitoringNode) {
-                    std::cout<<"NodeType is MonitoringNode\n";
-                }
             } else if (nBytes < 0) {
                 // error
                 std::cout << "Error while recv" << "\n";
@@ -123,7 +120,6 @@ namespace tpstest {
         }
 
         void conncb(ev::io &w, int revents) {
-            std::cout << "connSocketIOhandler" << "\n";
             if (revents & EV_READ) {
                 std::cout << "invalid event is triggered for connecting socket. " << "\n";
                 exit(-1);

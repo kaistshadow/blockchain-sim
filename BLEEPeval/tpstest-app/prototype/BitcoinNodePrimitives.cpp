@@ -82,6 +82,18 @@ void BitcoinNodePrimitives::OpAfterConnected(int data_fd) {
     // do nothing
 }
 
+
+BitcoinNodePrimitives::BlockInfo BitcoinNodePrimitives::MakeBlockInfo(uint256 _blockhash, uint256 _prevblockhash, uint32_t _timestamp, unsigned long _txcount) {
+
+    struct BitcoinNodePrimitives::BlockInfo newBlock;
+    newBlock.prevblockhash = _prevblockhash.ToString();
+    newBlock.blockhash = _blockhash.ToString();
+    newBlock.txcount = _txcount;
+    newBlock.timestamp = _timestamp;
+    return newBlock;
+}
+
+
 void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
     // recv to RecvBuffer
     TCPControl &tcpControl = GetTCPControl(data_fd);
@@ -139,7 +151,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
             string strCommand = hdr.GetCommand();
             CDataStream &vRecv = msg.vRecv;
 
-            std::cout<<"OpafterRecv : <<" <<strCommand <<"\n";
+//            std::cout<<"OpafterRecv : <<" <<strCommand <<" "<<data_fd<<"\n";
 
             if (strCommand == NetMsgType::VERSION) {
                 int64_t nTime;
@@ -168,59 +180,6 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 if (!vRecv.empty())
                     vRecv >> fRelay;
 
-                if (_type == NodeType::TxGenerator) {
-                    // VERSION message from inbound connection
-                    // send version message (reply)
-                    ServiceFlags nLocalNodeServices = ServiceFlags(NODE_NETWORK | NODE_WITNESS | NODE_NETWORK_LIMITED);
-                    uint64_t nonce = 0;
-                    int myNodeStartingHeight = nStartingHeight;
-
-
-                    cout << "version is from " << addrFrom.ToString() << ", to " << addrMe.ToString() << "\n";
-                    // their_addr
-                    assert(_targetPort != -1 && _targetIP != "");
-                    CAddress their_addr;
-                    struct sockaddr_in new_addr;    /* my address information */
-                    new_addr.sin_family = AF_INET;         /* host byte order */
-                    new_addr.sin_port = htons(_targetPort);     /* short, network byte order */
-                    new_addr.sin_addr.s_addr = inet_addr(_targetIP.c_str());
-                    bzero(&(new_addr.sin_zero), 8);        /* zero the rest of the struct */
-                    if (!their_addr.SetSockAddr((const struct sockaddr *) &new_addr)) {
-                        LogPrintf("Warning: Unknown socket family\n");
-                    }
-                    cout << "their_addr:" << their_addr.ToString() << "\n";
-
-
-                    CAddress addrMeForVersionReply = CAddress(CService(), nLocalNodeServices);
-
-
-                    CSerializedNetMsg replymsg = CNetMsgMaker(INIT_PROTO_VERSION).Make(NetMsgType::VERSION,
-                                                                                       PROTOCOL_VERSION,
-                                                                                       (uint64_t) nLocalNodeServices,
-                                                                                       nTime,
-                                                                                       their_addr,
-                                                                                       addrMeForVersionReply, nonce,
-                                                                                       strSubVersion,
-                                                                                       myNodeStartingHeight, true);
-
-                    size_t nMessageSize = replymsg.data.size();
-                    //size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
-                    LogPrint(BCLog::NET, "sending %s (%d bytes) \n", SanitizeString(replymsg.command.c_str()),
-                             nMessageSize);
-
-                    vector<unsigned char> serializedHeader;
-                    serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
-                    uint256 hash = Hash(replymsg.data.data(), replymsg.data.data() + nMessageSize);
-                    CMessageHeader replymsghdr(MessageStartChars, replymsg.command.c_str(), nMessageSize);
-                    memcpy(replymsghdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
-
-                    CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, serializedHeader, 0, replymsghdr};
-
-                    SendMsg(data_fd, serializedHeader);
-                    if (nMessageSize)
-                        SendMsg(data_fd, replymsg.data);
-                }
-
                 {
                     // send verack message
                     CSerializedNetMsg verack_msg = CNetMsgMaker(INIT_PROTO_VERSION).Make(NetMsgType::VERACK);
@@ -241,7 +200,6 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                         SendMsg(data_fd, verack_msg.data);
                 }
             } else if (strCommand == NetMsgType::PING) {
-                cout << "received PING" << "\n";
                 uint64_t nonce = 0;
                 vRecv >> nonce;
 
@@ -263,6 +221,81 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 if (nMessageSize)
                     SendMsg(data_fd, replymsg.data);
 
+            } else if (strCommand == NetMsgType::INV){
+
+                std::vector<CInv> vInv;
+                vRecv >> vInv;
+                for (CInv &inv : vInv)
+                {
+
+                    if (inv.type == MSG_TX) {
+//                        cout<<"inv msg MSG_TX from "<<data_fd<<" \n";
+                        std::cout<<"[INV] MSGTX: hash = "<<inv.hash.ToString()<<" from = "<<data_fd<<"\n";
+                        RegisterTx(inv.hash.ToString());
+
+                    } else if (inv.type == MSG_BLOCK) {
+                        std::string block_hash = inv.hash.ToString();
+
+                         //send block message
+                        CSerializedNetMsg replymsg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::GETDATA, vInv);
+
+                        size_t nMessageSize = replymsg.data.size();
+                        //size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
+                        // LogPrint(BCLog::NET, "sending %s (%d bytes) \n", SanitizeString(msg.command.c_str()), nMessageSize);
+
+                        vector<unsigned char> serializedHeader;
+                        serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
+                        uint256 hash = Hash(replymsg.data.data(), replymsg.data.data() + nMessageSize);
+                        CMessageHeader replymsghdr(MessageStartChars, replymsg.command.c_str(), nMessageSize);
+                        memcpy(replymsghdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
+
+                        CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, serializedHeader, 0, replymsghdr};
+
+                        SendMsg(data_fd, serializedHeader);
+                        if (nMessageSize)
+                            SendMsg(data_fd, replymsg.data);
+                    } else {
+                        std::string invhash = inv.hash.ToString();
+                            cout<<"inv msg else "<<invhash<<"\n";
+                    }
+                }
+
+            }else if(strCommand == NetMsgType::VERACK) {
+
+                //send sendheader message (But it is not working)
+//                CSerializedNetMsg verack_msg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::SENDHEADERS);
+//                size_t nMessageSize = verack_msg.data.size();
+//
+//                vector<unsigned char> verack_serializedHeader;
+//                verack_serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
+//                uint256 hash = Hash(verack_msg.data.data(), verack_msg.data.data() + nMessageSize);
+//                CMessageHeader verack_hdr(MessageStartChars, verack_msg.command.c_str(), nMessageSize);
+//                memcpy(verack_hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
+//
+//                CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, verack_serializedHeader, 0, verack_hdr};
+//
+//                SendMsg(data_fd, verack_serializedHeader);
+//                if (nMessageSize)
+//                    SendMsg(data_fd, verack_msg.data);
+
+                BitcoinNodePrimitives::LoadBlock(data_fd);
+
+            } else if (strCommand == NetMsgType::BLOCK) {
+
+                std::shared_ptr<CBlock> pblock = std::make_shared<CBlock>();
+                vRecv >> *pblock;
+
+                std::string pblock_hash = pblock->GetHash().ToString();
+
+                std::string vin_hash = pblock->vtx[0]->vin[0].prevout.hash.ToString();
+//                int vin_n = pblock->vtx[0]->vin[0].prevout.n;
+//                int vout_amount = pblock->vtx[0]->vout[0].nValue;
+                CScript vout_script = pblock->vtx[0]->vout[0].scriptPubKey;
+
+                struct BlockInfo newBlockInfo;
+                std::cout<<"[INV] MSGBLOCK : blockhash = "<<pblock->GetHash().ToString()<<" tx = "<<pblock->vtx.size()<<" from = "<<data_fd<<"\n";
+                newBlockInfo = MakeBlockInfo(pblock->GetHash(), pblock->hashPrevBlock, pblock->nTime, pblock->vtx.size());
+                RegisterBlock(newBlockInfo);
             }
 
             // Maybe, recvBuffer can be updated more efficiently. (minimizing a duplication)
@@ -282,12 +315,15 @@ void BitcoinNodePrimitives::OpAfterDisconnect() {
 void BitcoinNodePrimitives::bootstrap(const char* statefile, const char* keyfile) {
     std::ifstream state_ifs(statefile);
     std::string txstr((std::istreambuf_iterator<char>(state_ifs)), (std::istreambuf_iterator<char>()));
-    CDataStream stream(ParseHex(txstr), SER_DISK, CLIENT_VERSION);
-    sourceTx = new CTransaction(deserialize, stream);
+    CMutableTransaction mtx;
+    DecodeHexTx(mtx, txstr, true);
+    CTransaction* tx = new CTransaction(mtx);
 
     std::ifstream key_ifs(keyfile);
     std::string keystr((std::istreambuf_iterator<char>(key_ifs)), (std::istreambuf_iterator<char>()));
-    secret = DecodeSecret(keystr);
+    CKey key = DecodeSecret(keystr);
+
+    unspent_keyvalues.push({key, tx, 0});
 }
 #define COMPRESSED_KEY
 CKey _generateKey() {
@@ -304,29 +340,32 @@ CKey _generateKey() {
 }
 // from state and key, make next state and key, return serialized tx with size
 std::string BitcoinNodePrimitives::generate() {
-    // CKey::Sign(const uint256 &hash, std::vector<unsigned char>& vchSig, bool grind, uint32_t test_case)
-    // -> hash, vchSig만 있어도 되긴 함.
+    int dividing_factor = 2;
+
     // step 1, 12
     CMutableTransaction txNew;  // version and locktime is automatically set
 
+    auto source = unspent_keyvalues.front();
+    CKey sourceKey = source.sourceKey;
+    CTransaction* sourceTx = source.sourceTx;
+    uint32_t sourceIn = source.nIn;
+    CAmount fee = 1000;
+    CAmount voutValue = (sourceTx->vout[sourceIn].nValue - fee) / dividing_factor;
+
     // step 2, 3, 4, 5, 6, 7
-    CTxIn txin_proto(COutPoint(sourceTx->GetHash(), 0), sourceTx->vout[0].scriptPubKey, 0xffffffff);
+    CTxIn txin_proto(COutPoint(sourceTx->GetHash(), sourceIn), sourceTx->vout[sourceIn].scriptPubKey, 0xffffffff);
     txNew.vin.push_back(txin_proto);
 
     // txout build
-    CTxDestination receiveDest = GetDestinationForKey(secret.GetPubKey(), OutputType::LEGACY);
-    CScript scriptReceive = GetScriptForDestination(receiveDest);
-    CTxOut receive_prototype_txout(0, scriptReceive);
-    size_t nSize = GetSerializeSize(receive_prototype_txout);
-    CTxOut receive_txout(CFeeRate(DUST_RELAY_TX_FEE).GetFee(nSize) + 1, scriptReceive);
-    txNew.vout.push_back(receive_txout);
-
-    // dummy txchange build
-    CKey changer = _generateKey();
-    CTxDestination changeDest = GetDestinationForKey(changer.GetPubKey(), OutputType::LEGACY);
-    CScript scriptChange = GetScriptForDestination(changeDest);
-    CTxOut change_prototype_txout(0, scriptChange);
-    txNew.vout.push_back(change_prototype_txout);
+    std::vector<CKey> predata;
+    for(int i=0; i<dividing_factor; i++) {
+        CKey dest = _generateKey();
+        CTxDestination receiveDest = GetDestinationForKey(dest.GetPubKey(), OutputType::LEGACY);
+        CScript scriptReceive = GetScriptForDestination(receiveDest);
+        CTxOut receive_txout(voutValue, scriptReceive);
+        txNew.vout.push_back(receive_txout);
+        predata.push_back(dest);
+    }
 
     // get hash
     CHashWriter txhasher(SER_GETHASH, 0);
@@ -334,58 +373,22 @@ std::string BitcoinNodePrimitives::generate() {
     uint256 hash = txhasher.GetHash();
     // sign
     std::vector<unsigned char> vchSig;
-    secret.Sign(hash, vchSig);
+    sourceKey.Sign(hash, vchSig);
     // add hashtype
     vchSig.push_back((unsigned char)SIGHASH_ALL);
-    CDataStream scriptStream(SER_DISK, PROTOCOL_VERSION);
-    scriptStream << vchSig;   // debug
-    CDataStream pubkeyStream(SER_DISK, PROTOCOL_VERSION);
-    pubkeyStream << secret.GetPubKey();
-    unsigned char pubkeyLen = (HexStr(pubkeyStream.begin(), pubkeyStream.end()).length() / 2);
-    scriptStream << pubkeyLen << secret.GetPubKey();
     txNew.vin.clear();
-    CTxIn txin_proto2(COutPoint(sourceTx->GetHash(), 0), CScript() << ParseHex(HexStr(scriptStream.begin(), scriptStream.end())), 0xffffffff);
+    CTxIn txin_proto2(COutPoint(sourceTx->GetHash(), sourceIn), CScript() << vchSig << ToByteVector(sourceKey.GetPubKey()), 0xffffffff);
     txNew.vin.push_back(txin_proto2);
 
-    // recalculate changes
-    CTransaction tx(txNew);
-    CAmount nBytes = tx.GetTotalSize();
-    CAmount nFeeNeeded = CFeeRate(DEFAULT_FALLBACK_FEE).GetFee(nBytes);
-    CAmount change = sourceTx->vout[0].nValue - nFeeNeeded - 1;
-    CTxOut change_txout(change, scriptChange);
-    txNew.vout.pop_back();
-    txNew.vout.insert(txNew.vout.begin(), change_txout);
+    tx_logs.push(sourceTx);
+    unspent_keyvalues.pop();
+    CTransaction* tx = new CTransaction(txNew);
+    for(uint32_t i=0; i<dividing_factor; i++) {
+        unspent_keyvalues.push({predata[i], tx, i});
+    }
+    std::cout<<"Debug - created tx's hash:"<<tx->GetHash().GetHex()<<"\n";
 
-    // do signing again
-    txNew.vin.clear();
-    CTxIn txin_proto3(COutPoint(sourceTx->GetHash(), 0), sourceTx->vout[0].scriptPubKey, 0xffffffff);
-    txNew.vin.push_back(txin_proto3);
-    // get hash
-    CHashWriter txhasher2(SER_GETHASH, 0);
-    txhasher2 << txNew << (uint32_t)SIGHASH_ALL;
-    uint256 hash2 = txhasher2.GetHash();
-    // sign
-    std::vector<unsigned char> vchSig2;
-    secret.Sign(hash2, vchSig2);
-    // add hashtype
-    vchSig2.push_back((unsigned char)SIGHASH_ALL);
-    CDataStream scriptStream2(SER_DISK, PROTOCOL_VERSION);
-    scriptStream2 << vchSig2;   // debug
-    CDataStream pubkeyStream2(SER_DISK, PROTOCOL_VERSION);
-    pubkeyStream2 << secret.GetPubKey();
-    unsigned char pubkeyLen2 = (HexStr(pubkeyStream2.begin(), pubkeyStream2.end()).length() / 2);
-    scriptStream2 << pubkeyLen2 << secret.GetPubKey();
-    txNew.vin.clear();
-    CTxIn txin_proto4(COutPoint(sourceTx->GetHash(), 0), CScript() << ParseHex(HexStr(scriptStream2.begin(), scriptStream2.end())), 0xffffffff);
-    txNew.vin.push_back(txin_proto4);
-
-    // swap states
-    secret = changer;
-    CTransaction* prev = sourceTx;
-    sourceTx = new CTransaction(txNew);
-    delete prev;
-
-    return EncodeHexTx(*sourceTx);
+    return EncodeHexTx(*tx);
 }
 
 void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {
@@ -406,6 +409,48 @@ void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {
     SendMsg(data_fd, serializedHeader);
     if (nMessageSize) {
         SendMsg(data_fd, msg.data);
+    }
+
+}
+
+void BitcoinNodePrimitives::LoadBlock(int data_fd) {
+    //load block message in coinflip_hash.txt
+    std::string path = "./data/coinflip_hash.txt";
+    std::cout<<"path is load block "<<path<<" \n";
+
+    const unsigned char MessageStartChars2[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
+    ifstream file (path);
+    std::string line;
+    if (file.is_open())
+    {
+        while ( getline (file,line) )
+        {
+
+            std::vector<CInv> vInv2(1);
+            uint256 block_hash2 = uint256S(line);
+            vInv2[0] = CInv(2, block_hash2);
+
+            //send block message
+            CSerializedNetMsg replymsg2 = CNetMsgMaker(PROTOCOL_VERSION).Make(SERIALIZE_TRANSACTION_NO_WITNESS,NetMsgType::GETDATA, vInv2);
+
+            size_t nMessageSize2 = replymsg2.data.size();
+//            std::cout<<"sending %s (%d bytes) "<<block_hash2.ToString()<<" \n";
+
+
+            vector<unsigned char> serializedHeader2;
+            serializedHeader2.reserve(CMessageHeader::HEADER_SIZE);
+            uint256 hash2 = Hash(replymsg2.data.data(), replymsg2.data.data() + nMessageSize2);
+            CMessageHeader replymsghdr2(MessageStartChars2, replymsg2.command.c_str(), nMessageSize2);
+            memcpy(replymsghdr2.pchChecksum, hash2.begin(), CMessageHeader::CHECKSUM_SIZE);
+
+            CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, serializedHeader2, 0, replymsghdr2};
+
+            SendMsg(data_fd, serializedHeader2);
+            if (nMessageSize2)
+                SendMsg(data_fd, replymsg2.data);
+
+        }
+        file.close();
     }
 
 }

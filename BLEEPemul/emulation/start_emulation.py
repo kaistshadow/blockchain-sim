@@ -28,9 +28,6 @@ def main():
     # IP address 가져오기
     IP_list = utils.get_address_list("output.xml")
 
-    # # datadir 설정
-    utils.set_plugin_file(len(node_id_list), os.path.abspath("./data"), difficulty)
-
     # # shadow 실행
     print("shadow running ... ")
     utils.subprocess_open('shadow output.xml > output.txt')

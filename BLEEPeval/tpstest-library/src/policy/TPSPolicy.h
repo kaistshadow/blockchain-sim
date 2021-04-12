@@ -23,11 +23,11 @@ namespace tpstest {
             // Spawn network consisting of pre-defined number of transaction generator nodes
             auto &txGeneratorNode = _txGeneratorNodes.emplace_back(NodeIP, nodeport);
 
-#define TX_PER_TICK 1000        // temporary transaction per tick: 1000
+#define TX_PER_TICK 2        // temporary transaction per tick: 1000
 #define TIME_PER_TICK   1       // temporary time per tick: 1 second
             std::cout << "generator node objects are constructed " << _txGeneratorNodes.size() << "\n";
             for (auto &_txGeneratorNode : _txGeneratorNodes) {
-                _txGeneratorNode.bootstrap("state.txt", "key.txt");
+                _txGeneratorNode.bootstrap("./data/state.txt", "./data/key.txt");
                 for (auto &[_targetIP, _targetPort] : targets){
                     int conn_fd = _txGeneratorNode.tryConnectToTarget(_targetIP, _targetPort);
                 }

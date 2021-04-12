@@ -296,8 +296,10 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                     }
 
                     // get besttip, calculate tps
+                    static block* best = nullptr;
                     bp = bf.get_besttip();
-                    if (bp && bp->getParent()) {
+                    if (bp && bp->getParent() && (!best || best != bp)) {
+                        best = bp;
                         uint32_t besttime = bp->getTime();
                         size_t txcount = 0;
                         while(bp->getParent()) {

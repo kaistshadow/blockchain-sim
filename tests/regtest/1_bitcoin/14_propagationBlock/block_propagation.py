@@ -52,6 +52,8 @@ def main():
     # # Start propagationBlock test
     test_modules.Mointor_block_propagation_test(simulation_output_file, len(IP_list)-2, path)
 
+    # start comparing block hash values
+    test_modules.clinet_block_propagation_test(simulation_output_file, len(IP_list))
 
 if __name__ == '__main__':
     main()

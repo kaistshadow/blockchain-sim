@@ -329,62 +329,47 @@ def filter_block_hash(plugin_output_files, node_count):
     
     return node_list
 
-def get_plugin_tx_hash_list(plugin_output_files, node_count):
+def get_block_hash_list(plugin_output_files, node_count):
+    
     block_hash_list = []
-    for i in range(node_count):
-        line = []
-        block_hash_list.append(line)
-
-    j = 0
-    for i in range(len(plugin_output_files)):
-        result = plugin_output_files[i].find("stdout-client")
+    for i in range(0,len(plugin_output_files)):
+        result = plugin_output_files[i].find("monitor")
         if result != -1:
+            f = open(plugin_output_files[i], "r")
+            while True:
+                line = f.readline()
+                if not line: break
+                result = line.find("[INV] MSGBLOCK : blockhash")
+                if result != -1:
+                    input_data = line.split("=")[1].split(" ")[1].strip()
+                    if input_data in block_hash_list:
+                        continue
+                    else:
+                        block_hash_list.append(input_data)
+            f.close()
+    return block_hash_list
+
+# Updatetip을 기준으로 선별된 블록들 중에 중복된 블록 제거
+def overlap_blockHash(bitcoind_log):
+    hash_list = []
+    f = open(bitcoind_log, "r")
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("UpdateTip")
+        if result != -1:
+            input_data = line.split("=")[1].split(" ")[0]
+            if input_data in hash_list:
+                continue
+            else:
+                hash_list.append(input_data)
+    f.close()
+    return hash_list
+
+def compare_hash_values(param_log1, param_log2):
+    for i in range(len(param_log1)):
+        if param_log1[i] in param_log2:
             continue
         else:
-            
-            # 마이닝 노드
-            result = plugin_output_files[i].find('stdout-bcdnode')
-            if result != -1:
-                f = open(plugin_output_files[i], "r")
-                while True:
-                    line = f.readline()
-                    if not line: break
-                    result = line.find('AcceptToMemoryPool')
-                    if result != -1:
-                        Input_data = line.split(" ")[4]
-                        block_hash_list[j].append(Input_data)
-                f.close()
-                j += 1
-                continue
-
-            # Trnasaction generator
-            result = plugin_output_files[i].find('stdout-txgenerator.BITCOINTPS_TESTER.1000')
-            if result != -1:
-                f = open(plugin_output_files[i], "r")
-                while True:
-                    line = f.readline()
-                    if not line: break
-                    result = line.find("created tx's hash")
-                    if result != -1:
-                        Input_data = line.split(":")[1]
-                        block_hash_list[j].append(Input_data[:-1])
-                f.close()
-                j += 1
-                continue
-
-            # 모니터 노드 
-            result = plugin_output_files[i].find('stdout-monitor')
-            if result != -1:
-                f = open(plugin_output_files[i], "r")
-                while True:
-                    line = f.readline()
-                    if not line: break
-                    result = line.find('MSGTX: hash')
-                    if result != -1:
-                        Input_data = line.split("=")[1].split(" ")[1]
-                        block_hash_list[j].append(Input_data)
-                f.close()
-                j += 1
-                continue
-
-    return block_hash_list
+            print("Fail block propagations test ... ")
+            sys.exit(1)

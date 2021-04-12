@@ -600,7 +600,7 @@ def monitor_connection_test(plugin_output_files, abs_path, node_count):
     sys.exit(1)
 
 # --------------------------------------------------------------------------------------------------------------
-#                                       Regression test-14 - monitor node block propagation test
+#                                       Regression test-14-1 - monitor node block propagation test
 # --------------------------------------------------------------------------------------------------------------
 # Monitor 노드는 비트코인 노드로 부터 블록을 전파받음. 이렇게 전파 받은 블록의 해시 값들과,
 # 비트코인 실행 결과 로그 값에 기록된 블록 해시 값들을 비교하여, Monitor 노드가 제대로 전파를 받았나 확인을 하는 테스트
@@ -637,6 +637,17 @@ def Mointor_block_propagation_test(plugin_output_files, node_count, target_path)
     print("Success Monitor block propagation test ... ")
     sys.exit(0)
 
+# --------------------------------------------------------------------------------------------------------------
+#                                       Regression test-14-2 - TxGenerator Tx propagation test
+# --------------------------------------------------------------------------------------------------------------
+def clinet_block_propagation_test(plugin_output_files, node_count):
+    block_hash_list = utils.get_block_hash_list(plugin_output_files, node_count)
+    for i in range(len(plugin_output_files)):
+        block_hash_list_copy = []
+        result = plugin_output_files[i].find("bcdnode")
+        if result != -1:
+            utils.compare_hash_values(block_hash_list, utils.overlap_blockHash(plugin_output_files[i]))
+
 
 # --------------------------------------------------------------------------------------------------------------
 #                                       Regression test-15 - TxGenerator connection test
@@ -668,13 +679,3 @@ def TxGenerator_connection_test(plugin_output_files, xmlfile, node_count):
     print(condition_count)
     print("Fail txGenerator connection test ... ")
     sys.exit(1)
-
-# --------------------------------------------------------------------------------------------------------------
-#                                       Regression test-16 - TxGenerator Tx propagation test
-# --------------------------------------------------------------------------------------------------------------
-def TxGenerator_propagation_test(plugin_output_files, node_count):
-    
-    block_hash_list = utils.get_plugin_tx_hash_list(plugin_output_files, node_count)
-
-    for i in range(len(block_hash_list)):
-        print(len(block_hash_list[i]))

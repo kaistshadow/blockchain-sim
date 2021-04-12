@@ -281,16 +281,8 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 BitcoinNodePrimitives::LoadBlock(data_fd);
 
             } else if (strCommand == NetMsgType::BLOCK) {
-
                 std::shared_ptr<CBlock> pblock = std::make_shared<CBlock>();
                 vRecv >> *pblock;
-
-                std::string pblock_hash = pblock->GetHash().ToString();
-
-                std::string vin_hash = pblock->vtx[0]->vin[0].prevout.hash.ToString();
-//                int vin_n = pblock->vtx[0]->vin[0].prevout.n;
-//                int vout_amount = pblock->vtx[0]->vout[0].nValue;
-                CScript vout_script = pblock->vtx[0]->vout[0].scriptPubKey;
 
                 struct BlockInfo newBlockInfo;
                 std::cout<<"[INV] MSGBLOCK : blockhash = "<<pblock->GetHash().ToString()<<" tx = "<<pblock->vtx.size()<<" from = "<<data_fd<<"\n";

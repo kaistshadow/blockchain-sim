@@ -11,11 +11,6 @@ include(ShadowTools) # load ShadowTools Module
 
 find_package(Bitcoin_0_19_1dev REQUIRED)
 
-add_custom_target(shadow_xmlGenerator_test_prepare ALL
-  COMMAND rm -rf data/bcdnode0
-  COMMAND mkdir -p data/bcdnode0
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
 add_custom_target(shadow_xmlGenerator_test_prepare2 ALL
         DEPENDS Bitcoin_0_19_1dev::Plugin
         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/rpc.so

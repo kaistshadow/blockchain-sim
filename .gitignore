@@ -32,6 +32,9 @@ BLEEPeval/web-gui/vis/yarn-error.log
 
 BLEEPeval/web-gui/.tern-port
 
+BLEEPeval/*-app/*/datadir
+BLEEPeval/*-app/*/data
+
 terraform.tfstate
 terraform.tfstate.backup
 .terraform
@@ -86,8 +89,9 @@ tests/regtest/shadow-monero/monero_exe/
 tests/regtest/1_bitcoin/*.pyc
 tests/regtest/1_bitcoin/*/output.txt
 
-tests/regtest/*/data
-tests/regtest/*/*/data
+# tests/regtest/*/data
+# tests/regtest/*/*/data
+# tests/regtest/1_bitcoin/*/data
 
 external/bdb/4.8.30/build_unix
 external/libev/4.33/.deps/
@@ -113,9 +117,17 @@ BLEEPemul/*/datadir
 BLEEPemul/*/data
 BLEEPemul/*/target_example.xml
 
+BLEEPeval/tpstest-app/*/initial_tx_data.txt
+BLEEPeval/tpstest-app/*/private_key.txt
+
 tests/regtest/shadow-syscalls/1_eventfd/eventfd-test*
 tests/regtest/shadow-syscalls/1_eventfd/timerfd-test*
 BLEEPemul/emulation/output.xml
 testlibs/__pycache__
 tests/regtest/2_sybilAPI/*/output.txt
 testlibs/__pycache__/test_modules.cpython-36.pyc
+
+tests/regtest/1_bitcoin/*/data
+tests/regtest/*/coinflip_hash.txt
+
+tests/regtest/*/*/data

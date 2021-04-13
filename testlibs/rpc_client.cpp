@@ -12,6 +12,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <list>
 #include "rpc_client.h"
 
 Json::Reader reader;
@@ -63,15 +64,6 @@ std::string request(std::string req){
     return "";
 }
 
-// feature supports
-int getTxCount(std::string str) {
-    std::size_t found;
-    found = str.find("\"result\":");
-    std::string s = str.substr(found + 9, str.size());
-    found = s.find(",");
-    return atoi(s.substr(0, found).c_str());
-}
-
 void bitcoin_rpc_request(std::string method, Json::Value params) {
     json_req.clear();
     json_resp.clear();
@@ -84,4 +76,37 @@ void bitcoin_rpc_request(std::string method, Json::Value params) {
     std::string req = writer.write(json_req);
     std::string res = request(req);
     reader.parse(res, json_resp);
+}
+
+// example : setgeneratetoaddress rpc function
+// This function is used when calling rpc that requires parameters.
+void rpc_reqeust_with_params(std::string rpc_function, std::list<std::string> params_list) {
+    Json::Value params;
+    params.clear();
+    params = Json::arrayValue;
+    for(auto const& i: params_list) {
+        params.append(i);
+    }
+    bitcoin_rpc_request(rpc_function, params);
+}
+
+// example : getnewaddress rpc function
+// To get wallet address from "getnewaddress" rpc function call
+// Like this, this function enable to get string data from rpc call 
+std::string rpc_request_with_no_params(std::string rpc_function) {
+    Json::Value params;
+    params.clear();
+    params = Json::arrayValue;
+    bitcoin_rpc_request(rpc_function, params);
+    std::string return_value = json_resp["result"].asString();
+    return return_value;
+}
+
+// example : getblockchaininfo rpc function
+// This function is used when no params, no return values.
+void rpc_request_no_return_no_params(std::string rpc_function) {
+    Json::Value params;
+    params.clear();
+    params = Json::arrayValue;
+    bitcoin_rpc_request(rpc_function, params);
 }

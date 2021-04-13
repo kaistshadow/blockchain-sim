@@ -8,27 +8,6 @@
 #include <jsoncpp/json/json.h>
 #include "../../../../testlibs/rpc_client.h"
 
-void rpc_generatetoaddress(std::string wallet, char* ipport) {
-    Json::Value params;
-    params.clear();
-
-    params = Json::arrayValue;
-    params.append(wallet);
-    bitcoin_rpc_request("setgeneratetoaddress",params);
-}
-
-void rpc_getblockchaininfo(){
-    Json::Value params;
-    params.clear();
-    bitcoin_rpc_request("getblockchaininfo",params);
-}
-
-void rpc_getmempoolinfo(){
-    Json::Value params;
-    params.clear();
-    bitcoin_rpc_request("getmempoolinfo",params);
-}
-
 int main(int argc, char* argv[]) {
     // init
     std::cout<<"start client \n";
@@ -37,6 +16,6 @@ int main(int argc, char* argv[]) {
     Json::Value params;
     params.clear();
 
-    rpc_getblockchaininfo();
+    rpc_request_no_return_no_params("getblockchaininfo");
     return 0;
 }

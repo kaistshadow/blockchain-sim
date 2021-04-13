@@ -329,26 +329,6 @@ def filter_block_hash(plugin_output_files, node_count):
     
     return node_list
 
-def get_block_hash_list(plugin_output_files, node_count):
-    
-    block_hash_list = []
-    for i in range(0,len(plugin_output_files)):
-        result = plugin_output_files[i].find("monitor")
-        if result != -1:
-            f = open(plugin_output_files[i], "r")
-            while True:
-                line = f.readline()
-                if not line: break
-                result = line.find("[INV] MSGBLOCK : blockhash")
-                if result != -1:
-                    input_data = line.split("=")[1].split(" ")[1].strip()
-                    if input_data in block_hash_list:
-                        continue
-                    else:
-                        block_hash_list.append(input_data)
-            f.close()
-    return block_hash_list
-
 # Updatetip을 기준으로 선별된 블록들 중에 중복된 블록 제거
 def overlap_blockHash(bitcoind_log):
     hash_list = []
@@ -365,11 +345,3 @@ def overlap_blockHash(bitcoind_log):
                 hash_list.append(input_data)
     f.close()
     return hash_list
-
-def compare_hash_values(param_log1, param_log2):
-    for i in range(len(param_log1)):
-        if param_log1[i] in param_log2:
-            continue
-        else:
-            print("Fail block propagations test ... ")
-            sys.exit(1)

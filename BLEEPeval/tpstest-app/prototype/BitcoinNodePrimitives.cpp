@@ -400,6 +400,7 @@ std::string BitcoinNodePrimitives::generate() {
     for(uint32_t i=0; i<dividing_factor; i++) {
         unspent_keyvalues.push({predata[i], tx, i});
     }
+    std::cout<<"Debug - created tx's hash:"<<tx->GetHash().GetHex()<<"\n";
 
     return EncodeHexTx(*tx);
 }
@@ -408,7 +409,6 @@ void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {
     CMutableTransaction mtx;
     if (!DecodeHexTx(mtx, hexTx, true))
         throw std::runtime_error("invalid transaction encoding");
-    std::cout<<"Debug - send tx:"<<hexTx<<"\n";
     CTransaction tx(mtx);
     const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
     CSerializedNetMsg msg = CNetMsgMaker(PROTOCOL_VERSION).Make(SERIALIZE_TRANSACTION_NO_WITNESS, NetMsgType::TX, tx);

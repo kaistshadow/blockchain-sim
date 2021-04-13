@@ -18,7 +18,6 @@ def exec_shell_cmd(cmd):
         print("error while executing '%s'" % cmd)
         exit(-1)
 
-
 # xml 생성 시, injector 사용이 필요없는 테스트가 있음. 이럴 경우 xml 파일에 transcation.so 파일에 
 # 대한 정의가 되어있으면 안됨. 하지만 example.xml에는 되어 있기에, 이 함수를 통해 그에 대한 정의를 삭제를 해주고, 수정된 xml 파일을 return함
 def remove_tx_plugin(tx_plugin):
@@ -35,21 +34,6 @@ def remove_tx_plugin(tx_plugin):
         fw.write(line)
     fw.close()
     fr.close()
-
-# Description : blockchain plugin의 data dir를 설정해줘야할 디렉토리로서, 플러그인 개수만큼 제거하고 생성을 해줌.
-def set_plugin_file(node_count, path, difficulty):
-    if(os. path. isdir(path)):
-        the_command = "rm -rf data/*"
-        exec_shell_cmd(the_command)
-    command = ""
-    for i in range(0,node_count):
-        the_command = "mkdir -p data/bcdnode" + str(i)
-        exec_shell_cmd(the_command)
-
-    target_command = get_datadirDumpfile_path(path, difficulty)
-    command = "cp -r " + target_command + "/* " + path 
-       
-    exec_shell_cmd(command)
 
 # Description : xml 파일을 생성하기 위해, 현재 실행되는 함수의 경로에서 xml파일을 생성하기 위한 command를 생성하여 반환함.
 # input param : 현재 경로
@@ -278,3 +262,86 @@ def get_difficulty_fromXML(xmlfile):
                     break
     f.close()
     return return_difficulty[0]
+    
+def get_last_hashValue(shadow_output_file, rpc_output_file, node_count, pork_count):
+    condition_count = 0
+    i = 0
+    for z in range(0,node_count):
+        f = open(rpc_output_file[z+node_count] , "r")
+        for line in f.readlines()[::-1]:
+            line.rstrip()
+            result = line.find("bestblockhash")
+            if result != -1:
+                line = line.split(",")[3].split(":")[1]
+                genesisHash = line[1:len(line)-1]
+                i += 1
+                if i == (pork_count+1):
+                    break
+                else:
+                    continue
+
+        if os.path.isfile(shadow_output_file[z]):
+            f = open(shadow_output_file[z], "r")
+            while True:
+                line = f.readline()
+                if not line: break
+                result = line.find(genesisHash)
+                if result != -1:
+                    condition_count += 1
+
+    return condition_count
+
+def filter_testlibs_path(target_path):
+    the_path = ""
+    split_path = target_path.split("/")
+    for i in range(0,len(split_path)):
+        if split_path[i] == "blockchain-sim":
+            the_path += split_path[i]
+            the_path += "/"
+            break
+        the_path += split_path[i]
+        the_path += "/"
+
+    the_path += "/testlibs"
+    return the_path
+
+def filter_block_hash(plugin_output_files, node_count):
+    node_list = []
+    for i in range(node_count):
+        line = []
+        node_list.append(line)
+
+    for i in range(0,len(plugin_output_files)):
+        result = plugin_output_files[i].find("stdout-monitor.BITCOIN_MONITOR.1000")
+        if result != -1:
+            f = open(plugin_output_files[i], "r")
+            while True:
+                line = f.readline()
+                if not line: break
+                result = line.find("[INV] MSGBLOCK : blockhash =")
+                if result != -1:
+                    split_result = line.split("=")
+                    block_hash = split_result[1].split("tx")[0].strip()
+                    from_node = split_result[3].strip()
+                    node_list[int(from_node)-16].append(block_hash)
+
+            f.close()
+    
+    return node_list
+
+# Updatetip을 기준으로 선별된 블록들 중에 중복된 블록 제거
+def overlap_blockHash(bitcoind_log):
+    hash_list = []
+    f = open(bitcoind_log, "r")
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("UpdateTip")
+        if result != -1:
+            input_data = line.split("=")[1].split(" ")[0]
+            if input_data in hash_list:
+                continue
+            else:
+                hash_list.append(input_data)
+    f.close()
+    return hash_list

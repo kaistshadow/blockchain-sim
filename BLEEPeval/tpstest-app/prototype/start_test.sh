@@ -21,3 +21,4 @@ fi
 
 sh clean_data.sh $1
 shadow test-BitcoinP2P.xml
+

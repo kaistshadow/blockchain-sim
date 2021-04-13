@@ -17,3 +17,8 @@ add_dependencies(15_MonitorNode-plugin MonitorNode::Plugin)
 add_custom_target(15_MinerNodeRPC-plugin ALL
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:MinerNodeRPC::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
 add_dependencies(15_MinerNodeRPC-plugin MinerNodeRPC::Plugin)
+
+add_test(NAME TxGenrator-connection
+  COMMAND python3 block_propagation.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)

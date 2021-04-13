@@ -5,7 +5,7 @@ endif()
 
 #prepare bitcoin experiment
 add_custom_target(tps-API-bitcoin-prepare ALL
-        COMMAND sh clean_data.sh 3
+        COMMAND sh clean_data.sh 2
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 # compile bitcoin P2P tester
 add_library(BitcoinTPSAdapter SHARED
@@ -27,8 +27,8 @@ target_sources(BITCOINTPS_TESTER
 
 add_custom_command(TARGET BITCOINTPS_TESTER
         POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BITCOINTPS_TESTER> ${CMAKE_INSTALL_PREFIX}/plugin/$<TARGET_FILE:BITCOINTPS_TESTER>
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BITCOINTPS_TESTER> ${CMAKE_CURRENT_SOURCE_DIR}/$<TARGET_FILE:BITCOINTPS_TESTER>
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BITCOINTPS_TESTER> ${CMAKE_INSTALL_PREFIX}/plugin
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BITCOINTPS_TESTER> ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
 # Define targets that can be used in same build-tree
@@ -51,8 +51,8 @@ target_sources(BITCOIN_MONITOR
 
 add_custom_command(TARGET BITCOIN_MONITOR
         POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BITCOIN_MONITOR> ${CMAKE_INSTALL_PREFIX}/plugin/$<TARGET_FILE:BITCOIN_MONITOR>
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BITCOIN_MONITOR> ${CMAKE_CURRENT_SOURCE_DIR}/$<TARGET_FILE:BITCOIN_MONITOR>
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BITCOIN_MONITOR> ${CMAKE_INSTALL_PREFIX}/plugin
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BITCOIN_MONITOR> ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
 # Define targets that can be used in same build-tree
@@ -64,7 +64,7 @@ set_target_properties(MonitorNode::Plugin PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set_property(TARGET MonitorNode::Plugin PROPERTY IMPORTED_NO_SONAME 1)
 
-# copy plugins into source directory
+# copy plugin into source directory
 add_custom_target(tps-API-bitcoin-copy-plugin ALL
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1dev::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
 

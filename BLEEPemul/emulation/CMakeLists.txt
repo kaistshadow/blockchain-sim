@@ -23,7 +23,7 @@ add_custom_target(emulation-copy-plugin ALL
 
 add_custom_target(emulation-one-node-mine-plugin ALL
         COMMAND g++ -o minerNode_rpc.so one_node_setmine.cpp ../../testlibs/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -g
-        COMMAND ${CMAKE_COMMAND} -E copy minerNode_rpc.so ${CMAKE_INSTALL_PREFIX}/plugins
+        COMMAND ${CMAKE_COMMAND} -E copy minerNode_rpc.so ${CMAKE_INSTALL_PREFIX}/plugin/minerNode_rpc.so
         COMMAND g++ -o transaction.so transaction.cpp  ../../testlibs/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -g
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -32,7 +32,7 @@ add_library(MinerNodeRPC::Plugin SHARED IMPORTED GLOBAL)
 add_dependencies(MinerNodeRPC::Plugin bitcoin_0.19.1dev)
 set_target_properties(MinerNodeRPC::Plugin PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES "C"
-  IMPORTED_LOCATION ${CMAKE_INSTALL_PREFIX}/plugins/minerNode_rpc.so
+  IMPORTED_LOCATION ${CMAKE_INSTALL_PREFIX}/plugin/minerNode_rpc.so
   INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set_property(TARGET MinerNodeRPC::Plugin PROPERTY IMPORTED_NO_SONAME 1)
 

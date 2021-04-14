@@ -318,7 +318,7 @@ def filter_block_hash(plugin_output_files, node_count):
             while True:
                 line = f.readline()
                 if not line: break
-                result = line.find("[INV] MSGBLOCK : blockhash =")
+                result = line.find("[INV] MSGBLOCK: hash =")
                 if result != -1:
                     split_result = line.split("=")
                     block_hash = split_result[1].split("tx")[0].strip()

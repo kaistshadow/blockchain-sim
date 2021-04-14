@@ -1,2 +1,1 @@
-#add_subdirectory(bitcoin)
-add_subdirectory(prototype)
+add_subdirectory(bitcoin)

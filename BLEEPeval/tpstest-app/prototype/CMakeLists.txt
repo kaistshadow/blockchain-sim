@@ -21,14 +21,14 @@ target_sources(BITCOINTPS_TESTER
         PRIVATE
         tps_tester.cpp)
 
-add_shadow_plugin(BITCOIN_MONITOR)
-target_link_libraries(BITCOIN_MONITOR BLEEPtps)
-target_link_libraries(BITCOIN_MONITOR BitcoinTPSAdapter)
-target_link_libraries(BITCOIN_MONITOR Bitcoin_0_19_1dev::Plugin)
-
-target_sources(BITCOIN_MONITOR
-        PRIVATE
-        bitcoin_monitor.cpp)
+#add_shadow_plugin(BITCOIN_MONITOR)
+#target_link_libraries(BITCOIN_MONITOR BLEEPtps)
+#target_link_libraries(BITCOIN_MONITOR BitcoinTPSAdapter)
+#target_link_libraries(BITCOIN_MONITOR Bitcoin_0_19_1dev::Plugin)
+#
+#target_sources(BITCOIN_MONITOR
+#        PRIVATE
+#        bitcoin_monitor.cpp)
 
 
 
@@ -41,6 +41,6 @@ add_custom_command(TARGET BITCOINTPS_TESTER
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BITCOINTPS_TESTER> ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_custom_command(TARGET BITCOIN_MONITOR
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BITCOIN_MONITOR> ${CMAKE_CURRENT_SOURCE_DIR})
+#add_custom_command(TARGET BITCOIN_MONITOR
+#        POST_BUILD
+#        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BITCOIN_MONITOR> ${CMAKE_CURRENT_SOURCE_DIR})

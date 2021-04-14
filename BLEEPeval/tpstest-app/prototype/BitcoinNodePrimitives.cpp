@@ -287,27 +287,49 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
 
                     // create block structure
                     block* bp = new block(pblock->GetHash().GetHex(), pblock->hashPrevBlock.GetHex(), pblock->nTime);
+                    unsigned long int netTxLatency = 0;
                     for (int i = 0; i<pblock->vtx.size(); i++) {
                         bp->pushTxHash(pblock->vtx[i]->GetHash().GetHex());
                     }
+
                     // add block to forest
                     if (!bf.add_block(bp)) {
                         delete bp;  // if already exists, free allocated memory
                     }
 
+                    if (pblock->vtx.size() >= 2) {
+                        for (int i = 1; i<pblock->vtx.size(); i++) {
+                            assert(pblock->nTime >= global_txtimepool->get_txtime(pblock->vtx[i]->GetHash().GetHex()));
+                            netTxLatency += pblock->nTime - global_txtimepool->get_txtime(pblock->vtx[i]->GetHash().GetHex());
+                        }
+                        bp->setNetTxLatency(netTxLatency);
+                    }
+
                     // get besttip, calculate tps
                     static block* best = nullptr;
                     bp = bf.get_besttip();
+#define CONFIRMATION_COUNT  4
                     if (bp && bp->getParent() && (!best || best != bp)) {
                         best = bp;
                         uint32_t besttime = bp->getTime();
                         size_t txcount = 0;
+                        int length_from_tip = 0;
+                        size_t netConfirmedTxCount = 0;
+                        unsigned long int netConfirmedTxLatency = 0;
                         while(bp->getParent()) {
                             txcount += bp->getTxCount();
+                            if (length_from_tip > CONFIRMATION_COUNT) {
+                                netConfirmedTxCount += bp->getTxCount() - 1;    // ignore coinbase tx
+                                netConfirmedTxLatency += bp->getNetTxLatency();
+                            }
                             bp = bp->getParent();
+                            length_from_tip++;
                         }
                         uint32_t timebase = bp->getTime();
                         std::cout << "TPS = " << (txcount / ((double)besttime - timebase)) << "\n";
+                        if (netConfirmedTxCount && netConfirmedTxLatency) {
+                            std::cout << "Latency = " << (netConfirmedTxLatency / netConfirmedTxCount) << "seconds\n";
+                        }
                     }
                 }
             }
@@ -408,7 +430,7 @@ void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {
     CMutableTransaction mtx;
     if (!DecodeHexTx(mtx, hexTx, true))
         throw std::runtime_error("invalid transaction encoding");
-    std::cout<<"Debug - send tx:"<<hexTx<<"\n";
+//    std::cout<<"Debug - send tx:"<<hexTx<<"\n";
     CTransaction tx(mtx);
     const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
     CSerializedNetMsg msg = CNetMsgMaker(PROTOCOL_VERSION).Make(SERIALIZE_TRANSACTION_NO_WITNESS, NetMsgType::TX, tx);
@@ -420,6 +442,7 @@ void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {
     memcpy(hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
 
     CVectorWriter{SER_NETWORK, PROTOCOL_VERSION, serializedHeader, 0, hdr};
+    global_txtimepool->register_txtime(tx.GetHash().GetHex(), GetAdjustedTime());
     SendMsg(data_fd, serializedHeader);
     if (nMessageSize) {
         SendMsg(data_fd, msg.data);

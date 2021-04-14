@@ -11,14 +11,14 @@ import lxml.etree as ET
 import subprocess
 import math
 sys.path.append("")
-from testlibs import utils
+from testlibs import utils, test_result
 
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
         print("error while executing '%s'" % cmd)
         exit(-1)
 
-def test_result(condition_count, node_count, test_name):
+def simulation_test_result(condition_count, node_count, test_name):
     if condition_count == node_count:
         print("Success %s ... " %test_name)
         print("test result : %d/%d " %(condition_count,node_count))
@@ -226,7 +226,7 @@ def test_bitcoinApplication(output_file, args_standard, node_count):
         if j == len(args_standard):
             condition_count += 1
         
-    test_result(condition_count, node_count, "test_bitcoinApplication")
+    simulation_test_result(condition_count, node_count, "test_bitcoinApplication")
     sys.exit(0)
 
 # --------------------------------------------------------------------------------------------------------------
@@ -260,7 +260,7 @@ def test_difficulty_compare(bitcoin_log, xml_difficulty, node_count):
             if difficulty == "0.0002441371325370145":
                 condition_count += 1
 
-    test_result(condition_count, node_count, "test_difficulty_compare test")
+    simulation_test_result(condition_count, node_count, "test_difficulty_compare test")
     sys.exit(0)
 
 # --------------------------------------------------------------------------------------------------------------
@@ -282,7 +282,7 @@ def test_walletAddress(simulation_output_file, node_count):
                     condition_count += 1
                     continue
 
-    test_result(condition_count, node_count, "test_walletAddress ")
+    simulation_test_result(condition_count, node_count, "test_walletAddress ")
 
 # --------------------------------------------------------------------------------------------------------------
 #                                   Regression test-06 - mining test
@@ -302,7 +302,7 @@ def test_mining(shadow_output_file, node_count):
                 condition_count += 1
                 break
 
-    test_result(condition_count, node_count, "mining test")
+    simulation_test_result(condition_count, node_count, "mining test")
     sys.exit(0)
 
 # --------------------------------------------------------------------------------------------------------------
@@ -326,7 +326,7 @@ def test_MainChainInfo(shadow_output_file, rpc_output_file, node_count):
         print("There is a fork ...")
         condition_count = node_count
 
-    test_result(condition_count, node_count, "mainchain test")
+    simulation_test_result(condition_count, node_count, "mainchain test")
     sys.exit(0)
 
 # --------------------------------------------------------------------------------------------------------------
@@ -342,12 +342,11 @@ def test_transaction_existence(simulation_output_file, node_count):
             if not line: break
             result = line.find('"error":null')
             if result != -1:
-                print("Success transaction test ...")
                 condition_count += 1
                 break
         f.close()
 
-    test_result(condition_count, node_count, "transaction test")
+    simulation_test_result(condition_count, node_count, "transaction test")
 
 # --------------------------------------------------------------------------------------------------------------
 #                           Regression test-09 - transaction count test (emulation ver)
@@ -428,7 +427,7 @@ def test_transaction_count_regtest(simulation_output_file, node_count):
         if txs_bitcoind + int(mempool_size) == txs:
             condition_count += 1
 
-    test_result(condition_count, node_count, "transaction count test")
+    simulation_test_result(condition_count, node_count, "transaction count test")
 
 # --------------------------------------------------------------------------------------------------------------
 #                                       Regression test-10 - initial coin test 
@@ -567,5 +566,104 @@ def test_dumpfile_load(plugin_output_files, abs_path, difficulty):
         f.close()
         sys.exit(1)
 
+# --------------------------------------------------------------------------------------------------------------
+#                                       Regression test-13 - monitor node connection test
+# --------------------------------------------------------------------------------------------------------------
+# 이 테스트를 통해 실행될 플러그인 중에 monitor node 플러그인에 대한 테스트임.
+# monitor 노드는 시뮬레이션되는 블록체인의 모든 노드의 블록 전파를 관장함.
+# 현재 테스트에서는 시뮬레이션되는 블록체인의 노드와 monitor node와의 conncetion test임. 
+def monitor_connection_test(plugin_output_files, abs_path, node_count):
+    condition_count = 0
+    # 실행되는 node 수 + 
+    node_count = int(node_count) + 1
+    for i in range(0,len(plugin_output_files)):
+        result = plugin_output_files[i].find("monitor")
+        if result != -1:
+            f = open(plugin_output_files[i], "r")
+            while True:
+                line = f.readline()
+                if not line: break
+                result = line.find("Socket is successfully connected")
+                if result != -1:
+                    condition_count += 1
+                    if condition_count == node_count:
+                        f.close()
+                        break
+            f.close()
 
+        if condition_count == node_count:
+            print("Success monitor connection test ... ")
+            sys.exit(0)
 
+    print("Fail monitor conncetion test ... ")
+    print("only %d node connection ... " %condition_count)
+    sys.exit(1)
+
+# --------------------------------------------------------------------------------------------------------------
+#                                       Regression test-14 monitor node block propagation test
+# --------------------------------------------------------------------------------------------------------------
+# Monitor 노드는 비트코인 노드로 부터 블록을 전파받음. 이렇게 전파 받은 블록의 해시 값들과,
+# 비트코인 실행 결과 로그 값에 기록된 블록 해시 값들을 비교하여, Monitor 노드가 제대로 전파를 받았나 확인을 하는 테스트
+def Mointor_block_propagation_test(plugin_output_files, node_count, target_path):
+    each_node_block_list = utils.filter_block_hash(plugin_output_files, node_count)
+    monitor_result_path = target_path + "/shadow.data/monitor_result.txt"
+    f = open(monitor_result_path, "w")
+    for i in range(len(each_node_block_list)):
+        f.write("\t\t ---------- %d node monitor result ---------- \n\n" %i)
+        for j in range(len(each_node_block_list[i])):
+            f.write("Num %d block - %s\n" %(j, each_node_block_list[i][j]))
+        f.write("\n")
+    f.close()
+
+    node_blocklist = []
+    for i in range(node_count):
+        line = []
+        node_blocklist.append(line)
+
+    for i in range(0,len(plugin_output_files)):
+        result = plugin_output_files[i].find("stdout-bcdnode")
+        if result != -1:
+            node_blocklist[i] = test_result.filter_overlap_height(plugin_output_files[i])
+    
+    for i in range(0,len(node_blocklist)):
+        for j in range(0,len(node_blocklist[i])-1):
+            # 모니터 노드에는 제네시스 블록이 등록이 안되어 있기에, (전파된 블록만 컨트롤) 
+            if node_blocklist[i][j+1][0] in each_node_block_list[i]:
+                pass
+            else:
+                print("Fail Monitor block propagation test ... ")
+                print("There is no block (%s) " %node_blocklist[i][j+1][0])
+                sys.exit(1)
+    print("Success Monitor block propagation test ... ")
+    sys.exit(0)
+
+# --------------------------------------------------------------------------------------------------------------
+#                                       Regression test-15 - TxGenerator connection test
+# --------------------------------------------------------------------------------------------------------------
+# TxGenerator 가 node connection 과정에서 xml파일로부터 정의된 노드의 IP 주소를 기준으로 필터링 시작.
+def TxGenerator_connection_test(plugin_output_files, xmlfile, node_count):
+    IP_list = utils.get_address_list(xmlfile)
+    condition_count = 0
+    for i in range(0,len(plugin_output_files)):
+        result = plugin_output_files[i].find("txgenerator/stdout-txgenerator.BITCOINTPS_TESTER.1000.log")
+        if result != -1:
+            f = open(plugin_output_files[i], "r")
+            while True:
+                line = f.readline()
+                if not line: break
+                result = line.find("addTarget")
+                if result != -1:
+                    for i in range(0,len(IP_list)):
+                        result = line.find(IP_list[i])
+                        if result != -1:
+                            condition_count += 1
+                            if condition_count == 2:
+                                f.close()
+                                print("Success txGenrator connection test ...")
+                                sys.exit(0)
+                            else:
+                                break
+            f.close()
+    print(condition_count)
+    print("Fail txGenerator connection test ... ")
+    sys.exit(1)

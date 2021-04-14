@@ -7,9 +7,10 @@ if [ $1 -gt 3 ]; then
   exit
 fi
 
-if [ ! -e rpc.so ]; then
+if [ ! -e minerNode_rpc.so ]; then
   echo "start to dump!"
-  cp ../../../BLEEPemul/emulation/rpc.so ./
+  #install 경로 바꾸기.
+  cp ../../../BLEEPemul/emulation/minerNode_rpc.so ./
 fi
 
 path=../../../testlibs/dump/difficulty_$1
@@ -21,3 +22,4 @@ fi
 
 sh clean_data.sh $1
 shadow test-BitcoinP2P.xml
+

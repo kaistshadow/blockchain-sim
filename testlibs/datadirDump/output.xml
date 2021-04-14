@@ -29,27 +29,14 @@
              </graphml>]]></topology>
   <!-- the plug-ins we will be using -->
   <plugin id="bitcoind" path="libBITCOIND_0.19.1DEV.so"/>
-  <plugin id="client" path="minerNode_rpc.so"/>
-  <plugin id="BITCOINTPS_TESTER" path="libBITCOINTPS_TESTER.so"/>
-  <plugin id="BITCOIN_MONITOR" path="libBITCOIN_MONITOR.so"/>
+  <plugin id="client" path="rpc.so"/>
   <!-- the length of our experiment in seconds  1404101800-->
   <!-- our nodes -->
   <kill time="100"/>
   <node id="bcdnode0" iphint="1.0.0.1">
-    <application arguments="-debug -reindex -datadir=data/bcdnode0 -port=18333 -txindex=1 -fallbackfee=0.0002 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=1.0.0.1/0 -rpcbind=1.0.0.1 -addnode=1.1.0.1:18333 -addnode=1.1.0.1:18333 -algorithm=pow -difficulty=3 -limitancestorcount=200000 -limitdescendantcount=200000 -limitdescendantsize=20000 -maxmempool=1000" plugin="bitcoind" time="0"/>
-  </node>
-  <node id="bcdnode1" iphint="1.1.0.1">
-    <application arguments="-debug -reindex -datadir=data/bcdnode1 -port=18333 -txindex=1 -fallbackfee=0.0002 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=1.1.0.1/0 -rpcbind=1.1.0.1 -addnode=1.0.0.1:18333 -addnode=1.0.0.1:18333 -algorithm=pow -difficulty=3 -limitancestorcount=200000 -limitdescendantcount=200000 -limitdescendantsize=20000 -maxmempool=1000" plugin="bitcoind" time="0"/>
+    <application arguments="-debug -datadir=data/bcdnode0 -port=18333 -txindex=1 -fallbackfee=0.0002 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=1.0.0.1/0 -rpcbind=1.0.0.1 -addnode=1.0.0.1:18333 -addnode=1.1.0.1:18333 -addresstype=legacy -algorithm=pow -difficulty=3" plugin="bitcoind" time="0"/>
   </node>
   <node id="client0">
-    <application arguments="1.0.0.1:11111 93 " plugin="client" time="3"/>
+    <application arguments="1.0.0.1:11111 93 " plugin="client" time="5"/>
   </node>
-  <node id="txgenerator" iphint="99.99.0.1">
-    <application plugin="BITCOINTPS_TESTER" time="5" arguments="99.99.0.1 2"/>
-  </node>
-  <node id="monitor" iphint="99.99.0.2">
-    <application plugin="BITCOIN_MONITOR" time="5" arguments="99.99.0.2 2"/>
-  </node>
-
-
 </shadow>

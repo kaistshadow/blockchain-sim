@@ -23,7 +23,7 @@ add_custom_target(emulation-copy-plugin ALL
 
 add_custom_target(emulation-one-node-mine-plugin ALL
         COMMAND g++ -o minerNode_rpc.so one_node_setmine.cpp ../../testlibs/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -g
-        COMMAND ${CMAKE_COMMAND} -E copy minerNode_rpc.so ${CMAKE_INSTALL_PREFIX}/plugins
+        COMMAND ${CMAKE_COMMAND} -E copy minerNode_rpc.so ${CMAKE_INSTALL_PREFIX}/plugins/minerNode_rpc.so
         COMMAND g++ -o transaction.so transaction.cpp  ../../testlibs/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -g
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 

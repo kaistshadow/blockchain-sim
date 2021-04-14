@@ -170,6 +170,12 @@ if __name__ == '__main__':
 
     if OPT_TEST:
         cmake_test_opt = "-DTEST_OPT=ON"
+        my_path = os.getcwd()
+        target_path = my_path + "/testlibs/dump/difficulty_3"
+        if os.path.isdir(target_path):
+            pass
+        else:
+            exec_shell_cmd("cd testlibs/datadirDump; sh startdump.sh 3")
         exec_shell_cmd("mkdir -p build; cd build; cmake %s ../; make -j8; make test" %(cmake_test_opt))
 
     if OPT_UNITTEST:

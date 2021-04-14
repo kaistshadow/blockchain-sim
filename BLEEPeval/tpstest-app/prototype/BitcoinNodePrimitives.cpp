@@ -285,6 +285,8 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                     std::shared_ptr<CBlock> pblock = std::make_shared<CBlock>();
                     vRecv >> *pblock;
 
+                    std::cout<<"[INV] MSGBLOCK: hash = "<<pblock->GetHash().ToString()<<" txcnt = "<<pblock->vtx.size()<<" from = "<<data_fd <<"\n";
+
                     // create block structure
                     block* bp = new block(pblock->GetHash().GetHex(), pblock->hashPrevBlock.GetHex(), pblock->nTime);
                     for (int i = 0; i<pblock->vtx.size(); i++) {

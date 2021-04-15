@@ -24,21 +24,21 @@ int main(int argc, char* argv[]) {
     std::string wallet = rpc_request_with_no_params("getnewaddress");
     wallet = json_resp["result"].asString();
 
-    sleep(1);
-    int blockcnt=0;
-    while(blockcnt <= 6) {
-        rpc_request_no_return_no_params("getblockchaininfo");
-        blockcnt = json_resp["result"]["blocks"].asInt();
-        sleep(1);
-    }
+    // sleep(1);
+    // int blockcnt=0;
+    // while(blockcnt <= 6) {
+    //     rpc_request_no_return_no_params("getblockchaininfo");
+    //     blockcnt = json_resp["result"]["blocks"].asInt();
+    //     sleep(1);
+    // }
 
     int i=0;
     std::list<std::string> params_list;
 
     if(txcnt == -1) {
         while(1) {
-            params_list.push_front(wallet);
             params_list.push_front(amount);
+            params_list.push_front(wallet);
             rpc_reqeust_with_params("sendtoaddress", params_list);
             sleep(0.5);
             i++;
@@ -46,8 +46,8 @@ int main(int argc, char* argv[]) {
         }
     } else {
         for(i=0; i<txcnt; i++) {
-            params_list.push_front(wallet);
             params_list.push_front(amount);
+            params_list.push_front(wallet);
             rpc_reqeust_with_params("sendtoaddress", params_list);
             sleep(interval);
             params_list.clear();

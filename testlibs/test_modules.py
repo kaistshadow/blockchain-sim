@@ -96,17 +96,16 @@ def test_shadow(output_file, runtime, node_id_list, shadow_output):
             if result != -1:
                 condition_runtime = 1
 
-        result = line.find("starting to shut down")
-        if result != -1:
-            if result_count == len(node_id_list):
-                f.close()
-                print("Success shadow test ...")
-                return_count = 1
-                break
-            else:
-                f.close()
-                print("shadow plugin error...")
-                sys.exit(1)
+    if result_count == len(node_id_list):
+        f.close()
+        print("Success shadow test ...")
+        return_count = 1
+        sys.exit(0)
+
+    else:
+        f.close()
+        print("shadow plugin error...")
+        sys.exit(1)
 
     if return_count == 0:            
         f.close()
@@ -379,55 +378,29 @@ def test_transaction_count(simulation_output_file):
 # --------------------------------------------------------------------------------------------------------------
 # count "sendtoaddress" rpc request in bitcoin log and get transaction counts in tx injector log.
 # If the two are the same, true
-def test_transaction_count_regtest(simulation_output_file, node_count):
+def test_transaction_count_regtest(simulation_output_file):
     txs_bitcoind = 0
     blocks_count = 0
     mempool_size = 0
     condition_count = 0
-    for z in range(0,node_count):
-        f = open(simulation_output_file[0], "r")
-        for line in f.readlines()[::-1]:
-            result = line.find("UpdateTip")
-            if result != -1:
-                split_list = line.split(" ")
-                for i in range(0,len(split_list)):
-                    result = split_list[i].find("height=")
-                    if result != -1:
-                        blocks_count = int(split_list[i].split("=")[1])
-                        continue
-                    result = split_list[i].find("tx=")
-                    if result != -1:
-                        txs_bitcoind = int(split_list[i].split("=")[1])
-                        break
-                if txs_bitcoind != 0:
-                    break    
-        f.close()
-        txs_bitcoind = txs_bitcoind - blocks_count - 1
+    f = open(simulation_output_file[0], "r")
+    for line in f.readlines()[::-1]:
+        result = line.find("UpdateTip")
+        if result != -1:
+            split_list = line.split(" ")
+            for i in range(0,len(split_list)):
+                result = split_list[i].find("height=")
+                if result != -1:
+                    blocks_count = int(split_list[i].split("=")[1])
+                    continue
+                result = split_list[i].find("tx=")
+                if result != -1:
+                    txs_bitcoind = int(split_list[i].split("=")[1])
+                    break
+            if txs_bitcoind != 0:
+                break    
+    f.close()
 
-        txs = 0
-        f = open(simulation_output_file[(node_count*2)], "r")
-        for line in f.readlines()[::-1]:
-            result = line.find('"error":null')
-            if result != -1:
-                txs += 1
-            result = line.find('"result":null')
-            if result != -1:
-                break
-
-        f = open(simulation_output_file[z + node_count], "r")
-        while True:
-            line = f.readline()
-            if not line: break
-            result = line.find("maxmempool")
-            if result != -1:
-                mempool_size = line.split(",")[1].split(":")[1]
-                break
-        f.close()
-
-        if txs_bitcoind + int(mempool_size) == txs:
-            condition_count += 1
-
-    simulation_test_result(condition_count, node_count, "transaction count test")
 
 # --------------------------------------------------------------------------------------------------------------
 #                                       Regression test-10 - initial coin test 

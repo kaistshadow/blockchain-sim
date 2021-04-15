@@ -35,6 +35,7 @@ def get_xmlfile(path):
     xml_command = ""
     difficulty = ""
     node_count = 0
+    utils.exec_shell_cmd("rm -rf data shadow.data")
 
     if emulation_start == 1:
         tx_injector_file = 3
@@ -53,6 +54,9 @@ def get_xmlfile(path):
                     print("Only input integer ... (more than 1)")
                 else:
                     node_count = str(node_count)
+                    for i in range(0,int(node_count)):
+                        command = "mkdir -p data/bcdnode" + str(i)
+                        utils.exec_shell_cmd(command)
                     condition_count = 0
             except:
                 print("Only input integer ... (more than 1) ")
@@ -86,8 +90,11 @@ def get_xmlfile(path):
                 # data/bcdnode* 들은 여기 로직에 의해 생성됨.
                 # --------------------------------------------------------------------------------------------------------------
                 my_path = utils.filter_testlibs_path(my_path)
-                my_commnad = "cd " + my_path + "; python clean_data.py " + str(node_count) + " " + difficulty + " " + path
-                exec_shell_cmd(my_commnad)
+
+                # Emulation 과정에서는 dump logic이 필요없음
+                # 
+                # my_commnad = "cd " + my_path + "; python clean_data.py " + str(node_count) + " " + difficulty + " " + path
+                # exec_shell_cmd(my_commnad)
             else:
                 print("Enter only one of them(1/2/3)")
                 continue

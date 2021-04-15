@@ -27,12 +27,11 @@ jobs:
         python setup.py --test
 
     - name : Setup tmate session
-        uses : mxschmitt/action-tmate@v2
-        uses: actions/upload-artifact@v2
+      uses : mxschmitt/action-tmate@v2
+      if: failure()
 
-        # if: failure()
-        # - name: Archive test output files when the test is Failed
-        #     uses: actions/upload-artifact@v2
+    - name: Archive test output files when the test is Failed
+      uses: actions/upload-artifact@v2
 #       if: failure()
 #       with:
 #         name: shadow-bitcoin-with-wallet_outputs

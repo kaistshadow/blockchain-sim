@@ -25,7 +25,7 @@ if (ALL_OPT STREQUAL ON)
     message("                           Start All build")
     message("--------------------------------------------------------------------------------------")
     add_subdirectory(bitcoin)
-    add_subdirectory(monero)
+    # add_subdirectory(monero)
 
 elseif (GIT_OPT STREQUAL ON)
     message("--------------------------------------------------------------------------------------")

@@ -48,14 +48,14 @@ def setup_multiple_node_xml(node_num, simultime, bool_, algorithm, difficulty):
     else :
         node_id = "injector"
         node = ET.SubElement(shadow, "node", id=node_id)
-        time = str(60)
+        time = str(8)
         txcnt = sys.argv[6]
         if txcnt > -1:
             txsec = sys.argv[7]
             amount = sys.argv[8]
-            argument = "1.1.0.1:11111 %s %s %s " % (txcnt, txsec, amount)
+            argument = "1.0.0.1:11111 %s %s %s " % (txcnt, txsec, amount)
         elif txcnt == "-1 ":
-             argument= "1.1.0.1:11111 0 0 0 "
+             argument= "1.0.0.1:11111 0 0 0 "
         ET.SubElement(node,"application", plugin="txInjector", time=time, arguments=argument)
 
     tree.write(new_xml, pretty_print=True)

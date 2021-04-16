@@ -26,7 +26,13 @@ int main(int argc, char* argv[]) {
     params = Json::arrayValue;
     std::list<std::string> params_list;
     params_list.push_front(wallet);
+    params.clear();
+    params = Json::arrayValue;
+    params.append(wallet);
 
+    for(int i=0;i<7;i++){
+      bitcoin_rpc_request("setgeneratetoaddressnotime",params);
+    }
     rpc_reqeust_with_params("validateaddress", params_list);
     rpc_reqeust_with_params("setgeneratetoaddress", params_list);
 

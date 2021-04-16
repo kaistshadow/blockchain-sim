@@ -20,17 +20,17 @@ int main(int argc, char* argv[]) {
     params.clear();
 
     // method 1: generate node's wallet
+    bitcoin_rpc_request("listaddressgroupings", params);
     std::cout<<"-- wallet --\n";
-    std::string wallet = rpc_request_with_no_params("getnewaddress");
-    wallet = json_resp["result"].asString();
-
-    // sleep(1);
-    // int blockcnt=0;
-    // while(blockcnt <= 6) {
-    //     rpc_request_no_return_no_params("getblockchaininfo");
-    //     blockcnt = json_resp["result"]["blocks"].asInt();
-    //     sleep(1);
-    // }
+    std::string wallet = json_resp["result"][0][0][0].asString();
+    std::cout<<wallet<<"\n";
+    sleep(1);
+    int blockcnt=0;
+    while(blockcnt <= 6) {
+        rpc_request_no_return_no_params("getblockchaininfo");
+        blockcnt = json_resp["result"]["blocks"].asInt();
+        sleep(1);
+    }
 
     int i=0;
     std::list<std::string> params_list;

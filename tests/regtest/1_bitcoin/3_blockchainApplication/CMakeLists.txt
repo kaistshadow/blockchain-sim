@@ -27,8 +27,6 @@ add_test(NAME bitcoinApplication_shadow_test
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-set_tests_properties(bitcoinApplication_shadow_test PROPERTIES TIMEOUT 50) 
-
 set_property(TEST bitcoinApplication_shadow_test APPEND
         PROPERTY
         ENVIRONMENT PATH=$ENV{PATH}:$<TARGET_FILE_DIR:shadow>) # add path environment in order to run this test on CLion

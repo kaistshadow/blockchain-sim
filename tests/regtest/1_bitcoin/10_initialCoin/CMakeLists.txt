@@ -26,6 +26,7 @@ add_test(NAME bitcoin_initialCoin_test
   COMMAND python3 initialCoin.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
+
 set_property(TEST bitcoin_initialCoin_test APPEND
         PROPERTY
         ENVIRONMENT PATH=$ENV{PATH}:$<TARGET_FILE_DIR:shadow>) # add path environment in order to run this test on CLion

@@ -27,8 +27,6 @@ add_test(NAME bitcoin_dumpefile_test
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-set_tests_properties(bitcoin_dumpefile_test PROPERTIES TIMEOUT 50) 
-
 set_property(TEST bitcoin_dumpefile_test APPEND
         PROPERTY
         ENVIRONMENT PATH=$ENV{PATH}:$<TARGET_FILE_DIR:shadow>) # add path environment in order to run this test on CLion

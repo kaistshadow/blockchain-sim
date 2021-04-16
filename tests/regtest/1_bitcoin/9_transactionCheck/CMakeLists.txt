@@ -32,8 +32,6 @@ COMMAND python3 transaction_count.py
 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-set_tests_properties(shadow-bitcoin-transaction_count-test PROPERTIES TIMEOUT 50) 
-
 set_property(TEST shadow-bitcoin-transaction_count-test APPEND
         PROPERTY
         ENVIRONMENT PATH=$ENV{PATH}:$<TARGET_FILE_DIR:shadow>) # add path environment in order to run this test on CLion

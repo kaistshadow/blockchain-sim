@@ -136,4 +136,3 @@ testlibs/datadirDump/shadow.data
 testlibs/dump/difficulty_*
 
 .vscode
-tests/regtest/1_bitcoin/*/output2.xml

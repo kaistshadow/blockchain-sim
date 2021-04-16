@@ -28,9 +28,6 @@ add_test(NAME shadow_log_test
   COMMAND python3 shadowCheck.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
-
-set_tests_properties(shadow_log_test PROPERTIES TIMEOUT 5) 
-
 set_property(TEST shadow_log_test APPEND
         PROPERTY
         ENVIRONMENT PATH=$ENV{PATH}:$<TARGET_FILE_DIR:shadow>) # add path environment in order to use CLion

@@ -20,10 +20,10 @@ int main(int argc, char* argv[]) {
     params.clear();
 
     // method 1: generate node's wallet
+    bitcoin_rpc_request("listaddressgroupings", params);
     std::cout<<"-- wallet --\n";
-    std::string wallet = rpc_request_with_no_params("getnewaddress");
-    wallet = json_resp["result"].asString();
-
+    std::string wallet = json_resp["result"][0][0][0].asString();
+    std::cout<<wallet<<"\n";
     sleep(1);
     int blockcnt=0;
     while(blockcnt <= 6) {
@@ -37,8 +37,8 @@ int main(int argc, char* argv[]) {
 
     if(txcnt == -1) {
         while(1) {
-            params_list.push_front(wallet);
             params_list.push_front(amount);
+            params_list.push_front(wallet);
             rpc_reqeust_with_params("sendtoaddress", params_list);
             sleep(0.5);
             i++;
@@ -46,8 +46,8 @@ int main(int argc, char* argv[]) {
         }
     } else {
         for(i=0; i<txcnt; i++) {
-            params_list.push_front(wallet);
             params_list.push_front(amount);
+            params_list.push_front(wallet);
             rpc_reqeust_with_params("sendtoaddress", params_list);
             sleep(interval);
             params_list.clear();

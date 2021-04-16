@@ -39,22 +39,22 @@ def main():
     # # shadow output file이 제대로 생성된지 검증
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
 
-    if tx_mode == "enable":
-        # # Tx가 제대로 생성된지 검증.
-        test_modules.test_transaction_existence(simulation_output_file, int(len(plugin_list)/2))
+    # if tx_mode == "enable":
+    #     # # Tx가 제대로 생성된지 검증.
+    #     test_modules.test_transaction_existence(simulation_output_file, int(len(plugin_list)/2))
 
     # # shadow output 검증
-    complete_node, runtime = test_modules.emul_test_shadow(target_folder_file, runtime, node_id_list, output_file)
+    # complete_node, runtime = test_modules.emul_test_shadow(target_folder_file, runtime, node_id_list, output_file)
     
-    # wallet test
-    test_modules.test_walletAddress(simulation_output_file, int(len(plugin_list)/2))
+    # # wallet test
+    # test_modules.test_walletAddress(simulation_output_file, int(len(plugin_list)/2))
 
-    # result 
-    output_txt = path + "/shadow.data/output.txt"
-    test_result.summary_result(complete_node, simulation_output_file, runtime, output_txt, algo)
+    # # result 
+    # output_txt = path + "/shadow.data/output.txt"
+    # test_result.summary_result(complete_node, simulation_output_file, runtime, output_txt, algo)
 
-    print("emulation success!!")
-    sys.exit(0)
+    # print("emulation success!!")
+    # sys.exit(0)
 
 if __name__ == '__main__':
     main()

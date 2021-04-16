@@ -22,3 +22,4 @@ add_test(NAME MonitorNode-blockPropagation
   COMMAND python3 block_propagation.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
+set_tests_properties(MonitorNode-blockPropagation PROPERTIES TIMEOUT 150) 

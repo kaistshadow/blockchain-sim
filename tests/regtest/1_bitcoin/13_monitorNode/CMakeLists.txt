@@ -21,3 +21,5 @@ add_test(NAME MonitorNode-connection
   COMMAND python3 monitor.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
+
+set_tests_properties(MonitorNode-connection PROPERTIES TIMEOUT 150) 

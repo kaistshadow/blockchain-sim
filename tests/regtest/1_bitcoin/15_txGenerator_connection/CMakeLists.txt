@@ -21,3 +21,4 @@ add_test(NAME TxGenrator-connection
   COMMAND python3 txGenerator.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
+set_tests_properties(TxGenrator-connection PROPERTIES TIMEOUT 150) 

@@ -123,7 +123,6 @@ testlibs/__pycache__
 tests/regtest/2_sybilAPI/*/output.txt
 testlibs/__pycache__/test_modules.cpython-36.pyc
 
-tests/regtest/1_bitcoin/*/data
 tests/regtest/*/coinflip_hash.txt
 
 testlibs/datadirDump/data

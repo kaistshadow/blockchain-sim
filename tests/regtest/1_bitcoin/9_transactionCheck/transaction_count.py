@@ -22,7 +22,6 @@ def main():
     if OPT_REGTEST:
         tx_mode, algo, difficulty = xml_modules.get_xmlfile(path)
     else:
-        utils.exec_shell_cmd("sh clean_data.sh 10")
         present_path = path + "/output.xml"
         difficulty = utils.get_difficulty_fromXML(present_path)
 
@@ -53,7 +52,7 @@ def main():
     test_modules.test_walletAddress(simulation_output_file, int(len(plugin_list)/2))
 
     # transaction count test 실행.
-    test_modules.test_transaction_count_regtest(simulation_output_file)
+    test_modules.test_transaction_count_regtest(simulation_output_file, int(len(plugin_list)/2))
 
 
 if __name__ == '__main__':

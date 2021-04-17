@@ -89,10 +89,6 @@ tests/regtest/shadow-monero/monero_exe/
 tests/regtest/1_bitcoin/*.pyc
 tests/regtest/1_bitcoin/*/output.txt
 
-# tests/regtest/*/data
-# tests/regtest/*/*/data
-# tests/regtest/1_bitcoin/*/data
-
 external/bdb/4.8.30/build_unix
 external/libev/4.33/.deps/
 external/libev/4.33/.libs/
@@ -127,10 +123,8 @@ testlibs/__pycache__
 tests/regtest/2_sybilAPI/*/output.txt
 testlibs/__pycache__/test_modules.cpython-36.pyc
 
-tests/regtest/1_bitcoin/*/data
 tests/regtest/*/coinflip_hash.txt
 
-tests/regtest/*/*/data
 testlibs/datadirDump/data
 testlibs/datadirDump/shadow.data
 testlibs/dump/difficulty_*

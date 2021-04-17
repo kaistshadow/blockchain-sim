@@ -11,14 +11,14 @@ rm -rf data/*
 i=0
 while [ $i -lt $1 ]; do
 	mkdir -p data/bcdnode$i
-	cp -r ../../../../testlibs/dump/difficulty_3/bcdnode0/* ./data/bcdnode$i
+	# cp -r ../../../../testlibs/dump/difficulty_3/bcdnode0/* ./data/bcdnode$i
 	i=$(($i+1))
 done
 
-path="../../../../testlibs/dump/difficulty_3"
+# path="../../../../testlibs/dump/difficulty_3"
 
-cp -r $path/coinflip_hash.txt ./data
-cp -r $path/key.txt ./data
-cp -r $path/state.txt ./data
+# cp -r $path/coinflip_hash.txt ./data
+# cp -r $path/key.txt ./data
+# cp -r $path/state.txt ./data
 
-echo "Datadir Bootstrapping success!"
+# echo "Datadir Bootstrapping success!"

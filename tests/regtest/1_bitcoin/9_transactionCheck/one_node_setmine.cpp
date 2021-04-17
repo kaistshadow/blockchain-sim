@@ -22,14 +22,9 @@ int main(int argc, char* argv[]) {
     std::cout<<"wallet:";
     std::cout<<wallet;
     std::cout<<"\n";
+
     params.clear();
     params = Json::arrayValue;
-    params.append(wallet);
-
-    for(int i=0;i<7;i++){
-      bitcoin_rpc_request("setgeneratetoaddressnotime",params);
-    }
-
     std::list<std::string> params_list;
     params_list.push_front(wallet);
 

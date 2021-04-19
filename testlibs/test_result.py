@@ -99,8 +99,7 @@ def summary_result(node_list, node_output_file, sim_time, output_txt, algo):
     # peer_connection_result 리스트에는 각 peer들의 "getpeerinfo" rpc response 로그의 "ipaddr" 속성값들을 가져옴.
     # 예를들어 1.0.0.1의 노드는 ['1.1.0.1', '1.2.0.1'] 리스트를 가져와서 리스트가 곧 속성 값으로 저장이되는 식으로 2중 리스트 형식으로 구현됨.
     peer_connection_result = utils.get_peerinfo(node_output_file, IP_list)
-
-    f.write("\t4. peer connection status : \n\n")
+    f.write("\t5. peer connection status : \n\n")
     for i in range(0,len(peer_connection_result)):
         f.write("\t\t node : %s  ---------- connection match rate : %d/%d \n" %(IP_list[i], len(peer_connection_result[i]), len(IP_list)))
         for j in range(0,len(peer_connection_result[i])):

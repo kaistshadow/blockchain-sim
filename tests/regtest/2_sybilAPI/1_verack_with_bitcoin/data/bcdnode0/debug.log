@@ -18,10 +18,10 @@
 2020-01-01T00:00:00Z Using 16 MiB out of 32/2 requested for script execution cache, able to store 524288 elements
 2020-01-01T00:00:00Z Using 8 threads for script verification
 2020-01-01T00:00:00Z Allowing HTTP connections from: 127.0.0.0/8 0:0:0:0:0:0:0:0/128 0.0.0.0/0 
-2020-01-01T00:00:00Z libevent: event_add: event: 0x55aad71dad60 (fd 18), EV_READ    call 0x7f52764f3980
+2020-01-01T00:00:00Z libevent: event_add: event: 0x56046770b0a0 (fd 18), EV_READ    call 0x7f6e20e7a980
 2020-01-01T00:00:00Z libevent: Epoll ADD(1) on fd 18 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
 2020-01-01T00:00:00Z Binding RPC on address 1.0.0.1 port 11111
-2020-01-01T00:00:00Z libevent: event_add: event: 0x55aad71dd9d8 (fd 19), EV_READ    call 0x7f52765010d0
+2020-01-01T00:00:00Z libevent: event_add: event: 0x56046770e228 (fd 19), EV_READ    call 0x7f6e20e880d0
 2020-01-01T00:00:00Z libevent: Epoll ADD(1) on fd 19 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
 2020-01-01T00:00:00Z libevent: Bound to port 11111 - Awaiting connections ... 
 2020-01-01T00:00:00Z Initialized HTTP server
@@ -63,8 +63,8 @@
 2020-01-01T00:00:00Z leveldb: Delete type=3 #1
 2020-01-01T00:00:00Z Opened LevelDB successfully
 2020-01-01T00:00:00Z WriteBatch memory usage: db=chainstate, before=0.0MiB, after=0.0MiB
-2020-01-01T00:00:00Z Wrote new obfuscate key for /home/mong/dependency/blockchain-sim/tests/regtest/2_sybilAPI/1_verack_with_bitcoin/data/bcdnode0/chainstate: c4c122538a0555cf
-2020-01-01T00:00:00Z Using obfuscation key for /home/mong/dependency/blockchain-sim/tests/regtest/2_sybilAPI/1_verack_with_bitcoin/data/bcdnode0/chainstate: c4c122538a0555cf
+2020-01-01T00:00:00Z Wrote new obfuscate key for /home/mong/dependency/blockchain-sim/tests/regtest/2_sybilAPI/1_verack_with_bitcoin/data/bcdnode0/chainstate: aecb35ac01128851
+2020-01-01T00:00:00Z Using obfuscation key for /home/mong/dependency/blockchain-sim/tests/regtest/2_sybilAPI/1_verack_with_bitcoin/data/bcdnode0/chainstate: aecb35ac01128851
 2020-01-01T00:00:00Z init message: Rewinding blocks...
 2020-01-01T00:00:00Z  block index               0ms
 2020-01-01T00:00:00Z init message: Loading wallet...
@@ -90,7 +90,7 @@
 2020-01-01T00:00:00Z Failed to open mempool file from disk. Continuing anyway.
 2020-01-01T00:00:00Z block tree size = 1
 2020-01-01T00:00:00Z nBestHeight = 0
-2020-01-01T00:00:00Z libevent: event_add: event: 0x55aad8cd8da0 (fd 36), EV_READ    call 0x7f52764f3980
+2020-01-01T00:00:00Z libevent: event_add: event: 0x560469209b10 (fd 36), EV_READ    call 0x7f6e20e7a980
 2020-01-01T00:00:00Z libevent: Epoll ADD(1) on fd 36 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
 2020-01-01T00:00:00Z AddLocal(1.0.0.1:8333,1)
 2020-01-01T00:00:00Z Discover: IPv4 eth0: 1.0.0.1
@@ -103,40 +103,40 @@
 2020-01-01T00:00:00Z init message: Starting network threads...
 2020-01-01T00:00:00Z init message: Done loading
 2020-01-01T00:00:00Z torcontrol thread start
-2020-01-01T00:00:00Z libevent: event_add: event: 0x55aad92dee60 (fd -1), EV_READ    call 0x7f52764f2d40
-2020-01-01T00:00:00Z libevent: event_add: event: 0x55aad92deee0 (fd -1),  EV_WRITE   call 0x7f52764f2920
-2020-01-01T00:00:00Z libevent: event_del: 0x55aad92dee60 (fd -1), callback 0x7f52764f2d40
-2020-01-01T00:00:00Z libevent: event_del: 0x55aad92deee0 (fd -1), callback 0x7f52764f2920
-2020-01-01T00:00:00Z libevent: event_add: event: 0x55aad92dee60 (fd 39), EV_READ    call 0x7f52764f2d40
+2020-01-01T00:00:00Z libevent: event_add: event: 0x560469810030 (fd -1), EV_READ    call 0x7f6e20e79d40
+2020-01-01T00:00:00Z libevent: event_add: event: 0x5604698100b0 (fd -1),  EV_WRITE   call 0x7f6e20e79920
+2020-01-01T00:00:00Z libevent: event_del: 0x560469810030 (fd -1), callback 0x7f6e20e79d40
+2020-01-01T00:00:00Z libevent: event_del: 0x5604698100b0 (fd -1), callback 0x7f6e20e79920
+2020-01-01T00:00:00Z libevent: event_add: event: 0x560469810030 (fd 39), EV_READ    call 0x7f6e20e79d40
 2020-01-01T00:00:00Z libevent: Epoll ADD(1) on fd 39 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
-2020-01-01T00:00:00Z libevent: event_add: event: 0x55aad92deee0 (fd 39),  EV_WRITE   call 0x7f52764f2920
+2020-01-01T00:00:00Z libevent: event_add: event: 0x5604698100b0 (fd 39),  EV_WRITE   call 0x7f6e20e79920
 2020-01-01T00:00:00Z libevent: Epoll MOD(5) on fd 39 okay. Old events were 2; read change was 0 (none); write change was 1 (add); close change was 0 (none)
-2020-01-01T00:00:00Z libevent: event_add: event: 0x55aad92deee0 (fd 39),  EV_WRITE   call 0x7f52764f2920
+2020-01-01T00:00:00Z libevent: event_add: event: 0x5604698100b0 (fd 39),  EV_WRITE   call 0x7f6e20e79920
 2020-01-01T00:00:00Z net thread start
 2020-01-01T00:00:00Z dnsseed thread start
-2020-01-01T00:00:00Z Loading addresses from DNS seed dnsseed.bitcoin.dashjr.org
-2020-01-01T00:00:00Z Loading addresses from DNS seed seed.bitcoin.sipa.be
-2020-01-01T00:00:00Z Loading addresses from DNS seed seed.bitcoin.sprovoost.nl
-2020-01-01T00:00:00Z Loading addresses from DNS seed seed.btc.petertodd.org
 2020-01-01T00:00:00Z Loading addresses from DNS seed seed.bitcoinstats.com
-2020-01-01T00:00:00Z Loading addresses from DNS seed dnsseed.bluematt.me
+2020-01-01T00:00:00Z Loading addresses from DNS seed seed.btc.petertodd.org
+2020-01-01T00:00:00Z Loading addresses from DNS seed seed.bitcoin.sipa.be
 2020-01-01T00:00:00Z Loading addresses from DNS seed seed.bitcoin.jonasschnelli.ch
 2020-01-01T00:00:00Z Loading addresses from DNS seed dnsseed.emzy.de
+2020-01-01T00:00:00Z Loading addresses from DNS seed dnsseed.bluematt.me
+2020-01-01T00:00:00Z Loading addresses from DNS seed dnsseed.bitcoin.dashjr.org
+2020-01-01T00:00:00Z Loading addresses from DNS seed seed.bitcoin.sprovoost.nl
 2020-01-01T00:00:00Z 0 addresses found from DNS seeds
 2020-01-01T00:00:00Z dnsseed thread exit
 2020-01-01T00:00:00Z addcon thread start
 2020-01-01T00:00:00Z opencon thread start
-2020-01-01T00:00:00Z trying connection dnsseed.bitcoin.dashjr.org lastseen=0.0hrs
+2020-01-01T00:00:00Z trying connection seed.bitcoinstats.com lastseen=0.0hrs
 2020-01-01T00:00:00Z msghand thread start
-2020-01-01T00:00:00Z trying connection seed.bitcoin.sipa.be lastseen=0.0hrs
-2020-01-01T00:00:01Z trying connection seed.bitcoin.sprovoost.nl lastseen=0.0hrs
-2020-01-01T00:00:01Z trying connection seed.btc.petertodd.org lastseen=0.0hrs
-2020-01-01T00:00:02Z trying connection seed.bitcoinstats.com lastseen=0.0hrs
+2020-01-01T00:00:00Z trying connection seed.btc.petertodd.org lastseen=0.0hrs
+2020-01-01T00:00:01Z trying connection seed.bitcoin.sipa.be lastseen=0.0hrs
+2020-01-01T00:00:01Z trying connection seed.bitcoin.jonasschnelli.ch lastseen=0.0hrs
+2020-01-01T00:00:02Z trying connection dnsseed.emzy.de lastseen=0.0hrs
 2020-01-01T00:00:02Z Flushing wallet.dat
 2020-01-01T00:00:02Z Flushed wallet.dat 0ms
 2020-01-01T00:00:02Z trying connection dnsseed.bluematt.me lastseen=0.0hrs
-2020-01-01T00:00:03Z trying connection seed.bitcoin.jonasschnelli.ch lastseen=0.0hrs
-2020-01-01T00:00:03Z trying connection dnsseed.emzy.de lastseen=0.0hrs
+2020-01-01T00:00:03Z trying connection dnsseed.bitcoin.dashjr.org lastseen=0.0hrs
+2020-01-01T00:00:03Z trying connection seed.bitcoin.sprovoost.nl lastseen=0.0hrs
 2020-01-01T00:00:10Z Added connection peer=0
 2020-01-01T00:00:10Z connection from 2.0.0.1:58592 accepted
 2020-01-01T00:00:10Z received: version (102 bytes) peer=0

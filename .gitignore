@@ -130,3 +130,5 @@ testlibs/datadirDump/shadow.data
 testlibs/dump/difficulty_*
 
 .vscode
+tests/regtest/1_bitcoin/*/data
+tests/regtest/1_bitcoin/*/shadow.data

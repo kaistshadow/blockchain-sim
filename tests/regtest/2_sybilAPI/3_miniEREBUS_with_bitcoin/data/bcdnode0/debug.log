@@ -18,10 +18,10 @@
 2020-01-01T00:00:00Z Using 16 MiB out of 32/2 requested for script execution cache, able to store 524288 elements
 2020-01-01T00:00:00Z Using 8 threads for script verification
 2020-01-01T00:00:00Z Allowing HTTP connections from: 127.0.0.0/8 0:0:0:0:0:0:0:0/128 0.0.0.0/0 
-2020-01-01T00:00:00Z libevent: event_add: event: 0x55e6703b2a20 (fd 18), EV_READ    call 0x7f0f17170980
+2020-01-01T00:00:00Z libevent: event_add: event: 0x5588f6daf010 (fd 18), EV_READ    call 0x7fbdd523d980
 2020-01-01T00:00:00Z libevent: Epoll ADD(1) on fd 18 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
 2020-01-01T00:00:00Z Binding RPC on address 1.0.0.1 port 11111
-2020-01-01T00:00:00Z libevent: event_add: event: 0x55e6703b5ba8 (fd 19), EV_READ    call 0x7f0f1717e0d0
+2020-01-01T00:00:00Z libevent: event_add: event: 0x5588f6db2198 (fd 19), EV_READ    call 0x7fbdd524b0d0
 2020-01-01T00:00:00Z libevent: Epoll ADD(1) on fd 19 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
 2020-01-01T00:00:00Z libevent: Bound to port 11111 - Awaiting connections ... 
 2020-01-01T00:00:00Z Initialized HTTP server
@@ -63,8 +63,8 @@
 2020-01-01T00:00:00Z leveldb: Delete type=3 #1
 2020-01-01T00:00:00Z Opened LevelDB successfully
 2020-01-01T00:00:00Z WriteBatch memory usage: db=chainstate, before=0.0MiB, after=0.0MiB
-2020-01-01T00:00:00Z Wrote new obfuscate key for /home/mong/dependency/blockchain-sim/tests/regtest/2_sybilAPI/3_miniEREBUS_with_bitcoin/data/bcdnode0/chainstate: de3306ad0683092f
-2020-01-01T00:00:00Z Using obfuscation key for /home/mong/dependency/blockchain-sim/tests/regtest/2_sybilAPI/3_miniEREBUS_with_bitcoin/data/bcdnode0/chainstate: de3306ad0683092f
+2020-01-01T00:00:00Z Wrote new obfuscate key for /home/mong/dependency/blockchain-sim/tests/regtest/2_sybilAPI/3_miniEREBUS_with_bitcoin/data/bcdnode0/chainstate: 2fc5cbc6e81bf96e
+2020-01-01T00:00:00Z Using obfuscation key for /home/mong/dependency/blockchain-sim/tests/regtest/2_sybilAPI/3_miniEREBUS_with_bitcoin/data/bcdnode0/chainstate: 2fc5cbc6e81bf96e
 2020-01-01T00:00:00Z init message: Rewinding blocks...
 2020-01-01T00:00:00Z  block index               0ms
 2020-01-01T00:00:00Z init message: Loading wallet...
@@ -90,7 +90,7 @@
 2020-01-01T00:00:00Z Failed to open mempool file from disk. Continuing anyway.
 2020-01-01T00:00:00Z block tree size = 1
 2020-01-01T00:00:00Z nBestHeight = 0
-2020-01-01T00:00:00Z libevent: event_add: event: 0x55e671eb1600 (fd 36), EV_READ    call 0x7f0f17170980
+2020-01-01T00:00:00Z libevent: event_add: event: 0x5588f88adaa0 (fd 36), EV_READ    call 0x7fbdd523d980
 2020-01-01T00:00:00Z libevent: Epoll ADD(1) on fd 36 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
 2020-01-01T00:00:00Z AddLocal(1.0.0.1:8333,1)
 2020-01-01T00:00:00Z Discover: IPv4 eth0: 1.0.0.1
@@ -103,40 +103,40 @@
 2020-01-01T00:00:00Z init message: Starting network threads...
 2020-01-01T00:00:00Z init message: Done loading
 2020-01-01T00:00:00Z torcontrol thread start
-2020-01-01T00:00:00Z libevent: event_add: event: 0x55e6724b7ab0 (fd -1), EV_READ    call 0x7f0f1716fd40
-2020-01-01T00:00:00Z libevent: event_add: event: 0x55e6724b7b30 (fd -1),  EV_WRITE   call 0x7f0f1716f920
-2020-01-01T00:00:00Z libevent: event_del: 0x55e6724b7ab0 (fd -1), callback 0x7f0f1716fd40
-2020-01-01T00:00:00Z libevent: event_del: 0x55e6724b7b30 (fd -1), callback 0x7f0f1716f920
-2020-01-01T00:00:00Z libevent: event_add: event: 0x55e6724b7ab0 (fd 39), EV_READ    call 0x7f0f1716fd40
+2020-01-01T00:00:00Z libevent: event_add: event: 0x5588f8eb3e90 (fd -1), EV_READ    call 0x7fbdd523cd40
+2020-01-01T00:00:00Z libevent: event_add: event: 0x5588f8eb3f10 (fd -1),  EV_WRITE   call 0x7fbdd523c920
+2020-01-01T00:00:00Z libevent: event_del: 0x5588f8eb3e90 (fd -1), callback 0x7fbdd523cd40
+2020-01-01T00:00:00Z libevent: event_del: 0x5588f8eb3f10 (fd -1), callback 0x7fbdd523c920
+2020-01-01T00:00:00Z libevent: event_add: event: 0x5588f8eb3e90 (fd 39), EV_READ    call 0x7fbdd523cd40
 2020-01-01T00:00:00Z libevent: Epoll ADD(1) on fd 39 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
-2020-01-01T00:00:00Z libevent: event_add: event: 0x55e6724b7b30 (fd 39),  EV_WRITE   call 0x7f0f1716f920
+2020-01-01T00:00:00Z libevent: event_add: event: 0x5588f8eb3f10 (fd 39),  EV_WRITE   call 0x7fbdd523c920
 2020-01-01T00:00:00Z libevent: Epoll MOD(5) on fd 39 okay. Old events were 2; read change was 0 (none); write change was 1 (add); close change was 0 (none)
-2020-01-01T00:00:00Z libevent: event_add: event: 0x55e6724b7b30 (fd 39),  EV_WRITE   call 0x7f0f1716f920
+2020-01-01T00:00:00Z libevent: event_add: event: 0x5588f8eb3f10 (fd 39),  EV_WRITE   call 0x7fbdd523c920
 2020-01-01T00:00:00Z net thread start
 2020-01-01T00:00:00Z dnsseed thread start
-2020-01-01T00:00:00Z Loading addresses from DNS seed dnsseed.bluematt.me
-2020-01-01T00:00:00Z Loading addresses from DNS seed seed.bitcoin.sprovoost.nl
-2020-01-01T00:00:00Z Loading addresses from DNS seed seed.bitcoinstats.com
-2020-01-01T00:00:00Z Loading addresses from DNS seed seed.bitcoin.jonasschnelli.ch
-2020-01-01T00:00:00Z Loading addresses from DNS seed seed.bitcoin.sipa.be
 2020-01-01T00:00:00Z Loading addresses from DNS seed seed.btc.petertodd.org
-2020-01-01T00:00:00Z Loading addresses from DNS seed dnsseed.emzy.de
+2020-01-01T00:00:00Z Loading addresses from DNS seed seed.bitcoinstats.com
 2020-01-01T00:00:00Z Loading addresses from DNS seed dnsseed.bitcoin.dashjr.org
+2020-01-01T00:00:00Z Loading addresses from DNS seed seed.bitcoin.sipa.be
+2020-01-01T00:00:00Z Loading addresses from DNS seed dnsseed.bluematt.me
+2020-01-01T00:00:00Z Loading addresses from DNS seed seed.bitcoin.jonasschnelli.ch
+2020-01-01T00:00:00Z Loading addresses from DNS seed dnsseed.emzy.de
+2020-01-01T00:00:00Z Loading addresses from DNS seed seed.bitcoin.sprovoost.nl
 2020-01-01T00:00:00Z 0 addresses found from DNS seeds
 2020-01-01T00:00:00Z dnsseed thread exit
 2020-01-01T00:00:00Z addcon thread start
 2020-01-01T00:00:00Z opencon thread start
-2020-01-01T00:00:00Z trying connection dnsseed.bluematt.me lastseen=0.0hrs
+2020-01-01T00:00:00Z trying connection seed.btc.petertodd.org lastseen=0.0hrs
 2020-01-01T00:00:00Z msghand thread start
-2020-01-01T00:00:00Z trying connection seed.bitcoin.sprovoost.nl lastseen=0.0hrs
-2020-01-01T00:00:01Z trying connection seed.bitcoinstats.com lastseen=0.0hrs
-2020-01-01T00:00:01Z trying connection seed.bitcoin.jonasschnelli.ch lastseen=0.0hrs
-2020-01-01T00:00:02Z trying connection seed.bitcoin.sipa.be lastseen=0.0hrs
+2020-01-01T00:00:00Z trying connection seed.bitcoinstats.com lastseen=0.0hrs
+2020-01-01T00:00:01Z trying connection dnsseed.bitcoin.dashjr.org lastseen=0.0hrs
+2020-01-01T00:00:01Z trying connection seed.bitcoin.sipa.be lastseen=0.0hrs
+2020-01-01T00:00:02Z trying connection dnsseed.bluematt.me lastseen=0.0hrs
 2020-01-01T00:00:02Z Flushing wallet.dat
 2020-01-01T00:00:02Z Flushed wallet.dat 0ms
-2020-01-01T00:00:02Z trying connection seed.btc.petertodd.org lastseen=0.0hrs
+2020-01-01T00:00:02Z trying connection seed.bitcoin.jonasschnelli.ch lastseen=0.0hrs
 2020-01-01T00:00:03Z trying connection dnsseed.emzy.de lastseen=0.0hrs
-2020-01-01T00:00:03Z trying connection dnsseed.bitcoin.dashjr.org lastseen=0.0hrs
+2020-01-01T00:00:03Z trying connection seed.bitcoin.sprovoost.nl lastseen=0.0hrs
 2020-01-01T00:00:06Z Added connection peer=0
 2020-01-01T00:00:06Z connection from 23.19.34.231:46695 accepted
 2020-01-01T00:00:06Z received: version (102 bytes) peer=0
@@ -156,14 +156,14 @@
 2020-01-01T00:00:06Z received: pong (8 bytes) peer=0
 2020-01-01T00:00:55Z received: addr (301 bytes) peer=0
 2020-01-01T00:00:55Z Added 10 addresses from 23.19.34.231: 0 tried, 10 new
-2020-01-01T00:00:55Z trying connection 178.63.97.197:8333 lastseen=122.0hrs
+2020-01-01T00:00:55Z trying connection 77.234.50.2:8333 lastseen=122.0hrs
 2020-01-01T00:00:55Z Added connection peer=1
 2020-01-01T00:00:55Z sending version (102 bytes) peer=1
 2020-01-01T00:00:55Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=1
 2020-01-01T00:00:55Z received: version (102 bytes) peer=1
 2020-01-01T00:00:55Z sending verack (0 bytes) peer=1
 2020-01-01T00:00:55Z sending getaddr (0 bytes) peer=1
-2020-01-01T00:00:55Z Moving 178.63.97.197:8333 to tried
+2020-01-01T00:00:55Z Moving 77.234.50.2:8333 to tried
 2020-01-01T00:00:55Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=1
 2020-01-01T00:00:55Z added time data, samples 3, offset +0 (+0 minutes)
 2020-01-01T00:00:55Z received: verack (0 bytes) peer=1
@@ -174,14 +174,14 @@
 2020-01-01T00:00:55Z sending ping (8 bytes) peer=1
 2020-01-01T00:00:55Z sending feefilter (8 bytes) peer=1
 2020-01-01T00:00:56Z received: pong (8 bytes) peer=1
-2020-01-01T00:00:56Z trying connection 12.23.127.175:8333 lastseen=122.0hrs
+2020-01-01T00:00:56Z trying connection 13.114.243.132:8333 lastseen=122.0hrs
 2020-01-01T00:00:56Z Added connection peer=2
 2020-01-01T00:00:56Z sending version (102 bytes) peer=2
 2020-01-01T00:00:56Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=2
 2020-01-01T00:00:57Z received: version (102 bytes) peer=2
 2020-01-01T00:00:57Z sending verack (0 bytes) peer=2
 2020-01-01T00:00:57Z sending getaddr (0 bytes) peer=2
-2020-01-01T00:00:57Z Moving 12.23.127.175:8333 to tried
+2020-01-01T00:00:57Z Moving 13.114.243.132:8333 to tried
 2020-01-01T00:00:57Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=2
 2020-01-01T00:00:57Z added time data, samples 4, offset -1 (+0 minutes)
 2020-01-01T00:00:57Z received: verack (0 bytes) peer=2
@@ -191,241 +191,210 @@
 2020-01-01T00:00:57Z sending sendcmpct (9 bytes) peer=2
 2020-01-01T00:00:57Z sending ping (8 bytes) peer=2
 2020-01-01T00:00:57Z sending feefilter (8 bytes) peer=2
+2020-01-01T00:00:57Z trying connection 178.63.97.197:8333 lastseen=122.0hrs
 2020-01-01T00:00:57Z received: pong (8 bytes) peer=2
-2020-01-01T00:00:57Z trying connection 85.144.197.163:8333 lastseen=122.0hrs
 2020-01-01T00:00:57Z Added connection peer=3
 2020-01-01T00:00:57Z sending version (102 bytes) peer=3
 2020-01-01T00:00:57Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=3
-2020-01-01T00:00:58Z received: version (102 bytes) peer=3
-2020-01-01T00:00:58Z sending verack (0 bytes) peer=3
-2020-01-01T00:00:58Z sending getaddr (0 bytes) peer=3
-2020-01-01T00:00:58Z Moving 85.144.197.163:8333 to tried
-2020-01-01T00:00:58Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=3
-2020-01-01T00:00:58Z added time data, samples 5, offset -1 (+0 minutes)
-2020-01-01T00:00:58Z -1  -1  +0  +0  +0  |  nTimeOffset = +0  (+0 minutes)
-2020-01-01T00:00:58Z received: verack (0 bytes) peer=3
-2020-01-01T00:00:58Z New outbound peer connected: version: 70015, blocks=0, peer=3 (full-relay)
-2020-01-01T00:00:58Z sending sendheaders (0 bytes) peer=3
-2020-01-01T00:00:58Z sending sendcmpct (9 bytes) peer=3
-2020-01-01T00:00:58Z sending sendcmpct (9 bytes) peer=3
-2020-01-01T00:00:58Z sending ping (8 bytes) peer=3
-2020-01-01T00:00:58Z sending feefilter (8 bytes) peer=3
-2020-01-01T00:00:58Z trying connection 196.28.98.20:8333 lastseen=122.0hrs
-2020-01-01T00:00:58Z received: pong (8 bytes) peer=3
-2020-01-01T00:00:58Z Added connection peer=4
-2020-01-01T00:00:58Z sending version (102 bytes) peer=4
-2020-01-01T00:00:58Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=4
-2020-01-01T00:00:58Z received: version (102 bytes) peer=4
-2020-01-01T00:00:58Z sending verack (0 bytes) peer=4
-2020-01-01T00:00:58Z sending getaddr (0 bytes) peer=4
-2020-01-01T00:00:58Z Moving 196.28.98.20:8333 to tried
-2020-01-01T00:00:58Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=4
-2020-01-01T00:00:58Z added time data, samples 6, offset +0 (+0 minutes)
-2020-01-01T00:00:58Z received: verack (0 bytes) peer=4
-2020-01-01T00:00:58Z New outbound peer connected: version: 70015, blocks=0, peer=4 (full-relay)
-2020-01-01T00:00:58Z sending sendheaders (0 bytes) peer=4
-2020-01-01T00:00:58Z sending sendcmpct (9 bytes) peer=4
-2020-01-01T00:00:58Z sending sendcmpct (9 bytes) peer=4
-2020-01-01T00:00:58Z sending ping (8 bytes) peer=4
-2020-01-01T00:00:58Z sending feefilter (8 bytes) peer=4
-2020-01-01T00:00:58Z trying connection 77.234.50.2:8333 lastseen=122.0hrs
-2020-01-01T00:00:58Z received: pong (8 bytes) peer=4
-2020-01-01T00:00:59Z Added connection peer=5
-2020-01-01T00:00:59Z sending version (102 bytes) peer=5
-2020-01-01T00:00:59Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=5
-2020-01-01T00:00:59Z received: version (102 bytes) peer=5
-2020-01-01T00:00:59Z sending verack (0 bytes) peer=5
-2020-01-01T00:00:59Z sending getaddr (0 bytes) peer=5
-2020-01-01T00:00:59Z Moving 77.234.50.2:8333 to tried
-2020-01-01T00:00:59Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=5
-2020-01-01T00:00:59Z added time data, samples 7, offset +0 (+0 minutes)
-2020-01-01T00:00:59Z -1  -1  +0  +0  +0  +0  +0  |  nTimeOffset = +0  (+0 minutes)
-2020-01-01T00:00:59Z received: verack (0 bytes) peer=5
-2020-01-01T00:00:59Z New outbound peer connected: version: 70015, blocks=0, peer=5 (full-relay)
-2020-01-01T00:00:59Z sending sendheaders (0 bytes) peer=5
-2020-01-01T00:00:59Z sending sendcmpct (9 bytes) peer=5
-2020-01-01T00:00:59Z sending sendcmpct (9 bytes) peer=5
-2020-01-01T00:00:59Z sending ping (8 bytes) peer=5
-2020-01-01T00:00:59Z sending feefilter (8 bytes) peer=5
-2020-01-01T00:00:59Z received: pong (8 bytes) peer=5
-2020-01-01T00:01:01Z trying connection 83.164.131.242:8333 lastseen=122.0hrs
-2020-01-01T00:01:01Z Added connection peer=6
-2020-01-01T00:01:01Z sending version (102 bytes) peer=6
-2020-01-01T00:01:01Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=6
-2020-01-01T00:01:01Z received: version (102 bytes) peer=6
-2020-01-01T00:01:01Z sending verack (0 bytes) peer=6
-2020-01-01T00:01:01Z sending getaddr (0 bytes) peer=6
-2020-01-01T00:01:01Z Moving 83.164.131.242:8333 to tried
-2020-01-01T00:01:01Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=6
-2020-01-01T00:01:01Z added time data, samples 8, offset +0 (+0 minutes)
-2020-01-01T00:01:01Z received: verack (0 bytes) peer=6
-2020-01-01T00:01:01Z New outbound peer connected: version: 70015, blocks=0, peer=6 (full-relay)
-2020-01-01T00:01:01Z sending sendheaders (0 bytes) peer=6
-2020-01-01T00:01:01Z sending sendcmpct (9 bytes) peer=6
-2020-01-01T00:01:01Z sending sendcmpct (9 bytes) peer=6
-2020-01-01T00:01:01Z sending ping (8 bytes) peer=6
-2020-01-01T00:01:01Z sending feefilter (8 bytes) peer=6
-2020-01-01T00:01:02Z received: pong (8 bytes) peer=6
-2020-01-01T00:01:02Z trying connection 50.35.67.146:8333 lastseen=122.0hrs
-2020-01-01T00:01:02Z Added connection peer=7
-2020-01-01T00:01:02Z sending version (102 bytes) peer=7
-2020-01-01T00:01:02Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=7
-2020-01-01T00:01:03Z received: version (102 bytes) peer=7
-2020-01-01T00:01:03Z sending verack (0 bytes) peer=7
-2020-01-01T00:01:03Z sending getaddr (0 bytes) peer=7
-2020-01-01T00:01:03Z Moving 50.35.67.146:8333 to tried
-2020-01-01T00:01:03Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=7
-2020-01-01T00:01:03Z added time data, samples 9, offset -1 (+0 minutes)
-2020-01-01T00:01:03Z -1  -1  -1  +0  +0  +0  +0  +0  +0  |  nTimeOffset = +0  (+0 minutes)
-2020-01-01T00:01:03Z received: verack (0 bytes) peer=7
-2020-01-01T00:01:03Z New outbound peer connected: version: 70015, blocks=0, peer=7 (full-relay)
-2020-01-01T00:01:03Z sending sendheaders (0 bytes) peer=7
-2020-01-01T00:01:03Z sending sendcmpct (9 bytes) peer=7
-2020-01-01T00:01:03Z sending sendcmpct (9 bytes) peer=7
-2020-01-01T00:01:03Z sending ping (8 bytes) peer=7
-2020-01-01T00:01:03Z sending feefilter (8 bytes) peer=7
-2020-01-01T00:01:03Z received: pong (8 bytes) peer=7
-2020-01-01T00:01:05Z socket closed
-2020-01-01T00:01:05Z disconnecting peer=2
-2020-01-01T00:01:05Z Cleared nodestate for peer=2
-2020-01-01T00:01:05Z trying connection 13.114.243.132:8333 lastseen=122.0hrs
+2020-01-01T00:00:57Z received: version (102 bytes) peer=3
+2020-01-01T00:00:57Z sending verack (0 bytes) peer=3
+2020-01-01T00:00:57Z sending getaddr (0 bytes) peer=3
+2020-01-01T00:00:57Z Moving 178.63.97.197:8333 to tried
+2020-01-01T00:00:57Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=3
+2020-01-01T00:00:57Z added time data, samples 5, offset +0 (+0 minutes)
+2020-01-01T00:00:57Z -1  +0  +0  +0  +0  |  nTimeOffset = +0  (+0 minutes)
+2020-01-01T00:00:57Z received: verack (0 bytes) peer=3
+2020-01-01T00:00:57Z New outbound peer connected: version: 70015, blocks=0, peer=3 (full-relay)
+2020-01-01T00:00:57Z sending sendheaders (0 bytes) peer=3
+2020-01-01T00:00:57Z sending sendcmpct (9 bytes) peer=3
+2020-01-01T00:00:57Z sending sendcmpct (9 bytes) peer=3
+2020-01-01T00:00:57Z sending ping (8 bytes) peer=3
+2020-01-01T00:00:57Z sending feefilter (8 bytes) peer=3
+2020-01-01T00:00:57Z received: pong (8 bytes) peer=3
+2020-01-01T00:00:59Z trying connection 196.28.98.20:8333 lastseen=122.0hrs
+2020-01-01T00:00:59Z Added connection peer=4
+2020-01-01T00:00:59Z sending version (102 bytes) peer=4
+2020-01-01T00:00:59Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=4
+2020-01-01T00:00:59Z received: version (102 bytes) peer=4
+2020-01-01T00:00:59Z sending verack (0 bytes) peer=4
+2020-01-01T00:00:59Z sending getaddr (0 bytes) peer=4
+2020-01-01T00:00:59Z Moving 196.28.98.20:8333 to tried
+2020-01-01T00:00:59Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=4
+2020-01-01T00:00:59Z added time data, samples 6, offset +0 (+0 minutes)
+2020-01-01T00:00:59Z received: verack (0 bytes) peer=4
+2020-01-01T00:00:59Z New outbound peer connected: version: 70015, blocks=0, peer=4 (full-relay)
+2020-01-01T00:00:59Z sending sendheaders (0 bytes) peer=4
+2020-01-01T00:00:59Z sending sendcmpct (9 bytes) peer=4
+2020-01-01T00:00:59Z sending sendcmpct (9 bytes) peer=4
+2020-01-01T00:00:59Z sending ping (8 bytes) peer=4
+2020-01-01T00:00:59Z sending feefilter (8 bytes) peer=4
+2020-01-01T00:00:59Z received: pong (8 bytes) peer=4
+2020-01-01T00:01:01Z trying connection 85.144.197.163:8333 lastseen=122.0hrs
+2020-01-01T00:01:01Z Added connection peer=5
+2020-01-01T00:01:01Z sending version (102 bytes) peer=5
+2020-01-01T00:01:01Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=5
+2020-01-01T00:01:01Z received: version (102 bytes) peer=5
+2020-01-01T00:01:01Z sending verack (0 bytes) peer=5
+2020-01-01T00:01:01Z sending getaddr (0 bytes) peer=5
+2020-01-01T00:01:01Z Moving 85.144.197.163:8333 to tried
+2020-01-01T00:01:01Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=5
+2020-01-01T00:01:01Z added time data, samples 7, offset +0 (+0 minutes)
+2020-01-01T00:01:01Z -1  +0  +0  +0  +0  +0  +0  |  nTimeOffset = +0  (+0 minutes)
+2020-01-01T00:01:01Z received: verack (0 bytes) peer=5
+2020-01-01T00:01:01Z New outbound peer connected: version: 70015, blocks=0, peer=5 (full-relay)
+2020-01-01T00:01:01Z sending sendheaders (0 bytes) peer=5
+2020-01-01T00:01:01Z sending sendcmpct (9 bytes) peer=5
+2020-01-01T00:01:01Z sending sendcmpct (9 bytes) peer=5
+2020-01-01T00:01:01Z sending ping (8 bytes) peer=5
+2020-01-01T00:01:01Z sending feefilter (8 bytes) peer=5
+2020-01-01T00:01:02Z received: pong (8 bytes) peer=5
+2020-01-01T00:01:02Z trying connection 178.234.29.184:8333 lastseen=122.0hrs
+2020-01-01T00:01:02Z Added connection peer=6
+2020-01-01T00:01:02Z sending version (102 bytes) peer=6
+2020-01-01T00:01:02Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=6
+2020-01-01T00:01:02Z received: version (102 bytes) peer=6
+2020-01-01T00:01:02Z sending verack (0 bytes) peer=6
+2020-01-01T00:01:02Z sending getaddr (0 bytes) peer=6
+2020-01-01T00:01:02Z Moving 178.234.29.184:8333 to tried
+2020-01-01T00:01:02Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=6
+2020-01-01T00:01:02Z added time data, samples 8, offset +0 (+0 minutes)
+2020-01-01T00:01:02Z received: verack (0 bytes) peer=6
+2020-01-01T00:01:02Z New outbound peer connected: version: 70015, blocks=0, peer=6 (full-relay)
+2020-01-01T00:01:02Z sending sendheaders (0 bytes) peer=6
+2020-01-01T00:01:02Z sending sendcmpct (9 bytes) peer=6
+2020-01-01T00:01:02Z sending sendcmpct (9 bytes) peer=6
+2020-01-01T00:01:02Z sending ping (8 bytes) peer=6
+2020-01-01T00:01:02Z sending feefilter (8 bytes) peer=6
+2020-01-01T00:01:03Z received: pong (8 bytes) peer=6
+2020-01-01T00:01:04Z trying connection 83.164.131.242:8333 lastseen=122.0hrs
+2020-01-01T00:01:04Z Added connection peer=7
+2020-01-01T00:01:04Z sending version (102 bytes) peer=7
+2020-01-01T00:01:04Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=7
+2020-01-01T00:01:04Z received: version (102 bytes) peer=7
+2020-01-01T00:01:04Z sending verack (0 bytes) peer=7
+2020-01-01T00:01:04Z sending getaddr (0 bytes) peer=7
+2020-01-01T00:01:04Z Moving 83.164.131.242:8333 to tried
+2020-01-01T00:01:04Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=7
+2020-01-01T00:01:04Z added time data, samples 9, offset +0 (+0 minutes)
+2020-01-01T00:01:04Z -1  +0  +0  +0  +0  +0  +0  +0  +0  |  nTimeOffset = +0  (+0 minutes)
+2020-01-01T00:01:04Z received: verack (0 bytes) peer=7
+2020-01-01T00:01:04Z New outbound peer connected: version: 70015, blocks=0, peer=7 (full-relay)
+2020-01-01T00:01:04Z sending sendheaders (0 bytes) peer=7
+2020-01-01T00:01:04Z sending sendcmpct (9 bytes) peer=7
+2020-01-01T00:01:04Z sending sendcmpct (9 bytes) peer=7
+2020-01-01T00:01:04Z sending ping (8 bytes) peer=7
+2020-01-01T00:01:04Z sending feefilter (8 bytes) peer=7
+2020-01-01T00:01:04Z received: pong (8 bytes) peer=7
+2020-01-01T00:01:05Z trying connection 50.35.67.146:8333 lastseen=122.0hrs
 2020-01-01T00:01:05Z Added connection peer=8
 2020-01-01T00:01:05Z sending version (102 bytes) peer=8
 2020-01-01T00:01:05Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=8
-2020-01-01T00:01:06Z received: version (102 bytes) peer=8
-2020-01-01T00:01:06Z sending verack (0 bytes) peer=8
-2020-01-01T00:01:06Z sending getaddr (0 bytes) peer=8
-2020-01-01T00:01:06Z Moving 13.114.243.132:8333 to tried
-2020-01-01T00:01:06Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=8
-2020-01-01T00:01:06Z added time data, samples 10, offset -1 (+0 minutes)
-2020-01-01T00:01:06Z received: verack (0 bytes) peer=8
-2020-01-01T00:01:06Z New outbound peer connected: version: 70015, blocks=0, peer=8 (full-relay)
-2020-01-01T00:01:06Z sending sendheaders (0 bytes) peer=8
-2020-01-01T00:01:06Z sending sendcmpct (9 bytes) peer=8
-2020-01-01T00:01:06Z sending sendcmpct (9 bytes) peer=8
-2020-01-01T00:01:06Z sending ping (8 bytes) peer=8
-2020-01-01T00:01:06Z sending feefilter (8 bytes) peer=8
-2020-01-01T00:01:06Z trying connection 178.234.29.184:8333 lastseen=122.0hrs
-2020-01-01T00:01:06Z received: pong (8 bytes) peer=8
-2020-01-01T00:01:06Z Added connection peer=9
-2020-01-01T00:01:06Z sending version (102 bytes) peer=9
-2020-01-01T00:01:06Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=9
-2020-01-01T00:01:06Z received: version (102 bytes) peer=9
-2020-01-01T00:01:06Z sending verack (0 bytes) peer=9
-2020-01-01T00:01:06Z sending getaddr (0 bytes) peer=9
-2020-01-01T00:01:06Z Moving 178.234.29.184:8333 to tried
-2020-01-01T00:01:06Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=9
-2020-01-01T00:01:06Z added time data, samples 11, offset +0 (+0 minutes)
-2020-01-01T00:01:06Z -1  -1  -1  -1  +0  +0  +0  +0  +0  +0  +0  |  nTimeOffset = +0  (+0 minutes)
-2020-01-01T00:01:06Z received: verack (0 bytes) peer=9
-2020-01-01T00:01:06Z New outbound peer connected: version: 70015, blocks=0, peer=9 (full-relay)
-2020-01-01T00:01:06Z sending sendheaders (0 bytes) peer=9
-2020-01-01T00:01:06Z sending sendcmpct (9 bytes) peer=9
-2020-01-01T00:01:06Z sending sendcmpct (9 bytes) peer=9
-2020-01-01T00:01:06Z sending ping (8 bytes) peer=9
-2020-01-01T00:01:06Z sending feefilter (8 bytes) peer=9
-2020-01-01T00:01:06Z received: pong (8 bytes) peer=9
-2020-01-01T00:01:08Z trying connection 209.141.124.190:8333 lastseen=122.0hrs
-2020-01-01T00:01:08Z Added connection peer=10
-2020-01-01T00:01:08Z sending version (102 bytes) peer=10
-2020-01-01T00:01:08Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=10
-2020-01-01T00:01:08Z received: version (102 bytes) peer=10
-2020-01-01T00:01:08Z sending verack (0 bytes) peer=10
-2020-01-01T00:01:08Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=10
-2020-01-01T00:01:08Z added time data, samples 12, offset +0 (+0 minutes)
-2020-01-01T00:01:08Z received: verack (0 bytes) peer=10
-2020-01-01T00:01:08Z New outbound peer connected: version: 70015, blocks=0, peer=10 (block-relay)
-2020-01-01T00:01:08Z sending sendheaders (0 bytes) peer=10
-2020-01-01T00:01:08Z sending sendcmpct (9 bytes) peer=10
-2020-01-01T00:01:08Z sending sendcmpct (9 bytes) peer=10
-2020-01-01T00:01:08Z sending ping (8 bytes) peer=10
-2020-01-01T00:01:09Z received: pong (8 bytes) peer=10
+2020-01-01T00:01:05Z received: version (102 bytes) peer=8
+2020-01-01T00:01:05Z sending verack (0 bytes) peer=8
+2020-01-01T00:01:05Z sending getaddr (0 bytes) peer=8
+2020-01-01T00:01:05Z Moving 50.35.67.146:8333 to tried
+2020-01-01T00:01:05Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=8
+2020-01-01T00:01:05Z added time data, samples 10, offset +0 (+0 minutes)
+2020-01-01T00:01:05Z received: verack (0 bytes) peer=8
+2020-01-01T00:01:05Z New outbound peer connected: version: 70015, blocks=0, peer=8 (full-relay)
+2020-01-01T00:01:05Z sending sendheaders (0 bytes) peer=8
+2020-01-01T00:01:05Z sending sendcmpct (9 bytes) peer=8
+2020-01-01T00:01:05Z sending sendcmpct (9 bytes) peer=8
+2020-01-01T00:01:05Z sending ping (8 bytes) peer=8
+2020-01-01T00:01:05Z sending feefilter (8 bytes) peer=8
+2020-01-01T00:01:05Z received: pong (8 bytes) peer=8
+2020-01-01T00:01:06Z trying connection 12.23.127.175:8333 lastseen=122.0hrs
+2020-01-01T00:01:11Z connection to 12.23.127.175:8333 timeout
+2020-01-01T00:01:12Z trying connection 209.141.124.190:8333 lastseen=122.0hrs
+2020-01-01T00:01:12Z Added connection peer=9
+2020-01-01T00:01:12Z sending version (102 bytes) peer=9
+2020-01-01T00:01:12Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=9
+2020-01-01T00:01:12Z received: version (102 bytes) peer=9
+2020-01-01T00:01:12Z sending verack (0 bytes) peer=9
+2020-01-01T00:01:12Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=9
+2020-01-01T00:01:12Z added time data, samples 11, offset +0 (+0 minutes)
+2020-01-01T00:01:12Z -1  +0  +0  +0  +0  +0  +0  +0  +0  +0  +0  |  nTimeOffset = +0  (+0 minutes)
+2020-01-01T00:01:12Z received: verack (0 bytes) peer=9
+2020-01-01T00:01:12Z New outbound peer connected: version: 70015, blocks=0, peer=9 (block-relay)
+2020-01-01T00:01:12Z sending sendheaders (0 bytes) peer=9
+2020-01-01T00:01:12Z sending sendcmpct (9 bytes) peer=9
+2020-01-01T00:01:12Z sending sendcmpct (9 bytes) peer=9
+2020-01-01T00:01:12Z sending ping (8 bytes) peer=9
+2020-01-01T00:01:12Z received: pong (8 bytes) peer=9
 2020-01-01T00:01:45Z received: addr (301 bytes) peer=0
 2020-01-01T00:02:05Z socket closed
-2020-01-01T00:02:05Z disconnecting peer=8
-2020-01-01T00:02:05Z Cleared nodestate for peer=8
+2020-01-01T00:02:05Z disconnecting peer=2
+2020-01-01T00:02:05Z Cleared nodestate for peer=2
 2020-01-01T00:02:06Z sending ping (8 bytes) peer=0
 2020-01-01T00:02:06Z received: pong (8 bytes) peer=0
 2020-01-01T00:02:35Z received: addr (2761 bytes) peer=0
-2020-01-01T00:02:35Z Added 90 addresses from 23.19.34.231: 9 tried, 90 new
-2020-01-01T00:02:36Z trying connection 69.227.161.76:8333 lastseen=122.0hrs
+2020-01-01T00:02:35Z Added 90 addresses from 23.19.34.231: 8 tried, 89 new
+2020-01-01T00:02:35Z trying connection 159.197.167.236:8333 lastseen=122.0hrs
+2020-01-01T00:02:35Z Added connection peer=10
+2020-01-01T00:02:35Z sending version (102 bytes) peer=10
+2020-01-01T00:02:35Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=10
+2020-01-01T00:02:35Z received: version (102 bytes) peer=10
+2020-01-01T00:02:35Z sending verack (0 bytes) peer=10
+2020-01-01T00:02:35Z sending getaddr (0 bytes) peer=10
+2020-01-01T00:02:35Z Moving 159.197.167.236:8333 to tried
+2020-01-01T00:02:35Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=10
+2020-01-01T00:02:35Z added time data, samples 12, offset +0 (+0 minutes)
+2020-01-01T00:02:35Z received: verack (0 bytes) peer=10
+2020-01-01T00:02:35Z New outbound peer connected: version: 70015, blocks=0, peer=10 (full-relay)
+2020-01-01T00:02:35Z sending sendheaders (0 bytes) peer=10
+2020-01-01T00:02:35Z sending sendcmpct (9 bytes) peer=10
+2020-01-01T00:02:35Z sending sendcmpct (9 bytes) peer=10
+2020-01-01T00:02:35Z sending ping (8 bytes) peer=10
+2020-01-01T00:02:35Z sending feefilter (8 bytes) peer=10
+2020-01-01T00:02:36Z trying connection 17.243.219.43:8333 lastseen=122.0hrs
+2020-01-01T00:02:36Z received: pong (8 bytes) peer=10
 2020-01-01T00:02:36Z Added connection peer=11
 2020-01-01T00:02:36Z sending version (102 bytes) peer=11
 2020-01-01T00:02:36Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=11
 2020-01-01T00:02:36Z received: version (102 bytes) peer=11
 2020-01-01T00:02:36Z sending verack (0 bytes) peer=11
-2020-01-01T00:02:36Z sending getaddr (0 bytes) peer=11
-2020-01-01T00:02:36Z Moving 69.227.161.76:8333 to tried
 2020-01-01T00:02:36Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=11
 2020-01-01T00:02:36Z added time data, samples 13, offset +0 (+0 minutes)
-2020-01-01T00:02:36Z -1  -1  -1  -1  +0  +0  +0  +0  +0  +0  +0  +0  +0  |  nTimeOffset = +0  (+0 minutes)
+2020-01-01T00:02:36Z -1  +0  +0  +0  +0  +0  +0  +0  +0  +0  +0  +0  +0  |  nTimeOffset = +0  (+0 minutes)
 2020-01-01T00:02:36Z received: verack (0 bytes) peer=11
-2020-01-01T00:02:36Z New outbound peer connected: version: 70015, blocks=0, peer=11 (full-relay)
+2020-01-01T00:02:36Z New outbound peer connected: version: 70015, blocks=0, peer=11 (block-relay)
 2020-01-01T00:02:36Z sending sendheaders (0 bytes) peer=11
 2020-01-01T00:02:36Z sending sendcmpct (9 bytes) peer=11
 2020-01-01T00:02:36Z sending sendcmpct (9 bytes) peer=11
 2020-01-01T00:02:36Z sending ping (8 bytes) peer=11
-2020-01-01T00:02:36Z sending feefilter (8 bytes) peer=11
-2020-01-01T00:02:36Z trying connection 153.112.30.128:8333 lastseen=122.0hrs
 2020-01-01T00:02:36Z received: pong (8 bytes) peer=11
-2020-01-01T00:02:36Z Added connection peer=12
-2020-01-01T00:02:36Z sending version (102 bytes) peer=12
-2020-01-01T00:02:36Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=12
-2020-01-01T00:02:37Z received: version (102 bytes) peer=12
-2020-01-01T00:02:37Z sending verack (0 bytes) peer=12
-2020-01-01T00:02:37Z receive version message: /Satoshi:0.19.1/: version 70015, blocks=0, us=1.0.0.1:8333, peer=12
-2020-01-01T00:02:37Z added time data, samples 14, offset -1 (+0 minutes)
-2020-01-01T00:02:37Z received: verack (0 bytes) peer=12
-2020-01-01T00:02:37Z New outbound peer connected: version: 70015, blocks=0, peer=12 (block-relay)
-2020-01-01T00:02:37Z sending sendheaders (0 bytes) peer=12
-2020-01-01T00:02:37Z sending sendcmpct (9 bytes) peer=12
-2020-01-01T00:02:37Z sending sendcmpct (9 bytes) peer=12
-2020-01-01T00:02:37Z sending ping (8 bytes) peer=12
-2020-01-01T00:02:37Z received: pong (8 bytes) peer=12
-2020-01-01T00:02:38Z Making feeler connection to 52.65.19.187:8333
-2020-01-01T00:02:38Z trying connection 52.65.19.187:8333 lastseen=122.0hrs
-2020-01-01T00:02:38Z Added connection peer=13
-2020-01-01T00:02:38Z sending version (102 bytes) peer=13
-2020-01-01T00:02:38Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=13
+2020-01-01T00:02:37Z Making feeler connection to 205.88.49.98:8333
+2020-01-01T00:02:37Z trying connection 205.88.49.98:8333 lastseen=122.0hrs
+2020-01-01T00:02:37Z Added connection peer=12
+2020-01-01T00:02:37Z sending version (102 bytes) peer=12
+2020-01-01T00:02:37Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=12
 2020-01-01T00:02:55Z sending ping (8 bytes) peer=1
-2020-01-01T00:02:58Z sending ping (8 bytes) peer=3
-2020-01-01T00:02:58Z sending ping (8 bytes) peer=4
-2020-01-01T00:02:59Z sending ping (8 bytes) peer=5
-2020-01-01T00:03:01Z sending ping (8 bytes) peer=6
-2020-01-01T00:03:03Z sending ping (8 bytes) peer=7
-2020-01-01T00:03:06Z sending ping (8 bytes) peer=9
-2020-01-01T00:03:08Z sending ping (8 bytes) peer=10
-2020-01-01T00:03:39Z socket no message in first 60 seconds, 0 1 from 13
-2020-01-01T00:03:39Z disconnecting peer=13
-2020-01-01T00:03:39Z Cleared nodestate for peer=13
+2020-01-01T00:02:57Z sending ping (8 bytes) peer=3
+2020-01-01T00:02:59Z sending ping (8 bytes) peer=4
+2020-01-01T00:03:01Z sending ping (8 bytes) peer=5
+2020-01-01T00:03:02Z sending ping (8 bytes) peer=6
+2020-01-01T00:03:04Z sending ping (8 bytes) peer=7
+2020-01-01T00:03:05Z sending ping (8 bytes) peer=8
+2020-01-01T00:03:12Z sending ping (8 bytes) peer=9
+2020-01-01T00:03:38Z socket no message in first 60 seconds, 0 1 from 12
+2020-01-01T00:03:38Z disconnecting peer=12
+2020-01-01T00:03:38Z Cleared nodestate for peer=12
+2020-01-01T00:03:38Z Making feeler connection to 109.2.173.98:8333
+2020-01-01T00:03:38Z trying connection 109.2.173.98:8333 lastseen=122.0hrs
+2020-01-01T00:03:38Z Added connection peer=13
+2020-01-01T00:03:38Z sending version (102 bytes) peer=13
+2020-01-01T00:03:38Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=13
 2020-01-01T00:04:06Z sending ping (8 bytes) peer=0
-2020-01-01T00:04:17Z Interrupting HTTP server
-2020-01-01T00:04:17Z Interrupting HTTP RPC server
-2020-01-01T00:04:17Z Interrupting RPC
-2020-01-01T00:04:17Z tor: Thread interrupt
-2020-01-01T00:04:17Z libevent: event_active: 0x55e67021b5d0 (fd -1), res 1, callback 0x7f0f17177220
-2020-01-01T00:04:17Z libevent: epoll_dispatch: epoll_wait reports 1
-2020-01-01T00:04:17Z libevent: event_active: 0x55e671eb1600 (fd 36), res 2, callback 0x7f0f17170980
-2020-01-01T00:04:17Z libevent: event_del: 0x55e67021b5d0 (fd -1), callback 0x7f0f17177220
-2020-01-01T00:04:17Z libevent: event_process_active: event: 0x55e67021b5d0,    call 0x7f0f17177220
-2020-01-01T00:04:17Z libevent: event_base_loop: asked to terminate loop.
-2020-01-01T00:04:17Z libevent: event_del: 0x55e671eb2180 (fd -1), callback 0x7f0f1d68cf06
-2020-01-01T00:04:17Z libevent: event_callback_finalize_many_: 3 events finalizing
-2020-01-01T00:04:17Z libevent: event_del: 0x55e6724b7ab0 (fd 39), callback 0x7f0f1716fd40
-2020-01-01T00:04:17Z libevent: Epoll MOD(4) on fd 39 okay. Old events were 6; read change was 2 (del); write change was 0 (none); close change was 0 (none)
-2020-01-01T00:04:17Z libevent: event_del: 0x55e6724b7b30 (fd 39), callback 0x7f0f1716f920
-2020-01-01T00:04:17Z libevent: Epoll DEL(4) on fd 39 okay. Old events were 4; read change was 0 (none); write change was 2 (del); close change was 0 (none)
-2020-01-01T00:04:17Z libevent: event_del: 0x55e6724b7ab0 (fd 39), callback 0x7f0f1716fd40
-2020-01-01T00:04:17Z torcontrol thread exit
-2020-01-01T00:04:17Z addcon thread exit
-2020-01-01T00:04:17Z Shutdown: In progress...
-2020-01-01T00:04:17Z Stopping HTTP RPC server
-2020-01-01T00:04:17Z Unregistering HTTP handler for / (exactmatch 1)
-2020-01-01T00:04:17Z Unregistering HTTP handler for /wallet/ (exactmatch 0)
-2020-01-01T00:04:17Z Stopping RPC
-2020-01-01T00:04:17Z RPC stopped.
-2020-01-01T00:04:17Z Stopping HTTP server
-2020-01-01T00:04:17Z Waiting for HTTP worker threads to exit
-2020-01-01T00:04:17Z net thread exit
-2020-01-01T00:04:17Z msghand thread exit
-2020-01-01T00:04:18Z opencon thread exit
+2020-01-01T00:04:35Z sending ping (8 bytes) peer=10
+2020-01-01T00:04:36Z sending ping (8 bytes) peer=11
+2020-01-01T00:04:39Z socket no message in first 60 seconds, 0 1 from 13
+2020-01-01T00:04:39Z disconnecting peer=13
+2020-01-01T00:04:39Z Cleared nodestate for peer=13
+2020-01-01T00:06:03Z Making feeler connection to 180.131.79.51:8333
+2020-01-01T00:06:03Z trying connection 180.131.79.51:8333 lastseen=122.1hrs
+2020-01-01T00:06:03Z Added connection peer=14
+2020-01-01T00:06:03Z sending version (102 bytes) peer=14
+2020-01-01T00:06:03Z send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=14
+2020-01-01T00:07:04Z socket no message in first 60 seconds, 0 1 from 14
+2020-01-01T00:07:04Z disconnecting peer=14
+2020-01-01T00:07:04Z Cleared nodestate for peer=14

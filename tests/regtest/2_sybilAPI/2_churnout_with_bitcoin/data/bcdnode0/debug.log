@@ -23,10 +23,10 @@
 2020-01-01T00:00:05Z Using 16 MiB out of 32/2 requested for script execution cache, able to store 524288 elements
 2020-01-01T00:00:05Z Using 8 threads for script verification
 2020-01-01T00:00:05Z Allowing HTTP connections from: 127.0.0.0/8 0:0:0:0:0:0:0:0/128 0.0.0.0/0 
-2020-01-01T00:00:05Z libevent: event_add: event: 0x5651bfa252f0 (fd 18), EV_READ    call 0x7f2eaa2f0980
+2020-01-01T00:00:05Z libevent: event_add: event: 0x55c5f5620130 (fd 18), EV_READ    call 0x7fa7db753980
 2020-01-01T00:00:05Z libevent: Epoll ADD(1) on fd 18 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
 2020-01-01T00:00:05Z Binding RPC on address 1.0.0.1 port 11111
-2020-01-01T00:00:05Z libevent: event_add: event: 0x5651bfa28478 (fd 19), EV_READ    call 0x7f2eaa2fe0d0
+2020-01-01T00:00:05Z libevent: event_add: event: 0x55c5f56232b8 (fd 19), EV_READ    call 0x7fa7db7610d0
 2020-01-01T00:00:05Z libevent: Epoll ADD(1) on fd 19 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
 2020-01-01T00:00:05Z libevent: Bound to port 11111 - Awaiting connections ... 
 2020-01-01T00:00:05Z Initialized HTTP server
@@ -68,8 +68,8 @@
 2020-01-01T00:00:05Z leveldb: Delete type=3 #1
 2020-01-01T00:00:05Z Opened LevelDB successfully
 2020-01-01T00:00:05Z WriteBatch memory usage: db=chainstate, before=0.0MiB, after=0.0MiB
-2020-01-01T00:00:05Z Wrote new obfuscate key for /home/mong/dependency/blockchain-sim/tests/regtest/2_sybilAPI/2_churnout_with_bitcoin/data/bcdnode0/chainstate: dcf0acf988f4de61
-2020-01-01T00:00:05Z Using obfuscation key for /home/mong/dependency/blockchain-sim/tests/regtest/2_sybilAPI/2_churnout_with_bitcoin/data/bcdnode0/chainstate: dcf0acf988f4de61
+2020-01-01T00:00:05Z Wrote new obfuscate key for /home/mong/dependency/blockchain-sim/tests/regtest/2_sybilAPI/2_churnout_with_bitcoin/data/bcdnode0/chainstate: 697716d439b971ce
+2020-01-01T00:00:05Z Using obfuscation key for /home/mong/dependency/blockchain-sim/tests/regtest/2_sybilAPI/2_churnout_with_bitcoin/data/bcdnode0/chainstate: 697716d439b971ce
 2020-01-01T00:00:05Z init message: Rewinding blocks...
 2020-01-01T00:00:05Z  block index               0ms
 2020-01-01T00:00:05Z init message: Loading wallet...

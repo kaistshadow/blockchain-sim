@@ -18,7 +18,7 @@ mkdir -p data/bcdnode0
 
 #2-0. generate xml file
 SHELL_PATH=`pwd -P`
-python xmlGenerator.py 1 100 coinflip disable $1 $SHELL_PATH
+python xmlGenerator.py 1 100 pow disable $1 $SHELL_PATH
 
 #2. execute shadow
 SHELL_PATH=`pwd -P`
@@ -35,5 +35,7 @@ if [ -d $DUMPPATH ]; then
   rm -rf $DUMPPATH/*
 fi
 mkdir -p  $DUMPPATH/bcdnode0/
-cp -r ./data/bcdnode0  $DUMPPATH/*
+rm ./data/bcdnode0/peers.dat
+cp -r ./data/bcdnode0/*  $DUMPPATH/bcdnode0
 cp -r ./data/*.txt $DUMPPATH
+cp -r ./peers.dat $DUMPPATH/bcdnode0

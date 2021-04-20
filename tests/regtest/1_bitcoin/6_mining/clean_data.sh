@@ -11,7 +11,7 @@ rm -rf data/*
 i=0
 while [ $i -lt $1 ]; do
 	mkdir -p data/bcdnode$i
-	cp -r ../../../../testlibs/regtest_dump/difficulty_3/bcdnode0/* ./data/bcdnode$i
+	cp -r ../../../../testlibs/dump/difficulty_3/bcdnode0/* ./data/bcdnode$i
 	i=$(($i+1))
 done
 

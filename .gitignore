@@ -81,6 +81,7 @@ tests/regtest/shadow-dependencies/8_customed_rpc/node1/
 tests/regtest/shadow-bitcoin/*/base*.xml
 tests/regtest/*/datadir
 tests/regtest/*/*/datadir
+tests/regtest/*/*/data
 tests/regtest/shadow-bitcoin/*/data
 tests/regtest/shadow-bitcoin/*/target_example.xml
 tests/regtest/shadow_storage_mgmt_test/*.txt

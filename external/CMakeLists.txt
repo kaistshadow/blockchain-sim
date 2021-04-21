@@ -15,7 +15,6 @@ message("                           Start default dependencies build")
 message("--------------------------------------------------------------------------------------")
 add_subdirectory(openssl)
 add_subdirectory(bdb)
-
 add_subdirectory(curl)
 add_subdirectory(libev)
 
@@ -26,6 +25,12 @@ if (ALL_OPT STREQUAL ON)
     message("--------------------------------------------------------------------------------------")
     add_subdirectory(bitcoin)
     # add_subdirectory(monero)
+
+elseif (LITECOIN_OPT STREQUAL ON)
+    message("--------------------------------------------------------------------------------------")
+    message("                           Start Litecoin build")
+    message("--------------------------------------------------------------------------------------")
+    add_subdirectory(litecoin)
 
 elseif (GIT_OPT STREQUAL ON)
     message("--------------------------------------------------------------------------------------")

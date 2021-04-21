@@ -51,9 +51,12 @@ option(GIT_OPT "Only run on git action (deafult : OFF)" OFF)
 # bleep lib option
 option(BLEEPLIB_OPT "BLEEPLIB on build (default: ON)" ON)
 
+# litecoin option
+option(LITECOIN_OPT "Litecoin on build (default: OFF)" OFF)
 
 message("------------------------------------------------------------------------------------------------------")
 message("                                          BITCOIN_OPT : ${BITCOIN_OPT}")
+message("                                          LITECOIN_OPT : ${LITECOIN_OPT}")
 message("")
 message("")
 message("                                            ALL_OPT   : ${ALL_OPT}")
@@ -74,15 +77,15 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/Install")
 enable_testing()
 add_subdirectory(interfaces)
 add_subdirectory(external)
-add_subdirectory(BLEEPemul)
 
 if(BLEEPLIB_OPT STREQUAL ON)
     add_subdirectory(BLEEPlib)
+    add_subdirectory(BLEEPemul)
+    add_subdirectory(BLEEPeval)
+    add_subdirectory(testlibs)
 endif(BLEEPLIB_OPT STREQUAL ON)
 
 # add_subdirectory(BLEEPapp)
-add_subdirectory(BLEEPeval)
-add_subdirectory(testlibs)
 
 if (TEST_OPT STREQUAL ON)
     add_subdirectory(tests)

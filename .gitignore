@@ -128,6 +128,7 @@ tests/regtest/*/coinflip_hash.txt
 
 testlibs/datadirDump/data
 testlibs/datadirDump/shadow.data
+testlibs/datadirDump/*.xml
 testlibs/dump/difficulty_*
 
 .vscode

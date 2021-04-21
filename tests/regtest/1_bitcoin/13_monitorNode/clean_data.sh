@@ -15,10 +15,10 @@ while [ $i -lt $1 ]; do
 	i=$(($i+1))
 done
 
-# path="../../../../testlibs/dump/difficulty_3"
+path="../../../../testlibs/dump/difficulty_3"
 
-# cp -r $path/coinflip_hash.txt ./data
-# cp -r $path/key.txt ./data
-# cp -r $path/state.txt ./data
+cp -r $path/coinflip_hash.txt ./data
+cp -r $path/key.txt ./data
+cp -r $path/state.txt ./data
 
 # echo "Datadir Bootstrapping success!"

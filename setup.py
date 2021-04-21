@@ -43,7 +43,6 @@ def prepare_nodejs():
     
 def prepare_rust():
     exec_shell_cmd("sudo apt-get install -y rustc")
-
     # Following script is available for rustup installation.
     # However, shadow plugin is not compatible for rust library compiled by rustup-installed rustc
     # So, we commentify following sciprt

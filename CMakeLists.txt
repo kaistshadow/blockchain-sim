@@ -54,14 +54,19 @@ option(BLEEPLIB_OPT "BLEEPLIB on build (default: ON)" ON)
 # litecoin option
 option(LITECOIN_OPT "Litecoin on build (default: OFF)" OFF)
 
+# monero option
+option(MONERO_OPT "Monero on build (default : OFF)" OFF)
+
+message("------------------------------------------------------------------------------------------------------")
+message("                                       CMake build flags")
 message("------------------------------------------------------------------------------------------------------")
 message("                                          BITCOIN_OPT : ${BITCOIN_OPT}")
 message("                                          LITECOIN_OPT : ${LITECOIN_OPT}")
+message("                                          MONERO_OPT : ${MONERO_OPT}")
 message("")
 message("")
 message("                                            ALL_OPT   : ${ALL_OPT}")
 message("                                            GIT_OPT   : ${GIT_OPT}")
-message("                                         BLEEPLIB_OPT : ${BLEEPLIB_OPT}")
 message("------------------------------------------------------------------------------------------------------")
 
 find_package (PkgConfig REQUIRED)
@@ -78,15 +83,26 @@ enable_testing()
 add_subdirectory(interfaces)
 add_subdirectory(external)
 
-if(BLEEPLIB_OPT STREQUAL ON)
+# There are errors building only litecoin or monero only if not build bitcoin.
+# So if bitcoin build flag (BLEEPLIB_OPT) is enable, the below are enable. (ALL_OPT, GIT_OPT, BLEEPLIB_OPT)
+if(BITCOIN_OPT STREQUAL ON)
     add_subdirectory(BLEEPlib)
     add_subdirectory(BLEEPemul)
     add_subdirectory(BLEEPeval)
     add_subdirectory(testlibs)
-endif(BLEEPLIB_OPT STREQUAL ON)
+elseif(ALL_OPT STREQUAL ON)
+    add_subdirectory(BLEEPlib)
+    add_subdirectory(BLEEPemul)
+    add_subdirectory(BLEEPeval)
+    add_subdirectory(testlibs)
+elseif(GIT_OPT STREQUAL ON)
+    add_subdirectory(BLEEPlib)
+    add_subdirectory(BLEEPemul)
+    add_subdirectory(BLEEPeval)
+    add_subdirectory(testlibs)
+endif(BITCOIN_OPT STREQUAL ON)
 
-# add_subdirectory(BLEEPapp)
-
+# enable CTest flag
 if (TEST_OPT STREQUAL ON)
     add_subdirectory(tests)
 elseif (UNITTEST_OPT STREQUAL ON)

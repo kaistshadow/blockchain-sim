@@ -103,6 +103,7 @@ if __name__ == '__main__':
     parser.add_argument("--bitcoin", action="store_true", help="only bitcoin build")
     parser.add_argument("--git", action="store_true", help="Run on Git action")
     parser.add_argument("--litecoin", action="store_true", help="only litecoin build")
+    parser.add_argument("--monero", action="store_true", help="only monero build")
     
 
     args = parser.parse_args()
@@ -113,7 +114,7 @@ if __name__ == '__main__':
     OPT_ALL = args.all
     OPT_DEBUG = args.debug
     OPT_TEST = args.test
-    OPT_LITECOIN = args.litecoin
+    OPT_MONERO = args.monero
 
     OPT_UNITTEST = args.unittest
 
@@ -149,9 +150,19 @@ if __name__ == '__main__':
         exec_shell_cmd("sudo apt-get install -y libjsoncpp-dev")
         prepare_shadow()
         prepare_shadow_dependencies()
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (
-        cmake_debug_opt, cmake_bleeplib_opt))
+        cmake_bitcoin_opt = "-DBITCOIN_OPT=ON"
+
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (
+        cmake_debug_opt, cmake_bleeplib_opt, cmake_bitcoin_opt))
         process_ENV()   
+    
+    if OPT_MONERO:
+        prepare_monero_dependencies()
+        cmake_bleeplib_opt = "-DBLEEPLIB_OPT=OFF"
+        cmake_bitcoin_opt = "-DBITCOIN_OPT=OFF"
+        cmake_monero_opt = "-DMONERO_OPT=ON"
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_monero_opt, cmake_bleeplib_opt,cmake_bitcoin_opt))
+        process_ENV()
 
     if OPT_LITECOIN:
         exec_shell_cmd("git submodule update --init")

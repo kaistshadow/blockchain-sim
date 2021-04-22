@@ -18,19 +18,19 @@
 
 
 
-2020-01-01 00:00:03 Litecoin version v0.13.2.0-bddc1a977-dirty
+2020-01-01 00:00:03 Litecoin version v0.13.2.0-2e5a79012
 2020-01-01 00:00:03 InitParameterInteraction: parameter interaction: -connect set -> setting -dnsseed=0
 2020-01-01 00:00:03 InitParameterInteraction: parameter interaction: -whitelistforcerelay=1 -> setting -whitelistrelay=1
 2020-01-01 00:00:03 Default data directory /home/mong/.litecoin
-2020-01-01 00:00:03 Using data directory /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4
-2020-01-01 00:00:03 Using config file /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/node2.conf
+2020-01-01 00:00:03 Using data directory /home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4
+2020-01-01 00:00:03 Using config file /home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/node2.conf
 2020-01-01 00:00:03 Using at most 125 connections (1024 file descriptors available)
 2020-01-01 00:00:03 Using 4 threads for script verification
 2020-01-01 00:00:03 Allowing HTTP connections from: 0:0:0:0:0:0:0:0/128 
-2020-01-01 00:00:03 libevent: event_add: event: 0x562abab079c0 (fd 18), EV_READ    call 0x7f49af572980
+2020-01-01 00:00:03 libevent: event_add: event: 0x562e212194c0 (fd 18), EV_READ    call 0x7fb91e381980
 2020-01-01 00:00:03 libevent: Epoll ADD(1) on fd 18 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
 2020-01-01 00:00:03 Binding RPC on address 127.0.0.1 port 19332
-2020-01-01 00:00:03 libevent: event_add: event: 0x562abab09968 (fd 19), EV_READ    call 0x7f49af5800d0
+2020-01-01 00:00:03 libevent: event_add: event: 0x562e2121b238 (fd 19), EV_READ    call 0x7fb91e38f0d0
 2020-01-01 00:00:03 libevent: Epoll ADD(1) on fd 19 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
 2020-01-01 00:00:03 libevent: Bound to port 19332 - Awaiting connections ... 
 2020-01-01 00:00:03 Initialized HTTP server
@@ -38,14 +38,14 @@
 2020-01-01 00:00:03 Starting RPC
 2020-01-01 00:00:03 Starting HTTP RPC server
 2020-01-01 00:00:03 No rpcpassword set - using random cookie authentication
-2020-01-01 00:00:03 Generated RPC authentication cookie /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/.cookie
+2020-01-01 00:00:03 Generated RPC authentication cookie /home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/.cookie
 2020-01-01 00:00:03 Registering HTTP handler for / (exactmatch 1)
 2020-01-01 00:00:03 Starting HTTP server
 2020-01-01 00:00:03 HTTP: starting 4 worker threads
 2020-01-01 00:00:03 Using BerkeleyDB version Berkeley DB 4.8.30: (April  9, 2010)
 2020-01-01 00:00:03 Using wallet wallet.dat
 2020-01-01 00:00:03 init message: Verifying wallet...
-2020-01-01 00:00:03 CDBEnv::Open: LogDir=/home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/database ErrorFile=/home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/db.log
+2020-01-01 00:00:03 CDBEnv::Open: LogDir=/home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/database ErrorFile=/home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/db.log
 2020-01-01 00:00:03 Error: Couldn't open socket for incoming connections (socket returned error Address family not supported by protocol (97))
 2020-01-01 00:00:03 Bound to 0.0.0.0:1112
 2020-01-01 00:00:03 Block index database configuration:
@@ -57,13 +57,13 @@
 2020-01-01 00:00:03 * Using 8.0MiB for chain state database
 2020-01-01 00:00:03 * Using 290.0MiB for in-memory UTXO set
 2020-01-01 00:00:03 init message: Loading block index...
-2020-01-01 00:00:03 Opening LevelDB in /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/blocks/index
+2020-01-01 00:00:03 Opening LevelDB in /home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/blocks/index
 2020-01-01 00:00:03 Opened LevelDB successfully
-2020-01-01 00:00:03 Using obfuscation key for /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/blocks/index: 0000000000000000
-2020-01-01 00:00:03 Opening LevelDB in /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/chainstate
+2020-01-01 00:00:03 Using obfuscation key for /home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/blocks/index: 0000000000000000
+2020-01-01 00:00:03 Opening LevelDB in /home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/chainstate
 2020-01-01 00:00:03 Opened LevelDB successfully
-2020-01-01 00:00:03 Wrote new obfuscate key for /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/chainstate: 553eeab87d4533e9
-2020-01-01 00:00:03 Using obfuscation key for /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/chainstate: 553eeab87d4533e9
+2020-01-01 00:00:03 Wrote new obfuscate key for /home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/chainstate: 90f188d1ed4e3873
+2020-01-01 00:00:03 Using obfuscation key for /home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/chainstate: 90f188d1ed4e3873
 2020-01-01 00:00:03 LoadBlockIndexDB: last block file = 0
 2020-01-01 00:00:03 LoadBlockIndexDB: last block file info: CBlockFileInfo(blocks=0, size=0, heights=0...0, time=1970-01-01...1970-01-01)
 2020-01-01 00:00:03 Checking all blk files are present...
@@ -202,14 +202,14 @@
 2020-01-01 00:00:03 setKeyPool.size() = 100
 2020-01-01 00:00:03 mapWallet.size() = 0
 2020-01-01 00:00:03 mapAddressBook.size() = 1
-2020-01-01 00:00:03 libevent: event_add: event: 0x562aba5fa420 (fd 36), EV_READ    call 0x7f49af572980
+2020-01-01 00:00:03 libevent: event_add: event: 0x562e1f5b9400 (fd 36), EV_READ    call 0x7fb91e381980
 2020-01-01 00:00:03 libevent: Epoll ADD(1) on fd 36 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
 2020-01-01 00:00:03 init message: Loading addresses...
-2020-01-01 00:00:03 ERROR: Read: Failed to open file /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/peers.dat
+2020-01-01 00:00:03 ERROR: Read: Failed to open file /home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/peers.dat
 2020-01-01 00:00:03 Invalid or missing peers.dat; recreating
 2020-01-01 00:00:03 Flushed 0 addresses to peers.dat  0ms
 2020-01-01 00:00:03 init message: Loading banlist...
-2020-01-01 00:00:03 ERROR: Read: Failed to open file /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/banlist.dat
+2020-01-01 00:00:03 ERROR: Read: Failed to open file /home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/banlist.dat
 2020-01-01 00:00:03 Invalid or missing banlist.dat; recreating
 2020-01-01 00:00:03 Flushed 0 banned node ips/subnets to banlist.dat  0ms
 2020-01-01 00:00:03 init message: Starting network threads...
@@ -218,15 +218,15 @@
 2020-01-01 00:00:03 Discover: IPv4 eth0: 11.0.0.2
 2020-01-01 00:00:03 DNS seeding disabled
 2020-01-01 00:00:03 torcontrol thread start
-2020-01-01 00:00:03 libevent: event_add: event: 0x562ab8e976a0 (fd -1), EV_READ    call 0x7f49af571d40
-2020-01-01 00:00:03 libevent: event_add: event: 0x562ab8e97720 (fd -1),  EV_WRITE   call 0x7f49af571920
-2020-01-01 00:00:03 libevent: event_del: 0x562ab8e976a0 (fd -1), callback 0x7f49af571d40
-2020-01-01 00:00:03 libevent: event_del: 0x562ab8e97720 (fd -1), callback 0x7f49af571920
-2020-01-01 00:00:03 libevent: event_add: event: 0x562ab8e976a0 (fd 37), EV_READ    call 0x7f49af571d40
+2020-01-01 00:00:03 libevent: event_add: event: 0x562e2240e1b0 (fd -1), EV_READ    call 0x7fb91e380d40
+2020-01-01 00:00:03 libevent: event_add: event: 0x562e2240e230 (fd -1),  EV_WRITE   call 0x7fb91e380920
+2020-01-01 00:00:03 libevent: event_del: 0x562e2240e1b0 (fd -1), callback 0x7fb91e380d40
+2020-01-01 00:00:03 libevent: event_del: 0x562e2240e230 (fd -1), callback 0x7fb91e380920
+2020-01-01 00:00:03 libevent: event_add: event: 0x562e2240e1b0 (fd 37), EV_READ    call 0x7fb91e380d40
 2020-01-01 00:00:03 libevent: Epoll ADD(1) on fd 37 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
-2020-01-01 00:00:03 libevent: event_add: event: 0x562ab8e97720 (fd 37),  EV_WRITE   call 0x7f49af571920
+2020-01-01 00:00:03 libevent: event_add: event: 0x562e2240e230 (fd 37),  EV_WRITE   call 0x7fb91e380920
 2020-01-01 00:00:03 libevent: Epoll MOD(5) on fd 37 okay. Old events were 2; read change was 0 (none); write change was 1 (add); close change was 0 (none)
-2020-01-01 00:00:03 libevent: event_add: event: 0x562ab8e97720 (fd 37),  EV_WRITE   call 0x7f49af571920
+2020-01-01 00:00:03 libevent: event_add: event: 0x562e2240e230 (fd 37),  EV_WRITE   call 0x7fb91e380920
 2020-01-01 00:00:03 net thread start
 2020-01-01 00:00:03 addcon thread start
 2020-01-01 00:00:03 opencon thread start
@@ -276,19 +276,19 @@
 
 
 
-2020-01-01 00:00:03 Litecoin version v0.13.2.0-bddc1a977-dirty
+2020-01-01 00:00:03 Litecoin version v0.13.2.0-2e5a79012
 2020-01-01 00:00:03 InitParameterInteraction: parameter interaction: -connect set -> setting -dnsseed=0
 2020-01-01 00:00:03 InitParameterInteraction: parameter interaction: -whitelistforcerelay=1 -> setting -whitelistrelay=1
 2020-01-01 00:00:03 Default data directory /home/mong/.litecoin
-2020-01-01 00:00:03 Using data directory /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4
-2020-01-01 00:00:03 Using config file /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/node2.conf
+2020-01-01 00:00:03 Using data directory /home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4
+2020-01-01 00:00:03 Using config file /home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/node2.conf
 2020-01-01 00:00:03 Using at most 125 connections (1024 file descriptors available)
 2020-01-01 00:00:03 Using 4 threads for script verification
 2020-01-01 00:00:03 Allowing HTTP connections from: 0:0:0:0:0:0:0:0/128 
-2020-01-01 00:00:03 libevent: event_add: event: 0x564b6dc1b590 (fd 18), EV_READ    call 0x7f834acc2980
+2020-01-01 00:00:03 libevent: event_add: event: 0x5562066bdcc0 (fd 18), EV_READ    call 0x7f2611fe0980
 2020-01-01 00:00:03 libevent: Epoll ADD(1) on fd 18 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
 2020-01-01 00:00:03 Binding RPC on address 127.0.0.1 port 19332
-2020-01-01 00:00:03 libevent: event_add: event: 0x564b6dc1d538 (fd 19), EV_READ    call 0x7f834acd00d0
+2020-01-01 00:00:03 libevent: event_add: event: 0x5562066bfa38 (fd 19), EV_READ    call 0x7f2611fee0d0
 2020-01-01 00:00:03 libevent: Epoll ADD(1) on fd 19 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
 2020-01-01 00:00:03 libevent: Bound to port 19332 - Awaiting connections ... 
 2020-01-01 00:00:03 Initialized HTTP server
@@ -296,14 +296,14 @@
 2020-01-01 00:00:03 Starting RPC
 2020-01-01 00:00:03 Starting HTTP RPC server
 2020-01-01 00:00:03 No rpcpassword set - using random cookie authentication
-2020-01-01 00:00:03 Generated RPC authentication cookie /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/.cookie
+2020-01-01 00:00:03 Generated RPC authentication cookie /home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/.cookie
 2020-01-01 00:00:03 Registering HTTP handler for / (exactmatch 1)
 2020-01-01 00:00:03 Starting HTTP server
 2020-01-01 00:00:03 HTTP: starting 4 worker threads
 2020-01-01 00:00:03 Using BerkeleyDB version Berkeley DB 4.8.30: (April  9, 2010)
 2020-01-01 00:00:03 Using wallet wallet.dat
 2020-01-01 00:00:03 init message: Verifying wallet...
-2020-01-01 00:00:03 CDBEnv::Open: LogDir=/home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/database ErrorFile=/home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/db.log
+2020-01-01 00:00:03 CDBEnv::Open: LogDir=/home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/database ErrorFile=/home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/db.log
 2020-01-01 00:00:03 Error: Couldn't open socket for incoming connections (socket returned error Address family not supported by protocol (97))
 2020-01-01 00:00:03 Bound to 0.0.0.0:1112
 2020-01-01 00:00:03 Block index database configuration:
@@ -315,12 +315,12 @@
 2020-01-01 00:00:03 * Using 8.0MiB for chain state database
 2020-01-01 00:00:03 * Using 290.0MiB for in-memory UTXO set
 2020-01-01 00:00:03 init message: Loading block index...
-2020-01-01 00:00:03 Opening LevelDB in /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/blocks/index
+2020-01-01 00:00:03 Opening LevelDB in /home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/blocks/index
 2020-01-01 00:00:03 Opened LevelDB successfully
-2020-01-01 00:00:03 Using obfuscation key for /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/blocks/index: 0000000000000000
-2020-01-01 00:00:03 Opening LevelDB in /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/chainstate
+2020-01-01 00:00:03 Using obfuscation key for /home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/blocks/index: 0000000000000000
+2020-01-01 00:00:03 Opening LevelDB in /home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/chainstate
 2020-01-01 00:00:03 Opened LevelDB successfully
-2020-01-01 00:00:03 Using obfuscation key for /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/chainstate: 553eeab87d4533e9
+2020-01-01 00:00:03 Using obfuscation key for /home/mong/CLionProject/test/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/chainstate: 90f188d1ed4e3873
 2020-01-01 00:00:03 LoadBlockIndexDB: last block file = 0
 2020-01-01 00:00:03 LoadBlockIndexDB: last block file info: CBlockFileInfo(blocks=1, size=288, heights=0...0, time=2017-02-13...2017-02-13)
 2020-01-01 00:00:03 Checking all blk files are present...
@@ -354,7 +354,7 @@
 2020-01-01 00:00:03 setKeyPool.size() = 100
 2020-01-01 00:00:03 mapWallet.size() = 0
 2020-01-01 00:00:03 mapAddressBook.size() = 1
-2020-01-01 00:00:03 libevent: event_add: event: 0x564b6ee10b50 (fd 36), EV_READ    call 0x7f834acc2980
+2020-01-01 00:00:03 libevent: event_add: event: 0x5562078b6f00 (fd 36), EV_READ    call 0x7f2611fe0980
 2020-01-01 00:00:03 libevent: Epoll ADD(1) on fd 36 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
 2020-01-01 00:00:03 init message: Loading addresses...
 2020-01-01 00:00:03 Loaded 0 addresses from peers.dat  0ms
@@ -366,163 +366,15 @@
 2020-01-01 00:00:03 Discover: IPv4 eth0: 11.0.0.2
 2020-01-01 00:00:03 DNS seeding disabled
 2020-01-01 00:00:03 torcontrol thread start
-2020-01-01 00:00:03 libevent: event_add: event: 0x564b6fa3a570 (fd -1), EV_READ    call 0x7f834acc1d40
-2020-01-01 00:00:03 libevent: event_add: event: 0x564b6fa3a5f0 (fd -1),  EV_WRITE   call 0x7f834acc1920
-2020-01-01 00:00:03 libevent: event_del: 0x564b6fa3a570 (fd -1), callback 0x7f834acc1d40
-2020-01-01 00:00:03 libevent: event_del: 0x564b6fa3a5f0 (fd -1), callback 0x7f834acc1920
-2020-01-01 00:00:03 libevent: event_add: event: 0x564b6fa3a570 (fd 37), EV_READ    call 0x7f834acc1d40
+2020-01-01 00:00:03 libevent: event_add: event: 0x5562084e0e00 (fd -1), EV_READ    call 0x7f2611fdfd40
+2020-01-01 00:00:03 libevent: event_add: event: 0x5562084e0e80 (fd -1),  EV_WRITE   call 0x7f2611fdf920
+2020-01-01 00:00:03 libevent: event_del: 0x5562084e0e00 (fd -1), callback 0x7f2611fdfd40
+2020-01-01 00:00:03 libevent: event_del: 0x5562084e0e80 (fd -1), callback 0x7f2611fdf920
+2020-01-01 00:00:03 libevent: event_add: event: 0x5562084e0e00 (fd 37), EV_READ    call 0x7f2611fdfd40
 2020-01-01 00:00:03 libevent: Epoll ADD(1) on fd 37 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
-2020-01-01 00:00:03 libevent: event_add: event: 0x564b6fa3a5f0 (fd 37),  EV_WRITE   call 0x7f834acc1920
+2020-01-01 00:00:03 libevent: event_add: event: 0x5562084e0e80 (fd 37),  EV_WRITE   call 0x7f2611fdf920
 2020-01-01 00:00:03 libevent: Epoll MOD(5) on fd 37 okay. Old events were 2; read change was 0 (none); write change was 1 (add); close change was 0 (none)
-2020-01-01 00:00:03 libevent: event_add: event: 0x564b6fa3a5f0 (fd 37),  EV_WRITE   call 0x7f834acc1920
-2020-01-01 00:00:03 net thread start
-2020-01-01 00:00:03 addcon thread start
-2020-01-01 00:00:03 opencon thread start
-2020-01-01 00:00:03 trying connection 11.0.0.1:1111 lastseen=0.0hrs
-2020-01-01 00:00:03 msghand thread start
-2020-01-01 00:00:03 init message: Done loading
-2020-01-01 00:00:03 Added connection peer=1
-2020-01-01 00:00:03 send version message: version 70015, blocks=0, us=[0:0:0:0:0:0:0:0]:0, peer=1
-2020-01-01 00:00:03 sending: version (107 bytes) peer=1
-2020-01-01 00:00:03 received: version (107 bytes) peer=1
-2020-01-01 00:00:03 sending: verack (0 bytes) peer=1
-2020-01-01 00:00:03 sending: getaddr (0 bytes) peer=1
-2020-01-01 00:00:03 receive version message: /LitecoinCore:0.13.2/: version 70015, blocks=0, us=11.0.0.2:56578, peer=1
-2020-01-01 00:00:03 added time data, samples 2, offset +0 (+0 minutes)
-2020-01-01 00:00:03 sending: ping (8 bytes) peer=1
-2020-01-01 00:00:03 initial getheaders (0) to peer=1 (startheight:0)
-2020-01-01 00:00:03 sending: getheaders (69 bytes) peer=1
-2020-01-01 00:00:03 received: verack (0 bytes) peer=1
-2020-01-01 00:00:03 sending: sendheaders (0 bytes) peer=1
-2020-01-01 00:00:03 sending: sendcmpct (9 bytes) peer=1
-2020-01-01 00:00:03 sending: sendcmpct (9 bytes) peer=1
-2020-01-01 00:00:03 received: ping (8 bytes) peer=1
-2020-01-01 00:00:03 sending: pong (8 bytes) peer=1
-2020-01-01 00:00:03 received: getheaders (69 bytes) peer=1
-2020-01-01 00:00:03 Ignoring getheaders from peer=1 because node is in initial block download
-2020-01-01 00:00:03 received: sendheaders (0 bytes) peer=1
-2020-01-01 00:00:03 received: sendcmpct (9 bytes) peer=1
-2020-01-01 00:00:03 received: sendcmpct (9 bytes) peer=1
-2020-01-01 00:00:03 received: pong (8 bytes) peer=1
-2020-01-01 00:00:03 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2020-01-01 00:00:03 Litecoin version v0.13.2.0-bddc1a977-dirty
-2020-01-01 00:00:03 InitParameterInteraction: parameter interaction: -connect set -> setting -dnsseed=0
-2020-01-01 00:00:03 InitParameterInteraction: parameter interaction: -whitelistforcerelay=1 -> setting -whitelistrelay=1
-2020-01-01 00:00:03 Default data directory /home/mong/.litecoin
-2020-01-01 00:00:03 Using data directory /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4
-2020-01-01 00:00:03 Using config file /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/node2.conf
-2020-01-01 00:00:03 Using at most 125 connections (1024 file descriptors available)
-2020-01-01 00:00:03 Using 4 threads for script verification
-2020-01-01 00:00:03 Allowing HTTP connections from: 0:0:0:0:0:0:0:0/128 
-2020-01-01 00:00:03 libevent: event_add: event: 0x55565e960790 (fd 18), EV_READ    call 0x7fe0b550e980
-2020-01-01 00:00:03 libevent: Epoll ADD(1) on fd 18 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
-2020-01-01 00:00:03 Binding RPC on address 127.0.0.1 port 19332
-2020-01-01 00:00:03 libevent: event_add: event: 0x55565e962738 (fd 19), EV_READ    call 0x7fe0b551c0d0
-2020-01-01 00:00:03 libevent: Epoll ADD(1) on fd 19 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
-2020-01-01 00:00:03 libevent: Bound to port 19332 - Awaiting connections ... 
-2020-01-01 00:00:03 Initialized HTTP server
-2020-01-01 00:00:03 HTTP: creating work queue of depth 16
-2020-01-01 00:00:03 Starting RPC
-2020-01-01 00:00:03 Starting HTTP RPC server
-2020-01-01 00:00:03 No rpcpassword set - using random cookie authentication
-2020-01-01 00:00:03 Generated RPC authentication cookie /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/.cookie
-2020-01-01 00:00:03 Registering HTTP handler for / (exactmatch 1)
-2020-01-01 00:00:03 Starting HTTP server
-2020-01-01 00:00:03 HTTP: starting 4 worker threads
-2020-01-01 00:00:03 Using BerkeleyDB version Berkeley DB 4.8.30: (April  9, 2010)
-2020-01-01 00:00:03 Using wallet wallet.dat
-2020-01-01 00:00:03 init message: Verifying wallet...
-2020-01-01 00:00:03 CDBEnv::Open: LogDir=/home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/database ErrorFile=/home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/db.log
-2020-01-01 00:00:03 Error: Couldn't open socket for incoming connections (socket returned error Address family not supported by protocol (97))
-2020-01-01 00:00:03 Bound to 0.0.0.0:1112
-2020-01-01 00:00:03 Block index database configuration:
-2020-01-01 00:00:03 * Using 1000 max open files
-2020-01-01 00:00:03 * Compression is enabled
-2020-01-01 00:00:03 Cache configuration:
-2020-01-01 00:00:03 * Max cache setting possible 16384MiB
-2020-01-01 00:00:03 * Using 2.0MiB for block index database
-2020-01-01 00:00:03 * Using 8.0MiB for chain state database
-2020-01-01 00:00:03 * Using 290.0MiB for in-memory UTXO set
-2020-01-01 00:00:03 init message: Loading block index...
-2020-01-01 00:00:03 Opening LevelDB in /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/blocks/index
-2020-01-01 00:00:03 Opened LevelDB successfully
-2020-01-01 00:00:03 Using obfuscation key for /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/blocks/index: 0000000000000000
-2020-01-01 00:00:03 Opening LevelDB in /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/chainstate
-2020-01-01 00:00:03 Opened LevelDB successfully
-2020-01-01 00:00:03 Using obfuscation key for /home/mong/CLionProject/test/litecoin/blockchain-sim/tests/regtest/5_litecoin/./node2/testnet4/chainstate: 553eeab87d4533e9
-2020-01-01 00:00:03 LoadBlockIndexDB: last block file = 0
-2020-01-01 00:00:03 LoadBlockIndexDB: last block file info: CBlockFileInfo(blocks=2, size=576, heights=0...0, time=2017-02-13...2017-02-13)
-2020-01-01 00:00:03 Checking all blk files are present...
-2020-01-01 00:00:03 LoadBlockIndexDB: transaction index disabled
-2020-01-01 00:00:03 LoadBlockIndexDB: address index disabled
-2020-01-01 00:00:03 LoadBlockIndexDB: timestamp index disabled
-2020-01-01 00:00:03 LoadBlockIndexDB: spent index disabled
-2020-01-01 00:00:03 InitBlockIndex: transaction index disabled
-2020-01-01 00:00:03 InitBlockIndex: address index disabled
-2020-01-01 00:00:03 InitBlockIndex: timestamp index disabled
-2020-01-01 00:00:03 InitBlockIndex: spent index disabled
-2020-01-01 00:00:03 Initializing databases...
-2020-01-01 00:00:03 Committing 0 changed transactions (out of 0) to coin database...
-2020-01-01 00:00:03 init message: Verifying blocks...
-2020-01-01 00:00:03  block index               0ms
-2020-01-01 00:00:03 init message: Loading wallet...
-2020-01-01 00:00:03 nFileVersion = 130200
-2020-01-01 00:00:03 Keys: 102 plaintext, 0 encrypted, 102 w/ metadata, 102 total
-2020-01-01 00:00:03  wallet                    0ms
-2020-01-01 00:00:03 scheduler thread start
-2020-01-01 00:00:03 Entering http event loop
-2020-01-01 00:00:03   - Load block from disk: 0.00ms [0.00s]
-2020-01-01 00:00:03   - Connect total: 0.00ms [0.00s]
-2020-01-01 00:00:03   - Flush: 0.00ms [0.00s]
-2020-01-01 00:00:03   - Writing chainstate: 0.00ms [0.00s]
-2020-01-01 00:00:03 UpdateTip: new best=4966625a4b2851d9fdee139e56211a0d88575f59ed816ff5e6a63deb4e3e29a0 height=0 version=0x00000001 log2_work=20.000022 tx=1 date='2017-02-13 01:29:26' progress=0.000000 cache=0.0MiB(0tx)
-2020-01-01 00:00:03   - Connect postprocess: 0.00ms [0.00s]
-2020-01-01 00:00:03 - Connect block: 0.00ms [0.00s]
-2020-01-01 00:00:03 mapBlockIndex.size() = 1
-2020-01-01 00:00:03 nBestHeight = 0
-2020-01-01 00:00:03 setKeyPool.size() = 100
-2020-01-01 00:00:03 mapWallet.size() = 0
-2020-01-01 00:00:03 mapAddressBook.size() = 1
-2020-01-01 00:00:03 libevent: event_add: event: 0x55565fb55c70 (fd 36), EV_READ    call 0x7fe0b550e980
-2020-01-01 00:00:03 libevent: Epoll ADD(1) on fd 36 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
-2020-01-01 00:00:03 init message: Loading addresses...
-2020-01-01 00:00:03 Loaded 0 addresses from peers.dat  0ms
-2020-01-01 00:00:03 init message: Loading banlist...
-2020-01-01 00:00:03 Loaded 0 banned node ips/subnets from banlist.dat  0ms
-2020-01-01 00:00:03 init message: Starting network threads...
-2020-01-01 00:00:03 Added connection peer=0
-2020-01-01 00:00:03 AddLocal(11.0.0.2:1112,1)
-2020-01-01 00:00:03 Discover: IPv4 eth0: 11.0.0.2
-2020-01-01 00:00:03 DNS seeding disabled
-2020-01-01 00:00:03 torcontrol thread start
-2020-01-01 00:00:03 libevent: event_add: event: 0x55566077f930 (fd -1), EV_READ    call 0x7fe0b550dd40
-2020-01-01 00:00:03 libevent: event_add: event: 0x55566077f9b0 (fd -1),  EV_WRITE   call 0x7fe0b550d920
-2020-01-01 00:00:03 libevent: event_del: 0x55566077f930 (fd -1), callback 0x7fe0b550dd40
-2020-01-01 00:00:03 libevent: event_del: 0x55566077f9b0 (fd -1), callback 0x7fe0b550d920
-2020-01-01 00:00:03 libevent: event_add: event: 0x55566077f930 (fd 37), EV_READ    call 0x7fe0b550dd40
-2020-01-01 00:00:03 libevent: Epoll ADD(1) on fd 37 okay. Old events were 0; read change was 1 (add); write change was 0 (none); close change was 0 (none)
-2020-01-01 00:00:03 libevent: event_add: event: 0x55566077f9b0 (fd 37),  EV_WRITE   call 0x7fe0b550d920
-2020-01-01 00:00:03 libevent: Epoll MOD(5) on fd 37 okay. Old events were 2; read change was 0 (none); write change was 1 (add); close change was 0 (none)
-2020-01-01 00:00:03 libevent: event_add: event: 0x55566077f9b0 (fd 37),  EV_WRITE   call 0x7fe0b550d920
+2020-01-01 00:00:03 libevent: event_add: event: 0x5562084e0e80 (fd 37),  EV_WRITE   call 0x7f2611fdf920
 2020-01-01 00:00:03 net thread start
 2020-01-01 00:00:03 addcon thread start
 2020-01-01 00:00:03 opencon thread start

@@ -13,6 +13,9 @@ add_custom_target(curl-ubuntu-shared ALL
         COMMAND gcc simplecurl.c -o libsimplecurl.so -lcurl -shared -fPIC
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
+# system curl test on shadow
+# Input : Nothing
+# Output : 정상 종료 : return 0 , 아닐 경우 return error
 add_test(NAME shadow-ubuntu-libcurl
         COMMAND shadow simplecurl.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

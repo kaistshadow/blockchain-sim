@@ -22,8 +22,6 @@ endif(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 set(CMAKE_ROOT_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 set(CMAKE_ROOT_BINARY_DIR ${CMAKE_BINARY_DIR})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 
@@ -44,34 +42,21 @@ endif ()
 # Bitcoin option
 option(BITCOIN_OPT "Bitcoin on build (default: OFF)" OFF)
 
-# Zcash option
-option(ZCASH_OPT "Zcash on build (default: OFF)" OFF)
-
-# Monero option
-option(MONERO_OPT "Monero on build (default: OFF)" OFF)
-
 # all option
 option(ALL_OPT "All on build (deafult : OFF)" OFF)
 
 # git option
 option(GIT_OPT "Only run on git action (deafult : OFF)" OFF)
 
-# litecoin option
-option(LITECOIN_OPT "Litecoin on build (default: OFF)" OFF)
-
-# EOS option
-option(EOS_OPT "EOS on build (default: OFF)" OFF)
-
 # bleep lib option
 option(BLEEPLIB_OPT "BLEEPLIB on build (default: ON)" ON)
 
+# litecoin option
+option(LITECOIN_OPT "Litecoin on build (default: OFF)" OFF)
 
 message("------------------------------------------------------------------------------------------------------")
 message("                                          BITCOIN_OPT : ${BITCOIN_OPT}")
-message("                                          ZCASH_OPT   : ${ZCASH_OPT}")
-message("                                          MONERO_OPT  : ${MONERO_OPT}")
-message("                                          LITECOIN_OPT: ${LITECOIN_OPT}")
-message("                                          EOS_OPT     : ${EOS_OPT}")
+message("                                          LITECOIN_OPT : ${LITECOIN_OPT}")
 message("")
 message("")
 message("                                            ALL_OPT   : ${ALL_OPT}")
@@ -79,33 +64,13 @@ message("                                            GIT_OPT   : ${GIT_OPT}")
 message("                                         BLEEPLIB_OPT : ${BLEEPLIB_OPT}")
 message("------------------------------------------------------------------------------------------------------")
 
-
-## add shadow project
-# should not modify CMAKE_SOURCE_DIR, CMAKE_BINARY_DIR (https://stackoverflow.com/a/22220680)
-# set(CMAKE_SOURCE_DIR "${CMAKE_ROOT_SOURCE_DIR}/shadow")
-# set(CMAKE_BINARY_DIR "${CMAKE_ROOT_BINARY_DIR}/shadow")
-
-## use ExternalProject_add to use different INSTALL_PREFIX (https://stackoverflow.com/a/31702064)
-#include(ExternalProject)
-#ExternalProject_Add(shadow
-#  SOURCE_DIR ${CMAKE_ROOT_SOURCE_DIR}/shadow
-#  BUILD_ALWAYS 1
-#  CMAKE_ARGS "-DCMAKE_EXTRA_INCLUDES=$ENV{HOME}/.shadow/include" "-DCMAKE_EXTRA_LIBRARIES=$ENV{HOME}/.shadow/lib" "-DCMAKE_INSTALL_PREFIX=$ENV{HOME}/.shadow")
-## set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.shadow")
-## set(CMAKE_EXTRA_INCLUDES "$ENV{HOME}/.shadow/include") # for glib-2.42
-## set(CMAKE_EXTRA_LIBRARIES "$ENV{HOME}/.shadow/lib") # for glib-2.42
-### TODO if we have cmake > 3.1, can we do the following?
-## find_package (PkgConfig REQUIRED)
-## pkg_check_modules(GLIB REQUIRED glib-2.0>=2.42)
-## message(STATUS "GLIB_VERSION = ${GLIB_VERSION}")
-## add_subdirectory(shadow)
-
 find_package (PkgConfig REQUIRED)
 pkg_check_modules(GLIB REQUIRED glib-2.0>=2.42)
 message(STATUS "GLIB_VERSION = ${GLIB_VERSION}")
 add_subdirectory(shadow)
 
-
+# Unit test option
+option(UNITTEST_OPT "unittest on build (default : OFF) : OFF")
 
 ## add BLEEP
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/Install")
@@ -115,15 +80,18 @@ add_subdirectory(external)
 
 if(BLEEPLIB_OPT STREQUAL ON)
     add_subdirectory(BLEEPlib)
+    add_subdirectory(BLEEPemul)
+    add_subdirectory(BLEEPeval)
+    add_subdirectory(testlibs)
 endif(BLEEPLIB_OPT STREQUAL ON)
 
 # add_subdirectory(BLEEPapp)
-add_subdirectory(tests)
 
-## add tests
-# set(SHADOW_ROOT "${CMAKE_INSTALL_PREFIX}")
-# enable_testing()
-#add_subdirectory(test)
+if (TEST_OPT STREQUAL ON)
+    add_subdirectory(tests)
+elseif (UNITTEST_OPT STREQUAL ON)
+    add_subdirectory(tests)
+endif ()
 
 ## add command for lauching BLEEP web interface
 add_custom_target(run-web-gui

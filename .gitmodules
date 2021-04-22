@@ -4,6 +4,9 @@
 [submodule "external/bitcoin/0.19.1dev"]
 	path = external/bitcoin/0.19.1dev
 	url = https://github.com/kaistshadow/bitcoin.git
+[submodule "external/monero/0.17.0.0dev"]
+	path = external/monero/0.17.0.0dev
+	url = https://github.com/kaistshadow/monero
 [submodule "external/litecoin/litecore-litecoin"]
 	path = external/litecoin/litecore-litecoin
 	url = https://github.com/kaistshadow/litecore-litecoin.git

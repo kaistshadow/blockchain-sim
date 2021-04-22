@@ -1,3 +1,4 @@
+#include <netdb.h>
 #include "SocketManager.h"
 
 
@@ -28,6 +29,12 @@ std::shared_ptr<ListenSocket> SocketManager::GetListenSocket(int fd) {
 }
 
 int SocketManager::CreateNonblockConnectSocket(std::string dest) {
+    struct addrinfo* servinfo;
+    int n = getaddrinfo(dest.c_str(), NULL, NULL, &servinfo);
+    if (n != 0) {
+        return -1;
+    }
+
     // new ConnectSocket
     std::shared_ptr<ConnectSocket> new_socket = std::make_shared<ConnectSocket>(dest);
     _connectSockets[new_socket->GetFD()] = new_socket;

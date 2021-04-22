@@ -19,11 +19,12 @@ Blockchain-sim is now under development on top of the open-source discrete-event
 
 # How to run
 
-Please use Ubuntu 16.04 LTS or Ubuntu 18.04 LTS.
+Please use Ubuntu 18.04 LTS.
 
 Setup and Usage Instructions:
 
 * https://github.com/kaistshadow/blockchain-sim/wiki
+
 
 
 # For bitcoin simulation (Deprecated)

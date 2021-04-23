@@ -2,7 +2,7 @@ import sys
 import os
 
 sys.path.append('../../../../')
-from testlibs import test_modules
+from testlibs import test_modules, utils, xml_modules
 
 
 def check_shadownode(monero_log, tester_log):
@@ -95,21 +95,24 @@ def check_verack_withip(monero_log, tester_log, ip):
 
 
 def main(shadowpath, configpath):
+    path = os.path.abspath("./")
+
     # xml 파일 생성 확인
     target_folder_xml = test_modules.test_xml_existence(configpath)
 
     # 생성된 xml 파일로 부터 runtime, node_id, plugin 들을 뽑아옴.
-    runtime, node_id_list, plugin_list = test_modules.get_xml_info_new(target_folder_xml)
+    runtime, node_id_list, plugin_list = xml_modules.get_xml_info_new(target_folder_xml)
 
     # shadow 실행
     print("shadow running ...")
-    test_modules.subprocess_open('%s --turn_off_tls_fix 0 %s > output.txt' % (shadowpath, configpath))
+    utils.subprocess_open('%s --turn_off_tls_fix 0 %s > output.txt' % (shadowpath, configpath))
+    output_file = path + "/output.txt"
 
     # shadow output 파일 존재 검사.
-    target_folder_file = test_modules.test_shadow_output_file_existence("regtest")
+    target_folder_file = test_modules.test_shadow_output_file_existence("regtest", node_id_list)
 
     # shadow output 파일 내용 검사.
-    test_modules.test_shadow(target_folder_file, runtime, node_id_list)
+    test_modules.test_shadow(target_folder_file, runtime, node_id_list, output_file)
 
     # shadow plugin의 결과 값 뽑아옴.
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)

@@ -12,6 +12,7 @@ add_library(BitcoinTPSAdapter SHARED
         BitcoinNodePrimitives.cpp
         BitcoinNodePrimitives.h)
 target_link_libraries(BitcoinTPSAdapter BLEEPtps)
+target_link_libraries(BitcoinTPSAdapter Bitcoin_0_19_1dev::Plugin)
 target_include_directories(BitcoinTPSAdapter
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR})

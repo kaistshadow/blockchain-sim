@@ -1,1 +1,11 @@
-add_subdirectory(datadirDump)
+if (ALL_OPT STREQUAL ON)
+    add_subdirectory(datadirDump)
+elseif (GIT_OPT STREQUAL ON)
+    add_subdirectory(datadirDump)
+elseif (BITCOIN_OPT STREQUAL ON)
+    add_subdirectory(datadirDump)
+elseif (MONERO_OPT STREQUAL ON)
+
+else (ALL_OPT STREQUAL ON)
+    add_subdirectory(datadirDump)
+endif (ALL_OPT STREQUAL ON)

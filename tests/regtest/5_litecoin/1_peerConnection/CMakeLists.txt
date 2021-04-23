@@ -11,7 +11,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../../shadow/cm
 
 add_custom_target(copy-litecoin-plugin ALL
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:LITECOIN__DEV_::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
-add_dependencies(copy-litecoin-plugin LITECOIN__DEV_)
+add_dependencies(copy-litecoin-plugin LITECOIN__DEV_::Plugin)
 
 add_test(NAME shadow-litecoin
         COMMAND shadow example.xml

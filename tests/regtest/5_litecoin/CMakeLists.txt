@@ -1,1 +1,2 @@
 add_subdirectory(1_peerConnection)
+add_subdirectory(2_wallet)

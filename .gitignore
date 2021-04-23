@@ -133,4 +133,9 @@ testlibs/dump/difficulty_*
 .vscode
 tests/regtest/1_bitcoin/*/data
 tests/regtest/1_bitcoin/*/shadow.data
-tests/regtest/shadow-litecoin/*/node*/testnet4
+
+# litecoin
+
+tests/regtest/5_litecoin/*/node*/testnet4
+
+

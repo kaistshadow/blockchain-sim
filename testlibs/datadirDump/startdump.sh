@@ -18,7 +18,7 @@ mkdir -p data/bcdnode0
 
 #2-0. generate xml file
 SHELL_PATH=`pwd -P`
-python xmlGenerator.py 1 100 pow disable $1 $SHELL_PATH
+python xmlGenerator.py 1 100 pow disable $1 $SHELL_PATH 
 
 #2. execute shadow
 SHELL_PATH=`pwd -P`

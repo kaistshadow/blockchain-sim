@@ -26,6 +26,7 @@ def main():
         utils.exec_shell_cmd("sh clean_data.sh 2")
         present_path = path + "/test-BitcoinP2P.xml"
         difficulty = utils.get_difficulty_fromXML(present_path)
+        utils.check_dump_data(difficulty)
 
     # xml 파일 생성 확인
     target_folder_xml = test_modules.test_xml_existence("test-BitcoinP2P.xml")

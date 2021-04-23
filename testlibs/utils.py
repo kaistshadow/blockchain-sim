@@ -345,3 +345,43 @@ def overlap_blockHash(bitcoind_log):
                 hash_list.append(input_data)
     f.close()
     return hash_list
+
+# testlibs/dump/difficulty_* 에 dump파일이 제대로 생성되었나 확인하기 위한 함수.
+def check_dump_data(difficulty):
+    path = os.path.dirname( os.path.abspath( __file__ ) )
+    path = path.split('/')
+    destination_path = ""
+    dump_creator_path = ""
+    for i in range(1,len(path)):
+        destination_path += "/"
+        dump_creator_path += "/"
+        destination_path += path[i]
+        dump_creator_path += path[i]
+        if path[i] == 'blockchain-sim':
+            destination_path += "/testlibs/dump/difficulty_" + difficulty
+            dump_creator_path += "/testlibs/datadirDump"
+            break
+    check_flag = [False, False, False, False]
+    target = destination_path + "/coinflip_hash.txt"
+    if os.path.isfile(target):
+        check_flag[0] = True
+    target = destination_path + "/key.txt"
+    if os.path.isfile(target):
+        check_flag[1] = True
+    target = destination_path + "/state.txt"
+    if os.path.isfile(target):
+        check_flag[2] = True
+    target = destination_path + "/bcdnode0"
+    if os.path.isdir(target):
+        check_flag[3] = True
+
+    if all(check_flag):
+        print("Successfully dump file ... ")
+    
+    # 제대로 생성 안되어서 dump file 다시 만들기.
+    else:
+        dump_command = "cd " + dump_creator_path + "; sh startdump.sh " + difficulty
+        remove_command = "cd " + dump_creator_path + "; cd ../dump; rm -rf difficulty_" + difficulty
+        exec_shell_cmd(remove_command)
+        exec_shell_cmd(dump_command)
+        check_dump_data(difficulty)

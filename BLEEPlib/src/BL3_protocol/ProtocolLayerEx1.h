@@ -12,7 +12,6 @@ namespace libBLEEP_BL {
 
     class BL_ProtocolLayerEx1 : public BL_ProtocolLayer_API {
     private:
-        std::shared_ptr<TxPool> _txPool;
         std::vector<SimpleTransaction> _txToBroadcast;
         TxGossipProtocol _txGossipProtocol;
 

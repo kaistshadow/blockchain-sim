@@ -16,6 +16,15 @@ namespace libBLEEP_BL {
 
     private:
         static BL_ProtocolLayer_API *_instance;
+    protected:
+        bool _initiated = false;
+
+    protected:
+        std::shared_ptr<TxPool> _txPool;
+        int _txGenNum = 0;
+    public:
+        int GetTxGeneratedNum() { return _txGenNum; }
+        std::shared_ptr<TxPool> GetTxPool() { return _txPool; }
 
     public:
 

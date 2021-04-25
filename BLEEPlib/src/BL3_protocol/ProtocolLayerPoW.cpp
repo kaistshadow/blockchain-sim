@@ -3,7 +3,7 @@
 using namespace libBLEEP_BL;
 
 BL_ProtocolLayerPoW::BL_ProtocolLayerPoW() : BL_ProtocolLayer_API() {
-
+    _txPool = std::make_shared<TxPool>();
 }
 
 void BL_ProtocolLayerPoW::RecvMsgHandler(std::shared_ptr<Message> msg) {
@@ -25,9 +25,16 @@ void BL_ProtocolLayerPoW::SwitchAsyncEventHandler(AsyncEvent& event) {
 }
 
 bool BL_ProtocolLayerPoW::InitiateProtocol() {
-    std::cout << "initiating ProtocolPoW" << "\n";
+    if (!_initiated) {
+        std::cout << "initiating ProtocolPoW" << "\n";
+        _startPeriodicTxGen(0, 3);
+        _initiated = true;
 
-    return true;
+        return true;
+    } else {
+        std::cout << "already initiated protocol" << "\n";
+        return false;
+    }
 }
 
 bool BL_ProtocolLayerPoW::StopProtocol() {

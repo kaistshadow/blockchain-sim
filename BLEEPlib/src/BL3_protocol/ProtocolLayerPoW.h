@@ -16,6 +16,28 @@ namespace libBLEEP_BL {
         /* handler functions for each asynchronous event */
         void RecvMsgHandler(std::shared_ptr<Message> msg);
 
+    private:
+        // periodic tx generation for experimental purpose
+        ev::timer _txgentimer;
+        void _txgentimerCallback(ev::timer &w, int revents) {
+            // generate random transaction
+            srand((unsigned int)time(0));
+            int sender_id = rand() % 100;
+            int receiver_id = rand() % 100;
+            float amount = (float) (rand() % 100000);
+            SimpleTransaction tx(sender_id,receiver_id,amount);
+            if (!_txPool->ContainTx(tx.GetId())) {
+                _txPool->AddTx(boost::make_shared<SimpleTransaction>(tx));
+            }
+            _txGenNum += 1;
+        }
+        void _startPeriodicTxGen(double start, double interval) {
+            _txgentimer.set<BL_ProtocolLayerPoW, &BL_ProtocolLayerPoW::_txgentimerCallback>(this);
+            _txgentimer.set(start, interval);
+            _txgentimer.start();
+        }
+
+
     public:
         BL_ProtocolLayerPoW();
 

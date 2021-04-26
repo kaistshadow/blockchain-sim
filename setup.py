@@ -31,6 +31,12 @@ def prepare_shadow():
     else:
         exec_shell_cmd("sudo apt-get install -y gcc g++ libglib2.0-0 libglib2.0-dev libigraph0v5 libigraph0-dev cmake make xz-utils")
 
+def prepare_zcash_dependencies():
+    exec_shell_cmd("sudo apt-get install \
+                    build-essential pkg-config libc6-dev m4 g++-multilib \
+                    autoconf libtool ncurses-dev unzip git python3 python3-zmq \
+                    zlib1g-dev curl bsdmainutils automake libtinfo5")
+
 def prepare_nodejs():
     nodejs_serv_path = "./BLEEPeval/web-gui"    
     exec_shell_cmd("sudo apt-get install -y curl")
@@ -104,7 +110,8 @@ if __name__ == '__main__':
     parser.add_argument("--git", action="store_true", help="Run on Git action")
     parser.add_argument("--litecoin", action="store_true", help="only litecoin build")
     parser.add_argument("--monero", action="store_true", help="only monero build")
-    
+    parser.add_argument("--zcash", action="store_true", help="only Zcash build")
+
 
     args = parser.parse_args()
 
@@ -115,6 +122,7 @@ if __name__ == '__main__':
     OPT_DEBUG = args.debug
     OPT_TEST = args.test
     OPT_MONERO = args.monero
+    OPT_ZCASH = args.zcash
 
     OPT_UNITTEST = args.unittest
 
@@ -155,7 +163,19 @@ if __name__ == '__main__':
         exec_shell_cmd("mkdir build; cd build; cmake %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (
         cmake_debug_opt, cmake_bleeplib_opt, cmake_bitcoin_opt))
         process_ENV()   
-    
+        
+    if OPT_ZCASH:
+        exec_shell_cmd("git submodule update --init")
+        prepare_shadow()
+        prepare_shadow_dependencies()
+        prepare_zcash_dependencies()
+        exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
+        cmake_zcash_opt = "-DZCASH_OPT=ON"
+        cmake_bleeplib_opt = "-DBLEEPLIB_OPT=OFF"
+        cmake_bitcoin_opt = "-DBITCOIN_OPT=OFF"
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_zcash_opt,cmake_bleeplib_opt, cmake_bitcoin_opt))
+        process_ENV()
+
     if OPT_MONERO:
         prepare_monero_dependencies()
         cmake_bleeplib_opt = "-DBLEEPLIB_OPT=OFF"

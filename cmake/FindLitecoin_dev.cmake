@@ -1,29 +1,3 @@
-#.rst:
-# FindLITECOIN_DEV
-# -----------
-#
-# Find the Bitcoin plugin of version 0.19.1 (v0.19.1) development version
-#
-# Imported Targets
-# ^^^^^^^^^^^^^^^^
-#
-# This module defines the following :prop_tgt:`IMPORTED` targets:
-#
-# ``LITECOIN_DEV::Plugin``
-#   The Plugin for Bitcoin v0.19.1 development version, if found.
-#
-# Result Variables
-# ^^^^^^^^^^^^^^^^
-#
-# This module will set the following variables in your project:
-#
-# ``LITECOIN_DEV_FOUND``
-#   System has the Bitcoin plugin for v0.19.1 dev.
-#
-# Hints
-# ^^^^^
-#
-
 find_library(_LITECOIN_DEV
   NAMES
   LITECOIN.DEV

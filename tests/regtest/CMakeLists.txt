@@ -62,7 +62,7 @@ elseif (ALL_OPT STREQUAL ON)
     add_subdirectory(1_bitcoin)
     add_subdirectory(2_sybilAPI)
     add_subdirectory(3_BLEEPlib)
-    add_subdirectory(4_monero)
+    # add_subdirectory(4_monero)
     add_subdirectory(5_litecoin)
     add_subdirectory(6_zcash)
 

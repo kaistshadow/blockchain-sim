@@ -53,7 +53,7 @@ void TxGossipProtocol::RecvTxsHandler(std::shared_ptr<Message> msg) {
         std::cout << "receive tx:" << tx << "\n";
         
         // Add to txpool
-        _txPool->AddTx(boost::make_shared<SimpleTransaction>(tx));
+        _txPool->AddTx(std::make_shared<SimpleTransaction>(tx));
     }
 
     // relay tx to neighbors

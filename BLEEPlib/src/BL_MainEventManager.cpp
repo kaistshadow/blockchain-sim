@@ -21,9 +21,21 @@ void MainEventManager::InitInstance(AsyncEventEnum internalEventEnum) {
     _instance = new MainEventManager(internalEventEnum);
 }
 
+void MainEventManager::InitInstance(double timeout, AsyncEventEnum internalEventEnum) {
+    libBLEEP::M_Assert(_instance == 0, "Instance must be initialized once.");
+    _instance = new MainEventManager(timeout, internalEventEnum);
+}
+
 MainEventManager::MainEventManager(AsyncEventEnum internalEventEnum) {
     _libev_loop = EV_DEFAULT;
     _internalHandleEventEnum = internalEventEnum;
+}
+
+MainEventManager::MainEventManager(double timeout, AsyncEventEnum internalEventEnum) {
+    _libev_loop = EV_DEFAULT;
+    _internalHandleEventEnum = internalEventEnum;
+
+    _startTimer(timeout);
 }
 
 static void HandleAsyncEvent(AsyncEvent &event) {
@@ -74,6 +86,9 @@ void MainEventManager::Wait() {
                 HandleAsyncEvent(event);
             }
         }
+
+        if (_timeout_triggered)
+            return;
     }
 }
 

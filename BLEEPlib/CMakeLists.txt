@@ -26,8 +26,21 @@ else(BLEEP_DEBUG STREQUAL ON)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-parentheses -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch")
 endif(BLEEP_DEBUG STREQUAL ON)
 
-set(SRCS
+include(GNUInstallDirs)
+
+message(STATUS "CMAKE_INSTALL_LIBDIR:" ${CMAKE_INSTALL_LIBDIR})
+message(STATUS "CMAKE_INSTALL_INCLUDEDIR:" ${CMAKE_INSTALL_INCLUDEDIR})
+
+
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_CURRENT_SOURCE_DIR}/boost/lib")
+
+add_library(BLEEP SHARED)
+
+target_sources(BLEEP
+        PRIVATE
         src/BL_MainEventManager.cpp
+        src/BL_MainEventManager.h
         src/BL1_socket/Socket.cpp
         src/BL1_socket/SocketLayer_API.cpp
         src/BL1_socket/SocketManager.cpp
@@ -39,7 +52,11 @@ set(SRCS
         src/BL2_peer_connectivity/AdvertisementManager.cpp
         src/BL3_protocol/ProtocolLayer_API.cpp
         src/BL3_protocol/ProtocolLayerEx1.cpp
-         src/BL3_protocol/ProtocolLayerPoW.cpp
+        src/BL3_protocol/ProtocolLayerPoW.cpp
+        src/BL3_protocol/Block.h
+        src/BL3_protocol/POWBlock.h
+        src/BL3_protocol/POWBlock.cpp
+        src/BL3_protocol/POWMiner.cpp
         src/BL3_protocol/TxGossipProtocol.cpp
         src/BL3_protocol/TxPool.cpp
         src/utility/UInt256.cpp
@@ -50,19 +67,6 @@ set(SRCS
         src/utility/Logger.cpp
         src/crypto/SHA256.cpp
         src/utility/GlobalClock.cpp)
-
-
-include(GNUInstallDirs)
-
-message(STATUS "CMAKE_INSTALL_LIBDIR:" ${CMAKE_INSTALL_LIBDIR})
-message(STATUS "CMAKE_INSTALL_INCLUDEDIR:" ${CMAKE_INSTALL_INCLUDEDIR})
-
-
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_CURRENT_SOURCE_DIR}/boost/lib")
-
-add_library(BLEEP SHARED ${SRCS})
-
 
 target_include_directories(BLEEP
   PUBLIC 

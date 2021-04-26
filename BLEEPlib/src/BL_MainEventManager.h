@@ -7,6 +7,7 @@
 
 #include "BL2_peer_connectivity/Peer.h"
 #include "BL2_peer_connectivity/Message.h"
+#include "BL3_protocol/POWBlock.h"
 
 namespace libBLEEP_BL {
 
@@ -41,10 +42,11 @@ namespace libBLEEP_BL {
 
         Layer3_Event_Start,
         ProtocolRecvMsg,            //17
+        EmuBlockMiningComplete,     //18
         Layer3_Event_End,
 
         UnitTest_Event_Start,
-        FinishTest,                 //20
+        FinishTest,                 //21
         UnitTest_Event_End,
 
         Layer5_Event_END,
@@ -94,6 +96,9 @@ namespace libBLEEP_BL {
 
         // data for ProtocolRecvMsg event
         std::shared_ptr<Message> _protocolMsg;
+
+        // data for EmuBlockMiningComplete
+        std::shared_ptr<POWBlock> _minedBlk;
 
     public:
         // data set function for SocketAccept
@@ -176,6 +181,11 @@ namespace libBLEEP_BL {
         void SetProtocolMsg(std::shared_ptr<Message> msg) { _protocolMsg = msg; }
         // data access function for ProtocolRecvMsg
         std::shared_ptr<Message> GetProtocolMsg() { return _protocolMsg; }
+
+        // data set function for EmuBlockMiningComplete, BlockMiningComplete
+        void SetMinedBlock(std::shared_ptr<POWBlock> block) { _minedBlk = block; }
+        // data access function for EmuBlockMiningComplete, BlockMiningComplete
+        std::shared_ptr<POWBlock> GetMinedBlock() { return _minedBlk; }
     };
 
     class AsyncEvent {
@@ -192,6 +202,18 @@ namespace libBLEEP_BL {
     };
 
     class MainEventManager {
+    private:
+        ev::timer _timeout;
+        bool _timeout_triggered = false;
+        void _timercallback(ev::timer &w, int revents) {
+            _timeout_triggered = true;
+        }
+        void _startTimer(double timeout) {
+            _timeout.set<MainEventManager, &MainEventManager::_timercallback>(this);
+            _timeout.set(timeout, 0);
+            _timeout.start();
+        }
+
     private:
         /* internal event loop variable */
         struct ev_loop *_libev_loop;
@@ -211,8 +233,11 @@ namespace libBLEEP_BL {
 
         static void InitInstance(AsyncEventEnum internalEventEnum = AsyncEventEnum::Base);
 
+        static void InitInstance(double timeout, AsyncEventEnum internalEventEnum = AsyncEventEnum::Base);
+
     protected:
         MainEventManager(AsyncEventEnum internalEventEnum = AsyncEventEnum::Base);
+        MainEventManager(double timeout, AsyncEventEnum internalEventEnum = AsyncEventEnum::Base);
 
     private:
         static MainEventManager *_instance;

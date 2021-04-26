@@ -3,13 +3,13 @@
 
 using namespace libBLEEP_BL;
 
-std::list<boost::shared_ptr<SimpleTransaction> > TxPool::GetTxs(int num) {
+std::list<std::shared_ptr<SimpleTransaction> > TxPool::GetTxs(int num) {
     if (GetPendingTxNum() < num) {
         std::cout << "Warning : Not enough pending transaction pool. Too many requests" << "\n";
         return {};
     }
 
-    std::list<boost::shared_ptr<SimpleTransaction> > txs;
+    std::list<std::shared_ptr<SimpleTransaction> > txs;
     auto it = items.begin();
     while (num-- > 0) {
         txs.push_back(it->second);
@@ -28,12 +28,12 @@ void TxPool::RemoveTxs(const std::list<SimpleTransactionId>& txIds) {
     return;
 }
 
-void TxPool::AddTxs(std::list<boost::shared_ptr<SimpleTransaction> > txs) {
+void TxPool::AddTxs(std::list<std::shared_ptr<SimpleTransaction> > txs) {
     for (auto tx : txs)
         items.insert({tx->GetId(), tx});
 }
 
-void TxPool::AddTx(boost::shared_ptr<SimpleTransaction> tx) {
+void TxPool::AddTx(std::shared_ptr<SimpleTransaction> tx) {
     items.insert({tx->GetId(), tx});
     PrintPool();
     return;
@@ -43,7 +43,7 @@ bool TxPool::ContainTx(SimpleTransactionId tid) {
     return (items.count(tid) > 0);
 }
 
-boost::shared_ptr<SimpleTransaction> TxPool::GetTx(SimpleTransactionId id) {
+std::shared_ptr<SimpleTransaction> TxPool::GetTx(SimpleTransactionId id) {
     auto it = items.find(id);
     if (it != items.end())
         return it->second;

@@ -29,7 +29,7 @@ namespace libBLEEP_BL {
             float amount = (float) (rand() % 100000);
             SimpleTransaction tx(sender_id,receiver_id,amount);
             if (!_txPool->ContainTx(tx.GetId())) {
-                _txPool->AddTx(boost::make_shared<SimpleTransaction>(tx));
+                _txPool->AddTx(std::make_shared<SimpleTransaction>(tx));
                 _txToBroadcast.push_back(tx);
             }
         }

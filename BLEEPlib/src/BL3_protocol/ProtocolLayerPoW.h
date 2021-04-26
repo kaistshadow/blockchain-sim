@@ -6,17 +6,40 @@
 #include "ProtocolLayer_API.h"
 #include "Transaction.h"
 #include "TxGossipProtocol.h"
+#include "POWBlock.h"
+#include "POWMiner.h"
 
 
 namespace libBLEEP_BL {
 
+    // PoW parameters
+    extern int txNumPerBlock;
+    extern double txGenStartAt;
+    extern double txGenInterval;
+    extern double miningtime;
+    extern int miningnodecnt;
+
     class BL_ProtocolLayerPoW : public BL_ProtocolLayer_API {
     private:
+        POWMiner _powMiner;
 
         /* handler functions for each asynchronous event */
         void RecvMsgHandler(std::shared_ptr<Message> msg);
 
     private:
+        std::shared_ptr<POWBlock> _makeCandidateBlock() {
+            std::list<std::shared_ptr<SimpleTransaction> > txs = _txPool->GetTxs(txNumPerBlock);
+            std::shared_ptr<POWBlock> candidateBlk = std::make_shared<POWBlock>("", txs);
+
+            unsigned long blockidx = _blkPool.size();
+            candidateBlk->SetBlockIdx(blockidx);
+            std::shared_ptr<POWBlock> lastblk = std::dynamic_pointer_cast<POWBlock>(GetLastBlock());
+            if (lastblk)
+                candidateBlk->SetPrevBlockHash(lastblk->GetBlockHash());
+
+            return candidateBlk;
+        }
+
         // periodic tx generation for experimental purpose
         ev::timer _txgentimer;
         void _txgentimerCallback(ev::timer &w, int revents) {
@@ -26,8 +49,16 @@ namespace libBLEEP_BL {
             int receiver_id = rand() % 100;
             float amount = (float) (rand() % 100000);
             SimpleTransaction tx(sender_id,receiver_id,amount);
+
             if (!_txPool->ContainTx(tx.GetId())) {
-                _txPool->AddTx(boost::make_shared<SimpleTransaction>(tx));
+                _txPool->AddTx(std::make_shared<SimpleTransaction>(tx));
+
+                if (_txPool->GetPendingTxNum() >= libBLEEP_BL::txNumPerBlock) {
+                    if (!_powMiner.IsMining()) {
+                        std::shared_ptr<POWBlock> candidateBlk = _makeCandidateBlock();
+                        _powMiner.AsyncEmulateBlockMining(candidateBlk, miningtime/miningnodecnt);
+                    }
+                }
             }
             _txGenNum += 1;
         }

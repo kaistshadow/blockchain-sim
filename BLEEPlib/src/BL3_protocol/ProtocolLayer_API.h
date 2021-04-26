@@ -22,9 +22,12 @@ namespace libBLEEP_BL {
     protected:
         std::shared_ptr<TxPool> _txPool;
         int _txGenNum = 0;
+        std::list<std::shared_ptr<Block>> _blkPool;
     public:
         int GetTxGeneratedNum() { return _txGenNum; }
         std::shared_ptr<TxPool> GetTxPool() { return _txPool; }
+        int GetBlockPoolSize() { return _blkPool.size(); }
+        std::shared_ptr<Block> GetLastBlock() { return _blkPool.back(); }
 
     public:
 

@@ -22,10 +22,6 @@ endif(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 set(CMAKE_ROOT_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 set(CMAKE_ROOT_BINARY_DIR ${CMAKE_BINARY_DIR})
 
-add_compile_options(
-        $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,9.3.0>>:-std=c++2a>
-        $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.3.0>>:-std=c++17>)
-
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 
@@ -37,7 +33,6 @@ option(SHADOW_DEBUG "turn on debugging for verbose program output (default: ON f
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BLEEP_DEBUG ON)
     set(SHADOW_DEBUG ON)
-    set(SHADOW_PROFILE ON)
 elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
     set(BLEEP_DEBUG OFF)
     set(SHADOW_DEBUG OFF)
@@ -79,7 +74,7 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/Install")
 enable_testing()
 add_subdirectory(interfaces)
 add_subdirectory(external)
- add_subdirectory(BLEEPemul)
+add_subdirectory(BLEEPemul)
 
 if(BLEEPLIB_OPT STREQUAL ON)
     add_subdirectory(BLEEPlib)
@@ -87,10 +82,13 @@ endif(BLEEPLIB_OPT STREQUAL ON)
 
 # add_subdirectory(BLEEPapp)
 add_subdirectory(BLEEPeval)
+add_subdirectory(testlibs)
 
-if(TEST_OPT STREQUAL ON)
+if (TEST_OPT STREQUAL ON)
     add_subdirectory(tests)
-endif()
+elseif (UNITTEST_OPT STREQUAL ON)
+    add_subdirectory(tests)
+endif ()
 
 ## add command for lauching BLEEP web interface
 add_custom_target(run-web-gui

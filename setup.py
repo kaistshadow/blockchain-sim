@@ -61,6 +61,8 @@ def process_ENV():
     print ("After installing, execute following commands on your bash. (type without dollor sign)")
     print ("$ source ~/.bashrc")
 
+def prepare_monero_dependencies():
+    exec_shell_cmd("sudo apt install libminiupnpc-dev")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
@@ -88,35 +90,40 @@ if __name__ == '__main__':
 
 
     if len(sys.argv) == 1:
-        exec_shell_cmd("git submodule update --init")
-        #bitcoin dependency
+        exec_shell_cmd("git submodule update --init --recursive")
+        # bitcoin dependency
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
         exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
         exec_shell_cmd("sudo apt-get install -y libssl-dev")
+        # monero dependency
+        prepare_monero_dependencies()
+
         prepare_shadow()
         prepare_shadow_dependencies()
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_bleeplib_opt))
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (
+        cmake_debug_opt, cmake_bleeplib_opt))
         process_ENV()   
 
     if OPT_DEBUG:
         cmake_debug_opt = "-DSHADOW_DEBUG=ON -DBLEEP_DEBUG=ON"
 
     if OPT_BITCOIN:
-        exec_shell_cmd("git submodule update --init")
-        #bitcoin dependency
+        exec_shell_cmd("git submodule update --init --recursive")
+        # bitcoin dependency
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
         exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
         exec_shell_cmd("sudo apt-get install -y libssl-dev")
-        #rpc client dependency
+        # rpc client dependency
         exec_shell_cmd("sudo apt-get install -y libjsoncpp-dev")
         prepare_shadow()
         prepare_shadow_dependencies()
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" %(cmake_debug_opt, cmake_bleeplib_opt))
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (
+        cmake_debug_opt, cmake_bleeplib_opt))
         process_ENV()   
 
     if OPT_ALL:
         # cloning shadow repository (submodule)
-        exec_shell_cmd("git submodule update --init")
+        exec_shell_cmd("git submodule update --init --recursive")
         prepare_shadow()
         prepare_shadow_dependencies()
 
@@ -126,23 +133,28 @@ if __name__ == '__main__':
 
         ## install bitcoin dependencies
         exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
+        ## prepare monero dependency
+        prepare_monero_dependencies()
         ## bitcoin first run (without wallet enabled) dependencies
         exec_shell_cmd("sudo apt-get install -y libssl-dev")
         cmake_all_opt = "-DALL_OPT=ON"
 
         ## install
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (cmake_debug_opt, cmake_all_opt, cmake_bleeplib_opt))
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (
+        cmake_debug_opt, cmake_all_opt, cmake_bleeplib_opt))
         process_ENV()
     
     if OPT_GIT:
-         # cloning shadow repository (submodule)
-        exec_shell_cmd("git submodule update --init")
+        # cloning shadow repository (submodule)
+        exec_shell_cmd("git submodule update --init --recursive")
         prepare_shadow()
         prepare_shadow_dependencies()
         ### Until the complete tests are done, let's exclude following external modules from git all build
 
         # ## install boost-lib
         exec_shell_cmd("sudo apt-get install -y libboost-all-dev")
+        # rpc client dependency
+        exec_shell_cmd("sudo apt-get install -y libjsoncpp-dev")
 
         ## install bitcoin dependencies
         exec_shell_cmd("sudo apt-get install -y autoconf libtool libevent-dev libdb++-dev")
@@ -151,16 +163,23 @@ if __name__ == '__main__':
         cmake_git_opt = "-DGIT_OPT=ON"
 
         ## install
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (cmake_debug_opt, cmake_git_opt, cmake_bleeplib_opt))
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (
+        cmake_debug_opt, cmake_git_opt, cmake_bleeplib_opt))
         process_ENV()
 
 
     if OPT_TEST:
         cmake_test_opt = "-DTEST_OPT=ON"
+        # my_path = os.getcwd()
+        # target_path = my_path + "/testlibs/dump/difficulty_3"
+        # if os.path.isdir(target_path):
+        #     pass
+        # else:
+        #     exec_shell_cmd("cd testlibs/datadirDump; sh startdump.sh 3")
         exec_shell_cmd("mkdir -p build; cd build; cmake %s ../; make -j8; make test" %(cmake_test_opt))
 
     if OPT_UNITTEST:
-        exec_shell_cmd("git submodule update --init")
+        exec_shell_cmd("git submodule update --init --recursive")
         cmake_unittest_opt = "-DUNITTEST_OPT=ON"
         exec_shell_cmd("mkdir -p build; cd build; cmake %s ../; make -j8" %(cmake_unittest_opt))
 

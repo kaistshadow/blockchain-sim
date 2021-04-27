@@ -1,9 +1,13 @@
+#
+# 2021-03-18
+# created by hong joon
+#
 import os
 from subprocess import check_output
 import argparse
 import sys
 sys.path.append("./../../../../")
-from testlibs import test_modules
+from testlibs import test_modules, utils, xml_modules
 
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
@@ -16,7 +20,7 @@ def main():
     path = os.path.abspath("./")
 
     # xml 파일 생성
-    test_modules.get_xmlfile(path)
+    xml_modules.get_xmlfile(path)
 
     # xml 파일 생성 확인
     test_modules.test_xml_existence("output.xml")

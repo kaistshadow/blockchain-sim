@@ -28,18 +28,18 @@ def setup_multiple_node_xml(node_num, simultime, bool_, algorithm, difficulty):
         node = ET.SubElement(shadow, "node", id=node_id, iphint=node_iphint)
         time = str(0)
         if i==0:
-            argument = "-debug -datadir=data/bcdnode%d -port=18333 -txindex=1 -fallbackfee=0.0002 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333 -algorithm=%s -difficulty=%s" % (i, (node_iphint), (node_iphint), (node_num-1)/256 + 1, (node_num-1)%256, (i+1)/256 + 1, (i+1)%256, algorithm, difficulty)
+            argument = "-debug -reindex -datadir=data/bcdnode%d -port=18333 -txindex=1 -fallbackfee=0.0002 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333 -algorithm=%s -difficulty=%s" % (i, (node_iphint), (node_iphint), (node_num-1)/256 + 1, (node_num-1)%256, (i+1)/256 + 1, (i+1)%256, algorithm, difficulty)
         elif i<(node_num-1):
-            argument = "-debug -datadir=data/bcdnode%d -port=18333 -txindex=1 -fallbackfee=0.0002 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333 -algorithm=%s -difficulty=%s" % (i, (node_iphint), (node_iphint), (i-1)/256 + 1, (i-1)%256, (i+1)/256 + 1, (i+1)%256, algorithm, difficulty)
+            argument = "-debug -reindex -datadir=data/bcdnode%d -port=18333 -txindex=1 -fallbackfee=0.0002 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333 -algorithm=%s -difficulty=%s" % (i, (node_iphint), (node_iphint), (i-1)/256 + 1, (i-1)%256, (i+1)/256 + 1, (i+1)%256, algorithm, difficulty)
         else:
-            argument = "-debug -datadir=data/bcdnode%d -port=18333 -txindex=1 -fallbackfee=0.0002 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333 -algorithm=%s -difficulty=%s" % (i, (node_iphint), (node_iphint), (i-1)/256 + 1, (i-1)%256, 1, 0, algorithm, difficulty)
+            argument = "-debug -reindex -datadir=data/bcdnode%d -port=18333 -txindex=1 -fallbackfee=0.0002 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=%s/0 -rpcbind=%s -addnode=%d.%d.0.1:18333 -addnode=%d.%d.0.1:18333 -algorithm=%s -difficulty=%s" % (i, (node_iphint), (node_iphint), (i-1)/256 + 1, (i-1)%256, 1, 0, algorithm, difficulty)
         ET.SubElement(node,"application", plugin="bitcoind", time=time, arguments=argument)
 
     for i in range(0, node_num):
         node_id = "client%d" % (i)
         node = ET.SubElement(shadow, "node", id=node_id)
         time = str(5)
-        argument = "%d.%d.0.1:11111 %d " % (i/256 + 1, i%256, (simultime-6))
+        argument = "%d.%d.0.1:11111 %d " % (i/256 + 1, i%256, (simultime-8))
         ET.SubElement(node,"application", plugin="client", time=time, arguments=argument)
 
     if bool_ == True:
@@ -48,14 +48,14 @@ def setup_multiple_node_xml(node_num, simultime, bool_, algorithm, difficulty):
     else :
         node_id = "injector"
         node = ET.SubElement(shadow, "node", id=node_id)
-        time = str(5)
+        time = str(8)
         txcnt = sys.argv[6]
         if txcnt > -1:
             txsec = sys.argv[7]
             amount = sys.argv[8]
-            argument = " %d.%d.0.1:11111 %s %s %s " % (i % 256 + 1, i % 256, txcnt, txsec, amount)
+            argument = "1.0.0.1:11111 %s %s %s " % (txcnt, txsec, amount)
         elif txcnt == "-1 ":
-             argument= " %d.%d.0.1:11111 0 0 0 " %(i/256 + 1, i%256)
+             argument= "1.0.0.1:11111 0 0 0 "
         ET.SubElement(node,"application", plugin="txInjector", time=time, arguments=argument)
 
     tree.write(new_xml, pretty_print=True)

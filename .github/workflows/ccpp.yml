@@ -19,19 +19,19 @@ jobs:
         sudo apt install python
         sudo apt-get update
     - name: install BLEEP
-      run: python setup.py --all
+      run: python setup.py --bitcoin
     - name: test BLEEP using script
       run: |
         export PATH=${PATH}:${GITHUB_WORKSPACE}/Install/bin
         export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/Install
         python setup.py --test
 
-        #     - name : Setup tmate session
+        #    - name : Setup tmate session
         #uses : mxschmitt/action-tmate@v2
-     
-        #   if: failure()
-        #- name: Archive test output files when the test is Failed
-        #uses: actions/upload-artifact@v2
+    #   if: failure()
+
+    # - name: Archive test output files when the test is Failed
+    #   uses: actions/upload-artifact@v2
 #       if: failure()
 #       with:
 #         name: shadow-bitcoin-with-wallet_outputs

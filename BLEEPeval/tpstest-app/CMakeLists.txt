@@ -1,0 +1,11 @@
+if (ALL_OPT STREQUAL ON)
+    add_subdirectory(bitcoin)
+elseif (GIT_OPT STREQUAL ON)
+    add_subdirectory(bitcoin)
+elseif (BITCOIN_OPT STREQUAL ON)
+    add_subdirectory(bitcoin)
+elseif (MONERO_OPT STREQUAL ON)
+
+else (ALL_OPT STREQUAL ON)
+    add_subdirectory(bitcoin)
+endif (ALL_OPT STREQUAL ON)

@@ -6,3 +6,4 @@ add_compile_options(
 
 add_subdirectory(shadow_interface)
 add_subdirectory(shadow_bitcoin_interface)
+add_subdirectory(shadow_memshare_interface)

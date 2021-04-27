@@ -9,7 +9,6 @@ fi
 
 if [ ! -e minerNode_rpc.so ]; then
   echo "start to dump!"
-  #install 경로 바꾸기.
   cp ../../../BLEEPemul/emulation/minerNode_rpc.so ./
 fi
 
@@ -22,4 +21,3 @@ fi
 
 sh clean_data.sh $1
 shadow test-BitcoinP2P.xml
-

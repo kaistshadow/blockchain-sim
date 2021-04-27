@@ -9,11 +9,22 @@
 #include <queue>
 #include <vector>
 #include <string>
+#include <unordered_map>
+#include <mutex>
 
 class block;
 class blocktreebase;
 class blockforest;
 
+class shared_timepool {
+private:
+    std::unordered_map<std::string, uint32_t> txtimes;
+    std::mutex _lock;
+public:
+    void register_txtime(std::string txhash, uint32_t time);
+    uint32_t get_txtime(std::string txhash);
+};
+extern shared_timepool* global_txtimepool;
 class block {
 private:
     std::string hexHash;
@@ -22,6 +33,7 @@ private:
     block* parent;
     blocktreebase* treebase;
     std::vector<std::string> txHashes;
+    unsigned long int net_tx_latency;
 public:
     block(std::string hexHash, std::string hexPrevHash, uint32_t time);
     std::string getHexHash();
@@ -31,8 +43,11 @@ public:
     block* getParent();
     void setParent(block* bp);
     void pushTxHash(std::string txHash);
+    std::vector<std::string> getTxHashes();
     void setTreebase(blocktreebase* tb);
     blocktreebase* getTreebase();
+    unsigned long int getNetTxLatency();
+    void setNetTxLatency(unsigned long int netLatency);
 };
 class blocktreebase {
 private:

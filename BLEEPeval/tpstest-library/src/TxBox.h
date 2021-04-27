@@ -11,20 +11,22 @@
 namespace tpstest {
     template< template<class> class TestPolicy, class NodePrimitives>
     class TxBox : public TestPolicy <NodePrimitives> {
-        private:
-        std::string _nodeIP = "";
+    private:
+        std::string _txgenIP = "";
+        std::string _monitorIP = "";
         int _nodePort = -1;
         std::vector<std::pair<std::string, int>> targets;
 
-        public:
+    public:
         TxBox() {}
 
         void addTarget(std::string targetIP, int targetPort) {
             std::cout<<"addTarget : "<<targetIP <<" "<< targetPort<<"\n";
             targets.emplace_back(std::make_pair(targetIP, targetPort));
         }
-        void addNode(std::string nodeIP, int nodePort) {
-            _nodeIP = nodeIP;
+        void addNode(std::string txgenIP, std::string mointorIP, int nodePort) {
+            _txgenIP = txgenIP;
+            _monitorIP = mointorIP;
             _nodePort = nodePort;
         }
 
@@ -32,7 +34,7 @@ namespace tpstest {
             if (targets.size()==0)
                 return false;
 
-            if (!TestPolicy<NodePrimitives>::ConstructNet(targets, _nodeIP, _nodePort))
+            if (!TestPolicy<NodePrimitives>::ConstructNet(targets, _txgenIP, _monitorIP, _nodePort))
                 return false;
             return true;
         }

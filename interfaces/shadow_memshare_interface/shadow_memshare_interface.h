@@ -78,23 +78,34 @@ void* shadow_memshare_lookup(void* type_idx_ref, void* sptr_ref);
 }
 
 namespace memshare {
+    void set_shared_type_cache(std::type_index tidx);
+    int check_shared_type_cache(std::type_index tidx);
     template <typename SPTR_TYPE>
     void try_register_table() {
         std::type_index type_idx = std::type_index(typeid(SPTR_TYPE));
         memory_sharing_unspecified* mtbl = new memory_sharing<SPTR_TYPE>();
         shadow_try_register_memshare_table(&type_idx, mtbl);
+        set_shared_type_cache(type_idx);
     }
     template <typename SPTR_TYPE>
     void try_share(SPTR_TYPE sptr) {
         std::type_index type_idx = std::type_index(typeid(SPTR_TYPE));
+        if (check_shared_type_cache(type_idx)) {
+            try_register_table<SPTR_TYPE>();
+        }
         shadow_memshare_try_share(&type_idx, &sptr);
     }
     template <typename SPTR_TYPE>
     SPTR_TYPE lookup(SPTR_TYPE sptr) {
         std::type_index type_idx = std::type_index(typeid(SPTR_TYPE));
+        if (check_shared_type_cache(type_idx)) {
+            try_register_table<SPTR_TYPE>();
+        }
         SPTR_TYPE* sptr_ptr = (SPTR_TYPE*)shadow_memshare_lookup(&type_idx, &sptr);
         SPTR_TYPE res = *sptr_ptr;
-        delete sptr_ptr;
+        if (sptr_ptr != &sptr) {
+            delete sptr_ptr;
+        }
         return res;
     }
 }

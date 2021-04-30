@@ -40,6 +40,7 @@ namespace tpstest {
         }
 
         int startNetwork() {
+            TestPolicy<NodePrimitives>::SetGenerateTimer();
             ev_run(TestPolicy<NodePrimitives>::libev_loop, 0);
             return 0;
         }

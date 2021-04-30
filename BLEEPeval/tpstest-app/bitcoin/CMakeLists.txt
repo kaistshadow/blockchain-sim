@@ -43,6 +43,10 @@ set_property(TARGET TPSTESTER::Plugin PROPERTY IMPORTED_NO_SONAME 1)
 
 # copy plugin into source directory
 add_custom_target(tps-API-bitcoin-copy-plugin ALL
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1dev::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1dev::Plugin> ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMAND g++ -o minerNode_onlymining.so one_node_setmine.cpp ../../../testlibs/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../../Install/curl_7.70.0/lib -g
+        COMMAND ${CMAKE_COMMAND} -E copy minerNode_onlymining.so ${CMAKE_INSTALL_PREFIX}/plugins/minerNode_onlymining.so
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
 
 add_dependencies(tps-API-bitcoin-copy-plugin Bitcoin_0_19_1dev::Plugin)

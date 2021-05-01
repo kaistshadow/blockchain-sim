@@ -4,9 +4,7 @@ using namespace libBLEEP_BL;
 
 BL_ProtocolLayerEx1::BL_ProtocolLayerEx1() : BL_ProtocolLayer_API(),
                                              _txGossipProtocol(nullptr) {
-    std::shared_ptr<TxPool> txPool = std::make_shared<TxPool>();
-    _txPool = txPool;
-    _txGossipProtocol.SetTxPool(txPool);
+    _txGossipProtocol.SetTxPool(_txPool);
 }
 
 void BL_ProtocolLayerEx1::RecvMsgHandler(std::shared_ptr<Message> msg) {
@@ -35,10 +33,7 @@ void BL_ProtocolLayerEx1::SwitchAsyncEventHandler(AsyncEvent& event) {
 }
 
 bool BL_ProtocolLayerEx1::InitiateProtocol() {
-    // TODO : implement
-
-    _startPeriodicTxGen(10, 10);
-    _startPeriodicTxBroadcast(30, 30);
+    _startPeriodicTxGen(30, 30);
     return true;
 }
 

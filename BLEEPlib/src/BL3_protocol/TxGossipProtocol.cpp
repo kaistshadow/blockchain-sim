@@ -29,13 +29,13 @@ void TxGossipProtocol::RecvGetdataHandler(std::shared_ptr<Message> msg) {
     std::cout << "recv getdata msg" << "\n";
     std::shared_ptr<TxGossipGetdata> getdata = std::static_pointer_cast<TxGossipGetdata>(msg->GetObject());
     auto tids = getdata->GetTransactionIds();
-    std::vector<SimpleTransaction> txs;
+    std::vector<std::shared_ptr<SimpleTransaction>> txs;
     for (auto tid : tids) {
         std::cout << "receive getdata tx id:" << tid << "\n";
         
         // check whether the txpool has the tx
         if (_txPool->ContainTx(tid))
-            txs.push_back(*_txPool->GetTx(tid));
+            txs.push_back(_txPool->GetTx(tid));
     }
     if (!txs.empty()) {
         // send txs
@@ -53,13 +53,13 @@ void TxGossipProtocol::RecvTxsHandler(std::shared_ptr<Message> msg) {
         std::cout << "receive tx:" << tx << "\n";
         
         // Add to txpool
-        _txPool->AddTx(std::make_shared<SimpleTransaction>(tx));
+        _txPool->AddTx(tx);
     }
 
     // relay tx to neighbors
     std::vector<SimpleTransactionId> txids;
     for (auto tx : txs) {
-        txids.push_back(tx.GetId());
+        txids.push_back(tx->GetId());
     }
     std::vector<PeerId> neighborIds = BL_PeerConnectivityLayer_API::Instance()->GetNeighborPeerIds();
     for (auto neighborId : neighborIds) {

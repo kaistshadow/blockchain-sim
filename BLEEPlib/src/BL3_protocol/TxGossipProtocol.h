@@ -7,89 +7,55 @@
 
 #include "TxPool.h"
 #include "Transaction.h"
+
+#include "../BL2_peer_connectivity/PeerConnectivityLayer_API.h"
+#include "../BL2_peer_connectivity/Peer.h"
 #include "../BL2_peer_connectivity/MessageObject.h"
 
 namespace libBLEEP_BL {
     class Message;
 
-    // TODO : make TxGossipMsgObj as templatized class using enum class ??
-    // for example TxGossipMsgObj<enum::Inv>, TxGossipMsg<enum::GetData> ??
-    class TxGossipInventory : public MessageObject {
-    private:
-        std::vector<SimpleTransactionId> _ids;
-        
-    public:
-        TxGossipInventory() {}
-
-        TxGossipInventory(std::vector<SimpleTransactionId> ids) { 
-            for (auto id : ids) 
-                _ids.push_back(id);
-        }
-        
-        std::vector<SimpleTransactionId>& GetTransactionIds() { return _ids; }
-
-    private: // boost serialization
-        friend class boost::serialization::access;
-        template<class Archive>
-            void serialize(Archive & ar, const unsigned int version) {
-            ar & boost::serialization::base_object<MessageObject>(*this);
-            ar & _ids;
-        }
-    };
-
-    class TxGossipGetdata : public MessageObject {
-    private:
-        std::vector<SimpleTransactionId> _ids;
-        
-    public:
-        TxGossipGetdata() {}
-
-        TxGossipGetdata(std::vector<SimpleTransactionId> ids) { 
-            for (auto id : ids) 
-                _ids.push_back(id);
-        }
-        std::vector<SimpleTransactionId>& GetTransactionIds() { return _ids; }
-
-    private: // boost serialization
-        friend class boost::serialization::access;
-        template<class Archive>
-            void serialize(Archive & ar, const unsigned int version) {
-            ar & boost::serialization::base_object<MessageObject>(*this);
-            ar & _ids;
-        }
-    };
-
-    class TxGossipTxs : public MessageObject {
-    private:
-        std::vector<SimpleTransaction> _txs;
-        
-    public:
-        TxGossipTxs() {}
-
-        TxGossipTxs(std::vector<SimpleTransaction> &txs) { 
-            for (auto tx : txs) 
-                _txs.push_back(tx);
-        }
-        std::vector<SimpleTransaction>& GetTransactions() { return _txs; }
-
-    private: // boost serialization
-        friend class boost::serialization::access;
-        template<class Archive>
-            void serialize(Archive & ar, const unsigned int version) {
-            ar & boost::serialization::base_object<MessageObject>(*this);
-            ar & _txs;
-        }
-    };
-
-
     class TxGossipProtocol {
     private:
         std::shared_ptr<TxPool> _txPool;
+        std::vector<std::shared_ptr<SimpleTransaction> > _txToBroadcast;
+
+    private:
+        // periodic tx broadcast
+        ev::timer _txbctimer;
+        void _txbroadcasttimerCallback(ev::timer &w, int revents) {
+            std::cout << "tx broadcast timer called" << "\n";
+            std::cout << _txToBroadcast.size() << "\n";
+            if (_txToBroadcast.empty())
+                return;
+
+            std::vector<SimpleTransactionId> txids;
+            for (auto tx : _txToBroadcast)
+                txids.push_back(tx->GetId());
+
+            std::vector<PeerId> neighborIds = BL_PeerConnectivityLayer_API::Instance()->GetNeighborPeerIds();
+            for (auto &neighborId : neighborIds) {
+                std::cout << "send inv to " << neighborId.GetId() << "\n";
+                std::shared_ptr<MessageObject> ptrToObj = std::make_shared<TxGossipInventory>(txids);
+                std::shared_ptr<Message> message = std::make_shared<Message>(neighborId, "TXGOSSIP-INV", ptrToObj);
+                BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(neighborId, message);
+            }
+            _txToBroadcast.clear();
+        }
+        void _startPeriodicTxBroadcast(double start, double interval) {
+            _txbctimer.set<TxGossipProtocol, &TxGossipProtocol::_txbroadcasttimerCallback>(this);
+            _txbctimer.set(start, interval);
+            _txbctimer.start();
+        }
         
     public:
-        TxGossipProtocol(std::shared_ptr<TxPool> txPool) {_txPool = txPool;};
+        TxGossipProtocol(std::shared_ptr<TxPool> txPool) {
+            _txPool = txPool;
+            _startPeriodicTxBroadcast(30, 30);
+        };
         
         void SetTxPool(std::shared_ptr<TxPool> txPool) { _txPool = txPool; }
+        void PushTxToBroadcast(std::shared_ptr<SimpleTransaction> tx) { _txToBroadcast.push_back(tx); }
         
         void RecvInventoryHandler(std::shared_ptr<Message> msg);
 

@@ -22,6 +22,7 @@ BL_ProtocolLayer_API *BL_ProtocolLayer_API::Instance() {
 }
 
 void BL_ProtocolLayer_API::InitInstance(std::string protocolType) {
+    std::cout << "Protocol Layer initialization" << "\n";
     libBLEEP::M_Assert(_instance == 0, "Protocol Instance must be initialized once.");
     if (protocolType == "Ex1")
         _instance = new BL_ProtocolLayerEx1();
@@ -32,5 +33,5 @@ void BL_ProtocolLayer_API::InitInstance(std::string protocolType) {
 }
 
 BL_ProtocolLayer_API::BL_ProtocolLayer_API() {
-
+    _txPool = std::make_shared<TxPool>();
 }

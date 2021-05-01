@@ -9,13 +9,20 @@ int libBLEEP_BL::miningnodecnt = 1;
 using namespace libBLEEP_BL;
 
 
-BL_ProtocolLayerPoW::BL_ProtocolLayerPoW() : BL_ProtocolLayer_API() {
-    _txPool = std::make_shared<TxPool>();
+BL_ProtocolLayerPoW::BL_ProtocolLayerPoW() : BL_ProtocolLayer_API(),
+                                             _txGossipProtocol(_txPool) {
 }
 
 void BL_ProtocolLayerPoW::RecvMsgHandler(std::shared_ptr<Message> msg) {
     std::cout << "recv protocol msg" << "\n";
     MessageType msgType = msg->GetType();
+    if (msgType == "TXGOSSIP-INV") {
+        _txGossipProtocol.RecvInventoryHandler(msg);
+    } else if (msgType == "TXGOSSIP-GETDATA") {
+        _txGossipProtocol.RecvGetdataHandler(msg);
+    } else if (msgType == "TXGOSSIP-TXS") {
+        _txGossipProtocol.RecvTxsHandler(msg);
+    }
 }
 
 void BL_ProtocolLayerPoW::SwitchAsyncEventHandler(AsyncEvent& event) {

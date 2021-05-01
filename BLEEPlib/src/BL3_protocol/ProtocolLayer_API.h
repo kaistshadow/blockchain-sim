@@ -2,6 +2,7 @@
 #define PROTOCOL_LAYER_API_H
 
 #include "BL_MainEventManager.h"
+#include "TxPool.h"
 
 namespace libBLEEP_BL {
     class BL_ProtocolLayer_API {

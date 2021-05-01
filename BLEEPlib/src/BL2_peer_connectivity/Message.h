@@ -14,7 +14,7 @@
 
 #include "AddrAdvertisement.h"
 #include "../BL3_protocol/Inventory.h"
-#include "../BL3_protocol/TxGossipProtocol.h"
+#include "../BL3_protocol/TxGossipProtocolMsg.h"
 
 
 #include "utility/GlobalClock.h"

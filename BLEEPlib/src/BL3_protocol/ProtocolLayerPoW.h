@@ -22,6 +22,8 @@ namespace libBLEEP_BL {
     class BL_ProtocolLayerPoW : public BL_ProtocolLayer_API {
     private:
         POWMiner _powMiner;
+    private:
+        TxGossipProtocol _txGossipProtocol;
 
         /* handler functions for each asynchronous event */
         void RecvMsgHandler(std::shared_ptr<Message> msg);
@@ -48,10 +50,11 @@ namespace libBLEEP_BL {
             int sender_id = rand() % 100;
             int receiver_id = rand() % 100;
             float amount = (float) (rand() % 100000);
-            SimpleTransaction tx(sender_id,receiver_id,amount);
+            std::shared_ptr<SimpleTransaction> tx = std::make_shared<SimpleTransaction>(sender_id, receiver_id, amount);
 
-            if (!_txPool->ContainTx(tx.GetId())) {
-                _txPool->AddTx(std::make_shared<SimpleTransaction>(tx));
+            if (!_txPool->ContainTx(tx->GetId())) {
+                _txPool->AddTx(tx);
+                _txGossipProtocol.PushTxToBroadcast(tx);
 
                 if (_txPool->GetPendingTxNum() >= libBLEEP_BL::txNumPerBlock) {
                     if (!_powMiner.IsMining()) {

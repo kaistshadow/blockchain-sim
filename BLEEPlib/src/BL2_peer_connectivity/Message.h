@@ -15,6 +15,7 @@
 #include "AddrAdvertisement.h"
 #include "../BL3_protocol/Inventory.h"
 #include "../BL3_protocol/TxGossipProtocolMsg.h"
+#include "../BL3_protocol/POWBlockGossipProtocolMsg.h"
 
 
 #include "utility/GlobalClock.h"
@@ -86,6 +87,7 @@ namespace libBLEEP_BL {
             ar.template register_type<TxGossipInventory>();
             ar.template register_type<TxGossipGetdata>();
             ar.template register_type<TxGossipTxs>();
+            ar.template register_type<POWBlockGossipInventory>();
             ar & _src;
             ar & _dest;
             ar & _type;

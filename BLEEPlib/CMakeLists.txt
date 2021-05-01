@@ -57,6 +57,8 @@ target_sources(BLEEP
         src/BL3_protocol/POWBlock.h
         src/BL3_protocol/POWBlock.cpp
         src/BL3_protocol/POWMiner.cpp
+        src/BL3_protocol/POWBlockGossipProtocolMsg.h
+        src/BL3_protocol/BlockTree.h
         src/BL3_protocol/TxGossipProtocol.cpp
         src/BL3_protocol/TxGossipProtocol.h
         src/BL3_protocol/TxGossipProtocolMsg.h

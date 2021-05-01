@@ -28,6 +28,8 @@ namespace libBLEEP_BL {
         /* handler functions for each asynchronous event */
         void RecvMsgHandler(std::shared_ptr<Message> msg);
 
+        void _RecvPOWBlockInvHandler(std::shared_ptr<Message> msg);
+
     private:
         std::shared_ptr<POWBlock> _makeCandidateBlock() {
             std::list<std::shared_ptr<SimpleTransaction> > txs = _txPool->GetTxs(txNumPerBlock);
@@ -80,6 +82,7 @@ namespace libBLEEP_BL {
 
         /* public API functions */
         virtual bool InitiateProtocol();
+        virtual bool InitiateProtocol(ProtocolParameter* params);
         virtual bool StopProtocol();
     };
 }

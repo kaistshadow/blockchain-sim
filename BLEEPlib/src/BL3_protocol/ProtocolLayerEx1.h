@@ -46,6 +46,7 @@ namespace libBLEEP_BL {
 
         /* public API functions */
         virtual bool InitiateProtocol();
+        virtual bool InitiateProtocol(ProtocolParameter* params) { return false; }
         virtual bool StopProtocol();
     };
 }

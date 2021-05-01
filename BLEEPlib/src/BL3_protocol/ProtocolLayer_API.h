@@ -5,6 +5,11 @@
 #include "TxPool.h"
 
 namespace libBLEEP_BL {
+    class ProtocolParameter {
+    public:
+        virtual ~ProtocolParameter() {}
+    };
+
     class BL_ProtocolLayer_API {
         // singleton pattern
     public:
@@ -40,6 +45,7 @@ namespace libBLEEP_BL {
 
         /* public API functions */
         virtual bool InitiateProtocol() = 0;
+        virtual bool InitiateProtocol(ProtocolParameter *param) = 0;
 
         virtual bool StopProtocol() = 0;
 

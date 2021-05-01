@@ -8,22 +8,33 @@
 #include "TxGossipProtocol.h"
 #include "POWBlock.h"
 #include "POWMiner.h"
-
+#include "BlockTree.h"
+#include "BlockTree.cpp"  // This(BlockTree.cpp) is required since the BlockTree is template class
 
 namespace libBLEEP_BL {
 
     // PoW parameters
-    extern int txNumPerBlock;
-    extern double txGenStartAt;
-    extern double txGenInterval;
-    extern double miningtime;
-    extern int miningnodecnt;
+//    extern int txNumPerBlock;
+//    extern double txGenStartAt;
+//    extern double txGenInterval;
+//    extern double miningtime;
+//    extern int miningnodecnt;
 
     class BL_ProtocolLayerPoW : public BL_ProtocolLayer_API {
     private:
-        POWMiner _powMiner;
-    private:
         TxGossipProtocol _txGossipProtocol;
+    private:
+        POWMiner _powMiner;
+        BlockTree<POWBlock> _blocktree;
+    private: // PoW parameter
+        int txNumPerBlock = 2;
+        double txGenStartAt = 0;
+        double txGenInterval = 4;
+        double miningtime = 2;
+        int miningnodecnt = 1;
+    public:
+        BlockTree<POWBlock>& GetBlockTree() { return _blocktree; }
+
 
         /* handler functions for each asynchronous event */
         void RecvMsgHandler(std::shared_ptr<Message> msg);
@@ -35,11 +46,8 @@ namespace libBLEEP_BL {
             std::list<std::shared_ptr<SimpleTransaction> > txs = _txPool->GetTxs(txNumPerBlock);
             std::shared_ptr<POWBlock> candidateBlk = std::make_shared<POWBlock>("", txs);
 
-            unsigned long blockidx = _blkPool.size();
-            candidateBlk->SetBlockIdx(blockidx);
-            std::shared_ptr<POWBlock> lastblk = std::dynamic_pointer_cast<POWBlock>(GetLastBlock());
-            if (lastblk)
-                candidateBlk->SetPrevBlockHash(lastblk->GetBlockHash());
+            candidateBlk->SetBlockIdx(_blocktree.GetNextBlockIdx());
+            candidateBlk->SetPrevBlockHash(_blocktree.GetLastHash());
 
             return candidateBlk;
         }
@@ -58,7 +66,7 @@ namespace libBLEEP_BL {
                 _txPool->AddTx(tx);
                 _txGossipProtocol.PushTxToBroadcast(tx);
 
-                if (_txPool->GetPendingTxNum() >= libBLEEP_BL::txNumPerBlock) {
+                if (_txPool->GetPendingTxNum() >= txNumPerBlock) {
                     if (!_powMiner.IsMining()) {
                         std::shared_ptr<POWBlock> candidateBlk = _makeCandidateBlock();
                         _powMiner.AsyncEmulateBlockMining(candidateBlk, miningtime/miningnodecnt);

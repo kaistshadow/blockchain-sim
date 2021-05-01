@@ -2,11 +2,11 @@
 #include "POWProtocolParameter.h"
 #include "POWBlockGossipProtocolMsg.h"
 
-int libBLEEP_BL::txNumPerBlock = 2;
-double libBLEEP_BL::txGenStartAt = 0;
-double libBLEEP_BL::txGenInterval = 4;
-double libBLEEP_BL::miningtime = 2;
-int libBLEEP_BL::miningnodecnt = 1;
+//int libBLEEP_BL::txNumPerBlock = 2;
+//double libBLEEP_BL::txGenStartAt = 0;
+//double libBLEEP_BL::txGenInterval = 4;
+//double libBLEEP_BL::miningtime = 2;
+//int libBLEEP_BL::miningnodecnt = 1;
 
 using namespace libBLEEP_BL;
 
@@ -57,6 +57,7 @@ void BL_ProtocolLayerPoW::SwitchAsyncEventHandler(AsyncEvent& event) {
 
             // append block to ledger
             _blkPool.push_back(minedBlk);
+            _blocktree.AppendBlock(minedBlk);
 
             // remove tx from txpool
             std::list<SimpleTransactionId> txids;
@@ -86,7 +87,7 @@ void BL_ProtocolLayerPoW::SwitchAsyncEventHandler(AsyncEvent& event) {
 bool BL_ProtocolLayerPoW::InitiateProtocol() {
     if (!_initiated) {
         std::cout << "initiating ProtocolPoW" << "\n";
-        _startPeriodicTxGen(libBLEEP_BL::txGenStartAt, libBLEEP_BL::txGenInterval);
+        _startPeriodicTxGen(txGenStartAt, txGenInterval);
         _initiated = true;
 
         return true;

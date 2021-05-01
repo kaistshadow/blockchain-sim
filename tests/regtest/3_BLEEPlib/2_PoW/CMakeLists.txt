@@ -28,11 +28,6 @@ add_test(NAME BLEEPlib-pow-peer-1-ConnectPeer
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Testcase for Mining API
-add_test(NAME BLEEPlib-pow-peer-2-MiningWithPeer
-        COMMAND $<TARGET_FILE:shadow> test-MiningWithPeer.xml
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
-# Testcase for Mining API
-add_test(NAME BLEEPlib-pow-peer-3-BlockInvPropagate
+add_test(NAME BLEEPlib-pow-peer-2-BlockInvPropagate
         COMMAND $<TARGET_FILE:shadow> test-BlockInvPropagate.xml
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

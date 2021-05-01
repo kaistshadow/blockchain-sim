@@ -33,7 +33,6 @@ namespace libBLEEP_BL {
         // Because print is a normal member function, it can be virtualized
         virtual std::ostream& print(std::ostream&out) const  {
             out << GetId() << ":" << "Block has following transactions" << "\n";
-            const std::list<std::shared_ptr<SimpleTransaction> > &tx_list = GetTransactions();
             for (std::list<std::shared_ptr<SimpleTransaction> >::const_iterator it = tx_list.begin();
                  it != tx_list.end(); it++) {
                 out << GetId() << ":" << *(*it) << "\n";

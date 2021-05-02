@@ -87,7 +87,7 @@ def run_experiment(configfile, LOGLEVEL):
 def run_visualization_server(eventlogs, configfile, port, background=False):
     eventlogs_path = os.path.join(os.getcwd(), eventlogs)
     # Relative path from this file (visualize-event.py) to web-gui/
-    relpath = "/../../../BLEEPeval/web-gui"
+    relpath = "/../../../../BLEEPeval/web-gui"
     wd = os.path.dirname(os.path.realpath(__file__)) + relpath
 
     if background:
@@ -124,7 +124,7 @@ def search_logfile(datadir):
 
 def checking_output(datadir):
     cnt_list = []
-    txset_list = []
+    hashset_list = []
     fname_list = []
     log_list = search_logfile(os.path.join(datadir,"hosts"))
     i=0
@@ -133,29 +133,26 @@ def checking_output(datadir):
         fname_list.append(log.split('/')[-2])
         f = open(log,'r')
         text = f.read()
-        matches=re.findall(r'======== TXPOOL ========([\w\s\n]+)', text)
+        matches=re.findall(r'======== LongestChain ========([\[\]\w\s\n]+)', text)
         out = matches[-1]
-        txset = set()
+        hashset = set()
         for tx in out.split('\n'):
-            txdata = re.findall(r'\d+', tx)
-            if len(txdata) == 3:
-                txfrom = int(txdata[0])
-                txto = int(txdata[2])
-                txamount = int(txdata[1])
-                txset.add((txfrom,txto,txamount))
-        txset_list.append(txset)
+            hashdata = re.findall(r'\[.*\]', tx)
+            if len(hashdata) == 1:
+                hashset.add(hashdata[0])
+        hashset_list.append(hashset)
         cnt_list.append(len(out.split('\n'))-2)
         f.close()
 
         if len(cnt_list) > 1:
             if abs(cnt_list[0]- cnt_list[i]) > 1:
                 flag = False
-        if len(txset_list) > 1:
-            if len(txset_list[i] - txset_list[0]) > 1:
-                print (txset_list[i] - txset_list[0])
+        if len(hashset_list) > 1:
+            if len(hashset_list[i] - hashset_list[0]) > 1:
+                print (hashset_list[i] - hashset_list[0])
                 flag = False
-            elif len(txset_list[0] - txset_list[i]) > 1:
-                print (txset_list[0] - txset_list[i])
+            elif len(hashset_list[0] - hashset_list[i]) > 1:
+                print (hashset_list[0] - hashset_list[i])
                 flag = False
         i=i+1
 
@@ -175,15 +172,13 @@ if __name__ == '__main__':
     parser.add_argument("--background", action="store_true", help="Run server as background daemon.")
     parser.add_argument("--log", help="Shadow Log LEVEL above which to filter messages ('error' < 'critical' < 'warning' < 'message' < 'info' < 'debug') ['message']")
     parser.add_argument("--noserver", action="store_true", help="Don't run visualization server")
-    # --no server
-    parser.add_argument("--nocheck", action="store_true", help="Don't check for TX broadcast")
+
 
     args = parser.parse_args()
     configfile = args.configfile
     port = args.port
     OPT_BACKGROUND = args.background
     OPT_NOSERVER = args.noserver
-    OPT_NOCHECK = args.nocheck
 
     if not args.log:
         LOGLEVEL = "message"
@@ -195,20 +190,17 @@ if __name__ == '__main__':
     output = run_experiment(configfile, LOGLEVEL)
     end = datetime.datetime.now()
 
-    if not OPT_NOCHECK:
-        # compare result about 'host log'
-        datadir = "datadir"
-        cmp_result = checking_output(datadir)
+    # compare result about 'host log'
+    datadir = "datadir"
+    cmp_result = checking_output(datadir)
 
     elapsed_time = end - start
-    print
-    "elapsed_millisec=%d\n" % (int(elapsed_time.total_seconds() * 1000))
+    print ("elapsed_millisec=%d\n" % (int(elapsed_time.total_seconds() * 1000)))
 
     if OPT_NOSERVER:
         exit()
 
-    print
-    "Starting visualization"
+    print ("Starting visualization")
     if OPT_BACKGROUND:
         run_visualization_server(output, configfile, port, background=True)
     else:

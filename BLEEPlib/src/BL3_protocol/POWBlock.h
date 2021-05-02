@@ -30,16 +30,16 @@ namespace libBLEEP_BL {
             SetTxHash();
         };
 
+        virtual void SetGenesisBlock() override;
+        virtual void SetBlockHash(libBLEEP::UINT256_t hash) override { block_hash = hash; }
+        virtual libBLEEP::UINT256_t GetBlockHash() const override { return block_hash; }
+
+
         libBLEEP::UINT256_t GetTxHash() const { return tx_hash; }
 
         void SetNonce(unsigned long n) { nonce = n; }
-        void SetBlockIdx(unsigned long idx) {block_idx = idx; }
-
         unsigned long GetNonce() const {return nonce; }
-        unsigned long GetBlockIdx() const {return block_idx; }
 
-        void SetBlockHash(libBLEEP::UINT256_t hash) { block_hash = hash; }
-        libBLEEP::UINT256_t GetBlockHash() const { return block_hash; }
 
         void SetPrevBlockHash(libBLEEP::UINT256_t hash) { prev_block_hash = hash; }
         libBLEEP::UINT256_t GetPrevBlockHash() const { return prev_block_hash; }
@@ -60,10 +60,8 @@ namespace libBLEEP_BL {
         void serialize(Archive & ar, const unsigned int version) {
             ar & boost::serialization::base_object<Block>(*this);
             boost::serialization::void_cast_register<Block,POWBlock>();
-            ar & block_idx;
             ar & nonce;
             ar & tx_hash;
-            ar & block_hash;
             ar & prev_block_hash;
             ar & timestamp;
             ar & difficulty;
@@ -73,8 +71,7 @@ namespace libBLEEP_BL {
         unsigned long nonce;
         libBLEEP::UINT256_t tx_hash;
 
-        unsigned long block_idx;
-        libBLEEP::UINT256_t block_hash;
+
         libBLEEP::UINT256_t prev_block_hash;
 
         double timestamp = 0;

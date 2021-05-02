@@ -12,6 +12,7 @@
 #include <boost/property_tree/ptree.hpp>
 
 #include "Transaction.h"
+#include "../utility/UInt256.h"
 
 namespace libBLEEP_BL {
     class Block {
@@ -22,6 +23,12 @@ namespace libBLEEP_BL {
 
         const std::list<std::shared_ptr<SimpleTransaction> >& GetTransactions() const { return tx_list; }
         std::string GetId() const {return block_id; }
+        virtual void SetGenesisBlock() {}
+        virtual void SetBlockHash(libBLEEP::UINT256_t hash) { block_hash = hash; }
+        virtual libBLEEP::UINT256_t GetBlockHash() const { return block_hash; }
+
+        void SetBlockIdx(unsigned long idx) {block_idx = idx; }
+        unsigned long GetBlockIdx() const {return block_idx; }
 
         // This overloaded operator<<
         // Defines a non-member function, and makes it a friend of this class at the same time.
@@ -42,7 +49,9 @@ namespace libBLEEP_BL {
 
     protected:
         std::string block_id;
+        unsigned long block_idx;
         std::list<std::shared_ptr<SimpleTransaction> > tx_list;
+        libBLEEP::UINT256_t block_hash;
 
     private:
         friend class boost::serialization::access;
@@ -53,7 +62,9 @@ namespace libBLEEP_BL {
         template<class Archive>
         void serialize(Archive & ar, const unsigned int version) {
             ar & block_id;
+            ar & block_idx;
             ar & tx_list;
+            ar & block_hash;
         }
     };
 

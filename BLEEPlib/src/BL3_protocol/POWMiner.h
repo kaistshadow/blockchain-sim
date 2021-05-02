@@ -31,6 +31,7 @@ namespace libBLEEP_BL {
         void AsyncEmulateBlockMining(std::shared_ptr<POWBlock> candidateBlk, double lambda);
 
         bool IsMining() { return _isMining; }
+        void StopMining();
 
     private:
         ev::timer _timer; //mining timer

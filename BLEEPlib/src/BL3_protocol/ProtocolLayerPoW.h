@@ -26,20 +26,31 @@ namespace libBLEEP_BL {
     private:
         POWMiner _powMiner;
         BlockTree<POWBlock> _blocktree;
+    public:
+        BlockTree<POWBlock>& GetBlockTree() { return _blocktree; }
     private: // PoW parameter
         int txNumPerBlock = 2;
         double txGenStartAt = 0;
         double txGenInterval = 4;
         double miningtime = 2;
         int miningnodecnt = 1;
-    public:
-        BlockTree<POWBlock>& GetBlockTree() { return _blocktree; }
+    private: // Block propagation protocol-related data structure (processing inventory)
+        std::vector <std::string> _processingBlkinv;
+        bool _processing = false;
+        bool HasProcessingInv() { return _processing; }
+        void StartProcessingInv() { _processing = true; }
+        void StopProcessingInv() { _processing = false; }
+        std::vector <std::string>& GetProcessingInv() { return _processingBlkinv; }
+        void SetProcessingInv(std::vector <std::string> inv) { _processingBlkinv = inv; }
 
 
         /* handler functions for each asynchronous event */
         void RecvMsgHandler(std::shared_ptr<Message> msg);
 
         void _RecvPOWBlockInvHandler(std::shared_ptr<Message> msg);
+        void _RecvPOWBlockGetBlocksHandler(std::shared_ptr<Message> msg);
+        void _RecvPOWBlockGetDataHandler(std::shared_ptr<Message> msg);
+        void _RecvPOWBlockBlkHandler(std::shared_ptr<Message> msg);
 
     private:
         std::shared_ptr<POWBlock> _makeCandidateBlock() {
@@ -69,7 +80,7 @@ namespace libBLEEP_BL {
                 if (_txPool->GetPendingTxNum() >= txNumPerBlock) {
                     if (!_powMiner.IsMining()) {
                         std::shared_ptr<POWBlock> candidateBlk = _makeCandidateBlock();
-                        _powMiner.AsyncEmulateBlockMining(candidateBlk, miningtime/miningnodecnt);
+                        _powMiner.AsyncEmulateBlockMining(candidateBlk, 1/miningtime/miningnodecnt);
                     }
                 }
             }

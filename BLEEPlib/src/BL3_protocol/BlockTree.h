@@ -33,7 +33,7 @@ namespace libBLEEP_BL {
         libBLEEP::UINT256_t _lasthash = 0;
         libBLEEP::UINT256_t _genesis = 0;
     public:
-        BlockTree() {}
+        BlockTree();
 
         unsigned long GetNextBlockIdx() { return _treeheight; }
         libBLEEP::UINT256_t GetLastHash() { return _lasthash; }
@@ -53,6 +53,8 @@ namespace libBLEEP_BL {
         void AppendBlockHash(std::string hash);
 
         void AppendBlock(std::shared_ptr<T> blk);
+
+        void PrintLongestChain();
 
     };
 }

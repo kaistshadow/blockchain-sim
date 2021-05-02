@@ -51,9 +51,12 @@ target_sources(BLEEP
         src/BL2_peer_connectivity/AddrManager.cpp
         src/BL2_peer_connectivity/AdvertisementManager.cpp
         src/BL3_protocol/ProtocolLayer_API.cpp
+        src/BL3_protocol/ProtocolLayer_API.h
         src/BL3_protocol/ProtocolLayerEx1.cpp
+        src/BL3_protocol/ProtocolLayerEx1.h
         src/BL3_protocol/ProtocolLayerPoW.cpp
         src/BL3_protocol/ProtocolLayerPoW.h
+        src/BL3_protocol/POWProtocolParameter.h
         src/BL3_protocol/Block.h
         src/BL3_protocol/BlockTree.h
         src/BL3_protocol/BlockTree.cpp

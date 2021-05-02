@@ -13,6 +13,8 @@ namespace libBLEEP_BL {
         virtual ~POWProtocolParameter() {}
         double txGenStartAt = (double)INT_MAX;
         double txGenInterval = (double)INT_MAX;
+        double miningtime = 2;
+        int miningnodecnt = 1;
     };
 }
 #endif //BLEEP_POWPROTOCOLPARAMETER_H

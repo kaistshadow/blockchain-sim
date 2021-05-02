@@ -167,6 +167,7 @@ static int testBlockInvPropagate(Nodetype t) {
         BL_ProtocolLayer_API::InitInstance("PoW");
         POWProtocolParameter powparams;
         powparams.txGenStartAt = 10; powparams.txGenInterval = 4;
+        powparams.miningtime = 2; powparams.miningnodecnt = 1;
         BL_ProtocolLayer_API::Instance()->InitiateProtocol(&powparams);
 
         /* client tries to connect to server using BLEEP libray API*/
@@ -211,7 +212,7 @@ static int testBlockInvPropagate(Nodetype t) {
                     if (eventQueue[0] != AsyncEventEnum::SocketConnect) return -1;
                     if (eventQueue[1] != AsyncEventEnum::PeerSocketConnect) return -1;
                     if (eventQueue[2] != AsyncEventEnum::EmuBlockMiningComplete) return -1; //Emulated Block Mining
-                    if (eventQueue[3] != AsyncEventEnum::FinishTest) return -1;
+                    if (eventQueue[eventQueue.size()-1] != AsyncEventEnum::FinishTest) return -1;
 
                     /* Event sequence is valid, thus return 0 */
                     return 0;
@@ -223,6 +224,7 @@ static int testBlockInvPropagate(Nodetype t) {
         POWProtocolParameter powparams;
         powparams.txGenStartAt = (double)INT_MAX;
         powparams.txGenInterval = (double)INT_MAX;
+        powparams.miningtime = 10000; powparams.miningnodecnt = 2;
 
         /* init BLEEP library components */
         MainEventManager::InitInstance();
@@ -274,7 +276,7 @@ static int testBlockInvPropagate(Nodetype t) {
                     if (eventQueue[3] != AsyncEventEnum::PeerRecvMsg) return -1; // ADDR msg received
                     if (eventQueue[4] != AsyncEventEnum::PeerRecvMsg) return -1; // Block inv
                     if (eventQueue[5] != AsyncEventEnum::ProtocolRecvMsg) return -1; // Block inv
-                    if (eventQueue[6] != AsyncEventEnum::FinishTest) return -1;
+                    if (eventQueue[eventQueue.size()-1] != AsyncEventEnum::FinishTest) return -1;
 
                     /* Event sequence is valid, thus return 0 */
                     return 0;

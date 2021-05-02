@@ -11,7 +11,7 @@
 #include "BL2_peer_connectivity/PeerConnectivityLayer_API.h"
 #include "BL3_protocol/ProtocolLayer_API.h"
 #include "BL3_protocol/ProtocolLayerPoW.h"
-
+#include "BL3_protocol/POWProtocolParameter.h"
 #include <chrono>
 
 
@@ -88,12 +88,17 @@ TEST_CASE("BLEEP-Lib-PoW-mining") {
         BL_SocketLayer_API::Instance();
         BL_PeerConnectivityLayer_API::InitInstance("testnode1");
         BL_ProtocolLayer_API::InitInstance("PoW");
+        POWProtocolParameter powparams;
+        powparams.txGenStartAt = 0;
+        powparams.txGenInterval = 4;
+        powparams.miningtime = 2;
+        powparams.miningnodecnt = 1;
 
         REQUIRE(MainEventManager::Instance() != nullptr);
         REQUIRE(BL_SocketLayer_API::Instance() != nullptr);
         REQUIRE(BL_PeerConnectivityLayer_API::Instance() != nullptr);
         REQUIRE(BL_ProtocolLayer_API::Instance() != nullptr);
-        REQUIRE(BL_ProtocolLayer_API::Instance()->InitiateProtocol() == true);
+        REQUIRE(BL_ProtocolLayer_API::Instance()->InitiateProtocol(&powparams) == true);
     }
 
     SECTION("Checking Block generation") {
@@ -115,7 +120,7 @@ TEST_CASE("BLEEP-Lib-PoW-mining") {
         REQUIRE(powAPI != nullptr);
         BlockTree<POWBlock>& blockTree = powAPI->GetBlockTree();
 
-        REQUIRE(blockTree.GetNextBlockIdx() == BL_ProtocolLayer_API::Instance()->GetBlockPoolSize());
+        REQUIRE(blockTree.GetNextBlockIdx() == BL_ProtocolLayer_API::Instance()->GetBlockPoolSize() + 1); // since genesis
         REQUIRE(blockTree.GetLastHash() == blockTree.GetBlock(blockTree.GetLastHash().str())->GetBlockHash());
     }
 }
@@ -136,15 +141,20 @@ TEST_CASE("BLEEP-Lib-PoW-mining-long") {
         BL_SocketLayer_API::Instance();
         BL_PeerConnectivityLayer_API::InitInstance("testnode1");
         BL_ProtocolLayer_API::InitInstance("PoW");
+        POWProtocolParameter powparams;
+        powparams.txGenStartAt = 0;
+        powparams.txGenInterval = 4;
+        powparams.miningtime = 0.01;
+        powparams.miningnodecnt = 1;
 
         REQUIRE(MainEventManager::Instance() != nullptr);
         REQUIRE(BL_SocketLayer_API::Instance() != nullptr);
         REQUIRE(BL_PeerConnectivityLayer_API::Instance() != nullptr);
         REQUIRE(BL_ProtocolLayer_API::Instance() != nullptr);
-        REQUIRE(BL_ProtocolLayer_API::Instance()->InitiateProtocol() == true);
+        REQUIRE(BL_ProtocolLayer_API::Instance()->InitiateProtocol(&powparams) == true);
     }
 
-    SECTION("Checking BlockPool") {
+    SECTION("Checking BlockPool & BlockTree") {
         MainEventManager::Instance()->Wait();
         std::chrono::duration<double> time_elapsed = clock::now() - before;
 
@@ -157,14 +167,13 @@ TEST_CASE("BLEEP-Lib-PoW-mining-long") {
         REQUIRE(txGeneratedNum == BL_ProtocolLayer_API::Instance()->GetTxPool()->GetPendingTxNum() +
                                   BL_ProtocolLayer_API::Instance()->GetBlockPoolSize() * 2);
         REQUIRE(BL_ProtocolLayer_API::Instance()->GetBlockPoolSize() == 4);
-    }
 
-    SECTION("Checking BlockTree") {
+        std::cout << "Checking BlockTree" << "\n";
         BL_ProtocolLayerPoW* powAPI = dynamic_cast<BL_ProtocolLayerPoW*>(BL_ProtocolLayer_API::Instance());
         REQUIRE(powAPI != nullptr);
         BlockTree<POWBlock>& blockTree = powAPI->GetBlockTree();
 
-        REQUIRE(blockTree.GetNextBlockIdx() == 4);
+        REQUIRE(blockTree.GetNextBlockIdx() == 5); // since genesis
         REQUIRE(blockTree.GetLastHash() == blockTree.GetBlock(blockTree.GetLastHash().str())->GetBlockHash());
     }
 }

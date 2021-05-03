@@ -100,8 +100,6 @@ def test_shadow(output_file, runtime, node_id_list, shadow_output):
         f.close()
         print("Success shadow test ...")
         return_count = 1
-        sys.exit(0)
-
     else:
         f.close()
         print("shadow plugin error...")
@@ -599,14 +597,14 @@ def Mointor_block_propagation_test(plugin_output_files, node_count, target_path)
             node_blocklist[i] = test_result.filter_overlap_height(plugin_output_files[i])
     
     for i in range(0,len(node_blocklist)):
+        block_rate = 0
         for j in range(0,len(node_blocklist[i])-1):
             # 모니터 노드에는 제네시스 블록이 등록이 안되어 있기에, (전파된 블록만 컨트롤) 
             if node_blocklist[i][j+1][0] in each_node_block_list[i]:
                 pass
             else:
-                print("Fail Monitor block propagation test ... ")
                 print("There is no block (%s) " %node_blocklist[i][j+1][0])
-                sys.exit(1)
+                
     print("Success Monitor block propagation test ... ")
     sys.exit(0)
 

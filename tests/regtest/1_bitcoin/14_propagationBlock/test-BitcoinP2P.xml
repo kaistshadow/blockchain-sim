@@ -43,6 +43,10 @@
   <node id="client0">
     <application arguments="1.0.0.1:11111 53" plugin="client" time="3"/>
   </node>
+  <node id="client1">
+    <application arguments="1.1.0.1:11111 53" plugin="client" time="3"/>
+  </node>
+
   <node id="monitor" iphint="99.99.0.2">
     <application plugin="BITCOIN_MONITOR" time="5" arguments="99.99.0.2 2"/>
   </node>

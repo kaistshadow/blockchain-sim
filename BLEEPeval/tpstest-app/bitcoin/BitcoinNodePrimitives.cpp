@@ -229,7 +229,6 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 {
 
                     if (inv.type == MSG_TX) {
-//                        cout<<"inv msg MSG_TX from "<<data_fd<<" \n";
                         std::cout<<"[INV] MSGTX: hash = "<<inv.hash.ToString()<<" from = "<<data_fd<<"\n";
                         RegisterTx(inv.hash.ToString());
 
@@ -240,8 +239,6 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                         CSerializedNetMsg replymsg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::GETDATA, vInv);
 
                         size_t nMessageSize = replymsg.data.size();
-                        //size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
-                        // LogPrint(BCLog::NET, "sending %s (%d bytes) \n", SanitizeString(msg.command.c_str()), nMessageSize);
 
                         vector<unsigned char> serializedHeader;
                         serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
@@ -261,23 +258,6 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 }
 
             }else if(strCommand == NetMsgType::VERACK) {
-
-                //send sendheader message (But it is not working)
-//                CSerializedNetMsg verack_msg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::SENDHEADERS);
-//                size_t nMessageSize = verack_msg.data.size();
-//
-//                vector<unsigned char> verack_serializedHeader;
-//                verack_serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
-//                uint256 hash = Hash(verack_msg.data.data(), verack_msg.data.data() + nMessageSize);
-//                CMessageHeader verack_hdr(MessageStartChars, verack_msg.command.c_str(), nMessageSize);
-//                memcpy(verack_hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
-//
-//                CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, verack_serializedHeader, 0, verack_hdr};
-//
-//                SendMsg(data_fd, verack_serializedHeader);
-//                if (nMessageSize)
-//                    SendMsg(data_fd, verack_msg.data);
-
                 BitcoinNodePrimitives::LoadBlock(data_fd);
 
             } else if (strCommand == NetMsgType::BLOCK) {
@@ -285,7 +265,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                     std::shared_ptr<CBlock> pblock = std::make_shared<CBlock>();
                     vRecv >> *pblock;
 
-//                    std::cout<<"[INV] MSGBLOCK: hash = "<<pblock->GetHash().ToString()<<" txcnt = "<<pblock->vtx.size()<<" from = "<<data_fd <<"\n";
+                    std::cout<<"[INV] MSGBLOCK: hash = "<<pblock->GetHash().ToString()<<" txcnt = "<<pblock->vtx.size()<<" from = "<<data_fd <<"\n";
 
                     // create block structure
                     block* bp = new block(pblock->GetHash().GetHex(), pblock->hashPrevBlock.GetHex(), pblock->nTime);

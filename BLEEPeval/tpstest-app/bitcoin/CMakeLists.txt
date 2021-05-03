@@ -25,8 +25,7 @@ target_sources(BITCOINTPS_TESTER
         PRIVATE
         tps_tester.cpp)
 
-add_custom_command(TARGET BITCOINTPS_TESTER
-        POST_BUILD
+add_custom_target(tps_test ALL
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BITCOINTPS_TESTER> ${CMAKE_INSTALL_PREFIX}/plugins
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BITCOINTPS_TESTER> ${CMAKE_CURRENT_SOURCE_DIR}
         )

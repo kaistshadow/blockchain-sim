@@ -7,11 +7,6 @@ if [ $1 -gt 3 ]; then
   exit
 fi
 
-if [ ! -e minerNode_rpc.so ]; then
-  echo "start to dump!"
-  cp ../../../BLEEPemul/emulation/minerNode_rpc.so ./
-fi
-
 path=../../../testlibs/dump/difficulty_$1
 if [ ! -e $path/coinflip_hash.txt ]; then
   echo "start to dump!"

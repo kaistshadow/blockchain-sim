@@ -43,7 +43,7 @@ namespace tpstest {
             return true;
         }
 
-        void SetGenerateTimer(){
+        void SetGenerateTimer() {
 #define TX_PER_TICK 1000        // temporary transaction per tick: 1000
 #define TIME_PER_TICK   1       // temporary time per tick: 1 second
             for (auto &_txGeneratorNode : _txGeneratorNodes) {

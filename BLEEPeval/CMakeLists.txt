@@ -10,5 +10,16 @@ endif (BLEEP_DEBUG STREQUAL ON)
 
 add_subdirectory(sybiltest-library/src)
 add_subdirectory(sybiltest-app)
-add_subdirectory(tpstest-library/src)
-add_subdirectory(tpstest-app)
+
+if (BITCOIN_OPT STREQUAL ON)
+    add_subdirectory(tpstest-library/src)
+    add_subdirectory(tpstest-app)
+elseif (ALL_OPT STREQUAL ON)
+    add_subdirectory(tpstest-library/src)
+    add_subdirectory(tpstest-app)
+elseif (GIT_OPT STREQUAL ON)
+    add_subdirectory(tpstest-library/src)
+    add_subdirectory(tpstest-app)
+endif (BITCOIN_OPT STREQUAL ON)
+
+

@@ -71,12 +71,14 @@ if __name__ == '__main__':
     parser.add_argument("--unittest", action="store_true", help="Run Unit tests")
     parser.add_argument("--debug", action="store_true", help="Include debug symbols for shadow")
     parser.add_argument("--bitcoin", action="store_true", help="only bitcoin build")
+    parser.add_argument("--monero", action="store_true", help="only monero build")
     parser.add_argument("--git", action="store_true", help="Run on Git action")
     
 
     args = parser.parse_args()
 
     OPT_BITCOIN = args.bitcoin
+    OPT_MONERO = args.monero
 
     OPT_GIT = args.git
     OPT_ALL = args.all
@@ -117,10 +119,20 @@ if __name__ == '__main__':
         exec_shell_cmd("sudo apt-get install -y libjsoncpp-dev")
         prepare_shadow()
         prepare_shadow_dependencies()
-        exec_shell_cmd("mkdir build; cd build; cmake %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (
-        cmake_debug_opt, cmake_bleeplib_opt))
+        cmake_bitcoin_opt = "-DBITCOIN_OPT=ON"
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (
+        cmake_debug_opt, cmake_bleeplib_opt, cmake_bitcoin_opt))
         process_ENV()   
 
+    if OPT_MONERO:
+        exec_shell_cmd("git submodule update --init --recursive")
+        prepare_monero_dependencies()
+        cmake_monero_opt = "-DMONERO_OPT=ON"
+        cmake_bleeplib_opt = "-DBLEEPLIB_OPT=OFF"
+        exec_shell_cmd("mkdir build; cd build; cmake %s %s %s ../; cmake --build . --target install -- -j 8; cd ..;" % (
+        cmake_debug_opt, cmake_monero_opt, cmake_bleeplib_opt))
+        process_ENV()   
+        
     if OPT_ALL:
         # cloning shadow repository (submodule)
         exec_shell_cmd("git submodule update --init --recursive")

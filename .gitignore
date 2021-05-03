@@ -134,3 +134,7 @@ testlibs/dump/difficulty_*
 .vscode
 tests/regtest/1_bitcoin/*/data
 tests/regtest/1_bitcoin/*/shadow.data
+
+tests/regtest/4_monero/*/testnet
+tests/regtest/4_monero/*/output.txt
+tests/regtest/2_sybilAPI/*_monero/testnet

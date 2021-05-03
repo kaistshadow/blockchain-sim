@@ -4,6 +4,9 @@ endif(POLICY CMP0048)
 
 project(BLEEP)
 
+# BLEEP build path
+set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/Install")
+
 ## ensure cmake version
 cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -42,6 +45,9 @@ endif ()
 # Bitcoin option
 option(BITCOIN_OPT "Bitcoin on build (default: OFF)" OFF)
 
+# Monero option
+option(MONERO_OPT "Monero on build (default: OFF)" OFF)
+
 # all option
 option(ALL_OPT "All on build (deafult : OFF)" OFF)
 
@@ -54,6 +60,7 @@ option(BLEEPLIB_OPT "BLEEPLIB on build (default: ON)" ON)
 
 message("------------------------------------------------------------------------------------------------------")
 message("                                          BITCOIN_OPT : ${BITCOIN_OPT}")
+message("                                          MONERO_OPT : ${MONERO_OPT}")
 message("")
 message("")
 message("                                            ALL_OPT   : ${ALL_OPT}")
@@ -70,7 +77,6 @@ add_subdirectory(shadow)
 option(UNITTEST_OPT "unittest on build (default : OFF) : OFF")
 
 ## add BLEEP
-set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/Install")
 enable_testing()
 add_subdirectory(interfaces)
 add_subdirectory(external)

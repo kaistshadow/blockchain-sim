@@ -50,6 +50,7 @@ else (ALL_OPT STREQUAL ON)
     message("                           default (default = Bitcoin)")
     message("--------------------------------------------------------------------------------------")
     add_subdirectory(bitcoin)
+    add_subdirectory(monero)
 
 endif (ALL_OPT STREQUAL ON)
 

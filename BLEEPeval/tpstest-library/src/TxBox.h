@@ -33,15 +33,16 @@ namespace tpstest {
         bool setupNetwork() {
             if (targets.size()==0)
                 return false;
-
             if (!TestPolicy<NodePrimitives>::ConstructNet(targets, _txgenIP, _monitorIP, _nodePort))
                 return false;
-            ev_run(TestPolicy<NodePrimitives>::libev_loop, 0);
             return true;
         }
 
-        int startNetwork() {
-            TestPolicy<NodePrimitives>::SetGenerateTimer();
+        int startNetwork(bool txgenstart) {
+            if(txgenstart) {
+                TestPolicy<NodePrimitives>::SetGenerateTimer();
+            }
+            ev_run(TestPolicy<NodePrimitives>::libev_loop, 0);
             return 0;
         }
     };

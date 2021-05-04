@@ -11,6 +11,7 @@ target_sources(BLEEPtps
         node/Node.h
         node/MonitoringNode.h
         policy/TPSPolicy.h
+        policy/LatencyPolicy.h
         utility/blocks.h
         utility/blocks.cpp
         )

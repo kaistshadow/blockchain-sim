@@ -82,18 +82,6 @@ void BitcoinNodePrimitives::OpAfterConnected(int data_fd) {
     // do nothing
 }
 
-
-BitcoinNodePrimitives::BlockInfo BitcoinNodePrimitives::MakeBlockInfo(uint256 _blockhash, uint256 _prevblockhash, uint32_t _timestamp, unsigned long _txcount) {
-
-    struct BitcoinNodePrimitives::BlockInfo newBlock;
-    newBlock.prevblockhash = _prevblockhash.ToString();
-    newBlock.blockhash = _blockhash.ToString();
-    newBlock.txcount = _txcount;
-    newBlock.timestamp = _timestamp;
-    return newBlock;
-}
-
-
 void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
     // recv to RecvBuffer
     TCPControl &tcpControl = GetTCPControl(data_fd);
@@ -229,8 +217,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 {
 
                     if (inv.type == MSG_TX) {
-                        std::cout<<"[INV] MSGTX: hash = "<<inv.hash.ToString()<<" from = "<<data_fd<<"\n";
-                        RegisterTx(inv.hash.ToString());
+//                        std::cout<<"[INV] MSGTX: hash = "<<inv.hash.ToString()<<" from = "<<data_fd<<"\n";
 
                     } else if (inv.type == MSG_BLOCK) {
                         std::string block_hash = inv.hash.ToString();
@@ -266,53 +253,12 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                     vRecv >> *pblock;
 
                     std::cout<<"[INV] MSGBLOCK: hash = "<<pblock->GetHash().ToString()<<" txcnt = "<<pblock->vtx.size()<<" from = "<<data_fd <<"\n";
-
-                    // create block structure
-                    block* bp = new block(pblock->GetHash().GetHex(), pblock->hashPrevBlock.GetHex(), pblock->nTime);
-                    unsigned long int netTxLatency = 0;
+                    std::vector<std::string> txlist;
                     for (int i = 0; i<pblock->vtx.size(); i++) {
-                        bp->pushTxHash(pblock->vtx[i]->GetHash().GetHex());
+                        txlist.push_back(pblock->vtx[i]->GetHash().GetHex());
                     }
+                    Update(pblock->GetHash().GetHex(), pblock->hashPrevBlock.GetHex(), pblock->nTime, txlist);
 
-                    // add block to forest
-                    if (!bf.add_block(bp)) {
-                        delete bp;  // if already exists, free allocated memory
-                    }
-
-                    if (pblock->vtx.size() >= 2) {
-                        for (int i = 1; i<pblock->vtx.size(); i++) {
-                            assert(pblock->nTime >= global_txtimepool->get_txtime(pblock->vtx[i]->GetHash().GetHex()));
-                            netTxLatency += pblock->nTime - global_txtimepool->get_txtime(pblock->vtx[i]->GetHash().GetHex());
-                        }
-                        bp->setNetTxLatency(netTxLatency);
-                    }
-
-                    // get besttip, calculate tps
-                    static block* best = nullptr;
-                    bp = bf.get_besttip();
-#define CONFIRMATION_COUNT  4
-                    if (bp && bp->getParent() && (!best || best != bp)) {
-                        best = bp;
-                        uint32_t besttime = bp->getTime();
-                        size_t txcount = 0;
-                        int length_from_tip = 0;
-                        size_t netConfirmedTxCount = 0;
-                        unsigned long int netConfirmedTxLatency = 0;
-                        while(bp->getParent()) {
-                            txcount += bp->getTxCount();
-                            if (length_from_tip > CONFIRMATION_COUNT) {
-                                netConfirmedTxCount += bp->getTxCount() - 1;    // ignore coinbase tx
-                                netConfirmedTxLatency += bp->getNetTxLatency();
-                            }
-                            bp = bp->getParent();
-                            length_from_tip++;
-                        }
-                        uint32_t timebase = bp->getTime();
-                        std::cout << "TPS = " << (txcount / ((double)besttime - timebase)) << "\n";
-                        if (netConfirmedTxCount && netConfirmedTxLatency) {
-                            std::cout << "Latency = " << (netConfirmedTxLatency / netConfirmedTxCount) << "seconds\n";
-                        }
-                    }
                 }
             }
 

@@ -98,11 +98,9 @@ namespace tpstest {
         void OpAfterDisconnect();
 
         //methods for monitoring node
-        virtual bool RegisterTx(std::string hash);
         virtual bool _temp_isMointor();
+        virtual bool Update(std::string hexHash, std::string hexPrevHash, uint32_t time, std::vector<std::string> txhashlist);
     private:
-        // monitor
-        blockforest bf;
         // keygen
         std::queue<spend_data> unspent_keyvalues;
         std::queue<CTransaction*> tx_logs;
@@ -114,7 +112,6 @@ namespace tpstest {
         void sendTx(int data_fd, std::string hexTx);
 
         //method for Monitoring node
-        struct BlockInfo MakeBlockInfo(uint256 _blockhash, uint256 _prevblockhash, uint32_t _timestamp, unsigned long _txcount);
         void LoadBlock(int data_fd);
     };
 }

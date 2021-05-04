@@ -332,7 +332,7 @@ void BitcoinNodePrimitives::bootstrap(const char* statefile, const char* keyfile
     std::ifstream state_ifs(statefile);
     std::string txstr((std::istreambuf_iterator<char>(state_ifs)), (std::istreambuf_iterator<char>()));
     CMutableTransaction mtx;
-    DecodeHexTx(mtx, txstr, true);
+    bool return_value = DecodeHexTx(mtx, txstr, true);
     CTransaction* tx = new CTransaction(mtx);
 
     std::ifstream key_ifs(keyfile);

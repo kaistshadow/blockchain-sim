@@ -94,6 +94,7 @@ std::string ArgsManager::HelpMessage() {
     strUsage += HelpMessageOpt("-connect=<id>", "Specify the neighbor id (ex. domain or ip) for connection. ");
 
     strUsage += HelpMessageGroup("Injector Options:");
+    strUsage += HelpMessageOpt("-txgenstartat=<time>", "Specify the starttime for randomly generated tx. ");
     strUsage += HelpMessageOpt("-txgeninterval=<time>", "Specify the interval for randomly generated tx. ");
 
     strUsage += HelpMessageGroup("Blockchain Consensus Options (POW):");

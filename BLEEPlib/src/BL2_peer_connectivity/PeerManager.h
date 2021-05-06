@@ -4,7 +4,6 @@
 #include <map>
 
 #include "Peer.h"
-#include "../BL1_socket/Socket.h"
 
 
 namespace libBLEEP_BL {

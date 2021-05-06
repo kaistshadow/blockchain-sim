@@ -19,7 +19,7 @@ def parse_output(output, datadir):
     data['eventlogs'] = []
     eventlogs_filename = "eventlogs.json"
 
-    print "Parsing shadow output"
+    print ("Parsing shadow output")
     with open(output) as ifile:
         for line in ifile:
             # Regexp matching is expensive, and eventlog lines are a minority in
@@ -35,7 +35,7 @@ def parse_output(output, datadir):
                     }
                     data['eventlogs'].append(event)
     
-    print "eventlogs_length=%d" % len(data['eventlogs'])
+    print ("eventlogs_length=%d" % len(data['eventlogs']))
     with open("./%s/%s" % (datadir, eventlogs_filename), "w+") as ofile:
         json.dump(data, ofile)
 
@@ -71,11 +71,11 @@ def run_experiment(configfile, LOGLEVEL):
     shadow_returnCode = shadow.returncode
     for line in shadow_stdout_file:
         if "critical" in line:
-            print "critical error occurred during shadow simulation"
+            print ("critical error occurred during shadow simulation")
             sys.exit(-1)
 
     if shadow_returnCode != 0:
-        print "experiment failed. Try again."
+        print ("experiment failed. Try again.")
         sys.exit(-1)
 
     eventlogs_filename = parse_output("./%s/%s" % (datadir, shadow_stdout_filename), datadir)
@@ -96,19 +96,19 @@ def run_visualization_server(eventlogs, configfile, port, background=False):
         web_server = Popen(["node", "server.js", eventlogs_path, port], cwd=wd)
  
     time.sleep(1)
-    print ""
-    print ""
-    print ""
-    print ""
-    print "The script has launched the NodeJS web server for visualization."
-    print "You can see the visualization results of the configuration requested (i.e., %s)" % configfile
-    print "To see the results, connect to the server using address 'http://ipaddress_of_this_machine:%s/frontend.html' in web browser." % port
-    print ""
-    print ""
-    print ""
+    print ("")
+    print ("")
+    print ("")
+    print ("")
+    print ("The script has launched the NodeJS web server for visualization.")
+    print ("You can see the visualization results of the configuration requested (i.e., %s)" % configfile)
+    print ("To see the results, connect to the server using address 'http://ipaddress_of_this_machine:%s/frontend.html' in web browser." % port)
+    print ("")
+    print ("")
+    print ("")
     
     if not background:
-        print "Type Ctrl-C to terminate the NodeJS web server."
+        print ("Type Ctrl-C to terminate the NodeJS web server.")
         web_server.wait()
 
 def search_logfile(datadir):
@@ -124,6 +124,7 @@ def search_logfile(datadir):
 
 def checking_output(datadir):
     cnt_list = []
+    txset_list = []
     fname_list = []
     log_list = search_logfile(os.path.join(datadir,"hosts"))
     i=0
@@ -134,21 +135,37 @@ def checking_output(datadir):
         text = f.read()
         matches=re.findall(r'======== TXPOOL ========([\w\s\n]+)', text)
         out = matches[-1]
+        txset = set()
+        for tx in out.split('\n'):
+            txdata = re.findall(r'\d+', tx)
+            if len(txdata) == 3:
+                txfrom = int(txdata[0])
+                txto = int(txdata[2])
+                txamount = int(txdata[1])
+                txset.add((txfrom,txto,txamount))
+        txset_list.append(txset)
         cnt_list.append(len(out.split('\n'))-2)
         f.close()
 
         if len(cnt_list) > 1:
             if abs(cnt_list[0]- cnt_list[i]) > 1:
                 flag = False
+        if len(txset_list) > 1:
+            if len(txset_list[i] - txset_list[0]) > 1:
+                print (txset_list[i] - txset_list[0])
+                flag = False
+            elif len(txset_list[0] - txset_list[i]) > 1:
+                print (txset_list[0] - txset_list[i])
+                flag = False
         i=i+1
 
-    print fname_list, '\n', cnt_list
+    print (fname_list, '\n', cnt_list)
 
     if flag:
-        print "[Checking Result : Success]"
+        print("[Checking Result : Success]")
         return True
     else :
-        print "[Checking Result : Fail]"
+        print("[Checking Result : Fail]")
         sys.exit(-1)
 
 if __name__ == '__main__':
@@ -173,8 +190,7 @@ if __name__ == '__main__':
     else:
         LOGLEVEL = args.log
 
-    print
-    "Execute shadow experiment"
+    print("Execute shadow experiment")
     start = datetime.datetime.now()
     output = run_experiment(configfile, LOGLEVEL)
     end = datetime.datetime.now()

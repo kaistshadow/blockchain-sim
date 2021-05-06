@@ -1,6 +1,6 @@
 ## required for independent build (currently not supported)
 if (NOT TARGET BLEEP) # check whether it's independent build
-    message(FATAL "Did you try independent build? Only the full-build (building entire project) is supported.")
+    message(FATAL_ERROR "Did you try independent build? Only the full-build (building entire project) is supported.")
 endif ()
 ## required for independent build end
 

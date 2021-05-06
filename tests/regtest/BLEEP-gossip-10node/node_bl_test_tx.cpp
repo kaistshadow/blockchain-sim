@@ -80,9 +80,12 @@ int main(int argc, char *argv[]) {
             //     libBLEEP_BL::g_SocketLayer_API->SendToSocket(event.GetData().GetNewlyConnectedSocket(), "world", 5);
             // }
             break;
-        case libBLEEP_BL::AsyncEventEnum::Layer2_Event_Start ... libBLEEP_BL::AsyncEventEnum::Layer2_Event_End:
-            libBLEEP_BL::BL_PeerConnectivityLayer_API::Instance()->SwitchAsyncEventHandler(event);
-            break;
+            case libBLEEP_BL::AsyncEventEnum::Layer2_Event_Start ... libBLEEP_BL::AsyncEventEnum::Layer2_Event_End:
+                libBLEEP_BL::BL_PeerConnectivityLayer_API::Instance()->SwitchAsyncEventHandler(event);
+                break;
+            case libBLEEP_BL::AsyncEventEnum::Layer3_Event_Start ... libBLEEP_BL::AsyncEventEnum::Layer3_Event_End:
+                libBLEEP_BL::BL_ProtocolLayer_API::Instance()->SwitchAsyncEventHandler(event);
+                break;
         }
     }
 }

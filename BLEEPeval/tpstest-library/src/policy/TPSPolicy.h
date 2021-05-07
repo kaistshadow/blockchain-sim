@@ -52,12 +52,12 @@ namespace tpstest {
         }
 
         void setMonitorTimer() {
-            _monitorTimer.set<TPSPolicy,&TPSPolicy::txmonitorcb>(this);
+            _monitorTimer.set<TPSPolicy,&TPSPolicy<NodePrimitives>::_txmonitorcb>(this);
             _monitorTimer.set(1,1);
             _monitorTimer.start();
         }
 
-        bool txmonitorcb() {
+        void _txmonitorcb() {
             static block* best = nullptr;
             blockforest _bf;
             for (auto &_monitoringNode : _monitoringNodes) {

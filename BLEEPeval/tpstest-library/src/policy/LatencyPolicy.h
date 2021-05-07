@@ -51,21 +51,20 @@ namespace tpstest {
             }
         }
 
-
         void setMonitorTimer() {
-            _monitorTimer.set<LatencyPolicy,&LatencyPolicy::txmonitorcb>(this);
+            _monitorTimer.set<LatencyPolicy,&LatencyPolicy<NodePrimitives>::txmonitorcb>(this);
             _monitorTimer.set(1,1);
             _monitorTimer.start();
         }
 
-        bool txmonitorcb() {
+        void txmonitorcb() {
             blockforest _bf;
             for (auto &_monitoringNode : _monitoringNodes) {
                 _bf = _monitoringNode.get_blockforest();
             }
             block* bp = _bf.get_besttip();
             if(!bp) {
-                return false;
+                return;
             }
 
             unsigned long int netTxLatency = 0;
@@ -104,10 +103,7 @@ namespace tpstest {
 
                 }
             }
-            return true;
         }
-
-
 
 
         list <TxGeneratorNode<NodePrimitives>> &GetTxGeneratorNodes() { return _txGeneratorNodes; }

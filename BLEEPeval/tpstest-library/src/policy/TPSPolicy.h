@@ -51,11 +51,44 @@ namespace tpstest {
             }
         }
 
+        void setMonitorTimer() {
+            _monitorTimer.set<TPSPolicy,&TPSPolicy::txmonitorcb>(this);
+            _monitorTimer.set(1,1);
+            _monitorTimer.start();
+        }
+
+        bool txmonitorcb() {
+            static block* best = nullptr;
+            blockforest _bf;
+            for (auto &_monitoringNode : _monitoringNodes) {
+                _bf = _monitoringNode.get_blockforest();
+            }
+            block* bp = _bf.get_besttip();
+
+            if (bp && bp->getParent() && (!best || best != bp)) {
+                best = bp;
+                uint32_t besttime = bp->getTime();
+                size_t txcount = 0;
+                int length_from_tip = 0;
+                while(bp->getParent()) {
+                    txcount += bp->getTxCount();
+                    bp = bp->getParent();
+                    length_from_tip++;
+                }
+                uint32_t timebase = bp->getTime();
+                std::cout << "TPS = "<< (txcount / ((double)besttime - timebase)) <<" / txcount :"<<txcount<< "\n";
+            }
+        }
+
+
         list <TxGeneratorNode<NodePrimitives>> &GetTxGeneratorNodes() { return _txGeneratorNodes; }
         list <MonitoringNode<NodePrimitives>> &GetMonitoringNodes() { return _monitoringNodes; }
     private:
         list <TxGeneratorNode<NodePrimitives>> _txGeneratorNodes;
         list <MonitoringNode<NodePrimitives>> _monitoringNodes;
+
+        ev::timer _monitorTimer;
+
     protected:
         struct ev_loop *libev_loop = nullptr;
     };

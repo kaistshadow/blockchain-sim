@@ -144,86 +144,26 @@ namespace tpstest {
         }
 
         bool Update(std::string hexHash, std::string hexPrevHash, uint32_t time, std::vector<std::string> txs) {
-            block* bp = new block(hexHash, hexPrevHash,time);   // generate block structure
+            block* bp = new block(hexHash, hexPrevHash,time);
             if(!bp)
                 return false;
             for (int i = 0; i<txs.size(); i++) {
-                bp->pushTxHash(txs[i]); // insert block to hash table(checking this block is already exist)
+                bp->pushTxHash(txs[i]);
             }
             // add block to forest
             if (!bf.add_block(bp)) {
-                delete bp;  // if already exists, free allocated memory
+                delete bp;
             }
-            
-            calculate_tps(time, txs);
-            calculate_latency(time, txs);
+
             return true;
         }
 
-        bool calculate_tps(uint32_t time, std::vector<std::string> txs) {
-            if(_temp_isMointor()) {
-                static block* best = nullptr;
-                block* bp = bf.get_besttip();
-
-                if (bp && bp->getParent() && (!best || best != bp)) {
-                    best = bp;
-                    uint32_t besttime = bp->getTime();
-                    size_t txcount = 0;
-                    int length_from_tip = 0;
-                    while(bp->getParent()) {
-                        txcount += bp->getTxCount();
-                        bp = bp->getParent();
-                        length_from_tip++;
-                    }
-                    uint32_t timebase = bp->getTime();
-                    std::cout << "TPS = "<< (txcount / ((double)besttime - timebase)) <<" / txcount :"<<txcount<< "\n";
-                }
-            }
-        }
-
-        bool calculate_latency(uint32_t time, std::vector<std::string> txs) {
-            
-            if(_temp_isMointor()) {
-                block* bp = bf.get_besttip();
-                unsigned long int netTxLatency = 0;
-                
-                if (txs.size() >= 2) {
-                    for (int i = 1; i<txs.size(); i++) {
-                        assert(time >= global_txtimepool->get_txtime(txs[i]));
-                        netTxLatency += time - global_txtimepool->get_txtime(txs[i]);
-                        std::cout<<"nettxlatency = hash : " <<txs[i]<<" / time = "<< time <<" / global_txtimepool = "<<global_txtimepool->get_txtime(txs[i])<<"\n";
-                    }
-                    bp->setNetTxLatency(netTxLatency);
-                }
-                
-                static block* best = nullptr;
-                
-
-#define CONFIRMATION_COUNT  4
-                if (bp && bp->getParent() && (!best || best != bp)) {
-                    best = bp;
-                    int length_from_tip = 0;
-                    size_t netConfirmedTxCount = 0;
-                    unsigned long int netConfirmedTxLatency = 0;
-                    while(bp->getParent()) {
-                        if (length_from_tip > CONFIRMATION_COUNT) {
-                            netConfirmedTxCount += bp->getTxCount();    // ignore coinbase tx
-                            netConfirmedTxLatency += bp->getNetTxLatency();
-                        }
-                        bp = bp->getParent();
-                        length_from_tip++;
-                    }
-                    if (netConfirmedTxCount && netConfirmedTxLatency) {
-                        std::cout << "Latency = " << (netConfirmedTxLatency / netConfirmedTxCount) << "seconds\n";
-                    }
-                }
-            }
-        }
-
     private:
-        // monitor
         blockforest bf;
     public:
+        blockforest get_blockforest() {
+            return bf;
+        }
     };
 }
 

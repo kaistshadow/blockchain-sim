@@ -41,6 +41,7 @@ namespace tpstest {
         int startNetwork(bool txgenstart) {
             if(txgenstart) {
                 TestPolicy<NodePrimitives>::SetGenerateTimer();
+                TestPolicy<NodePrimitives>::setMonitorTimer();
             }
             ev_run(TestPolicy<NodePrimitives>::libev_loop, 0);
             return 0;

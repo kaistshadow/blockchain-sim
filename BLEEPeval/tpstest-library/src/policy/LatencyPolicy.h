@@ -99,7 +99,7 @@ namespace tpstest {
                     length_from_tip++;
                 }
                 if (netConfirmedTxCount && netConfirmedTxLatency) {
-                    std::cout << "Latency = " << (netConfirmedTxLatency / netConfirmedTxCount) << "seconds\n";
+                    std::cout << "Latency=" << (netConfirmedTxLatency / netConfirmedTxCount) << "seconds\n";
 
                 }
             }

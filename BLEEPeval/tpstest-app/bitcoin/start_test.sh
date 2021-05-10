@@ -6,6 +6,7 @@ if [ $1 -gt 3 ]; then
   echo "difficulty is smaller than 3"
   exit
 fi
+SHELL_PATH=`pwd -P`
 
 path=../../../testlibs/dump/difficulty_$1
 if [ ! -e $path/coinflip_hash.txt ]; then
@@ -14,6 +15,7 @@ if [ ! -e $path/coinflip_hash.txt ]; then
   sh startdump.sh $1
 fi
 
+cd $SHELL_PATH
 sh clean_data.sh $1
 
 if [ $2 = "TPS" ]; then

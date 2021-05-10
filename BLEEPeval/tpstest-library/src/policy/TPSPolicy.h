@@ -70,13 +70,15 @@ namespace tpstest {
                 uint32_t besttime = bp->getTime();
                 size_t txcount = 0;
                 int length_from_tip = 0;
+                std::cout<<"blockhash="<<bp->getHexHash()<<" ";
                 while(bp->getParent()) {
                     txcount += bp->getTxCount();
+//                    std::cout<<"txmonitorcb bp hash = "<<bp->getHexHash()<< " / tx count  = "<< bp->getTxCount()<<"\n";
                     bp = bp->getParent();
                     length_from_tip++;
                 }
                 uint32_t timebase = bp->getTime();
-                std::cout << "TPS="<< (txcount / ((double)besttime - timebase)) <<"/txcount="<<txcount<< "/blockhash="<<bp->getHexHash()<< "\n";
+                std::cout << "TPS="<< (txcount / ((double)besttime - timebase)) <<"/txcount="<<txcount<< "\n";
             }
         }
 

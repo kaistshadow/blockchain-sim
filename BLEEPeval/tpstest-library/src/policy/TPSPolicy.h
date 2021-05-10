@@ -68,12 +68,11 @@ namespace tpstest {
             if (bp && bp->getParent() && (!best || best != bp)) {
                 best = bp;
                 uint32_t besttime = bp->getTime();
-                size_t txcount = 0;
+                size_t txcount = 1; //coinbase tx for genesis block
                 int length_from_tip = 0;
                 std::cout<<"blockhash="<<bp->getHexHash()<<" ";
                 while(bp->getParent()) {
                     txcount += bp->getTxCount();
-//                    std::cout<<"txmonitorcb bp hash = "<<bp->getHexHash()<< " / tx count  = "<< bp->getTxCount()<<"\n";
                     bp = bp->getParent();
                     length_from_tip++;
                 }

@@ -77,6 +77,9 @@ namespace tpstest {
                     length_from_tip++;
                 }
                 uint32_t timebase = bp->getTime();
+                std::cout<<"\n";
+                std::cout<<"besttime : "<<(double)besttime<<"\n";
+                std::cout<<"timebase : "<<timebase<<"\n"; 
                 std::cout << "TPS="<< (txcount / ((double)besttime - timebase)) <<"/txcount="<<txcount<< "\n";
             }
         }

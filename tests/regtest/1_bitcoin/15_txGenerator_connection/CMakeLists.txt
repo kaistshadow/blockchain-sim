@@ -8,11 +8,6 @@ add_custom_target(15_TPSTESTER-plugin ALL
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BITCOINTPS_TESTER> ${CMAKE_CURRENT_SOURCE_DIR})
 add_dependencies(15_TPSTESTER-plugin BITCOINTPS_TESTER)
 
-# copy Monitor Node plugin
-add_custom_target(15_MonitorNode-plugin ALL
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BITCOIN_MONITOR> ${CMAKE_CURRENT_SOURCE_DIR})
-add_dependencies(15_MonitorNode-plugin BITCOIN_MONITOR)
-
 # copy Miner node rpc plugin
 add_custom_target(15_MinerNodeRPC-plugin ALL
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:MinerNodeRPC::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})

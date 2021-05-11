@@ -53,6 +53,8 @@ def main():
     # dump test start
     test_modules.test_dumpfile_load(simulation_output_file[0], path, difficulty)
 
+    sys.exit(0)
+
 if __name__ == '__main__':
     main()
     

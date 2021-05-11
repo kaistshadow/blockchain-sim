@@ -100,7 +100,6 @@ def test_shadow(output_file, runtime, node_id_list, shadow_output):
         f.close()
         print("Success shadow test ...")
         return_count = 1
-        sys.exit(0)
 
     else:
         f.close()
@@ -440,6 +439,10 @@ def test_initialCoin(simulation_output_file):
 def test_peer_connection(plugin_output_files, IP_list, xml_file):
     addnode_list = utils.get_addnode_list(IP_list, xml_file)
     getpeerinfo_list = utils.get_peerinfo(plugin_output_files, IP_list)
+    print("--------------------")
+    print(addnode_list)
+    print(getpeerinfo_list)
+    print("--------------------")
     result_count = 0
     con_count = 0
 
@@ -604,9 +607,8 @@ def Mointor_block_propagation_test(plugin_output_files, node_count, target_path)
             if node_blocklist[i][j+1][0] in each_node_block_list[i]:
                 pass
             else:
-                print("Fail Monitor block propagation test ... ")
                 print("There is no block (%s) " %node_blocklist[i][j+1][0])
-                sys.exit(1)
+
     print("Success Monitor block propagation test ... ")
     sys.exit(0)
 

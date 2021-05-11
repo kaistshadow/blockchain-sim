@@ -12,11 +12,7 @@ add_dependencies(16_TPSTESTER-plugin BITCOINTPS_TESTER)
 add_custom_target(16_MinerNodeRPC-plugin ALL
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:MinerNodeRPC::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
 
-# add_test(NAME TxGenrator-connection
-#   COMMAND python3 txGenerator.py
-#   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-# )
-
-# set_property(TEST TxGenrator-connection APPEND
-#         PROPERTY
-#         ENVIRONMENT PATH=$ENV{PATH}:$<TARGET_FILE_DIR:shadow>) # add path environment in order to run this test on CLion
+add_test(NAME TPSTEST-connection
+  COMMAND python3 tps.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)

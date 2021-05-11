@@ -647,17 +647,21 @@ def TxGenerator_connection_test(plugin_output_files, xmlfile, node_count):
 # --------------------------------------------------------------------------------------------------------------
 #                                       Regression test-16 - TPS test
 # --------------------------------------------------------------------------------------------------------------
-
+# bitcoind의 첫번째 블록의 timestamp와 마지막 블록의 timestamp와 마지막 블록의 txc를 구하고, 
+# txgenerator의 첫번째 블록의 timestamp와 마지막 블록의 timestamp와 마지막 블록의 txc를 구하여, 두 개를 비교를 함.
+# TPS = 마지막 블록의 txc / ((마지막 블록의 timestamp) - (첫번째 블록의 timestamp))
 def TPS_test(simulation_output_file):
     bitcoind_firstBlock, bitcoind_lastBlock, bitcoind_txc = "", "", ""
     txgenerator_firstBlock, txgenerator_lastBlock, txgenerator_txc = "", "", ""
 
     for i in range(0,len(simulation_output_file)):
+        # miner node로 부터 log를 가져옴
         result = simulation_output_file[i].find("bcdnode0")
         if result != -1:
             bitcoind_firstBlock, bitcoind_lastBlock, bitcoind_txc = utils.getBlockTime_fromBitcoind(simulation_output_file[i])
             continue
 
+        # Txgenerator로 부터 log를 가져옴
         result = simulation_output_file[i].find("txgenerator")
         if result != -1:
             txgenerator_firstBlock, txgenerator_lastBlock, txgenerator_txc = utils.geBlockTime_fromTxGenerator(simulation_output_file[i])

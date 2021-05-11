@@ -28,14 +28,11 @@ def main():
     # 생성된 xml 파일로 부터 runtime, node_id, plugin 들을 뽑아옴.
     runtime, node_id_list, plugin_list = xml_modules.get_xml_info_new(target_folder_xml)
 
-    # shadow output test
-    target_folder_file = test_modules.test_shadow_output_file_existence("regtest", node_id_list)
-
     # shadow plugin의 결과 값 뽑아옴.
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)
 
     # TPS test
-
+    test_modules.TPS_test(simulation_output_file)
 
 if __name__ == '__main__':
     main()

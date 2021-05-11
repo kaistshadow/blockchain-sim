@@ -345,3 +345,40 @@ def overlap_blockHash(bitcoind_log):
                 hash_list.append(input_data)
     f.close()
     return hash_list
+
+def geBlockTime_fromTxGenerator(txgenerator_log):
+    lastBlock = ""
+    firstBlock = ""
+    txc = ""
+    f = open(txgenerator_log, "r")
+    for line in f.readlines()[::-1]:
+        result = line.find("txcount")
+        if result != -1:
+            split_list = line.split('/')
+            lastBlock = split_list[0].split(':')[1]
+            txc = split_list[3].split('=')[1]
+            firstBlock = split_list[1].split('/')[0].split(':')[1]
+            break
+
+    return firstBlock, lastBlock, int(txc)
+    f.close()
+
+def getBlockTime_fromBitcoind(bitcoind_log):
+    blockTimeList = []
+    Tx_list = []
+    f = open(bitcoind_log, "r")
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("UpdateTip")
+        if result != -1:
+            BlockTime = line.split(' ')[8].split('Z')[1][:-1]
+            blockTimeList.append(int(BlockTime))
+            Txc = line.split(' ')[7].split('=')[1]
+            Tx_list.append(int(Txc))
+
+    FirstBlockTime = min(blockTimeList)
+    LastBlockTime = max(blockTimeList)
+    TotalTxc = max(Tx_list)
+    f.close()    
+    return str(FirstBlockTime), str(LastBlockTime), int(TotalTxc)

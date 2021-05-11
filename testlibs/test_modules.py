@@ -640,3 +640,50 @@ def TxGenerator_connection_test(plugin_output_files, xmlfile, node_count):
     print(condition_count)
     print("Fail txGenerator connection test ... ")
     sys.exit(1)
+
+
+# --------------------------------------------------------------------------------------------------------------
+#                                       Regression test-16 - TPS test
+# --------------------------------------------------------------------------------------------------------------
+
+def TPS_test(simulation_output_file):
+    bitcoind_firstBlock, bitcoind_lastBlock, bitcoind_txc = "", "", ""
+    txgenerator_firstBlock, txgenerator_lastBlock, txgenerator_txc = "", "", ""
+
+    for i in range(0,len(simulation_output_file)):
+        result = simulation_output_file[i].find("bcdnode0")
+        if result != -1:
+            bitcoind_firstBlock, bitcoind_lastBlock, bitcoind_txc = utils.getBlockTime_fromBitcoind(simulation_output_file[i])
+            continue
+
+        result = simulation_output_file[i].find("txgenerator")
+        if result != -1:
+            txgenerator_firstBlock, txgenerator_lastBlock, txgenerator_txc = utils.geBlockTime_fromTxGenerator(simulation_output_file[i])
+            break
+
+    check_flag = [False, False, False]
+    if bitcoind_firstBlock == txgenerator_firstBlock:
+        check_flag[0] = True
+    else:
+        print("bitcoind_firstBlock : %s" %bitcoind_firstBlock)
+        print("txgenerator_firstBlock : %s" %txgenerator_firstBlock)
+        sys.exit(1)
+    
+    if bitcoind_lastBlock == txgenerator_lastBlock:
+        check_flag[1] = True
+    else:
+        print("bitcoind_lastBlock : %s" %bitcoind_lastBlock)
+        print("txgenerator_lastBlock : %s" %txgenerator_lastBlock)
+        sys.exit(1)
+
+    if bitcoind_txc == txgenerator_txc:
+        check_flag[2] = True
+    else:
+        print("bitcoind_txc : %s" %bitcoind_txc)
+        print("txgenerator_txc : %s" %txgenerator_txc)
+        sys.exit(1)
+
+    if all(check_flag):
+        print("Success TPS test ...")
+        sys.exit(0)
+   

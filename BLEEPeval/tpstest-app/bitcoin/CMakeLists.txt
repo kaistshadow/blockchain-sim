@@ -55,8 +55,6 @@ add_custom_target(latency_test ALL
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BITCOINLATENCY_TESTER> ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-
-
 # copy plugin into source directory
 add_custom_target(tps-API-bitcoin-copy-plugin ALL
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1dev::Plugin> ${CMAKE_CURRENT_SOURCE_DIR}

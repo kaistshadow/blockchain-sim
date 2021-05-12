@@ -28,7 +28,7 @@ jobs:
 
         #    - name : Setup tmate session
         #uses : mxschmitt/action-tmate@v2
-    #   if: failure()
+      if: failure()
 
     - name: Archive test output files when the test is Failed
       uses: actions/upload-artifact@v2

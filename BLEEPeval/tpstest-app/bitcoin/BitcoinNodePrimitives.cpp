@@ -82,18 +82,6 @@ void BitcoinNodePrimitives::OpAfterConnected(int data_fd) {
     // do nothing
 }
 
-
-BitcoinNodePrimitives::BlockInfo BitcoinNodePrimitives::MakeBlockInfo(uint256 _blockhash, uint256 _prevblockhash, uint32_t _timestamp, unsigned long _txcount) {
-
-    struct BitcoinNodePrimitives::BlockInfo newBlock;
-    newBlock.prevblockhash = _prevblockhash.ToString();
-    newBlock.blockhash = _blockhash.ToString();
-    newBlock.txcount = _txcount;
-    newBlock.timestamp = _timestamp;
-    return newBlock;
-}
-
-
 void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
     // recv to RecvBuffer
     TCPControl &tcpControl = GetTCPControl(data_fd);
@@ -229,9 +217,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 {
 
                     if (inv.type == MSG_TX) {
-//                        cout<<"inv msg MSG_TX from "<<data_fd<<" \n";
-                        std::cout<<"[INV] MSGTX: hash = "<<inv.hash.ToString()<<" from = "<<data_fd<<"\n";
-                        RegisterTx(inv.hash.ToString());
+//                        std::cout<<"[INV] MSGTX: hash = "<<inv.hash.ToString()<<" from = "<<data_fd<<"\n";
 
                     } else if (inv.type == MSG_BLOCK) {
                         std::string block_hash = inv.hash.ToString();
@@ -240,8 +226,6 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                         CSerializedNetMsg replymsg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::GETDATA, vInv);
 
                         size_t nMessageSize = replymsg.data.size();
-                        //size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
-                        // LogPrint(BCLog::NET, "sending %s (%d bytes) \n", SanitizeString(msg.command.c_str()), nMessageSize);
 
                         vector<unsigned char> serializedHeader;
                         serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
@@ -261,23 +245,6 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 }
 
             }else if(strCommand == NetMsgType::VERACK) {
-
-                //send sendheader message (But it is not working)
-//                CSerializedNetMsg verack_msg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::SENDHEADERS);
-//                size_t nMessageSize = verack_msg.data.size();
-//
-//                vector<unsigned char> verack_serializedHeader;
-//                verack_serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
-//                uint256 hash = Hash(verack_msg.data.data(), verack_msg.data.data() + nMessageSize);
-//                CMessageHeader verack_hdr(MessageStartChars, verack_msg.command.c_str(), nMessageSize);
-//                memcpy(verack_hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
-//
-//                CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, verack_serializedHeader, 0, verack_hdr};
-//
-//                SendMsg(data_fd, verack_serializedHeader);
-//                if (nMessageSize)
-//                    SendMsg(data_fd, verack_msg.data);
-
                 BitcoinNodePrimitives::LoadBlock(data_fd);
 
             } else if (strCommand == NetMsgType::BLOCK) {
@@ -286,31 +253,12 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                     vRecv >> *pblock;
 
                     std::cout<<"[INV] MSGBLOCK: hash = "<<pblock->GetHash().ToString()<<" txcnt = "<<pblock->vtx.size()<<" from = "<<data_fd <<"\n";
-
-                    // create block structure
-                    block* bp = new block(pblock->GetHash().GetHex(), pblock->hashPrevBlock.GetHex(), pblock->nTime);
+                    std::vector<std::string> txlist;
                     for (int i = 0; i<pblock->vtx.size(); i++) {
-                        bp->pushTxHash(pblock->vtx[i]->GetHash().GetHex());
+                        txlist.push_back(pblock->vtx[i]->GetHash().GetHex());
                     }
-                    // add block to forest
-                    if (!bf.add_block(bp)) {
-                        delete bp;  // if already exists, free allocated memory
-                    }
+                    Update(pblock->GetHash().GetHex(), pblock->hashPrevBlock.GetHex(), pblock->nTime, txlist);
 
-                    // get besttip, calculate tps
-                    static block* best = nullptr;
-                    bp = bf.get_besttip();
-                    if (bp && bp->getParent() && (!best || best != bp)) {
-                        best = bp;
-                        uint32_t besttime = bp->getTime();
-                        size_t txcount = 0;
-                        while(bp->getParent()) {
-                            txcount += bp->getTxCount();
-                            bp = bp->getParent();
-                        }
-                        uint32_t timebase = bp->getTime();
-                        std::cout << "TPS = " << (txcount / ((double)besttime - timebase)) << "\n";
-                    }
                 }
             }
 
@@ -422,6 +370,7 @@ void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {
     memcpy(hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
 
     CVectorWriter{SER_NETWORK, PROTOCOL_VERSION, serializedHeader, 0, hdr};
+    global_txtimepool->register_txtime(tx.GetHash().GetHex(), GetAdjustedTime());
     SendMsg(data_fd, serializedHeader);
     if (nMessageSize) {
         SendMsg(data_fd, msg.data);

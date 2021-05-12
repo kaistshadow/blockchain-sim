@@ -4,11 +4,27 @@
 
 #include "blocks.h"
 
+void shared_timepool::register_txtime(std::string txhash, uint32_t time) {
+    _lock.lock();
+    txtimes.insert({txhash, time});
+    _lock.unlock();
+}
+uint32_t shared_timepool::get_txtime(std::string txhash) {
+    _lock.lock();
+    auto it = txtimes.find(txhash);
+    _lock.unlock();
+    if (it != txtimes.end()) {
+        return it->second;
+    }
+    return 0;
+}
+shared_timepool* global_txtimepool = new shared_timepool();
 block::block(std::string hexHash, std::string hexPrevHash, uint32_t time) {
     this->hexHash = hexHash;
     this->hexPrevHash = hexPrevHash;
     this->time = time;
     parent = nullptr;
+    net_tx_latency = 0;
 }
 std::string block::getHexHash() {
     return hexHash;
@@ -31,11 +47,20 @@ void block::setParent(block* bp) {
 void block::pushTxHash(std::string txHash) {
     txHashes.push_back(txHash);
 }
+std::vector<std::string> block::getTxHashes() {
+    return txHashes;
+}
 void block::setTreebase(blocktreebase* tb) {
     treebase = tb;
 }
 blocktreebase* block::getTreebase() {
     return treebase;
+}
+unsigned long int block::getNetTxLatency() {
+    return net_tx_latency;
+}
+void block::setNetTxLatency(unsigned long int netLatency) {
+    net_tx_latency = netLatency;
 }
 
 blocktreebase::blocktreebase(block* bp) {

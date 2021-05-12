@@ -1,5 +1,5 @@
-#ifndef TPS_POLICY_H
-#define TPS_POLICY_H
+#ifndef LATENCY_POLICY_H
+#define LATENCY_POLICY_H
 
 #include <list>
 #include <ctime>
@@ -15,9 +15,9 @@ using namespace std;
 namespace tpstest {
 
     template<class NodePrimitives>
-    class TPSPolicy {
+    class LatencyPolicy {
     public:
-        TPSPolicy() : libev_loop(EV_DEFAULT) {}
+        LatencyPolicy() : libev_loop(EV_DEFAULT) {}
 
         // step 1. construct virtual network using sybil nodes
         bool ConstructNet (std::vector<pair<std::string,int>> targets, std::string txgenIP, std::string monitorIP, int nodeport) {
@@ -44,7 +44,7 @@ namespace tpstest {
         }
 
         void SetGenerateTimer() {
-#define TX_PER_TICK 1000        // temporary transaction per tick: 1000
+#define TX_PER_TICK 10        // temporary transaction per tick: 1000
 #define TIME_PER_TICK   1       // temporary time per tick: 1 second
             for (auto &_txGeneratorNode : _txGeneratorNodes) {
                 _txGeneratorNode.SetTxGenerateTimer(TX_PER_TICK, TIME_PER_TICK);
@@ -52,32 +52,56 @@ namespace tpstest {
         }
 
         void setMonitorTimer() {
-            _monitorTimer.set<TPSPolicy,&TPSPolicy<NodePrimitives>::_txmonitorcb>(this);
+            _monitorTimer.set<LatencyPolicy,&LatencyPolicy<NodePrimitives>::txmonitorcb>(this);
             _monitorTimer.set(1,1);
             _monitorTimer.start();
         }
 
-        void _txmonitorcb() {
-            static block* best = nullptr;
+        void txmonitorcb() {
             blockforest _bf;
             for (auto &_monitoringNode : _monitoringNodes) {
                 _bf = _monitoringNode.get_blockforest();
             }
             block* bp = _bf.get_besttip();
+            if(!bp) {
+                return;
+            }
 
+            unsigned long int netTxLatency = 0;
+            std::vector<std::string> txs = bp->getTxHashes();
+
+            uint32_t time = bp->getTime();
+
+            if (txs.size() >= 2) {
+                for (int i = 1; i<txs.size(); i++) {
+                    assert(time >= global_txtimepool->get_txtime(txs[i]));
+                    netTxLatency += time - global_txtimepool->get_txtime(txs[i]);
+                }
+                bp->setNetTxLatency(netTxLatency);
+            }
+
+            static block* best = nullptr;
+
+
+#define CONFIRMATION_COUNT  4
             if (bp && bp->getParent() && (!best || best != bp)) {
                 best = bp;
-                uint32_t besttime = bp->getTime();
-                size_t txcount = 1; //coinbase tx for genesis block
                 int length_from_tip = 0;
-                std::cout<<"blockhash="<<bp->getHexHash()<<" ";
+                size_t netConfirmedTxCount = 0;
+                unsigned long int netConfirmedTxLatency = 0;
+
                 while(bp->getParent()) {
-                    txcount += bp->getTxCount();
+                    if (length_from_tip > CONFIRMATION_COUNT) {
+                        netConfirmedTxCount += bp->getTxCount();    // ignore coinbase tx
+                        netConfirmedTxLatency += bp->getNetTxLatency();
+                    }
                     bp = bp->getParent();
                     length_from_tip++;
                 }
-                uint32_t timebase = bp->getTime();
-                std::cout << "TPS="<< (txcount / ((double)besttime - timebase)) <<"/txcount="<<txcount<< "\n";
+                if (netConfirmedTxCount && netConfirmedTxLatency) {
+                    std::cout << "Latency=" << (netConfirmedTxLatency / netConfirmedTxCount) << "seconds\n";
+
+                }
             }
         }
 
@@ -87,9 +111,7 @@ namespace tpstest {
     private:
         list <TxGeneratorNode<NodePrimitives>> _txGeneratorNodes;
         list <MonitoringNode<NodePrimitives>> _monitoringNodes;
-
         ev::timer _monitorTimer;
-
     protected:
         struct ev_loop *libev_loop = nullptr;
     };

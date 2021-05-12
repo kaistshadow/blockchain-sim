@@ -130,7 +130,6 @@ namespace tpstest {
                     perror("getsockopt"); // Solaris pending error?
                     exit(-1);
                 }
-
                 if (err) {
                     std::cout << "error for SocketConnect" << "\n";
                     close(w.fd);

@@ -2,6 +2,7 @@ add_library(BLEEPtps SHARED)
 set_target_properties(BLEEPtps PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(BLEEPtps SHADOW_INTERFACE)
 target_link_libraries(BLEEPtps Libev_4_33::Libev)
+target_link_libraries(BLEEPtps Bitcoin_0_19_1dev::Plugin)
 
 target_sources(BLEEPtps
         PRIVATE
@@ -10,7 +11,7 @@ target_sources(BLEEPtps
         node/Node.h
         node/MonitoringNode.h
         policy/TPSPolicy.h
-        policy/MonitoringPolicy.h
+        policy/LatencyPolicy.h
         utility/blocks.h
         utility/blocks.cpp
         )

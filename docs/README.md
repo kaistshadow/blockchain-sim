@@ -8,7 +8,7 @@ Welcome to the BLEEP documentation <br>
    * [Installation and Setup](Intro-Installation-and-Setup.md)
  * Getting Started: Emulation
    * Emulation for Blockchain Application
-   * [bitcoin](Emulation-bitcoin.md)
+     * [bitcoin](Emulation-bitcoin.md)
    * Emulation for Scalability Testing     
      * [Memory Sharing](Emulation-Scalability.md)   
  * Getting Started: Evaluation

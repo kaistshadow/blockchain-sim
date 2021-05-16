@@ -21,10 +21,13 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/../Install")
 # debug option
 if(BLEEP_DEBUG STREQUAL ON)
   message(STATUS "Debug enabled.")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-parentheses -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch") # suppress error for manually installed boost (1.58)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg -g3 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-parentheses -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch") # suppress error for manually installed boost (1.58)
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pg")
 else(BLEEP_DEBUG STREQUAL ON)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-parentheses -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch")
 endif(BLEEP_DEBUG STREQUAL ON)
+
 
 include(GNUInstallDirs)
 
@@ -127,9 +130,11 @@ find_package(Libev_4_33 REQUIRED)
 target_link_libraries(BLEEP Libev_4_33::Libev)
 #target_link_libraries(BLEEP -lev)
 target_link_libraries(BLEEP SHADOW_INTERFACE)
+target_link_libraries(BLEEP SHADOW_MEMSHARE_INTERFACE)
 target_link_libraries(BLEEP ${Boost_LIBRARIES})
 
 
 include_directories(${CMAKE_ROOT_SOURCE_DIR}/interfaces/shadow_interface)
+include_directories(${CMAKE_ROOT_SOURCE_DIR}/interfaces/shadow_memshare_interface)
 include_directories(${Boost_INCLUDE_DIRS})
 

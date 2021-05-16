@@ -176,7 +176,7 @@ if __name__ == '__main__':
         #     pass
         # else:
         #     exec_shell_cmd("cd testlibs/datadirDump; sh startdump.sh 3")
-        exec_shell_cmd("mkdir -p build; cd build; cmake %s ../; make -j8; make test" %(cmake_test_opt))
+        exec_shell_cmd("mkdir -p build; cd build; cmake %s ../")
 
     if OPT_UNITTEST:
         exec_shell_cmd("git submodule update --init --recursive")

@@ -40,9 +40,9 @@ BL_PeerConnectivityLayer_API::BL_PeerConnectivityLayer_API(std::string myPeerId)
     _ping_timer.start();
 
     // append shadow log
-    char buf[256];
-    sprintf(buf, "InitPeerId,%s", myPeerId.c_str());
-    shadow_push_eventlog(buf);
+    // char buf[256];
+    // sprintf(buf, "InitPeerId,%s", myPeerId.c_str());
+    // shadow_push_eventlog(buf);
 }
 
 void BL_PeerConnectivityLayer_API::SocketConnectHandler(std::shared_ptr<DataSocket> dataSocket) {
@@ -71,11 +71,11 @@ void BL_PeerConnectivityLayer_API::SocketConnectHandler(std::shared_ptr<DataSock
     // Since socket establishment is already 3-way handshaking, 
     // and the peer should try to make connection for valid outgoing peer,
     // we can assume that two peers are valid if socket connection is successfully established.
-    char buf[256];
-    sprintf(buf, "ConnectPeer,%s,%s",
-            _peerManager.GetMyPeerId().GetId().c_str(),
-            outgoingPeer->GetPeerId().GetId().c_str());
-    shadow_push_eventlog(buf);
+    // char buf[256];
+    // sprintf(buf, "ConnectPeer,%s,%s",
+    //         _peerManager.GetMyPeerId().GetId().c_str(),
+    //         outgoingPeer->GetPeerId().GetId().c_str());
+    // shadow_push_eventlog(buf);
 
 
 
@@ -142,20 +142,20 @@ void BL_PeerConnectivityLayer_API::SocketCloseHandler(std::shared_ptr<DataSocket
     std::shared_ptr<Peer> peer = it->second;
     PeerId id = it->first;
     std::cout << "aa" << "\n";
-    if (peer->GetPeerType() == PeerType::IncomingPeer) {
-        char buf[256];
-        sprintf(buf, "DisconnectIncomingPeer,%s,%s",
-                _peerManager.GetMyPeerId().GetId().c_str(),
-                id.GetId().c_str());
-        shadow_push_eventlog(buf);
-    }
-    else if (peer->GetPeerType() == PeerType::OutgoingPeer) {
-        char buf[256];
-        sprintf(buf, "DisconnectOutgoingPeer,%s,%s",
-                _peerManager.GetMyPeerId().GetId().c_str(),
-                id.GetId().c_str());
-        shadow_push_eventlog(buf);
-    }
+    // if (peer->GetPeerType() == PeerType::IncomingPeer) {
+    //     char buf[256];
+    //     sprintf(buf, "DisconnectIncomingPeer,%s,%s",
+    //             _peerManager.GetMyPeerId().GetId().c_str(),
+    //             id.GetId().c_str());
+    //     shadow_push_eventlog(buf);
+    // }
+    // else if (peer->GetPeerType() == PeerType::OutgoingPeer) {
+    //     char buf[256];
+    //     sprintf(buf, "DisconnectOutgoingPeer,%s,%s",
+    //             _peerManager.GetMyPeerId().GetId().c_str(),
+    //             id.GetId().c_str());
+    //     shadow_push_eventlog(buf);
+    // }
 
     _peerManager.RemovePeer(peer);
 }
@@ -164,13 +164,13 @@ void BL_PeerConnectivityLayer_API::SocketCloseHandler(std::shared_ptr<DataSocket
 
 void BL_PeerConnectivityLayer_API::RecvMsgHandler(PeerId sourcePeerId,
                                               std::shared_ptr<Message> msg) {
-    char buf[256];
-    sprintf(buf, "RecvMessage,%s,%s,%s,%s",
-            sourcePeerId.GetId().c_str(),
-            _peerManager.GetMyPeerId().GetId().c_str(),
-            msg->GetType().c_str(),
-            msg->GetMessageId().c_str());
-    shadow_push_eventlog(buf);
+    // char buf[256];
+    // sprintf(buf, "RecvMessage,%s,%s,%s,%s",
+    //         sourcePeerId.GetId().c_str(),
+    //         _peerManager.GetMyPeerId().GetId().c_str(),
+    //         msg->GetType().c_str(),
+    //         msg->GetMessageId().c_str());
+    // shadow_push_eventlog(buf);
 
 
     MessageType msgType = msg->GetType();
@@ -372,19 +372,19 @@ bool BL_PeerConnectivityLayer_API::DisconnectPeer(PeerId id) {
 //    }
 
 
-    if (peer->GetPeerType() == PeerType::IncomingPeer) {
-        char buf[256];
-        sprintf(buf, "DisconnectIncomingPeer,%s,%s",
-                _peerManager.GetMyPeerId().GetId().c_str(),
-                id.GetId().c_str());
-        shadow_push_eventlog(buf);
-    } else if (peer->GetPeerType() == PeerType::OutgoingPeer) {
-        char buf[256];
-        sprintf(buf, "DisconnectOutgoingPeer,%s,%s",
-                _peerManager.GetMyPeerId().GetId().c_str(),
-                id.GetId().c_str());
-        shadow_push_eventlog(buf);
-    }
+    // if (peer->GetPeerType() == PeerType::IncomingPeer) {
+    //     char buf[256];
+    //     sprintf(buf, "DisconnectIncomingPeer,%s,%s",
+    //             _peerManager.GetMyPeerId().GetId().c_str(),
+    //             id.GetId().c_str());
+    //     shadow_push_eventlog(buf);
+    // } else if (peer->GetPeerType() == PeerType::OutgoingPeer) {
+    //     char buf[256];
+    //     sprintf(buf, "DisconnectOutgoingPeer,%s,%s",
+    //             _peerManager.GetMyPeerId().GetId().c_str(),
+    //             id.GetId().c_str());
+    //     shadow_push_eventlog(buf);
+    // }
 
     _peerManager.RemovePeer(peer);
 
@@ -422,14 +422,14 @@ bool BL_PeerConnectivityLayer_API::SendMsgToPeer(PeerId id, std::shared_ptr<Mess
     const char *buf = serial_str.c_str();
     dest->GetDataSocket()->AppendToSendBuff(buf, message_len);
 
-    // append shadow log
-    char logbuf[256];
-    sprintf(logbuf, "UnicastMessage,%s,%s,%s,%s",
-            _peerManager.GetMyPeerId().GetId().c_str(),
-            dest->GetPeerId().GetId().c_str(),
-            msg->GetType().c_str(),
-            msg->GetMessageId().c_str());
-    shadow_push_eventlog(logbuf);
+    // // append shadow log
+    // char logbuf[256];
+    // sprintf(logbuf, "UnicastMessage,%s,%s,%s,%s",
+    //         _peerManager.GetMyPeerId().GetId().c_str(),
+    //         dest->GetPeerId().GetId().c_str(),
+    //         msg->GetType().c_str(),
+    //         msg->GetMessageId().c_str());
+    // shadow_push_eventlog(logbuf);
 
     return true;
 }
@@ -441,10 +441,10 @@ bool BL_PeerConnectivityLayer_API::Shutdown() {
         std::cout << "DisconnectPeer " << peerId.GetId() << "\n";
     }
 
-    // append shadow log
-    char buf[256];
-    sprintf(buf, "ShutdownPeerId,%s", _peerManager.GetMyPeerId().GetId().c_str());
-    shadow_push_eventlog(buf);
+    // // append shadow log
+    // char buf[256];
+    // sprintf(buf, "ShutdownPeerId,%s", _peerManager.GetMyPeerId().GetId().c_str());
+    // shadow_push_eventlog(buf);
 
     std::cout << "Shutdown the peer" << "\n";
     exit(0);

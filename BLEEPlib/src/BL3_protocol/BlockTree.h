@@ -8,6 +8,7 @@
 #include <type_traits>
 #include "Block.h"
 #include "../utility/UInt256.h"
+#include <unordered_map>
 
 namespace libBLEEP_BL {
     template <typename T>

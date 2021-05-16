@@ -4,6 +4,8 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
+#include <iostream>
+
 namespace libBLEEP_BL {
     /* class TransactionId { */
     /* public: */
@@ -48,7 +50,9 @@ namespace libBLEEP_BL {
         int receiver;
         float amount;
 
-        SimpleTransactionId() {}
+        SimpleTransactionId() {
+
+        }
         SimpleTransactionId(int s, int r, float a) { sender = s; receiver = r; amount = a; }
 
         // This overloaded operator<< 
@@ -85,14 +89,23 @@ namespace libBLEEP_BL {
     private:
         SimpleTransactionId _id;
     public:
-        SimpleTransaction() {}
+        SimpleTransaction() {
+            memset(dummy_text, 0, sizeof(char)*200);
+            std::cout<<"SimpleTransaction() Called\n";
+        }
+        ~SimpleTransaction() {
+            std::cout<<"~SimpleTransaction() Called\n";
+        }
         SimpleTransaction(int sid, int rid, float a) {
-            sender_id=sid; receiver_id=rid; amount=a; 
+            sender_id=sid; receiver_id=rid; amount=a;
             _id = SimpleTransactionId(sid, rid, a);
+            memset(dummy_text, 0, sizeof(char)*200);
+            std::cout<<"SimpleTransaction(int sid, int rid, float a) Called\n";
         }        
         int sender_id;
         int receiver_id;
         float amount;
+        char dummy_text[200];
 
         SimpleTransactionId GetId() { return _id; }
 
@@ -102,6 +115,17 @@ namespace libBLEEP_BL {
         {
             out << tx.sender_id << " sends " << tx.amount << " to " << tx.receiver_id;
             return out;
+        }
+
+        std::size_t hash() {
+            return ((std::hash<int>()(sender_id)
+                     ^ (std::hash<int>()(receiver_id) << 1)) >> 1)
+                   ^ (std::hash<float>()(amount) << 1);
+        }
+        bool operator==(const SimpleTransaction& other) {
+            return sender_id == other.sender_id
+                   && receiver_id == other.receiver_id
+                   && amount == other.amount;
         }
 
     private:
@@ -115,6 +139,7 @@ namespace libBLEEP_BL {
             ar & sender_id;
             ar & receiver_id;
             ar & amount;
+//            ar & dummy_text;
         }
     };
 

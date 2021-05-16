@@ -12,6 +12,7 @@
 #include <memory>
 #include <mutex>
 
+#define MEMSHARE_DISABLED
 
 /* sharing target object requires:
  * 1. bool operator==(const A& other)
@@ -82,21 +83,30 @@ namespace memshare {
     int check_shared_type_cache(std::type_index tidx);
     template <typename SPTR_TYPE>
     void try_register_table() {
+        #ifndef MEMSHARE_DISABLED
         std::type_index type_idx = std::type_index(typeid(SPTR_TYPE));
         memory_sharing_unspecified* mtbl = new memory_sharing<SPTR_TYPE>();
         shadow_try_register_memshare_table(&type_idx, mtbl);
         set_shared_type_cache(type_idx);
+        #else
+        return;
+        #endif
     }
     template <typename SPTR_TYPE>
     void try_share(SPTR_TYPE sptr) {
+        #ifndef MEMSHARE_DISABLED
         std::type_index type_idx = std::type_index(typeid(SPTR_TYPE));
         if (check_shared_type_cache(type_idx)) {
             try_register_table<SPTR_TYPE>();
         }
         shadow_memshare_try_share(&type_idx, &sptr);
+        #else
+        return;
+        #endif
     }
     template <typename SPTR_TYPE>
     SPTR_TYPE lookup(SPTR_TYPE sptr) {
+        #ifndef MEMSHARE_DISABLED
         std::type_index type_idx = std::type_index(typeid(SPTR_TYPE));
         if (check_shared_type_cache(type_idx)) {
             try_register_table<SPTR_TYPE>();
@@ -107,6 +117,9 @@ namespace memshare {
             delete sptr_ptr;
         }
         return res;
+        #else
+        return sptr;
+        #endif
     }
 }
 

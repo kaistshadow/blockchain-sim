@@ -21,7 +21,7 @@ def main():
 
     # Start TPS test 
     exec_shell_cmd("rm -rf testTimeStamp.txt")
-    # exec_shell_cmd("sh start_test.sh 3 Latency")
+    exec_shell_cmd("sh start_test.sh 3 Latency")
 
     # xml 파일 생성 확인
     target_folder_xml = test_modules.test_xml_existence("test-BitcoinLatency.xml")

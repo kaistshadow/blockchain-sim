@@ -693,3 +693,45 @@ def TPS_test(simulation_output_file):
         print("Success TPS test ...")
         sys.exit(0)
    
+
+# --------------------------------------------------------------------------------------------------------------
+#                                       Regression test-17 - Latency test
+# --------------------------------------------------------------------------------------------------------------
+
+def Latency_test(simulation_output_file, transactionTable, txgen_path):
+    # bitcoind 의 트랜잭션이 모두 담김. 리스트 인덱스 기준은 블록이며, 리스트 요소로 각 블록에 담긴 트랜잭션 해시값과 타임스탬프 값이 담겨있음.
+    # 타임스탬프는 각 리스트의 마지막 요소에 담김.
+    bitcoind_HashTable = utils.getEachTxHashFromBitcoin_log(simulation_output_file[0])   
+    # txgenator가 생성한 모든 tx의 해시값과 timeStamp를 load함.
+    total_list = utils.getHashTableFile(transactionTable)
+
+    totalDiffValue = 0
+    condition_count = 0
+    EachBlock_tx_count = 0
+    EachBlock_tx_total_timestamp = 0
+    EachBlock_diffTimeStamp_sum = 0
+    confirmedTx_count = 0
+
+    for i in range(0,len(bitcoind_HashTable)-5):
+        for j in range(0,len(bitcoind_HashTable[i])):
+            if len(bitcoind_HashTable[i][j]) > 20:
+                # tx hash case in bitcoind_HashTable list
+                for z in range(0,len(total_list)):
+                    if (bitcoind_HashTable[i][j] == total_list[z].split('/')[0]):
+                        EachBlock_tx_count += 1
+                        EachBlock_tx_total_timestamp += int(total_list[z].split('/')[1])
+                        break
+
+            else:
+                # timestamp case in bitcoind_HashTable list
+                EachBlock_diffTimeStamp_sum += (int(bitcoind_HashTable[i][j]) * EachBlock_tx_count) - EachBlock_tx_total_timestamp
+                confirmedTx_count += EachBlock_tx_count
+                EachBlock_tx_count = 0
+                EachBlock_tx_total_timestamp = 0
+
+    print("---------------------------------------")
+    result_latency = float(EachBlock_diffTimeStamp_sum/confirmedTx_count)
+    print("result_latency : %lf" %(result_latency))
+    print("Result \t Timestamp / txcount")
+    print("MinerNode: %s/%s" %(EachBlock_diffTimeStamp_sum, confirmedTx_count))
+    utils.open_txgenResult(txgen_path)

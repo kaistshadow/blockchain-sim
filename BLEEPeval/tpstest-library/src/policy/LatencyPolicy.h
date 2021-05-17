@@ -71,7 +71,6 @@ namespace tpstest {
             std::vector<std::string> txs = bp->getTxHashes();
 
             uint32_t time = bp->getTime();
-
             if (txs.size() >= 2) {
                 for (int i = 1; i<txs.size(); i++) {
                     assert(time >= global_txtimepool->get_txtime(txs[i]));
@@ -92,15 +91,19 @@ namespace tpstest {
 
                 while(bp->getParent()) {
                     if (length_from_tip > CONFIRMATION_COUNT) {
-                        netConfirmedTxCount += bp->getTxCount();    // ignore coinbase tx
+                        netConfirmedTxCount += bp->getTxCount() - 1;    // ignore coinbase tx
                         netConfirmedTxLatency += bp->getNetTxLatency();
                     }
+                    std::cout<<"blockhash:"<<bp->getHexHash()<<"\n";
+                    std::cout<<"blockTimeStamp:"<<bp->getTime()<<"\n";
+                    std::cout<<"Txcount:"<<int(bp->getTxCount()) -1<<"\n";
                     bp = bp->getParent();
                     length_from_tip++;
                 }
                 if (netConfirmedTxCount && netConfirmedTxLatency) {
+                    std::cout<<"targetdata:"<<netConfirmedTxLatency<<"/"<<netConfirmedTxCount<<"\n";
                     std::cout << "Latency=" << (netConfirmedTxLatency / netConfirmedTxCount) << "seconds\n";
-
+                    std::cout<<"blockHash:"<<best->getHexHash()<<"\n";
                 }
             }
         }

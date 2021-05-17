@@ -9,8 +9,8 @@
 #include "../BL1_socket/SocketLayer_API.h"
 #include "PeerConnectivityLayer_API.h"
 #include "utility/Assert.h"
+#include "utility/Random.h"
 #include <iostream>
-#include <random>
 
 #include "shadow_interface.h"
 
@@ -200,18 +200,17 @@ void BL_PeerConnectivityLayer_API::RecvMsgHandler(PeerId sourcePeerId,
             std::cout << "after add" << "\n";
             // relay address
             if (size <= 10) {
-                std::random_device rd; // obtain a random number from hardware 
-                std::mt19937 mt(rd());
+                auto rng = *(libBLEEP::get_global_random_source().get_default_random_source());
                 std::uniform_int_distribution<> dist(1,2); // number of relay
-                int relayCount = dist(mt);
+                int relayCount = dist(rng);
 
                 std::map<PeerId, std::shared_ptr<Peer>, PeerIdCompare>& peers = _peerManager.GetPeers();
                 // std::set<int> indexset;
                 for (int i = 0; i < relayCount; i++) {
                     std::uniform_int_distribution<> distv(0, peers.size()-1);
-                    // indexset.insert(distv(mt));
+                    // indexset.insert(distv(rng));
                     auto it = peers.begin();
-                    int random = distv(mt);
+                    int random = distv(rng);
                     std::advance(it, random);
                     std::cout << "retrieving relayedPeer" << "\n";
                     std::shared_ptr<Peer> relayedPeer = it->second;

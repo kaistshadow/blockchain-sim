@@ -13,8 +13,8 @@
 * 단일 머신에서 수천 개 이상의 노드 시뮬레이션이 가능한 고성능 테스트 환경을 제공한다. 
 
 # How to run BLEEP?
-[BLEEP document를 참고한다.]() <br>
-※ Ubuntu 16.04 LTS 또는 Ubuntu 18.04 LTS 환경에서 설치 및 사용하는것을 권장한다. 
+[BLEEP document](docs/README.md)를 참고한다. <br>
+※ Ubuntu 18.04 LTS 환경에서 설치 및 사용하는것을 권장 
 
 # How to do BLEEP?
 ## Test frameworks
@@ -69,7 +69,7 @@
 	- 6.구현 완료된 테스트케이스는 BLEEP에서 제공하는 테스트케이스와 같이 스크립트코드를 이용해 자동화 한다. 
 
 ## How to contribute?
-- (All) BLEEP 프로젝트에 기여하고 싶다면 [Github 이슈]((https://github.com/kaistshadow/blockchain-sim/issues/new/choose))를 사용한다. 
+- (All) BLEEP 프로젝트에 기여하고 싶다면 [Github 이슈](https://github.com/kaistshadow/blockchain-sim/issues/new/choose)를 사용한다. 
 - (User) 변경 사항에 대한 `Pull` 요청을 한다. 
 - (Owner) 코드 리뷰 및 Git Action 동작 결과를 확인 후 `merge`한다. <br>
 ※ BLEEP은 개발 및 프로그램 품질 관리를 위해 Git Action을 사용하고 있다. 

@@ -197,7 +197,7 @@ void BL_PeerConnectivityLayer_API::RecvMsgHandler(PeerId sourcePeerId,
             if (addr.GetString() != myAddr)
                 _addrManager.Add(addr);
 
-            std::cout << "after add" << "\n";
+            // std::cout << "after add" << "\n";
             // relay address
             if (size <= 10) {
                 auto rng = *(libBLEEP::get_global_random_source().get_default_random_source());

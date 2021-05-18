@@ -131,8 +131,8 @@ std::shared_ptr<Address> AddrManager::SelectAddressFromTable() {
 }
 
 void AddrManager::PrintAddressTable() {
-    std::cout << "stored addr num:" << mapAddr.size() << "\n";
-    for (auto x : mapAddr) {
-        std::cout << x.second.GetString() << "\n";
-    }
+    // std::cout << "stored addr num:" << mapAddr.size() << "\n";
+    // for (auto x : mapAddr) {
+    //     std::cout << x.second.GetString() << "\n";
+    // }
 }

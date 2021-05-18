@@ -91,10 +91,8 @@ namespace libBLEEP_BL {
     public:
         SimpleTransaction() {
             memset(dummy_text, 0, sizeof(char)*200);
-            std::cout<<"SimpleTransaction() Called\n";
         }
         ~SimpleTransaction() {
-            std::cout<<"~SimpleTransaction() Called\n";
         }
         SimpleTransaction(int sid, int rid, float a) {
             sender_id=sid; receiver_id=rid; amount=a;

@@ -215,7 +215,7 @@ void BlockTree<T>::AppendBlock(std::shared_ptr<T> blk) {
             _treeheight++;
             std::cout << "append to tip:" << blk->GetBlockHash().str() << "\n";
 
-            std::cout << "before dynamic_pointer_cast" << "\n";
+            // std::cout << "before dynamic_pointer_cast" << "\n";
             auto pow_blk = std::dynamic_pointer_cast<T>(blk);
             // if (pow_blk) {
             //     // append shadow log

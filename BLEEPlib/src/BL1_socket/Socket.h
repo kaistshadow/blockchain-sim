@@ -173,7 +173,7 @@ namespace libBLEEP_BL {
             
             /* event io callback */
             void _dataSocketIOCallback(ev::io &w, int revents) {
-                std::cout << "data socket IO callback called!" << "\n";
+                // std::cout << "data socket IO callback called!" << "\n";
 
                 if (revents & EV_READ) {
                     AsyncEvent event(AsyncEventEnum::SocketRecv);

@@ -44,7 +44,7 @@
   </node>
 
   <node id="pownode1" iphint="1.1.0.1">
-    <application plugin="NODE" time="6" arguments="-id=pownode1 -txgenstartat=10000000 -txgeninterval=10000000 -connect=pownode0" />
+    <application plugin="NODE" time="5" arguments="-id=pownode1 -txgenstartat=10000000 -txgeninterval=10000000 -connect=pownode0" />
   </node>
 
   <node id="txgenerator" iphint="99.99.0.1">

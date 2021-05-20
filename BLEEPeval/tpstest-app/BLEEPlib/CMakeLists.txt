@@ -3,16 +3,12 @@ if (NOT CMAKE_INSTALL_PREFIX OR
   set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/../../../Install")
 endif()
 
-#prepare bitcoin experiment
-add_custom_target(tps-API-bitcoin-prepare ALL
-        COMMAND sh clean_data.sh 2
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
 # compile BLEEPlib P2P tester
 add_library(BLEEPlibTPSAdapter SHARED
         BitcoinNodePrimitives.cpp
         BitcoinNodePrimitives.h)
 target_link_libraries(BLEEPlibTPSAdapter BLEEPtps)
+target_link_libraries(BLEEPlibTPSAdapter BLEEP)
 target_include_directories(BLEEPlibTPSAdapter
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR})
@@ -20,7 +16,6 @@ target_include_directories(BLEEPlibTPSAdapter
 add_shadow_plugin(BLEEPlibTPS_TESTER)
 target_link_libraries(BLEEPlibTPS_TESTER BLEEPtps)
 target_link_libraries(BLEEPlibTPS_TESTER BLEEPlibTPSAdapter)
-target_link_libraries(BLEEPlibTPS_TESTER Bitcoin_0_19_1dev::Plugin)
 
 target_sources(BLEEPlibTPS_TESTER
         PRIVATE

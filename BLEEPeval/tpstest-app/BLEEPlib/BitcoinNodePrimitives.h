@@ -15,6 +15,9 @@
 #include <utility/blocks.h>
 #include <queue>
 
+#define BLEEP_MAGIC "BLEEPmsg"
+#define BLEEP_MAGIC_SIZE 8
+
 namespace tpstest {
 
     struct spend_data {
@@ -102,6 +105,7 @@ namespace tpstest {
         virtual bool RegisterBlock(struct BlockInfo newblock) {};
         virtual bool RegisterTx(std::string hash);
         virtual bool _temp_isMointor();
+        virtual bool UpdateBlock(std::string hexHash, std::string hexPrevHash, uint32_t time, std::vector<std::string> txhashlist);
     private:
         // monitor
         blockforest bf;

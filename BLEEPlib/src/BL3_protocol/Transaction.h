@@ -3,6 +3,7 @@
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include "../utility/UInt256.h"
 
 namespace libBLEEP_BL {
     /* class TransactionId { */
@@ -93,6 +94,7 @@ namespace libBLEEP_BL {
         int sender_id;
         int receiver_id;
         float amount;
+        libBLEEP::UINT256_t tx_hash;
 
         SimpleTransactionId GetId() { return _id; }
 
@@ -103,6 +105,9 @@ namespace libBLEEP_BL {
             out << tx.sender_id << " sends " << tx.amount << " to " << tx.receiver_id;
             return out;
         }
+
+        void virtual SetTxHash(libBLEEP::UINT256_t hash) { tx_hash = hash; }
+        virtual libBLEEP::UINT256_t GetTxHash() const { return tx_hash; }
 
     private:
         friend class boost::serialization::access;
@@ -115,6 +120,7 @@ namespace libBLEEP_BL {
             ar & sender_id;
             ar & receiver_id;
             ar & amount;
+            ar & tx_hash;
         }
     };
 

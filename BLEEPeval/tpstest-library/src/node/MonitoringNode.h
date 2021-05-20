@@ -143,7 +143,8 @@ namespace tpstest {
             return true;
         }
 
-        bool Update(std::string hexHash, std::string hexPrevHash, uint32_t time, std::vector<std::string> txs) {
+        bool UpdateBlock(std::string hexHash, std::string hexPrevHash, uint32_t time, std::vector<std::string> txs) {
+            std::cout<<"UpdateBlock "<<hexHash<<"\n";
             block* bp = new block(hexHash, hexPrevHash,time);
             if(!bp)
                 return false;
@@ -154,7 +155,6 @@ namespace tpstest {
             if (!bf.add_block(bp)) {
                 delete bp;
             }
-
             return true;
         }
 

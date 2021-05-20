@@ -20,6 +20,16 @@
 #include <wallet/wallet.h>
 #include <core_io.h>
 #include <outputtype.h>
+#include "BL2_peer_connectivity/Message.h"
+#include "BL2_peer_connectivity/Peer.h"
+#include "../../../shadow/src/main/core/work/shd-message.h"
+
+#include <boost/iostreams/stream.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+
+#include <boost/archive/binary_iarchive.hpp>
+
 
 using namespace tpstest;
 using namespace std;
@@ -29,51 +39,25 @@ void BitcoinNodePrimitives::OpAfterConnect(int conn_fd) {
     switch (_type) {
         case NodeType::TxGenerator:
         case NodeType::MonitoringNode: {
-          // send initializing version message
-          const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
+            // send initializing message
+            std::shared_ptr<libBLEEP_BL::Message> peerIDmsg = std::make_shared<libBLEEP_BL::Message>(
+                    libBLEEP_BL::PeerId(GetIP()), libBLEEP_BL::PeerId(""), "notifyPeerId");
 
-          // their_addr
-          assert(_targetPort != -1 && _targetIP != "");
-          CAddress their_addr;
-          struct sockaddr_in new_addr;    /* my address information */
-          new_addr.sin_family = AF_INET;         /* host byte order */
-          new_addr.sin_port = htons(_targetPort);     /* short, network byte order */
-          new_addr.sin_addr.s_addr = inet_addr(_targetIP.c_str());
-          bzero(&(new_addr.sin_zero), 8);        /* zero the rest of the struct */
+            // serialize message obj into an std::string
+            std::string serial_str;
+            boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+            boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
+            boost::archive::binary_oarchive oa(s);
+            oa << peerIDmsg;
+            s.flush();
 
-          if (!their_addr.SetSockAddr((const struct sockaddr *) &new_addr)) {
-            LogPrintf("Warning: Unknown socket family\n");
-          }
-
-          // version message
-          ServiceFlags nLocalNodeServices = ServiceFlags(NODE_NETWORK | NODE_WITNESS | NODE_NETWORK_LIMITED);
-          uint64_t nonce = 0;
-          int myNodeStartingHeight = 0;
-          CAddress addrMe = CAddress(CService(), nLocalNodeServices);
-
-          CSerializedNetMsg msg = CNetMsgMaker(INIT_PROTO_VERSION).Make(NetMsgType::VERSION, PROTOCOL_VERSION,
-                                                                        (uint64_t) nLocalNodeServices, GetTime(),
-                                                                        their_addr, addrMe, nonce, strSubVersion,
-                                                                        myNodeStartingHeight, true);
-
-          size_t nMessageSize = msg.data.size();
-          //size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
-          LogPrint(BCLog::NET, "sending %s (%d bytes) \n", SanitizeString(msg.command.c_str()), nMessageSize);
-
-          vector<unsigned char> serializedHeader;
-          serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
-          uint256 hash = Hash(msg.data.data(), msg.data.data() + nMessageSize);
-          CMessageHeader hdr(MessageStartChars, msg.command.c_str(), nMessageSize);
-          memcpy(hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
-
-          CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, serializedHeader, 0, hdr};
-
-          SendMsg(conn_fd, serializedHeader);
-          if (nMessageSize) {
-            SendMsg(conn_fd, msg.data);
-          }
-
-          break;
+            SendMsg(conn_fd, BLEEP_MAGIC);
+            SendMsg(conn_fd, serial_str.size());
+            SendMsg(conn_fd, serial_str);
+            // how to send P2P message -> use BLEEP library logic
+            // how to manage Transport layer buffer -> TCPControl internally manages buffer, ReactorWatcher refers TCPControl
+            // how to manage asynchronous I/O events -> TCPControl controls watcher
+            break;
         }
     }
 }
@@ -95,232 +79,115 @@ BitcoinNodePrimitives::BlockInfo BitcoinNodePrimitives::MakeBlockInfo(uint256 _b
 
 
 void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
-    // recv to RecvBuffer
-    TCPControl &tcpControl = GetTCPControl(data_fd);
-    tcpControl.AppendToRecvBuffer(recv_str);
+    switch (_type) {
+        case NodeType::MonitoringNode:
+        case NodeType::TxGenerator: {
+            // recv to RecvBuffer
+            TCPControl &tcpControl = GetTCPControl(data_fd);
+            tcpControl.AppendToRecvBuffer(recv_str);
 
-    // get all received data stream
-    string &recvbufstr = tcpControl.GetRecvBuffer();
+            // parsing a received data stream
+            std::string &recvbufstr = tcpControl.GetRecvBuffer();
+            while (true) {
+                const char *recvBuf = recvbufstr.c_str();
+                if (!strncmp(recvBuf, BLEEP_MAGIC, BLEEP_MAGIC_SIZE)) {
+                    // bleep magic received
+                    // retrieve the size of the msg if possible
+                    int msg_size = 0;
+                    if (recvbufstr.size() >= BLEEP_MAGIC_SIZE + sizeof(int)) {
+                        memcpy(&msg_size, recvBuf + BLEEP_MAGIC_SIZE, sizeof(int));
+                        // msg length received
+                    } else
+                        break;
 
+                    // recv entire msg if possible
+                    if (msg_size && recvbufstr.size() >= BLEEP_MAGIC_SIZE + sizeof(int) + msg_size) {
+                        // start deserializing MSG
+                        recvBuf += BLEEP_MAGIC_SIZE + sizeof(int);
+                        std::shared_ptr<libBLEEP_BL::Message> msg;
+                        boost::iostreams::basic_array_source<char> device(recvBuf, msg_size);
+                        boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
+                        boost::archive::binary_iarchive ia(s);
+                        ia >> msg;
 
-    while (recvbufstr.size() > 0) {
-        // first, dump a message header
-        CNetMessage msg(Params().MessageStart(), SER_NETWORK,
-                        INIT_PROTO_VERSION); // error when bitcoin is not initialized
-        int headerReadSize = msg.readHeader(recvbufstr.c_str(), recvbufstr.size());
-        if (headerReadSize < 0) {// error while reading header
-            std::cout << "error while reading header" << "\n";
-            assert(-1);
-        }
-        if (!msg.in_data) // header is not fully received
-            return;
+                        // deserializing MSG complete
+                        std::cout << "OpAfterRecv: deserializing MSG complete, MSG type:" << msg->GetType() << "\n";
 
-        // second, dump a message
-        string msgstr = recvbufstr.substr(headerReadSize);
-        int msgReadSize = msg.readData(msgstr.c_str(),
-                                       msgstr.size());  // TODO : can be optimized to check size before dumping
-        if (msgReadSize < 0) {// error??
-            std::cout << "unrecognized error while reading data" << "\n";
-            assert(-1);
-        }
-        if (msg.in_data && msg.hdr.nMessageSize > MAX_PROTOCOL_MESSAGE_LENGTH) {
-            cout << "Oversized message" << "\n";
-            exit(-1);
-        }
+                        if (msg->GetType() == "PING") {
+                            // send PONG message
+                            std::shared_ptr<libBLEEP_BL::Message> pongMsg = std::make_shared<libBLEEP_BL::Message>(
+                                    libBLEEP_BL::PeerId(GetIP()), libBLEEP_BL::PeerId(""), "PONG");
 
-        // third, parse a message
-        if (!msg.complete()) {
-            // data is not fully received
-            return;
-        } else {
-            // data is fully received, so handle the message
-            const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
+                            // serialize message obj into an std::string
+                            std::string serial_str;
+                            boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+                            boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > outs(inserter);
+                            boost::archive::binary_oarchive oa(outs);
+                            oa << pongMsg;
+                            outs.flush();
 
-            if (memcmp(msg.hdr.pchMessageStart, MessageStartChars, CMessageHeader::MESSAGE_START_SIZE) != 0) {
-                cout << "INVALID MESSAGESTART " << msg.hdr.GetCommand() << "\n";
-                exit(-1);
-            }
+                            SendMsg(data_fd, BLEEP_MAGIC);
+                            SendMsg(data_fd, serial_str.size());
+                            SendMsg(data_fd, serial_str);
+                            std::cout<<"send Pong message to "<<data_fd<<" \n";
 
+                        } else if( msg->GetType() == "POWBLOCK-INV") {
 
-            // Read header
-            CMessageHeader &hdr = msg.hdr;
-            if (!hdr.IsValid(MessageStartChars)) {
-                LogPrint(BCLog::NET, "PROCESSMESSAGE: ERRORS IN HEADER %s\n", hdr.GetCommand());
-                exit(-1);
-            }
-            string strCommand = hdr.GetCommand();
-            CDataStream &vRecv = msg.vRecv;
+                            //1. msg hash 값 확인
+                            std::shared_ptr<libBLEEP_BL::POWBlockGossipInventory> inv = std::static_pointer_cast<libBLEEP_BL::POWBlockGossipInventory>(msg->GetObject());
+                            auto hashes = inv->GetHashlist();
+                            for (auto hash : hashes) {
+                                //2. getdata 메세지 보내기
+                                std::shared_ptr<libBLEEP_BL::MessageObject> ptrToObj = std::make_shared<libBLEEP_BL::POWBlockGossipGetData>(hash);
+                                std::shared_ptr<libBLEEP_BL::Message> Msg = std::make_shared<libBLEEP_BL::Message>(
+                                        libBLEEP_BL::PeerId(GetIP()), libBLEEP_BL::PeerId(""), "POWBLOCK-GETDATA",ptrToObj);
 
-//            std::cout<<"OpafterRecv : <<" <<strCommand <<" "<<data_fd<<"\n";
+                                // serialize message obj into an std::string
+                                std::string serial_str;
+                                boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+                                boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > outs(inserter);
+                                boost::archive::binary_oarchive oa(outs);
+                                oa << Msg;
+                                outs.flush();
 
-            if (strCommand == NetMsgType::VERSION) {
-                int64_t nTime;
-                CAddress addrMe;
-                CAddress addrFrom;
-                uint64_t nNonce = 1;
-                uint64_t nServiceInt;
+                                SendMsg(data_fd, BLEEP_MAGIC);
+                                SendMsg(data_fd, serial_str.size());
+                                SendMsg(data_fd, serial_str);
+                            }
+                        } else if (msg->GetType() == "POWBLOCK-BLK") {
+                            std::shared_ptr<libBLEEP_BL::POWBlockGossipBlk> getdata = std::static_pointer_cast<libBLEEP_BL::POWBlockGossipBlk>(msg->GetObject());
+                            std::shared_ptr<libBLEEP_BL::POWBlock> blkptr = getdata->GetBlock();
+                            std::cout<<"powblock-blk message "<<blkptr->GetBlockHash()<<" / prevhash = "<<blkptr->GetPrevBlockHash()<<"\n";
 
-                int nVersion;
-                string cleanSubVer;
-                int nStartingHeight = -1;
-                bool fRelay = true;
+                            //block insert to blockforest
+//                            std::cout<<"[INV] MSGBLOCK: hash = "<<blkptr->GetBlockHash()<<" txcnt = "<<blkptr->GetTransactions().size()<<" from = "<<data_fd <<"\n";
+                            std::vector<std::string> txlist;
+                            std::list<std::shared_ptr<libBLEEP_BL::SimpleTransaction>> block_txs = blkptr->GetTransactions();
+                            for(auto transaction : block_txs) {
+//                                std::cout<<"tx : "<<transaction->GetTxHash() <<"\n";
+                                txlist.push_back(transaction->GetTxHash().str());
+                            }
+                            uint32_t time = uint32_t(blkptr->GetTimestamp());
+//                            if(!UpdateBlock(blkptr->GetBlockHash().str(), blkptr->GetPrevBlockHash().str(),time, txlist)){
+//                                std::cout<<"block is already exist \n";
+//                            }
+//                            std::cout<<"block successfully register\n";
 
-                vRecv >> nVersion >> nServiceInt >> nTime >> addrMe;
-
-                if (!vRecv.empty())
-                    vRecv >> addrFrom >> nNonce;
-                if (!vRecv.empty()) {
-                    string strSubVer;
-                    vRecv >> LIMITED_STRING(strSubVer, MAX_SUBVERSION_LENGTH);
-                    cleanSubVer = SanitizeString(strSubVer);
-                }
-                if (!vRecv.empty()) {
-                    vRecv >> nStartingHeight;
-                }
-                if (!vRecv.empty())
-                    vRecv >> fRelay;
-
-                {
-                    // send verack message
-                    CSerializedNetMsg verack_msg = CNetMsgMaker(INIT_PROTO_VERSION).Make(NetMsgType::VERACK);
-                    size_t nMessageSize = verack_msg.data.size();
-                    LogPrint(BCLog::NET, "sending %s (%d bytes) \n", SanitizeString(verack_msg.command.c_str()),
-                             nMessageSize);
-
-                    vector<unsigned char> verack_serializedHeader;
-                    verack_serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
-                    uint256 hash = Hash(verack_msg.data.data(), verack_msg.data.data() + nMessageSize);
-                    CMessageHeader verack_hdr(MessageStartChars, verack_msg.command.c_str(), nMessageSize);
-                    memcpy(verack_hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
-
-                    CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, verack_serializedHeader, 0, verack_hdr};
-
-                    SendMsg(data_fd, verack_serializedHeader);
-                    if (nMessageSize)
-                        SendMsg(data_fd, verack_msg.data);
-                }
-            } else if (strCommand == NetMsgType::PING) {
-                uint64_t nonce = 0;
-                vRecv >> nonce;
-
-                CSerializedNetMsg replymsg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::PONG, nonce);
-
-                size_t nMessageSize = replymsg.data.size();
-                //size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
-                // LogPrint(BCLog::NET, "sending %s (%d bytes) \n", SanitizeString(msg.command.c_str()), nMessageSize);
-
-                vector<unsigned char> serializedHeader;
-                serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
-                uint256 hash = Hash(replymsg.data.data(), replymsg.data.data() + nMessageSize);
-                CMessageHeader replymsghdr(MessageStartChars, replymsg.command.c_str(), nMessageSize);
-                memcpy(replymsghdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
-
-                CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, serializedHeader, 0, replymsghdr};
-
-                SendMsg(data_fd, serializedHeader);
-                if (nMessageSize)
-                    SendMsg(data_fd, replymsg.data);
-
-            } else if (strCommand == NetMsgType::INV){
-
-                std::vector<CInv> vInv;
-                vRecv >> vInv;
-                for (CInv &inv : vInv)
-                {
-
-                    if (inv.type == MSG_TX) {
-//                        cout<<"inv msg MSG_TX from "<<data_fd<<" \n";
-                        std::cout<<"[INV] MSGTX: hash = "<<inv.hash.ToString()<<" from = "<<data_fd<<"\n";
-                        RegisterTx(inv.hash.ToString());
-
-                    } else if (inv.type == MSG_BLOCK) {
-                        std::string block_hash = inv.hash.ToString();
-
-                         //send block message
-                        CSerializedNetMsg replymsg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::GETDATA, vInv);
-
-                        size_t nMessageSize = replymsg.data.size();
-                        //size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
-                        // LogPrint(BCLog::NET, "sending %s (%d bytes) \n", SanitizeString(msg.command.c_str()), nMessageSize);
-
-                        vector<unsigned char> serializedHeader;
-                        serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
-                        uint256 hash = Hash(replymsg.data.data(), replymsg.data.data() + nMessageSize);
-                        CMessageHeader replymsghdr(MessageStartChars, replymsg.command.c_str(), nMessageSize);
-                        memcpy(replymsghdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
-
-                        CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, serializedHeader, 0, replymsghdr};
-
-                        SendMsg(data_fd, serializedHeader);
-                        if (nMessageSize)
-                            SendMsg(data_fd, replymsg.data);
-                    } else {
-                        std::string invhash = inv.hash.ToString();
-                            cout<<"inv msg else "<<invhash<<"\n";
-                    }
-                }
-
-            }else if(strCommand == NetMsgType::VERACK) {
-
-                //send sendheader message (But it is not working)
-//                CSerializedNetMsg verack_msg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::SENDHEADERS);
-//                size_t nMessageSize = verack_msg.data.size();
-//
-//                vector<unsigned char> verack_serializedHeader;
-//                verack_serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
-//                uint256 hash = Hash(verack_msg.data.data(), verack_msg.data.data() + nMessageSize);
-//                CMessageHeader verack_hdr(MessageStartChars, verack_msg.command.c_str(), nMessageSize);
-//                memcpy(verack_hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
-//
-//                CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, verack_serializedHeader, 0, verack_hdr};
-//
-//                SendMsg(data_fd, verack_serializedHeader);
-//                if (nMessageSize)
-//                    SendMsg(data_fd, verack_msg.data);
-
-                BitcoinNodePrimitives::LoadBlock(data_fd);
-
-            } else if (strCommand == NetMsgType::BLOCK) {
-                if (_temp_isMointor()) {
-                    std::shared_ptr<CBlock> pblock = std::make_shared<CBlock>();
-                    vRecv >> *pblock;
-
-                    std::cout<<"[INV] MSGBLOCK: hash = "<<pblock->GetHash().ToString()<<" txcnt = "<<pblock->vtx.size()<<" from = "<<data_fd <<"\n";
-
-                    // create block structure
-                    block* bp = new block(pblock->GetHash().GetHex(), pblock->hashPrevBlock.GetHex(), pblock->nTime);
-                    for (int i = 0; i<pblock->vtx.size(); i++) {
-                        bp->pushTxHash(pblock->vtx[i]->GetHash().GetHex());
-                    }
-                    // add block to forest
-                    if (!bf.add_block(bp)) {
-                        delete bp;  // if already exists, free allocated memory
-                    }
-
-                    // get besttip, calculate tps
-                    static block* best = nullptr;
-                    bp = bf.get_besttip();
-                    if (bp && bp->getParent() && (!best || best != bp)) {
-                        best = bp;
-                        uint32_t besttime = bp->getTime();
-                        size_t txcount = 0;
-                        while(bp->getParent()) {
-                            txcount += bp->getTxCount();
-                            bp = bp->getParent();
+                        } else if (msg->GetType() == "TXGOSSIP-INV") {
+                            std::shared_ptr<libBLEEP_BL::TxGossipInventory> inv = std::static_pointer_cast<libBLEEP_BL::TxGossipInventory>(msg->GetObject());
+                            auto tids = inv->GetTransactionIds();
                         }
-                        uint32_t timebase = bp->getTime();
-                        std::cout << "TPS = " << (txcount / ((double)besttime - timebase)) << "\n";
-                    }
-                }
+
+                        // Maybe, recvBuffer can be updated efficiently. (minimizing a duplication)
+                        std::string remain = recvbufstr.substr(BLEEP_MAGIC_SIZE + sizeof(int) + msg_size);
+                        tcpControl.SetRecvBuffer(remain);
+                    }else
+                        break;
+                } else
+                    break;
             }
-
-            // Maybe, recvBuffer can be updated more efficiently. (minimizing a duplication)
-            std::string remain = recvbufstr.substr(headerReadSize + msgReadSize);
-            tcpControl.SetRecvBuffer(remain);
+            break;
         }
-
-        // repeating the process until there is remaining data stream in RecvBuffer
-        recvbufstr = tcpControl.GetRecvBuffer();
     }
 }
 
@@ -356,76 +223,37 @@ CKey _generateKey() {
 }
 // from state and key, make next state and key, return serialized tx with size
 std::string BitcoinNodePrimitives::generate() {
-    int dividing_factor = 2;
+// generate random transaction
+    srand((unsigned int)time(0));
+    int sender_id = rand() % 100;
+    int receiver_id = rand() % 100;
+    float amount = (float) (rand() % 100000);
+    std::shared_ptr<libBLEEP_BL::SimpleTransaction> tx = std::make_shared<libBLEEP_BL::SimpleTransaction>(sender_id, receiver_id, amount);
 
-    // step 1, 12
-    CMutableTransaction txNew;  // version and locktime is automatically set
 
-    auto source = unspent_keyvalues.front();
-    CKey sourceKey = source.sourceKey;
-    CTransaction* sourceTx = source.sourceTx;
-    uint32_t sourceIn = source.nIn;
-    CAmount fee = 1000;
-    CAmount voutValue = (sourceTx->vout[sourceIn].nValue - fee) / dividing_factor;
-
-    // step 2, 3, 4, 5, 6, 7
-    CTxIn txin_proto(COutPoint(sourceTx->GetHash(), sourceIn), sourceTx->vout[sourceIn].scriptPubKey, 0xffffffff);
-    txNew.vin.push_back(txin_proto);
-
-    // txout build
-    std::vector<CKey> predata;
-    for(int i=0; i<dividing_factor; i++) {
-        CKey dest = _generateKey();
-        CTxDestination receiveDest = GetDestinationForKey(dest.GetPubKey(), OutputType::LEGACY);
-        CScript scriptReceive = GetScriptForDestination(receiveDest);
-        CTxOut receive_txout(voutValue, scriptReceive);
-        txNew.vout.push_back(receive_txout);
-        predata.push_back(dest);
-    }
-
-    // get hash
-    CHashWriter txhasher(SER_GETHASH, 0);
-    txhasher << txNew << (uint32_t)SIGHASH_ALL;
-    uint256 hash = txhasher.GetHash();
-    // sign
-    std::vector<unsigned char> vchSig;
-    sourceKey.Sign(hash, vchSig);
-    // add hashtype
-    vchSig.push_back((unsigned char)SIGHASH_ALL);
-    txNew.vin.clear();
-    CTxIn txin_proto2(COutPoint(sourceTx->GetHash(), sourceIn), CScript() << vchSig << ToByteVector(sourceKey.GetPubKey()), 0xffffffff);
-    txNew.vin.push_back(txin_proto2);
-
-    tx_logs.push(sourceTx);
-    unspent_keyvalues.pop();
-    CTransaction* tx = new CTransaction(txNew);
-    for(uint32_t i=0; i<dividing_factor; i++) {
-        unspent_keyvalues.push({predata[i], tx, i});
-    }
-    std::cout<<"Debug - created tx's hash:"<<tx->GetHash().GetHex()<<"\n";
-
-    return EncodeHexTx(*tx);
+    return "hello";
 }
 
 void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {
-    CMutableTransaction mtx;
-    if (!DecodeHexTx(mtx, hexTx, true))
-        throw std::runtime_error("invalid transaction encoding");
-    CTransaction tx(mtx);
-    const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
-    CSerializedNetMsg msg = CNetMsgMaker(PROTOCOL_VERSION).Make(SERIALIZE_TRANSACTION_NO_WITNESS, NetMsgType::TX, tx);
-    size_t nMessageSize = msg.data.size();
-    std::vector<unsigned char> serializedHeader;
-    serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
-    uint256 hash = Hash(msg.data.data(), msg.data.data() + nMessageSize);
-    CMessageHeader hdr(MessageStartChars, msg.command.c_str(), nMessageSize);
-    memcpy(hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
+//    CMutableTransaction mtx;
+//    if (!DecodeHexTx(mtx, hexTx, true))
+//        throw std::runtime_error("invalid transaction encoding");
+//    CTransaction tx(mtx);
+//    const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
+//    CSerializedNetMsg msg = CNetMsgMaker(PROTOCOL_VERSION).Make(SERIALIZE_TRANSACTION_NO_WITNESS, NetMsgType::TX, tx);
+//    size_t nMessageSize = msg.data.size();
+//    std::vector<unsigned char> serializedHeader;
+//    serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
+//    uint256 hash = Hash(msg.data.data(), msg.data.data() + nMessageSize);
+//    CMessageHeader hdr(MessageStartChars, msg.command.c_str(), nMessageSize);
+//    memcpy(hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
+//
+//    CVectorWriter{SER_NETWORK, PROTOCOL_VERSION, serializedHeader, 0, hdr};
+//    SendMsg(data_fd, serializedHeader);
+//    if (nMessageSize) {
+//        SendMsg(data_fd, msg.data);
+//    }
 
-    CVectorWriter{SER_NETWORK, PROTOCOL_VERSION, serializedHeader, 0, hdr};
-    SendMsg(data_fd, serializedHeader);
-    if (nMessageSize) {
-        SendMsg(data_fd, msg.data);
-    }
 
 }
 

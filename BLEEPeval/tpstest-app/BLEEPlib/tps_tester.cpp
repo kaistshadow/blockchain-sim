@@ -19,11 +19,11 @@ int main(int argc, char* argv[]) {
     ECCVerifyHandle* ecc = new ECCVerifyHandle();
 
     TxBox<TPSPolicy, BitcoinNodePrimitives> tpsBox;
-    tpsBox.addNode(txgenIP, monitorIP, 18333);
+    tpsBox.addNode(txgenIP, monitorIP, 3456);
 
     for(int i=0; i<targetNum; i++){
         std::string address;
-        int port = 18333;
+        int port = 3456;
         sprintf(&address[0], "1.%d.0.1", i);
         tpsBox.addTarget(address.c_str(), port);
     }

@@ -92,7 +92,7 @@ namespace tpstest {
 
                 while(bp->getParent()) {
                     if (length_from_tip > CONFIRMATION_COUNT) {
-                        netConfirmedTxCount += bp->getTxCount();    // ignore coinbase tx
+                        netConfirmedTxCount += bp->getTxCount() - 1;    // ignore coinbase tx
                         netConfirmedTxLatency += bp->getNetTxLatency();
                     }
                     bp = bp->getParent();

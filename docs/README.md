@@ -20,17 +20,11 @@ Welcome to the BLEEP documentation <br>
 
 
 ## Tips
-- 공유라이브러리 만들기(TODO) 
-- BLEEP 환경설정 파일 만들기(TODO) 
-- 프로토콜 분석을 위한 ZMQ 사용법(TODO)
-- 비트코인 난이도 조정 방법(TODO)
+- TODO
 
-## Plug-in Info
-- Profiling tool : https://
-- Pattern matching tool : https://
-- Dynamic debugging tool : https://
-- Xml Generating tool : https://
+## Tools
+- TODO
 
 ## Resources
-- [API Documentation](api/test-api.md)
-- [External Resources](Resource-External.md)
+- [API Documentation](api/test-api.md) (TODO)
+- [External Resources](Resource-External.md) (TODO)

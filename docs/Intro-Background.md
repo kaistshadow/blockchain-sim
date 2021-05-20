@@ -41,7 +41,7 @@ BLEEP은 Git 저장소를 이용해 소스코드를 관리하며 아래와 같�
 ```
 
 # Git Action을 이용한 CI(Continuous Integration)
-BLEEP을 이용한 개발 및 프로그램 품질 관리를 위해 Git Action을 사용함. 
+BLEEP을 이용한 개발 및 프로그램 품질 관리를 위해 Git Action을 사용하고 있다. 
 - 예시) 비트코인 빌드 및 관련 테스트케이스에 대한 동작 검증
 ```
 jobs:
@@ -62,5 +62,3 @@ jobs:
         export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/Install
         python setup.py --test
 ```
-
-

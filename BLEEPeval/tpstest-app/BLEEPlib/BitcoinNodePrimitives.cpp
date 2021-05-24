@@ -167,11 +167,18 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
 //                                std::cout<<"tx : "<<transaction->GetTxHash() <<"\n";
                                 txlist.push_back(transaction->GetTxHash().str());
                             }
-                            uint32_t time = uint32_t(blkptr->GetTimestamp());
-//                            if(!UpdateBlock(blkptr->GetBlockHash().str(), blkptr->GetPrevBlockHash().str(),time, txlist)){
-//                                std::cout<<"block is already exist \n";
-//                            }
-//                            std::cout<<"block successfully register\n";
+
+                            if(blkptr->GetPrevBlockHash()==libBLEEP::UINT256_t(NULL)){
+                                isMonitoring=true;
+                                break;
+                            }
+                            if(isMonitoring){
+                                uint32_t time = uint32_t(blkptr->GetTimestamp());
+                                if(!UpdateBlock(blkptr->GetBlockHash().str(), blkptr->GetPrevBlockHash().str(),time, txlist)){
+                                    std::cout<<"block is already exist \n";
+                                }
+                                std::cout<<"block successfully register\n";
+                            }
 
                         } else if (msg->GetType() == "TXGOSSIP-INV") {
                             std::shared_ptr<libBLEEP_BL::TxGossipInventory> inv = std::static_pointer_cast<libBLEEP_BL::TxGossipInventory>(msg->GetObject());
@@ -258,42 +265,6 @@ void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {
 }
 
 void BitcoinNodePrimitives::LoadBlock(int data_fd) {
-    //load block message in coinflip_hash.txt
-    std::string path = "./data/coinflip_hash.txt";
-
-    const unsigned char MessageStartChars2[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
-    ifstream file (path);
-    std::string line;
-    if (file.is_open())
-    {
-        while ( getline (file,line) )
-        {
-
-            std::vector<CInv> vInv2(1);
-            uint256 block_hash2 = uint256S(line);
-            vInv2[0] = CInv(2, block_hash2);
-
-            //send block message
-            CSerializedNetMsg replymsg2 = CNetMsgMaker(PROTOCOL_VERSION).Make(SERIALIZE_TRANSACTION_NO_WITNESS,NetMsgType::GETDATA, vInv2);
-
-            size_t nMessageSize2 = replymsg2.data.size();
-//            std::cout<<"sending %s (%d bytes) "<<block_hash2.ToString()<<" \n";
-
-
-            vector<unsigned char> serializedHeader2;
-            serializedHeader2.reserve(CMessageHeader::HEADER_SIZE);
-            uint256 hash2 = Hash(replymsg2.data.data(), replymsg2.data.data() + nMessageSize2);
-            CMessageHeader replymsghdr2(MessageStartChars2, replymsg2.command.c_str(), nMessageSize2);
-            memcpy(replymsghdr2.pchChecksum, hash2.begin(), CMessageHeader::CHECKSUM_SIZE);
-
-            CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, serializedHeader2, 0, replymsghdr2};
-
-            SendMsg(data_fd, serializedHeader2);
-            if (nMessageSize2)
-                SendMsg(data_fd, replymsg2.data);
-
-        }
-        file.close();
-    }
+//    if(!UpdateBlock(blkptr->GetBlockHash().str(), blkptr->GetPrevBlockHash().str(),time, txlist)){
 
 }

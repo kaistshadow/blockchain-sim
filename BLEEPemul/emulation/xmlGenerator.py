@@ -23,7 +23,7 @@ def setup_multiple_node_xml(node_num, simultime):
 
         argument = "-id=pownode%d -miningtime=20 -miningnodecnt=%d" % (i, node_num)
         if i==0:
-            argument += " -txgenstartat=0 -txgeninterval=3"
+            argument += " -txgenstartat=0 -txgeninterval=0.005"
         else:
             argument += " -connect=pownode%d" % ((i + (4 - 1)) / 4 - 1)
 

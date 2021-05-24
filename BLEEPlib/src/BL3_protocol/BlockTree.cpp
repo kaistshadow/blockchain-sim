@@ -22,6 +22,8 @@ BlockTree<T>::BlockTree() {
 
     std::shared_ptr<T> genesisblk = std::make_shared<T>("", genesis_tx_list);
     genesisblk->SetGenesisBlock();
+    memshare::try_share(genesisblk);
+    genesis_tx = memshare::lookup(genesisblk);
 
     std::shared_ptr<BlockTreeBlockIndex<T> > genesisIndex = std::make_shared< BlockTreeBlockIndex<T> >(genesisblk, "");
     // prevblockhash of genesis block is ""

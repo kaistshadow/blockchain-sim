@@ -32,7 +32,6 @@
 
   <!-- the plug-ins we will be using -->
   <plugin id="NODE" path="libBLEEPlib-pow-node.so" />
-  <plugin id="TESTER" path="libBLEEPlibTPS_TESTER.so"/>
 
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="300" />

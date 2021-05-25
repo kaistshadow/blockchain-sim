@@ -166,8 +166,13 @@ def get_address_list(xml_file):
         if not line: break
         result = line.find("iphint")
         if result != -1:
-            IP_address = line.split("iphint")[1].split("=")[1].split(">")[0]
-            ip_list.append(IP_address[1:len(IP_address)-1])
+            # 주석 처리된 경우
+            result = line.find("!")
+            if result != -1:
+                continue
+            else:
+                IP_address = line.split("iphint")[1].split("=")[1].split(">")[0]
+                ip_list.append(IP_address[1:len(IP_address)-1])
     f.close()
     return ip_list
         

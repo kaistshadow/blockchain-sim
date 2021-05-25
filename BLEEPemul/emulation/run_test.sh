@@ -1,6 +1,6 @@
 #!/bin/bash
 
-python ./xmlGenerator.py 1000 43200
+python ./xmlGenerator.py 1000 3600
 sleep 0.2
 rm ../../interfaces/shadow_memshare_interface/shadow_memshare_interface.h
 sleep 0.2

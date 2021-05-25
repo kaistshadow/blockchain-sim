@@ -87,7 +87,5 @@ external/libev/4.33/libev.la
 external/libev/4.33/libtool
 external/libev/4.33/stamp-h1
 
-extension/bin/drshadow
-extension/bin/libdrshadow.so
-extension/bin/drshadow-runner
-extension/shadow-dynamorio-runner/drshadow-runner
+.DS_Store
+build

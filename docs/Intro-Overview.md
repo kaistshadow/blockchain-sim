@@ -7,8 +7,8 @@ BLEEP을 이용한다면 다양한 블록체인 어플리케이션의 실제 동
 이를 이용하는 어플리케이션까지 확장하고자 한다.<br>  
 
 - 이를위해 BLEEP은 다음과 같은 핵심 목표를 추구하고 있으며,
-  - (1) 다양한 언어로 구현된 블록체인 바이너리의 동작을 에뮬레이션
-  - (2) 블록체인 동작 검증을 위한 기능 및 성능, 취약성 등의 테스팅 환경 제공
+  - [(1) 다양한 언어로 구현된 블록체인 바이너리의 동작을 에뮬레이션](Intro-Overview.md#1-blockchain-emulationtesting-platform)
+  - [(2) 블록체인 동작 검증을 위한 기능 및 성능, 취약성 등의 테스팅 환경 제공](Intro-Overview.md#2-blockchain-evaluationtesting-platform)
 
 - 아래와 같이 3개의 핵심 컴포넌트로 제공하고 있다. 
 
@@ -39,7 +39,7 @@ BLEEP을 이용한다면 다양한 블록체인 어플리케이션의 실제 동
     - `Install`
       - BLEEP에서 공통적으로 사용하는 플러그인, 라이브러리, 헤더파일, CMake파일 등을 제공 <br><br>
 
-![그림1. BLEEP Architecture](https://github.com/kaistshadow/blockchain-sim/blob/feature/191/documentation/doc/images/BLEEP_Architecture.png)
+![그림1. BLEEP Architecture](images/bleepArchitecture.png)
 
 
 # (1) Blockchain emulation(testing) platform 

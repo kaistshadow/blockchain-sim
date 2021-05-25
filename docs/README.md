@@ -9,7 +9,7 @@ Welcome to the BLEEP documentation <br>
  * Getting Started: Emulation
    * Emulation for Blockchain Application
      * [bitcoin](Emulation-bitcoin.md)
-   * Emulation for Scalability Testing     
+   * Scalability Features for the Emulation
      * [Memory Sharing](Emulation-Scalability.md)   
  * Getting Started: Evaluation
    * Security Test

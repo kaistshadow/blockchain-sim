@@ -4,6 +4,9 @@ if (NOT CMAKE_INSTALL_PREFIX OR
 endif()
 
 #prepare bitcoin experiment
+
+set(CMAKE_BUILD_TYPE Debug)
+
 add_custom_target(tps-API-bitcoin-prepare ALL
         COMMAND sh clean_data.sh 2
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

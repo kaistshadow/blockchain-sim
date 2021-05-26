@@ -8,7 +8,8 @@
 #ifndef BLEEP_RPC_CLIENT_H_
 #define BLEEP_RPC_CLIENT_H_
 
-#include "./../Install/curl_7.70.0/include/curl/curl.h"
+// #include "./../Install/curl_7.70.0/include/curl/curl.h"
+#include <curl/curl.h>
 #include <jsoncpp/json/json.h>
 #include <string>
 #include <iostream>

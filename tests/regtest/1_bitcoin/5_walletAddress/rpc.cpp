@@ -4,8 +4,9 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string>
+#include <curl/curl.h>
 #include <jsoncpp/json/json.h>
-#include "../../../../testlibs/rpc_client.h"
+#include "rpc_client.h"
 
 int main(int argc, char* argv[]) {
     // init

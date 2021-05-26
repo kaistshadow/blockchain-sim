@@ -1,11 +1,12 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
+#include <curl/curl.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <string>
 #include <jsoncpp/json/json.h>
-#include "../../../../testlibs/rpc_client.h"
+#include "rpc_client.h"
 
 int main(int argc, char* argv[]) {
     // init

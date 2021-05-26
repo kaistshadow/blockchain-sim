@@ -22,12 +22,10 @@ add_custom_target(emulation-copy-plugin ALL
   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1dev::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(emulation-one-node-mine-plugin ALL
-        COMMAND g++ -o minerNode_rpc.so one_node_setmine.cpp ../../testlibs/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -g
+        COMMAND g++ -o minerNode_rpc.so one_node_setmine.cpp ../../testlibs/rpc_client.cpp -I./../../testlibs -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -g
         COMMAND ${CMAKE_COMMAND} -E copy minerNode_rpc.so ${CMAKE_INSTALL_PREFIX}/plugins/minerNode_rpc.so
-        COMMAND g++ -o transaction.so transaction.cpp  ../../testlibs/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -g
+        COMMAND g++ -o transaction.so transaction.cpp  ../../testlibs/rpc_client.cpp -I./../../testlibs -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../Install/curl_7.70.0/lib -g
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-        
-target_link_libraries(emulation-one-node-mine-plugin CURL_7_70_0::CURL)
 
 # Define targets that can be used in same build-tree
 add_library(MinerNodeRPC::Plugin SHARED IMPORTED GLOBAL)

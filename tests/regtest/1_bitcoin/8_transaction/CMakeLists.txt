@@ -23,8 +23,8 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/rpc.so
         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/one_node_setmine.cpp
         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../testlibs/rpc_client.cpp
         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/transaction.cpp
-        COMMAND gcc -o rpc.so one_node_setmine.cpp ../../../../testlibs/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -g -std=c99
-        COMMAND gcc -o transaction.so transaction.cpp ../../../../testlibs/rpc_client.cpp -ljsoncpp -lcurl -lssl -shared -fPIC -Wl,-rpath=${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/curl_7.70.0/lib -g
+        COMMAND gcc -o rpc.so one_node_setmine.cpp ../../../../testlibs/rpc_client.cpp -I./../../../../testlibs -ljsoncpp -lssl -shared -fPIC -g -std=c99
+        COMMAND gcc -o transaction.so transaction.cpp ../../../../testlibs/rpc_client.cpp -I./../../../../testlibs -ljsoncpp -lssl -shared -fPIC -g -std=c99
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_test(NAME shadow-bitcoin-transaction-test

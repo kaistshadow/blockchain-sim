@@ -4,10 +4,46 @@
 메모리 영역 공유 기법을 적용하기 위해서 메모리 영역 공유 기법 인터페이스에 맞춘 타겟 데이터 클래스의 함수 추가 및 에뮬레이션 대상 코드의 일부 수정이 필요하다.
 
 # Prerequisites
-메모리 영역 공유 기법을 적용 가능한 데이터의 조건은 다음과 같다.
+현재 메모리 영역 공유 기법을 적용 가능한 데이터의 조건은 다음과 같다.
+- 에뮬레이션 대상 코드는 C++ 기반으로 작성되어야 하며, 임의의 공유할 데이터는 클래스 타입이어야 함
 - 공유할 데이터는 에뮬레이션 대상 코드에서 shared_ptr 기법을 이용하여 처리되어야 함(std::shared_ptr 또는 boost::shared_ptr 사용)
 - 임의의 공유할 데이터 클래스 X의 필드 함수로 std::size_t hash() 함수와 bool operator==(const X& other) 함수가 구현되어있어야 함
+  - hash 함수는 std::size_t의 타입을 가지는 고유 해시 데이터를 생성하는 함수
+  - operator== 함수는 동일 클래스의 다른 데이터와 동일함을 비교하기 위한 함수
 - 공유할 데이터는 공유 시점 이후 변경되지 않아야 함(공유 이후 데이터의 변경이 발생하는 경우, 예상하지 못한 결과가 발생 할 수 있음)
+
+## Example
+다음 클래스 A에 메모리 영역 공유 기법을 적용하려고 한다.
+```
+class A {
+  int x;
+public:
+  A() { x = 1; }
+};
+```
+해당 클래스로 선언된 변수는 에뮬레이션 대상 코드 내에서 다음과 같이 shared_ptr 기법을 이용하여 관리된다고 가정한다.
+```
+int fn1() {
+  ...
+  std::shared_ptr sptr = std::make_shared<A>();
+  ...
+}
+```
+메모리 영역 공유 기법을 적용하기 위하여, std::size_t hash() 함수와 bool operator==(const A& other) 함수가 없는 경우, 의미에 맞게 추가 구현하여 다음과 같이 A를 수정한다.
+```
+class A {
+  int x;
+public:
+  A() { x = 1; }
+  std::size_t hash() {
+    return std::hash<int>()(x);
+  }
+  bool operator==(const A& other) {
+    return x == other.x;
+  }
+};
+```
+
 
 # Memory Sharing API
 

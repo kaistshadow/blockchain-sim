@@ -5,10 +5,8 @@ if [ $# -lt 1 ]; then
   exit
 fi
 
-
 echo "cleanup data start!"
 SHELL_PATH=`pwd -P`
-
 
 cd $SHELL_PATH
 CreateDIR=./data
@@ -24,7 +22,6 @@ while [ $i -lt $1 ]; do
   cp -r $path/bcdnode0/* ./data/bcdnode$i
   i=$(($i+1))
 done
-
 
 cp -r $path/coinflip_hash.txt ./data
 cp -r $path/key.txt ./data

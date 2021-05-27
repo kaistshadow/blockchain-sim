@@ -89,16 +89,6 @@ namespace tpstest {
             return conn_fd;
         }
 
-        // API for connection to target using timer
-        void tryConnectToTarget(std::string targetIP, int targetPort, double starttime) {
-            _connStartTimer.set<TxGeneratorNode<NodePrimitives>, &TxGeneratorNode<NodePrimitives>::_timercb>(this);
-            _connStartTimer.set(starttime, 0);
-            _connStartTimer.start();
-
-            Node<NodePrimitives>::_targetIP = targetIP;
-            Node<NodePrimitives>::_targetPort = targetPort;
-        }
-
         void _timercb(ev::timer &w, int revents) {
             tryConnectToTarget(Node<NodePrimitives>::_targetIP, Node<NodePrimitives>::_targetPort);
             _connStartTimer.stop();

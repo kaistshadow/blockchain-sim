@@ -29,11 +29,11 @@ namespace sybiltest {
         // step 1. construct virtual network using sybil nodes
         bool ConstructSybilNet(IPDatabase &ipdb, std::string targetIP,
                                int targetPort) {
-            vector<pair<string, int>> &vIPDurationPair = ipdb.GetIPDurationpair();
+            vector<pair<string, vector<int>>> &vIPDurationPair = ipdb.GetIPDurationpair();
             ipdb.Initialize(NodeParams::reachableIPNum, NodeParams::unreachableIPNum, NodeParams::shadowIPNum);
 
             vector<string> &vReachableIP = ipdb.GetVReachableIP();
-            map<string, int> &mIPDuration = ipdb.GetMIPDuration();
+            map<string, vector<int>> &mIPDuration = ipdb.GetMIPDuration();
             vector<string> &vAttackerIP = ipdb.GetVAttackerIP();
             vector<string> &vShadowIP = ipdb.GetVShadowIP();
 
@@ -44,8 +44,10 @@ namespace sybiltest {
                 benignNode.SetTarget(targetIP, targetPort);
 
                 // set a churnout timer for all the benign nodes
-                int uptime = mIPDuration[ip];
-                benignNode.SetChurnOutTimer(uptime);
+                vector<int> duration = mIPDuration[ip];
+                for(auto timestamp : duration) {
+                    benignNode.SetChurnToggleTimer(timestamp);
+                }
             }
             std::cout << "benign node objects are constructed" << "\n";
             std::cout << "size of reachable IP:" << vReachableIP.size() << "\n";

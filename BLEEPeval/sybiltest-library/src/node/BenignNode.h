@@ -155,26 +155,42 @@ namespace sybiltest {
 
     private:
         ev::timer _churnoutTimer;
-
+        std::deque<ev::timer *> churnTimers;
         void _churnoutcb(ev::timer &w, int revents) {
-            for (auto &[fd, watcher] : Node<NodePrimitives>::_mDataSocketWatcher) {
-                watcher.stop();
-                close(fd);
-            }
-            for (auto &[fd, watcher] : Node<NodePrimitives>::_mConnSocketWatcher) {
-                watcher.stop();
-                close(fd);
-            }
-            Node<NodePrimitives>::_listen_watcher.stop();
-            close(Node<NodePrimitives>::_listen_sockfd);
+            Node<NodePrimitives>::ChurnOut();
             std::cout << "churn out timer is called at " << Node<NodePrimitives>::GetIP() << "\n";
+        }
+        void _churntogglecb(ev::timer &w, int revents) {
+            Node<NodePrimitives>::ChurnToggle();
+            if(churnTimers.front() != &w) {
+                std::cout << "ChurnToggle Timers deque is corrupted" << "\n";
+                exit(1);
+            }
+            delete churnTimers.front();
+            churnTimers.pop_front();
         }
 
     public:
         void SetChurnOutTimer(int uptime) {
+            // Called for legacy code - assumes that the node is already churned in
+            // should churn in the node first
+            std::cout << "set churn out timer called at " << Node<NodePrimitives>::GetIP() << "\n";
+            Node<NodePrimitives>::ChurnIn();
+            SetChurnToggleTimer(uptime);
+            //std::cout << "set churn out timer success at " << Node<NodePrimitives>::GetIP() << "\n";
+            /*
             _churnoutTimer.set<BenignNode, &BenignNode<NodePrimitives>::_churnoutcb>(this);
             _churnoutTimer.set(uptime, 0.);
             _churnoutTimer.start();
+             */
+        }
+        void SetChurnToggleTimer(int toggletime) {
+            std::cout << "set churn toggle timer called at " << Node<NodePrimitives>::GetIP() << "\n";
+            ev::timer *toggleTimer = new ev::timer();
+            toggleTimer->set(toggletime, 0.);
+            toggleTimer->start();
+            churnTimers.push_back(toggleTimer);
+            //std::cout << "set churn toggle timer success at " << Node<NodePrimitives>::GetIP() << "\n";
         }
     };
 }

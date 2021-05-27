@@ -35,7 +35,9 @@ namespace sybiltest {
         std::map<int, ev::io> _mDataSocketWatcher;
         std::map<int, ev::io> _mConnSocketWatcher;
         ev::io _listen_watcher;
-        int _listen_sockfd;
+        int _listen_sockfd = -1;
+        bool _listen_socket;
+        struct sockaddr_in my_addr;
 
         std::string string_to_hex(const std::string &input) {
             static const char hex_digits[] = "0123456789ABCDEF";
@@ -225,7 +227,6 @@ namespace sybiltest {
                                                                                                                    myIP,
                                                                                                                    type) {
             // Create virtual NIC for this node
-            struct sockaddr_in my_addr;    /* my address information */
             my_addr.sin_family = AF_INET;         /* host byte order */
             my_addr.sin_addr.s_addr = inet_addr(myIP.c_str());
             bzero(&(my_addr.sin_zero), 8);        /* zero the rest of the struct */
@@ -234,34 +235,86 @@ namespace sybiltest {
                 exit(-1);
             }
 
+            _listen_sockfd = -1;
             // create listen socket
-            if (listenPort == 0)
+            if (listenPort == 0) {
+                _listen_socket = false;
                 return;
-            int listenfd = CreateNewSocket();
-
+            }
+            _listen_socket = true;
             // bind to shadow's virtual NIC
             my_addr.sin_family = AF_INET;         /* host byte order */
             my_addr.sin_port = htons(listenPort);     /* short, network byte order */
             my_addr.sin_addr.s_addr = inet_addr(myIP.c_str());
             bzero(&(my_addr.sin_zero), 8);        /* zero the rest of the struct */
-
+        }
+        void ChurnIn() {
+            std::cout << "Churn In called at " << Node<NodePrimitives>::GetIP() << "\n";
+            if(!_listen_socket) {
+                std::cout<<"Churn in called for not listening socket\n";
+                perror("Churn in called for not listening socket");
+                exit(1);
+            }
+            if(_listen_sockfd != -1) {
+                std::cout<<"Churn in called for already churned in socket (fd : " << _listen_sockfd << ")\n";
+                perror("Churn in called for already churned in socket");
+                exit(1);
+            }
+            //std::cout<<"condition passed\n";
+            int listenfd = CreateNewSocket();
+            //std::cout<<"socket created\n";
             if (bind(listenfd, (struct sockaddr *) &my_addr, sizeof(struct sockaddr)) == -1) {
                 perror("bind");
                 exit(1);
             }
-
+            //std::cout<<"socket binded to address\n";
             // listen
             if (listen(listenfd, 10) == -1) {
                 perror("listen");
                 exit(1);
             }
-
+            //std::cout<<"socket listening\n";
             // register a watcher
             _listen_sockfd = listenfd;
             _listen_watcher.set<Node, &Node<NodePrimitives>::listencb>(this);
+            //std::cout<<"listen watcher set\n";
             _listen_watcher.start(_listen_sockfd, ev::READ);
+            //std::cout<<"listen watcher start\n";
         }
-
+        void ChurnOut() {
+            std::cout<< "Churn Out called at " << Node<NodePrimitives>::GetIP() << "\n";
+            if(!_listen_socket) {
+                perror("Churn out called for not listening socket");
+                exit(1);
+            }
+            if(_listen_socket == -1) {
+                perror("Churn out called for already churned out socket");
+                exit(1);
+            }
+            for (auto &[fd, watcher] : _mDataSocketWatcher) {
+                watcher.stop();
+                close(fd);
+            }
+            _mDataSocketWatcher.clear();
+            for (auto &[fd, watcher] : _mConnSocketWatcher) {
+                watcher.stop();
+                close(fd);
+            }
+            _mConnSocketWatcher.clear();
+            _listen_watcher.stop();
+            close(_listen_sockfd);
+            _listen_sockfd = -1;
+        }
+        void ChurnToggle() {
+            if(_listen_sockfd == -1) {
+                std::cout << "churn toggle is called at " << Node<NodePrimitives>::GetIP() << " - churning in\n";
+                ChurnIn();
+            }
+            else {
+                std::cout << "churn toggle is called at " << Node<NodePrimitives>::GetIP() << " - churning out\n";
+                ChurnOut();
+            }
+        }
     private:
 
         int CreateNewSocket() {

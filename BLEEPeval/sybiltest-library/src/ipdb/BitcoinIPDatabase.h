@@ -21,21 +21,54 @@ namespace sybiltest {
     public:
         BitcoinIPDatabase() {
             // Load and store IP address database from churn.txt
-            std::ifstream read("churn.txt");
+            std::ifstream read("churn_8333.txt");
             if (read.fail()) {
                 std::cout << "failed to read churn.txt file" << "\n";
                 exit(-1);
             }
             std::regex re("\\d+\\.\\d+\\.\\d+\\.\\d+");
+            int mintime = 1541030644; // current minimum is 2018-11/1541030644.json
             for (std::string line; std::getline(read, line);) {
                 auto pos = line.find(' ');
+                /*
+                // Previous version of churn data
                 std::string ip = line.substr(0, pos);
                 int duration = std::stoi(line.substr(pos));
 
                 if (duration > 0 && std::regex_match(ip, re)) {
+                    InsertIPDurationPair(ip, {0, duration});
+                    _mIPDuration[ip] = {0, duration};
+                }
+                 */
+
+                std::string ipport = line.substr(0, pos);
+                auto delimiter = ipport.find(':');
+                std::string ip = ipport.substr(0, delimiter);
+                int port = stoi(ipport.substr(delimiter+1));
+
+                vector<int> duration;
+                std::string timestamp;
+
+                // For testing, all nodes churned in at beginning, and churned out after one week
+                duration.push_back(0);
+                duration.push_back(60 * 60 * 24 * 7);
+                InsertIPDurationPair(ip, duration);
+                _mIPDuration[ip] = duration;
+                /*
+                // setting small value can cut off churn data, boosting up testing
+                // to test with whole data, set this value at zero or negative value
+                int maxchurn = 10;
+
+                while(std::getline(std::stringstream(line.substr(pos+1)), timestamp, ' ')) {
+                    duration.push_back(stoi(timestamp) - mintime);
+                    if(--maxchurn == 0) break;
+                }
+                if (duration.size() > 0 && std::regex_match(ip, re)) {
                     InsertIPDurationPair(ip, duration);
                     _mIPDuration[ip] = duration;
                 }
+                 */
+
             }
         }
         void Initialize(int reachableIPNum, int unreachableIPNum, int shadowIPNum) {

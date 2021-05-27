@@ -11,6 +11,9 @@
   - hash 함수는 std::size_t의 타입을 가지는 고유 해시 데이터를 생성하는 함수
   - operator== 함수는 동일 클래스의 다른 데이터와 동일함을 비교하기 위한 함수
 - 공유할 데이터는 공유 시점 이후 변경되지 않아야 함(공유 이후 데이터의 변경이 발생하는 경우, 예상하지 못한 결과가 발생 할 수 있음)
+- 에뮬레이션 대상 코드에 인터페이스 헤더 추가 및 인터페이스 라이브러리 링크
+  - 메모리 영역 공유 기법 인터페이스 헤더 `shadow_memshare_interface.h`는 `interfaces/shadow_memshare_interface`에 존재함
+  - 메모리 영역 공유 기법 인터페이스 라이브러리 `libSHADOW_MEMSHARE_INTERFACE.so`는 `Shadow` 설치시 `Install/lib`에 함께 설치되며, 에뮬레이션 대상 코드 빌드시 해당 라이브러리를 함께 링크하여 빌드해야 함
 
 ## Example
 다음 클래스 A에 메모리 영역 공유 기법을 적용하려고 한다.
@@ -43,8 +46,36 @@ public:
   }
 };
 ```
-
+`cmake`이용시, `CMakeLists.txt`파일에서 빌드 타겟 T에 대하여 메모리 영역 공유 기법 라이브러리 링크 및 헤더 디렉토리를 추가한다.
+```
+...
+add_library(T ...)
+target_link_libraries(T SHADOW_MEMSHARE_INTERFACE)
+include_directories(${CMAKE_ROOT_SOURCE_DIR}/interfaces/shadow_memshare_interface)
+...
+```
 
 # Memory Sharing API
+공유 가능한 임의의 클래스 X에 대한 에뮬레이션 대상 코드에서 사용되는 메모리 공유 기법 API는 다음과 같다.
+- `void memshare::try_share(shared_ptr<X> sptr)`: `sptr`을 라이브러리상의 해시테이블에 등록함. 만약 해당 `shared_ptr`가 참조하는 데이터와 동일한 값을 가지는 데이터가 존재시 어떠한 효과도 없음.
+- `shared_ptr<X> memshare::lookup(shared_ptr<X> sptr)`: `sptr`이 참조하는 데이터와 동일한 값을 가지는 데이터를 라이브러리상의 해시테이블에서 검색하여 찾은 `shared_ptr`를 반환함. 만약 동일한 데이터가 없다면 `sptr`을 그대로 반환.
+  - `shared_ptr<X>` 타입의 임의의 변수 `a`에 대하여, `a = memshare::lookup(a)`와 같이 사용시 `shared_ptr` 매커니즘에 의하여 다른 메모리 영역에 할당된 동일한 데이터를 자동적으로 제거할 수 있음.
+
+## Example
+Prerequisites의 예시에서 명시된 `fn1`에서 A에 대한 공유를 수행하기 위하여 다음과 같이 코드를 추가 할 수 있다.
+```
+...
+#include "shadow_memshare_interface.h"  // 인터페이스 함수 사용을 위한 헤더 추가
+...
+int fn1() {
+  ...
+  std::shared_ptr sptr = std::make_shared<A>();
+  ...
+  memshare::try_share(sptr);
+  sptr = memshare::lookup(sptr);
+  ...
+}
+```
+위 코드와 같이 `memshare::try_share`과 `memshare::lookup` 함수를 연속적으로 사용함으로써 공유 해시테이블에 동일 데이터가 없다면 등록하고 동일 데이터가 존재한다면 기존 변수에서 참조하는 데이터의 메모리 할당을 해제하고 해시테이블의 데이터를 사용하도록 코드를 작성 할 수 있다.
 
 # Memory Sharing Example

@@ -6,7 +6,7 @@
 # Plugin Guides
 비트코인의 성능 측정을 위한 에뮬레이션 구성은 다음과 같다. 
 
-### Logistics 
+### Workflow 
 - `shadow` 프로세스는 `xml`파일에 정의된 내용을 기반으로 네트워크 및 노드를 구성한다. 
 - 비트코인 노드(`libBITCOIND_0.19.1DEV.so`)가 초기화 및 실행된다. 
 - 채굴관련 노드(`minerNode_onlymining.so`)가 초기화 및 실행된다. 

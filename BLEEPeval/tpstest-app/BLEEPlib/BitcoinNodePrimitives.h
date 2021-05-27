@@ -101,10 +101,6 @@ namespace tpstest {
         void OpAfterDisconnect();
 
         //methods for monitoring node
-        virtual void UpdateTPS(unsigned int txcnt, unsigned int block_interval) {};
-        virtual bool RegisterBlock(struct BlockInfo newblock) {};
-        virtual bool RegisterTx(std::string hash);
-        virtual bool _temp_isMointor();
         virtual bool UpdateBlock(std::string hexHash, std::string hexPrevHash, uint32_t time, std::vector<std::string> txhashlist);
     private:
         // monitor

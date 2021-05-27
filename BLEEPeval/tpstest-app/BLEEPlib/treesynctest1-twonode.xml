@@ -48,7 +48,7 @@
   </node>
 
   <node id="txgenerator" iphint="99.99.0.1">
-    <application plugin="TESTER" time="5" arguments="99.99.0.1 99.99.0.2 2"/>
+    <application plugin="TESTER" time="6" arguments="99.99.0.1 99.99.0.2 2"/>
   </node>
 
 </shadow>

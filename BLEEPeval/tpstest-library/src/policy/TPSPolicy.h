@@ -25,13 +25,15 @@ namespace tpstest {
             // Spawn network consisting of pre-defined number of transaction generator nodes
             auto &txGeneratorNode = _txGeneratorNodes.emplace_back(txgenIP, nodeport);
 
-//            std::cout << "generator node objects are constructed " << _txGeneratorNodes.size() << "\n";
-//            for (auto &_txGeneratorNode : _txGeneratorNodes) {
-//                _txGeneratorNode.bootstrap("./data/state.txt", "./data/key.txt");
-//                for (auto &[_targetIP, _targetPort] : targets){
-//                    int conn_fd = _txGeneratorNode.tryConnectToTarget(_targetIP, _targetPort);
-//                }
-//            }
+            std::cout << "generator node objects are constructed " << _txGeneratorNodes.size() << "\n";
+            for (auto &_txGeneratorNode : _txGeneratorNodes) {
+                _txGeneratorNode.bootstrap("./data/state.txt", "./data/key.txt");
+                for (auto &[_targetIP, _targetPort] : targets){
+                    std::cout<<"target_ip : "<<_targetIP<<" / targetport = "<<_targetPort<<"\n";
+                    int conn_fd = _txGeneratorNode.tryConnectToTarget(_targetIP, _targetPort);
+                    std::cout<<"try connect to target finish \n";
+                }
+            }
             // spawn monitor node
             // Spawn network consisting of pre-defined number of transaction generator nodes
             auto &monitoringNode = _monitoringNodes.emplace_back(monitorIP, nodeport);

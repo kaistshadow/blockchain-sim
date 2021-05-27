@@ -79,3 +79,104 @@ int fn1() {
 위 코드와 같이 `memshare::try_share`과 `memshare::lookup` 함수를 연속적으로 사용함으로써 공유 해시테이블에 동일 데이터가 없다면 등록하고 동일 데이터가 존재한다면 기존 변수에서 참조하는 데이터의 메모리 할당을 해제하고 해시테이블의 데이터를 사용하도록 코드를 작성 할 수 있다.
 
 # Memory Sharing Example
+메모리 공유 기법의 성능 확인을 위하여 BLEEPlib의 PoW 블록체인 추상화 에뮬레이션에 메모리 공유 기법을 적용하였다.
+이를 위하여 다음과 같이 수정하였다.
+- 인터페이스 헤더 디렉토리 연결 및 인터페이스 라이브러리 링크
+  - `BLEEPlib/CMakeLists.txt`에 `target_link_libraries(BLEEP SHADOW_MEMSHARE_INTERFACE)`, `include_directories(${CMAKE_ROOT_SOURCE_DIR}/interfaces/shadow_memshare_interface)`추가
+- SimpleTransaction 클래스 및 PoWBlock 클래스의 함수 추가
+  - `BLEEPlib/src/BL3_protocol/POWBlock.h`의 `POWBlock` 클래스에 public 함수 hash, operator== 추가
+    ```
+    std::size_t hash() {
+      return (std::hash<std::string>()(block_hash.str()));
+    }
+    bool operator==(const POWBlock& other) {
+      return nonce == other.nonce
+      && tx_hash == other.tx_hash
+      && prev_block_hash == other.prev_block_hash
+      && timestamp == other.timestamp
+      && difficulty == other.difficulty;
+    }
+    ```
+  - `BLEEPlib/src/BL3_protocol/Transaction.h`의 `SimpleTransaction` 클래스 public 함수 hash, operator== 추가
+    ```
+    std::size_t hash() {
+      return ((std::hash<int>()(sender_id)
+      ^ (std::hash<int>()(receiver_id) << 1)) >> 1)
+      ^ (std::hash<float>()(amount) << 1);
+    }
+    bool operator==(const SimpleTransaction& other) {
+      return sender_id == other.sender_id
+      && receiver_id == other.receiver_id
+      && amount == other.amount;
+    }
+    ```
+- SimpleTransaction 및 PoWBlock 데이터가 변경되지 않는 시점에서의 공유 매커니즘 추가
+  - `BLEEPlib/src/BL3_protocol/BlockTree.cpp`의 genesis 트랜잭션, genesis 블록의 등록시도, 공유(`BlockTree<T>::BlockTree()` 함수)
+    ```
+    ...
+    std::shared_ptr<SimpleTransaction> genesis_tx = std::make_shared<SimpleTransaction>(0, 0, 0);
+    memshare::try_share(genesis_tx);
+    genesis_tx = memshare::lookup(genesis_tx);
+    genesis_tx_list.push_back(genesis_tx);
+
+    std::shared_ptr<T> genesisblk = std::make_shared<T>("", genesis_tx_list);
+    genesisblk->SetGenesisBlock();
+    memshare::try_share(genesisblk);
+    genesisblk = memshare::lookup(genesisblk);
+    ...
+    ```
+  - `BLEEPlib/src/BL3_protocol/ProtocolLayerEx1.h`의 록시도션 공유(`_txgentimerCallback(ev::timer &w, int revents)` 함수)
+    ```
+    ...
+    std::shared_ptr<SimpleTransaction> tx = std::make_shared<SimpleTransaction>(sender_id, receiver_id, amount);
+    memshare::try_share(tx);
+    tx = memshare::lookup(tx);
+    ...
+    ```
+  - `BLEEPlib/src/BL3_protocol/ProtocolLayerPoW.cpp`의 블록 데이터 수신 후 공유(`_RecvPOWBlockBlkHandler(std::shared_ptr<Message> msg)` 함수)
+    ```
+    ...
+    std::shared_ptr<POWBlock> blkptr = getdata->GetBlock();
+    blkptr = memshare::lookup(blkptr);
+    ...
+    ```
+  - `BLEEPlib/src/BL3_protocol/ProtocolLayerPoW.cpp`의 블록 생성 후 공유(`BL_ProtocolLayerPoW::SwitchAsyncEventHandler(AsyncEvent& event)` 함수)
+    ```
+    ...
+    std::cout << "blockhash:" << libBLEEP::UINT256_t((const unsigned char*)minedBlk->GetBlockHash().str().c_str(), 32) << "\n";
+    
+    memshare::try_share(minedBlk);
+    minedBlk = memshare::lookup(minedBlk);
+    
+    // append block to ledger
+    ...
+    ```
+  - `BLEEPlib/src/BL3_protocol/ProtocolLayerPoW.h`의 트랜잭션 생성 후 공유(`BL_ProtocolLayerPoW::SwitchAsyncEventHandler(AsyncEvent& event)` 함수)
+    ```
+    ...
+    std::shared_ptr<SimpleTransaction> tx = std::make_shared<SimpleTransaction>(sender_id, receiver_id, amount);
+    memshare::try_share(tx);
+    tx = memshare::lookup(tx);
+    ...
+    ```
+  - `BLEEPlib/src/BL3_protocol/TxGossipProtocol.cpp`의 트랜잭션 수신 후 공유(`TxGossipProtocol::RecvTxsHandler(std::shared_ptr<Message> msg)` 함수)
+    ```
+    ...
+    for (auto tx : txs) {
+      std::cout << "receive tx:" << tx << "\n";
+      
+      // Add to txpool
+      tx = memshare::lookup(tx);
+      _txPool->AddTx(tx);
+    }
+    ...
+    ```
+- `memshare` 인터페이스를 사용하는 모든 코드에 `#include "shadow_memshare_interface.h"` 추가
+성능 실험 환경을 `Bitcoin`의 평균 블록 크기 및 트랜잭션 크기, 블록 생성주기와 맞추도록 하기 위하여 추가로 다음을 수정하였다.
+- `SimpleTransaction` 클래스 필드 변수로 `char dummy[200]` 추가(트랜잭션의 데이터 크기 조정을 위하여 200byte 추가)
+- `POWBlock`의 트랜잭션 개수를 4000개 가량으로 설정(1MB 가량의 블록데이터로 가정)
+- 전체 네트워크의 블록 생성 평균 시간을 600초 가량으로 설정
+전체 네트워크의 설정을 다음과 같이 설정하였다.
+- 전체 네트워크는 1000개의 BLEEPlib PoW 노드로 이루어진 트리형태의 네트워크로 구성
+- 전체 노드들이 PoW 블록 채굴의 추상화된 알고리즘을 수행
+- 한 블록당 4000개 가량의 트랜잭션이 지연없이 들어가도록 충분히 많은 트랜잭션을 하나의 노드가 생성하여 연결된 피어 노드로 전파

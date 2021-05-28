@@ -70,26 +70,5 @@
 
 
 ## How to contribute?
-- **Questions and Bug Reports** <br>
-[https://github.com/kaistshadow/blockchain-sim/issues](https://github.com/kaistshadow/blockchain-sim/issues/new/choose)
-
-	> - **Branch Naming** <br>
-	> BLEEP은 develop 브랜치를 이용해 개발을 진행하고 해당 버전 릴리즈가 완료되면 master에 병합하고 있다. 
-	>	- release/x.x.x : develop 브랜치로부터 생성
-	>	- feature/<issue_number>/<짧은 설명> : 완료 후 develop 브랜치에 병합
-	>	- hotfix/<issue_number> : master 브랜치로부터 생성
-	>	- issue/<issue_number> : develop, feature, release 브랜치로부터 생성
-
-	> - **How to write a git commit message** <br>
-	>	- 커밋 제목
-	>		- 커밋 제목과 본문 사이에 한줄 띄울것
-	>		- 커밋 제목은 50자 이내
-	>		- 커밋 제목은 첫글자가 대문자로 시작
-	>		- 커밋 제목 끝에 온점 붙이지 말 것
-	>		- 커밋 제목은 명령형으로 쓸 것
-	>			- e.g., Implement A to B, Rename A to B, Fix typo
-	>	- 커밋 내용
-	>		- 72자 이내로 다음 줄로 개행할 것
-	>		- 무엇을 바꿨는지, 왜 바꿨는지 쓸 것
-
+See [docs/contributingGuide.md](docs/contributingGuide.md)
 

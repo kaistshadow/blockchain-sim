@@ -21,13 +21,10 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/../Install")
 # debug option
 if(BLEEP_DEBUG STREQUAL ON)
   message(STATUS "Debug enabled.")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg -g3 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-parentheses -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch") # suppress error for manually installed boost (1.58)
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pg")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-parentheses -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch") # suppress error for manually installed boost (1.58)
 else(BLEEP_DEBUG STREQUAL ON)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-parentheses -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch")
 endif(BLEEP_DEBUG STREQUAL ON)
-
 
 include(GNUInstallDirs)
 

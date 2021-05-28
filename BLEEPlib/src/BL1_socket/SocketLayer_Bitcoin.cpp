@@ -34,7 +34,7 @@ BL_SocketLayer_Bitcoin *BL_SocketLayer_Bitcoin::Instance() {
 }
 
 void BL_SocketLayer_Bitcoin::RecvHandler(int fd) {
-    // std::cout << "DoRecv!" << "\n";
+    std::cout << "DoRecv!" << "\n";
 
     // recv from socket, and append received data into the buffer.
     char string_read[2001];

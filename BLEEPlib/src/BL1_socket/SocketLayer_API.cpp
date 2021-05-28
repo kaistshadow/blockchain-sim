@@ -90,7 +90,7 @@ void BL_SocketLayer_API::ConnectFailedHandler(int fd, std::string domain) {
 }
 
 void BL_SocketLayer_API::RecvHandler(int fd) {
-    // std::cout << "DoRecv!" << "\n";
+    std::cout << "DoRecv!" << "\n";
 
     // recv from socket, and append received data into the buffer.
     char string_read[2001];
@@ -209,7 +209,7 @@ void BL_SocketLayer_API::WriteHandler(int fd) {
     auto dataSocket = _socketManager.GetDataSocket(fd);
     libBLEEP::M_Assert(dataSocket != nullptr, "dataSocket not exist for given (write) event");
 
-    // std::cout << "DoSend!" << "\n";
+    std::cout << "DoSend!" << "\n";
     dataSocket->DoSend();
 }
 

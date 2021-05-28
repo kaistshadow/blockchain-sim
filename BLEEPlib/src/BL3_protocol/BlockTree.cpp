@@ -217,53 +217,53 @@ void BlockTree<T>::AppendBlock(std::shared_ptr<T> blk) {
             _treeheight++;
             std::cout << "append to tip:" << blk->GetBlockHash().str() << "\n";
 
-            // std::cout << "before dynamic_pointer_cast" << "\n";
+            std::cout << "before dynamic_pointer_cast" << "\n";
             auto pow_blk = std::dynamic_pointer_cast<T>(blk);
-            // if (pow_blk) {
-            //     // append shadow log
-            //     char buf[256];
+            if (pow_blk) {
+                // append shadow log
+                char buf[256];
 
-            //     std::stringstream str, str2;
-            //     std::ostringstream ss, ss2;
-            //     str << pow_blk->GetBlockHash();
-            //     ss << str.rdbuf();
-            //     std::string blockHash = ss.str();
+                std::stringstream str, str2;
+                std::ostringstream ss, ss2;
+                str << pow_blk->GetBlockHash();
+                ss << str.rdbuf();
+                std::string blockHash = ss.str();
 
-            //     str2 << pow_blk->GetPrevBlockHash();
-            //     ss2 << str2.rdbuf();
-            //     std::string prevBlockHashstr = ss2.str();
-            //     sprintf(buf, "BlockAppend,%lu,%s,%s,%f",
-            //             pow_blk->GetBlockIdx(),
-            //             blockHash.substr(2, 10).c_str(),
-            //             prevBlockHashstr.substr(2,10).c_str(),
-            //             pow_blk->GetTimestamp());
-            //     shadow_push_eventlog(buf);
-            // }
+                str2 << pow_blk->GetPrevBlockHash();
+                ss2 << str2.rdbuf();
+                std::string prevBlockHashstr = ss2.str();
+                sprintf(buf, "BlockAppend,%lu,%s,%s,%f",
+                        pow_blk->GetBlockIdx(),
+                        blockHash.substr(2, 10).c_str(),
+                        prevBlockHashstr.substr(2,10).c_str(),
+                        pow_blk->GetTimestamp());
+                shadow_push_eventlog(buf);
+            }
         } else if (_treeheight <= blk->GetBlockIdx()) {
             _lasthash = blk->GetBlockHash();
             _treeheight = blk->GetBlockIdx()+1;
             std::cout << "tip changing:" << blk->GetBlockHash().str() << "\n";
             auto pow_blk = std::dynamic_pointer_cast<T>(blk);
-            // if (pow_blk) {
-            //     // append shadow log
-            //     char buf[256];
+            if (pow_blk) {
+                // append shadow log
+                char buf[256];
 
-            //     std::stringstream str, str2;
-            //     std::ostringstream ss, ss2;
-            //     str << pow_blk->GetBlockHash();
-            //     ss << str.rdbuf();
-            //     std::string blockHash = ss.str();
+                std::stringstream str, str2;
+                std::ostringstream ss, ss2;
+                str << pow_blk->GetBlockHash();
+                ss << str.rdbuf();
+                std::string blockHash = ss.str();
 
-            //     str2 << pow_blk->GetPrevBlockHash();
-            //     ss2 << str2.rdbuf();
-            //     std::string prevBlockHashstr = ss2.str();
-            //     sprintf(buf, "BlockAppend,%lu,%s,%s,%f",
-            //             pow_blk->GetBlockIdx(),
-            //             blockHash.substr(2, 10).c_str(),
-            //             prevBlockHashstr.substr(2,10).c_str(),
-            //             pow_blk->GetTimestamp());
-            //     shadow_push_eventlog(buf);
-            // }
+                str2 << pow_blk->GetPrevBlockHash();
+                ss2 << str2.rdbuf();
+                std::string prevBlockHashstr = ss2.str();
+                sprintf(buf, "BlockAppend,%lu,%s,%s,%f",
+                        pow_blk->GetBlockIdx(),
+                        blockHash.substr(2, 10).c_str(),
+                        prevBlockHashstr.substr(2,10).c_str(),
+                        pow_blk->GetTimestamp());
+                shadow_push_eventlog(buf);
+            }
         }
     }
     PrintLongestChain();

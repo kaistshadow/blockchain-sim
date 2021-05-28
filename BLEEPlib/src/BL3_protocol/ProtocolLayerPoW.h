@@ -74,7 +74,6 @@ namespace libBLEEP_BL {
             int receiver_id = rand() % 100;
             float amount = (float) (rand() % 100000);
             std::shared_ptr<SimpleTransaction> tx = std::make_shared<SimpleTransaction>(sender_id, receiver_id, amount);
-            shadow_push_eventlog("test");
             memshare::try_share(tx);
             tx = memshare::lookup(tx);
             if (!_txPool->ContainTx(tx->GetId())) {

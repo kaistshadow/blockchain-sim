@@ -50,9 +50,7 @@ namespace libBLEEP_BL {
         int receiver;
         float amount;
 
-        SimpleTransactionId() {
-
-        }
+        SimpleTransactionId() {}
         SimpleTransactionId(int s, int r, float a) { sender = s; receiver = r; amount = a; }
 
         // This overloaded operator<< 
@@ -89,16 +87,10 @@ namespace libBLEEP_BL {
     private:
         SimpleTransactionId _id;
     public:
-        SimpleTransaction() {
-            memset(dummy_text, 0, sizeof(char)*200);
-        }
-        ~SimpleTransaction() {
-        }
+        SimpleTransaction() {}
         SimpleTransaction(int sid, int rid, float a) {
             sender_id=sid; receiver_id=rid; amount=a;
             _id = SimpleTransactionId(sid, rid, a);
-            memset(dummy_text, 0, sizeof(char)*200);
-            std::cout<<"SimpleTransaction(int sid, int rid, float a) Called\n";
         }        
         int sender_id;
         int receiver_id;
@@ -137,7 +129,6 @@ namespace libBLEEP_BL {
             ar & sender_id;
             ar & receiver_id;
             ar & amount;
-//            ar & dummy_text;
         }
     };
 

@@ -186,7 +186,7 @@ void DataSocket::DoSend() {
             _sendBuff.pop_front();
             if (_sendBuff.empty()) {
                 _watcher->UnsetWritable(); // no data left to send. so, make the watcher to not monitor write event.
-                // std::cout << "all sent" << "\n";
+                std::cout << "all sent" << "\n";
                 return;
             }
         } else {

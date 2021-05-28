@@ -13,7 +13,7 @@ void TxGossipProtocol::RecvInventoryHandler(std::shared_ptr<Message> msg) {
     auto tids = inv->GetTransactionIds();
     std::vector<SimpleTransactionId> getdataIds;
     for (auto tid : tids) {
-        // std::cout << "receive transaction id:" << tid << "\n";
+        std::cout << "receive transaction id:" << tid << "\n";
         
         // check whether the txpool has the tx
         if (!_txPool->ContainTx(tid))
@@ -33,7 +33,7 @@ void TxGossipProtocol::RecvGetdataHandler(std::shared_ptr<Message> msg) {
     auto tids = getdata->GetTransactionIds();
     std::vector<std::shared_ptr<SimpleTransaction>> txs;
     for (auto tid : tids) {
-        // std::cout << "receive getdata tx id:" << tid << "\n";
+        std::cout << "receive getdata tx id:" << tid << "\n";
         
         // check whether the txpool has the tx
         if (_txPool->ContainTx(tid))

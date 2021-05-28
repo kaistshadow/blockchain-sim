@@ -35,13 +35,3 @@ set_target_properties(MinerNodeRPC::Plugin PROPERTIES
   IMPORTED_LOCATION ${CMAKE_INSTALL_PREFIX}/plugins/minerNode_rpc.so
   INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set_property(TARGET MinerNodeRPC::Plugin PROPERTY IMPORTED_NO_SONAME 1)
-
-find_package(shadow REQUIRED)
-find_package(Libev_4_33 REQUIRED)
-include(ShadowTools) # load ShadowTools Module
-add_shadow_plugin(BLEEPlib-test-pow-node node-pow.cpp)
-target_link_libraries(BLEEPlib-test-pow-node BLEEP)
-# copy resulting plugins into source directory
-add_custom_command(TARGET BLEEPlib-test-pow-node
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BLEEPlib-test-pow-node> ${CMAKE_CURRENT_SOURCE_DIR})

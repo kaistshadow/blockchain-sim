@@ -1,9 +1,9 @@
 
 비트코인 어플리케이션을 에뮬레이션하기 위해서는 `Shadow`시뮬레이터, `plugins`, `xml`파일이 필요하다. <br>
 BLEEP을 설치하면 에뮬레이션에 필요한 파일이 아래의 경로에 각각 설치 된다. 
-- `shadow` : `~/blockchain-sim/shadow`
-- `plugin` : `~/blockchain-sim/Install/plugins` 또는 `~/blockchain-sim/<해당 테스트케이스 폴더>`
-- `xml` 파일 : `~/blockchain-sim/<해당 테스트케이스 폴더>`
+- `shadow` : `blockchain-sim/shadow`
+- `plugin` : `blockchain-sim/Install/plugins` 또는 `blockchain-sim/<해당 테스트케이스 폴더>`
+- `xml` 파일 : `blockchain-sim/<해당 테스트케이스 폴더>`
 
 `shadow`는 네트워크 및 비트코인의 동작을 시뮬레이션 및 에뮬레이션하는 역할을 담당한다.<br> 
 `plugin`은 `shadow`에서 네트워크에 참여하는 시뮬레이션된 노드를 뜻한다.<br> 

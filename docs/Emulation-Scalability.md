@@ -1,11 +1,11 @@
 BLEEP은 단일 PC에서 대규모(수천개) 노드의 에뮬레이션을 지원하기 위해 독립적으로 존재하는 각각의 노드간 불변성을 지닌 데이터(e.g., 트랜잭션, 블록 데이터)에 대하여 메모리 영역 공유를 지원한다.<br> 
 
 - 메모리 영역 공유 기법을 적용하기 위해 알아야할 요소
-  - 메모리 영역 공유가 가능한 데이터의 조건과 예시
-  - 메모리 영역 공유를 위한 API 사용법
+  - [메모리 영역 공유가 가능한 데이터의 조건과 예시](Emulation-Scalability.md#prerequisites)
+  - [메모리 영역 공유를 위한 API 사용법](/Emulation-Scalability.md#memory-sharing-api)
 
 - 메모리 영역 공유 기법 적용 예시<br>
-  - P2P 네트워크 및 합의(PoW)를 수행하는 자체 개발한 라이브러리(`BLEEPlib`)에 적용 
+  - [P2P 네트워크 및 합의(PoW)를 수행하는 자체 개발한 라이브러리(`BLEEPlib`)에 적용](Emulation-Scalability.md#memory-sharing-example) 
 
 # Prerequisites
 현재 메모리 영역 공유 기법을 적용 가능한 데이터의 조건은 다음과 같다.

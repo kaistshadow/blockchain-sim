@@ -129,7 +129,7 @@ int fn1() {
     genesisblk = memshare::lookup(genesisblk);
     ...
     ```
-  - `BLEEPlib/src/BL3_protocol/ProtocolLayerEx1.h`의 록시도션 공유(`_txgentimerCallback(ev::timer &w, int revents)` 함수)
+  - `BLEEPlib/src/BL3_protocol/ProtocolLayerEx1.h`의 트랜잭션 생성  공유(`_txgentimerCallback(ev::timer &w, int revents)` 함수)
     ```
     ...
     std::shared_ptr<SimpleTransaction> tx = std::make_shared<SimpleTransaction>(sender_id, receiver_id, amount);

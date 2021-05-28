@@ -6,7 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include "../../../../testlibs/rpc_client.h"
+#include "rpc_client.h"
 
 int main(int argc, char* argv[]) {
 

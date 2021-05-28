@@ -19,7 +19,7 @@ BLEEP은 단일 PC에서 대규모(수천개) 노드의 에뮬레이션을 지�
   - 메모리 영역 공유 기법 인터페이스 헤더 `shadow_memshare_interface.h`는 `interfaces/shadow_memshare_interface`에 존재함
   - 메모리 영역 공유 기법 인터페이스 라이브러리 `libSHADOW_MEMSHARE_INTERFACE.so`는 `Shadow` 설치시 `Install/lib`에 함께 설치되며, 에뮬레이션 대상 코드 빌드시 해당 라이브러리를 함께 링크하여 빌드해야 함
 
-### Sudo Code
+### Example Code
 다음 클래스 A에 메모리 영역 공유 기법을 적용하려고 한다.
 ```
 class A {
@@ -65,11 +65,7 @@ include_directories(${CMAKE_ROOT_SOURCE_DIR}/interfaces/shadow_memshare_interfac
 - `shared_ptr<X> memshare::lookup(shared_ptr<X> sptr)`: `sptr`이 참조하는 데이터와 동일한 값을 가지는 데이터를 라이브러리상의 해시테이블에서 검색하여 찾은 `shared_ptr`를 반환함. 만약 동일한 데이터가 없다면 `sptr`을 그대로 반환.
   - `shared_ptr<X>` 타입의 임의의 변수 `a`에 대하여, `a = memshare::lookup(a)`와 같이 사용시 `shared_ptr` 매커니즘에 의하여 다른 메모리 영역에 할당된 동일한 데이터를 자동적으로 제거할 수 있음.
 
-<<<<<<< HEAD
-### Sudo Code
-=======
-## Example
->>>>>>> e9632338fc8891f11470812a7a103a5d578acf58
+### Example Code
 Prerequisites의 예시에서 명시된 `fn1`에서 A에 대한 공유를 수행하기 위하여 다음과 같이 코드를 추가 할 수 있다.
 ```
 ...
@@ -180,7 +176,6 @@ int fn1() {
     ...
     ```
 - `memshare` 인터페이스를 사용하는 모든 코드에 `#include "shadow_memshare_interface.h"` 추가
-<<<<<<< HEAD
   
 수정된 BLEEPlib 코드를 이용하여 `Shadow` 시뮬레이션 구동시 메모리 사용량이 감소하는 것을 확인 할 수 있다.
 
@@ -197,18 +192,3 @@ int fn1() {
   > - 한 블록당 4000개 가량의 트랜잭션이 지연없이 들어가도록 충분히 많은 트랜잭션을 하나의 노드가 생성하여 연결된 피어 노드로 전파<br><br>
   > 
   > 해당 네트워크를 `Shadow`에서 3600초간 실험 한 결과 초당 메모리 증가율이 80% 이상 감소함을 확인함
-=======
-
-수정된 BLEEPlib 코드를 이용하여 `Shadow` 시뮬레이션 구동시 메모리 사용량이 감소하는 것을 확인 할 수 있다.
-> 성능 실험 환경을 `Bitcoin`의 평균 블록 크기 및 트랜잭션 크기, 블록 생성주기와 맞추도록 하기 위하여 추가로 다음을 수정하였음
-> - `SimpleTransaction` 클래스 필드 변수로 `char dummy[200]` 추가(트랜잭션의 데이터 크기 조정을 위하여 200byte 추가)
-> - `POWBlock`의 트랜잭션 개수를 4000개 가량으로 설정(1MB 가량의 블록데이터로 가정)
-> - 전체 네트워크의 블록 생성 평균 시간을 600초 가량으로 설정
-> 
-> 전체 네트워크의 설정을 다음과 같이 설정하였음
-> - 전체 네트워크는 1000개의 BLEEPlib PoW 노드로 이루어진 트리형태의 네트워크로 구성
-> - 전체 노드들이 PoW 블록 채굴의 추상화된 알고리즘을 수행
-> - 한 블록당 4000개 가량의 트랜잭션이 지연없이 들어가도록 충분히 많은 트랜잭션을 하나의 노드가 생성하여 연결된 피어 노드로 전파
-> 
-> 해당 네트워크를 `Shadow`에서 3600초간 실험 한 결과 초당 메모리 증가율이 80% 이상 감소함을 확인함
->>>>>>> e9632338fc8891f11470812a7a103a5d578acf58

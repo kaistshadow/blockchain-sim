@@ -23,7 +23,7 @@ namespace sybiltest {
             // Load and store IP address database from churn.txt
             std::ifstream read("churn_8333.txt");
             if (read.fail()) {
-                std::cout << "failed to read churn.txt file" << "\n";
+                std::cout << "failed to read churn_8333.txt file" << "\n";
                 exit(-1);
             }
             std::regex re("\\d+\\.\\d+\\.\\d+\\.\\d+");

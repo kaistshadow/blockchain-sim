@@ -249,7 +249,7 @@ namespace sybiltest {
             bzero(&(my_addr.sin_zero), 8);        /* zero the rest of the struct */
         }
         void ChurnIn() {
-            std::cout << "Churn In called at " << Node<NodePrimitives>::GetIP() << "\n";
+            //std::cout << "Churn In called at " << Node<NodePrimitives>::GetIP() << "\n";
             if(!_listen_socket) {
                 std::cout<<"Churn in called for not listening socket\n";
                 perror("Churn in called for not listening socket");
@@ -282,7 +282,7 @@ namespace sybiltest {
             //std::cout<<"listen watcher start\n";
         }
         void ChurnOut() {
-            std::cout<< "Churn Out called at " << Node<NodePrimitives>::GetIP() << "\n";
+            //std::cout<< "Churn Out called at " << Node<NodePrimitives>::GetIP() << "\n";
             if(!_listen_socket) {
                 perror("Churn out called for not listening socket");
                 exit(1);
@@ -307,11 +307,11 @@ namespace sybiltest {
         }
         void ChurnToggle() {
             if(_listen_sockfd == -1) {
-                std::cout << "churn toggle is called at " << Node<NodePrimitives>::GetIP() << " - churning in\n";
+                //std::cout << "churn toggle is called at " << Node<NodePrimitives>::GetIP() << " - churning in\n";
                 ChurnIn();
             }
             else {
-                std::cout << "churn toggle is called at " << Node<NodePrimitives>::GetIP() << " - churning out\n";
+                //std::cout << "churn toggle is called at " << Node<NodePrimitives>::GetIP() << " - churning out\n";
                 ChurnOut();
             }
         }

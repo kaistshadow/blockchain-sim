@@ -174,7 +174,7 @@ namespace sybiltest {
         void SetChurnOutTimer(int uptime) {
             // Called for legacy code - assumes that the node is already churned in
             // should churn in the node first
-            std::cout << "set churn out timer called at " << Node<NodePrimitives>::GetIP() << "\n";
+            //std::cout << "set churn out timer called at " << Node<NodePrimitives>::GetIP() << "\n";
             Node<NodePrimitives>::ChurnIn();
             SetChurnToggleTimer(uptime);
             //std::cout << "set churn out timer success at " << Node<NodePrimitives>::GetIP() << "\n";
@@ -187,6 +187,7 @@ namespace sybiltest {
         void SetChurnToggleTimer(int toggletime) {
             std::cout << "set churn toggle timer called at " << Node<NodePrimitives>::GetIP() << "\n";
             ev::timer *toggleTimer = new ev::timer();
+            toggleTimer->set<BenignNode, &BenignNode<NodePrimitives>::_churntogglecb>(this);
             toggleTimer->set(toggletime, 0.);
             toggleTimer->start();
             churnTimers.push_back(toggleTimer);

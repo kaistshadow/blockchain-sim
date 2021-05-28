@@ -43,7 +43,7 @@ namespace sybiltest {
                 auto &benignNode = _benignNodes.emplace_back(&_attackStat, &ipdb, ip, NodeParams::targetPort);
                 benignNode.SetTarget(targetIP, targetPort);
 
-                // set a churnout timer for all the benign nodes
+                // set a churn toggle timer for all the benign nodes
                 vector<int> duration = mIPDuration[ip];
                 for(auto timestamp : duration) {
                     benignNode.SetChurnToggleTimer(timestamp);

@@ -5,8 +5,7 @@ Welcome to the BLEEP documentation <br>
  * The BLEEP Introduction 
    * [Overview](Intro-Overview.md)
    * [Background](Intro-Background.md)
-   * [Installation and Setup](Intro-Installation-and-Setup.md)   
-   * How to contribute? 
+   * [Installation and Setup](Intro-Installation-and-Setup.md)      
  * Getting Started: Emulation
    * Emulation for Blockchain Application
      * [The Beginner's Guide](Emulation-Guide.md)   
@@ -19,7 +18,7 @@ Welcome to the BLEEP documentation <br>
    * Performance Test    
      * [TPS, Latency](Evaluation-perf-TPS_Latency.md)
  * [Developer Guide (with CLion IDE)](developerGuide.md)
-
+ * [Contributing Guide (with Github)](contributingGuide.md)
 
 ## Tips
 - TODO

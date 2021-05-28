@@ -9,7 +9,7 @@ Welcome to the BLEEP documentation <br>
    * How to contribute? 
  * Getting Started: Emulation
    * Emulation for Blockchain Application
-     * [The Beginner's Guide](Emulation-Guide)   
+     * [The Beginner's Guide](Emulation-Guide.md)   
      * [bitcoin](Emulation-bitcoin.md)
    * Scalability Features for the Emulation
      * [Memory Sharing](Emulation-Scalability.md)   

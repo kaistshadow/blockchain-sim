@@ -49,6 +49,8 @@ source ~/.bashrc
 python setup.py --test
 ```
 
+만약 설치 과정에 에러가 발생할 경우 [버그 이슈](https://github.com/kaistshadow/blockchain-sim/issues/new?assignees=&labels=&template=bug_report.md&title=)를 올리면, BLEEP팀에서 이슈를 확인 후 조치하도록 하겠다. 
+
 ## Manual Build
 BLEEP을 매뉴얼하게 설치하기 위한 절차는 다음과 같다. 
 #### 1. Download BLEEP Repository

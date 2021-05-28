@@ -5,9 +5,11 @@ Welcome to the BLEEP documentation <br>
  * The BLEEP Introduction 
    * [Overview](Intro-Overview.md)
    * [Background](Intro-Background.md)
-   * [Installation and Setup](Intro-Installation-and-Setup.md)
+   * [Installation and Setup](Intro-Installation-and-Setup.md)   
+   * How to contribute? 
  * Getting Started: Emulation
    * Emulation for Blockchain Application
+     * [The Beginner's Guide](Emulation-Guide)   
      * [bitcoin](Emulation-bitcoin.md)
    * Scalability Features for the Emulation
      * [Memory Sharing](Emulation-Scalability.md)   

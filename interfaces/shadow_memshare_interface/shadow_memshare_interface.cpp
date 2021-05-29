@@ -6,6 +6,9 @@
 
 #include <iostream>
 
+int shadow_check_memshare_flag() {
+    return 0;
+}
 void shadow_try_register_memshare_table(void* type_idx_ref, void* mtbl) {
     std::cout<<"local-shadow_try_register_memshare_table\n";
     return;
@@ -24,4 +27,9 @@ void set_shared_type_cache(std::type_index tidx) {
 }
 int check_shared_type_cache(std::type_index tidx) {
     return (type_shared_checks->find(tidx.name()) == type_shared_checks->end()?0:1);
+}
+
+int memshare::get_memshare_flag() {
+    static int memshare_flag = shadow_check_memshare_flag();
+    return memshare_flag;
 }

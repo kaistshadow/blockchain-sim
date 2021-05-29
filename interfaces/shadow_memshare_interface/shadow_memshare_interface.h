@@ -12,8 +12,6 @@
 #include <memory>
 #include <mutex>
 
-#define MEMSHARE_DISABLED
-
 /* sharing target object requires:
  * 1. bool operator==(const A& other)
  * 2. std::size_t hash()
@@ -73,40 +71,42 @@ namespace memshare {
 
 extern "C"
 {
+int shadow_check_memshare_flag();
 void shadow_try_register_memshare_table(void* type_idx_ref, void* mtbl);
 void shadow_memshare_try_share(void* type_idx_ref, void* sptr_ref);
 void* shadow_memshare_lookup(void* type_idx_ref, void* sptr_ref);
 }
 
 namespace memshare {
+    int get_memshare_flag();
     void set_shared_type_cache(std::type_index tidx);
     int check_shared_type_cache(std::type_index tidx);
     template <typename SPTR_TYPE>
     void try_register_table() {
-        #ifndef MEMSHARE_DISABLED
+        if (!get_memshare_flag())
+            return;
+
         std::type_index type_idx = std::type_index(typeid(SPTR_TYPE));
         memory_sharing_unspecified* mtbl = new memory_sharing<SPTR_TYPE>();
         shadow_try_register_memshare_table(&type_idx, mtbl);
         set_shared_type_cache(type_idx);
-        #else
-        return;
-        #endif
     }
     template <typename SPTR_TYPE>
     void try_share(SPTR_TYPE sptr) {
-        #ifndef MEMSHARE_DISABLED
+        if (!get_memshare_flag())
+            return;
+
         std::type_index type_idx = std::type_index(typeid(SPTR_TYPE));
         if (check_shared_type_cache(type_idx)) {
             try_register_table<SPTR_TYPE>();
         }
         shadow_memshare_try_share(&type_idx, &sptr);
-        #else
-        return;
-        #endif
     }
     template <typename SPTR_TYPE>
     SPTR_TYPE lookup(SPTR_TYPE sptr) {
-        #ifndef MEMSHARE_DISABLED
+        if (!get_memshare_flag())
+            return sptr;
+
         std::type_index type_idx = std::type_index(typeid(SPTR_TYPE));
         if (check_shared_type_cache(type_idx)) {
             try_register_table<SPTR_TYPE>();
@@ -117,9 +117,6 @@ namespace memshare {
             delete sptr_ptr;
         }
         return res;
-        #else
-        return sptr;
-        #endif
     }
 }
 

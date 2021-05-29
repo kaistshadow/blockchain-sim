@@ -59,7 +59,7 @@ Sybil library API 및 Adapter를 사용해 P2P 공격 테스트를 간단히 구
 ```
 #include <bitcoind.h>
 #include <AttackBox.h>                      // Sybil Library API
-#include <policy/ErebusAttackPolicy.h>.     // Sybil Library API
+#include <policy/ErebusAttackPolicy.h>      // Sybil Library API
 #include <ipdb/BitcoinIPDatabase.h>         // Sybil Library API
 
 #include "BitcoinNodePrimitives.h"          // Adapter for Bitcoin
@@ -86,6 +86,151 @@ int main() {
 
 # P2P Security Test Example
 
-예를 들어, Bitcoin v0.19.1에 대한 EREBUS 공격 테스트를 제작하고자 한다. ([구현 링크](https://github.com/kaistshadow/blockchain-sim/tree/master/BLEEPeval/sybiltest-app/bitcoin))
+- 테스트 하고자 하는 타겟노드를 BLEEP에서 에뮬레이션 할 수 있는 플러그인 형태(즉, shared object)로 컴파일한다. 
 
-... to be written
+- Sybil Library의 AttackBox를 이용하는 [Tester](Evaluation-Security-Sybil.md#tester)를 구현한다.
+```
+#include <AttackBox.h>
+
+int main() {
+    AttackBox< , , , > attackBox;
+    attackBox.setTarget("1.0.0.1", 8333);                                  // 타겟 노드 설정
+    if (!attackBox.setupAttack()) {                                        // P2P 공격을 위한 sybil network 설정
+        std::cout << "setup attack failed" << "\n";
+        return -1;
+    }
+    attackBox.startAttack();                                               // P2P 공격 수행
+    std::cout << "attack finished" << "\n";                                // 공격 테스트 완료 후 종료
+
+    return 0;      
+    
+}
+```
+
+- Tester에서 테스트하고자 하는 공격을 설정한다. (현재 Sybil library가 제공하는 policy는 `ErebusAttackPolicy`와 `EclipseIncomingAttackPolicy`가 있다.)
+```
+#include <policy/ErebusAttackPolicy.h>
+
+...
+int main() {
+    AttackBox<ErebusAttackPolicy, , , > attackBox;
+...
+```
+
+- Tester에서 공격을 위해 사용하는 IP Database를 세팅한다. (현재 Sybil Library가 제공하는 IP database는 `BitcoinIPDatabase`와 `SimpleIPDatabase`가 있다.)
+```
+#include <ipdb/BitcoinIPDatabase.h>
+
+...
+int main() {
+    AttackBox<ErebusAttackPolicy, , ,BitcoinIPDatabase> attackBox;
+...
+```
+
+- Adapter를 구현하여, Tester에서 include한다. 
+``` 
+==== BitcoinNodePrimitives.h ====
+
+class BitcoinNodePrimitives {
+    private:
+    ... // 각종 utility
+    
+    public:
+        void OpAfterConnect(int conn_fd);
+
+        void OpAfterConnected(int data_fd); 
+
+        void OpAfterRecv(int data_fd, std::string recv_str);
+
+        void OpAfterDisconnect();
+
+        void OpAddrInjectionTimeout(std::chrono::system_clock::duration preparePhaseDuration, int periodLength,
+                                    double ipPerSec, double shadowRate);
+}     
+
+==== BitcoinNodePrimitives.cpp ====
+
+void BitcoinNodePrimitives::OpAfterConnect(int conn_fd) {
+    // 관련 로직 구현
+}
+
+void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
+    // 관련 로직 구현
+}   
+
+void BitcoinNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::duration preparePhaseDuration,
+                                                   int periodLength, double ipPerSec, double shadowRate) {
+    // 관련 로직 구현
+}    
+
+void BitcoinNodePrimitives::OpAfterConnected(int data_fd) {
+    // do nothing
+}
+void BitcoinNodePrimitives::OpAfterDisconnect() {
+    // do nothing
+}
+
+==== tester.cpp ====
+#include "BitcoinNodePrimitives.h"
+
+...
+int main() {
+    AttackBox<ErebusAttackPolicy, BitcoinNodePrimitives, ,BitcoinIPDatabase> attackBox;
+...
+```
+
+- 실험 관련 파라미터를 정의하여 Tester에서 사용한다.
+```
+==== BitcoinNodeParams.h ====
+    struct BitcoinNodeParams {
+        //============================== parameters related to EREBUS attack test ======================================
+        static constexpr int targetPort = 8333;
+        static constexpr int targetOutgoingConnNum = 5;
+        static constexpr int reachableIPNum = 100000;
+        static constexpr int unreachableIPNum = 1000000;
+        static constexpr int shadowIPNum = 200000;
+        static constexpr int addrInjectionStartTime = 15;
+        static constexpr int addrInjectionDelay = 900;
+        static constexpr double addrInjectionIPPerSec = 2;
+        static constexpr double addrInjectionShadowRate = 0.9;
+        static constexpr std::chrono::system_clock::duration preparePhaseTimeLength = std::chrono::hours(30*24);
+    };
+    
+==== tester.cpp ====
+#include "BitcoinNodeParams.h"
+
+...
+int main() {
+    AttackBox<ErebusAttackPolicy, BitcoinNodePrimitives, BitcoinNodeParams, BitcoinIPDatabase> attackBox;
+...
+```
+
+- Tester를 plugin형태(shared object)로 컴파일한 뒤, 타겟 노드와 함께 emulation을 동작시키기 위한 실험 설정을 제작한다.
+```
+==== test-BitcoinP2P.xml ====
+...
+  <!-- the plug-ins we will be using -->
+  <plugin id="bitcoind" path="libBITCOIND_0.19.1DEV.so"/>
+  <plugin id="BITCOINP2P_TESTER" path="libBITCOINP2P_TESTER.so"/>
+
+  <kill time="17776000"/>
+  <node id="bcdnode0" iphint="1.0.0.1">
+    <application
+            arguments="-debug -datadir=data/bcdnode0 -port=8333 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=1.0.0.1/0 -rpcbind=1.0.0.1 -erebustest"
+            plugin="bitcoind" time="0"/>
+  </node>
+
+
+  <node id="tester" iphint="99.99.0.1">
+    <application plugin="BITCOINP2P_TESTER" time="5" arguments=""/>
+  </node>
+...
+```
+
+- BLEEP 내의 shadow를 이용해 실험을 동작시킨다.
+```
+$ ./path/to/shadow test-BitcoinP2P.xml
+```
+
+위 예제는 Bitcoin v0.19.1에 대한 EREBUS 공격 테스트를 제작한 것으로 아래의 위치에 구현되어 있다. <br>
+https://github.com/kaistshadow/blockchain-sim/tree/master/BLEEPeval/sybiltest-app/bitcoin

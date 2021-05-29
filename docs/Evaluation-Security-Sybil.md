@@ -232,5 +232,11 @@ int main() {
 $ ./path/to/shadow test-BitcoinP2P.xml
 ```
 
+- 테스트 결과는 아래의 폴더에 log형태로 저장된다.
+```
+$ less ./shadow.data/hosts/tester/*
+$ less ./shadow.data/hosts/bcdnode0/*
+```
+
 위 예제는 Bitcoin v0.19.1에 대한 EREBUS 공격 테스트를 제작한 것으로 아래의 위치에 구현되어 있다. <br>
 https://github.com/kaistshadow/blockchain-sim/tree/master/BLEEPeval/sybiltest-app/bitcoin

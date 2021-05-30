@@ -7,8 +7,14 @@ then
 	exit
 fi
 
+if [ "$#" -ne 2 ]
+then
+  echo "Usage: bash run_test.sh <node#> <simulation time>"
+  exit
+fi
+
 # generator output.xml
-python ./xmlGenerator.py 1000 3600
+python ./xmlGenerator.py $1 $2
 
 # install plugin
 mkdir -p build
@@ -24,5 +30,5 @@ sleep 0.2
 ../../../Install/bin/shadow -d datadir -h 10000 -w 8 output.xml
 # test with memshare
 sleep 0.2
-../../../Install/bin/shadow -d datadir -h 10000 -w 8 --memshare=ON output.xml
+../../../Install/bin/shadow -d datadir -h 10000 -w 8 -m output.xml
 

@@ -1,5 +1,5 @@
 # 선행지식
-- Shadow<br>[Shadow](https://github.com/shadow/shadow)는 unix-type systems에서 동작히는 실제 어플리케이션을 시뮬레이션 해주는 오픈소스 프로그램이다. 여기서 실제 어플리케이션(바이너리)를 shadow환경에서 실행 시키기 위해서는 Shared object 포맷으로 변형해야만 한다. 즉 일반 바이너리 파일인 `target`을 `target.so`로 변형을 해야만 한다.
+- Shadow<br>[Shadow](https://github.com/shadow/shadow)는 unix-type systems에서 동작히는 실제 어플리케이션을 시뮬레이션 해주는 오픈소스 프로그램이다. 여기서 실제 어플리케이션(바이너리)를 shadow환경에서 실행 시키기 위해서는 Shared object 포맷으로 변형해야만 한다. 즉 일반 바이너리 파일인 `target`을 `target.so`로 변형을 해야만 한다.
 - Build system <br>
 블록체인 프로그램은 대부분 빌드시스템을 이용하여 빌드및 컴파일을 한다. 그렇기에 포팅하고자 하는 블록체인의 빌드시스템에 대한 이해가 없으면 포팅을 할 수 없다. 대부분의 블록체인의 빌드시스템은 [CMake](https://cmake.org/cmake/help/latest/guide/tutorial/index.html), [AutoMake](https://linux.die.net/man/1/automake)를 사용한다. 
 <br><br>

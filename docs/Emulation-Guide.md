@@ -4,7 +4,7 @@
 # Prerequisites
 - 시뮬레이션할 어플리케이션은 gcc또는 g++컴파일러로 컴파일된 어플리케이션이거나, CMake또는 Automake로 빌드및 컴파일된 어플리케이션이어야 한다.
 - 시뮬레이션할 어플리케이션이 openssl 라이브러리를 사용한다면, 1.1.0 버젼의 openssl을 사용해야한다. 
-- Shadow에서 지원하지 못하거나 구현되지 않은 부분에 대해 시뮬레이션할 어플리케이션은 사용 하면 안된다.
+- Shadow에서 지원하지 못하거나 구현되지 않은 부분은 시뮬레이션할 수 없음
     - TLS(Thread local storage)를 사용하면 안된다.
     - Spin_lock을 사용하면 안된다.
     - pthread관련 함수인 pthread_mutexattr_setpshared(), pthread_mutexattr_setrobust()를 사용하면 안된다.

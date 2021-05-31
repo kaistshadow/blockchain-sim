@@ -75,4 +75,8 @@ public:
     block* get_besttip();
 };
 
+blockforest bf;
+blockforest get_blockforest() { return bf; }
+bool UpdateBlock(std::string hexHash, std::string hexPrevHash, uint32_t time, std::vector<std::string> txs);
+
 #endif //BLEEP_BLOCKS_H

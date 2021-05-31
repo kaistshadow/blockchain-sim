@@ -63,7 +63,7 @@ namespace tpstest {
             static block* best = nullptr;
             blockforest _bf;
             for (auto &_monitoringNode : _monitoringNodes) {
-                _bf = _monitoringNode.get_blockforest();
+                _bf = get_blockforest();
             }
             block* bp = _bf.get_besttip();
 

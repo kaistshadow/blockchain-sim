@@ -28,6 +28,7 @@
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 
+#include <utility/blocks.cpp>
 #include <boost/archive/binary_iarchive.hpp>
 
 
@@ -160,24 +161,21 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                             std::cout<<"powblock-blk message "<<blkptr->GetBlockHash()<<" / prevhash = "<<blkptr->GetPrevBlockHash()<<"\n";
 
                             //block insert to blockforest
-//                            std::cout<<"[INV] MSGBLOCK: hash = "<<blkptr->GetBlockHash()<<" txcnt = "<<blkptr->GetTransactions().size()<<" from = "<<data_fd <<"\n";
                             std::vector<std::string> txlist;
                             std::list<std::shared_ptr<libBLEEP_BL::SimpleTransaction>> block_txs = blkptr->GetTransactions();
                             for(auto transaction : block_txs) {
-//                                std::cout<<"tx : "<<transaction->GetTxHash() <<"\n";
                                 txlist.push_back(transaction->GetTxHash().str());
                             }
 
                             if(blkptr->GetPrevBlockHash()==libBLEEP::UINT256_t(NULL)){
                                 isMonitoring=true;
-                                break;
                             }
-                            if(isMonitoring){
+                            if(isMonitoring) {
                                 uint32_t time = uint32_t(blkptr->GetTimestamp());
                                 if(!UpdateBlock(blkptr->GetBlockHash().str(), blkptr->GetPrevBlockHash().str(),time, txlist)){
-                                    std::cout<<"block is already exist \n";
+                                    std::cout<<"block is already exist / blockhash = "<<blkptr->GetBlockHash().str()<< "\n";
                                 }
-                                std::cout<<"block successfully register\n";
+                                std::cout<<"block successfully register / blockhash = "<<blkptr->GetBlockHash().str()<<" \n";
                             }
 
                         } else if (msg->GetType() == "TXGOSSIP-INV") {
@@ -188,7 +186,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                         // Maybe, recvBuffer can be updated efficiently. (minimizing a duplication)
                         std::string remain = recvbufstr.substr(BLEEP_MAGIC_SIZE + sizeof(int) + msg_size);
                         tcpControl.SetRecvBuffer(remain);
-                    }else
+                    } else
                         break;
                 } else
                     break;
@@ -236,12 +234,13 @@ std::string BitcoinNodePrimitives::generate() {
     int receiver_id = rand() % 100;
     float amount = (float) (rand() % 100000);
     std::shared_ptr<libBLEEP_BL::SimpleTransaction> tx = std::make_shared<libBLEEP_BL::SimpleTransaction>(sender_id, receiver_id, amount);
-
+    std::cout<<"generate() sender_id "<<sender_id<<" / receiver_id "<<receiver_id<<" / amount "<<amount<<"\n";
 
     return "hello";
 }
 
 void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {
+    std::cout<<"sendTx()\n";
 //    CMutableTransaction mtx;
 //    if (!DecodeHexTx(mtx, hexTx, true))
 //        throw std::runtime_error("invalid transaction encoding");

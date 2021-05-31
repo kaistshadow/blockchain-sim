@@ -100,8 +100,6 @@ namespace tpstest {
 
         void OpAfterDisconnect();
 
-        //methods for monitoring node
-        virtual bool UpdateBlock(std::string hexHash, std::string hexPrevHash, uint32_t time, std::vector<std::string> txhashlist);
     private:
         // monitor
         blockforest bf;

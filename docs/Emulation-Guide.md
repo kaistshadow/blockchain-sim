@@ -74,7 +74,7 @@ add_library(example_library_N ...)
 ```
 
 3. Setting shadow dependency <br>
-Shadow에서는 Opeenssl library 버젼 호환 문제가 있다. 그렇기에 Shadow와 호환이 맞는 버젼인 1.1.0 버젼의 Openssl를 사용해야 한다. Openssl 1.1.0버젼은 BLEEP설치 시 같이 설치가 되기에, BLEEP에서 설치한 Openssl 라이브러리를 Openssl이 사용디는 경우마다 링크를 해주어 사용하면 된다.<br><br>
+Shadow에서는 Opeenssl library 버젼 호환 문제가 있다. 그렇기에 Shadow와 호환이 맞는 버젼인 1.1.0 버젼의 Openssl를 사용해야 한다. Openssl 1.1.0버젼은 BLEEP설치 시 같이 설치가 되기에, BLEEP에서 설치한 Openssl 라이브러리를 Openssl이 사용는 경우마다 링크를 해주어 사용하면 된다.<br><br>
 
 4. shared object 만들기<br>
 블록체인 바이너리 파일을 만들기 위한 compile 명령어와 fPIC 옵션으로 컴파일된 object들로 구성된 라이브러리를 알고 있으니, 이를 바탕으로 블록체인 바이너리 파일을 만들기 위한 compile 명령어에 object 생성 옵션으로 `-shared`를 추가한다. 마지막으로 fPIC 옵션으로 컴파일된 object로 구성된 라이브러리들을 링크를 해줌으로써 shared object를 생성할 수 있다

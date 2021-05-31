@@ -7,14 +7,14 @@ then
 	exit
 fi
 
-if [ "$#" -ne 2 ]
+if [ "$#" -ne 3 ]
 then
-  echo "Usage: bash run_test.sh <node#> <simulation time>"
+  echo "Usage: bash run_test.sh <node#> <simulation time> <exp. mining time>"
   exit
 fi
 
 # generator output.xml
-python ./xmlGenerator.py $1 $2
+python ./xmlGenerator.py $1 $2 $3
 
 # install plugin
 mkdir -p build

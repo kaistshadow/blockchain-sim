@@ -1,7 +1,7 @@
 import sys
 import lxml.etree as ET
 
-def setup_multiple_node_xml(node_num, simultime):
+def setup_multiple_node_xml(node_num, simultime, miningtime):
 
     base_xml = "treesynctest2-tennode.xml"
     new_xml  = "output.xml"
@@ -21,9 +21,9 @@ def setup_multiple_node_xml(node_num, simultime):
         node = ET.SubElement(shadow, "node", id=node_id)
         time = str(0)
 
-        argument = "-id=pownode%d -miningtime=20 -miningnodecnt=%d" % (i, node_num)
+        argument = "-id=pownode%d -miningtime=%d -miningnodecnt=%d" % (i, miningtime, node_num)
         if i==0:
-            argument += " -txgenstartat=0 -txgeninterval=0.005"
+            argument += " -txgenstartat=0 -txgeninterval=%f" % (miningtime/4000.0)
         else:
             argument += " -connect=pownode%d" % ((i + (4 - 1)) / 4 - 1)
 
@@ -35,5 +35,6 @@ def setup_multiple_node_xml(node_num, simultime):
 if __name__ == '__main__':
     node_count = int(sys.argv[1])
     simulation_time = int(sys.argv[2])
+    mining_time = int(sys.argv[3])
 
-    setup_multiple_node_xml(node_count, simulation_time)
+    setup_multiple_node_xml(node_count, simulation_time, mining_time)

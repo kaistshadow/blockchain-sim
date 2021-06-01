@@ -14,6 +14,7 @@
 #include <primitives/transaction.h>
 #include <utility/blocks.h>
 #include <queue>
+#include <BL2_peer_connectivity/MessageObject.h>
 
 #define BLEEP_MAGIC "BLEEPmsg"
 #define BLEEP_MAGIC_SIZE 8
@@ -117,6 +118,7 @@ namespace tpstest {
         struct BlockInfo MakeBlockInfo(uint256 _blockhash, uint256 _prevblockhash, uint32_t _timestamp, unsigned long _txcount);
         void LoadBlock(int data_fd);
         bool isMonitoring = false;
+        std::shared_ptr<libBLEEP_BL::MessageObject> _txToBroadcast;
     };
 }
 

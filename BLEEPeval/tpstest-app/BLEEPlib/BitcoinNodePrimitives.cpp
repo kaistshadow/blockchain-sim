@@ -158,7 +158,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                         } else if (msg->GetType() == "POWBLOCK-BLK") {
                             std::shared_ptr<libBLEEP_BL::POWBlockGossipBlk> getdata = std::static_pointer_cast<libBLEEP_BL::POWBlockGossipBlk>(msg->GetObject());
                             std::shared_ptr<libBLEEP_BL::POWBlock> blkptr = getdata->GetBlock();
-                            std::cout<<"powblock-blk message "<<blkptr->GetBlockHash()<<" / prevhash = "<<blkptr->GetPrevBlockHash()<<"\n";
+                            std::cout<<"powblock-blk message "<<blkptr->GetBlockHash()<<" / prevhash = "<<blkptr->GetPrevBlockHash()<<" / tx cont = "<<blkptr->GetTransactions().size()<<"\n";
 
                             //block insert to blockforest
                             std::vector<std::string> txlist;
@@ -177,10 +177,6 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                                 }
                                 std::cout<<"block successfully register / blockhash = "<<blkptr->GetBlockHash().str()<<" \n";
                             }
-
-                        } else if (msg->GetType() == "TXGOSSIP-INV") {
-                            std::shared_ptr<libBLEEP_BL::TxGossipInventory> inv = std::static_pointer_cast<libBLEEP_BL::TxGossipInventory>(msg->GetObject());
-                            auto tids = inv->GetTransactionIds();
                         }
 
                         // Maybe, recvBuffer can be updated efficiently. (minimizing a duplication)
@@ -233,33 +229,52 @@ std::string BitcoinNodePrimitives::generate() {
     int sender_id = rand() % 100;
     int receiver_id = rand() % 100;
     float amount = (float) (rand() % 100000);
-    std::shared_ptr<libBLEEP_BL::SimpleTransaction> tx = std::make_shared<libBLEEP_BL::SimpleTransaction>(sender_id, receiver_id, amount);
-    std::cout<<"generate() sender_id "<<sender_id<<" / receiver_id "<<receiver_id<<" / amount "<<amount<<"\n";
 
-    return "hello";
+    std::shared_ptr<libBLEEP_BL::SimpleTransaction> tx = std::make_shared<libBLEEP_BL::SimpleTransaction>(sender_id, receiver_id, amount);
+
+    unsigned char hash_out[32];
+    std::string sender_id_str = std::to_string(sender_id);
+    SHA256_CTX ctx;
+    sha256_init(&ctx);
+    sha256_update(&ctx, (const unsigned char*)std::to_string(sender_id).c_str(), sizeof(int));
+    sha256_update(&ctx, (const unsigned char*)std::to_string(receiver_id).c_str(), sizeof(int));
+    sha256_update(&ctx, (const unsigned char*)std::to_string(amount).c_str(), sizeof(float));
+
+    double timestamp = libBLEEP::GetGlobalClock();
+    sha256_update(&ctx, (const unsigned char*)&timestamp, sizeof(double));
+    sha256_final(&ctx, hash_out);
+    libBLEEP::UINT256_t hash_out_256(hash_out, 32);
+    tx->SetTxHash(hash_out_256);
+
+
+    std::vector<std::shared_ptr<libBLEEP_BL::SimpleTransaction>> txs;
+    txs.push_back(tx);
+
+    std::shared_ptr<libBLEEP_BL::MessageObject> ptrToObj = std::make_shared<libBLEEP_BL::TxGossipTxs>(txs);
+    _txToBroadcast = ptrToObj;
+    std::cout<<"txgentimer generate new tx = "<<tx->GetTxHash()<<"\n";
+
+    return tx->GetTxHash().str();
 }
 
 void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {
-    std::cout<<"sendTx()\n";
-//    CMutableTransaction mtx;
-//    if (!DecodeHexTx(mtx, hexTx, true))
-//        throw std::runtime_error("invalid transaction encoding");
-//    CTransaction tx(mtx);
-//    const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
-//    CSerializedNetMsg msg = CNetMsgMaker(PROTOCOL_VERSION).Make(SERIALIZE_TRANSACTION_NO_WITNESS, NetMsgType::TX, tx);
-//    size_t nMessageSize = msg.data.size();
-//    std::vector<unsigned char> serializedHeader;
-//    serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
-//    uint256 hash = Hash(msg.data.data(), msg.data.data() + nMessageSize);
-//    CMessageHeader hdr(MessageStartChars, msg.command.c_str(), nMessageSize);
-//    memcpy(hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
-//
-//    CVectorWriter{SER_NETWORK, PROTOCOL_VERSION, serializedHeader, 0, hdr};
-//    SendMsg(data_fd, serializedHeader);
-//    if (nMessageSize) {
-//        SendMsg(data_fd, msg.data);
-//    }
 
+    std::shared_ptr<libBLEEP_BL::MessageObject> ptrToObj = _txToBroadcast;
+    std::shared_ptr<libBLEEP_BL::Message> message = std::make_shared<libBLEEP_BL::Message>(
+            libBLEEP_BL::PeerId(GetIP()), libBLEEP_BL::PeerId(""), "TXGOSSIP-TXS", ptrToObj);
+
+    // serialize message obj into an std::string
+    std::string serial_str;
+    boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+    boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
+    boost::archive::binary_oarchive oa(s);
+    oa << message;
+    s.flush();
+
+    SendMsg(data_fd, BLEEP_MAGIC);
+    SendMsg(data_fd, serial_str.size());
+    SendMsg(data_fd, serial_str);
+    std::cout << "send tx message to " << data_fd << "\n";
 
 }
 

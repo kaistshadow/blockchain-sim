@@ -1,7 +1,4 @@
 #prepare bitcoin experiment
-
-set(CMAKE_BUILD_TYPE Debug)
-
 add_custom_target(sybil-API-bitcoin-prepare ALL
         COMMAND rm -rf data/bcdnode0
         COMMAND mkdir -p data/bcdnode0

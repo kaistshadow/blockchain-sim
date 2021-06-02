@@ -48,17 +48,17 @@ set_target_properties(BLEEPlib_TPSTESTER::Plugin PROPERTIES
 set_property(TARGET BLEEPlib_TPSTESTER::Plugin PROPERTY IMPORTED_NO_SONAME 1)
 
 
-##build latency_tester.cpp
-#add_shadow_plugin(BLEEPlibLATENCY_TESTER)
-#target_link_libraries(BLEEPlibLATENCY_TESTER BLEEPtps)
-#target_link_libraries(BLEEPlibLATENCY_TESTER BitcoinTPSAdapter)
-#target_link_libraries(BLEEPlibLATENCY_TESTER Bitcoin_0_19_1dev::Plugin)
-#
-#target_sources(BLEEPlibLATENCY_TESTER
-#        PRIVATE
-#        latency_tester.cpp)
-#
-#add_custom_target(BLEEPlib_latency_test ALL
-#        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BLEEPlibLATENCY_TESTER> ${CMAKE_INSTALL_PREFIX}/plugins
-#        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BLEEPlibLATENCY_TESTER> ${CMAKE_CURRENT_SOURCE_DIR}
-#        )
+#build latency_tester.cpp
+add_shadow_plugin(BLEEPlibLATENCY_TESTER)
+target_link_libraries(BLEEPlibLATENCY_TESTER BLEEPtps)
+target_link_libraries(BLEEPlibLATENCY_TESTER BLEEP)
+target_link_libraries(BLEEPlibLATENCY_TESTER BLEEPlibTPSAdapter)
+
+target_sources(BLEEPlibLATENCY_TESTER
+        PRIVATE
+        latency_tester.cpp)
+
+add_custom_target(BLEEPlib_latency_test ALL
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BLEEPlibLATENCY_TESTER> ${CMAKE_INSTALL_PREFIX}/plugins
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BLEEPlibLATENCY_TESTER> ${CMAKE_CURRENT_SOURCE_DIR}
+        )

@@ -1,13 +1,16 @@
 # Emulation porting guide
-[Shadow](https://github.com/shadow/shadow)는 unix-type systems에서 동작히는 실제 어플리케이션을 시뮬레이션 해주는 오픈소스 프로그램이다. 그렇기에 C,C++기반의 어플리케이션만 시뮬레이션이 가능하다. 여기서 실제 어플리케이션(바이너리)을 shadow환경에서 시뮬레이션하기 위해서는 시뮬레이션할 바이너리 실행파일을 Shared object 포맷으로 변형해야 한다.
+[Shadow](https://github.com/shadow/shadow)는 linux에서 동작하는 네트워크 어플리케이션을 가상의 네트워크 상에서 동작하도록 에뮬레이션 해주는 오픈소스 프로그램이다. 현재 C,C++기반의 어플리케이션을 지원한다. BLEEP에서 블록체인 어플리케이션을 에뮬레이션하기 위해서는 Shadow에서 동작가능한 형태로 어플리케이션을 컴파일해야한다. Shadow는 동적 적재(dynamic loading)기법을 이용해 어플리케이션을 동작시키므로 Shadow 환경에서 어플리케이션을 동작시키기 위해서는 시뮬레이션할 바이너리 실행파일을 동적 라이브러리(즉, shared library)포맷으로 변형하는 (컴파일)과정이 필요하다.
 
 # Prerequisites
 - 시뮬레이션할 어플리케이션은 gcc또는 g++컴파일러로 컴파일된 어플리케이션이거나, CMake또는 Automake로 빌드및 컴파일된 어플리케이션이어야 한다.
-- 시뮬레이션할 어플리케이션이 openssl 라이브러리를 사용한다면, 1.1.0 버젼의 openssl을 사용해야한다. 
-- Shadow에서 지원하지 못하거나 구현되지 않은 부분은 시뮬레이션할 수 없음
-    - TLS(Thread local storage)를 사용하면 안된다.
-    - Spin_lock을 사용하면 안된다.
-    - pthread관련 함수인 pthread_mutexattr_setpshared(), pthread_mutexattr_setrobust()를 사용하면 안된다.
+- 시뮬레이션할 어플리케이션이 사용하는 라이브러리 중, shadow가 제대로 에뮬레이션 할 수 없는 경우가 존재하며 이 경우 수동으로 버젼을 맞춰주는 것이 필요하다.
+    - 예: 1.1.0i 버젼 이후의 openssl 라이브러리는 shadow 동작시 문제가 발생하므로, 1.1.0h 버젼(혹은 그 이하)의 openssl을 사용해야한다.
+- Shadow에서 지원하지 못하거나 구현되지 않은 부분은 시뮬레이션 시 문제를 일으킬 수 있으므로 피해야한다. 
+    - TLS(Thread local storage)변수를 `__thread` 키워드를 이용해 직접 사용할 수 없음.
+        - `__thread`를 지원하기 위해서는 BLEEP팀이 추가한 shadow option(`turn_off_tls_fix`)을 사용할 수 있으나, 실험적인 feature임.
+        - 관련 이슈 : [#171](https://github.com/kaistshadow/blockchain-sim/issues/171), [PR #110](https://github.com/kaistshadow/blockchain-sim/pull/110), [PR #101](https://github.com/kaistshadow/blockchain-sim/pull/101)
+    - Spin lock을 사용하는 경우, non-preemptive한 shadow thread의 특성 상 무한 루프에 빠질 수 있음.
+    - Shadow에 구현되지 않은 system call은 사용할 수 없음. (예: pthread관련 함수인 pthread_mutexattr_setrobust() 등)
     - setsocket()함수 사용 시, Shadow에서는 "127.0.0.0" 주소 값을 처리하는 프로세스가 구현되지 않아 사용하면 안된다.
 
 

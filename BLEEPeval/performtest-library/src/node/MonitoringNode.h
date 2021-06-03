@@ -143,27 +143,11 @@ namespace tpstest {
             return true;
         }
 
-        bool Update(std::string hexHash, std::string hexPrevHash, uint32_t time, std::vector<std::string> txs) {
-            block* bp = new block(hexHash, hexPrevHash,time);
-            if(!bp)
-                return false;
-            for (int i = 0; i<txs.size(); i++) {
-                bp->pushTxHash(txs[i]);
-            }
-            // add block to forest
-            if (!bf.add_block(bp)) {
-                delete bp;
-            }
 
-            return true;
-        }
 
     private:
-        blockforest bf;
+
     public:
-        blockforest get_blockforest() {
-            return bf;
-        }
     };
 }
 

@@ -45,7 +45,7 @@ def main():
     target_folder_file = test_modules.test_shadow_output_file_existence("regtest", node_id_list)
 
     # shadow output 파일 검사.
-    test_modules.test_shadow(target_folder_file, runtime, node_id_list, output_file)
+    # test_modules.test_shadow(target_folder_file, runtime, node_id_list, output_file)
 
     # shadow plugin의 결과 값 뽑아옴.
     simulation_output_file = test_modules.test_file_existence(node_id_list, plugin_list)

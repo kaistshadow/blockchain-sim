@@ -43,7 +43,6 @@ namespace libBLEEP_BL {
         Layer3_Event_Start,
         ProtocolRecvMsg,            //17
         EmuBlockMiningComplete,     //18
-        SlotStart,                  // for PoS usage
         Layer3_Event_End,
 
         UnitTest_Event_Start,
@@ -100,9 +99,6 @@ namespace libBLEEP_BL {
 
         // data for EmuBlockMiningComplete
         std::shared_ptr<POWBlock> _minedBlk;
-
-        // data for SlotStart
-        unsigned int _slot_id;
 
     public:
         // data set function for SocketAccept
@@ -190,10 +186,6 @@ namespace libBLEEP_BL {
         void SetMinedBlock(std::shared_ptr<POWBlock> block) { _minedBlk = block; }
         // data access function for EmuBlockMiningComplete, BlockMiningComplete
         std::shared_ptr<POWBlock> GetMinedBlock() { return _minedBlk; }
-
-        // data set function for SlotStart
-        void SetSlotId(unsigned int slot_id) { _slot_id = slot_id; }
-        unsigned int GetSlotId() { return _slot_id; }
     };
 
     class AsyncEvent {

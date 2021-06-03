@@ -141,28 +141,24 @@ void BL_ProtocolLayerPoS::_RecvPOSBlockGetDataHandler(std::shared_ptr<Message> m
     BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(msg->GetSource(), message);
 }
 
-
+// processing on reception of block data: check block validity, add block, update besttip for mining
 void BL_ProtocolLayerPoS::_RecvPOSBlockBlkHandler(std::shared_ptr<Message> msg) {
     std::cout << "received POS protocol block message" << "\n";
 
     std::shared_ptr<POSBlockGossipBlk> getdata = std::static_pointer_cast<POSBlockGossipBlk>(msg->GetObject());
     std::shared_ptr<POSBlock> blkptr = getdata->GetBlock();
 
-    // TODO
-    /*
-        check validity
-        if random selection(block.slot_id) == block.creator
-            add
-        else
-            return
+    if (!(random_selection(blkptr->slot_no) == blkptr->creator)) {
+        return; // mismatch between block creator and expected block creator
+    }
 
-        try change best tip
-        if chain accept rule (block)    // longest + less than k gap??
-            change best tip
-        else
-            return
-    */
-    // Static Stake Protocol in Ouroboros https://eprint.iacr.org/2016/889.pdf is only available for now.
+    // add block on blockchain, whether or not the block is main-chain family.
+    std::cout << "blockhash:" << blkptr->GetBlockHash().str() << "\n";
+    if (!_blocktree.ContainBlock(blkptr->GetBlockHash().str())) {
+        _blocktree.AppendBlock(blkptr);
+    }
+
+    try_update_besttip();
 }
 
 void BL_ProtocolLayerPoS::SwitchAsyncEventHandler(AsyncEvent& event) {
@@ -204,21 +200,6 @@ void BL_ProtocolLayerPoS::SwitchAsyncEventHandler(AsyncEvent& event) {
 
             break;
         }
-        case AsyncEventEnum::SlotStart:
-        {
-            // TODO
-            unsigned int current_slot_id = event.GetData().GetSlotId();
-            if (random_selection(current_slot_id) == this->id) {
-                generateBlock();
-            }
-
-            // calculate time and make next SlotStart reservation
-            // push asynchronous event
-            AsyncEvent event(AsyncEventEnum::SlotStart);
-            event.GetData().SetSlotId(current_slot_id + 1)
-            MainEventManager::Instance()->PushAsyncEvent(event);
-            break;
-        }
     default:
         break;
     }
@@ -234,16 +215,27 @@ unsigned int BL_ProtocolLayerPoS::random_selection(unsigned int slot_id) {
         return stakes.first();
     if (number >= 1)
         return stakes.end();
-
     return stakes.get_containing_element(number * stakes.range())
+}
+void BL_ProtocolLayerPoS::_slottimerCallback(ev::timer &w, int revents) {
+    _current_slot = (int)(GetGlobalClock() / slot_interval)
+    assert(_current_slot >= 0);
+    if (random_selection((unsigned int)_current_slot) == _owner_id) {
+        generateBlock();
+    }
+}
+void BL_ProtocolLayerPoS::_startPeriodicSlotStart(double slot_interval) {
+    _slottimer.set<BL_ProtocolLayerPoS, &BL_ProtocolLayerPoS::_slottimerCallback>(this);
+    _slottimer.set(0, slot_interval);
+    _slottimer.start();
 }
 
 bool BL_ProtocolLayerPoS::InitiateProtocol() {
     if (!_initiated) {
         std::cout << "initiating ProtocolPoS" << "\n";
         _startPeriodicTxGen(txGenStartAt, txGenInterval);
+        _startPeriodicSlotStart(slot_interval);
         _initiated = true;
-
         return true;
     } else {
         std::cout << "already initiated protocol" << "\n";
@@ -257,6 +249,7 @@ bool BL_ProtocolLayerPoS::InitiateProtocol(ProtocolParameter* params) {
     if (!_initiated) {
         std::cout << "initiating ProtocolPoS with custom params" << "\n";
         _startPeriodicTxGen(posparams->txGenStartAt, posparams->txGenInterval);
+        _startPeriodicSlotStart(posparams->slot_interval);
         _initiated = true;
 
         return true;

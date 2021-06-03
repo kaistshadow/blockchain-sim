@@ -70,13 +70,6 @@ namespace libBLEEP_BL {
             if (!_txPool->ContainTx(tx->GetId())) {
                 _txPool->AddTx(tx);
                 _txGossipProtocol.PushTxToBroadcast(tx);
-
-                // if (_txPool->GetPendingTxNum() >= txNumPerBlock) {
-                //     if (!_posMiner.IsMining()) {
-                //         std::shared_ptr<POWBlock> candidateBlk = _makeCandidateBlock();
-                //         _posMiner.AsyncEmulateBlockMining(candidateBlk, 1/miningtime/miningnodecnt);
-                //     }
-                // }
             }
             _txGenNum += 1;
         }
@@ -85,6 +78,11 @@ namespace libBLEEP_BL {
             _txgentimer.set(start, interval);
             _txgentimer.start();
         }
+
+        // slot processing
+        ev::timer _slottimer;
+        void _slottimerCallback(ev::timer &w, int revents);
+        void _startPeriodicSlotStart(double slot_interval);
 
 
     public:

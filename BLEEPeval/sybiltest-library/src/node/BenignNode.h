@@ -14,7 +14,7 @@
 #include <netinet/tcp.h>
 #include <errno.h>
 #include <strings.h>
-
+#include <set>
 #include "shadow_interface.h"
 #include "Node.h"
 
@@ -155,19 +155,19 @@ namespace sybiltest {
 
     private:
         ev::timer _churnoutTimer;
-        std::deque<ev::timer *> churnTimers;
+        std::set<ev::timer *> churnTimers;
         void _churnoutcb(ev::timer &w, int revents) {
             Node<NodePrimitives>::ChurnOut();
             std::cout << "churn out timer is called at " << Node<NodePrimitives>::GetIP() << "\n";
         }
         void _churntogglecb(ev::timer &w, int revents) {
             Node<NodePrimitives>::ChurnToggle();
-            if(churnTimers.front() != &w) {
+            if(churnTimers.find(&w) == churnTimers.end()) {
                 std::cout << "ChurnToggle Timers deque is corrupted" << "\n";
                 exit(1);
             }
-            delete churnTimers.front();
-            churnTimers.pop_front();
+            delete &w;
+            churnTimers.erase(&w);
         }
 
     public:
@@ -185,12 +185,12 @@ namespace sybiltest {
              */
         }
         void SetChurnToggleTimer(int toggletime) {
-            std::cout << "set churn toggle timer called at " << Node<NodePrimitives>::GetIP() << "\n";
+            //std::cout << "set churn toggle timer called at " << Node<NodePrimitives>::GetIP() << "\n";
             ev::timer *toggleTimer = new ev::timer();
             toggleTimer->set<BenignNode, &BenignNode<NodePrimitives>::_churntogglecb>(this);
             toggleTimer->set(toggletime, 0.);
             toggleTimer->start();
-            churnTimers.push_back(toggleTimer);
+            churnTimers.insert(toggleTimer);
             //std::cout << "set churn toggle timer success at " << Node<NodePrimitives>::GetIP() << "\n";
         }
     };

@@ -31,7 +31,7 @@ namespace libBLEEP_BL {
     public:
         BlockTree<POWBlock>& GetBlockTree() { return _blocktree; }
     private: // PoW parameter
-        int txNumPerBlock = 4000;
+        int txNumPerBlock = 2;
         double txGenStartAt = 0;
         double txGenInterval = 4;
         double miningtime = 2;

@@ -85,8 +85,8 @@ namespace libBLEEP_BL {
             sha256_update(&ctx, (const unsigned char*)&timestamp, sizeof(double));
             sha256_final(&ctx, hash_out);
             libBLEEP::UINT256_t hash_out_256(hash_out, 32);
-            tx->SetTxHash(hash_out_256);
-            std::cout<<"txgentimer generate new tx = "<<tx->GetTxHash()<<"\n";
+            tx->_id.SetTxHash(hash_out_256);
+            std::cout<<"txgentimer generate new tx = "<<tx->_id.GetTxHash()<<"\n";
 
 
             if (!_txPool->ContainTx(tx->GetId())) {

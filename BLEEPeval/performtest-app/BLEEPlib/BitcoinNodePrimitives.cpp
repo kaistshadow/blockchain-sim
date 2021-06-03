@@ -164,7 +164,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                             std::vector<std::string> txlist;
                             std::list<std::shared_ptr<libBLEEP_BL::SimpleTransaction>> block_txs = blkptr->GetTransactions();
                             for(auto transaction : block_txs) {
-                                txlist.push_back(transaction->GetTxHash().str());
+                                txlist.push_back(transaction->_id.GetTxHash().str());
                             }
 
                             if(blkptr->GetPrevBlockHash()==libBLEEP::UINT256_t(NULL)){
@@ -176,6 +176,13 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                                     std::cout<<"block is already exist / blockhash = "<<blkptr->GetBlockHash().str()<< "\n";
                                 }
                                 std::cout<<"block successfully register / blockhash = "<<blkptr->GetBlockHash().str()<<" \n";
+                            }
+                        } else if (msg->GetType() =="TXGOSSIP-INV") {
+                            std::shared_ptr<libBLEEP_BL::TxGossipInventory> inv = std::static_pointer_cast<libBLEEP_BL::TxGossipInventory>(msg->GetObject());
+                            auto tids = inv->GetTransactionIds();
+                            std::vector<libBLEEP_BL::SimpleTransactionId> getdataIds;
+                            for(auto tid: tids){
+                                global_txtimepool->register_txtime(tid.GetTxHash().str(),libBLEEP::GetGlobalClock());
                             }
                         }
 
@@ -244,7 +251,7 @@ std::string BitcoinNodePrimitives::generate() {
     sha256_update(&ctx, (const unsigned char*)&timestamp, sizeof(double));
     sha256_final(&ctx, hash_out);
     libBLEEP::UINT256_t hash_out_256(hash_out, 32);
-    tx->SetTxHash(hash_out_256);
+    tx->_id.SetTxHash(hash_out_256);
 
 
     std::vector<std::shared_ptr<libBLEEP_BL::SimpleTransaction>> txs;
@@ -252,9 +259,10 @@ std::string BitcoinNodePrimitives::generate() {
 
     std::shared_ptr<libBLEEP_BL::MessageObject> ptrToObj = std::make_shared<libBLEEP_BL::TxGossipTxs>(txs);
     _txToBroadcast = ptrToObj;
-    std::cout<<"txgentimer generate new tx = "<<tx->GetTxHash()<<"\n";
+    global_txtimepool->register_txtime(hash_out_256.str(),libBLEEP::GetGlobalClock());
+    std::cout<<"txgentimer generate new tx = "<<tx->_id.GetTxHash()<<"\n";
 
-    return tx->GetTxHash().str();
+    return tx->_id.GetTxHash().str();
 }
 
 void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {

@@ -74,8 +74,12 @@ namespace tpstest {
 
             if (txs.size() >= 2) {
                 for (int i = 1; i<txs.size(); i++) {
-                    assert(time >= global_txtimepool->get_txtime(txs[i]));
-                    netTxLatency += time - global_txtimepool->get_txtime(txs[i]);
+//                    assert(time >= global_txtimepool->get_txtime(txs[i]));
+                    uint32_t timestamp = global_txtimepool->get_txtime(txs[i]);
+                    if(global_txtimepool->get_txtime(txs[i]) == 0) {
+                        time=0;
+                    }
+                    netTxLatency += time - timestamp;
                 }
                 bp->setNetTxLatency(netTxLatency);
             }

@@ -31,7 +31,6 @@
   <plugin id="bitcoind" path="libBITCOIND_0.19.1DEV.so"/>
   <plugin id="client" path="minerNode_rpc.so"/>
   <plugin id="BITCOINTPS_TESTER" path="libBITCOINTPS_TESTER.so"/>
-  <plugin id="BITCOIN_MONITOR" path="libBITCOIN_MONITOR.so"/>
   <!-- the length of our experiment in seconds  1404101800-->
   <!-- our nodes -->
   <kill time="30"/>
@@ -50,9 +49,5 @@
   <node id="txgenerator" iphint="99.99.0.1">
     <application plugin="BITCOINTPS_TESTER" time="5" arguments="99.99.0.1 99.99.0.2 2"/>
   </node>
-  <node id="monitor" iphint="99.99.0.2">
-    <application plugin="BITCOIN_MONITOR" time="3" arguments="99.99.0.2 2"/>
-  </node>
-
 
 </shadow>

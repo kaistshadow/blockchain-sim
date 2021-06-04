@@ -19,13 +19,3 @@ Welcome to the BLEEP documentation <br>
      * [TPS, Latency](Evaluation-perf-TPS_Latency.md)
  * [Developer Guide (with CLion IDE)](developerGuide.md)
  * [Contributing Guide (with Github)](contributingGuide.md)
-
-## Tips
-- TODO
-
-## Tools
-- TODO
-
-## Resources
-- [API Documentation](api/test-api.md) (TODO)
-- [External Resources](Resource-External.md) (TODO)

@@ -51,6 +51,18 @@ namespace libBLEEP_BL {
         libBLEEP::UINT256_t GetDifficulty() const { return difficulty; }
 
         virtual std::ostream& print(std::ostream& out) const override;
+
+        std::size_t hash() {
+            return (std::hash<std::string>()(block_hash.str()));
+        }
+        bool operator==(const POWBlock& other) {
+            return nonce == other.nonce
+                && tx_hash == other.tx_hash
+                && prev_block_hash == other.prev_block_hash
+                && timestamp == other.timestamp
+                && difficulty == other.difficulty;
+        }
+
     private:
         friend class boost::serialization::access;
         // When the class Archive corresponds to an output archive, the

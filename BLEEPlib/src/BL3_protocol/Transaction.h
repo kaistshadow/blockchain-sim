@@ -92,14 +92,14 @@ namespace libBLEEP_BL {
     public:
         SimpleTransaction() {}
         SimpleTransaction(int sid, int rid, float a) {
-            sender_id=sid; receiver_id=rid; amount=a; 
+            sender_id=sid; receiver_id=rid; amount=a;
             _id = SimpleTransactionId(sid, rid, a);
         }
         SimpleTransactionId _id;
         int sender_id;
         int receiver_id;
         float amount;
-
+        char dummy_text[200];
 
         SimpleTransactionId GetId() { return _id; }
 
@@ -111,6 +111,16 @@ namespace libBLEEP_BL {
             return out;
         }
 
+        std::size_t hash() {
+            return ((std::hash<int>()(sender_id)
+                     ^ (std::hash<int>()(receiver_id) << 1)) >> 1)
+                   ^ (std::hash<float>()(amount) << 1);
+        }
+        bool operator==(const SimpleTransaction& other) {
+            return sender_id == other.sender_id
+                   && receiver_id == other.receiver_id
+                   && amount == other.amount;
+        }
 
     private:
         friend class boost::serialization::access;

@@ -3,7 +3,7 @@
  디버깅을 위해서는 빌드 시에 심볼을 포함하도록 설정을 해야한다. BLEEP 프로젝트는 이를 위해 `CMAKE_BUILD_TYPE`을 이용한다. `CMAKE_BUILD_TYPE`이 `Debug`로 세팅되어있으면, BLEEP의 CMake script들은 모든 컴포넌트들을 컴파일할 때 debug 심볼을 포함시키게 된다.
  따라서 CLion에서 CMake 설정을 하면 되는데, Setting(Preference)->Build, Execution, Deployment->CMake에서 프로필을 설정할 수 있다.
  
- ![CLion CMake 설정 예시](https://github.com/kaistshadow/blockchain-sim/blob/feature/191/documentation/doc/images/Developerguide-clion-cmake.png)
+ ![CLion CMake 설정 예시](images/Developerguide-clion-cmake.png)
 
  위의 예시에서 중요한 부분은 CMake options 부분이다. `-DCMAKE_BUILD_TYPE=Debug`가 자동으로 세팅되어있는 것을 확인할 수 있다.
 
@@ -25,7 +25,7 @@ CLion에서 Build->Install 명령을 사용하면 된다.
 
 Install이 완료되었다면 Run/Debug configuration을 추가해야한다. Run-> Edit Configurations 메뉴에서 아래와 같이 새로운 `CMake Application` 실행 설정을 추가한다. 
 
- ![CLion Run/Debug 설정 예시](https://github.com/kaistshadow/blockchain-sim/blob/feature/191/documentation/doc/images/Developerguide-clion-runconf.png)
+ ![CLion Run/Debug 설정 예시](images/Developerguide-clion-runconf.png)
 
 Program arguments로 $FileName$을 세팅하고, Working directory에는 $FileDir$를 세팅해준다. 이렇게 세팅을 하면, CLion에서 실행/디버깅을 하고자 하는 shadow 설정파일 (예: `BLEEPeval/sybiltest-app/bitcoin/test-BitcoinP2P.xml`)을 열고 실행/디버깅을 동작시켰을 때, 이는 해당 shadow 설정파일이 있는 디렉토리 (예: `BLEEPeval/sybiltest-app/bitcoin/`)에서 `shadow test-BitcoinP2P.xml`을 실행/디버깅하는 작업과 동일하게 된다. 
 

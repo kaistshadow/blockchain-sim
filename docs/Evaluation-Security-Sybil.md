@@ -2,11 +2,11 @@ BLEEP은 P2P 모듈 취약점을 분석하기 위한 테스트 프레임워크 �
 제공하는 테스트 프레임워크를 통해 블록체인 구현에 상관없이 공통적으로 적용 가능한 P2P 보안 테스트를 구동시킬 수 있고, 취약점을 분석할 수 있다. 
 
 # P2P Security Test Overview
-BLEEP은 [Emulation](https://github.com/kaistshadow/blockchain-sim/blob/feature/191/documentation/docs/Emulation-Guide.md) 기능을 통해, 블록체인 네트워크를 구성 및 동작시키고 그 위에서 P2P 프로토콜이 정상적으로 동작하는지를 검증한다.
+BLEEP은 [Emulation](Emulation-Guide.md) 기능을 통해, 블록체인 네트워크를 구성 및 동작시키고 그 위에서 P2P 프로토콜이 정상적으로 동작하는지를 검증한다.
 BLEEP은 임의의 블록체인 바이너리(혹은 P2P 구현 모듈)에 대한 테스트를 위해, 공통적으로 사용할 수 있는 에뮬레이터, sybil 라이브러리, 어댑터 API 등을 제공한다.
 
 BLEEP P2P security 테스트의 구성 요소는 아래와 같다. 
-- [Emulator](https://github.com/kaistshadow/blockchain-sim/blob/feature/191/documentation/docs/Emulation-Guide.md) : 실제 네트워크를 띄울 필요 없이 다수의 노드로 구성된 P2P 네트워크를 에뮬레이션
+- [Emulator](Emulation-Guide.md) : 실제 네트워크를 띄울 필요 없이 다수의 노드로 구성된 P2P 네트워크를 에뮬레이션
 - [Sybil Library](Evaluation-Security-Sybil.md#sybil-library) : 공격을 위한 P2P 환경을 구성하고, 공격에 필요한 sybil 노드들을 구성하여 타겟 노드에 대한 공격 실행 및 P2P 취약점을 검증
 - [Adapter](Evaluation-Security-Sybil.md#adapter) : Sybil 라이브러리를 임의의 타겟 노드에 대해 동작시키기 위한 어댑터 
 - [Tester](Evaluation-Security-Sybil.md#tester) : Sybil 라이브러리와 Adapter를 이용해 실제 테스트가 구현된 프로그램 

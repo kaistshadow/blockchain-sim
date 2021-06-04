@@ -257,7 +257,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                     for (int i = 0; i<pblock->vtx.size(); i++) {
                         txlist.push_back(pblock->vtx[i]->GetHash().GetHex());
                     }
-                    Update(pblock->GetHash().GetHex(), pblock->hashPrevBlock.GetHex(), pblock->nTime, txlist);
+                    UpdateBlock(pblock->GetHash().GetHex(), pblock->hashPrevBlock.GetHex(), pblock->nTime, txlist);
 
                 }
             }

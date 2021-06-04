@@ -105,7 +105,7 @@ if __name__ == '__main__':
         process_ENV()   
 
     if OPT_DEBUG:
-        cmake_debug_opt = "-DSHADOW_DEBUG=OFF -DBLEEP_DEBUG=OFF -DCMAKE_BUILD_TYPE=Release"
+        cmake_debug_opt = "-DSHADOW_DEBUG=ON -DBLEEP_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug"
 
     if OPT_BITCOIN:
         exec_shell_cmd("git submodule update --init --recursive")

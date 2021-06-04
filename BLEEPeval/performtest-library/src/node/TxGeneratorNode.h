@@ -89,14 +89,6 @@ namespace tpstest {
             return conn_fd;
         }
 
-        void _timercb(ev::timer &w, int revents) {
-            tryConnectToTarget(Node<NodePrimitives>::_targetIP, Node<NodePrimitives>::_targetPort);
-            _connStartTimer.stop();
-        }
-
-        bool _temp_isMointor() {
-            return false;
-        }
     private:
         ev::timer _connStartTimer;
 

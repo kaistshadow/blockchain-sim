@@ -11,6 +11,7 @@
 #include <netmessagemaker.h>
 #include <util/strencodings.h>
 #include <chainparams.h>
+#include <utility/blocks.cpp>
 
 // bitcoin-specific tx generation
 #include <config/bitcoin-config.h>
@@ -248,17 +249,18 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 BitcoinNodePrimitives::LoadBlock(data_fd);
 
             } else if (strCommand == NetMsgType::BLOCK) {
-                if (_temp_isMointor()) {
-                    std::shared_ptr<CBlock> pblock = std::make_shared<CBlock>();
-                    vRecv >> *pblock;
+                switch(_type){
+                    case NodeType::MonitoringNode: {
+                        std::shared_ptr<CBlock> pblock = std::make_shared<CBlock>();
+                        vRecv >> *pblock;
 
-                    std::cout<<"[INV] MSGBLOCK: hash = "<<pblock->GetHash().ToString()<<" txcnt = "<<pblock->vtx.size()<<" from = "<<data_fd <<"\n";
-                    std::vector<std::string> txlist;
-                    for (int i = 0; i<pblock->vtx.size(); i++) {
-                        txlist.push_back(pblock->vtx[i]->GetHash().GetHex());
+                        std::cout<<"[INV] MSGBLOCK: hash = "<<pblock->GetHash().ToString()<<" txcnt = "<<pblock->vtx.size()<<" from = "<<data_fd <<"\n";
+                        std::vector<std::string> txlist;
+                        for (int i = 0; i<pblock->vtx.size(); i++) {
+                            txlist.push_back(pblock->vtx[i]->GetHash().GetHex());
+                        }
+                        UpdateBlock(pblock->GetHash().GetHex(), pblock->hashPrevBlock.GetHex(), pblock->nTime, txlist);
                     }
-                    UpdateBlock(pblock->GetHash().GetHex(), pblock->hashPrevBlock.GetHex(), pblock->nTime, txlist);
-
                 }
             }
 

@@ -97,9 +97,6 @@ namespace tpstest {
 
         void OpAfterDisconnect();
 
-        //methods for monitoring node
-        virtual bool _temp_isMointor();
-        virtual bool UpdateBlock(std::string hexHash, std::string hexPrevHash, uint32_t time, std::vector<std::string> txhashlist);
     private:
         // keygen
         std::queue<spend_data> unspent_keyvalues;

@@ -156,9 +156,45 @@ void BL_ProtocolLayerPoS::_RecvPOSBlockBlkHandler(std::shared_ptr<Message> msg) 
     std::cout << "blockhash:" << blkptr->GetBlockHash().str() << "\n";
     if (!_blocktree.ContainBlock(blkptr->GetBlockHash().str())) {
         _blocktree.AppendBlock(blkptr);
+        // Future TODO: every blockchain system has different besttip rule, so it might be separated from BlockTree code,
+        // and make the BlockTree code to be generalized form.
     }
 
-    try_update_besttip();
+    if (HasProcessingInv()) {
+        std::vector<std::string>& inv = GetProcessingInv();
+
+        // if hash tree lacks of actual block, request the block
+        // else, finish the inv processing.
+        bool invAllProcessed = true;
+        for (std::string h : inv) {
+            if (!_blocktree.ContainBlock(h)) {
+                std::cout << "sending POS protocol getdata for" << h << "\n";
+
+                std::shared_ptr<MessageObject> ptrToObj = std::make_shared<POSBlockGossipGetData>(h);
+                std::shared_ptr<Message> message = std::make_shared<Message>(msg->GetSource(), "POSBLOCK-GETDATA", ptrToObj);
+                BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(msg->GetSource(), message);
+
+                invAllProcessed = false;
+                break; // request only a single block
+            }
+        }
+
+        if (invAllProcessed) {
+            std::cout << "stop processing inv" << "\n";
+            StopProcessingInv();
+
+            // relay POSBLOCK-INV message??
+            std::shared_ptr<MessageObject> ptrToObj = std::make_shared<POSBlockGossipInventory>(inv);
+            std::vector<PeerId> neighborIds = BL_PeerConnectivityLayer_API::Instance()->GetNeighborPeerIds();
+            for (auto neighborId : neighborIds) {
+                if (neighborId.GetId() != msg->GetSource().GetId()) {
+                    std::cout << "send(relay) inv to " << neighborId.GetId() << "\n";
+                    std::shared_ptr<Message> message = std::make_shared<Message>(neighborId, "POSBLOCK-INV", ptrToObj);
+                    BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(neighborId, message);
+                }
+            }
+        }
+    }
 }
 
 void BL_ProtocolLayerPoS::SwitchAsyncEventHandler(AsyncEvent& event) {
@@ -206,22 +242,36 @@ void BL_ProtocolLayerPoS::SwitchAsyncEventHandler(AsyncEvent& event) {
 }
 
 unsigned int BL_ProtocolLayerPoS::random_selection(unsigned int slot_id) {
+    if (slot_id == 0) {
+        return 0;
+    }
     unsigned int random_num = slot_id;
     std::default_random_engine generator(random_num);
     std::uniform_real_distribution<double> distribution(0.0,1.0);
     double number = distribution(generator);
 
     if (number <= 0)
-        return stakes.first();
+        return stakes.first();  // TODO: stakes
     if (number >= 1)
         return stakes.end();
     return stakes.get_containing_element(number * stakes.range())
 }
+std::shared_ptr<POSBlock> BL_ProtocolLayerPoS::makeBlockTemplate(unsinged int slot_id) {
+    std::list<std::shared_ptr<SimpleTransaction>> txs = _txPool->GetTxs(maxTxPerBlock);
+    std::shared_ptr<POSBlock> templateBlock = std::make_shared<POSBlock>("", txs, _owner_id, slot_id);
+    templateBlock->SetBlockIdx(_blocktree.GetNextBlockIdx());
+    templateBlock->SetPrevBlockHash(_blocktree.GetLastHash());
+    return templateBlock;
+}
 void BL_ProtocolLayerPoS::_slottimerCallback(ev::timer &w, int revents) {
-    _current_slot = (int)(GetGlobalClock() / slot_interval)
-    assert(_current_slot >= 0);
+    unsigned int _current_slot = (int)(GetGlobalClock() / slot_interval)
+    if (_current_slot == 0) {
+        // ignore genesis case
+        return;
+    }
     if (random_selection((unsigned int)_current_slot) == _owner_id) {
-        generateBlock();
+        std::shared_ptr<POSBlock> blk = makeBlockTemplate(_current_slot);
+        _posMiner.AsyncMakeBlock(blk);
     }
 }
 void BL_ProtocolLayerPoS::_startPeriodicSlotStart(double slot_interval) {

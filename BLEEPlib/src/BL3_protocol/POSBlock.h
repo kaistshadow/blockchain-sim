@@ -1,3 +1,7 @@
+//
+// Created by Hyunjin Kim on 2021/06/04.
+//
+
 #ifndef BLEEP_POSBLOCK_H
 #define BLEEP_POSBLOCK_H
 
@@ -17,29 +21,29 @@
 namespace libBLEEP_BL {
     class POSBlock : public Block {
     private:
+        unsigned int creator;
+        unsigned int slot_no;
         libBLEEP::UINT256_t prev_block_hash;
         libBLEEP::UINT256_t tx_hash;
-        unsigned int slot_no;
-        signature sl_signature;
-        
-        
-        int creator;
-        unsigned int seed;          // for convenience
         double timestamp = 0;
 
         void SetTxHash();
     public:
         POSBlock() : Block() {}
         virtual ~POSBlock() {}
-        POSBlock(int creator, std::string id, std::list<std::shared_ptr<SimpleTransaction> > input_tx_list)
+        POSBlock(std::string id, std::list<std::shared_ptr<SimpleTransaction>> input_tx_list, int creator, unsigned int slot_no)
                 : Block(id, input_tx_list) {
             this->creator = creator;
+            this->slot_no = slot_no;
             SetTxHash();
         };
 
         virtual void SetGenesisBlock() override;
         virtual std::ostream& print(std::ostream& out) const override;
 
+        // getter, setter
+        unsigned int GetCreator() { return creator; }
+        unsigned int GetSlotNo() { return slot_no; }
         virtual void SetBlockHash(libBLEEP::UINT256_t hash) override { block_hash = hash; }
         virtual libBLEEP::UINT256_t GetBlockHash() const override { return block_hash; }
         libBLEEP::UINT256_t GetTxHash() const { return tx_hash; }
@@ -58,7 +62,7 @@ namespace libBLEEP_BL {
             ar & boost::serialization::base_object<Block>(*this);
             boost::serialization::void_cast_register<Block,POSBlock>();
             ar & creator;
-            ar & seed;
+            ar & slot_no;
             ar & tx_hash;
             ar & prev_block_hash;
             ar & timestamp;

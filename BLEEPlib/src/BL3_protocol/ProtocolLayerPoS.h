@@ -1,3 +1,7 @@
+//
+// Created by Hyunjin Kim on 2021/06/04.
+//
+
 #ifndef PROTOCOL_LAYER_POS_H
 #define PROTOCOL_LAYER_POS_H
 
@@ -15,9 +19,11 @@ namespace libBLEEP_BL {
     class BL_ProtocolLayerPoS : public BL_ProtocolLayer_API {
     private:
         TxGossipProtocol _txGossipProtocol;
-    private:
+
         POSMiner _posMiner;
         BlockTree<POSBlock> _blocktree;
+
+        unsigned int _current_slot;
     public:
         BlockTree<POSBlock>& GetBlockTree() { return _blocktree; }
     private: // PoS parameter
@@ -47,15 +53,7 @@ namespace libBLEEP_BL {
         void _RecvPOSBlockBlkHandler(std::shared_ptr<Message> msg);
 
     private:
-        std::shared_ptr<POSBlock> _makeCandidateBlock() {
-            std::list<std::shared_ptr<SimpleTransaction> > txs = _txPool->GetTxs(maxTxPerBlock);
-            std::shared_ptr<POSBlock> candidateBlk = std::make_shared<POSBlock>("", txs);
-
-            candidateBlk->SetBlockIdx(_blocktree.GetNextBlockIdx());
-            candidateBlk->SetPrevBlockHash(_blocktree.GetLastHash());
-
-            return candidateBlk;
-        }
+        std::shared_ptr<POSBlock> BL_ProtocolLayerPoS::makeBlockTemplate(unsinged int slot_id);
 
         // periodic tx generation for experimental purpose
         ev::timer _txgentimer;

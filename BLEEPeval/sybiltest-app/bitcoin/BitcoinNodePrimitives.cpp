@@ -297,8 +297,8 @@ void BitcoinNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::du
     if (now < attack_start_time) {
         // if it's prepare phase
         int totalIPCount = 1000;
-        int legiIPcount = totalIPCount * 0.3;
-        int unreLegiIPcount = totalIPCount * 0.7;
+        int legiIPcount = totalIPCount * 1;
+        int unreLegiIPcount = totalIPCount * 0;
 
         legiIPcount = min(legiIPcount, (int) vReachableIP.size());
         unreLegiIPcount = min(unreLegiIPcount, (int) vUnreachIP.size());
@@ -348,7 +348,6 @@ void BitcoinNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::du
         struct in_addr in_addr_ip;
         in_addr_ip.s_addr = inet_addr(ip.c_str());
         CAddress addr = CAddress(CService(CNetAddr(in_addr_ip), 8333), nLocalNodeServices);
-
         vCAddr.push_back(addr);
     }
     CSerializedNetMsg msg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::ADDR, vCAddr);

@@ -21,7 +21,7 @@ namespace sybiltest {
     public:
         BitcoinIPDatabase() {
             // Load and store IP address database from churn.txt
-            std::ifstream read("churn_8333.txt");
+            std::ifstream read("churn_8333_1y.txt");
             if (read.fail()) {
                 std::cout << "failed to read churn_8333.txt file" << "\n";
                 exit(-1);
@@ -49,25 +49,30 @@ namespace sybiltest {
                 vector<int> duration;
                 std::string timestamp;
 
+                /*
                 // For testing, all nodes churned in at beginning, and churned out after one week
                 duration.push_back(0);
                 duration.push_back(60 * 60 * 24 * 7);
                 InsertIPDurationPair(ip, duration);
                 _mIPDuration[ip] = duration;
-                /*
+                */
+
                 // setting small value can cut off churn data, boosting up testing
                 // to test with whole data, set this value at zero or negative value
-                int maxchurn = 10;
-
-                while(std::getline(std::stringstream(line.substr(pos+1)), timestamp, ' ')) {
+                int maxchurn = 0;
+                std::cout<<"IP : " << ipport << " ";
+                std::stringstream ss = std::stringstream(line.substr(pos+1));
+                while(std::getline(ss, timestamp, ' ')) {
                     duration.push_back(stoi(timestamp) - mintime);
+                    std::cout<<stoi(timestamp) - mintime<<" ";
                     if(--maxchurn == 0) break;
                 }
+                std::cout<<"\n";
                 if (duration.size() > 0 && std::regex_match(ip, re)) {
                     InsertIPDurationPair(ip, duration);
                     _mIPDuration[ip] = duration;
                 }
-                 */
+
 
             }
         }

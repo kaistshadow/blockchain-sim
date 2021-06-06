@@ -55,15 +55,22 @@ target_sources(BLEEP
         src/BL3_protocol/ProtocolLayerEx1.cpp
         src/BL3_protocol/ProtocolLayerEx1.h
         src/BL3_protocol/ProtocolLayerPoW.cpp
+        src/BL3_protocol/ProtocolLayerPoS.cpp
         src/BL3_protocol/ProtocolLayerPoW.h
+        src/BL3_protocol/ProtocolLayerPoS.h
         src/BL3_protocol/POWProtocolParameter.h
+        src/BL3_protocol/POSProtocolParameter.h
         src/BL3_protocol/Block.h
         src/BL3_protocol/BlockTree.h
         src/BL3_protocol/BlockTree.cpp
         src/BL3_protocol/POWBlock.h
+        src/BL3_protocol/POSBlock.h
         src/BL3_protocol/POWBlock.cpp
+        src/BL3_protocol/POSBlock.cpp
         src/BL3_protocol/POWMiner.cpp
+        src/BL3_protocol/POSMiner.cpp
         src/BL3_protocol/POWBlockGossipProtocolMsg.h
+        src/BL3_protocol/POSBlockGossipProtocolMsg.h
         src/BL3_protocol/TxGossipProtocol.cpp
         src/BL3_protocol/TxGossipProtocol.h
         src/BL3_protocol/TxGossipProtocolMsg.h

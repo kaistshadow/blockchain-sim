@@ -23,7 +23,6 @@ namespace libBLEEP_BL {
         POSMiner _posMiner;
         BlockTree<POSBlock> _blocktree;
 
-        unsigned int _current_slot;
     public:
         BlockTree<POSBlock>& GetBlockTree() { return _blocktree; }
     private: // PoS parameter
@@ -53,7 +52,7 @@ namespace libBLEEP_BL {
         void _RecvPOSBlockBlkHandler(std::shared_ptr<Message> msg);
 
     private:
-        std::shared_ptr<POSBlock> BL_ProtocolLayerPoS::makeBlockTemplate(unsinged int slot_id);
+        std::shared_ptr<POSBlock> makeBlockTemplate(unsigned int slot_id);
 
         // periodic tx generation for experimental purpose
         ev::timer _txgentimer;
@@ -80,7 +79,7 @@ namespace libBLEEP_BL {
         // slot processing
         ev::timer _slottimer;
         void _slottimerCallback(ev::timer &w, int revents);
-        void _startPeriodicSlotStart(double slot_interval);
+        void _startPeriodicSlotStart(double interval);
 
 
     public:
@@ -93,6 +92,8 @@ namespace libBLEEP_BL {
         virtual bool InitiateProtocol();
         virtual bool InitiateProtocol(ProtocolParameter* params);
         virtual bool StopProtocol();
+
+        unsigned int random_selection(unsigned int slot_id);
     };
 }
 

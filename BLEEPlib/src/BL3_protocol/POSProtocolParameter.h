@@ -13,6 +13,7 @@ namespace libBLEEP_BL {
         virtual ~POSProtocolParameter() {}
         double txGenStartAt = (double)INT_MAX;
         double txGenInterval = (double)INT_MAX;
+        double slot_interval = 20;
         unsigned int slot_epoch_cnt = 10;
         unsigned int chain_selection_block_threshold = 4;    // chain selection: 
     };

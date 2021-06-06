@@ -10,6 +10,20 @@
 
 using namespace libBLEEP_BL;
 
+void POSBlock::CalcHash() {
+    unsigned char hash_out[32];
+    SHA256_CTX ctx;
+    sha256_init(&ctx);
+    sha256_update(&ctx, (const unsigned char*)tx_hash.str().c_str(), tx_hash.str().size());
+    sha256_update(&ctx, (const unsigned char*)prev_block_hash.str().c_str(), prev_block_hash.str().size());
+    sha256_update(&ctx, (const unsigned char*)&_slot_no, sizeof(unsigned int));
+    sha256_update(&ctx, (const unsigned char*)&_creator, sizeof(unsigned int));
+    sha256_update(&ctx, (const unsigned char*)&timestamp, sizeof(double));
+    sha256_final(&ctx, hash_out);
+    libBLEEP::UINT256_t hash_out_256(hash_out, 32);
+    SetBlockHash(hash_out_256);
+}
+
 void POSBlock::SetGenesisBlock() {
     SetPrevBlockHash(0);
     SetSlotNo(0);
@@ -19,18 +33,7 @@ void POSBlock::SetGenesisBlock() {
 
     std::cout << "genesis txhash:" << tx_hash.str() << "\n";
 
-    unsigned char hash_out[32];
-    SHA256_CTX ctx;
-    sha256_init(&ctx);
-    sha256_update(&ctx, (const unsigned char*)blk->GetTxHash().str().c_str(), blk->GetTxHash().str().size());
-    sha256_update(&ctx, (const unsigned char*)blk->GetPrevBlockHash().str().c_str(), blk->GetPrevBlockHash().str().size());
-    sha256_update(&ctx, (const unsigned char*)&slot_no, sizeof(unsigned int));
-    sha256_update(&ctx, (const unsigned char*)&creator, sizeof(unsigned int));
-    sha256_update(&ctx, (const unsigned char*)&timestamp, sizeof(double));
-    sha256_final(&ctx, hash_out);
-
-    libBLEEP::UINT256_t hash_out_256(hash_out, 32);
-    SetBlockHash(hash_out_256);
+    CalcHash();
 }
 
 void POSBlock::SetTxHash() {

@@ -2,6 +2,8 @@
 #include "POSProtocolParameter.h"
 #include "POSBlockGossipProtocolMsg.h"
 
+#include <random>
+
 using namespace libBLEEP_BL;
 
 
@@ -148,7 +150,7 @@ void BL_ProtocolLayerPoS::_RecvPOSBlockBlkHandler(std::shared_ptr<Message> msg) 
     std::shared_ptr<POSBlockGossipBlk> getdata = std::static_pointer_cast<POSBlockGossipBlk>(msg->GetObject());
     std::shared_ptr<POSBlock> blkptr = getdata->GetBlock();
 
-    if (!(random_selection(blkptr->slot_no) == blkptr->creator)) {
+    if (!(random_selection(blkptr->GetSlotNo()) == blkptr->GetCreator())) {
         return; // mismatch between block creator and expected block creator
     }
 
@@ -208,7 +210,7 @@ void BL_ProtocolLayerPoS::SwitchAsyncEventHandler(AsyncEvent& event) {
         case AsyncEventEnum::EmuBlockMiningComplete:
         {
             std::cout << "block mining complete" << "\n";
-            std::shared_ptr<POSBlock> minedBlk = event.GetData().GetMinedBlock();
+            std::shared_ptr<POSBlock> minedBlk = event.GetData().GetMinedPOSBlock();
             std::cout << "blockhash:" << minedBlk->GetBlockHash() << "\n";
             std::cout << "blockhash(str):" << minedBlk->GetBlockHash().str() << "\n";
             std::cout << "blockhash:" << libBLEEP::UINT256_t((const unsigned char*)minedBlk->GetBlockHash().str().c_str(), 32) << "\n";
@@ -254,9 +256,9 @@ unsigned int BL_ProtocolLayerPoS::random_selection(unsigned int slot_id) {
         return stakes.first();  // TODO: stakes
     if (number >= 1)
         return stakes.end();
-    return stakes.get_containing_element(number * stakes.range())
+    return stakes.get_containing_element(number * stakes.range());
 }
-std::shared_ptr<POSBlock> BL_ProtocolLayerPoS::makeBlockTemplate(unsinged int slot_id) {
+std::shared_ptr<POSBlock> BL_ProtocolLayerPoS::makeBlockTemplate(unsigned int slot_id) {
     std::list<std::shared_ptr<SimpleTransaction>> txs = _txPool->GetTxs(maxTxPerBlock);
     std::shared_ptr<POSBlock> templateBlock = std::make_shared<POSBlock>("", txs, _owner_id, slot_id);
     templateBlock->SetBlockIdx(_blocktree.GetNextBlockIdx());
@@ -264,7 +266,7 @@ std::shared_ptr<POSBlock> BL_ProtocolLayerPoS::makeBlockTemplate(unsinged int sl
     return templateBlock;
 }
 void BL_ProtocolLayerPoS::_slottimerCallback(ev::timer &w, int revents) {
-    unsigned int _current_slot = (int)(GetGlobalClock() / slot_interval)
+    unsigned int _current_slot = (int)(GetGlobalClock() / slot_interval);
     if (_current_slot == 0) {
         // ignore genesis case
         return;
@@ -274,9 +276,9 @@ void BL_ProtocolLayerPoS::_slottimerCallback(ev::timer &w, int revents) {
         _posMiner.AsyncMakeBlock(blk);
     }
 }
-void BL_ProtocolLayerPoS::_startPeriodicSlotStart(double slot_interval) {
+void BL_ProtocolLayerPoS::_startPeriodicSlotStart(double interval) {
     _slottimer.set<BL_ProtocolLayerPoS, &BL_ProtocolLayerPoS::_slottimerCallback>(this);
-    _slottimer.set(0, slot_interval);
+    _slottimer.set(0, interval);
     _slottimer.start();
 }
 

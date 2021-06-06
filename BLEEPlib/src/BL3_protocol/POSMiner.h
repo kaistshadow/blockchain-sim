@@ -20,7 +20,7 @@ namespace libBLEEP_BL {
         /*********************************************************/
         /* Public API designed for high-level event requests */
         /*********************************************************/
-        void AsyncMakeBlock(std::shared_ptr<POSBLOCK> templateBlock);
+        void AsyncMakeBlock(std::shared_ptr<POSBlock> templateBlock);
     };
 }
 #endif //BLEEP_POSMINER_H

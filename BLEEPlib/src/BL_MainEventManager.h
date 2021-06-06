@@ -8,6 +8,7 @@
 #include "BL2_peer_connectivity/Peer.h"
 #include "BL2_peer_connectivity/Message.h"
 #include "BL3_protocol/POWBlock.h"
+#include "BL3_protocol/POSBlock.h"
 
 namespace libBLEEP_BL {
 
@@ -54,7 +55,7 @@ namespace libBLEEP_BL {
     };
 
     /* class for data */
-    /* It needs a refactoring! Use polymorphism to reduce data overhead! */
+    /* TODO: It needs a refactoring! Use polymorphism to reduce data overhead! */
     class AsyncEventDataManager {
     private:
         // data for SocketAccept event
@@ -99,6 +100,9 @@ namespace libBLEEP_BL {
 
         // data for EmuBlockMiningComplete
         std::shared_ptr<POWBlock> _minedBlk;
+
+        // data for POS block minting
+        std::shared_ptr<POSBlock> _minedPOSBlk;
 
     public:
         // data set function for SocketAccept
@@ -186,6 +190,11 @@ namespace libBLEEP_BL {
         void SetMinedBlock(std::shared_ptr<POWBlock> block) { _minedBlk = block; }
         // data access function for EmuBlockMiningComplete, BlockMiningComplete
         std::shared_ptr<POWBlock> GetMinedBlock() { return _minedBlk; }
+
+        // data set function for EmuBlockMiningComplete, BlockMiningComplete (POS)
+        void SetMinedPOSBlock(std::shared_ptr<POSBlock> block) { _minedPOSBlk = block; }
+        // data access function for EmuBlockMiningComplete, BlockMiningComplete
+        std::shared_ptr<POSBlock> GetMinedPOSBlock() { return _minedPOSBlk; }
     };
 
     class AsyncEvent {

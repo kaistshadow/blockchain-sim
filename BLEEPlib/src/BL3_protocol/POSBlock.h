@@ -21,8 +21,8 @@
 namespace libBLEEP_BL {
     class POSBlock : public Block {
     private:
-        unsigned int creator;
-        unsigned int slot_no;
+        unsigned int _creator;
+        unsigned int _slot_no;
         libBLEEP::UINT256_t prev_block_hash;
         libBLEEP::UINT256_t tx_hash;
         double timestamp = 0;
@@ -31,19 +31,20 @@ namespace libBLEEP_BL {
     public:
         POSBlock() : Block() {}
         virtual ~POSBlock() {}
-        POSBlock(std::string id, std::list<std::shared_ptr<SimpleTransaction>> input_tx_list, int creator, unsigned int slot_no)
+        POSBlock(std::string id, std::list<std::shared_ptr<SimpleTransaction>> input_tx_list)
                 : Block(id, input_tx_list) {
-            this->creator = creator;
-            this->slot_no = slot_no;
             SetTxHash();
         };
 
         virtual void SetGenesisBlock() override;
         virtual std::ostream& print(std::ostream& out) const override;
+        void CalcHash();
 
         // getter, setter
-        unsigned int GetCreator() { return creator; }
-        unsigned int GetSlotNo() { return slot_no; }
+        void SetCreator(unsigned int creator) { _creator = creator; }
+        unsigned int GetCreator() const { return _creator; }
+        void SetSlotNo(unsigned int slot_no) { _slot_no = slot_no; }
+        unsigned int GetSlotNo() const { return _slot_no; }
         virtual void SetBlockHash(libBLEEP::UINT256_t hash) override { block_hash = hash; }
         virtual libBLEEP::UINT256_t GetBlockHash() const override { return block_hash; }
         libBLEEP::UINT256_t GetTxHash() const { return tx_hash; }
@@ -61,8 +62,8 @@ namespace libBLEEP_BL {
         void serialize(Archive & ar, const unsigned int version) {
             ar & boost::serialization::base_object<Block>(*this);
             boost::serialization::void_cast_register<Block,POSBlock>();
-            ar & creator;
-            ar & slot_no;
+            ar & _creator;
+            ar & _slot_no;
             ar & tx_hash;
             ar & prev_block_hash;
             ar & timestamp;

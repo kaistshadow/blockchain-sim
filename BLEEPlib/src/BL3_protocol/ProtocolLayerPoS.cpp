@@ -255,8 +255,8 @@ unsigned int BL_ProtocolLayerPoS::random_selection(unsigned int slot_id) {
     if (number <= 0)
         return stakes.first();  // TODO: stakes
     if (number >= 1)
-        return stakes.end();
-    return stakes.get_containing_element(number * stakes.range());
+        return stakes.last();
+    return stakes.pickLeader((unsigned int)(number * stakes.getTotal()));
 }
 std::shared_ptr<POSBlock> BL_ProtocolLayerPoS::makeBlockTemplate(unsigned int slot_id) {
     std::list<std::shared_ptr<SimpleTransaction>> txs = _txPool->GetTxs(maxTxPerBlock);

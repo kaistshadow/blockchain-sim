@@ -288,6 +288,8 @@ bool BL_ProtocolLayerPoS::InitiateProtocol() {
         _startPeriodicTxGen(txGenStartAt, txGenInterval);
         _startPeriodicSlotStart(slot_interval);
         _initiated = true;
+        // TODO: parse _owner_id from bleep#
+        // TODO: load stakes
         return true;
     } else {
         std::cout << "already initiated protocol" << "\n";
@@ -303,7 +305,8 @@ bool BL_ProtocolLayerPoS::InitiateProtocol(ProtocolParameter* params) {
         _startPeriodicTxGen(posparams->txGenStartAt, posparams->txGenInterval);
         _startPeriodicSlotStart(posparams->slot_interval);
         _initiated = true;
-
+        // TODO: parse _owner_id from bleep#
+        // TODO: load stakes
         return true;
     } else {
         std::cout << "already initiated protocol" << "\n";

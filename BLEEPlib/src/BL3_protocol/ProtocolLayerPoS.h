@@ -15,10 +15,14 @@
 #include "BlockTree.h"
 #include "BlockTree.cpp"  // This(BlockTree.cpp) is required since the BlockTree is template class
 
+#include <string>
+
 namespace libBLEEP_BL {
     class BL_ProtocolLayerPoS : public BL_ProtocolLayer_API {
     private:
         TxGossipProtocol _txGossipProtocol;
+        StakeList stakes;
+        unsigned int _owner_id;
 
         POSMiner _posMiner;
         BlockTree<POSBlock> _blocktree;
@@ -31,6 +35,7 @@ namespace libBLEEP_BL {
         double txGenInterval = 4;
 
         double slot_interval = 20;
+        std::string stakeDatafile = "stakes.txt"
         unsigned int slot_epoch_cnt = 10;
         unsigned int chain_selection_block_threshold = 4;    // chain selection: 
     private: // Block propagation protocol-related data structure (processing inventory)

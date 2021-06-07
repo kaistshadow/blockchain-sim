@@ -36,3 +36,9 @@ set_target_properties(MinerNodeRPC::Plugin PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set_property(TARGET MinerNodeRPC::Plugin PROPERTY IMPORTED_NO_SONAME 1)
 
+add_shadow_plugin(BLEEPemul-test-pos-node node-pos.cpp)
+target_link_libraries(BLEEPemul-test-pos-node BLEEP)
+# copy resulting plugins into source directory
+add_custom_command(TARGET BLEEPemul-test-pos-node
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BLEEPemul-test-pos-node> ${CMAKE_CURRENT_SOURCE_DIR})

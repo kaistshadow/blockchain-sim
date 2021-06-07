@@ -16,8 +16,8 @@ void POSBlock::CalcHash() {
     sha256_init(&ctx);
     sha256_update(&ctx, (const unsigned char*)tx_hash.str().c_str(), tx_hash.str().size());
     sha256_update(&ctx, (const unsigned char*)prev_block_hash.str().c_str(), prev_block_hash.str().size());
-    sha256_update(&ctx, (const unsigned char*)&_slot_no, sizeof(unsigned int));
-    sha256_update(&ctx, (const unsigned char*)&_creator, sizeof(unsigned int));
+    sha256_update(&ctx, (const unsigned char*)&_slot_no, sizeof(unsigned long));
+    sha256_update(&ctx, (const unsigned char*)&_creator, sizeof(unsigned long));
     sha256_update(&ctx, (const unsigned char*)&timestamp, sizeof(double));
     sha256_final(&ctx, hash_out);
     libBLEEP::UINT256_t hash_out_256(hash_out, 32);

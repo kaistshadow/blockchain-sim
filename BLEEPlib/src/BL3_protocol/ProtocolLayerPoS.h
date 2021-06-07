@@ -23,7 +23,7 @@ namespace libBLEEP_BL {
     private:
         TxGossipProtocol _txGossipProtocol;
         StakeList stakes;
-        unsigned int _creatorNodeId;
+        unsigned long _creatorNodeId;
 
         POSMiner _posMiner;
         BlockTree<POSBlock> _blocktree;
@@ -58,7 +58,7 @@ namespace libBLEEP_BL {
         void _RecvPOSBlockBlkHandler(std::shared_ptr<Message> msg);
 
     private:
-        std::shared_ptr<POSBlock> makeBlockTemplate(unsigned int slot_id);
+        std::shared_ptr<POSBlock> makeBlockTemplate(unsigned long slot_id);
 
         // periodic tx generation for experimental purpose
         ev::timer _txgentimer;
@@ -99,7 +99,7 @@ namespace libBLEEP_BL {
         virtual bool InitiateProtocol(ProtocolParameter* params);
         virtual bool StopProtocol();
 
-        unsigned int random_selection(unsigned int slot_id);
+        unsigned long random_selection(unsigned long slot_id);
     };
 }
 

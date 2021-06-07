@@ -15,9 +15,9 @@ namespace libBLEEP_BL {
 	class StakeList {
 	private:
 	    bool fDirty;
-	    std::map<unsigned int, unsigned int> leadermap;
-	    std::map<unsigned int, unsigned int> inverted_leadermap;
-	    unsigned int totalStakedValue;
+	    std::map<unsigned long, unsigned long> leadermap;
+	    std::map<unsigned long, unsigned long> inverted_leadermap;
+	    unsigned long totalStakedValue;
 
 	    void updateInvertedMap();
 	public:
@@ -25,12 +25,12 @@ namespace libBLEEP_BL {
 	        fDirty = true;
 	        totalStakedValue = 0;
 	    }
-	    void addStake(unsigned int leader, unsigned int stakedValue);
+	    void addStake(unsigned long leader, unsigned long stakedValue);
 	    /* leader pick functions */
-	    unsigned int first();
-	    unsigned int last();
-	    unsigned int pickLeader(unsigned int v);
-	    unsigned int getTotal();
+	    unsigned long first();
+	    unsigned long last();
+	    unsigned long pickLeader(unsigned long v);
+	    unsigned long getTotal();
 	    void load(std::string stakefile);
 	};
 }

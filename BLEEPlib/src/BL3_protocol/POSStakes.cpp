@@ -11,7 +11,7 @@ namespace libBLEEP_BL {
         inverted_leadermap.clear();
         totalStakedValue = 0;
         auto it = leadermap.begin();
-        unsigned int value = 0;
+        unsigned long value = 0;
         while (it != leadermap.end()) {
             inverted_leadermap.insert({value, it->first});
             value += it->second;
@@ -21,7 +21,7 @@ namespace libBLEEP_BL {
         totalStakedValue = value;
     }
 
-    void StakeList::addStake(unsigned int leader, unsigned int stakedValue) {
+    void StakeList::addStake(unsigned long leader, unsigned long stakedValue) {
         auto it = leadermap.find(leader);
         if (it == leadermap.end()) {
             leadermap.insert({leader, stakedValue});
@@ -31,21 +31,21 @@ namespace libBLEEP_BL {
         fDirty = true;
     }
 
-    unsigned int StakeList::first() {
+    unsigned long StakeList::first() {
         if (fDirty) {
             updateInvertedMap();
         }
         return inverted_leadermap.begin()->second;
     }
 
-    unsigned int StakeList::last() {
+    unsigned long StakeList::last() {
         if (fDirty) {
             updateInvertedMap();
         }
         return std::prev(inverted_leadermap.end())->second;
     }
 
-    unsigned int StakeList::pickLeader(unsigned int v) {
+    unsigned long StakeList::pickLeader(unsigned long v) {
         if (fDirty) {
             updateInvertedMap();
         }
@@ -57,7 +57,7 @@ namespace libBLEEP_BL {
         }
     }
 
-    unsigned int StakeList::getTotal() {
+    unsigned long StakeList::getTotal() {
         if (fDirty) {
             updateInvertedMap();
         }
@@ -66,13 +66,30 @@ namespace libBLEEP_BL {
 
     void StakeList::load(std::string stakefile) {
         std::ifstream file(stakefile);
-        // TODO: assert existence
         std::string str;
         while (std::getline(file, str)) {
-            // TODO: trim
-            // TODO: separate number with ':'
-            // TODO: assert each number (unsigned int, double)
-            // TODO: add
+            // trim
+            str.erase(std::remove_if(str.begin(), str.end(), std::isspace), str.end());
+            size_t pivot = str.find(':');
+            if (pivot == std::string::npos) {
+                std::cout << "exception occured on stakefile parsing.\n";
+                return;
+            }
+        
+            std::string left = str.substr(0, pivot);
+            std::string right = str.substr(pivot + 1);
+
+            unsigned long leader;
+            unsigned long stakedValue;
+            try {
+                leader = std::stoul(left);
+                stakedValue = std::stoul(right);
+                addStake(leader, stakedValue);
+            }
+            catch (const std::exception& expn) {
+                std::cout << "exception occured on stakefile parsing.\n";
+            }
         }
+        return;
     }
 }

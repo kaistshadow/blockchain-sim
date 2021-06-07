@@ -21,8 +21,8 @@
 namespace libBLEEP_BL {
     class POSBlock : public Block {
     private:
-        unsigned int _creator;
-        unsigned int _slot_no;
+        unsigned long _creator;
+        unsigned long _slot_no;
         libBLEEP::UINT256_t prev_block_hash;
         libBLEEP::UINT256_t tx_hash;
         double timestamp = 0;
@@ -41,10 +41,10 @@ namespace libBLEEP_BL {
         void CalcHash();
 
         // getter, setter
-        void SetCreator(unsigned int creator) { _creator = creator; }
-        unsigned int GetCreator() const { return _creator; }
-        void SetSlotNo(unsigned int slot_no) { _slot_no = slot_no; }
-        unsigned int GetSlotNo() const { return _slot_no; }
+        void SetCreator(unsigned long creator) { _creator = creator; }
+        unsigned long GetCreator() const { return _creator; }
+        void SetSlotNo(unsigned long slot_no) { _slot_no = slot_no; }
+        unsigned long GetSlotNo() const { return _slot_no; }
         virtual void SetBlockHash(libBLEEP::UINT256_t hash) override { block_hash = hash; }
         virtual libBLEEP::UINT256_t GetBlockHash() const override { return block_hash; }
         libBLEEP::UINT256_t GetTxHash() const { return tx_hash; }

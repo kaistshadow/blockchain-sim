@@ -243,11 +243,11 @@ void BL_ProtocolLayerPoS::SwitchAsyncEventHandler(AsyncEvent& event) {
     }
 }
 
-unsigned int BL_ProtocolLayerPoS::random_selection(unsigned int slot_id) {
+unsigned long BL_ProtocolLayerPoS::random_selection(unsigned long slot_id) {
     if (slot_id == 0) {
         return 0;
     }
-    unsigned int random_num = slot_id;
+    unsigned long random_num = slot_id;
     std::default_random_engine generator(random_num);
     std::uniform_real_distribution<double> distribution(0.0,1.0);
     double number = distribution(generator);
@@ -256,9 +256,9 @@ unsigned int BL_ProtocolLayerPoS::random_selection(unsigned int slot_id) {
         return stakes.first();  // TODO: stakes
     if (number >= 1)
         return stakes.last();
-    return stakes.pickLeader((unsigned int)(number * stakes.getTotal()));
+    return stakes.pickLeader((unsigned long)(number * stakes.getTotal()));
 }
-std::shared_ptr<POSBlock> BL_ProtocolLayerPoS::makeBlockTemplate(unsigned int slot_id) {
+std::shared_ptr<POSBlock> BL_ProtocolLayerPoS::makeBlockTemplate(unsigned long slot_id) {
     std::list<std::shared_ptr<SimpleTransaction>> txs = _txPool->GetTxs(maxTxPerBlock);
     std::shared_ptr<POSBlock> templateBlock = std::make_shared<POSBlock>("", txs);
     templateBlock->SetBlockIdx(_blocktree.GetNextBlockIdx());
@@ -266,12 +266,12 @@ std::shared_ptr<POSBlock> BL_ProtocolLayerPoS::makeBlockTemplate(unsigned int sl
     return templateBlock;
 }
 void BL_ProtocolLayerPoS::_slottimerCallback(ev::timer &w, int revents) {
-    unsigned int _current_slot = (int)(GetGlobalClock() / slot_interval);
+    unsigned long _current_slot = (int)(GetGlobalClock() / slot_interval);
     if (_current_slot == 0) {
         // ignore genesis case
         return;
     }
-    if (random_selection((unsigned int)_current_slot) == _creatorNodeId) {
+    if (random_selection((unsigned long)_current_slot) == _creatorNodeId) {
         std::shared_ptr<POSBlock> blk = makeBlockTemplate(_current_slot);
         _posMiner.AsyncMakeBlock(blk);
     }

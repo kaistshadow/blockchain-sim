@@ -16,7 +16,7 @@ namespace libBLEEP_BL {
         double txGenStartAt = (double)INT_MAX;
         double txGenInterval = (double)INT_MAX;
 
-        unsigned int creatorNodeId = 0;
+        unsigned long creatorNodeId = 0;
         std::string stakeDatafile = "stakes.txt";
         double slot_interval = 20;
 

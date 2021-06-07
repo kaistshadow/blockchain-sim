@@ -31,6 +31,7 @@ namespace libBLEEP_BL {
 	    unsigned int last();
 	    unsigned int pickLeader(unsigned int v);
 	    unsigned int getTotal();
+	    void load(std::string stakefile);
 	};
 }
 

@@ -74,6 +74,7 @@ target_sources(BLEEP
         src/BL3_protocol/TxGossipProtocol.cpp
         src/BL3_protocol/TxGossipProtocol.h
         src/BL3_protocol/TxGossipProtocolMsg.h
+        src/BL3_protocol/POSStakes.cpp
         src/BL3_protocol/TxPool.cpp
         src/utility/UInt256.cpp
         src/utility/Assert.cpp

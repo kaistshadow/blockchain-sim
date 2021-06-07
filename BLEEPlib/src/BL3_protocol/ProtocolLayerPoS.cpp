@@ -260,7 +260,7 @@ unsigned int BL_ProtocolLayerPoS::random_selection(unsigned int slot_id) {
 }
 std::shared_ptr<POSBlock> BL_ProtocolLayerPoS::makeBlockTemplate(unsigned int slot_id) {
     std::list<std::shared_ptr<SimpleTransaction>> txs = _txPool->GetTxs(maxTxPerBlock);
-    std::shared_ptr<POSBlock> templateBlock = std::make_shared<POSBlock>("", txs, _owner_id, slot_id);
+    std::shared_ptr<POSBlock> templateBlock = std::make_shared<POSBlock>("", txs);
     templateBlock->SetBlockIdx(_blocktree.GetNextBlockIdx());
     templateBlock->SetPrevBlockHash(_blocktree.GetLastHash());
     return templateBlock;
@@ -271,7 +271,7 @@ void BL_ProtocolLayerPoS::_slottimerCallback(ev::timer &w, int revents) {
         // ignore genesis case
         return;
     }
-    if (random_selection((unsigned int)_current_slot) == _owner_id) {
+    if (random_selection((unsigned int)_current_slot) == _creatorNodeId) {
         std::shared_ptr<POSBlock> blk = makeBlockTemplate(_current_slot);
         _posMiner.AsyncMakeBlock(blk);
     }
@@ -288,8 +288,7 @@ bool BL_ProtocolLayerPoS::InitiateProtocol() {
         _startPeriodicTxGen(txGenStartAt, txGenInterval);
         _startPeriodicSlotStart(slot_interval);
         _initiated = true;
-        // TODO: parse _owner_id from bleep#
-        // TODO: load stakes
+        stakes.load(stakeDatafile);
         return true;
     } else {
         std::cout << "already initiated protocol" << "\n";
@@ -305,8 +304,9 @@ bool BL_ProtocolLayerPoS::InitiateProtocol(ProtocolParameter* params) {
         _startPeriodicTxGen(posparams->txGenStartAt, posparams->txGenInterval);
         _startPeriodicSlotStart(posparams->slot_interval);
         _initiated = true;
-        // TODO: parse _owner_id from bleep#
-        // TODO: load stakes
+        _creatorNodeId = posparams->creatorNodeId;
+        stakeDatafile = posparams->stakeDatafile;
+        stakes.load(stakeDatafile);
         return true;
     } else {
         std::cout << "already initiated protocol" << "\n";

@@ -5,6 +5,9 @@
 #include "POSStakes.h"
 
 #include <fstream>
+#include <iostream>
+#include <algorithm>
+#include <string>
 
 namespace libBLEEP_BL {
     void StakeList::updateInvertedMap() {
@@ -69,7 +72,10 @@ namespace libBLEEP_BL {
         std::string str;
         while (std::getline(file, str)) {
             // trim
-            str.erase(std::remove_if(str.begin(), str.end(), std::isspace), str.end());
+            str.erase(std::remove(str.begin(), str.end(), ' '), str.end());
+            str.erase(std::remove(str.begin(), str.end(), '\t'), str.end());
+            str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
+            str.erase(std::remove(str.begin(), str.end(), '\r'), str.end());
             size_t pivot = str.find(':');
             if (pivot == std::string::npos) {
                 std::cout << "exception occured on stakefile parsing.\n";

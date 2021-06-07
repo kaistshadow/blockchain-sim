@@ -4,14 +4,9 @@
 using namespace libBLEEP_BL;
 
 std::list<std::shared_ptr<SimpleTransaction> > TxPool::GetTxs(int num) {
-    if (GetPendingTxNum() < num) {
-        std::cout << "Warning : Not enough pending transaction pool. Too many requests" << "\n";
-        return {};
-    }
-
     std::list<std::shared_ptr<SimpleTransaction> > txs;
     auto it = items.begin();
-    while (num-- > 0) {
+    while (num-- > 0 && it != items.end()) {
         txs.push_back(it->second);
         it++;
         // txs.push_back(items.front());

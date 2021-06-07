@@ -151,6 +151,7 @@ void BL_ProtocolLayerPoS::_RecvPOSBlockBlkHandler(std::shared_ptr<Message> msg) 
     std::shared_ptr<POSBlock> blkptr = getdata->GetBlock();
 
     if (!(random_selection(blkptr->GetSlotNo()) == blkptr->GetCreator())) {
+        std::cout << "block creator mismatch: creator=" << blkptr->GetCreator() << "\n";
         return; // mismatch between block creator and expected block creator
     }
 
@@ -244,6 +245,7 @@ void BL_ProtocolLayerPoS::SwitchAsyncEventHandler(AsyncEvent& event) {
 }
 
 unsigned long BL_ProtocolLayerPoS::random_selection(unsigned long slot_id) {
+    std::cout << "PoS Debug - random selection for slot#: " << slot_id <<"\n";
     if (slot_id == 0) {
         return 0;
     }
@@ -252,21 +254,31 @@ unsigned long BL_ProtocolLayerPoS::random_selection(unsigned long slot_id) {
     std::uniform_real_distribution<double> distribution(0.0,1.0);
     double number = distribution(generator);
 
-    if (number <= 0)
-        return stakes.first();  // TODO: stakes
-    if (number >= 1)
+    if (number <= 0) {
+        std::cout << "Debug Selected: " << stakes.first() << "\n";
+        return stakes.first();
+    } else if (number >= 1) {
+        std::cout << "Debug Selected: " << stakes.last() << "\n";
         return stakes.last();
-    return stakes.pickLeader((unsigned long)(number * stakes.getTotal()));
+    } else {
+        std::cout << "Debug Selected: " << stakes.pickLeader((unsigned long)(number * stakes.getTotal())) << "\n";
+        return stakes.pickLeader((unsigned long)(number * stakes.getTotal()));
+    }
 }
 std::shared_ptr<POSBlock> BL_ProtocolLayerPoS::makeBlockTemplate(unsigned long slot_id) {
-    std::list<std::shared_ptr<SimpleTransaction>> txs = _txPool->GetTxs(maxTxPerBlock);
+    std::list<std::shared_ptr<SimpleTransaction>> txs = _txPool->GetTxs(maxTxPerBlock); // TODO: change txpool logic
     std::shared_ptr<POSBlock> templateBlock = std::make_shared<POSBlock>("", txs);
-    templateBlock->SetBlockIdx(_blocktree.GetNextBlockIdx());
     templateBlock->SetPrevBlockHash(_blocktree.GetLastHash());
+    templateBlock->SetCreator(_creatorNodeId);
+    templateBlock->SetSlotNo(slot_id);
+    templateBlock->SetBlockIdx(_blocktree.GetNextBlockIdx());
     return templateBlock;
 }
 void BL_ProtocolLayerPoS::_slottimerCallback(ev::timer &w, int revents) {
-    unsigned long _current_slot = (int)(GetGlobalClock() / slot_interval);
+    double clock = GetGlobalClock();
+    std::cout << "Debug clock:" << clock << "\n";
+    std::cout << "Debug interval:" << slot_interval << "\n";
+    unsigned long _current_slot = (unsigned long)(GetGlobalClock() / slot_interval);
     if (_current_slot == 0) {
         // ignore genesis case
         return;
@@ -278,7 +290,7 @@ void BL_ProtocolLayerPoS::_slottimerCallback(ev::timer &w, int revents) {
 }
 void BL_ProtocolLayerPoS::_startPeriodicSlotStart(double interval) {
     _slottimer.set<BL_ProtocolLayerPoS, &BL_ProtocolLayerPoS::_slottimerCallback>(this);
-    _slottimer.set(0, interval);
+    _slottimer.set(5, interval);
     _slottimer.start();
 }
 
@@ -302,6 +314,7 @@ bool BL_ProtocolLayerPoS::InitiateProtocol(ProtocolParameter* params) {
     if (!_initiated) {
         std::cout << "initiating ProtocolPoS with custom params" << "\n";
         _startPeriodicTxGen(posparams->txGenStartAt, posparams->txGenInterval);
+        slot_interval = posparams->slot_interval;
         _startPeriodicSlotStart(posparams->slot_interval);
         _initiated = true;
         _creatorNodeId = posparams->creatorNodeId;

@@ -1,6 +1,10 @@
 //
 // Created by Yonggon Kim on 2021/05/01.
 //
+
+#ifndef BLEEP_BLOCKTREE_CPP_H
+#define BLEEP_BLOCKTREE_CPP_H
+
 #include <iostream>
 #include "BlockTree.h"
 #include "shadow_interface.h"
@@ -281,3 +285,5 @@ void BlockTree<T>::PrintLongestChain() {
     }
     std::cout << "========================" << "\n";
 }
+
+#endif //BLEEP_BLOCKTREE_CPP_H

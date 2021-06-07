@@ -18,6 +18,9 @@
 #include "../utility/UInt256.h"
 #include "Block.h"
 
+// for debug
+#include "../utility/GlobalClock.h"
+
 namespace libBLEEP_BL {
     class POSBlock : public Block {
     private:
@@ -34,6 +37,7 @@ namespace libBLEEP_BL {
         POSBlock(std::string id, std::list<std::shared_ptr<SimpleTransaction>> input_tx_list)
                 : Block(id, input_tx_list) {
             SetTxHash();
+            std::cout << "POS Debug - time: " << libBLEEP::GetGlobalClock() << ", PoS Block created\n";
         };
 
         virtual void SetGenesisBlock() override;

@@ -178,6 +178,8 @@ void BL_SocketLayer_API::RecvHandler(int fd) {
                         // PONG message is handled by generic (Layer2) PeerRecvMsg event
                     } else if (msg->GetType().find("POWBLOCK", 0) == 0) {
                         // POWBlock sync protocol messages are handled by generic (LAyer2) PeerRecvMsg event
+                    } else if (msg->GetType().find("POSBLOCK", 0) == 0) {
+                        // POWBlock sync protocol messages are handled by generic (LAyer2) PeerRecvMsg event
                     }
                         // If any new message is added, new statement should be added here.
                         // (This is for integrity check)

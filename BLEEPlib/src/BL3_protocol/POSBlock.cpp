@@ -26,8 +26,8 @@ void POSBlock::CalcHash() {
 
 void POSBlock::SetGenesisBlock() {
     SetPrevBlockHash(0);
-    SetSlotNo(0);
     SetCreator(0);
+    SetSlotNo(0);
     SetBlockIdx(0);
     SetTimestamp(0);
 

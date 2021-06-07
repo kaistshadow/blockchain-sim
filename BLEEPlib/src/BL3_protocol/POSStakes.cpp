@@ -69,6 +69,10 @@ namespace libBLEEP_BL {
 
     void StakeList::load(std::string stakefile) {
         std::ifstream file(stakefile);
+        if (!file.is_open()) {
+            std::cout << "stake file not exists. abort.\n";
+            exit(-1);
+        }
         std::string str;
         while (std::getline(file, str)) {
             // trim

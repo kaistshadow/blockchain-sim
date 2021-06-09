@@ -137,3 +137,6 @@ testlibs/dump/difficulty_*
 tests/regtest/1_bitcoin/*/data
 tests/regtest/1_bitcoin/*/shadow.data
 BLEEPeval/tpstest-app/bitcoin/transactionTable.txt
+
+transactionTable.txt
+tests/regtest/*/*/output.txt

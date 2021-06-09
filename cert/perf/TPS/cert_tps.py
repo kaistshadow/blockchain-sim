@@ -34,9 +34,9 @@ def check_nodeId(target_path, target_list):
 
 if __name__ == '__main__':
 
-    # exec_shell_cmd("rm -rf shadow.data")
+    exec_shell_cmd("rm -rf shadow.data")
     print("Emulation start(cert TPS) ...")
-    # exec_shell_cmd("shadow test-BLEEPLib-TPS.xml > /dev/null 2>&1")
+    exec_shell_cmd("shadow test-BLEEPLib-TPS.xml > /dev/null 2>&1")
 
     path = os.path.abspath("./")
     target_path = path + "/shadow.data/hosts"

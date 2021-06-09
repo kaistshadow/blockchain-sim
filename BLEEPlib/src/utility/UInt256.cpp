@@ -633,3 +633,22 @@ std::string libBLEEP::gen_test( const UINT256_t & rhs) {
     std::string res = stream.str();
     return res;
 }
+
+std::string libBLEEP::UINT128_t::rawstr() {
+    unsigned char char_lower[8];
+    memcpy(char_lower, &LOWER, 8);
+    std::string str_lower((const char *)char_lower, 8);
+    std::reverse(str_lower.begin(), str_lower.end());
+
+    unsigned char char_upper[8];
+    memcpy(char_upper, &UPPER, 8);
+    std::string str_upper((const char *)char_upper, 8);
+    std::reverse(str_upper.begin(), str_upper.end());
+
+    std::string str = str_upper + str_lower;
+    return str;
+}
+std::string libBLEEP::UINT256_t::rawstr() {
+    std::string str = UPPER.rawstr() + LOWER.rawstr();
+    return str;
+}

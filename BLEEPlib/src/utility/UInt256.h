@@ -30,6 +30,7 @@ namespace libBLEEP {
         std::pair <UINT128_t, UINT128_t> divmod(const UINT128_t & lhs, const UINT128_t & rhs) const;
 
     public:
+        std::string rawstr();
         std::string str();
 
         const uint64_t & upper() const { return UPPER; }
@@ -205,6 +206,7 @@ namespace libBLEEP {
     public:
         const UINT128_t & upper() const { return UPPER; }
         const UINT128_t & lower() const { return LOWER; }
+        std::string rawstr();
         std::string str();
         uint64_t getint();
         // Get bitsize of value

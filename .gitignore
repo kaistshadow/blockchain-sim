@@ -138,3 +138,5 @@ tests/regtest/1_bitcoin/*/data
 tests/regtest/1_bitcoin/*/shadow.data
 
 ps.log
+ps_results
+shadow.output

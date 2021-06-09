@@ -53,7 +53,7 @@ def main():
     test_modules.test_walletAddress(simulation_output_file, int(len(plugin_list)/2))
 
     # transaction count test 실행.
-    test_modules.test_transaction_count_regtest(simulation_output_file, int(len(plugin_list)/2))
+    test_modules.test_transaction_count_regtest(simulation_output_file)
 
 
 if __name__ == '__main__':

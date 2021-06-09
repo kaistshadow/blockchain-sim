@@ -73,6 +73,8 @@ tests/perftest/cpu/mpstat/mpstat_results
 tests/perftest/memory/vmstat/vmstat_results
 tests/perftest/memory/ps/ps_results
 tests/perftest/memory/pmap/pmap_results
+tests/perftest/memory_sharing/output.xml
+tests/perftest/memory_sharing/datadir
 
 tests/regtest/BLEEP-POW-consensus/target_example.xml
 tests/regtest/shadow-dependencies/1_ubuntu_libcurl/simplecurl
@@ -134,3 +136,4 @@ testlibs/dump/difficulty_*
 .vscode
 tests/regtest/1_bitcoin/*/data
 tests/regtest/1_bitcoin/*/shadow.data
+BLEEPeval/tpstest-app/bitcoin/transactionTable.txt

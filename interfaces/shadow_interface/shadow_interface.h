@@ -37,8 +37,4 @@ void* shadow_claim_shared_entry(void* ptr, size_t sz, int shared_id);
 #endif
 
 
-
-
-
-
 #endif

@@ -100,7 +100,6 @@ def test_shadow(output_file, runtime, node_id_list, shadow_output):
         f.close()
         print("Success shadow test ...")
         return_count = 1
-        sys.exit(0)
 
     else:
         f.close()
@@ -440,6 +439,10 @@ def test_initialCoin(simulation_output_file):
 def test_peer_connection(plugin_output_files, IP_list, xml_file):
     addnode_list = utils.get_addnode_list(IP_list, xml_file)
     getpeerinfo_list = utils.get_peerinfo(plugin_output_files, IP_list)
+    print("--------------------")
+    print(addnode_list)
+    print(getpeerinfo_list)
+    print("--------------------")
     result_count = 0
     con_count = 0
 
@@ -604,9 +607,8 @@ def Mointor_block_propagation_test(plugin_output_files, node_count, target_path)
             if node_blocklist[i][j+1][0] in each_node_block_list[i]:
                 pass
             else:
-                print("Fail Monitor block propagation test ... ")
                 print("There is no block (%s) " %node_blocklist[i][j+1][0])
-                sys.exit(1)
+
     print("Success Monitor block propagation test ... ")
     sys.exit(0)
 
@@ -640,3 +642,96 @@ def TxGenerator_connection_test(plugin_output_files, xmlfile, node_count):
     print(condition_count)
     print("Fail txGenerator connection test ... ")
     sys.exit(1)
+
+
+# --------------------------------------------------------------------------------------------------------------
+#                                       Regression test-16 - TPS test
+# --------------------------------------------------------------------------------------------------------------
+# bitcoind의 첫번째 블록의 timestamp와 마지막 블록의 timestamp와 마지막 블록의 txc를 구하고, 
+# txgenerator의 첫번째 블록의 timestamp와 마지막 블록의 timestamp와 마지막 블록의 txc를 구하여, 두 개를 비교를 함.
+# TPS = 마지막 블록의 txc / ((마지막 블록의 timestamp) - (첫번째 블록의 timestamp))
+def TPS_test(simulation_output_file):
+    bitcoind_firstBlock, bitcoind_lastBlock, bitcoind_txc = "", "", ""
+    txgenerator_firstBlock, txgenerator_lastBlock, txgenerator_txc = "", "", ""
+
+    for i in range(0,len(simulation_output_file)):
+        # miner node로 부터 log를 가져옴
+        result = simulation_output_file[i].find("bcdnode0")
+        if result != -1:
+            bitcoind_firstBlock, bitcoind_lastBlock, bitcoind_txc = utils.getBlockTime_fromBitcoind(simulation_output_file[i])
+            continue
+
+        # Txgenerator로 부터 log를 가져옴
+        result = simulation_output_file[i].find("txgenerator")
+        if result != -1:
+            txgenerator_firstBlock, txgenerator_lastBlock, txgenerator_txc = utils.geBlockTime_fromTxGenerator(simulation_output_file[i])
+            break
+
+    check_flag = [False, False, False]
+    if bitcoind_firstBlock == txgenerator_firstBlock:
+        check_flag[0] = True
+    else:
+        print("bitcoind_firstBlock : %s" %bitcoind_firstBlock)
+        print("txgenerator_firstBlock : %s" %txgenerator_firstBlock)
+        sys.exit(1)
+    
+    if bitcoind_lastBlock == txgenerator_lastBlock:
+        check_flag[1] = True
+    else:
+        print("bitcoind_lastBlock : %s" %bitcoind_lastBlock)
+        print("txgenerator_lastBlock : %s" %txgenerator_lastBlock)
+        sys.exit(1)
+
+    if bitcoind_txc == txgenerator_txc:
+        check_flag[2] = True
+    else:
+        print("bitcoind_txc : %s" %bitcoind_txc)
+        print("txgenerator_txc : %s" %txgenerator_txc)
+        sys.exit(1)
+
+    if all(check_flag):
+        print("Success TPS test ...")
+        sys.exit(0)
+   
+
+# --------------------------------------------------------------------------------------------------------------
+#                                       Regression test-17 - Latency test
+# --------------------------------------------------------------------------------------------------------------
+
+def Latency_test(simulation_output_file, transactionTable, txgen_path):
+    # bitcoind 의 트랜잭션이 모두 담김. 리스트 인덱스 기준은 블록이며, 리스트 요소로 각 블록에 담긴 트랜잭션 해시값과 타임스탬프 값이 담겨있음.
+    # 타임스탬프는 각 리스트의 마지막 요소에 담김.
+    bitcoind_HashTable = utils.getEachTxHashFromBitcoin_log(simulation_output_file[0])   
+    # txgenator가 생성한 모든 tx의 해시값과 timeStamp를 load함.
+    total_list = utils.getHashTableFile(transactionTable)
+
+    totalDiffValue = 0
+    condition_count = 0
+    EachBlock_tx_count = 0
+    EachBlock_tx_total_timestamp = 0
+    EachBlock_diffTimeStamp_sum = 0
+    confirmedTx_count = 0
+
+    for i in range(0,len(bitcoind_HashTable)-5):
+        for j in range(0,len(bitcoind_HashTable[i])):
+            if len(bitcoind_HashTable[i][j]) > 20:
+                # tx hash case in bitcoind_HashTable list
+                for z in range(0,len(total_list)):
+                    if (bitcoind_HashTable[i][j] == total_list[z].split('/')[0]):
+                        EachBlock_tx_count += 1
+                        EachBlock_tx_total_timestamp += int(total_list[z].split('/')[1])
+                        break
+
+            else:
+                # timestamp case in bitcoind_HashTable list
+                EachBlock_diffTimeStamp_sum += (int(bitcoind_HashTable[i][j]) * EachBlock_tx_count) - EachBlock_tx_total_timestamp
+                confirmedTx_count += EachBlock_tx_count
+                EachBlock_tx_count = 0
+                EachBlock_tx_total_timestamp = 0
+
+    print("---------------------------------------")
+    result_latency = float(EachBlock_diffTimeStamp_sum/confirmedTx_count)
+    print("result_latency : %lf" %(result_latency))
+    print("Result \t Timestamp / txcount")
+    print("MinerNode: %s/%s" %(EachBlock_diffTimeStamp_sum, confirmedTx_count))
+    utils.open_txgenResult(txgen_path)

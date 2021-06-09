@@ -11,6 +11,8 @@
 #include "BlockTree.h"
 #include "BlockTree.cpp"  // This(BlockTree.cpp) is required since the BlockTree is template class
 
+#include "shadow_memshare_interface.h"
+
 namespace libBLEEP_BL {
 
     // PoW parameters
@@ -85,9 +87,11 @@ namespace libBLEEP_BL {
             sha256_update(&ctx, (const unsigned char*)&timestamp, sizeof(double));
             sha256_final(&ctx, hash_out);
             libBLEEP::UINT256_t hash_out_256(hash_out, 32);
-            tx->SetTxHash(hash_out_256);
-            std::cout<<"txgentimer generate new tx = "<<tx->GetTxHash()<<"\n";
+            tx->_id.SetTxHash(hash_out_256);
+            std::cout<<"txgentimer generate new tx = "<<tx->_id.GetTxHash()<<"\n";
 
+            memshare::try_share(tx);
+            tx = memshare::lookup(tx);
 
             if (!_txPool->ContainTx(tx->GetId())) {
                 _txPool->AddTx(tx);

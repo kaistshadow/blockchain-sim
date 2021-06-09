@@ -127,9 +127,11 @@ find_package(Libev_4_33 REQUIRED)
 target_link_libraries(BLEEP Libev_4_33::Libev)
 #target_link_libraries(BLEEP -lev)
 target_link_libraries(BLEEP SHADOW_INTERFACE)
+target_link_libraries(BLEEP SHADOW_MEMSHARE_INTERFACE)
 target_link_libraries(BLEEP ${Boost_LIBRARIES})
 
 
 include_directories(${CMAKE_ROOT_SOURCE_DIR}/interfaces/shadow_interface)
+include_directories(${CMAKE_ROOT_SOURCE_DIR}/interfaces/shadow_memshare_interface)
 include_directories(${Boost_INCLUDE_DIRS})
 

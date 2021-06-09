@@ -31,6 +31,7 @@ namespace libBLEEP {
 
     public:
         std::string str();
+        std::string rawstr();
 
         const uint64_t & upper() const { return UPPER; }
         const uint64_t & lower() const { return LOWER; }
@@ -206,6 +207,8 @@ namespace libBLEEP {
         const UINT128_t & upper() const { return UPPER; }
         const UINT128_t & lower() const { return LOWER; }
         std::string str();
+        std::string rawstr();
+
         uint64_t getint();
         // Get bitsize of value
         uint16_t bits() const;

@@ -83,6 +83,7 @@ endif(BLEEPLIB_OPT STREQUAL ON)
 # add_subdirectory(BLEEPapp)
 add_subdirectory(BLEEPeval)
 add_subdirectory(testlibs)
+add_subdirectory(cert)
 
 if (TEST_OPT STREQUAL ON)
     add_subdirectory(tests)

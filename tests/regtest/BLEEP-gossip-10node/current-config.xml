@@ -31,21 +31,56 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="NODE" path="libBLEEPlib-test-pow-node1.so" />
+  <plugin id="NODE" path="libNODE_BL_TEST_TX_10.so" />
 
 
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="300" />
   <!-- our nodes -->
 
-  <node id="pownode0">
-    <application plugin="NODE" time="5" arguments="-id=pownode0 -txgenstartat=0 -txgeninterval=4" />
+  <node id="bleep0">
+    <application plugin="NODE" time="5" arguments="-id=bleep0" />
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>
 
-  <node id="pownode1">
-    <application plugin="NODE" time="6" arguments="-id=pownode1 -txgenstartat=10000000 -txgeninterval=10000000 -connect=pownode0" />
+  <node id="bleep1">
+    <application plugin="NODE" time="6" arguments="-id=bleep1 -connect=bleep0" />
   </node>
 
+  <node id="bleep2">
+    <application plugin="NODE" time="7" arguments="-id=bleep2 -connect=bleep0" />
+  </node>
+
+  <node id="bleep3">
+    <application plugin="NODE" time="8" arguments="-id=bleep3 -connect=bleep1" />
+  </node>
+
+  <node id="bleep4">
+    <application plugin="NODE" time="9" arguments="-id=bleep4 -connect=bleep2" />
+  </node>
+
+  <node id="bleep5">
+    <application plugin="NODE" time="10" arguments="-id=bleep5 -connect=bleep1" />
+  </node>
+
+  <node id="bleep6">
+    <application plugin="NODE" time="11" arguments="-id=bleep6 -connect=bleep2" />
+  </node>
+
+  <node id="bleep7">
+    <application plugin="NODE" time="12" arguments="-id=bleep7 -connect=bleep3" />
+  </node>
+
+  <node id="bleep8">
+    <application plugin="NODE" time="13" arguments="-id=bleep8 -connect=bleep3" />
+  </node>
+
+  <node id="bleep9">
+    <application plugin="NODE" time="14" arguments="-id=bleep9 -connect=bleep4" />
+  </node>
+
+  <!-- <node id="bleep1"> -->
+  <!--   <application plugin="PEER_NONBLOCK_IO" time="13" arguments="bleep0"/> -->
+  <!-- </node> -->
 
 </shadow>

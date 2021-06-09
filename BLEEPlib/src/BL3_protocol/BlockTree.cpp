@@ -237,7 +237,7 @@ void BlockTree<T>::AppendBlock(std::shared_ptr<T> blk) {
                         blockHash.substr(2, 10).c_str(),
                         prevBlockHashstr.substr(2,10).c_str(),
                         pow_blk->GetTimestamp());
-                shadow_push_eventlog(buf);
+                // shadow_push_eventlog(buf);
             }
         } else if (_treeheight <= blk->GetBlockIdx()) {
             _lasthash = blk->GetBlockHash();
@@ -262,7 +262,7 @@ void BlockTree<T>::AppendBlock(std::shared_ptr<T> blk) {
                         blockHash.substr(2, 10).c_str(),
                         prevBlockHashstr.substr(2,10).c_str(),
                         pow_blk->GetTimestamp());
-                shadow_push_eventlog(buf);
+                // shadow_push_eventlog(buf);
             }
         }
     }

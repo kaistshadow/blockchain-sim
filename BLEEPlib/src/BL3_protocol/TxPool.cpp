@@ -52,9 +52,9 @@ std::shared_ptr<SimpleTransaction> TxPool::GetTx(SimpleTransactionId id) {
 }
 
 void TxPool::PrintPool() {
-    std::cout << "======== TXPOOL ========" << "\n";
-    for (auto item : items) {
-        std::cout << *(item.second) << "\n";
-    }
-    std::cout << "========================" << "\n";
+    // std::cout << "======== TXPOOL ========" << "\n";
+    // for (auto item : items) {
+    //     std::cout << *(item.second) << "\n";
+    // }
+    // std::cout << "========================" << "\n";
 }

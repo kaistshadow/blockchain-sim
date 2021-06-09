@@ -10,5 +10,5 @@ endif (BLEEP_DEBUG STREQUAL ON)
 
 add_subdirectory(sybiltest-library/src)
 add_subdirectory(sybiltest-app)
-add_subdirectory(tpstest-library/src)
-add_subdirectory(tpstest-app)
+add_subdirectory(performtest-library/src)
+add_subdirectory(performtest-app)

@@ -3,6 +3,8 @@
 #include "../BL2_peer_connectivity/Message.h"
 #include "../BL2_peer_connectivity/PeerConnectivityLayer_API.h"
 
+#include "shadow_memshare_interface.h"
+
 using namespace libBLEEP_BL;
 
 void TxGossipProtocol::RecvInventoryHandler(std::shared_ptr<Message> msg) {
@@ -29,13 +31,13 @@ void TxGossipProtocol::RecvGetdataHandler(std::shared_ptr<Message> msg) {
     std::cout << "recv getdata msg" << "\n";
     std::shared_ptr<TxGossipGetdata> getdata = std::static_pointer_cast<TxGossipGetdata>(msg->GetObject());
     auto tids = getdata->GetTransactionIds();
-    std::vector<SimpleTransaction> txs;
+    std::vector<std::shared_ptr<SimpleTransaction>> txs;
     for (auto tid : tids) {
         std::cout << "receive getdata tx id:" << tid << "\n";
         
         // check whether the txpool has the tx
         if (_txPool->ContainTx(tid))
-            txs.push_back(*_txPool->GetTx(tid));
+            txs.push_back(_txPool->GetTx(tid));
     }
     if (!txs.empty()) {
         // send txs
@@ -50,16 +52,17 @@ void TxGossipProtocol::RecvTxsHandler(std::shared_ptr<Message> msg) {
     std::shared_ptr<TxGossipTxs> txsObject = std::static_pointer_cast<TxGossipTxs>(msg->GetObject());
     auto txs = txsObject->GetTransactions();
     for (auto tx : txs) {
-        std::cout << "receive tx:" << tx << "\n";
+        std::cout << "receive tx:" << tx->_id.GetTxHash()<<" sender = "<<tx->sender_id<<" / receiver = "<<tx->receiver_id<<" / amount = "<<tx->amount<<"\n";
         
         // Add to txpool
-        _txPool->AddTx(boost::make_shared<SimpleTransaction>(tx));
+        tx = memshare::lookup(tx);
+        _txPool->AddTx(tx);
     }
 
     // relay tx to neighbors
     std::vector<SimpleTransactionId> txids;
     for (auto tx : txs) {
-        txids.push_back(tx.GetId());
+        txids.push_back(tx->GetId());
     }
     std::vector<PeerId> neighborIds = BL_PeerConnectivityLayer_API::Instance()->GetNeighborPeerIds();
     for (auto neighborId : neighborIds) {

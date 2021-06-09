@@ -26,19 +26,19 @@ fi
 xmls=(
 	/memory_sharing/output.xml
 	)
-
 for (( i=0; i<${#xmls[@]}; i++ )); do
 	FILE_DEST="$XMLROOT"${xmls[i]}
 	DIR=${FILE_DEST%/*}
 	XML_TARGET=${FILE_DEST##*/}
 
+
 	cd $DIR
 	# run shadow
     if [ $3 -eq "1" ]; then 
-	    shadow -h 10000 -w $WORKER_CNT -m $4 & RUNPID=$! 
+	    shadow -d datadir -h 10000 -w $WORKER_CNT -m $4 & RUNPID=$! 
 
     else
-        shadow -h 10000 -w $WORKER_CNT $4 & RUNPID=$!
+        shadow -d datadir -h 10000 -w $WORKER_CNT $4 & RUNPID=$!
     fi
 
 	ps u -p $RUNPID &> ps.log

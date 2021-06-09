@@ -22,6 +22,7 @@ elseif(TEST_OPT STREQUAL ON)
   message("                            Start regression tests")
   message("--------------------------------------------------------------------------------------")
   add_subdirectory(regtest)
+  add_subdirectory(perftest)
 
 endif()
 

@@ -51,6 +51,12 @@ namespace libBLEEP_BL {
         /* handler functions for each asynchronous event */
         void RecvMsgHandler(std::shared_ptr<Message> msg);
 
+        void _RecvPBFTPreprepareHandler(std::shared_ptr<Message> msg);
+        void _RecvPBFTPrepareHandler(std::shared_ptr<Message> msg);
+        void _RecvPBFTCommitHandler(std::shared_ptr<Message> msg);
+        void _RecvPBFTCheckpointHandler(std::shared_ptr<Message> msg);
+        void _RecvPBFTViewChangeHandler(std::shared_ptr<Message> msg);
+
     private:
         std::shared_ptr<POSBlock> makeBlockTemplate();
 

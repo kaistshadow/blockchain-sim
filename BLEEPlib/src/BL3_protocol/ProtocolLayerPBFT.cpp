@@ -153,6 +153,14 @@ void BL_ProtocolLayerPBFT::_RecvPBFTCommitHandler(std::shared_ptr<Message> msg) 
     }
 }
 
+// TODO: implement
+void BL_ProtocolLayerPBFT::_RecvPBFTCheckpointHandler(std::shared_ptr<Message> msg) {
+}
+
+// TODO: implement
+void BL_ProtocolLayerPBFT::_RecvPBFTViewChangeHandler(std::shared_ptr<Message> msg) {
+}
+
 void BL_ProtocolLayerPBFT::SwitchAsyncEventHandler(AsyncEvent& event) {
     switch (event.GetType()) {
         case AsyncEventEnum::ProtocolRecvMsg:

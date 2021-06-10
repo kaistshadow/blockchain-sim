@@ -503,7 +503,6 @@ def test_dumpfile_load(plugin_output_files, abs_path, difficulty):
         condition_count = 2
         f.close()
 
-
     if condition_count == 2:
         the_path = utils.get_datadirDumpfile_path(abs_path, difficulty)
         the_path = the_path + "/coinflip_hash.txt"
@@ -515,16 +514,14 @@ def test_dumpfile_load(plugin_output_files, abs_path, difficulty):
         f.close()
 
         i = 0
-        result_hash_list = []
         f = open(plugin_output_files, "r")
         while True:
             line = f.readline()
             if not line:break
             result = line.find("UpdateTip")
             if result != -1:
-                if ready_hash_list[i] == line.split(" ")[3].split("=")[1]:
+                if ready_hash_list[i+1] == line.split(" ")[3].split("=")[1]:
                     i += 1
-                    pass
                 # 0번째는 제네시스 블록이라 스킵.
                 elif i == 0:
                     continue
@@ -536,6 +533,8 @@ def test_dumpfile_load(plugin_output_files, abs_path, difficulty):
                 print("Success test dump file load test ... ")
                 f.close()
                 break
+            else:
+                pass
 
     else:
         print("Fail load data file test ... (Not Reindexing finished)")

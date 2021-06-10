@@ -532,7 +532,7 @@ def test_dumpfile_load(plugin_output_files, abs_path, difficulty):
             if i == 7:
                 print("Success test dump file load test ... ")
                 f.close()
-                break
+                sys.exit(0)
             else:
                 pass
 

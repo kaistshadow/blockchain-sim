@@ -185,13 +185,10 @@ bool BL_ProtocolLayerPBFT::InitiateProtocol(ProtocolParameter* params) {
     assert(pbftparams != nullptr);
     if (!_initiated) {
         std::cout << "initiating ProtocolPBFT with custom params" << "\n";
-        _startPeriodicTxGen(pbftparams->txGenStartAt, pbftparams->txGenInterval);
+        txGenStartAt = pbftparams->txGenStartAt;
+        txGenInterval = pbftparams->txGenInterval;
+        _startPeriodicTxGen(txGenStartAt, txGenInterval);
         _initiated = true;
-
-        miningtime = pbftparams->miningtime;
-        miningnodecnt = pbftparams->miningnodecnt;
-        std::cout << "miningtime:" << miningtime << "\n";
-        std::cout << "miningnodecnt:" << miningnodecnt << "\n";
 
         return true;
     } else {

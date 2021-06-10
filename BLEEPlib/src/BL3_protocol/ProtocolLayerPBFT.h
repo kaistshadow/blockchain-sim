@@ -48,16 +48,6 @@ namespace libBLEEP_BL {
         _checkpoint;    // > 2f+1 count of checkpoint msg with same seq# and digest.
 
     private:
-        // Block propagation protocol-related data structure (processing inventory)
-        std::vector <std::string> _processingBlkinv;
-        bool _processing = false;
-        bool HasProcessingInv() { return _processing; }
-        void StartProcessingInv() { _processing = true; }
-        void StopProcessingInv() { _processing = false; }
-        std::vector <std::string>& GetProcessingInv() { return _processingBlkinv; }
-        void SetProcessingInv(std::vector <std::string> inv) { _processingBlkinv = inv; }
-
-
         /* handler functions for each asynchronous event */
         void RecvMsgHandler(std::shared_ptr<Message> msg);
 

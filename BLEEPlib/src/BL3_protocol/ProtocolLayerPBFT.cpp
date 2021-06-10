@@ -20,27 +20,152 @@ void BL_ProtocolLayerPBFT::RecvMsgHandler(std::shared_ptr<Message> msg) {
         _txGossipProtocol.RecvGetdataHandler(msg);
     } else if (msgType == "TXGOSSIP-TXS") {
         _txGossipProtocol.RecvTxsHandler(msg);
-        if (_txPool->GetPendingTxNum() >= txNumPerBlock) {
-            if (!_powMiner.IsMining()) {
-                std::shared_ptr<POWBlock> candidateBlk = _makeCandidateBlock();
-                _powMiner.AsyncEmulateBlockMining(candidateBlk, 1/miningtime/miningnodecnt);
-            }
-        }
-    } else if (msgType == "POWBLOCK-INV") {
-        _RecvPOWBlockInvHandler(msg);
-    } else if (msgType == "POWBLOCK-GETBLOCKS") {
-        _RecvPOWBlockGetBlocksHandler(msg);
-    } else if (msgType == "POWBLOCK-GETDATA") {
-        _RecvPOWBlockGetDataHandler(msg);
-    } else if (msgType == "POWBLOCK-BLK") {
-        _RecvPOWBlockBlkHandler(msg);
+    } else if (msgType == "PBFTBLOCK-INV") {
+        _RecvPBFTBlockInvHandler(msg);
+    } else if (msgType == "PBFTBLOCK-GETBLOCKS") {
+        _RecvPBFTBlockGetBlocksHandler(msg);
+    } else if (msgType == "PBFTBLOCK-GETDATA") {
+        _RecvPBFTBlockGetDataHandler(msg);
+    } else if (msgType == "PBFTBLOCK-BLK") {
+        _RecvPBFTBlockBlkHandler(msg);
+    } else if (msgType == "PBFT-PREPREPARE") {
+        _RecvPBFTPreprepareHandler(msg);
+    } else if (msgType == "PBFT-PREPARE") {
+        _RecvPBFTPrepareHandler(msg);
+    } else if (msgType == "PBFT-COMMIT") {
+        _RecvPBFTCommitHandler(msg);
+    } else if (msgType == "PBFT-CHECKPOINT") {
+        _RecvPBFTCheckpointHandler(msg);
+    } else if (msgType == "PBFT-VIEWCHANGE") {
+        _RecvPBFTViewChangeHandler(msg);
     }
 }
 
-void BL_ProtocolLayerPoW::_RecvPOWBlockInvHandler(std::shared_ptr<Message> msg) {
-    std::cout << "recv POW protocol msg (POWBLOCK-INV)" << "\n";
+// TODO: considering the case that prepare from other replica arrives earlier than the preprepare from the primary.
+void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> msg) {
+    if (_p == _consensusId) {
+        // why primary node get preprepare message? ignore it.
+        return;
+    }
 
-    std::shared_ptr<POWBlockGossipInventory> inv = std::static_pointer_cast<POWBlockGossipInventory>(msg->GetObject());
+    std::shared_ptr<PBFTPreprepare> ppr = std::static_pointer_cast<PBFTPreprepare>(msg->GetObject());
+
+    // signature verification    
+    std::ostringstream oss;
+    unsigned int v = ppr->m->v;
+    unsigned int n = ppr->m->n;
+    std::string d = ppr->m->str();
+
+    if (v != _v) {
+        // view mismatch
+        return;
+    }
+    oss << "PREPREPARE" << v << n << d;
+    if (!pubkey[_p].verify(oss.str(), ppr->sign)) {
+        // pubkey mismatch. ignore the message.
+        return;
+    }
+    if (n <= _h || n >= _h + _k) {
+        // sequence range mismatch
+        return;
+    }
+    // TODO: check message validity (block is well connected to the last block in the tree)
+
+
+    _preprepareMsgsLock.lock();
+    if (_preprepareMsgs.has(v, n)) {
+        _preprepareMsgsLock.unlock();
+        return;
+    }
+
+    // setup target
+    _current_consensus.set(v, n, d);
+    // clear n enable prepare reception
+    _current_prepare.reset();
+    // send prepare message to everyone in the consensus
+    for (auto consensusNeighbor : consensusNeighbors) {
+        std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTPrepare>(v, n, d, _consensusId);
+        std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor, "PBFT-PREPARE", ptrToObj);
+        BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(consensusNeighbor, message);
+    }
+
+}
+void BL_ProtocolLayerPBFT::_RecvPBFTPrepareHandler(std::shared_ptr<Message> msg) {
+    if (_current_prepare.isDisabled()) {
+        return;
+    }
+    std::shared_ptr<PBFTPrepare> pr = std::static_pointer_cast<PBFTPrepare>(msg->GetObject());
+
+    // signature verification    
+    std::ostringstream oss;
+    unsigned int v = _current_consensus.v;
+    unsigned int n = _current_consensus.n;
+    std::string d = _current_consensus.d;
+    unsigned int i = msg->GetSource();
+    oss << "PREPARE" << v << n << d << i;
+    if (!pubkey[i].verify(oss.str(), pr->sign)) {
+        // pubkey mismatch. ignore the message.
+        return;
+    }
+
+    // try save
+    if (_current_prepare.hasNeighbor(i)) {
+        // already know
+        return;
+    }
+    _current_prepare.addNeighbor(i);
+
+    if (_current_prepare.NeighborCount() == 2 * _f) {
+        // next phase enabled, so stop receiving prepare message
+        _current_prepare.disable();
+        // clear n enable commit reception
+        _current_commit.reset();
+        // send commit message to everyone in the consensus
+        for (auto consensusNeighbor : consensusNeighbors) {
+            std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTCommit>(v, n, d, _consensusId);
+            std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor, "PBFT-COMMIT", ptrToObj);
+            BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(consensusNeighbor, message);
+        }
+    }
+}
+void BL_ProtocolLayerPBFT::_RecvPBFTCommitHandler(std::shared_ptr<Message> msg) {
+    if (_current_commit.isDisabled()) {
+        return;
+    }
+    std::shared_ptr<PBFTCommit> cm = std::static_pointer_cast<PBFTCommit>(msg->GetObject());
+
+    // signature verification    
+    std::ostringstream oss;
+    unsigned int v = _current_consensus.v;
+    unsigned int n = _current_consensus.n;
+    std::string d = _current_consensus.d;
+    unsigned int i = msg->GetSource();
+    oss << "COMMIT" << v << n << d << i;
+    if (!pubkey[i].verify(oss.str(), cm->sign)) {
+        // pubkey mismatch. ignore the message.
+        return;
+    }
+
+    // try save
+    if (_current_commit.hasNeighbor(i)) {
+        // already know
+        return;
+    }
+    _current_commit.addNeighbor(i);
+
+    if (_current_commit.NeighborCount() == 2 * _f) {
+        // next phase enabled, so stop receiving commit message
+        _current_commit.disable();
+
+        // TODO: phase end.
+    }
+}
+
+
+void BL_ProtocolLayerPBFT::_RecvPBFTBlockInvHandler(std::shared_ptr<Message> msg) {
+    std::cout << "recv PBFT protocol msg (PBFTBLOCK-INV)" << "\n";
+
+    std::shared_ptr<PBFTBlockGossipInventory> inv = std::static_pointer_cast<PBFTBlockGossipInventory>(msg->GetObject());
     auto hashes = inv->GetHashlist();
     for (auto hash : hashes) {
         std::cout << "receive block hash:" << hash << "\n";
@@ -60,8 +185,8 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockInvHandler(std::shared_ptr<Message> msg) 
             std::cout << "hash in blocklocator:" << h << "\n";
         }
 
-        std::shared_ptr<MessageObject> ptrToObj = std::make_shared<POWBlockGossipGetBlocks>(blockLocator);
-        std::shared_ptr<Message> message = std::make_shared<Message>(msg->GetSource(), "POWBLOCK-GETBLOCKS", ptrToObj);
+        std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTBlockGossipGetBlocks>(blockLocator);
+        std::shared_ptr<Message> message = std::make_shared<Message>(msg->GetSource(), "PBFTBLOCK-GETBLOCKS", ptrToObj);
         BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(msg->GetSource(), message);
     } else {
         // Register processing inventory
@@ -72,10 +197,10 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockInvHandler(std::shared_ptr<Message> msg) 
         bool containAll = true;
         for (std::string h : hashes) {
             if (!_blocktree.ContainBlock(h)) {
-                std::cout << "send POW getdata message" << "\n";
+                std::cout << "send PBFT getdata message" << "\n";
 
-                std::shared_ptr<MessageObject> ptrToObj = std::make_shared<POWBlockGossipGetData>(h);
-                std::shared_ptr<Message> message = std::make_shared<Message>(msg->GetSource(), "POWBLOCK-GETDATA", ptrToObj);
+                std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTBlockGossipGetData>(h);
+                std::shared_ptr<Message> message = std::make_shared<Message>(msg->GetSource(), "PBFTBLOCK-GETDATA", ptrToObj);
                 BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(msg->GetSource(), message);
 
                 containAll = false;
@@ -94,10 +219,10 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockInvHandler(std::shared_ptr<Message> msg) 
 
 }
 
-void BL_ProtocolLayerPoW::_RecvPOWBlockGetBlocksHandler(std::shared_ptr<Message> msg) {
-    std::cout << "received POW protocol getblocks message" << "\n";
+void BL_ProtocolLayerPBFT::_RecvPBFTBlockGetBlocksHandler(std::shared_ptr<Message> msg) {
+    std::cout << "received PBFT protocol getblocks message" << "\n";
 
-    std::shared_ptr<POWBlockGossipGetBlocks> getblocks = std::static_pointer_cast<POWBlockGossipGetBlocks>(msg->GetObject());
+    std::shared_ptr<PBFTBlockGossipGetBlocks> getblocks = std::static_pointer_cast<PBFTBlockGossipGetBlocks>(msg->GetObject());
     std::vector<std::string> blockLocator = getblocks->GetBlockLocator();
     for (auto hash : blockLocator) {
         std::cout << "blocklocator's block hash:" << hash << "\n";
@@ -120,101 +245,35 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockGetBlocksHandler(std::shared_ptr<Message>
 
     std::cout << "inventory size:" << inv.size() << "\n";
 
-    // create POWBLOCK-INV message
-    std::shared_ptr<MessageObject> ptrToObj = std::make_shared<POWBlockGossipInventory>(inv);
-    std::shared_ptr<Message> message = std::make_shared<Message>(msg->GetSource(), "POWBLOCK-INV", ptrToObj);
+    // create PBFTBLOCK-INV message
+    std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTBlockGossipInventory>(inv);
+    std::shared_ptr<Message> message = std::make_shared<Message>(msg->GetSource(), "PBFTBLOCK-INV", ptrToObj);
     BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(msg->GetSource(), message);
 }
 
-void BL_ProtocolLayerPoW::_RecvPOWBlockGetDataHandler(std::shared_ptr<Message> msg) {
+void BL_ProtocolLayerPBFT::_RecvPBFTBlockGetDataHandler(std::shared_ptr<Message> msg) {
 
-    std::cout << "received POW protocol getdata message" << "\n";
+    std::cout << "received PBFT protocol getdata message" << "\n";
 
-    std::shared_ptr<POWBlockGossipGetData> getdata = std::static_pointer_cast<POWBlockGossipGetData>(msg->GetObject());
+    std::shared_ptr<PBFTBlockGossipGetData> getdata = std::static_pointer_cast<PBFTBlockGossipGetData>(msg->GetObject());
     std::string blockhash = getdata->GetBlockHash();
     std::cout << "getdata's block hash:" << blockhash << "\n";
 
     M_Assert(_blocktree.ContainBlockHash(blockhash), "hash must be synchronized already.");
     M_Assert(_blocktree.ContainBlock(blockhash), "must have blockdata.");
 
-    // create POWBLOCK-BLK message
-    std::shared_ptr<MessageObject> ptrToObj = std::make_shared<POWBlockGossipBlk>(_blocktree.GetBlock(blockhash));
-    std::shared_ptr<Message> message = std::make_shared<Message>(msg->GetSource(), "POWBLOCK-BLK", ptrToObj);
+    // create PBFTBLOCK-BLK message
+    std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTBlockGossipBlk>(_blocktree.GetBlock(blockhash));
+    std::shared_ptr<Message> message = std::make_shared<Message>(msg->GetSource(), "PBFTBLOCK-BLK", ptrToObj);
     BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(msg->GetSource(), message);
 }
 
 
-void BL_ProtocolLayerPoW::_RecvPOWBlockBlkHandler(std::shared_ptr<Message> msg) {
-    std::cout << "received POW protocol block message" << "\n";
-
-    std::shared_ptr<POWBlockGossipBlk> getdata = std::static_pointer_cast<POWBlockGossipBlk>(msg->GetObject());
-    std::shared_ptr<POWBlock> blkptr = getdata->GetBlock();
-
-    blkptr = memshare::lookup(blkptr);
-
-    UINT256_t lasthash = _blocktree.GetLastHash();
-    // append a block to ledger
-    std::cout << "blockhash:" << blkptr->GetBlockHash().str() << "\n";
-    if (!_blocktree.ContainBlock(blkptr->GetBlockHash().str()))  {
-        std::list<SimpleTransactionId> txids;
-        for (auto tx: blkptr->GetTransactions()) {
-            txids.push_back(tx->GetId());
-        }
-        _txPool->RemoveTxs(txids);
-        _blocktree.AppendBlock(blkptr);
-    }
-
-    // if lasthash is changed, restart mining
-    if (lasthash != _blocktree.GetLastHash()) {
-        // stop mining
-        if (_powMiner.IsMining()) {
-            _powMiner.StopMining();
-        }
-        // restart mining for new block
-        if (_txPool->GetPendingTxNum() >= txNumPerBlock) {
-            std::shared_ptr<POWBlock> candidateBlk = _makeCandidateBlock();
-            _powMiner.AsyncEmulateBlockMining(candidateBlk, 1/miningtime/miningnodecnt);
-        }
-    }
-
-    if (HasProcessingInv()) {
-        std::vector<std::string>& inv = GetProcessingInv();
-
-        // if hash tree lacks of actual block, request the block
-        // else, finish the inv processing.
-        bool invAllProcessed = true;
-        for (std::string h : inv) {
-            if (!_blocktree.ContainBlock(h)) {
-                std::cout << "sending POW protocol getdata for" << h << "\n";
-
-                std::shared_ptr<MessageObject> ptrToObj = std::make_shared<POWBlockGossipGetData>(h);
-                std::shared_ptr<Message> message = std::make_shared<Message>(msg->GetSource(), "POWBLOCK-GETDATA", ptrToObj);
-                BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(msg->GetSource(), message);
-
-                invAllProcessed = false;
-                break; // request only a single block
-            }
-        }
-
-        if (invAllProcessed) {
-            std::cout << "stop processing inv" << "\n";
-            StopProcessingInv();
-
-            // relay POWBLOCK-INV message??
-            std::shared_ptr<MessageObject> ptrToObj = std::make_shared<POWBlockGossipInventory>(inv);
-            std::vector<PeerId> neighborIds = BL_PeerConnectivityLayer_API::Instance()->GetNeighborPeerIds();
-            for (auto neighborId : neighborIds) {
-                if (neighborId.GetId() != msg->GetSource().GetId()) {
-                    std::cout << "send(relay) inv to " << neighborId.GetId() << "\n";
-                    std::shared_ptr<Message> message = std::make_shared<Message>(neighborId, "POWBLOCK-INV", ptrToObj);
-                    BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(neighborId, message);
-                }
-            }
-        }
-    }
+void BL_ProtocolLayerPBFT::_RecvPBFTBlockBlkHandler(std::shared_ptr<Message> msg) {
+    std::cout << "received PBFT protocol block message" << "\n";
 }
 
-void BL_ProtocolLayerPoW::SwitchAsyncEventHandler(AsyncEvent& event) {
+void BL_ProtocolLayerPBFT::SwitchAsyncEventHandler(AsyncEvent& event) {
     switch (event.GetType()) {
         case AsyncEventEnum::ProtocolRecvMsg:
         {
@@ -225,7 +284,7 @@ void BL_ProtocolLayerPoW::SwitchAsyncEventHandler(AsyncEvent& event) {
         case AsyncEventEnum::EmuBlockMiningComplete:
         {
             std::cout << "block mining complete" << "\n";
-            std::shared_ptr<POWBlock> minedBlk = event.GetData().GetMinedBlock();
+            std::shared_ptr<PBFTBlock> minedBlk = event.GetData().GetMinedBlock();
             std::cout << "blockhash:" << minedBlk->GetBlockHash() << "\n";
             std::cout << "blockhash(str):" << minedBlk->GetBlockHash().str() << "\n";
             std::cout << "blockhash:" << libBLEEP::UINT256_t((const unsigned char*)minedBlk->GetBlockHash().str().c_str(), 32) << "\n";
@@ -246,12 +305,12 @@ void BL_ProtocolLayerPoW::SwitchAsyncEventHandler(AsyncEvent& event) {
 
             std::vector<std::string> hashes;
             hashes.push_back(minedBlk->GetBlockHash().str());
-            std::shared_ptr<MessageObject> ptrToObj = std::make_shared<POWBlockGossipInventory>(hashes);
+            std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTBlockGossipInventory>(hashes);
 
             std::vector<PeerId> neighborIds = BL_PeerConnectivityLayer_API::Instance()->GetNeighborPeerIds();
             for (auto &neighborId : neighborIds) {
-                std::cout << "send POWBlockinv to " << neighborId.GetId() << "\n";
-                std::shared_ptr<Message> message = std::make_shared<Message>(neighborId, "POWBLOCK-INV", ptrToObj);
+                std::cout << "send PBFTBlockinv to " << neighborId.GetId() << "\n";
+                std::shared_ptr<Message> message = std::make_shared<Message>(neighborId, "PBFTBLOCK-INV", ptrToObj);
                 BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(neighborId, message);
             }
 
@@ -262,9 +321,9 @@ void BL_ProtocolLayerPoW::SwitchAsyncEventHandler(AsyncEvent& event) {
     }
 }
 
-bool BL_ProtocolLayerPoW::InitiateProtocol() {
+bool BL_ProtocolLayerPBFT::InitiateProtocol() {
     if (!_initiated) {
-        std::cout << "initiating ProtocolPoW" << "\n";
+        std::cout << "initiating ProtocolPBFT" << "\n";
         _startPeriodicTxGen(txGenStartAt, txGenInterval);
         _initiated = true;
 
@@ -275,17 +334,17 @@ bool BL_ProtocolLayerPoW::InitiateProtocol() {
     }
 }
 
-bool BL_ProtocolLayerPoW::InitiateProtocol(ProtocolParameter* params) {
-//    POWProtocolParameter& powparams = dynamic_cast<POWProtocolParameter &>(params);
-    POWProtocolParameter* powparams = dynamic_cast<POWProtocolParameter*>(params);
-    assert(powparams != nullptr);
+bool BL_ProtocolLayerPBFT::InitiateProtocol(ProtocolParameter* params) {
+//    PBFTProtocolParameter& pbftparams = dynamic_cast<PBFTProtocolParameter &>(params);
+    PBFTProtocolParameter* pbftparams = dynamic_cast<PBFTProtocolParameter*>(params);
+    assert(pbftparams != nullptr);
     if (!_initiated) {
-        std::cout << "initiating ProtocolPoW with custom params" << "\n";
-        _startPeriodicTxGen(powparams->txGenStartAt, powparams->txGenInterval);
+        std::cout << "initiating ProtocolPBFT with custom params" << "\n";
+        _startPeriodicTxGen(pbftparams->txGenStartAt, pbftparams->txGenInterval);
         _initiated = true;
 
-        miningtime = powparams->miningtime;
-        miningnodecnt = powparams->miningnodecnt;
+        miningtime = pbftparams->miningtime;
+        miningnodecnt = pbftparams->miningnodecnt;
         std::cout << "miningtime:" << miningtime << "\n";
         std::cout << "miningnodecnt:" << miningnodecnt << "\n";
 
@@ -296,7 +355,7 @@ bool BL_ProtocolLayerPoW::InitiateProtocol(ProtocolParameter* params) {
     }
 }
 
-bool BL_ProtocolLayerPoW::StopProtocol() {
+bool BL_ProtocolLayerPBFT::StopProtocol() {
     // do nothing?
     return true;
 }

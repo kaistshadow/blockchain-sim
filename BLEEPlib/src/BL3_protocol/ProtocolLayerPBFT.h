@@ -27,13 +27,25 @@ namespace libBLEEP_BL {
     public:
         BlockTree<PBFTBlock>& GetBlockTree() { return _blocktree; }
     private:
-        // PBFT parameter
+        // txgen parameter
         int txNumPerBlock = 2;
         double txGenStartAt = 0;
         double txGenInterval = 4;
-        unsigned long consensusId = 0;
+
+        // PBFT initial setup parameter
         std::string configFile = "config.txt";
         double phase_interval = 20;
+        // PBFT logic parameter
+        unsigned long _p;               // primary
+        unsigned long _consensusId = 0;
+        unsigned long _v;               // current view#
+        unsigned long _h;               // sequence boundary (bottom)
+        unsigned long _k;               // sequence range (_h + _k = H = Checkpoint starting sequence)
+        unsigned long _f;               // faulty node limit
+        // PBFT messages
+        _preprepared;   // _prepreared msgs after _checkpoint
+        _prepared;      // _prepared msgs after _checkpoint
+        _checkpoint;    // > 2f+1 count of checkpoint msg with same seq# and digest.
 
     private:
         // Block propagation protocol-related data structure (processing inventory)

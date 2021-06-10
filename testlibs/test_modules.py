@@ -532,7 +532,7 @@ def test_dumpfile_load(plugin_output_files, abs_path, difficulty):
             if i == 7:
                 print("Success test dump file load test ... ")
                 f.close()
-                sys.exit(0)
+                break
             else:
                 pass
 
@@ -684,6 +684,7 @@ def TPS_test(simulation_output_file):
     if bitcoind_txc == txgenerator_txc:
         check_flag[2] = True
     else:
+        print("Fail TPS test ...")
         print("bitcoind_txc : %s" %bitcoind_txc)
         print("txgenerator_txc : %s" %txgenerator_txc)
         sys.exit(1)

@@ -45,7 +45,8 @@ namespace libBLEEP_BL {
         // PBFT messages
         _preprepared;   // _prepreared msgs after _checkpoint
         _prepared;      // _prepared msgs after _checkpoint
-        _checkpoint;    // > 2f+1 count of checkpoint msg with same seq# and digest.
+        _checkpoints;    // > 2f+1 count of checkpoint msg with same seq# and digest.
+        _recentStableCheckpoint;
 
     private:
         /* handler functions for each asynchronous event */

@@ -21,8 +21,10 @@ void BL_ProtocolLayerPBFT::RecvMsgHandler(std::shared_ptr<Message> msg) {
         _txGossipProtocol.RecvGetdataHandler(msg);
     } else if (msgType == "TXGOSSIP-TXS") {
         _txGossipProtocol.RecvTxsHandler(msg);
-    } else if (msgType == "PBFT-JOIN") {
-        _RecvPBFTJoinHandler(msg);
+    } else if (msgType == "PBFT-JOINREQ") {
+        _RecvPBFTJoinRequestHandler(msg);
+    } else if (msgType == "PBFT-JOINRES") {
+        _RecvPBFTJoinResponseHandler(msg);
 //    } else if (msgType == "PBFT-PREPREPARE") {
 //        _RecvPBFTPreprepareHandler(msg);
 //    } else if (msgType == "PBFT-PREPARE") {
@@ -33,6 +35,28 @@ void BL_ProtocolLayerPBFT::RecvMsgHandler(std::shared_ptr<Message> msg) {
 //        _RecvPBFTCheckpointHandler(msg);
 //    } else if (msgType == "PBFT-VIEWCHANGE") {
 //        _RecvPBFTViewChangeHandler(msg);
+    }
+}
+
+void BL_ProtocolLayerPBFT::_joinTimerCallback(ev::timer &w, int revents) {
+    // if all consensus node is connected, stop timer.
+    if (_config.isAllConnected()) {
+        w.stop();
+        return;
+    }
+
+    // for all connection, check below
+    // if the connection is already mapped with pubkey, continue.
+    // else send joinRequest
+    std::vector<PeerId> neighborIds = BL_PeerConnectivityLayer_API::Instance()->GetNeighborPeerIds();
+    for (auto neighborId : neighborIds) {
+        unsigned long pk;
+        if (_config.getPeerPubkey(neighborId.GetId(), pk) == 0) {
+            continue;
+        }
+        std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTJoinRequest>();
+        std::shared_ptr<Message> message = std::make_shared<Message>(neighborId, "PBFT-JOINREQ", ptrToObj);
+        BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(neighborId, message);
     }
 }
 
@@ -49,16 +73,34 @@ bool _PBFTVerify(PBFTPubkey p, std::string sig, std::string plainText) {
     return p.verify(sig, d);
 }
 
-void BL_ProtocolLayerPBFT::_RecvPBFTJoinHandler(std::shared_ptr<Message> msg) {
-    std::shared_ptr<PBFTJoin> ppr = std::static_pointer_cast<PBFTJoin>(msg->GetObject());
+void BL_ProtocolLayerPBFT::_RecvPBFTJoinRequestHandler(std::shared_ptr<Message> msg) {
+    std::shared_ptr<PBFTJoinRequest> jreq = std::static_pointer_cast<PBFTJoinRequest>(msg->GetObject());
 
-    // TODO: map source with pubkey configuration
+    std::ostringstream oss;
+    oss << "JOINREQ" << _consensusNodeID;
+    std::string signText = oss.str();
+    std::string sign = _PBFTSignature(_secret, signText);
 
-    // TODO: if you are primary and all nodes joined, start _StartPreprepare
+    std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTJoinResponse>(_consensusNodeID, sign);
+    std::shared_ptr<Message> message = std::make_shared<Message>(msg->GetSource(), "PBFT-JOINRES", ptrToObj);
+    BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(msg->GetSource(), message);
+}
+void BL_ProtocolLayerPBFT::_RecvPBFTJoinResponseHandler(std::shared_ptr<Message> msg) {
+    std::shared_ptr<PBFTJoinResponse> jres = std::static_pointer_cast<PBFTJoinResponse>(msg->GetObject());
+
+    std::ostringstream oss;
+    oss << "JOINREQ" << jres->consensusNodeId;
+
+    PBFTPubkey pk;
+    pk.setID(jres->consensusNodeId);
+    if (!pk.verify(oss.str(), jres->sign)) {
+        return;
+    }
+    _config.assignSource(jres->consensusNodeId, msg->GetSource().GetId());
 }
 
 //void BL_ProtocolLayerPBFT::_StartPreprepare() {
-//    if (_p != _consensusId) {
+//    if (_p != _consensusNodeID) {
 //        // why non-primary node create preprepare message? ignore it.
 //        return;
 //    }
@@ -82,7 +124,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTJoinHandler(std::shared_ptr<Message> msg) {
 //
 //// TODO: considering the case that prepare from other replica arrives earlier than the preprepare from the primary.
 //void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> msg) {
-//    if (_p == _consensusId) {
+//    if (_p == _consensusNodeID) {
 //        // why primary node get preprepare message? ignore it.
 //        return;
 //    }
@@ -124,7 +166,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTJoinHandler(std::shared_ptr<Message> msg) {
 //    _current_prepare.reset();
 //    // send prepare message to everyone in the consensus
 //    for (auto consensusNeighbor : consensusNeighbors) {
-//        std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTPrepare>(v, n, d, _consensusId);
+//        std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTPrepare>(v, n, d, _consensusNodeID);
 //        std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor, "PBFT-PREPARE", ptrToObj);
 //        BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(consensusNeighbor, message);
 //    }
@@ -263,6 +305,12 @@ bool BL_ProtocolLayerPBFT::InitiateProtocol() {
         std::cout << "initiating ProtocolPBFT" << "\n";
         _startPeriodicTxGen(txGenStartAt, txGenInterval);
         _initiated = true;
+        _config.load("config.txt");
+
+        _secret.setID(_consensusNodeID);
+        _pubkey.setID(_consensusNodeID);
+
+        _initJoinTimer();
 
         return true;
     } else {
@@ -281,6 +329,13 @@ bool BL_ProtocolLayerPBFT::InitiateProtocol(ProtocolParameter* params) {
         txGenInterval = pbftparams->txGenInterval;
         _startPeriodicTxGen(txGenStartAt, txGenInterval);
         _initiated = true;
+        _config.load(configFile);
+
+        _consensusNodeID = pbftparams->consensusNodeID;
+        _secret.setID(_consensusNodeID);
+        _pubkey.setID(_consensusNodeID);
+
+        _initJoinTimer();
 
         return true;
     } else {

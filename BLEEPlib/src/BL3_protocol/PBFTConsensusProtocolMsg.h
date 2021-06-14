@@ -11,8 +11,34 @@
 
 namespace libBLEEP_BL {
     class Message;
-    class PBFTJoin: public MessageObject {
-        // TODO
+
+    class PBFTJoinRequest: public MessageObject {
+    public:
+        PBFTJoinRequest() {}
+    private: // boost serialization
+        friend class boost::serialization::access;
+
+        template<class Archive>
+        void serialize(Archive &ar, const unsigned int version) {
+            ar & boost::serialization::base_object<MessageObject>(*this);
+        }
+    };
+    class PBFTJoinResponse: public MessageObject {
+    public:
+        unsigned long consensusNodeId;
+        std::string sign;
+        PBFTJoinResponse() {}
+        PBFTJoinResponse(unsigned long id, std::string sig) {
+            consensusNodeId = id;
+            sign = sig;
+        }
+    private: // boost serialization
+        friend class boost::serialization::access;
+
+        template<class Archive>
+        void serialize(Archive &ar, const unsigned int version) {
+            ar & boost::serialization::base_object<MessageObject>(*this);
+        }
     };
 
 //    class Preprepare : public MessageObject {

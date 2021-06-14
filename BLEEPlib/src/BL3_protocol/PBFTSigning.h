@@ -9,11 +9,15 @@
 
 namespace libBLEEP_BL {
     class PBFTSecret {
+        unsigned long _id;
     public:
+        void setID(unsigned long id) {_id = id;}
         std::string sign(std::string text);
     };
     class PBFTPubkey {
+        unsigned long _id;
     public:
+        void setID(unsigned long id) {_id = id;}
         bool verify(std::string sig, std::string text);
     };
 }

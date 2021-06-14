@@ -43,7 +43,7 @@
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>
   <node id="pbftnode1">
-    <application plugin="NODE" time="0" arguments="-id=pbftnode1 -consensusNodeID=6 -configfile=onestake.txt -phaseinterval=30 -connect=pbftnode0" />
+    <application plugin="NODE" time="0" arguments="-id=pbftnode1 -consensusNodeID=6 -configfile=onestake.txt -phaseinterval=30 -connect=pbftnode5" />
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>
 

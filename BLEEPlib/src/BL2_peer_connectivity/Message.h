@@ -92,7 +92,8 @@ namespace libBLEEP_BL {
             ar.template register_type<POWBlockGossipGetBlocks>();
             ar.template register_type<POWBlockGossipGetData>();
             ar.template register_type<POWBlockGossipBlk>();
-            ar.template register_type<PBFTJoin>();
+            ar.template register_type<PBFTJoinRequest>();
+            ar.template register_type<PBFTJoinResponse>();
             ar & _src;
             ar & _dest;
             ar & _type;

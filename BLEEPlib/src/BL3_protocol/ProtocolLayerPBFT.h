@@ -13,7 +13,8 @@
 #include "PBFTBlock.h"
 #include "BlockTree.h"
 #include "BlockTree.cpp"  // This(BlockTree.cpp) is required since the BlockTree is template class
-//#include "PBFTConfig.h" // TODO
+#include "PBFTConfig.h"
+#include "PBFTSigning.h"
 
 #include "shadow_memshare_interface.h"
 
@@ -21,6 +22,7 @@ namespace libBLEEP_BL {
     class BL_ProtocolLayerPBFT : public BL_ProtocolLayer_API {
     private:
         TxGossipProtocol _txGossipProtocol;
+        PBFTConfig _config;
     private:
         BlockTree<PBFTBlock> _blocktree;
     public:
@@ -36,7 +38,7 @@ namespace libBLEEP_BL {
         double phase_interval = 20;
         // PBFT logic parameter
         unsigned long _p;               // primary
-        unsigned long _consensusId = 0;
+        unsigned long _consensusNodeID = 0;
         unsigned long _v;               // current view#
         unsigned long _h;               // sequence boundary (bottom)
         unsigned long _k;               // sequence range (_h + _k = H = Checkpoint starting sequence)
@@ -46,12 +48,15 @@ namespace libBLEEP_BL {
 //        _prepared;      // _prepared msgs after _checkpoint
 //        _checkpoints;    // > 2f+1 count of checkpoint msg with same seq# and digest.
 //        _recentStableCheckpoint;
+        PBFTSecret _secret;
+        PBFTPubkey _pubkey;
 
     private:
         /* handler functions for each asynchronous event */
         void RecvMsgHandler(std::shared_ptr<Message> msg);
 
-        void _RecvPBFTJoinHandler(std::shared_ptr<Message> msg);
+        void _RecvPBFTJoinRequestHandler(std::shared_ptr<Message> msg);
+        void _RecvPBFTJoinResponseHandler(std::shared_ptr<Message> msg);
         void _RecvPBFTPreprepareHandler(std::shared_ptr<Message> msg);
         void _RecvPBFTPrepareHandler(std::shared_ptr<Message> msg);
         void _RecvPBFTCommitHandler(std::shared_ptr<Message> msg);
@@ -110,6 +115,14 @@ namespace libBLEEP_BL {
         void _renewViewChangeStarter() {
             // TODO: stop timer
             // TODO: reset timer with _viewChangeInterval
+        }
+
+        ev::timer _joinTimer;
+        void _joinTimerCallback(ev::timer &w, int revents);
+        void _initJoinTimer() {
+            _joinTimer.set<BL_ProtocolLayerPBFT, &BL_ProtocolLayerPBFT::_joinTimerCallback>(this);
+            _joinTimer.set(5, 20);
+            _joinTimer.start();
         }
 
 

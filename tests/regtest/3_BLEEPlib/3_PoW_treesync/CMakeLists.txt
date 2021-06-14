@@ -24,22 +24,22 @@ add_custom_command(TARGET BLEEPlib-test-pow-node
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BLEEPlib-test-pow-node> ${CMAKE_CURRENT_SOURCE_DIR}/../../perftest/memory_sharing
         )
 
-add_test(NAME BLEEPlib-pow-treesync-1
-        COMMAND python test-treesync.py --noserver treesynctest1-twonode.xml
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/")
+#add_test(NAME BLEEPlib-pow-treesync-1
+#        COMMAND python test-treesync.py --noserver treesynctest1-twonode.xml
+#        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/")
 
-set_property(TEST BLEEPlib-pow-treesync-1 APPEND
-        PROPERTY
-        ENVIRONMENT PATH=$ENV{PATH}:${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/bin) # add path environment in order to use CLion
+#set_property(TEST BLEEPlib-pow-treesync-1 APPEND
+#        PROPERTY
+#        ENVIRONMENT PATH=$ENV{PATH}:${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/bin) # add path environment in order to use CLion
 
 
-add_test(NAME BLEEPlib-pow-treesync-2
-        COMMAND python test-treesync.py --noserver treesynctest2-tennode.xml
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/")
+#add_test(NAME BLEEPlib-pow-treesync-2
+#        COMMAND python test-treesync.py --noserver treesynctest2-tennode.xml
+#        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/")
 
-set_property(TEST BLEEPlib-pow-treesync-2 APPEND
-        PROPERTY
-        ENVIRONMENT PATH=$ENV{PATH}:${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/bin) # add path environment in order to use CLion
+#set_property(TEST BLEEPlib-pow-treesync-2 APPEND
+#        PROPERTY
+#        ENVIRONMENT PATH=$ENV{PATH}:${CMAKE_CURRENT_SOURCE_DIR}/../../../../Install/bin) # add path environment in order to use CLion
 
 #
 ## Testcase for ConnectPeer API

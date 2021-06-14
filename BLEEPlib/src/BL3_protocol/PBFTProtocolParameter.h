@@ -16,8 +16,8 @@ namespace libBLEEP_BL {
         double txGenStartAt = (double)INT_MAX;
         double txGenInterval = (double)INT_MAX;
 
-        unsigned long consensusId = 0;
         std::string configFile = "config.txt";
+        unsigned long consensusNodeID = 0;
         double phase_interval = 20;
     };
 }

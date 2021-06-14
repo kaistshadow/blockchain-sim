@@ -54,7 +54,7 @@ namespace libBLEEP_BL {
         bool operator==(const PBFTBlock& other) {
             return tx_hash == other.tx_hash
                 && prev_block_hash == other.prev_block_hash
-                && timestamp == other.timestamp
+                && timestamp == other.timestamp;
         }
 
     private:

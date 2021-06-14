@@ -11,25 +11,24 @@
 
 namespace libBLEEP_BL {
     class Message;
-/*
-
-
-
-*/
-    class Preprepare : public MessageObject {
-    private:
-        Signature sign;
-        Message m;
-    public:
-        Preprepare()
-        // primary's sign(preprepare, view# v, sequence# n, message_hash d)
+    class PBFTJoin: public MessageObject {
+        // TODO
     };
-    class Prepare : public MessageObject {
 
-    };
-    class Commit : public MessageObject {
-
-    }
+//    class Preprepare : public MessageObject {
+//    private:
+//        Signature sign;
+//        Message m;
+//    public:
+//        Preprepare()
+//        // primary's sign(preprepare, view# v, sequence# n, message_hash d)
+//    };
+//    class Prepare : public MessageObject {
+//
+//    };
+//    class Commit : public MessageObject {
+//
+//    }
 
     class PBFTBlockGossipBlk : public MessageObject {
     private:

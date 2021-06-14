@@ -11,10 +11,9 @@
 #include "Transaction.h"
 #include "TxGossipProtocol.h"
 #include "PBFTBlock.h"
-#include "PBFTMiner.h"
 #include "BlockTree.h"
 #include "BlockTree.cpp"  // This(BlockTree.cpp) is required since the BlockTree is template class
-#include "PBFTConfig.h"
+//#include "PBFTConfig.h" // TODO
 
 #include "shadow_memshare_interface.h"
 
@@ -42,16 +41,17 @@ namespace libBLEEP_BL {
         unsigned long _h;               // sequence boundary (bottom)
         unsigned long _k;               // sequence range (_h + _k = H = Checkpoint starting sequence)
         unsigned long _f;               // faulty node limit
-        // PBFT messages
-        _preprepared;   // _prepreared msgs after _checkpoint
-        _prepared;      // _prepared msgs after _checkpoint
-        _checkpoints;    // > 2f+1 count of checkpoint msg with same seq# and digest.
-        _recentStableCheckpoint;
+        // PBFT messages TODO
+//        _preprepared;   // _prepreared msgs after _checkpoint
+//        _prepared;      // _prepared msgs after _checkpoint
+//        _checkpoints;    // > 2f+1 count of checkpoint msg with same seq# and digest.
+//        _recentStableCheckpoint;
 
     private:
         /* handler functions for each asynchronous event */
         void RecvMsgHandler(std::shared_ptr<Message> msg);
 
+        void _RecvPBFTJoinHandler(std::shared_ptr<Message> msg);
         void _RecvPBFTPreprepareHandler(std::shared_ptr<Message> msg);
         void _RecvPBFTPrepareHandler(std::shared_ptr<Message> msg);
         void _RecvPBFTCommitHandler(std::shared_ptr<Message> msg);
@@ -59,7 +59,7 @@ namespace libBLEEP_BL {
         void _RecvPBFTViewChangeHandler(std::shared_ptr<Message> msg);
 
     private:
-        std::shared_ptr<POSBlock> makeBlockTemplate();
+        std::shared_ptr<PBFTBlock> makeBlockTemplate();
 
         // periodic tx generation for experimental purpose
         ev::timer _txgentimer;
@@ -104,7 +104,7 @@ namespace libBLEEP_BL {
         ev::timer _viewChangeStarter;
         double _viewChangeInterval = 100;
         void _initViewChangeStarter() {
-            _viewChangeStarter.set<BL_ProtocolLayerPBFT, &BL_ProtocolLayerPBFT::_changeView>(this);
+//            _viewChangeStarter.set<BL_ProtocolLayerPBFT, &BL_ProtocolLayerPBFT::_changeView>(this);   // TODO
         }
         // called on new preprepare message
         void _renewViewChangeStarter() {

@@ -16,6 +16,7 @@
 #include "../BL3_protocol/Inventory.h"
 #include "../BL3_protocol/TxGossipProtocolMsg.h"
 #include "../BL3_protocol/POWBlockGossipProtocolMsg.h"
+#include "../BL3_protocol/PBFTConsensusProtocolMsg.h"
 
 
 #include "utility/GlobalClock.h"
@@ -91,6 +92,7 @@ namespace libBLEEP_BL {
             ar.template register_type<POWBlockGossipGetBlocks>();
             ar.template register_type<POWBlockGossipGetData>();
             ar.template register_type<POWBlockGossipBlk>();
+            ar.template register_type<PBFTJoin>();
             ar & _src;
             ar & _dest;
             ar & _type;

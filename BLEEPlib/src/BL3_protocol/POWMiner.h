@@ -68,12 +68,12 @@ namespace libBLEEP_BL {
             libBLEEP::UINT256_t hash_out_256(hash_out, 32);
             validBlk->SetBlockHash(hash_out_256);
             validBlk->SetTimestamp(timestamp);
-
+            std::cout<<"blockID:"<<validBlk->GetBlockIdx()<<"\n";
             // push asynchronous event
             AsyncEvent event(AsyncEventEnum::EmuBlockMiningComplete);
             event.GetData().SetMinedBlock(validBlk);
             MainEventManager::Instance()->PushAsyncEvent(event);
-
+            std::cout<<"blockhash:"<<validBlk->GetBlockHash().str()<<"\n";
             _isMining = false;
             libBLEEP::PrintTimespec("POW miningTimer callback ended");
             /* next_shadow_clock_update("==== done handling miningTimer callback"); */

@@ -160,6 +160,7 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockBlkHandler(std::shared_ptr<Message> msg) 
 
     UINT256_t lasthash = _blocktree.GetLastHash();
     // append a block to ledger
+    std::cout<<"blockID:"<<blkptr->GetBlockIdx()<<"\n";
     std::cout << "blockhash:" << blkptr->GetBlockHash().str() << "\n";
     if (!_blocktree.ContainBlock(blkptr->GetBlockHash().str()))  {
         std::list<SimpleTransactionId> txids;

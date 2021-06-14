@@ -20,6 +20,8 @@ void BL_ProtocolLayerPBFT::RecvMsgHandler(std::shared_ptr<Message> msg) {
         _txGossipProtocol.RecvGetdataHandler(msg);
     } else if (msgType == "TXGOSSIP-TXS") {
         _txGossipProtocol.RecvTxsHandler(msg);
+    } else if (msgType == "PBFT-JOIN") {
+        _RecvPBFTJoinHanlder(msg);
     } else if (msgType == "PBFT-PREPREPARE") {
         _RecvPBFTPreprepareHandler(msg);
     } else if (msgType == "PBFT-PREPARE") {
@@ -40,6 +42,14 @@ std::string _PBFTSignature(Secret k, std::string plainText) {
 std::string _PBFTVerify(Pubkey p, std::string sig, std::string plainText) {
     std::string d = _digest(plainText);
     p.verify(sig, d);
+}
+
+void BL_ProtocolLayerPBFT::_RecvPBFTJoinHandler(std::shared_ptr<Message> msg) {
+    std::shared_ptr<PBFTJoin> ppr = std::static_pointer_cast<PBFTJoin>(msg->GetObject());
+
+    // TODO: map source with pubkey configuration
+
+    // TODO: if you are primary and all nodes joined, start _StartPreprepare
 }
 
 void BL_ProtocolLayerPBFT::_StartPreprepare() {

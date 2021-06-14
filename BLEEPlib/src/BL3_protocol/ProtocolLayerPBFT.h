@@ -101,6 +101,17 @@ namespace libBLEEP_BL {
             _txgentimer.start();
         }
 
+        ev::timer _viewChangeStarter;
+        double _viewChangeInterval = 100;
+        void _initViewChangeStarter() {
+            _viewChangeStarter.set<BL_ProtocolLayerPBFT, &BL_ProtocolLayerPBFT::_changeView>(this);
+        }
+        // called on new preprepare message
+        void _renewViewChangeStarter() {
+            // TODO: stop timer
+            // TODO: reset timer with _viewChangeInterval
+        }
+
 
     public:
         BL_ProtocolLayerPBFT();

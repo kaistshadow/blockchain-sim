@@ -39,6 +39,7 @@ void BL_ProtocolLayerPBFT::RecvMsgHandler(std::shared_ptr<Message> msg) {
 }
 
 void BL_ProtocolLayerPBFT::_joinTimerCallback(ev::timer &w, int revents) {
+    std::cout << "Debug _joinTimerCallback called\n";
     // if all consensus node is connected, stop timer.
     if (_config.isAllConnected()) {
         w.stop();
@@ -50,6 +51,7 @@ void BL_ProtocolLayerPBFT::_joinTimerCallback(ev::timer &w, int revents) {
     // else send joinRequest
     std::vector<PeerId> neighborIds = BL_PeerConnectivityLayer_API::Instance()->GetNeighborPeerIds();
     for (auto neighborId : neighborIds) {
+        std::cout << "Debug join request target:" << neighborId.GetId() << "\n";
         unsigned long pk;
         if (_config.getPeerPubkey(neighborId.GetId(), pk) == 0) {
             continue;
@@ -74,26 +76,30 @@ bool _PBFTVerify(PBFTPubkey p, std::string sig, std::string plainText) {
 }
 
 void BL_ProtocolLayerPBFT::_RecvPBFTJoinRequestHandler(std::shared_ptr<Message> msg) {
+    std::cout << "Debug PBFTJoinRequest message received\n";
     std::shared_ptr<PBFTJoinRequest> jreq = std::static_pointer_cast<PBFTJoinRequest>(msg->GetObject());
 
     std::ostringstream oss;
     oss << "JOINREQ" << _consensusNodeID;
     std::string signText = oss.str();
     std::string sign = _PBFTSignature(_secret, signText);
+    std::cout << "Debug PBFTJoinRequest content: " << _consensusNodeID << ", " << sign << "\n";
 
     std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTJoinResponse>(_consensusNodeID, sign);
     std::shared_ptr<Message> message = std::make_shared<Message>(msg->GetSource(), "PBFT-JOINRES", ptrToObj);
     BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(msg->GetSource(), message);
 }
 void BL_ProtocolLayerPBFT::_RecvPBFTJoinResponseHandler(std::shared_ptr<Message> msg) {
+    std::cout << "Debug PBFTJoinResponse message received\n";
     std::shared_ptr<PBFTJoinResponse> jres = std::static_pointer_cast<PBFTJoinResponse>(msg->GetObject());
 
     std::ostringstream oss;
     oss << "JOINREQ" << jres->consensusNodeId;
 
     PBFTPubkey pk;
+    std::cout << "Debug join response:" << jres->consensusNodeId << "-"<< msg->GetSource().GetId() << ", " << jres->sign << "\n";
     pk.setID(jres->consensusNodeId);
-    if (!pk.verify(oss.str(), jres->sign)) {
+    if (!pk.verify(jres->sign, oss.str())) {
         return;
     }
     _config.assignSource(jres->consensusNodeId, msg->GetSource().GetId());
@@ -307,6 +313,7 @@ bool BL_ProtocolLayerPBFT::InitiateProtocol() {
         _initiated = true;
         _config.load("config.txt");
 
+        std::cout << "Debug _consensusNodeID:" << _consensusNodeID << "\n";
         _secret.setID(_consensusNodeID);
         _pubkey.setID(_consensusNodeID);
 
@@ -332,6 +339,7 @@ bool BL_ProtocolLayerPBFT::InitiateProtocol(ProtocolParameter* params) {
         _config.load(configFile);
 
         _consensusNodeID = pbftparams->consensusNodeID;
+        std::cout << "Debug _consensusNodeID:" << _consensusNodeID << "\n";
         _secret.setID(_consensusNodeID);
         _pubkey.setID(_consensusNodeID);
 

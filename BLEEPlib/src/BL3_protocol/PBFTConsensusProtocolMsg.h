@@ -38,6 +38,8 @@ namespace libBLEEP_BL {
         template<class Archive>
         void serialize(Archive &ar, const unsigned int version) {
             ar & boost::serialization::base_object<MessageObject>(*this);
+            ar & consensusNodeId;
+            ar & sign;
         }
     };
 

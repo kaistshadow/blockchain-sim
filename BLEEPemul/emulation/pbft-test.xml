@@ -35,15 +35,15 @@
 
 
   <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="20" />
+  <kill time="300" />
   <!-- our nodes -->
 
   <node id="pbftnode0">
-    <application plugin="NODE" time="0" arguments="-id=pbftnode0 -consensusNodeID=0 -configfile=onestake.txt -phaseinterval=30 -txgenstartat=0 -txgeninterval=4 " />
+    <application plugin="NODE" time="0" arguments="-id=pbftnode0 -consensusNodeID=1 -configfile=config.txt -phaseinterval=30 -txgenstartat=0 -txgeninterval=4 " />
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>
   <node id="pbftnode1">
-    <application plugin="NODE" time="0" arguments="-id=pbftnode1 -consensusNodeID=6 -configfile=onestake.txt -phaseinterval=30 -connect=pbftnode5" />
+    <application plugin="NODE" time="0" arguments="-id=pbftnode1 -consensusNodeID=2 -configfile=config.txt -phaseinterval=30 -connect=pbftnode0" />
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>
 

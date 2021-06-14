@@ -31,6 +31,7 @@ namespace libBLEEP_BL {
         }
     }
     void PBFTConfig::assignSource(unsigned long pubkey, std::string peer) {
+        std::cout << "Debug assignSource: " << pubkey << " to " << peer << "\n";
         auto it = consensusMap.find(pubkey);
         if (it == consensusMap.end()) {
             std::cout << "Cannot find pubkey\n";

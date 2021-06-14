@@ -54,6 +54,7 @@ void BL_ProtocolLayerPBFT::_joinTimerCallback(ev::timer &w, int revents) {
         std::cout << "Debug join request target:" << neighborId.GetId() << "\n";
         unsigned long pk;
         if (_config.getPeerPubkey(neighborId.GetId(), pk) == 0) {
+            std::cout << "Debug already set neighbor\n";
             continue;
         }
         std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTJoinRequest>();
@@ -311,11 +312,12 @@ bool BL_ProtocolLayerPBFT::InitiateProtocol() {
         std::cout << "initiating ProtocolPBFT" << "\n";
         _startPeriodicTxGen(txGenStartAt, txGenInterval);
         _initiated = true;
-        _config.load("config.txt");
 
         std::cout << "Debug _consensusNodeID:" << _consensusNodeID << "\n";
         _secret.setID(_consensusNodeID);
         _pubkey.setID(_consensusNodeID);
+
+        _config.load("config.txt", _consensusNodeID);
 
         _initJoinTimer();
 
@@ -336,12 +338,13 @@ bool BL_ProtocolLayerPBFT::InitiateProtocol(ProtocolParameter* params) {
         txGenInterval = pbftparams->txGenInterval;
         _startPeriodicTxGen(txGenStartAt, txGenInterval);
         _initiated = true;
-        _config.load(configFile);
 
         _consensusNodeID = pbftparams->consensusNodeID;
         std::cout << "Debug _consensusNodeID:" << _consensusNodeID << "\n";
         _secret.setID(_consensusNodeID);
         _pubkey.setID(_consensusNodeID);
+
+        _config.load(configFile, _consensusNodeID);
 
         _initJoinTimer();
 

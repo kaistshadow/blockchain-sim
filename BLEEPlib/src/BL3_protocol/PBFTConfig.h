@@ -14,7 +14,7 @@ namespace libBLEEP_BL {
         std::map<std::string, unsigned long> peerPubkeyMap;
         unsigned int connectedCount = 0;
     public:
-        void load(std::string filename);
+        void load(std::string filename, unsigned long selfExclude);
         void assignSource(unsigned long pubkey, std::string peer);
         std::string getPubkeyPeer(unsigned long pubkey);
         int getPeerPubkey(std::string peer, unsigned long& res);

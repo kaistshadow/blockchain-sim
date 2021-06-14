@@ -5,7 +5,7 @@
 #include <algorithm>
 
 namespace libBLEEP_BL {
-    void PBFTConfig::load(std::string filename) {
+    void PBFTConfig::load(std::string filename, unsigned long selfExclude) {
         std::ifstream file(filename);
         if (!file.is_open()) {
             std::cout << "stake file not exists. abort.\n";
@@ -22,6 +22,10 @@ namespace libBLEEP_BL {
             unsigned long pubkey;
             try {
                 pubkey = std::stoul(str);
+                // exclude my pubkey
+                if (selfExclude == pubkey) {
+                    continue;
+                }
                 // register pubkey without fd connection
                 consensusMap.insert({pubkey, ""});
             }
@@ -37,6 +41,10 @@ namespace libBLEEP_BL {
             std::cout << "Cannot find pubkey\n";
             return;
         }
+        if (it->second == "") {
+            std::cout << "Debug " << pubkey << " is newly assigned to " << peer << "\n";
+            connectedCount++;
+        }
         it->second = peer;
 
         auto inverted_it = peerPubkeyMap.find(peer);
@@ -45,7 +53,6 @@ namespace libBLEEP_BL {
         } else {
             inverted_it->second = pubkey;
         }
-        connectedCount++;
     }
     std::string PBFTConfig::getPubkeyPeer(unsigned long pubkey) {
         auto it = consensusMap.find(pubkey);
@@ -65,6 +72,7 @@ namespace libBLEEP_BL {
         return 0;
     }
     bool PBFTConfig::isAllConnected() {
+        std::cout << "Debug consensus map size: " << consensusMap.size() << ", connectedCount: " << connectedCount << "\n";
         return consensusMap.size() == connectedCount;
     }
 }

@@ -35,7 +35,7 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	cd $DIR
 	# run shadow
     if [ $3 -eq "1" ]; then 
-	    shadow -d datadir -h 10000 -w $WORKER_CNT -m $4 & RUNPID=$! 
+        shadow -d datadir -h 10000 -w $WORKER_CNT -m $4 & RUNPID=$! 
 
     else
         shadow -d datadir -h 10000 -w $WORKER_CNT $4 & RUNPID=$!

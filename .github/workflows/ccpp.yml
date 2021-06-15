@@ -32,10 +32,10 @@ jobs:
 
     - name: Archive test output files when the test is Failed
       uses: actions/upload-artifact@v2
-#       if: failure()
-#       with:
-#         name: shadow-bitcoin-with-wallet_outputs
-#         path: tests/regtest/shadow-bitcoin/2_with-wallet/shadow.data/
+      if: failure()
+      with:
+        name: shadow-bitcoin-with-wallet_outputs
+        path: tests/regtest/shadow-bitcoin/2_with-wallet/shadow.data/
 
     # - name: debug BLEEP
     #   run: |

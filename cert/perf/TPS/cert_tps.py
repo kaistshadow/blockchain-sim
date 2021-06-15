@@ -58,7 +58,7 @@ if __name__ == '__main__':
         result = line.find("TPS=")
         if result != -1:
             target_tps = float(line.split("=")[2].split("/")[0][0:3])
-            tx_cnt = int(line.split("/")[1].split("=")[1])
+            tx_cnt = float(line.split("/")[1].split("=")[1])
             total_tps += target_tps
             tps_cnt += 1
 
@@ -69,10 +69,10 @@ if __name__ == '__main__':
     f.close()
 
     print("--------------------------------------------------------------------------------------------------")
-    print("\t\t\t\t Total transaction : %d" %tx_cnt)
-    print("\t\t\t\t Max TPS : %d" %max_tps)
-    print("\t\t\t\t Min TPS : %d" %min_tps)
-    print("\t\t\t\t Average TPS : %d" %(total_tps/tps_cnt))
+    print("\t\t\t\t Total transaction : %0.2lf" %tx_cnt)
+    print("\t\t\t\t Max TPS : %0.2lf" %max_tps)
+    print("\t\t\t\t Min TPS : %0.2lf" %min_tps)
+    print("\t\t\t\t Average TPS : %0.2lf" %(total_tps/tps_cnt))
     print("--------------------------------------------------------------------------------------------------")
 
 

@@ -20,6 +20,7 @@ namespace libBLEEP_BL {
         int getPeerPubkey(std::string peer, unsigned long& res);
         bool isAllConnected();
         unsigned int size();
+        std::map<unsigned long, std::string> getConsensusMap() {return consensusMap;}
     };
 }
 

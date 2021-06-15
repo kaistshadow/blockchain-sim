@@ -42,15 +42,33 @@ namespace libBLEEP_BL {
             ar & sign;
         }
     };
+    class PBFTPreprepare : public MessageObject {
+    private:
+        unsigned long view;
+        unsigned int sequence;
+        std::string sign;
+        std::shared_ptr<PBFTBlock> blk;
+    public:
+        PBFTPreprepare() {}
+        PBFTPreprepare(unsigned long v, unsigned int n, std::string sig, std::shared_ptr<PBFTBlock> m) {
+            view = v;
+            sequence = n;
+            sign = sig;
+            blk = m;
+        }
+    private: // boost serialization
+        friend class boost::serialization::access;
 
-//    class Preprepare : public MessageObject {
-//    private:
-//        Signature sign;
-//        Message m;
-//    public:
-//        Preprepare()
-//        // primary's sign(preprepare, view# v, sequence# n, message_hash d)
-//    };
+        template<class Archive>
+        void serialize(Archive &ar, const unsigned int version) {
+            ar & boost::serialization::base_object<MessageObject>(*this);
+            ar & view;
+            ar & sequence;
+            ar & sign;
+            ar & blk;
+        }
+    };
+
 //    class Prepare : public MessageObject {
 //
 //    };

@@ -29,7 +29,7 @@ namespace libBLEEP_BL {
         BlockTree<PBFTBlock>& GetBlockTree() { return _blocktree; }
     private:
         // txgen parameter
-        int txNumPerBlock = 2;
+        int maxTxPerBlock = 100;
         double txGenStartAt = 0;
         double txGenInterval = 4;
 
@@ -40,6 +40,7 @@ namespace libBLEEP_BL {
         unsigned long _p;               // primary
         unsigned long _consensusNodeID = 0;
         unsigned long _v;               // current view#
+        unsigned long _n;               // current seq#
         unsigned long _h;               // sequence boundary (bottom)
         unsigned long _k = 20;               // sequence range (_h + _k = H = Checkpoint starting sequence)  // TODO: parameterize
         unsigned long _f;               // faulty node limit

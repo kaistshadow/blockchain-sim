@@ -142,19 +142,20 @@ void BL_ProtocolLayerPBFT::_StartPreprepare() {
    }
 
    std::shared_ptr<PBFTBlock> blk = makeBlockTemplate();
+   blk->CalcHash();
 
    // make preprepare message
    std::ostringstream oss;
    unsigned int n = _n++;
-   std::string d = _digest(blk->str());
+   std::string d = _digest(blk->GetBlockHash().str());  // simply get digest with block hash, for just simple abstraction PBFT logic.
    oss << "PREPREPARE" << _v << n << d;
    std::string signText = oss.str();
-   std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTPreprepare>(_v, n, d, _PBFTSignature(_key, signText), blk);
+   std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTPreprepare>(_v, n, _PBFTSignature(_secret, signText), blk);
 
    // send preprepare message to everyone in the consensus
-   for (auto consensusNeighbor : consensusNeighbors) {
-       std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor, "PBFT-PREPREPARE", ptrToObj);
-       BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(consensusNeighbor, message);
+   for (auto consensusNeighbor : _config.getConsensusMap()) {
+       std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor.second, "PBFT-PREPREPARE", ptrToObj);
+       BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(consensusNeighbor.second, message);
    }
 }
 

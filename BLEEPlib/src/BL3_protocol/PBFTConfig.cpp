@@ -75,7 +75,7 @@ namespace libBLEEP_BL {
         std::cout << "Debug consensus map size: " << consensusMap.size() << ", connectedCount: " << connectedCount << "\n";
         return consensusMap.size() == connectedCount;
     }
-    unsigned int size() {
+    unsigned int PBFTConfig::size() {
         return consensusMap.size();
     }
 }

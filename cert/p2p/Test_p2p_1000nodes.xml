@@ -33,7 +33,7 @@
   <!-- our nodes -->
   <kill time="500"/>
   <node id="pownode0">
-    <application arguments="-id=pownode0 -miningtime=600 -miningnodecnt=1000 -txgenstartat=0 -txgeninterval=0.150000" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode0 -txgenstartat=0 -txgeninterval=3" plugin="NODE" time="0"/>
   </node>
   <node id="pownode1">
     <application arguments="-id=pownode1 -miningtime=600 -miningnodecnt=1000 -connect=pownode0" plugin="NODE" time="0"/>

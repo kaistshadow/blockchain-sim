@@ -43,16 +43,18 @@ namespace libBLEEP_BL {
         }
     };
     class PBFTPreprepare : public MessageObject {
-    private:
+    public:
         unsigned long view;
         unsigned int sequence;
+        std::string digest;
         std::string sign;
         std::shared_ptr<PBFTBlock> blk;
-    public:
+
         PBFTPreprepare() {}
-        PBFTPreprepare(unsigned long v, unsigned int n, std::string sig, std::shared_ptr<PBFTBlock> m) {
+        PBFTPreprepare(unsigned long v, unsigned int n, std::string d, std::string sig, std::shared_ptr<PBFTBlock> m) {
             view = v;
             sequence = n;
+            digest = d;
             sign = sig;
             blk = m;
         }
@@ -64,8 +66,38 @@ namespace libBLEEP_BL {
             ar & boost::serialization::base_object<MessageObject>(*this);
             ar & view;
             ar & sequence;
+            ar & digest;
             ar & sign;
             ar & blk;
+        }
+    };
+    class PBFTPrepare : public MessageObject {
+    public:
+        unsigned long view;
+        unsigned int sequence;
+        std::string digest;
+        unsigned long memberID;
+        std::string sign;
+
+        PBFTPrepare() {}
+        PBFTPrepare(unsigned long v, unsigned int n, std::string d, unsigned long i, std::string sig) {
+            view = v;
+            sequence = n;
+            digest = d;
+            memberID = i;
+            sign = sig;
+        }
+    private: // boost serialization
+        friend class boost::serialization::access;
+
+        template<class Archive>
+        void serialize(Archive &ar, const unsigned int version) {
+            ar & boost::serialization::base_object<MessageObject>(*this);
+            ar & view;
+            ar & sequence;
+            ar & digest;
+            ar & memberID;
+            ar & sign;
         }
     };
 

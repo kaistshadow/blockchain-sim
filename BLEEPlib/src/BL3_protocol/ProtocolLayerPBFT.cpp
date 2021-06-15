@@ -25,9 +25,9 @@ void BL_ProtocolLayerPBFT::RecvMsgHandler(std::shared_ptr<Message> msg) {
         _RecvPBFTJoinRequestHandler(msg);
     } else if (msgType == "PBFT-JOINRES") {
         _RecvPBFTJoinResponseHandler(msg);
+    } else if (msgType == "PBFT-PREPREPARE") {
+        _RecvPBFTPreprepareHandler(msg);
 // TODO
-//    } else if (msgType == "PBFT-PREPREPARE") {
-//        _RecvPBFTPreprepareHandler(msg);
 //    } else if (msgType == "PBFT-PREPARE") {
 //        _RecvPBFTPrepareHandler(msg);
 //    } else if (msgType == "PBFT-COMMIT") {
@@ -134,7 +134,6 @@ void BL_ProtocolLayerPBFT::_RecvPBFTJoinResponseHandler(std::shared_ptr<Message>
     _config.assignSource(jres->consensusNodeId, msg->GetSource().GetId());
 }
 
-// TODO
 void BL_ProtocolLayerPBFT::_StartPreprepare() {
    if (_p != _consensusNodeID) {
        // why non-primary node create preprepare message? ignore it.
@@ -150,7 +149,7 @@ void BL_ProtocolLayerPBFT::_StartPreprepare() {
    std::string d = _digest(blk->GetBlockHash().str());  // simply get digest with block hash, for just simple abstraction PBFT logic.
    oss << "PREPREPARE" << _v << n << d;
    std::string signText = oss.str();
-   std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTPreprepare>(_v, n, _PBFTSignature(_secret, signText), blk);
+   std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTPreprepare>(_v, n, d, _PBFTSignature(_secret, signText), blk);
 
    // send preprepare message to everyone in the consensus
    for (auto consensusNeighbor : _config.getConsensusMap()) {
@@ -159,57 +158,82 @@ void BL_ProtocolLayerPBFT::_StartPreprepare() {
    }
 }
 
-//
-//// TODO: considering the case that prepare from other replica arrives earlier than the preprepare from the primary.
-//void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> msg) {
-//    if (_p == _consensusNodeID) {
-//        // why primary node get preprepare message? ignore it.
-//        return;
-//    }
-//
-//    std::shared_ptr<PBFTPreprepare> ppr = std::static_pointer_cast<PBFTPreprepare>(msg->GetObject());
-//
-//    // verification
-//    std::ostringstream oss;
-//    unsigned int v = ppr->v;
-//    unsigned int n = ppr->n;
-//    std::string d = ppr->d;
-//    if (v != _v) {
-//        // view mismatch
-//        return;
-//    }
-//    if (d != digest(ppr->m)) {
-//        // digest for m mismatch
-//        return;
-//    }
-//    oss << "PREPREPARE" << v << n << d;
-//    if (!pubkey[_p].verify(oss.str(), ppr->sign)) {
-//        // signature mismatch
-//        return;
-//    }
-//    if (n <= _h || n >= _h + _k) {
-//        // sequence range mismatch
-//        return;
-//    }
-//    // TODO: check message validity (block is well connected to the last block in the tree)
-//
-//    if (_preprepareMsgs.has(v, n)) {
-//        // already received message with same v, n
-//        return;
-//    }
-//
+// TODO: considering the case that prepare from other replica arrives earlier than the preprepare from the primary.
+void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> msg) {
+    if (_p == _consensusNodeID) {
+        // why primary node get preprepare message? ignore it.
+        return;
+    }
+
+    std::shared_ptr<PBFTPreprepare> ppr = std::static_pointer_cast<PBFTPreprepare>(msg->GetObject());
+
+    std::ostringstream oss;
+    unsigned int v = ppr->view;
+    unsigned int n = ppr->sequence;
+    std::string d = ppr->digest;
+    /* verification in PBFT paper 4.2 Normal-Case Operation */
+    // the signatures in the pre-prepare message are correct and d is the digest for m
+    oss << "PREPREPARE" << v << n << d;
+    unsigned long pubkeyId;
+    if (_config.getPeerPubkey(msg->GetSource().GetId(), pubkeyId) == -1) {
+        // cannot find corresponding pubkey
+        return;
+    }
+    PBFTPubkey pk;
+    pk.setID(pubkeyId);
+    if (!pk.verify(ppr->sign, oss.str())) {
+        // signature mismatch
+        return;
+    }
+    if (d != _digest(ppr->blk->GetBlockHash().str())) {
+        // digest for m mismatch
+        return;
+    }
+    // it is in view v
+    if (v != _v) {
+        // view mismatch
+        return;
+    }
+    // it has not accepted a pre-prepare message for view v and sequence number n containing a different digest
+    if (_msgs.hasPreprepared(n)) {
+        // already received message with same v, n
+        return;
+    }
+    // the sequence number in the pre-prepare message is between a low water mark h, and a high water mark H
+    if (n <= _h || n >= _h + _k) {
+        // sequence range mismatch
+        return;
+    }
+
+    // check message validity (block is well connected to the last block in the tree)
+    if (ppr->blk->GetPrevBlockHash() != _blocktree.GetLastHash()) {
+        // last tip mismatch
+        return;
+    }
+
+    // after verification, add preprepare message
+    _msgs.addPreprepared(n, d);
+
+// unused codes
 //    // setup target
 //    _current_consensus.set(v, n, d);
 //    // clear n enable prepare reception
 //    _current_prepare.reset();
-//    // send prepare message to everyone in the consensus
-//    for (auto consensusNeighbor : consensusNeighbors) {
-//        std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTPrepare>(v, n, d, _consensusNodeID);
-//        std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor, "PBFT-PREPARE", ptrToObj);
-//        BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(consensusNeighbor, message);
-//    }
-//
-//}
+
+    // enter prepare phase
+    // make prepare message
+    oss.clear();
+    unsigned long i = _consensusNodeID;
+    oss << "PREPARE" << v << n << d << i;
+    std::string signText = oss.str();
+    std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTPrepare>(_v, n, d, i, _PBFTSignature(_secret, signText));
+    // send prepare message to everyone in the consensus
+    for (auto consensusNeighbor : _config.getConsensusMap()) {
+        std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor.second, "PBFT-PREPARE", ptrToObj);
+        BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(consensusNeighbor.second, message);
+    }
+
+}
 //void BL_ProtocolLayerPBFT::_RecvPBFTPrepareHandler(std::shared_ptr<Message> msg) {
 //    if (_current_prepare.isDisabled()) {
 //        return;

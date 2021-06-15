@@ -15,6 +15,7 @@
 #include "BlockTree.cpp"  // This(BlockTree.cpp) is required since the BlockTree is template class
 #include "PBFTConfig.h"
 #include "PBFTSigning.h"
+#include "PBFTMsgHolder.h"
 
 #include "shadow_memshare_interface.h"
 
@@ -23,6 +24,7 @@ namespace libBLEEP_BL {
     private:
         TxGossipProtocol _txGossipProtocol;
         PBFTConfig _config;
+        PBFTMsgHolder _msgs;
     private:
         BlockTree<PBFTBlock> _blocktree;
     public:

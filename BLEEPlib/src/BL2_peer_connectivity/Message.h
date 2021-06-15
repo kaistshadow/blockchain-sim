@@ -95,6 +95,7 @@ namespace libBLEEP_BL {
             ar.template register_type<PBFTJoinRequest>();
             ar.template register_type<PBFTJoinResponse>();
             ar.template register_type<PBFTPreprepare>();
+            ar.template register_type<PBFTPrepare>();
             ar & _src;
             ar & _dest;
             ar & _type;

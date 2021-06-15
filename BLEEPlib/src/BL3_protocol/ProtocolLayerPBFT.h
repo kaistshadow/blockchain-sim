@@ -41,7 +41,7 @@ namespace libBLEEP_BL {
         unsigned long _consensusNodeID = 0;
         unsigned long _v;               // current view#
         unsigned long _h;               // sequence boundary (bottom)
-        unsigned long _k;               // sequence range (_h + _k = H = Checkpoint starting sequence)
+        unsigned long _k = 20;               // sequence range (_h + _k = H = Checkpoint starting sequence)  // TODO: parameterize
         unsigned long _f;               // faulty node limit
         // PBFT messages TODO
 //        _preprepared;   // _prepreared msgs after _checkpoint
@@ -57,9 +57,11 @@ namespace libBLEEP_BL {
 
         void _RecvPBFTJoinRequestHandler(std::shared_ptr<Message> msg);
         void _RecvPBFTJoinResponseHandler(std::shared_ptr<Message> msg);
+        void _StartPreprepare();
         void _RecvPBFTPreprepareHandler(std::shared_ptr<Message> msg);
         void _RecvPBFTPrepareHandler(std::shared_ptr<Message> msg);
         void _RecvPBFTCommitHandler(std::shared_ptr<Message> msg);
+        void _changeViewCallback(ev::timer &w, int revents);
         void _RecvPBFTCheckpointHandler(std::shared_ptr<Message> msg);
         void _RecvPBFTViewChangeHandler(std::shared_ptr<Message> msg);
 
@@ -107,14 +109,18 @@ namespace libBLEEP_BL {
         }
 
         ev::timer _viewChangeStarter;
-        double _viewChangeInterval = 100;
+        double _viewChangeInterval = 100;       // TODO: make parameter input for view change interval setting
         void _initViewChangeStarter() {
-//            _viewChangeStarter.set<BL_ProtocolLayerPBFT, &BL_ProtocolLayerPBFT::_changeView>(this);   // TODO
+            _viewChangeStarter.set<BL_ProtocolLayerPBFT, &BL_ProtocolLayerPBFT::_changeViewCallback>(this);
+            _viewChangeStarter.set(0, _viewChangeInterval);
+            _viewChangeStarter.start();
         }
         // called on new preprepare message
         void _renewViewChangeStarter() {
-            // TODO: stop timer
-            // TODO: reset timer with _viewChangeInterval
+            // stop timer, reset timer with _viewChangeInterval
+            _viewChangeStarter.stop();
+            _viewChangeStarter.set(0, _viewChangeInterval);
+            _viewChangeStarter.start();
         }
 
         ev::timer _joinTimer;

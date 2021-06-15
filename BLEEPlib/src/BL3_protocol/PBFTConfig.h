@@ -19,6 +19,7 @@ namespace libBLEEP_BL {
         std::string getPubkeyPeer(unsigned long pubkey);
         int getPeerPubkey(std::string peer, unsigned long& res);
         bool isAllConnected();
+        unsigned int size();
     };
 }
 

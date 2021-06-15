@@ -25,6 +25,7 @@ void BL_ProtocolLayerPBFT::RecvMsgHandler(std::shared_ptr<Message> msg) {
         _RecvPBFTJoinRequestHandler(msg);
     } else if (msgType == "PBFT-JOINRES") {
         _RecvPBFTJoinResponseHandler(msg);
+// TODO
 //    } else if (msgType == "PBFT-PREPREPARE") {
 //        _RecvPBFTPreprepareHandler(msg);
 //    } else if (msgType == "PBFT-PREPARE") {
@@ -43,6 +44,24 @@ void BL_ProtocolLayerPBFT::_joinTimerCallback(ev::timer &w, int revents) {
     // if all consensus node is connected, stop timer.
     if (_config.isAllConnected()) {
         w.stop();
+        // initialize current view as 0
+        _v = 0;
+        // pick a _config member as first primary
+        _p = _v % _config.size();
+        // setup faulty limit
+        if (_config.size() < 4) {
+            // cannot make proper PBFT algorithm
+            return;
+        }
+        _f = (_config.size() - 1) / 3;
+        // setup checkout boundary
+        _h = 0;
+        // setup viewchange timer
+        _initViewChangeStarter();
+        // if my id is primary, call _StartPreprepare
+        if (_p == _consensusNodeID) {
+            _StartPreprepare();
+        }
         return;
     }
 
@@ -106,28 +125,30 @@ void BL_ProtocolLayerPBFT::_RecvPBFTJoinResponseHandler(std::shared_ptr<Message>
     _config.assignSource(jres->consensusNodeId, msg->GetSource().GetId());
 }
 
-//void BL_ProtocolLayerPBFT::_StartPreprepare() {
-//    if (_p != _consensusNodeID) {
-//        // why non-primary node create preprepare message? ignore it.
-//        return;
-//    }
-//
-//    std::shared_ptr<PBFTBlock> blk = _makeTemplate();
-//
-//    // make preprepare message
-//    std::ostringstream oss;
-//    unsigned int n = _n++;
-//    std::string d = _digest(blk->str());
-//    oss << "PREPREPARE" << _v << n << d;
-//    std::string signText = oss.str();
-//    std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTPreprepare>(_v, n, d, _PBFTSignature(_key, signText), blk);
-//
-//    // send preprepare message to everyone in the consensus
-//    for (auto consensusNeighbor : consensusNeighbors) {
-//        std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor, "PBFT-PREPREPARE", ptrToObj);
-//        BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(consensusNeighbor, message);
-//    }
-//}
+// TODO
+void BL_ProtocolLayerPBFT::_StartPreprepare() {
+   if (_p != _consensusNodeID) {
+       // why non-primary node create preprepare message? ignore it.
+       return;
+   }
+
+   std::shared_ptr<PBFTBlock> blk = _makeTemplate();
+
+   // make preprepare message
+   std::ostringstream oss;
+   unsigned int n = _n++;
+   std::string d = _digest(blk->str());
+   oss << "PREPREPARE" << _v << n << d;
+   std::string signText = oss.str();
+   std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTPreprepare>(_v, n, d, _PBFTSignature(_key, signText), blk);
+
+   // send preprepare message to everyone in the consensus
+   for (auto consensusNeighbor : consensusNeighbors) {
+       std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor, "PBFT-PREPREPARE", ptrToObj);
+       BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(consensusNeighbor, message);
+   }
+}
+
 //
 //// TODO: considering the case that prepare from other replica arrives earlier than the preprepare from the primary.
 //void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> msg) {
@@ -249,7 +270,10 @@ void BL_ProtocolLayerPBFT::_RecvPBFTJoinResponseHandler(std::shared_ptr<Message>
 //        // TODO: phase end.
 //    }
 //}
-//
+// TODO
+void BL_ProtocolLayerPBFT::_changeViewCallback(ev::timer &w, int revents) {
+
+}
 //// TODO: implement
 //void BL_ProtocolLayerPBFT::_RecvPBFTCheckpointHandler(std::shared_ptr<Message> msg) {
 //    std::shared_ptr<PBFTCheckpoint> cp = std::static_pointer_cast<PBFTCheckpoint>(msg->GetObject());

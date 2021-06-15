@@ -1,7 +1,6 @@
 import os
 import argparse
 import sys
-import time
 
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
@@ -21,7 +20,6 @@ def check_node_count(xmlfile):
     return count
 
 def test_nodediscovery(target_output_file):
-
     standard_num = 0
     f = open(target_output_file, "r")
     while True:
@@ -43,7 +41,6 @@ def test_nodediscovery(target_output_file):
                 f.close()
                 return True
     f.close()
-    print(target_output_file)
     return False
 
 def test_gossip(target_output_file, target_blockID, target_blockHash):
@@ -67,6 +64,7 @@ def test_gossip(target_output_file, target_blockID, target_blockHash):
                     return True
 
     f.close() 
+    print(target_output_file)
     return False
 
 def get_compare_value(target_output):
@@ -116,15 +114,19 @@ def check_p2p_abilities(outputfile_list, target_path, node_count):
         gossip_flag[i] = test_gossip(target_output_file, target_blockID, target_blockHash)
         nodediscovery_flag[i] = test_nodediscovery(target_output_file)
 
-    if all(gossip_flag) & all(nodediscovery_flag):
-        print("Simulation result : Success ")
+    if all(gossip_flag):
+        print("Gossip simulation result : Success ")
     else:
-        print("Simulation result : Fail")        
+        print("Gossip simulation result : Fail")
+    
+    if any(nodediscovery_flag):
+        print("NodeDiscovery simulation result : Success")
+    else:
+        print("NodeDiscovery simulation result : Fail")
 
 if __name__ == '__main__':
 
     path = os.path.abspath("./")
-    start = time.time()
     print("Start p2p 10nodes emulation ...")
     exec_shell_cmd("shadow -h 10000 -w 8 Test_p2p_10nodes.xml > /dev/null 2>&1")
     
@@ -140,21 +142,22 @@ if __name__ == '__main__':
     # p2p regression test
     output_file_list = os.listdir(output_path)
     check_p2p_abilities(output_file_list, output_path, node_count)
-    # print("-------------------------------------------------------------------------------------")
-    # print("Start p2p 1000nodes emulation ...")
-    # exec_shell_cmd("shadow -h 10000 -w 8 Test_p2p_1000nodes.xml > /dev/null 2>&1")
+    
+    # 1000 nodes simulation start
+    print("-------------------------------------------------------------------------------------")
+    print("Start p2p 1000nodes emulation ...")
+    exec_shell_cmd("shadow -h 10000 -w 8 Test_p2p_1000nodes.xml > /dev/null 2>&1")
 
-    # # output file check
-    # xmlpath = path + "/Test_p2p_1000nodes.xml"
-    # node_count = check_node_count(xmlpath) - 1
-    # output_path = path + "/shadow.data/hosts"
-    # if node_count == len(os.listdir(output_path)):
-    #     print("Successfully 1000nodes emulation ...")
-    # else:
-    #     print("Failed 1000nodes emulation ...")
+    # output file check
+    xmlpath = path + "/Test_p2p_1000nodes.xml"
+    node_count = check_node_count(xmlpath) - 1
+    output_path = path + "/shadow.data/hosts"
+    if node_count == len(os.listdir(output_path)):
+        print("Successfully 1000nodes emulation ...")
+    else:
+        print("Failed 1000nodes emulation ...")
 
-    # # p2p regression test
-    # output_file_list = os.listdir(output_path)
-    # check_p2p_abilities(output_file_list, output_path, node_count)
+    # p2p regression test
+    output_file_list = os.listdir(output_path)
+    check_p2p_abilities(output_file_list, output_path, node_count)
 
-    print("time : ", time.time() - start)

@@ -54,7 +54,7 @@ namespace libBLEEP_BL {
     private:
         /* handler functions for each asynchronous event */
         void RecvMsgHandler(std::shared_ptr<Message> msg);
-
+        
         void _RecvPBFTJoinRequestHandler(std::shared_ptr<Message> msg);
         void _RecvPBFTJoinResponseHandler(std::shared_ptr<Message> msg);
         void _StartPreprepare();

@@ -44,8 +44,9 @@ void BL_ProtocolLayerPBFT::_joinTimerCallback(ev::timer &w, int revents) {
     // if all consensus node is connected, stop timer.
     if (_config.isAllConnected()) {
         w.stop();
-        // initialize current view as 0
+        // initialize current view as 0, sequence as 0
         _v = 0;
+        _n = 0;
         // pick a _config member as first primary
         _p = _v % _config.size();
         // setup faulty limit
@@ -95,6 +96,14 @@ bool _PBFTVerify(PBFTPubkey p, std::string sig, std::string plainText) {
     return p.verify(sig, d);
 }
 
+std::shared_ptr<PBFTBlock> BL_ProtocolLayerPBFT::makeBlockTemplate() {
+    std::list<std::shared_ptr<SimpleTransaction>> txs = _txPool->GetTxs(maxTxPerBlock); // TODO: change txpool logic
+    std::shared_ptr<PBFTBlock> templateBlock = std::make_shared<PBFTBlock>("", txs);
+    templateBlock->SetPrevBlockHash(_blocktree.GetLastHash());
+    templateBlock->SetBlockIdx(_blocktree.GetNextBlockIdx());
+    return templateBlock;
+}
+
 void BL_ProtocolLayerPBFT::_RecvPBFTJoinRequestHandler(std::shared_ptr<Message> msg) {
     std::cout << "Debug PBFTJoinRequest message received\n";
     std::shared_ptr<PBFTJoinRequest> jreq = std::static_pointer_cast<PBFTJoinRequest>(msg->GetObject());
@@ -132,7 +141,7 @@ void BL_ProtocolLayerPBFT::_StartPreprepare() {
        return;
    }
 
-   std::shared_ptr<PBFTBlock> blk = _makeTemplate();
+   std::shared_ptr<PBFTBlock> blk = makeBlockTemplate();
 
    // make preprepare message
    std::ostringstream oss;

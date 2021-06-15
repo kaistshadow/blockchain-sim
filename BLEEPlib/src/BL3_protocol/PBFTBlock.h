@@ -29,7 +29,6 @@ namespace libBLEEP_BL {
     public:
         PBFTBlock() : Block() {}
         virtual ~PBFTBlock() {}
-
         PBFTBlock(std::string id, std::list<std::shared_ptr<SimpleTransaction>> input_tx_list)
                 : Block(id, input_tx_list) {
             SetTxHash();

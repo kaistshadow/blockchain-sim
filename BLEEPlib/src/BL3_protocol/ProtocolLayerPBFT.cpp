@@ -29,9 +29,8 @@ void BL_ProtocolLayerPBFT::RecvMsgHandler(std::shared_ptr<Message> msg) {
         _RecvPBFTPreprepareHandler(msg);
     } else if (msgType == "PBFT-PREPARE") {
         _RecvPBFTPrepareHandler(msg);
-// TODO
-//    } else if (msgType == "PBFT-COMMIT") {
-//        _RecvPBFTCommitHandler(msg);
+    } else if (msgType == "PBFT-COMMIT") {
+        _RecvPBFTCommitHandler(msg);
 //    } else if (msgType == "PBFT-CHECKPOINT") {
 //        _RecvPBFTCheckpointHandler(msg);
 //    } else if (msgType == "PBFT-VIEWCHANGE") {
@@ -55,6 +54,7 @@ void BL_ProtocolLayerPBFT::_joinTimerCallback(ev::timer &w, int revents) {
             return;
         }
         _f = (_config.size() - 1) / 3;
+        _msgs.setFaultyLimit(_f);
         // setup checkout boundary
         _h = 0;
         // setup viewchange timer
@@ -158,7 +158,6 @@ void BL_ProtocolLayerPBFT::_StartPreprepare() {
    }
 }
 
-// TODO: considering the case that prepare from other replica arrives earlier than the preprepare from the primary.
 void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> msg) {
     if (_p == _consensusNodeID) {
         // why primary node get preprepare message? ignore it.
@@ -212,9 +211,6 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> m
         return;
     }
 
-    // after verification, add preprepare message
-    _msgs.addPreprepared(v, n, d, m);
-
 // unused codes
 //    // setup target
 //    _current_consensus.set(v, n, d);
@@ -234,8 +230,9 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> m
         BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(consensusNeighbor.second, message);
     }
 
-    if (_msgs.isWellPrepared(v, n)) {
-        // TODO: call commit;
+    _msgs.addPreprepared(v, n, m);
+    if (_msgs.predPrepared(v, n)) {
+        _Commit(v, n, d, _consensusNodeID);
     }
 }
 void BL_ProtocolLayerPBFT::_RecvPBFTPrepareHandler(std::shared_ptr<Message> msg) {
@@ -256,9 +253,8 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPrepareHandler(std::shared_ptr<Message> msg)
     }
 
     _msgs.addPrepared(v, n, d, i);
-
-    if (_msgs.isWellPrepared(v, n)) {
-        // TODO: call commit;
+    if (_msgs.predPrepared(v, n)) {
+        _Commit(v, n, d, _consensusNodeID);
     }
 }
 void BL_ProtocolLayerPBFT::_Commit(unsigned long v, unsigned int n, std::string d, unsigned long i) {
@@ -270,6 +266,11 @@ void BL_ProtocolLayerPBFT::_Commit(unsigned long v, unsigned int n, std::string 
     for (auto consensusNeighbor : _config.getConsensusMap()) {
         std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor.second, "PBFT-COMMIT", ptrToObj);
         BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(consensusNeighbor.second, message);
+    }
+
+    _msgs.addCommit(v, n, d, i);
+    if (_msgs.predCommittedLocal(v, n)) {
+        // TODO: move to end phase
     }
 }
 void BL_ProtocolLayerPBFT::_RecvPBFTCommitHandler(std::shared_ptr<Message> msg) {
@@ -298,11 +299,12 @@ void BL_ProtocolLayerPBFT::_RecvPBFTCommitHandler(std::shared_ptr<Message> msg) 
         return;
     }
 
-    // TODO: add commit to _msgs
-
-    // TODO: check predicate committed-local
+    _msgs.addCommit(v, n, d, i);
+    if (_msgs.predCommittedLocal(v, n)) {
+        // TODO: move to end phase
+    }
 }
-// TODO
+
 void BL_ProtocolLayerPBFT::_changeViewCallback(ev::timer &w, int revents) {
 
 }

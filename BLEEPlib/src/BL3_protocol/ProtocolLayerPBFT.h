@@ -47,8 +47,6 @@ namespace libBLEEP_BL {
         unsigned long _k = 20;               // sequence range (_h + _k = H = Checkpoint starting sequence)  // TODO: parameterize
         unsigned long _f;               // faulty node limit
         // PBFT messages TODO
-//        _preprepared;   // _prepreared msgs after _checkpoint
-//        _prepared;      // _prepared msgs after _checkpoint
 //        _checkpoints;    // > 2f+1 count of checkpoint msg with same seq# and digest.
 //        _recentStableCheckpoint;
         PBFTSecret _secret;

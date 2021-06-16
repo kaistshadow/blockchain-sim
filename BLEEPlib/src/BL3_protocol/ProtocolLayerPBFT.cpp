@@ -272,38 +272,36 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> m
 //        }
 //    }
 //}
-//void BL_ProtocolLayerPBFT::_RecvPBFTCommitHandler(std::shared_ptr<Message> msg) {
-//    if (_current_commit.isDisabled()) {
-//        return;
-//    }
-//    std::shared_ptr<PBFTCommit> cm = std::static_pointer_cast<PBFTCommit>(msg->GetObject());
-//
-//    // signature verification
-//    std::ostringstream oss;
-//    unsigned int v = _current_consensus.v;
-//    unsigned int n = _current_consensus.n;
-//    std::string d = _current_consensus.d;
-//    unsigned int i = cm->i;
-//    oss << "COMMIT" << v << n << d << i;
-//    if (!pubkey[i].verify(oss.str(), cm->sign)) {
-//        // pubkey mismatch. ignore the message.
-//        return;
-//    }
-//
-//    // try save
-//    if (_current_commit.hasNeighbor(i)) {
-//        // already know
-//        return;
-//    }
-//    _current_commit.addNeighbor(i);
-//
-//    if (_current_commit.NeighborCount() == 2 * _f) {
-//        // next phase enabled, so stop receiving commit message
-//        _current_commit.disable();
-//
-//        // TODO: phase end.
-//    }
-//}
+void BL_ProtocolLayerPBFT::_RecvPBFTCommitHandler(std::shared_ptr<Message> msg) {
+    std::shared_ptr<PBFTCommit> cm = std::static_pointer_cast<PBFTCommit>(msg->GetObject());
+
+    std::ostringstream oss;
+    unsigned long v = cm->view;
+    unsigned int n = cm->sequence;
+    std::string d = cm->digest;
+    unsigned long i = cm->memberID;
+    oss << "COMMIT" << v << n << d << i;
+    PBFTPubkey pk;
+    pk.setID(i);
+    if (!pk.verify(cm->sign, oss.str())) {
+        // pubkey mismatch. ignore the message.
+        return;
+    }
+    // it is in view v
+    if (v != _v) {
+        // view mismatch
+        return;
+    }
+    // the sequence number in the pre-prepare message is between a low water mark h, and a high water mark H
+    if (n <= _h || n >= _h + _k) {
+        // sequence range mismatch
+        return;
+    }
+
+    // TODO: add commit to _msgs
+
+    // TODO: check predicate committed-local
+}
 // TODO
 void BL_ProtocolLayerPBFT::_changeViewCallback(ev::timer &w, int revents) {
 

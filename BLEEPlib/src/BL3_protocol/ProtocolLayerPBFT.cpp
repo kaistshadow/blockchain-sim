@@ -27,9 +27,9 @@ void BL_ProtocolLayerPBFT::RecvMsgHandler(std::shared_ptr<Message> msg) {
         _RecvPBFTJoinResponseHandler(msg);
     } else if (msgType == "PBFT-PREPREPARE") {
         _RecvPBFTPreprepareHandler(msg);
+    } else if (msgType == "PBFT-PREPARE") {
+        _RecvPBFTPrepareHandler(msg);
 // TODO
-//    } else if (msgType == "PBFT-PREPARE") {
-//        _RecvPBFTPrepareHandler(msg);
 //    } else if (msgType == "PBFT-COMMIT") {
 //        _RecvPBFTCommitHandler(msg);
 //    } else if (msgType == "PBFT-CHECKPOINT") {
@@ -171,6 +171,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> m
     unsigned int v = ppr->view;
     unsigned int n = ppr->sequence;
     std::string d = ppr->digest;
+    std::shared_ptr<PBFTBlock> m = ppr->blk;
     /* verification in PBFT paper 4.2 Normal-Case Operation */
     // the signatures in the pre-prepare message are correct and d is the digest for m
     oss << "PREPREPARE" << v << n << d;
@@ -185,7 +186,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> m
         // signature mismatch
         return;
     }
-    if (d != _digest(ppr->blk->GetBlockHash().str())) {
+    if (d != _digest(m->GetBlockHash().str())) {
         // digest for m mismatch
         return;
     }
@@ -195,7 +196,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> m
         return;
     }
     // it has not accepted a pre-prepare message for view v and sequence number n containing a different digest
-    if (_msgs.hasPreprepared(n)) {
+    if (_msgs.hasPreprepared(v, n)) {
         // already received message with same v, n
         return;
     }
@@ -206,13 +207,13 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> m
     }
 
     // check message validity (block is well connected to the last block in the tree)
-    if (ppr->blk->GetPrevBlockHash() != _blocktree.GetLastHash()) {
+    if (m->GetPrevBlockHash() != _blocktree.GetLastHash()) {
         // last tip mismatch
         return;
     }
 
     // after verification, add preprepare message
-    _msgs.addPreprepared(n, d);
+    _msgs.addPreprepared(v, n, d, m);
 
 // unused codes
 //    // setup target
@@ -233,45 +234,44 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> m
         BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(consensusNeighbor.second, message);
     }
 
+    if (_msgs.isWellPrepared(v, n)) {
+        // TODO: call commit;
+    }
 }
-//void BL_ProtocolLayerPBFT::_RecvPBFTPrepareHandler(std::shared_ptr<Message> msg) {
-//    if (_current_prepare.isDisabled()) {
-//        return;
-//    }
-//    std::shared_ptr<PBFTPrepare> pr = std::static_pointer_cast<PBFTPrepare>(msg->GetObject());
-//
-//    // signature verification
-//    std::ostringstream oss;
-//    unsigned int v = _current_consensus.v;
-//    unsigned int n = _current_consensus.n;
-//    std::string d = _current_consensus.d;
-//    unsigned int i = pr->i;
-//    oss << "PREPARE" << v << n << d << i;
-//    if (!pubkey[i].verify(oss.str(), pr->sign)) {
-//        // pubkey mismatch. ignore the message.
-//        return;
-//    }
-//
-//    // try save
-//    if (_current_prepare.hasNeighbor(i)) {
-//        // already know
-//        return;
-//    }
-//    _current_prepare.addNeighbor(i);
-//
-//    if (_current_prepare.NeighborCount() == 2 * _f) {
-//        // next phase enabled, so stop receiving prepare message
-//        _current_prepare.disable();
-//        // clear n enable commit reception
-//        _current_commit.reset();
-//        // send commit message to everyone in the consensus
-//        for (auto consensusNeighbor : consensusNeighbors) {
-//            std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTCommit>(v, n, d, _consensusId);
-//            std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor, "PBFT-COMMIT", ptrToObj);
-//            BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(consensusNeighbor, message);
-//        }
-//    }
-//}
+void BL_ProtocolLayerPBFT::_RecvPBFTPrepareHandler(std::shared_ptr<Message> msg) {
+    std::shared_ptr<PBFTPrepare> pr = std::static_pointer_cast<PBFTPrepare>(msg->GetObject());
+
+    // signature verification
+    std::ostringstream oss;
+    unsigned int v = pr->view;
+    unsigned int n = pr->sequence;
+    std::string d = pr->digest;
+    unsigned int i = pr->memberID;
+    oss << "PREPARE" << v << n << d << i;
+    PBFTPubkey pk;
+    pk.setID(i);
+    if (!pk.verify(pr->sign, oss.str())) {
+        // signature mismatch
+        return;
+    }
+
+    _msgs.addPrepared(v, n, d, i);
+
+    if (_msgs.isWellPrepared(v, n)) {
+        // TODO: call commit;
+    }
+}
+void BL_ProtocolLayerPBFT::_Commit(unsigned long v, unsigned int n, std::string d, unsigned long i) {
+    std::ostringstream oss;
+    oss << "COMMIT" << v << n << d << i;
+    std::string signText = oss.str();
+    std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTCommit>(v, n, d, i, _PBFTSignature(_secret, signText));
+    // send prepare message to everyone in the consensus
+    for (auto consensusNeighbor : _config.getConsensusMap()) {
+        std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor.second, "PBFT-COMMIT", ptrToObj);
+        BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(consensusNeighbor.second, message);
+    }
+}
 //void BL_ProtocolLayerPBFT::_RecvPBFTCommitHandler(std::shared_ptr<Message> msg) {
 //    if (_current_commit.isDisabled()) {
 //        return;

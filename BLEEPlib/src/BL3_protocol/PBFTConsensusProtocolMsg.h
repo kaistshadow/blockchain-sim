@@ -100,6 +100,35 @@ namespace libBLEEP_BL {
             ar & sign;
         }
     };
+    class PBFTCommit : public MessageObject {
+    public:
+        unsigned long view;
+        unsigned int sequence;
+        std::string digest;
+        unsigned long memberID;
+        std::string sign;
+
+        PBFTCommit() {}
+        PBFTCommit(unsigned long v, unsigned int n, std::string d, unsigned long i, std::string sig) {
+            view = v;
+            sequence = n;
+            digest = d;
+            memberID = i;
+            sign = sig;
+        }
+    private: // boost serialization
+        friend class boost::serialization::access;
+
+        template<class Archive>
+        void serialize(Archive &ar, const unsigned int version) {
+            ar & boost::serialization::base_object<MessageObject>(*this);
+            ar & view;
+            ar & sequence;
+            ar & digest;
+            ar & memberID;
+            ar & sign;
+        }
+    };
 
 //    class Prepare : public MessageObject {
 //

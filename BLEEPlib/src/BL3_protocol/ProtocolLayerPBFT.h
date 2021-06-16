@@ -63,6 +63,7 @@ namespace libBLEEP_BL {
         void _StartPreprepare();
         void _RecvPBFTPreprepareHandler(std::shared_ptr<Message> msg);
         void _RecvPBFTPrepareHandler(std::shared_ptr<Message> msg);
+        void _Commit(unsigned long v, unsigned int n, std::string d, unsigned long i);
         void _RecvPBFTCommitHandler(std::shared_ptr<Message> msg);
         void _changeViewCallback(ev::timer &w, int revents);
         void _RecvPBFTCheckpointHandler(std::shared_ptr<Message> msg);

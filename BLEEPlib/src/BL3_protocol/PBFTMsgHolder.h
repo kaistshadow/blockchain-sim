@@ -5,6 +5,8 @@
 #ifndef BLEEP_PBFT_MSGHOLDER_H
 #define BLEEP_PBFT_MSGHOLDER_H
 
+#include "PBFTBlock.h"
+
 #include <map>
 
 namespace libBLEEP_BL {
@@ -15,6 +17,10 @@ namespace libBLEEP_BL {
         bool hasPreprepared(unsigned int n);
         void addPreprepared(unsigned int n, std::string d);
         void clearPreprepared();
+
+        bool predPrepared(std::shared_ptr<PBFTBlock> m, unsigned long v, unsigned int n, unsigned long i);
+        bool predCommitted(std::shared_ptr<PBFTBlock> m, unsigned long v, unsigned int n);
+        bool predCommittedLocal(std::shared_ptr<PBFTBlock> m, unsigned long v, unsigned int n , unsigned long i);
     };
 }
 

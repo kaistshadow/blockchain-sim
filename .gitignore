@@ -141,3 +141,4 @@ ps.log
 ps_results
 shadow.output
 tests/regtest/perftest/
+shadow_result

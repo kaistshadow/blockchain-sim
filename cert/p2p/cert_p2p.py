@@ -128,12 +128,12 @@ if __name__ == '__main__':
 
     path = os.path.abspath("./")
     print("Start p2p 10nodes emulation ...")
-    exec_shell_cmd("shadow -h 10000 -w 8 Test_p2p_10nodes.xml > /dev/null 2>&1")
+    exec_shell_cmd("shadow -h 10000 -d shadow_result/10nodes -w 8 Test_p2p_10nodes.xml > /dev/null 2>&1")
     
     # output file check
     xmlpath = path + "/Test_p2p_10nodes.xml"
     node_count = check_node_count(xmlpath) - 1
-    output_path = path + "/shadow.data/hosts"
+    output_path = path + "/shadow_result/10nodes/hosts"
     if node_count == len(os.listdir(output_path)):
         print("Successfully 10nodes emulation ...")
     else:
@@ -146,12 +146,12 @@ if __name__ == '__main__':
     # 1000 nodes simulation start
     print("-------------------------------------------------------------------------------------")
     print("Start p2p 1000nodes emulation ...")
-    exec_shell_cmd("shadow -h 10000 -w 8 Test_p2p_1000nodes.xml > /dev/null 2>&1")
+    exec_shell_cmd("shadow -h 10000 -d shadow_result/1000nodes -w 8 Test_p2p_1000nodes.xml > /dev/null 2>&1")
 
     # output file check
     xmlpath = path + "/Test_p2p_1000nodes.xml"
     node_count = check_node_count(xmlpath) - 1
-    output_path = path + "/shadow.data/hosts"
+    output_path = path + "/shadow_result/1000nodes/hosts"
     if node_count == len(os.listdir(output_path)):
         print("Successfully 1000nodes emulation ...")
     else:

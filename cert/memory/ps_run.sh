@@ -35,10 +35,10 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 	cd $DIR
 	# run shadow
     if [ $3 -eq "1" ]; then 
-        shadow -d datadir -h 10000 -w $WORKER_CNT -m $4 & RUNPID=$! 
+        shadow -d $5 -h 10000 -w $WORKER_CNT -m $4 & RUNPID=$! 
 
     else
-        shadow -d datadir -h 10000 -w $WORKER_CNT $4 & RUNPID=$!
+        shadow -d $5 -h 10000 -w $WORKER_CNT $4 & RUNPID=$!
     fi
 
 	ps u -p $RUNPID &> ps.log
@@ -54,7 +54,7 @@ for (( i=0; i<${#xmls[@]}; i++ )); do
 		fi
 		ps u --no-headers -p $RUNPID >> ps.log
 	done
-    rm -r ./datadir
+
     if test -f gmon.out; then
 	    rm gmon.out
 	fi

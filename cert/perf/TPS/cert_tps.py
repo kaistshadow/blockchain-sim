@@ -69,10 +69,10 @@ if __name__ == '__main__':
     f.close()
 
     print("--------------------------------------------------------------------------------------------------")
-    print("\t\t\t\t Total transaction : %0.2lf" %tx_cnt)
-    print("\t\t\t\t Max TPS : %0.2lf" %max_tps)
-    print("\t\t\t\t Min TPS : %0.2lf" %min_tps)
-    print("\t\t\t\t Average TPS : %0.2lf" %(total_tps/tps_cnt))
+    print("\t\t\t\t Total transaction : %d Count" %tx_cnt)
+    print("\t\t\t\t Max TPS : %0.2lfS" %max_tps)
+    print("\t\t\t\t Min TPS : %0.2lfS" %min_tps)
+    print("\t\t\t\t Average TPS : %0.2lfS" %(total_tps/tps_cnt))
     print("--------------------------------------------------------------------------------------------------")
 
 

@@ -65,7 +65,7 @@ if __name__ == '__main__':
 
     f.close()
     print("--------------------------------------------------------------------------------------------------")
-    print("\t\t\t\t Max Latency : %d" %max_latency)
-    print("\t\t\t\t Min Latency : %d" %min_latency)
-    print("\t\t\t\t Average Latency : %0.2lf" %(total_latency/latency_cnt))
+    print("\t\t\t\t Max Latency : %dS" %max_latency)
+    print("\t\t\t\t Min Latency : %dS" %min_latency)
+    print("\t\t\t\t Average Latency : %0.2lfS" %(total_latency/latency_cnt))
     print("--------------------------------------------------------------------------------------------------")

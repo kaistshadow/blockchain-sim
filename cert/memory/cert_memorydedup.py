@@ -49,26 +49,30 @@ if __name__ == '__main__':
 
     print("\nStart dedup mode 1000Sec simulation ... ")
     target_xml = path + "/1000S.xml"
-    exec_shell_cmd("bash ps_run.sh 8 1000 1 %s > /dev/null 2>&1" %(target_xml))
+    datadir_path = "shadow_result/1000nodes_dedup"
+    exec_shell_cmd("bash ps_run.sh 8 1000 1 %s %s > /dev/null 2>&1" %(target_xml, datadir_path))
     target_path = path + "/ps_results/dedup_1000s.log"
     check_output_logfile(target_path, rss_list)
     print("Successfully dedup mode 1000Sec simulation ...")
 
     print("\nStart non-dedup mode 1000Sec simulation ... ")
-    exec_shell_cmd("bash ps_run.sh 8 1000 2 %s > /dev/null 2>&1" %(target_xml))
+    datadir_path = "shadow_result/1000nodes_non_dedup"
+    exec_shell_cmd("bash ps_run.sh 8 1000 2 %s %s > /dev/null 2>&1" %(target_xml, datadir_path))
     target_path = path + "/ps_results/non_dedup_1000s.log"
     check_output_logfile(target_path, rss_list)
     print("Successfully non-dedup mode 1000Sec simulation ...")
 
     print("\nStart dedup mode 2000Sec simulation ... ")
     target_xml = path + "/2000S.xml"
-    exec_shell_cmd("bash ps_run.sh 8 2000 1 %s > /dev/null 2>&1" %(target_xml))
+    datadir_path = "shadow_result/2000nodes_dedup"
+    exec_shell_cmd("bash ps_run.sh 8 2000 1 %s %s > /dev/null 2>&1" %(target_xml, datadir_path))
     target_path = path + "/ps_results/dedup_2000s.log"
     check_output_logfile(target_path, rss_list)
     print("Successfully dedup mode 2000Sec simulation ...")
 
     print("\nStart non-dedup mode 2000Sec simulation ... ")
-    exec_shell_cmd("bash ps_run.sh 8 2000 2 %s > /dev/null 2>&1" %(target_xml))
+    datadir_path = "shadow_result/2000nodes_non_dedup"
+    exec_shell_cmd("bash ps_run.sh 8 2000 2 %s %s > /dev/null 2>&1" %(target_xml, datadir_path))
     target_path = path + "/ps_results/non_dedup_2000s.log"
     check_output_logfile(target_path, rss_list)
     print("Successfully non-dedup mode 2000Sec simulation ...")

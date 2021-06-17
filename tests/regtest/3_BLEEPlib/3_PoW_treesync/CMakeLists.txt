@@ -21,7 +21,7 @@ target_link_libraries(BLEEPlib-test-pow-node
 add_custom_command(TARGET BLEEPlib-test-pow-node
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BLEEPlib-test-pow-node> ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BLEEPlib-test-pow-node> ${CMAKE_CURRENT_SOURCE_DIR}/../../perftest/memory_sharing
+        #COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BLEEPlib-test-pow-node> ${CMAKE_CURRENT_SOURCE_DIR}/../../perftest/memory_sharing
         )
 
 #add_test(NAME BLEEPlib-pow-treesync-1

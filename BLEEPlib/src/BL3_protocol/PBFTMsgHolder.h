@@ -12,7 +12,7 @@
 namespace libBLEEP_BL {
     class PBFTViewMsgHolder {
 
-    }
+    };
     class PBFTMsgHolder {
 
     private:

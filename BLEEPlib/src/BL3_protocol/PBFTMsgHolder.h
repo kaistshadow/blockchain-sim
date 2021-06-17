@@ -19,9 +19,10 @@ namespace libBLEEP_BL {
         unsigned long _f;
     public:
         int addPreprepared(unsigned long v, unsigned int n, std::shared_ptr<PBFTBlock> m);
-        int addprepared(unsigned long v, unsigned int n, std::string d, unsigned long i);
+        int addPrepared(unsigned long v, unsigned int n, std::string d, unsigned long i);
         int addCommit(unsigned long v, unsigned int n, std::string d, unsigned long i);
 
+	bool hasPreprepared(unsigned long v, unsigned int n);
         // know m, preprepare for m with (v, n), 2 x f prepare(v, n, d, ...) from others
         bool predPrepared(unsigned long v, unsigned int n);
         // predPrepared(m, v, n, i), 2 x f + 1 commit(v, n, d) from others

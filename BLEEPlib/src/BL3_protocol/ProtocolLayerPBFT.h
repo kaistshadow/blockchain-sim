@@ -41,10 +41,10 @@ namespace libBLEEP_BL {
         // PBFT logic parameter
         unsigned long _p;               // primary
         unsigned long _consensusNodeID = 0;
-        unsigned long _v;               // current view#
-        unsigned long _n;               // current seq#
-        unsigned long _h;               // sequence boundary (bottom)
-        unsigned long _k = 20;               // sequence range (_h + _k = H = Checkpoint starting sequence)  // TODO: parameterize
+        unsigned long _v = 0;               // current view#
+        unsigned long _n = 0;               // current seq#
+        unsigned long _h = 0;               // sequence boundary (bottom)
+        unsigned long _k = 4000000000;      // sequence range (_h + _k = H = Checkpoint starting sequence)  // TODO: parameterize
         unsigned long _f;               // faulty node limit
         // PBFT messages TODO
 //        _checkpoints;    // > 2f+1 count of checkpoint msg with same seq# and digest.

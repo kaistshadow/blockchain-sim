@@ -124,6 +124,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTJoinResponseHandler(std::shared_ptr<Message>
 }
 
 void BL_ProtocolLayerPBFT::_StartPreprepare() {
+    std::cout << "Debug StartPreprepare called\n";
    if (_p != _consensusNodeID) {
        // why non-primary node create preprepare message? ignore it.
        return;
@@ -148,6 +149,7 @@ void BL_ProtocolLayerPBFT::_StartPreprepare() {
 }
 
 void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> msg) {
+    std::cout << "Debug preprepare received\n";
     if (_p == _consensusNodeID) {
         // why primary node get preprepare message? ignore it.
         return;
@@ -197,6 +199,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> m
     // check message validity (block is well connected to the last block in the tree)
     if (m->GetPrevBlockHash() != _blocktree.GetLastHash()) {
         // last tip mismatch
+        std::cout << "Debug received block's parent does not match\n";
         // TODO: add followup protocol
         return;
     }
@@ -226,6 +229,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> m
     }
 }
 void BL_ProtocolLayerPBFT::_RecvPBFTPrepareHandler(std::shared_ptr<Message> msg) {
+    std::cout << "Debug prepare received\n";
     std::shared_ptr<PBFTPrepare> pr = std::static_pointer_cast<PBFTPrepare>(msg->GetObject());
 
     // signature verification
@@ -248,6 +252,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPrepareHandler(std::shared_ptr<Message> msg)
     }
 }
 void BL_ProtocolLayerPBFT::_Commit(unsigned long v, unsigned int n, std::string d, unsigned long i) {
+    std::cout << "Debug commit called\n";
     std::ostringstream oss;
     oss << "COMMIT" << v << n << d << i;
     std::string signText = oss.str();
@@ -260,6 +265,7 @@ void BL_ProtocolLayerPBFT::_Commit(unsigned long v, unsigned int n, std::string 
 
     _msgs.addCommit(v, n, d, i);
     if (_msgs.predCommittedLocal(v, n)) {
+        std::cout << "Debug commit local true\n";
         // add block to chain
         auto blkptr = _msgs.getMessage(v, n);
         _blocktree.AppendBlock(blkptr);
@@ -270,6 +276,7 @@ void BL_ProtocolLayerPBFT::_Commit(unsigned long v, unsigned int n, std::string 
     }
 }
 void BL_ProtocolLayerPBFT::_RecvPBFTCommitHandler(std::shared_ptr<Message> msg) {
+    std::cout << "Debug commit received\n";
     std::shared_ptr<PBFTCommit> cm = std::static_pointer_cast<PBFTCommit>(msg->GetObject());
 
     std::ostringstream oss;
@@ -297,6 +304,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTCommitHandler(std::shared_ptr<Message> msg) 
 
     _msgs.addCommit(v, n, d, i);
     if (_msgs.predCommittedLocal(v, n)) {
+        std::cout << "Debug commit local true\n";
         // add block to chain
         auto blkptr = _msgs.getMessage(v, n);
         _blocktree.AppendBlock(blkptr);

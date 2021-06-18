@@ -20,7 +20,7 @@ namespace libBLEEP_BL {
         void setID(unsigned long id) {_id = id;}
         bool verify(std::string sig, std::string text);
     };
-    std::string PBFTdigest(std::string plainText);
+    std::string PBFTDigest(std::string plainText);
     std::string PBFTSignature(PBFTSecret k, std::string plainText);
     bool PBFTVerify(PBFTPubkey p, std::string sig, std::string plainText);
 }

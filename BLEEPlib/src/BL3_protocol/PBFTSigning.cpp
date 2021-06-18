@@ -15,15 +15,15 @@ namespace libBLEEP_BL {
         return sig==oss.str();
     }
 
-    std::string PBFTdigest(std::string plainText) {
+    std::string PBFTDigest(std::string plainText) {
         return plainText;
     }
     std::string PBFTSignature(PBFTSecret k, std::string plainText) {
-        std::string d = PBFTdigest(plainText);
+        std::string d = PBFTDigest(plainText);
         return k.sign(d);
     }
     bool PBFTVerify(PBFTPubkey p, std::string sig, std::string plainText) {
-        std::string d = PBFTdigest(plainText);
+        std::string d = PBFTDigest(plainText);
         return p.verify(sig, d);
     }
 }

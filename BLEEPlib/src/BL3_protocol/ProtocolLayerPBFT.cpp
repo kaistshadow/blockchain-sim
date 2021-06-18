@@ -83,18 +83,7 @@ void BL_ProtocolLayerPBFT::_joinTimerCallback(ev::timer &w, int revents) {
     }
 }
 
-std::string _digest(std::string plainText) {
-    return plainText;
-}
 
-std::string _PBFTSignature(PBFTSecret k, std::string plainText) {
-    std::string d = _digest(plainText);
-    return k.sign(d);
-}
-bool _PBFTVerify(PBFTPubkey p, std::string sig, std::string plainText) {
-    std::string d = _digest(plainText);
-    return p.verify(sig, d);
-}
 
 std::shared_ptr<PBFTBlock> BL_ProtocolLayerPBFT::makeBlockTemplate() {
     std::list<std::shared_ptr<SimpleTransaction>> txs = _txPool->GetTxs(maxTxPerBlock); // TODO: change txpool logic
@@ -111,7 +100,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTJoinRequestHandler(std::shared_ptr<Message> 
     std::ostringstream oss;
     oss << "JOINREQ" << _consensusNodeID;
     std::string signText = oss.str();
-    std::string sign = _PBFTSignature(_secret, signText);
+    std::string sign = PBFTSignature(_secret, signText);
     std::cout << "Debug PBFTJoinRequest content: " << _consensusNodeID << ", " << sign << "\n";
 
     std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTJoinResponse>(_consensusNodeID, sign);
@@ -128,7 +117,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTJoinResponseHandler(std::shared_ptr<Message>
     PBFTPubkey pk;
     std::cout << "Debug join response:" << jres->consensusNodeId << "-"<< msg->GetSource().GetId() << ", " << jres->sign << "\n";
     pk.setID(jres->consensusNodeId);
-    if (!pk.verify(jres->sign, oss.str())) {
+    if (!PBFTVerify(pk, jres->sign, oss.str())) {
         return;
     }
     _config.assignSource(jres->consensusNodeId, msg->GetSource().GetId());
@@ -146,10 +135,10 @@ void BL_ProtocolLayerPBFT::_StartPreprepare() {
    // make preprepare message
    std::ostringstream oss;
    unsigned int n = _n++;
-   std::string d = _digest(blk->GetBlockHash().str());  // simply get digest with block hash, for just simple abstraction PBFT logic.
+   std::string d = PBFTDigest(blk->GetBlockHash().str());  // simply get digest with block hash, for just simple abstraction PBFT logic.
    oss << "PREPREPARE" << _v << n << d;
    std::string signText = oss.str();
-   std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTPreprepare>(_v, n, d, _PBFTSignature(_secret, signText), blk);
+   std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTPreprepare>(_v, n, d, PBFTSignature(_secret, signText), blk);
 
    // send preprepare message to everyone in the consensus
    for (auto consensusNeighbor : _config.getConsensusMap()) {
@@ -181,11 +170,11 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> m
     }
     PBFTPubkey pk;
     pk.setID(pubkeyId);
-    if (!pk.verify(ppr->sign, oss.str())) {
+    if (!PBFTVerify(pk, ppr->sign, oss.str())) {
         // signature mismatch
         return;
     }
-    if (d != _digest(m->GetBlockHash().str())) {
+    if (d != PBFTDigest(m->GetBlockHash().str())) {
         // digest for m mismatch
         return;
     }
@@ -223,7 +212,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> m
     unsigned long i = _consensusNodeID;
     oss << "PREPARE" << v << n << d << i;
     std::string signText = oss.str();
-    std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTPrepare>(_v, n, d, i, _PBFTSignature(_secret, signText));
+    std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTPrepare>(_v, n, d, i, PBFTSignature(_secret, signText));
     // send prepare message to everyone in the consensus
     for (auto consensusNeighbor : _config.getConsensusMap()) {
         std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor.second, "PBFT-PREPARE", ptrToObj);
@@ -247,7 +236,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPrepareHandler(std::shared_ptr<Message> msg)
     oss << "PREPARE" << v << n << d << i;
     PBFTPubkey pk;
     pk.setID(i);
-    if (!pk.verify(pr->sign, oss.str())) {
+    if (!PBFTVerify(pk, pr->sign, oss.str())) {
         // signature mismatch
         return;
     }
@@ -261,7 +250,7 @@ void BL_ProtocolLayerPBFT::_Commit(unsigned long v, unsigned int n, std::string 
     std::ostringstream oss;
     oss << "COMMIT" << v << n << d << i;
     std::string signText = oss.str();
-    std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTCommit>(v, n, d, i, _PBFTSignature(_secret, signText));
+    std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTCommit>(v, n, d, i, PBFTSignature(_secret, signText));
     // send prepare message to everyone in the consensus
     for (auto consensusNeighbor : _config.getConsensusMap()) {
         std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor.second, "PBFT-COMMIT", ptrToObj);
@@ -284,7 +273,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTCommitHandler(std::shared_ptr<Message> msg) 
     oss << "COMMIT" << v << n << d << i;
     PBFTPubkey pk;
     pk.setID(i);
-    if (!pk.verify(cm->sign, oss.str())) {
+    if (!PBFTVerify(pk, cm->sign, oss.str())) {
         // pubkey mismatch. ignore the message.
         return;
     }
@@ -318,7 +307,7 @@ void BL_ProtocolLayerPBFT::_changeViewCallback(ev::timer &w, int revents) {
 //    std::string d = cp->d;
 //    unsigned int i = cp->i;
 //    oss << "CHECKPOINT" << n << d << i;
-//    if (!pubkey[i].verify(oss.str(), cm->sign)) {
+//    if (!PBFTVerify(pubkey[i], cm->sign, oss.str())) {
 //        // pubkey mismatch. ignore the message.
 //        return;
 //    }
@@ -346,7 +335,7 @@ void BL_ProtocolLayerPBFT::_changeViewCallback(ev::timer &w, int revents) {
 //    std::string n = vc->d;
 //    unsigned int i = vc->i;
 //    oss << "VIEWCHANGE" <<  << d << i;
-//    if (!pubkey[i].verify(oss.str(), cm->sign)) {
+//    if (!PBFTVerify(pubkey[i], cm->sign, oss.str())) {
 //        // pubkey mismatch. ignore the message.
 //        return;
 //    }

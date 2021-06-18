@@ -50,12 +50,11 @@ def test_gossip(target_output_file, target_blockID, target_blockHash):
     while True:
         line = f.readline()
         if not line: break
-        if condition_value == 0:
-            result = line.find("blockID")
-            if result != -1:
-                _blockID = line.split(":")[1][:-1]
-                if _blockID == target_blockID:
-                    condition_value = 1
+        result = line.find("blockID:10")
+        if result != -1:
+            _blockID = line.split(":")[1][:-1]
+            if _blockID == target_blockID:
+                condition_value = 1
         if condition_value == 1:
             result = line.find("blockhash")
             if result != -1:
@@ -73,6 +72,7 @@ def get_compare_value(target_output):
 
     conditionValue_blockID = 0
     conditionValue_blockHash = 0
+    condition_count = 0
 
     f = open(target_output, "r")
     while True:
@@ -80,16 +80,18 @@ def get_compare_value(target_output):
         if not line: break
 
         if conditionValue_blockID == 0:
-            result = line.find("blockID:")
+            result = line.find("blockID:10")
             if result != -1:
                 target_blockID = line.split(":")[1][:-1]
                 conditionValue_blockID = 1
+                condition_count = 1
 
         if conditionValue_blockHash == 0:
-            result = line.find("blockhash:")
-            if result != -1:
-                target_blockHash = line.split(":")[1][:-1]
-                conditionValue_blockHash = 1
+            if condition_count == 1:
+                result = line.find("blockhash:")
+                if result != -1:
+                    target_blockHash = line.split(":")[1][:-1]
+                    conditionValue_blockHash = 1
 
         if (conditionValue_blockHash == 1) & (conditionValue_blockID == 1):
             break

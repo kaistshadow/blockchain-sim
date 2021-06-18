@@ -101,6 +101,7 @@ def get_compare_value(target_output):
 
 def check_p2p_abilities(outputfile_list, target_path, node_count):
 
+    count = 0
     target_blockID = ""
     target_blockHash = ""
     nodediscovery_flag = []
@@ -116,13 +117,15 @@ def check_p2p_abilities(outputfile_list, target_path, node_count):
             target_blockID, target_blockHash = get_compare_value(target_output_file)
         gossip_flag[i] = test_gossip(target_output_file, target_blockID, target_blockHash)
         nodediscovery_flag[i] = test_nodediscovery(target_output_file)
+        if nodediscovery_flag[i] == True:
+            count += 1
 
     if all(gossip_flag):
         print("Gossip simulation result : Success ")
     else:
         print("Gossip simulation result : Fail")
     
-    if any(nodediscovery_flag):
+    if int(len(outputfile_list)/2) <= count:
         print("NodeDiscovery simulation result : Success")
     else:
         print("NodeDiscovery simulation result : Fail")

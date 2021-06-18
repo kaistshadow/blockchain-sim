@@ -123,7 +123,7 @@ namespace libBLEEP_BL {
         }
         auto prd_it = pr_it->second->find(d);
         if (prd_it == pr_it->second->end()) {
-            return false;x
+            return false;
         }
         auto prds = prd_it->second;
         if (prds->size() < 2 * _f) {

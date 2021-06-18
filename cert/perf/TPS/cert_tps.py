@@ -1,7 +1,7 @@
 import os
 import argparse
 import sys
-
+import time
 
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
@@ -34,6 +34,7 @@ def check_nodeId(target_path, target_list):
 
 if __name__ == '__main__':
 
+    start = time.time()
     exec_shell_cmd("rm -rf shadow.data")
     print("Emulation start(cert TPS) ...")
     exec_shell_cmd("shadow test-BLEEPLib-TPS.xml > /dev/null 2>&1")
@@ -74,5 +75,5 @@ if __name__ == '__main__':
     print("\t\t\t\t Min TPS : %0.2lfS" %min_tps)
     print("\t\t\t\t Average TPS : %0.2lfS" %(total_tps/tps_cnt))
     print("--------------------------------------------------------------------------------------------------")
-
-
+    runtime = time.time() - start
+    print("\t\t\t\tRunTime : %d Sec" %runtime)

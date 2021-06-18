@@ -99,7 +99,7 @@ namespace libBLEEP_BL {
         int sender_id;
         int receiver_id;
         float amount;
-        char dummy_text[900];
+        char dummy_text[1200];
 
         SimpleTransactionId GetId() { return _id; }
 

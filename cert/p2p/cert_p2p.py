@@ -1,6 +1,7 @@
 import os
 import argparse
 import sys
+import time
 
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
@@ -128,6 +129,7 @@ def check_p2p_abilities(outputfile_list, target_path, node_count):
 
 if __name__ == '__main__':
 
+    start = time.time()
     path = os.path.abspath("./")
     print("Start p2p 10nodes emulation ...")
     exec_shell_cmd("shadow -h 10000 -d shadow_result/10nodes -w 8 Test_p2p_10nodes.xml > /dev/null 2>&1")
@@ -162,4 +164,5 @@ if __name__ == '__main__':
     # p2p regression test
     output_file_list = os.listdir(output_path)
     check_p2p_abilities(output_file_list, output_path, node_count)
-
+    runtime = time.time() - start
+    print("RunTime : %d Sec" %runtime)

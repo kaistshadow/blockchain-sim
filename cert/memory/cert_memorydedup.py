@@ -83,5 +83,11 @@ if __name__ == '__main__':
     delta_nondedup = rss_list[3] - rss_list[1]
     memory_dedup_rate = float(1 - (float(delta_dedup)/float(delta_nondedup))) * 100
     print("\nThe memory deduplication rate is --->  %0.2lf Percentage " %memory_dedup_rate)
+    test_result = ""
+    if memory_dedup_rate >= 80:
+        test_result = "Success"
+    else:
+        test_result = "Fail"
     runtime = time.time() - start
     print("RunTime : %d Sec" %runtime)
+    print("Test result : %s" %test_result)

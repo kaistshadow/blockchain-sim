@@ -132,6 +132,7 @@ def check_p2p_abilities(outputfile_list, target_path, node_count):
 
 if __name__ == '__main__':
 
+    result_condition_count = 0
     start = time.time()
     path = os.path.abspath("./")
     print("Start p2p 10nodes emulation ...")
@@ -143,6 +144,7 @@ if __name__ == '__main__':
     output_path = path + "/shadow_result/10nodes/hosts"
     if node_count == len(os.listdir(output_path)):
         print("Successfully 10nodes emulation ...")
+        result_condition_count += 1
     else:
         print("Failed 10nodes emulation ...")
 
@@ -161,6 +163,7 @@ if __name__ == '__main__':
     output_path = path + "/shadow_result/1000nodes/hosts"
     if node_count == len(os.listdir(output_path)):
         print("Successfully 1000nodes emulation ...")
+        result_condition_count += 1
     else:
         print("Failed 1000nodes emulation ...")
 
@@ -169,3 +172,7 @@ if __name__ == '__main__':
     check_p2p_abilities(output_file_list, output_path, node_count)
     runtime = time.time() - start
     print("RunTime : %d Sec" %runtime)
+    if result_condition_count == 2:
+        print("Test result : Success" )
+    else:
+        print("Test result : Fail")

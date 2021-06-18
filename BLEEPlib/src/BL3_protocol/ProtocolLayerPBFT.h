@@ -14,6 +14,7 @@
 #include "BlockTree.h"
 #include "BlockTree.cpp"  // This(BlockTree.cpp) is required since the BlockTree is template class
 #include "PBFTConfig.h"
+#include "PBFTSigning.h"
 #include "PBFTMsgHolder.h"
 
 #include "shadow_memshare_interface.h"

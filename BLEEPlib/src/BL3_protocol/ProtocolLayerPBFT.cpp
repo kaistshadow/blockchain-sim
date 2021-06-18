@@ -197,6 +197,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> m
     // check message validity (block is well connected to the last block in the tree)
     if (m->GetPrevBlockHash() != _blocktree.GetLastHash()) {
         // last tip mismatch
+        // TODO: add followup protocol
         return;
     }
 
@@ -259,7 +260,13 @@ void BL_ProtocolLayerPBFT::_Commit(unsigned long v, unsigned int n, std::string 
 
     _msgs.addCommit(v, n, d, i);
     if (_msgs.predCommittedLocal(v, n)) {
-        // TODO: move to end phase
+        // add block to chain
+        auto blkptr = _msgs.getMessage(v, n);
+        _blocktree.AppendBlock(blkptr);
+        // if my id is primary id, start next consensus
+        if (_p == _consensusNodeID) {
+            _StartPreprepare();
+        }
     }
 }
 void BL_ProtocolLayerPBFT::_RecvPBFTCommitHandler(std::shared_ptr<Message> msg) {
@@ -290,7 +297,13 @@ void BL_ProtocolLayerPBFT::_RecvPBFTCommitHandler(std::shared_ptr<Message> msg) 
 
     _msgs.addCommit(v, n, d, i);
     if (_msgs.predCommittedLocal(v, n)) {
-        // TODO: move to end phase
+        // add block to chain
+        auto blkptr = _msgs.getMessage(v, n);
+        _blocktree.AppendBlock(blkptr);
+        // if my id is primary id, start next consensus
+        if (_p == _consensusNodeID) {
+            _StartPreprepare();
+        }
     }
 }
 

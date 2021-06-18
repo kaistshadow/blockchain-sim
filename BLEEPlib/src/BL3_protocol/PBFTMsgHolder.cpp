@@ -144,4 +144,11 @@ namespace libBLEEP_BL {
         }
         return true;
     }
+    std::shared_ptr<PBFTBlock> PBFTMsgHolder::getMessage(unsigned long v, unsigned int n) {
+        auto it = _preprepared.find({v, n});
+        if (it == _preprepared.end()) {
+            return nullptr;
+        }
+        return it->second;
+    }
 }

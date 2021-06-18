@@ -40,6 +40,8 @@ namespace libBLEEP_BL {
         void setFaultyLimit(unsigned long f) {
             _f = f;
         }
+
+        std::shared_ptr<PBFTBlock> getMessage(unsigned long v, unsigned int n);
     };
 }
 

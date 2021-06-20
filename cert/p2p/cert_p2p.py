@@ -77,7 +77,7 @@ def get_compare_value(target_output, nodes):
     if nodes == 10:
         target_blockNumber = random.randrange(2,10)
     if nodes == 1000:
-        target_blockNumber = random.randrange(2,50)
+        target_blockNumber = random.randrange(2,30)
     
     conditionValue_blockID = 0
     conditionValue_blockHash = 0
@@ -181,6 +181,7 @@ def p2p_test(test_count, path):
 if __name__ == '__main__':
 
     try:
+        exec_shell_cmd("rm -rf shadow_result")
         test_count = int(sys.argv[1])
     except:
         print("Please Input test count")

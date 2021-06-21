@@ -75,9 +75,9 @@ def get_compare_value(target_output, nodes):
     target_blockNumber = 0
 
     if nodes == 10:
-        target_blockNumber = random.randrange(2,10)
+        target_blockNumber = random.randrange(2,20)
     if nodes == 1000:
-        target_blockNumber = random.randrange(2,30)
+        target_blockNumber = random.randrange(2,19)
     
     conditionValue_blockID = 0
     conditionValue_blockHash = 0
@@ -132,13 +132,13 @@ def check_p2p_abilities(outputfile_list, target_path, node_count):
             count += 1
 
     if all(gossip_flag):
+        print("Gossip test random target blockID: %d "%target_blockNumber)
         print("Gossip simulation result : Success ")
     else:
         print("Gossip simulation result : Fail")
     
     if int(len(outputfile_list)/2) <= count:
         print("NodeDiscovery simulation result : Success")
-        print("NodeDiscovery test target blockID : %d" %target_blockNumber)
     else:
         print("NodeDiscovery simulation result : Fail")
 
@@ -179,10 +179,13 @@ def p2p_test(test_count, path):
         return False
 
 if __name__ == '__main__':
-
     try:
         exec_shell_cmd("rm -rf shadow_result")
-        test_count = int(sys.argv[1])
+        if(len(sys.argv) == 1):
+            test_count = 1
+        else:
+            test_count = int(sys.argv[1])
+
     except:
         print("Please Input test count")
         sys.exit(1)

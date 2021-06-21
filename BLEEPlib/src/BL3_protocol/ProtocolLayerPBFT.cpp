@@ -42,6 +42,7 @@ void BL_ProtocolLayerPBFT::_joinTimerCallback(ev::timer &w, int revents) {
     std::cout << "Debug _joinTimerCallback called\n";
     // if all consensus node is connected, stop timer.
     if (_config.isAllConnected()) {
+        std::cout << "Debug _joinTimerCallback::all connected\n";
         w.stop();
         // initialize current view as 0, sequence as 0
         _v = 0;
@@ -60,6 +61,7 @@ void BL_ProtocolLayerPBFT::_joinTimerCallback(ev::timer &w, int revents) {
         // setup viewchange timer
         _initViewChangeStarter();
         // if my id is primary, call _StartPreprepare
+        std::cout << "Debug _joinTimerCallback:: _p=" << _p << ", _consensusNodeID=" << _consensusNodeID << "\n";
         if (_p == _consensusNodeID) {
             _StartPreprepare();
         }
@@ -146,6 +148,7 @@ void BL_ProtocolLayerPBFT::_StartPreprepare() {
        std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor.second, "PBFT-PREPREPARE", ptrToObj);
        BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(consensusNeighbor.second, message);
    }
+   _msgs.addPreprepared(_v, n, blk);
 }
 
 void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> msg) {
@@ -168,31 +171,37 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> m
     unsigned long pubkeyId;
     if (_config.getPeerPubkey(msg->GetSource().GetId(), pubkeyId) == -1) {
         // cannot find corresponding pubkey
+        std::cout << "Debug _RecvPBFTPreprepareHandler::cannot find corresponding pubkey\n";
         return;
     }
     PBFTPubkey pk;
     pk.setID(pubkeyId);
     if (!PBFTVerify(pk, ppr->sign, oss.str())) {
         // signature mismatch
+        std::cout << "Debug _RecvPBFTPreprepareHandler::signature mismatch\n";
         return;
     }
     if (d != PBFTDigest(m->GetBlockHash().str())) {
         // digest for m mismatch
+        std::cout << "Debug _RecvPBFTPreprepareHandler::digest for m mismatch\n";
         return;
     }
     // it is in view v
     if (v != _v) {
         // view mismatch
+        std::cout << "Debug _RecvPBFTPreprepareHandler::view mismatch\n";
         return;
     }
     // it has not accepted a pre-prepare message for view v and sequence number n containing a different digest
     if (_msgs.hasPreprepared(v, n)) {
         // already received message with same v, n
+        std::cout << "Debug _RecvPBFTPreprepareHandler::already received message with same v, n\n";
         return;
     }
     // the sequence number in the pre-prepare message is between a low water mark h, and a high water mark H
-    if (n <= _h || n >= _h + _k) {
+    if (n < _h || n >= _h + _k) {
         // sequence range mismatch
+        std::cout << "Debug _RecvPBFTPreprepareHandler::sequence range mismatch\n";
         return;
     }
 
@@ -212,10 +221,10 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> m
 
     // enter prepare phase
     // make prepare message
-    oss.clear();
+    std::ostringstream oss2;
     unsigned long i = _consensusNodeID;
-    oss << "PREPARE" << v << n << d << i;
-    std::string signText = oss.str();
+    oss2 << "PREPARE" << v << n << d << i;
+    std::string signText = oss2.str();
     std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTPrepare>(_v, n, d, i, PBFTSignature(_secret, signText));
     // send prepare message to everyone in the consensus
     for (auto consensusNeighbor : _config.getConsensusMap()) {
@@ -224,7 +233,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> m
     }
 
     _msgs.addPreprepared(v, n, m);
-    if (_msgs.predPrepared(v, n)) {
+    if (_msgs.predPreparedOnce(v, n)) {
         _Commit(v, n, d, _consensusNodeID);
     }
 }
@@ -243,16 +252,18 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPrepareHandler(std::shared_ptr<Message> msg)
     pk.setID(i);
     if (!PBFTVerify(pk, pr->sign, oss.str())) {
         // signature mismatch
+        std::cout << "Debug _RecvPBFTPrepareHandler::signature mismatch\n";
+        std::cout << "Debug sign: " << pr->sign << ", answer: " << oss.str() << "\n";
         return;
     }
 
     _msgs.addPrepared(v, n, d, i);
-    if (_msgs.predPrepared(v, n)) {
+    if (_msgs.predPreparedOnce(v, n)) {
         _Commit(v, n, d, _consensusNodeID);
     }
 }
 void BL_ProtocolLayerPBFT::_Commit(unsigned long v, unsigned int n, std::string d, unsigned long i) {
-    std::cout << "Debug commit called\n";
+    std::cout << "Debug commit called for " << v << ", " << n << ", " << d << ", " << i << "\n";
     std::ostringstream oss;
     oss << "COMMIT" << v << n << d << i;
     std::string signText = oss.str();
@@ -262,9 +273,8 @@ void BL_ProtocolLayerPBFT::_Commit(unsigned long v, unsigned int n, std::string 
         std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor.second, "PBFT-COMMIT", ptrToObj);
         BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(consensusNeighbor.second, message);
     }
-
     _msgs.addCommit(v, n, d, i);
-    if (_msgs.predCommittedLocal(v, n)) {
+    if (_msgs.predCommittedLocalOnce(v, n)) {
         std::cout << "Debug commit local true\n";
         // add block to chain
         auto blkptr = _msgs.getMessage(v, n);
@@ -297,13 +307,13 @@ void BL_ProtocolLayerPBFT::_RecvPBFTCommitHandler(std::shared_ptr<Message> msg) 
         return;
     }
     // the sequence number in the pre-prepare message is between a low water mark h, and a high water mark H
-    if (n <= _h || n >= _h + _k) {
+    if (n < _h || n >= _h + _k) {
         // sequence range mismatch
         return;
     }
 
     _msgs.addCommit(v, n, d, i);
-    if (_msgs.predCommittedLocal(v, n)) {
+    if (_msgs.predCommittedLocalOnce(v, n)) {
         std::cout << "Debug commit local true\n";
         // add block to chain
         auto blkptr = _msgs.getMessage(v, n);

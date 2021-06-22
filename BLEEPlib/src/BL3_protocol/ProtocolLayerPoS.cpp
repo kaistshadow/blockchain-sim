@@ -245,7 +245,7 @@ void BL_ProtocolLayerPoS::SwitchAsyncEventHandler(AsyncEvent& event) {
 }
 
 unsigned long BL_ProtocolLayerPoS::random_selection(unsigned long slot_id) {
-    std::cout << "PoS Debug - random selection for slot#: " << slot_id <<"\n";
+    std::cout << "PoS Debug - random selection for slot#:" << slot_id <<"|";
     if (slot_id == 0) {
         return 0;
     }
@@ -255,13 +255,13 @@ unsigned long BL_ProtocolLayerPoS::random_selection(unsigned long slot_id) {
     double number = distribution(generator);
 
     if (number <= 0) {
-        std::cout << "Debug Selected: " << stakes.first() << "\n";
+        std::cout << "Debug Selected:" << stakes.first() << "\n";
         return stakes.first();
     } else if (number >= 1) {
-        std::cout << "Debug Selected: " << stakes.last() << "\n";
+        std::cout << "Debug Selected:" << stakes.last() << "\n";
         return stakes.last();
     } else {
-        std::cout << "Debug Selected: " << stakes.pickLeader((unsigned long)(number * stakes.getTotal())) << "\n";
+        std::cout << "Debug Selected:" << stakes.pickLeader((unsigned long)(number * stakes.getTotal())) << "\n";
         return stakes.pickLeader((unsigned long)(number * stakes.getTotal()));
     }
 }

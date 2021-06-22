@@ -28,6 +28,9 @@ namespace libBLEEP_BL {
         auto it = leadermap.find(leader);
         if (it == leadermap.end()) {
             leadermap.insert({leader, stakedValue});
+            std::cout<<"leadermap Successfully"<<"\n";
+            std::cout<<"leader:"<<leader<<"|";
+            std::cout<<"stakedValue:"<<stakedValue<<"\n";
         } else {
             it->second += stakedValue;
         }

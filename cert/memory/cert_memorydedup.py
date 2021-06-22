@@ -47,7 +47,7 @@ if __name__ == '__main__':
     rss_list = []
     path = os.path.abspath("./")
     print("Emulation start...")
-    exec_shell_cmd("rm -rf ps_results")
+    #exec_shell_cmd("rm -rf ps_results")
 
     print("\nStart dedup mode 1000Sec simulation ... ")
     target_xml = path + "/1000S.xml"
@@ -79,6 +79,13 @@ if __name__ == '__main__':
     check_output_logfile(target_path, rss_list)
     print("Successfully non-dedup mode 2000Sec simulation ...")
 
+    print("\n-------------------------")
+    print("rss_a : %d" %rss_list[1])
+    print("rss_b : %d" %rss_list[3])
+    print("rss_c : %d" %rss_list[0])
+    print("rss_d : %d" %rss_list[2])
+    print("-------------------------")
+    
     delta_dedup = rss_list[2] - rss_list[0]
     delta_nondedup = rss_list[3] - rss_list[1]
     memory_dedup_rate = float(1 - (float(delta_dedup)/float(delta_nondedup))) * 100

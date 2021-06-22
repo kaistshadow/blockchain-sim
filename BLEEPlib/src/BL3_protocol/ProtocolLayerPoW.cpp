@@ -272,7 +272,7 @@ void BL_ProtocolLayerPoW::SwitchAsyncEventHandler(AsyncEvent& event) {
 bool BL_ProtocolLayerPoW::InitiateProtocol() {
     if (!_initiated) {
         std::cout << "initiating ProtocolPoW" << "\n";
-        _startPeriodicTxGen(txGenStartAt, txGenInterval);
+        _startPeriodicTxGen(10, 1);
         _initiated = true;
 
         return true;

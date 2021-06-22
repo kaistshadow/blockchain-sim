@@ -49,7 +49,7 @@ namespace libBLEEP_BL {
     public:
         TxGossipProtocol(std::shared_ptr<TxPool> txPool) {
             _txPool = txPool;
-            _startPeriodicTxBroadcast(30, 30);
+            _startPeriodicTxBroadcast(1, 1);
         };
         
         void SetTxPool(std::shared_ptr<TxPool> txPool) { _txPool = txPool; }

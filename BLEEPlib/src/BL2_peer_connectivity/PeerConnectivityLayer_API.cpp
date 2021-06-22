@@ -199,13 +199,15 @@ void BL_PeerConnectivityLayer_API::RecvMsgHandler(PeerId sourcePeerId,
 
             std::cout << "after add" << "\n";
             // relay address
-            if (size <= 10) {
+            if (size <= 1000) {
                 auto rng = *(libBLEEP::get_global_random_source().get_default_random_source());
-                std::uniform_int_distribution<> dist(1,2); // number of relay
-                int relayCount = dist(rng);
+                std::uniform_int_distribution<> dist(1,100); // number of relay
+//                int relayCount = dist(rng);
+		int relayCount=15;                
 
                 std::map<PeerId, std::shared_ptr<Peer>, PeerIdCompare>& peers = _peerManager.GetPeers();
                 // std::set<int> indexset;
+		std::cout<<"print relayCount"<<relayCount<<"\n";
                 for (int i = 0; i < relayCount; i++) {
                     std::uniform_int_distribution<> distv(0, peers.size()-1);
                     // indexset.insert(distv(rng));
@@ -221,7 +223,7 @@ void BL_PeerConnectivityLayer_API::RecvMsgHandler(PeerId sourcePeerId,
                         _adManager.PushAddr(relayedPeer->GetPeerId(), addr);
                     }
                 }
-            }
+           }
         }
     } else if (msgType == "PING") {
         // Reply a pong message when the peer receives ping message.

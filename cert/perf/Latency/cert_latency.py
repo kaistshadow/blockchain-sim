@@ -71,4 +71,4 @@ if __name__ == '__main__':
     print("\t\t\t\t Average Latency : %0.2lfS" %(total_latency/latency_cnt))
     print("--------------------------------------------------------------------------------------------------")
     runtime = time.time() - start
-    print("\t\t\t\tRunTime : %d Sec" %runtime)
+    print("\t\t\t\tSimulated Time : 300 Sec")

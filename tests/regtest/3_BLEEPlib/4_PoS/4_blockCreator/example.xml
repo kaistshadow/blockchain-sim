@@ -1,7 +1,6 @@
 <shadow>
   <!-- our network -->
-  <topology>
-    <![CDATA[<?xml version="1.0" encoding="utf-8"?><graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <topology><![CDATA[<?xml version="1.0" encoding="utf-8"?><graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
              <key attr.name="packetloss" attr.type="double" for="edge" id="d9" />
              <key attr.name="jitter" attr.type="double" for="edge" id="d8" />
              <key attr.name="latency" attr.type="double" for="edge" id="d7" />
@@ -27,25 +26,16 @@
                  <data key="d9">0.0</data>
                </edge>
              </graph>
-             </graphml>]]>
-  </topology>
-
+             </graphml>]]></topology>
   <!-- the plug-ins we will be using -->
-  <plugin id="NODE" path="libBLEEPlib-test-pos-node.so" />
-
-
+  <plugin id="NODE" path="libBLEEPemul-test-pos-node.so"/>
   <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="300" />
   <!-- our nodes -->
-
+  <kill time="600"/>
   <node id="posnode0">
-    <application plugin="NODE" time="5" arguments="-id=posnode0 -txgenstartat=0 -txgeninterval=4" />
-    <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
+    <application plugin="NODE" time="0" arguments="-id=posnode0 -stakefile=stakefile.txt -slotinterval=30 -creatorid=1 -connect=posnode1"/>
   </node>
-
   <node id="posnode1">
-    <application plugin="NODE" time="6" arguments="-id=posnode1 -txgenstartat=10000000 -txgeninterval=10000000 -connect=pownode0" />
+    <application plugin="NODE" time="0" arguments="-id=posnode1 -stakefile=stakefile.txt -slotinterval=30 -creatorid=2 -connect=posnode0"/>
   </node>
-
-
 </shadow>

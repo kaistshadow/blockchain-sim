@@ -33,12 +33,9 @@
   <!-- our nodes -->
   <kill time="10"/>
   <node id="posnode0">
-    <application plugin="NODE" time="0" arguments="-id=posnode0 -stakefile=stakefile.txt -slotinterval=30 -creatorid=1 -connect=posnode0"/>
+    <application plugin="NODE" time="0" arguments="-id=posnode0 -stakefile=stakefile.txt -slotinterval=30 -creatorid=1 -connect=posnode1"/>
   </node>
   <node id="posnode1">
     <application plugin="NODE" time="0" arguments="-id=posnode1 -stakefile=stakefile.txt -slotinterval=30 -creatorid=2 -connect=posnode0"/>
-  </node>
-  <node id="posnode2">
-    <application plugin="NODE" time="0" arguments="-id=posnode2 -stakefile=stakefile.txt -slotinterval=30 -creatorid=3 -connect=posnode0"/>
   </node>
 </shadow>

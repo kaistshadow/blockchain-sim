@@ -31,53 +31,53 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="NODE" path="libBLEEPlib-test-pos-node.so" />
+  <plugin id="NODE" path="libBLEEPemul-test-pos-node.so" />
 
 
   <!-- the length of our experiment in seconds  1404101800-->
   <kill time="300" />
   <!-- our nodes -->
 
-  <node id="posnode0">
-    <application plugin="NODE" time="5" arguments="-id=posnode0 -txgenstartat=0 -txgeninterval=3 -miningtime=20 -miningnodecnt=10" />
+  <node id="pownode0">
+    <application plugin="NODE" time="5" arguments="-id=pownode0 -txgenstartat=0 -txgeninterval=3 -miningtime=20 -miningnodecnt=10" />
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>
 
-  <node id="posnode1">
-    <application plugin="NODE" time="6" arguments="-id=posnode1 -miningtime=20 -miningnodecnt=10 -connect=posnode0" />
+  <node id="pownode1">
+    <application plugin="NODE" time="6" arguments="-id=pownode1 -miningtime=20 -miningnodecnt=10 -connect=pownode0" />
   </node>
 
 
-  <node id="posnode2">
-    <application plugin="NODE" time="7" arguments="-id=posnode2 -miningtime=20 -miningnodecnt=10 -connect=posnode0" />
+  <node id="pownode2">
+    <application plugin="NODE" time="7" arguments="-id=pownode2 -miningtime=20 -miningnodecnt=10 -connect=pownode0" />
   </node>
 
-  <node id="posnode3">
-    <application plugin="NODE" time="8" arguments="-id=posnode3 -miningtime=20 -miningnodecnt=10 -connect=posnode1" />
+  <node id="pownode3">
+    <application plugin="NODE" time="8" arguments="-id=pownode3 -miningtime=20 -miningnodecnt=10 -connect=pownode1" />
   </node>
 
-  <node id="posnode4">
-    <application plugin="NODE" time="9" arguments="-id=posnode4 -miningtime=20 -miningnodecnt=10 -connect=posnode2" />
+  <node id="pownode4">
+    <application plugin="NODE" time="9" arguments="-id=pownode4 -miningtime=20 -miningnodecnt=10 -connect=pownode2" />
   </node>
 
-  <node id="posnode5">
-    <application plugin="NODE" time="10" arguments="-id=posnode5 -miningtime=20 -miningnodecnt=10 -connect=posnode1" />
+  <node id="pownode5">
+    <application plugin="NODE" time="10" arguments="-id=pownode5 -miningtime=20 -miningnodecnt=10 -connect=pownode1" />
   </node>
 
-  <node id="posnode6">
-    <application plugin="NODE" time="11" arguments="-id=posnode6 -miningtime=20 -miningnodecnt=10 -connect=posnode2" />
+  <node id="pownode6">
+    <application plugin="NODE" time="11" arguments="-id=pownode6 -miningtime=20 -miningnodecnt=10 -connect=pownode2" />
   </node>
 
-  <node id="posnode7">
-    <application plugin="NODE" time="12" arguments="-id=posnode7 -miningtime=20 -miningnodecnt=10 -connect=posnode3" />
+  <node id="pownode7">
+    <application plugin="NODE" time="12" arguments="-id=pownode7 -miningtime=20 -miningnodecnt=10 -connect=pownode3" />
   </node>
 
-  <node id="posnode8">
-    <application plugin="NODE" time="13" arguments="-id=posnode8 -miningtime=20 -miningnodecnt=10 -connect=posnode3" />
+  <node id="pownode8">
+    <application plugin="NODE" time="13" arguments="-id=pownode8 -miningtime=20 -miningnodecnt=10 -connect=pownode3" />
   </node>
 
-  <node id="posnode9">
-    <application plugin="NODE" time="14" arguments="-id=posnode9 -miningtime=20 -miningnodecnt=10 -connect=posnode4" />
+  <node id="pownode9">
+    <application plugin="NODE" time="14" arguments="-id=pownode9 -miningtime=20 -miningnodecnt=10 -connect=pownode4" />
   </node>
 
 </shadow>

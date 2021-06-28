@@ -68,6 +68,11 @@ target_sources(BLEEP
         src/BL3_protocol/TxGossipProtocol.h
         src/BL3_protocol/TxGossipProtocolMsg.h
         src/BL3_protocol/TxPool.cpp
+        src/BL3_protocol/PBFTConfig.cpp
+        src/BL3_protocol/PBFTBlock.cpp
+        src/BL3_protocol/PBFTSigning.cpp
+        src/BL3_protocol/PBFTMsgHolder.cpp
+        src/BL3_protocol/ProtocolLayerPBFT.cpp
         src/utility/UInt256.cpp
         src/utility/Assert.cpp
         src/utility/Random.cpp

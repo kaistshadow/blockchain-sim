@@ -382,6 +382,9 @@ namespace libBLEEP {
     // IO Operator
     std::ostream & operator<<(std::ostream & stream, const UINT128_t & rhs);
     std::ostream & operator<<(std::ostream & stream, const UINT256_t & rhs);
+    std::string gen_test( const UINT128_t & rhs);
+    std::string gen_test( const UINT256_t & rhs);
+
 }
 
 #endif

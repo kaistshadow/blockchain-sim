@@ -212,7 +212,7 @@ void BL_ProtocolLayerPoS::SwitchAsyncEventHandler(AsyncEvent& event) {
         {
             std::cout << "block mining complete" << "\n";
             std::shared_ptr<POSBlock> minedBlk = event.GetData().GetMinedPOSBlock();
-            std::cout << "blockhash:" << minedBlk->GetBlockHash() << "\n";
+            std::cout << "blockhash:" << minedBlk->GetBlockHash().str() << "\n";
             std::cout << "blockhash(str):" << minedBlk->GetBlockHash().str() << "\n";
             std::cout << "blockhash:" << libBLEEP::UINT256_t((const unsigned char*)minedBlk->GetBlockHash().str().c_str(), 32) << "\n";
             // append block to ledger

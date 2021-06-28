@@ -143,6 +143,8 @@ void BL_ProtocolLayerPBFT::_StartPreprepare() {
    std::string signText = oss.str();
    std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTPreprepare>(_v, n, d, PBFTSignature(_secret, signText), blk);
 
+    std::cout<< "Request block hash = "<<blk->GetBlockHash()<<" / v: "<<_v<<" / n: "<<n<<"\n";
+
    // send preprepare message to everyone in the consensus
    for (auto consensusNeighbor : _config.getConsensusMap()) {
        std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor.second, "PBFT-PREPREPARE", ptrToObj);
@@ -275,7 +277,7 @@ void BL_ProtocolLayerPBFT::_Commit(unsigned long v, unsigned int n, std::string 
     }
     _msgs.addCommit(v, n, d, i);
     if (_msgs.predCommittedLocalOnce(v, n)) {
-        std::cout << "Debug commit local true\n";
+        std::cout << "Debug commit local true v: "<<v<<" / n: "<<n<<"\n";
         // add block to chain
         auto blkptr = _msgs.getMessage(v, n);
         _blocktree.AppendBlock(blkptr);
@@ -314,7 +316,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTCommitHandler(std::shared_ptr<Message> msg) 
 
     _msgs.addCommit(v, n, d, i);
     if (_msgs.predCommittedLocalOnce(v, n)) {
-        std::cout << "Debug commit local true\n";
+        std::cout << "Debug commit local true v: "<<v<<" / n: "<<n<<"\n";
         // add block to chain
         auto blkptr = _msgs.getMessage(v, n);
         _blocktree.AppendBlock(blkptr);

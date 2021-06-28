@@ -1,6 +1,6 @@
 if (NOT CMAKE_INSTALL_PREFIX OR
 CMAKE_INSTALL_PREFIX STREQUAL "/usr/local")
-set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/../../../Install")
+set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/../../Install")
 endif()
 ## required for independent build
 cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
@@ -35,10 +35,3 @@ set_target_properties(MinerNodeRPC::Plugin PROPERTIES
   IMPORTED_LOCATION ${CMAKE_INSTALL_PREFIX}/plugins/minerNode_rpc.so
   INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set_property(TARGET MinerNodeRPC::Plugin PROPERTY IMPORTED_NO_SONAME 1)
-
-add_shadow_plugin(BLEEPemul-test-pbft-node node-pbft.cpp)
-target_link_libraries(BLEEPemul-test-pbft-node BLEEP)
-# copy resulting plugins into source directory
-add_custom_command(TARGET BLEEPemul-test-pbft-node
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BLEEPemul-test-pbft-node> ${CMAKE_CURRENT_SOURCE_DIR})

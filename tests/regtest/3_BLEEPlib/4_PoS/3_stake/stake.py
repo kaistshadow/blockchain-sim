@@ -38,7 +38,7 @@ def get_stake_form(txt_file):
 def test_stake(path):
     # running shadow
     print("Start POS stake test ...")
-    # exec_shell_cmd("shadow example.xml > /dev/null 2>&1")
+    exec_shell_cmd("shadow example.xml > /dev/null 2>&1")
     print("Finish POS stake test ...")
 
     # get stake value from txt file

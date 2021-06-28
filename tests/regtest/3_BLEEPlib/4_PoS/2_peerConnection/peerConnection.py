@@ -41,6 +41,7 @@ def test_peerConnection(shadow_outputpath, connect_peerlist):
             result = line.find(connect_peerlist[i])
             if result != -1:
                 test_condition += 1
+                break
         f.close()
 
     if test_condition == 2:

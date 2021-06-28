@@ -3,6 +3,7 @@
 //
 #include "ProtocolLayer_API.h"
 #include "ProtocolLayerEx1.h"
+#include "ProtocolLayerPoW.h"
 #include "utility/Assert.h"
 #include <iostream>
 #include <random>
@@ -21,13 +22,16 @@ BL_ProtocolLayer_API *BL_ProtocolLayer_API::Instance() {
 }
 
 void BL_ProtocolLayer_API::InitInstance(std::string protocolType) {
+    std::cout << "Protocol Layer initialization" << "\n";
     libBLEEP::M_Assert(_instance == 0, "Protocol Instance must be initialized once.");
     if (protocolType == "Ex1")
         _instance = new BL_ProtocolLayerEx1();
+    else if (protocolType == "PoW")
+        _instance = new BL_ProtocolLayerPoW();
     else // default protocol
         _instance = new BL_ProtocolLayerEx1();
 }
 
 BL_ProtocolLayer_API::BL_ProtocolLayer_API() {
-
+    _txPool = std::make_shared<TxPool>();
 }

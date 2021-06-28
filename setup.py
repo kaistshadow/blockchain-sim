@@ -86,7 +86,7 @@ if __name__ == '__main__':
     OPT_UNITTEST = args.unittest
 
     cmake_bleeplib_opt = "-DBLEEPLIB_OPT=ON"
-    cmake_debug_opt = "-DSHADOW_DEBUG=ON -DBLEEP_DEBUG=ON"
+    cmake_debug_opt = "-DSHADOW_DEBUG=OFF -DBLEEP_DEBUG=OFF -DCMAKE_BUILD_TYPE=Release"
 
 
     if len(sys.argv) == 1:
@@ -105,7 +105,7 @@ if __name__ == '__main__':
         process_ENV()   
 
     if OPT_DEBUG:
-        cmake_debug_opt = "-DSHADOW_DEBUG=ON -DBLEEP_DEBUG=ON"
+        cmake_debug_opt = "-DSHADOW_DEBUG=ON -DBLEEP_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug"
 
     if OPT_BITCOIN:
         exec_shell_cmd("git submodule update --init --recursive")

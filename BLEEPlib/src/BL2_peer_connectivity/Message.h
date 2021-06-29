@@ -16,8 +16,8 @@
 #include "../BL3_protocol/Inventory.h"
 #include "../BL3_protocol/TxGossipProtocolMsg.h"
 #include "../BL3_protocol/POWBlockGossipProtocolMsg.h"
+#include "../BL3_protocol/POSBlockGossipProtocolMsg.h"
 #include "../BL3_protocol/PBFTConsensusProtocolMsg.h"
-
 
 #include "utility/GlobalClock.h"
 #include "crypto/SHA256.h"
@@ -92,6 +92,10 @@ namespace libBLEEP_BL {
             ar.template register_type<POWBlockGossipGetBlocks>();
             ar.template register_type<POWBlockGossipGetData>();
             ar.template register_type<POWBlockGossipBlk>();
+            ar.template register_type<POSBlockGossipInventory>();
+            ar.template register_type<POSBlockGossipGetBlocks>();
+            ar.template register_type<POSBlockGossipGetData>();
+            ar.template register_type<POSBlockGossipBlk>();
             ar.template register_type<PBFTJoinRequest>();
             ar.template register_type<PBFTJoinResponse>();
             ar.template register_type<PBFTPreprepare>();

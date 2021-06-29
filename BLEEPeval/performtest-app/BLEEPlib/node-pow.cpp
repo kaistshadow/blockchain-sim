@@ -22,6 +22,7 @@ int main(int argc, char *argv[]) {
 
     std::cout << "main started" << "\n";
     std::string myId = gArgs.GetArg("-id", "noid");
+    std::cout<<"myId:"<<myId<<"\n";
 
     POWProtocolParameter powparams;
     if (gArgs.IsArgSet("-txgenstartat"))

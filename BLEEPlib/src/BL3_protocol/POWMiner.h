@@ -41,7 +41,8 @@ namespace libBLEEP_BL {
         void _timerCallback(ev::timer &w, int revents) {
             /* init_shadow_clock_update();                 */
             libBLEEP::PrintTimespec("POW miningTimer callback called");
-
+            std::cout<<"POW miningTimer callback called"<<"\n";
+            
             // 1. calculate random block.
             srand((unsigned int)time(0));
             /* unsigned long nonce = 0;  // since this is an emulator, we use arbitrary nonce value. */
@@ -68,12 +69,12 @@ namespace libBLEEP_BL {
             libBLEEP::UINT256_t hash_out_256(hash_out, 32);
             validBlk->SetBlockHash(hash_out_256);
             validBlk->SetTimestamp(timestamp);
-
+            std::cout<<"blockID:"<<validBlk->GetBlockIdx()<<"\n";
             // push asynchronous event
             AsyncEvent event(AsyncEventEnum::EmuBlockMiningComplete);
             event.GetData().SetMinedBlock(validBlk);
             MainEventManager::Instance()->PushAsyncEvent(event);
-
+            std::cout<<"blockhash:"<<validBlk->GetBlockHash().str()<<"\n";
             _isMining = false;
             libBLEEP::PrintTimespec("POW miningTimer callback ended");
             /* next_shadow_clock_update("==== done handling miningTimer callback"); */

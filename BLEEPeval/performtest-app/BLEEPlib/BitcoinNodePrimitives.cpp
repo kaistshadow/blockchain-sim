@@ -260,8 +260,14 @@ std::string BitcoinNodePrimitives::generate() {
     std::shared_ptr<libBLEEP_BL::MessageObject> ptrToObj = std::make_shared<libBLEEP_BL::TxGossipTxs>(txs);
     _txToBroadcast = ptrToObj;
     global_txtimepool->register_txtime(hash_out_256.str(),libBLEEP::GetGlobalClock());
+    std::cout<<"--------------------------------------------------"<<"\n";
     std::cout<<"txgentimer generate new tx = "<<tx->_id.GetTxHash()<<"\n";
-
+    std::cout<<"--------------------------------------------------"<<"\n";
+    int Geneted_tx_days = (int(timestamp/60));
+    int Gerated_tx_min = (int(timestamp)/60)%60;
+    int Gerated_tx_hour = ((int(timestamp/60))/24)%24;
+    int Gerated_tx_sec = int(timestamp)%60;
+    std::cout<<"Gererated time:"<<Geneted_tx_days<<"/"<<Gerated_tx_hour<<":"<<Gerated_tx_min<<":"<<Gerated_tx_sec<<"\n";
     return tx->_id.GetTxHash().str();
 }
 

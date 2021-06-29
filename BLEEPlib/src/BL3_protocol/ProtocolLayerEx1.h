@@ -7,6 +7,7 @@
 #include "Transaction.h"
 #include "TxGossipProtocol.h"
 
+#include "shadow_memshare_interface.h"
 
 namespace libBLEEP_BL {
 
@@ -27,6 +28,8 @@ namespace libBLEEP_BL {
             int receiver_id = rand() % 100;
             float amount = (float) (rand() % 100000);
             std::shared_ptr<SimpleTransaction> tx = std::make_shared<SimpleTransaction>(sender_id, receiver_id, amount);
+            memshare::try_share(tx);
+            tx = memshare::lookup(tx);
             if (!_txPool->ContainTx(tx->GetId())) {
                 _txPool->AddTx(tx);
                 _txGossipProtocol.PushTxToBroadcast(tx);

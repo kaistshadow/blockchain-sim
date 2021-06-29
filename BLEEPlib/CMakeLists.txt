@@ -76,6 +76,11 @@ target_sources(BLEEP
         src/BL3_protocol/TxGossipProtocolMsg.h
         src/BL3_protocol/POSStakes.cpp
         src/BL3_protocol/TxPool.cpp
+        src/BL3_protocol/PBFTConfig.cpp
+        src/BL3_protocol/PBFTBlock.cpp
+        src/BL3_protocol/PBFTSigning.cpp
+        src/BL3_protocol/PBFTMsgHolder.cpp
+        src/BL3_protocol/ProtocolLayerPBFT.cpp
         src/utility/UInt256.cpp
         src/utility/Assert.cpp
         src/utility/Random.cpp
@@ -135,9 +140,11 @@ find_package(Libev_4_33 REQUIRED)
 target_link_libraries(BLEEP Libev_4_33::Libev)
 #target_link_libraries(BLEEP -lev)
 target_link_libraries(BLEEP SHADOW_INTERFACE)
+target_link_libraries(BLEEP SHADOW_MEMSHARE_INTERFACE)
 target_link_libraries(BLEEP ${Boost_LIBRARIES})
 
 
 include_directories(${CMAKE_ROOT_SOURCE_DIR}/interfaces/shadow_interface)
+include_directories(${CMAKE_ROOT_SOURCE_DIR}/interfaces/shadow_memshare_interface)
 include_directories(${Boost_INCLUDE_DIRS})
 

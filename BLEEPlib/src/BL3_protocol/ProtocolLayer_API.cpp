@@ -5,6 +5,7 @@
 #include "ProtocolLayerEx1.h"
 #include "ProtocolLayerPoW.h"
 #include "ProtocolLayerPoS.h"
+#include "ProtocolLayerPBFT.h"
 #include "utility/Assert.h"
 #include <iostream>
 
@@ -30,6 +31,8 @@ void BL_ProtocolLayer_API::InitInstance(std::string protocolType) {
         _instance = new BL_ProtocolLayerPoW();
     else if (protocolType == "PoS")
         _instance = new BL_ProtocolLayerPoS();
+    else if (protocolType == "PBFT")
+        _instance = new BL_ProtocolLayerPBFT();
     else // default protocol
         _instance = new BL_ProtocolLayerEx1();
 }

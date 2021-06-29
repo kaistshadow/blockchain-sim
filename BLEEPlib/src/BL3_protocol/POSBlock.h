@@ -57,6 +57,15 @@ namespace libBLEEP_BL {
         void SetTimestamp(double t) { timestamp = t; }
         double GetTimestamp() const { return timestamp; }
 
+        std::size_t hash() { return (std::hash<std::string>()(block_hash.str())); }
+        bool operator==(const POSBlock& other) {
+            return _creator == other._creator
+                    && _slot_no == other._slot_no
+                    && tx_hash == other.tx_hash
+                    && prev_block_hash == other.prev_block_hash
+                    && timestamp == other.timestamp;
+        }
+
     private:
         friend class boost::serialization::access;
         // When the class Archive corresponds to an output archive, the

@@ -8,6 +8,8 @@
 //double libBLEEP_BL::miningtime = 2;
 //int libBLEEP_BL::miningnodecnt = 1;
 
+#include "shadow_memshare_interface.h"
+
 using namespace libBLEEP_BL;
 
 
@@ -154,6 +156,8 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockBlkHandler(std::shared_ptr<Message> msg) 
     std::shared_ptr<POWBlockGossipBlk> getdata = std::static_pointer_cast<POWBlockGossipBlk>(msg->GetObject());
     std::shared_ptr<POWBlock> blkptr = getdata->GetBlock();
 
+    blkptr = memshare::lookup(blkptr);
+
     UINT256_t lasthash = _blocktree.GetLastHash();
     // append a block to ledger
     std::cout << "blockhash:" << blkptr->GetBlockHash().str() << "\n";
@@ -231,6 +235,9 @@ void BL_ProtocolLayerPoW::SwitchAsyncEventHandler(AsyncEvent& event) {
             std::cout << "blockhash:" << minedBlk->GetBlockHash() << "\n";
             std::cout << "blockhash(str):" << minedBlk->GetBlockHash().str() << "\n";
             std::cout << "blockhash:" << libBLEEP::UINT256_t((const unsigned char*)minedBlk->GetBlockHash().str().c_str(), 32) << "\n";
+
+            memshare::try_share(minedBlk);
+            minedBlk = memshare::lookup(minedBlk);
 
             // append block to ledger
             _blkPool.push_back(minedBlk);

@@ -3,6 +3,8 @@
 #include "../BL2_peer_connectivity/Message.h"
 #include "../BL2_peer_connectivity/PeerConnectivityLayer_API.h"
 
+#include "shadow_memshare_interface.h"
+
 using namespace libBLEEP_BL;
 
 void TxGossipProtocol::RecvInventoryHandler(std::shared_ptr<Message> msg) {
@@ -50,9 +52,10 @@ void TxGossipProtocol::RecvTxsHandler(std::shared_ptr<Message> msg) {
     std::shared_ptr<TxGossipTxs> txsObject = std::static_pointer_cast<TxGossipTxs>(msg->GetObject());
     auto txs = txsObject->GetTransactions();
     for (auto tx : txs) {
-        std::cout << "receive tx:" << tx << "\n";
+        std::cout << "receive tx:" << tx->_id.GetTxHash()<<" sender = "<<tx->sender_id<<" / receiver = "<<tx->receiver_id<<" / amount = "<<tx->amount<<"\n";
         
         // Add to txpool
+        tx = memshare::lookup(tx);
         _txPool->AddTx(tx);
     }
 

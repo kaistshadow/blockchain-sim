@@ -3,6 +3,7 @@
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include "../utility/UInt256.h"
 
 namespace libBLEEP_BL {
     /* class TransactionId { */
@@ -47,9 +48,13 @@ namespace libBLEEP_BL {
         int sender;
         int receiver;
         float amount;
+        libBLEEP::UINT256_t tx_hash;
 
         SimpleTransactionId() {}
         SimpleTransactionId(int s, int r, float a) { sender = s; receiver = r; amount = a; }
+
+        void virtual SetTxHash(libBLEEP::UINT256_t hash) { tx_hash = hash; }
+        virtual libBLEEP::UINT256_t GetTxHash() const { return tx_hash; }
 
         // This overloaded operator<< 
         // Defines a non-member function, and makes it a friend of this class at the same time. 
@@ -78,21 +83,23 @@ namespace libBLEEP_BL {
             ar & sender;
             ar & receiver;
             ar & amount;
+            ar & tx_hash;
         }
     };
 
     class SimpleTransaction {
     private:
-        SimpleTransactionId _id;
     public:
         SimpleTransaction() {}
         SimpleTransaction(int sid, int rid, float a) {
-            sender_id=sid; receiver_id=rid; amount=a; 
+            sender_id=sid; receiver_id=rid; amount=a;
             _id = SimpleTransactionId(sid, rid, a);
-        }        
+        }
+        SimpleTransactionId _id;
         int sender_id;
         int receiver_id;
         float amount;
+        char dummy_text[200];
 
         SimpleTransactionId GetId() { return _id; }
 
@@ -102,6 +109,17 @@ namespace libBLEEP_BL {
         {
             out << tx.sender_id << " sends " << tx.amount << " to " << tx.receiver_id;
             return out;
+        }
+
+        std::size_t hash() {
+            return ((std::hash<int>()(sender_id)
+                     ^ (std::hash<int>()(receiver_id) << 1)) >> 1)
+                   ^ (std::hash<float>()(amount) << 1);
+        }
+        bool operator==(const SimpleTransaction& other) {
+            return sender_id == other.sender_id
+                   && receiver_id == other.receiver_id
+                   && amount == other.amount;
         }
 
     private:

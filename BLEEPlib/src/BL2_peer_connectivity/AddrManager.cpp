@@ -1,9 +1,9 @@
 #include "utility/UInt256.h"
 #include "utility/GlobalClock.h"
+#include "utility/Random.h"
 #include "crypto/SHA256.h"
 
 #include "AddrManager.h"
-#include <random>
 using namespace libBLEEP_BL;
 
 
@@ -99,8 +99,7 @@ std::vector<Address> AddrManager::GetAddresses() {
         vIds.push_back(imap.first);
 
     // random shuffle
-    std::random_device rd; // obtain a random number from hardware 
-    auto rng = std::default_random_engine {rd()};
+    auto rng = *(libBLEEP::get_global_random_source().get_default_random_source());
     std::shuffle(std::begin(vIds), std::end(vIds), rng);
 
     for (unsigned int n = 0; n < vIds.size(); n++) {
@@ -125,8 +124,7 @@ std::shared_ptr<Address> AddrManager::SelectAddressFromTable() {
         vIds.push_back(imap.first);
 
     // random shuffle
-    std::random_device rd; // obtain a random number from hardware 
-    auto rng = std::default_random_engine {rd()};
+    auto rng = *(libBLEEP::get_global_random_source().get_default_random_source());
     std::shuffle(std::begin(vIds), std::end(vIds), rng);
             
     return std::make_shared<Address>(mapAddr[vIds[0]]);

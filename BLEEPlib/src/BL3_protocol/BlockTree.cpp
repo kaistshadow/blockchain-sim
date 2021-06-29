@@ -10,6 +10,8 @@
 #include "shadow_interface.h"
 #include "../utility/Assert.h"
 
+#include "shadow_memshare_interface.h"
+
 using namespace libBLEEP_BL;
 using namespace libBLEEP;
 
@@ -18,10 +20,14 @@ BlockTree<T>::BlockTree() {
     // create genesis block
     std::list<std::shared_ptr<SimpleTransaction> > genesis_tx_list;
     std::shared_ptr<SimpleTransaction> genesis_tx = std::make_shared<SimpleTransaction>(0, 0, 0);
+    memshare::try_share(genesis_tx);
+    genesis_tx = memshare::lookup(genesis_tx);
     genesis_tx_list.push_back(genesis_tx);
 
     std::shared_ptr<T> genesisblk = std::make_shared<T>("", genesis_tx_list);
     genesisblk->SetGenesisBlock();
+    memshare::try_share(genesisblk);
+    genesisblk = memshare::lookup(genesisblk);
 
     std::shared_ptr<BlockTreeBlockIndex<T> > genesisIndex = std::make_shared< BlockTreeBlockIndex<T> >(genesisblk, "");
     // prevblockhash of genesis block is ""

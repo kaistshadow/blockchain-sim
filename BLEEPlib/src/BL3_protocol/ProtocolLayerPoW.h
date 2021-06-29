@@ -11,6 +11,8 @@
 #include "BlockTree.h"
 #include "BlockTree.cpp"  // This(BlockTree.cpp) is required since the BlockTree is template class
 
+#include "shadow_memshare_interface.h"
+
 namespace libBLEEP_BL {
 
     // PoW parameters
@@ -72,6 +74,24 @@ namespace libBLEEP_BL {
             int receiver_id = rand() % 100;
             float amount = (float) (rand() % 100000);
             std::shared_ptr<SimpleTransaction> tx = std::make_shared<SimpleTransaction>(sender_id, receiver_id, amount);
+
+            unsigned char hash_out[32];
+            std::string sender_id_str = std::to_string(sender_id);
+            SHA256_CTX ctx;
+            sha256_init(&ctx);
+            sha256_update(&ctx, (const unsigned char*)std::to_string(sender_id).c_str(), sizeof(int));
+            sha256_update(&ctx, (const unsigned char*)std::to_string(receiver_id).c_str(), sizeof(int));
+            sha256_update(&ctx, (const unsigned char*)std::to_string(amount).c_str(), sizeof(float));
+
+            double timestamp = libBLEEP::GetGlobalClock();
+            sha256_update(&ctx, (const unsigned char*)&timestamp, sizeof(double));
+            sha256_final(&ctx, hash_out);
+            libBLEEP::UINT256_t hash_out_256(hash_out, 32);
+            tx->_id.SetTxHash(hash_out_256);
+            std::cout<<"txgentimer generate new tx = "<<tx->_id.GetTxHash()<<"\n";
+
+            memshare::try_share(tx);
+            tx = memshare::lookup(tx);
 
             if (!_txPool->ContainTx(tx->GetId())) {
                 _txPool->AddTx(tx);

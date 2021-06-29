@@ -24,8 +24,6 @@ namespace libBLEEP_BL {
         // periodic tx broadcast
         ev::timer _txbctimer;
         void _txbroadcasttimerCallback(ev::timer &w, int revents) {
-            std::cout << "tx broadcast timer called" << "\n";
-            std::cout << _txToBroadcast.size() << "\n";
             if (_txToBroadcast.empty())
                 return;
 

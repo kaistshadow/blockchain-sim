@@ -1,6 +1,6 @@
 # BLEEP Blockchain Library Proof of Work Abstraction
-`BLEEPlib`은 시뮬레이션을 위한 합의 알고리즘 중 하나로 PoW Abstraction을 제공한다. PoW Abstraction 관련 처리는 `ProtocolLayerPoW.cpp`, `ProtocolLayerPow.h` 파일에서 이뤄지며, 수행되는 내용은 다음과 같다.
-- PoW 관련 메세지 핸들링: Inventory 메세지 수신, Block 요청 메세지, Transaction 요청 메세지, 블록 전송 메세지 등을 처리
+`BLEEPlib`은 시뮬레이션을 위한 합의 알고리즘 중 하나로 PoW Abstraction을 제공한다. PoW Abstraction 관련 처리는 `ProtocolLayerPoW.cpp`, `ProtocolLayerPoW.h` 파일에서 이뤄지며, 수행되는 내용은 다음과 같다.
+- PoW 관련 메세지 핸들링: 수신된 Inventory 메세지, Block 요청 메세지, Transaction 요청 메세지, 블록 전송 메세지 등을 처리
 - 타이머 함수 처리: 주기적인 트랜잭션 생성 및 블록 마이닝 로직 수행
 
 # Message Handling Function Detail

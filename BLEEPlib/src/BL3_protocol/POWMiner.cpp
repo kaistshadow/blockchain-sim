@@ -27,7 +27,7 @@ void POWMiner::AsyncEmulateBlockMining(std::shared_ptr<POWBlock> candidateBlk, d
     // append shadow api log
     char buf[256];
     sprintf(buf, "API,AsyncEmulateBlockMining,%f", lambda);
-    // shadow_push_eventlog(buf);
+    shadow_push_eventlog(buf);
 }
 
 void POWMiner::StopMining() {
@@ -37,6 +37,6 @@ void POWMiner::StopMining() {
     // append shadow api log
     char buf[256];
     sprintf(buf, "API,StopMining");
-    // shadow_push_eventlog(buf);
+    shadow_push_eventlog(buf);
 }
 

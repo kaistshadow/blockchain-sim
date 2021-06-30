@@ -3,7 +3,8 @@ from subprocess import check_output
 import argparse
 import sys
 import time
-import copy
+sys.path.append("./../")
+import modules_visualization
 
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
@@ -197,17 +198,39 @@ def check_block_fork(posnode_output_data):
 
 if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser(description='Script for installation and simulation')
+    parser.add_argument("configfile", help="filepath for blockchain network configuration file (shadow xml configuration)")
+    parser.add_argument("-p", "--port", metavar="port", default="1337", help="Port where we'll run the websocket server")
+    parser.add_argument("--background", action="store_true", help="Run server as background daemon.")
+    parser.add_argument("--log", help="Shadow Log LEVEL above which to filter messages ('error' < 'critical' < 'warning' < 'message' < 'info' < 'debug') ['message']")
+    parser.add_argument("--noserver", action="store_true", help="Don't run visualization server")
+    parser.add_argument("--force", action="store_true", help="Run visualization even if the test is failed ['false']")
+
+    args = parser.parse_args()
+    configfile = args.configfile
+    port = args.port
+    OPT_BACKGROUND = args.background
+    OPT_NOSERVER = args.noserver
+    OPT_FORCE = args.force
+
+    if not args.log:
+        LOGLEVEL = "message"
+    else:
+        LOGLEVEL = args.log
+
     print("Start POS consensus certification test ...")
-    path = os.path.abspath("./")
-
-    xmlfile = path + "/pos.xml"
-    running_time, node_count = get_infos_fromXML(xmlfile)
-
     emulated_time = time.time()
     print("Start emulate POS consensus ... ")
-    exec_shell_cmd("shadow pos.xml > /dev/null 2>&1")
+    output = modules_visualization.run_experiment(configfile, LOGLEVEL, OPT_FORCE)
     print("Finish emulate POS consensus ...")
     emulated_time = time.time() - emulated_time
+
+    if OPT_NOSERVER:
+        exit()
+
+    path = os.path.abspath("./")
+    xmlfile = path + "/pos.xml"
+    running_time, node_count = get_infos_fromXML(xmlfile)
 
     result_value = node_count
     blockHash_list, result_value = get_blockhash(path, result_value)
@@ -249,5 +272,10 @@ if __name__ == '__main__':
     else:
         print("\t\t POS module liveness result : Fail")
     print("---------------------------------------------------------")
-    
-
+    print "Starting visualization"
+    if OPT_BACKGROUND:
+        print(output, configfile, port)
+        modules_visualization.run_visualization_server(output, configfile, port, background=True)
+    else:
+        print(output, configfile, port)
+        modules_visualization.run_visualization_server(output, configfile, port)

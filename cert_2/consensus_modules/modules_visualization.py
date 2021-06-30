@@ -41,7 +41,7 @@ def parse_output(output, datadir):
 def run_experiment(configfile, LOGLEVEL, forcerun):
     # Datadir is signed with pid to differenciate experiments currently running on
     # different ports
-    datadir = "visualize-datadir.%d" % os.getpid()
+    datadir = "shadow.data"
     current_config_path = os.path.join(
         os.path.dirname(configfile),
         "current-config.xml"

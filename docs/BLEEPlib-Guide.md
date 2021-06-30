@@ -31,3 +31,7 @@ BLEEPlib의 코드는 다음과 같은 3개의 프로토콜 계층 모듈로 나
 - 상위 프로토콜 계층(BL_ProtocolLayer_API)
   - 합의에 관련된 합의 알고리즘, 블록 및 트랜잭션, 블록체인 데이터 관련 자료구조 관리
   - 임의 블록체인 포맷에 맞는 메세지 핸들링 및 블록체인 상태 변경 수행
+  - 구현된 합의 알고리즘 모듈
+    - [Proof of Work abstraction](BLEEPlib-POW.md)
+    - [Proof of Stake](BLEEPlib-POS.md)
+    - [BFT-variant](BLEEPlib-BFT.md)

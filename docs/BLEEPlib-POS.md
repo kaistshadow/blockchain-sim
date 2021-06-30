@@ -26,8 +26,18 @@ void BL_ProtocolLayerPoS::RecvMsgHandler(std::shared_ptr<Message> msg) {
 }
 ```
 ## Transaction Inventory Handling
+외부로부터 트랜잭션 Inventory 메세지 `TXGOSSIP-INV`를 받는 경우 `RecvInventoryHandler` 함수가 수행된다. 해당 함수의 동작은 다음과 같다.
+- 받은 트랜잭션 Inventory 메세지에 존재하는 트랜잭션 ID 중 자신의 트랜잭션 풀에 존재하지 않는 트랜잭션 ID에 대하여 트랜잭션 데이터를 요청(`TXGOSSIP-GETDATA`)하는 메세지 구성
+- 구성된 트랜잭션 요청 메세지를 Inventory 메세지를 전달해 준 피어에게 피어 연결 계층 API를 이용하여 전송
 ## Transaction Request Handling
+외부로부터 트랜잭션 데이터 요청 메세지 `TXGOSSIP-GETDATA`를 받는 경우 `RecvGetdataHandler` 함수가 수행된다. 해당 함수의 동작은 다음과 같다.
+- 받은 트랜잭션 요청 메세지에 존재하는 트랜잭션 ID들에 매칭되는 트랜잭션 데이터가 자신의 트랜잭션 풀에 존재하는 경우 해당 트랜잭션들을 트랜잭션 풀에서 가져와 메세지를 구성
+- 구성된 메세지(`TXGOSSIP-TXS`)를 트랜잭션 요청을 보낸 피어에게 피어 연결 계층 API를 이용하여 전송
 ## Transaction Data Response Handling
+외부로부터 트랜잭션 데이터 메세지 `TXGOSSIP-TXS`를 받는 경우 `RecvTxsHandler` 함수가 수행된다. 해당 함수의 동작은 다음과 같다.
+- 받은 메세지에 존재하는 트랜잭션 데이터들이 자신의 트랜잭션 풀에 존재하지 않는 경우, 트랜잭션 풀에 해당 트랜잭션 데이터들을 추가
+- 받은 메세지에 존재하는 트랜잭션 데이터들의 트랜잭션 ID를 이용하여 트랜잭션 Inventory 메세지를 구성
+- 트랜잭션 전파를 위하여 구성된 트랜잭션 Inventory 메세지를 자신의 이웃 피어들에게 전달
 ## Block Inventory Handling
 ## Block Request Handling
 ## Block Data Response Handling

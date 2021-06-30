@@ -256,7 +256,10 @@ if __name__ == '__main__':
             continue
         else:
             break
-    print("---------------------------------------------------------")
+
+    print("-------------------------------------------------------------------------------")
+    print("\t\t\t POS module test result")
+    print("-------------------------------------------------------------------------------")
     print("\t\t Run time : %d" %emulated_time)
     print("\t\t Simulate time : %d" %running_time)
     print("\t\t Block count : %d" %block_count)
@@ -271,11 +274,10 @@ if __name__ == '__main__':
         print("\t\t POS module liveness result : Success")
     else:
         print("\t\t POS module liveness result : Fail")
-    print("---------------------------------------------------------")
-    print "Starting visualization"
+    print("-------------------------------------------------------------------------------")
+    target_page = "localhost:1337/frontend.html"
+    print "\n\t\t Starting visualization    -- > %s " %target_page
     if OPT_BACKGROUND:
-        print(output, configfile, port)
         modules_visualization.run_visualization_server(output, configfile, port, background=True)
     else:
-        print(output, configfile, port)
         modules_visualization.run_visualization_server(output, configfile, port)

@@ -92,7 +92,7 @@ function initializeWebSocketServer(port) {
         // Not important for us. We're writing WebSocket server, not HTTP server
     });
     server.listen(port, function() {
-        console.log((new Date()) + " Server is listening on port " + port);
+        // console.log((new Date()) + " Server is listening on port " + port);
     });
     
     /**

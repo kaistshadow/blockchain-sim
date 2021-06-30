@@ -142,3 +142,8 @@ ps_results
 shadow.output
 tests/regtest/perftest/
 shadow_result
+cert_2/consensus_modules/*/node_modules/
+cert_2/consensus_modules/*/visualize-datadir.*/
+cert_2/consensus_modules/*.py
+cert_2/consensus_modules/*.pyc
+cert_2/consensus_modules/node_modules/

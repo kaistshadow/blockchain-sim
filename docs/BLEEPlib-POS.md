@@ -4,7 +4,7 @@
 - 타이머 함수 처리: 주기적인 트랜잭션 생성 및 PoS 슬롯 마다의 블록생성 리더 선정 로직 수행
 
 # Message Handling Function Detail
-외부로부터 수신한 Protocol layer 관련 메세지를 핸들링 하는 코드는 다음과 같다 (`ProtocolLayerPoW.cpp`).
+외부로부터 수신한 Protocol layer 관련 메세지를 핸들링 하는 코드는 다음과 같다 (`ProtocolLayerPoS.cpp`).
 ```
 void BL_ProtocolLayerPoS::RecvMsgHandler(std::shared_ptr<Message> msg) {
     MessageType msgType = msg->GetType();

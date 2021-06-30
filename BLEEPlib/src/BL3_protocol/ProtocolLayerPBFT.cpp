@@ -144,7 +144,8 @@ void BL_ProtocolLayerPBFT::_StartPreprepare() {
    std::shared_ptr<MessageObject> ptrToObj = std::make_shared<PBFTPreprepare>(_v, n, d, PBFTSignature(_secret, signText), blk);
 
     std::cout<< "Request block hash = "<<blk->GetBlockHash()<<" / v: "<<_v<<" / n: "<<n<<"\n";
-
+    std::cout<< "blockID:" << blk->GetBlockIdx() << "\n";
+    std::cout<< "blockhash:" << blk->GetBlockHash() << "\n";
    // send preprepare message to everyone in the consensus
    for (auto consensusNeighbor : _config.getConsensusMap()) {
        std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor.second, "PBFT-PREPREPARE", ptrToObj);

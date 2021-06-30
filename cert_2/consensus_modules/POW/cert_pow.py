@@ -111,9 +111,7 @@ def compare_longestChain_hash(post_chain, present_chain):
     else:
         return False
         
-#Gererated time:10519200/12:0:39
 def compare_previousTime_with_presentTime(previous_time, present_time):
-
     previous_hour = int(previous_time.split(":")[0])
     previous_min =  int(previous_time.split(":")[1])
     previous_sec =  int(previous_time.split(":")[2])
@@ -122,19 +120,11 @@ def compare_previousTime_with_presentTime(previous_time, present_time):
     present_min = int(present_time.split(":")[1])
     present_sec = int(present_time.split(":")[2])
     
+    previous_sec_time = (previous_hour * 60 * 60)+ (previous_min * 60) + previous_sec
+    present_sec_time = (present_hour * 60 * 60)+ (present_min * 60) + present_sec
 
-    if present_hour > previous_hour:
+    if 540 >= (present_sec_time - previous_sec_time):
         return True
-    elif present_hour == previous_hour:
-        if present_min > previous_min:
-            return True
-        elif present_min == previous_min:
-            if present_sec >= previous_sec:
-                return True
-            else:
-                return False
-        else:
-            return False
     else:
         return False
 
@@ -203,7 +193,7 @@ def check_block_fork(pownode_output_data):
     f.close()
 
     fork_count = fork_rate_list.count(False)
-    return fork_count, len(fork_rate_list)
+    return int(fork_count), len(fork_rate_list)
 
 if __name__ == '__main__':
 
@@ -215,7 +205,7 @@ if __name__ == '__main__':
 
     emulated_time = time.time()
     print("Start emulate POW consensus ... ")
-    exec_shell_cmd("shadow -w 3 pow.xml > /dev/null 2>&1")
+    # exec_shell_cmd("shadow -w 3 pow.xml > /dev/null 2>&1")
     print("Finish emulate POW consensus ...")
     emulated_time = time.time() - emulated_time
 
@@ -228,7 +218,7 @@ if __name__ == '__main__':
     else:
         safety_value = False
 
-    fork_coun, blockCount = 0, 0
+    fork_count, blockCount = 0, 0
     block_count = 0
     liveness_result = False
 
@@ -243,13 +233,12 @@ if __name__ == '__main__':
             continue
         else:
             break
-    
     print("---------------------------------------------------------")
     print("\t\t Run time : %d" %emulated_time)
     print("\t\t Simulate time : %d" %running_time)
     print("\t\t Block count : %d" %block_count)
     print("\t\t Fork count : %d" %fork_count)
-    print("\t\t Fork rate : %.2lf" %(fork_count/blockCount))
+    # print("\t\t Fork rate : %f" %fork_rate)
     if safety_value == True:
         print("\t\t POW module safety result : Success")
     else:
@@ -259,8 +248,6 @@ if __name__ == '__main__':
         print("\t\t POW module liveness result : Success")
     else:
         print("\t\t POW module liveness result : Fail")
-    
-    
     print("---------------------------------------------------------")
     
 

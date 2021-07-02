@@ -3,7 +3,8 @@ from subprocess import check_output
 import argparse
 import sys
 import time
-import copy
+sys.path.append("./../")
+import modules_visualization
 
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
@@ -193,13 +194,41 @@ def check_block_fork(pbftnode_output_data):
     f.close()
 
     fork_count = fork_rate_list.count(False)
-    return int(fork_count), len(fork_rate_list)
+    return int(fork_count)
 
 if __name__ == '__main__':
 
-    print("Start PBFT consensus certification test ...")
-    path = os.path.abspath("./")
+    parser = argparse.ArgumentParser(description='Script for installation and simulation')
+    parser.add_argument("configfile", help="filepath for blockchain network configuration file (shadow xml configuration)")
+    parser.add_argument("-p", "--port", metavar="port", default="1337", help="Port where we'll run the websocket server")
+    parser.add_argument("--background", action="store_true", help="Run server as background daemon.")
+    parser.add_argument("--log", help="Shadow Log LEVEL above which to filter messages ('error' < 'critical' < 'warning' < 'message' < 'info' < 'debug') ['message']")
+    parser.add_argument("--noserver", action="store_true", help="Don't run visualization server")
+    parser.add_argument("--force", action="store_true", help="Run visualization even if the test is failed ['false']")
 
+    args = parser.parse_args()
+    configfile = args.configfile
+    port = args.port
+    OPT_BACKGROUND = args.background
+    OPT_NOSERVER = args.noserver
+    OPT_FORCE = args.force
+
+    if not args.log:
+        LOGLEVEL = "message"
+    else:
+        LOGLEVEL = args.log
+
+    print("Start PBFT consensus certification test ...")
+    emulated_time = time.time()
+    print("Start emulate PBFT consensus ... ")
+    output = modules_visualization.run_experiment(configfile, LOGLEVEL, OPT_FORCE)
+    print("Finish emulate PBFT consensus ...")
+    emulated_time = time.time() - emulated_time
+
+    if OPT_NOSERVER:
+        exit()
+
+    path = os.path.abspath("./")
     xmlfile = path + "/pbft.xml"
     running_time, node_count = get_infos_fromXML(xmlfile)
 
@@ -228,17 +257,16 @@ if __name__ == '__main__':
             block_count = get_blockCount(target_path)
             liveness_result = check_node_liveness(target_path)
 
-        fork_count, blockCount = check_block_fork(target_path)
-        if (fork_count/blockCount) == 0:
-            continue
-        else:
+        fork_count = check_block_fork(target_path)
+        if fork_count != 0:
             break
-    print("---------------------------------------------------------")
+    print("-------------------------------------------------------------------------------")
+    print("\t\t\t PBFT module test result")
+    print("-------------------------------------------------------------------------------")
     print("\t\t Run time : %d" %emulated_time)
     print("\t\t Simulate time : %d" %running_time)
     print("\t\t Block count : %d" %block_count)
     print("\t\t Fork count : %d" %fork_count)
-    # print("\t\t Fork rate : %f" %fork_rate)
     if safety_value == True:
         print("\t\t PBFT module safety result : Success")
     else:
@@ -248,6 +276,10 @@ if __name__ == '__main__':
         print("\t\t PBFT module liveness result : Success")
     else:
         print("\t\t PBFT module liveness result : Fail")
-    print("---------------------------------------------------------")
-    
-
+    print("-------------------------------------------------------------------------------")
+    target_page = "localhost:1337/frontend.html"
+    print "\n\t\t Starting visualization    -- > %s " %target_page
+    if OPT_BACKGROUND:
+        modules_visualization.run_visualization_server(output, configfile, port, background=True)
+    else:
+        modules_visualization.run_visualization_server(output, configfile, port)

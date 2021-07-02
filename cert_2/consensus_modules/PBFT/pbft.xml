@@ -35,7 +35,7 @@
 
 
   <!-- the length of our experiment in seconds  1404101800-->
-  <kill time="30" />
+  <kill time="1000" />
   <!-- our nodes -->
 
   <node id="pbftnode0">
@@ -56,6 +56,26 @@
   </node>
   <node id="pbftnode4">
     <application plugin="NODE" time="0" arguments="-id=pbftnode4 -consensusNodeID=4 -configfile=config.txt -phaseinterval=30 -connect=pbftnode0 -connect=pbftnode1 -connect=pbftnode2 -connect=pbftnode3" />
+    <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
+  </node>
+  <node id="pbftnode5">
+    <application plugin="NODE" time="0" arguments="-id=pbftnode5 -consensusNodeID=5 -configfile=config.txt -phaseinterval=30 -connect=pbftnode0 -connect=pbftnode1 -connect=pbftnode2 -connect=pbftnode3 -connect=pbftnode4" />
+    <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
+  </node>
+  <node id="pbftnode6">
+    <application plugin="NODE" time="0" arguments="-id=pbftnode6 -consensusNodeID=6 -configfile=config.txt -phaseinterval=30 -connect=pbftnode0 -connect=pbftnode1 -connect=pbftnode2 -connect=pbftnode3 -connect=pbftnode4 -connect=pbftnode5 " />
+    <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
+  </node>
+  <node id="pbftnode7">
+    <application plugin="NODE" time="0" arguments="-id=pbftnode7 -consensusNodeID=7 -configfile=config.txt -phaseinterval=30 -connect=pbftnode0 -connect=pbftnode1 -connect=pbftnode2 -connect=pbftnode3 -connect=pbftnode4 -connect=pbftnode5 -connect=pbftnode6" />
+    <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
+  </node>
+  <node id="pbftnode8">
+    <application plugin="NODE" time="0" arguments="-id=pbftnode8 -consensusNodeID=8 -configfile=config.txt -phaseinterval=30 -connect=pbftnode0 -connect=pbftnode1 -connect=pbftnode2 -connect=pbftnode3 -connect=pbftnode4 -connect=pbftnode5 -connect=pbftnode6 -connect=pbftnode7 " />
+    <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
+  </node>
+  <node id="pbftnode9">
+    <application plugin="NODE" time="0" arguments="-id=pbftnode9 -consensusNodeID=9 -configfile=config.txt -phaseinterval=30 -connect=pbftnode0 -connect=pbftnode1 -connect=pbftnode2 -connect=pbftnode3 -connect=pbftnode4 -connect=pbftnode5 -connect=pbftnode6 -connect=pbftnode7 -connect=pbftnode8" />
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>
 

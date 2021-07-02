@@ -3,6 +3,8 @@
 - PoW 관련 메세지 핸들링: 수신된 Inventory 메세지, Block 요청 메세지, Transaction 요청 메세지, 블록 전송 메세지 등을 처리
 - 타이머 함수 처리: 주기적인 트랜잭션 생성 및 블록 마이닝 로직 수행
 
+(TODO: 지수분포 랜덤 로직 설명)
+
 # Message Handling Function Detail
 외부로부터 수신한 Protocol layer 관련 메세지를 핸들링 하는 코드는 다음과 같다 (`ProtocolLayerPoW.cpp`).
 ```

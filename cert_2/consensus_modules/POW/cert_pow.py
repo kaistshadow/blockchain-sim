@@ -125,7 +125,7 @@ def compare_previousTime_with_presentTime(previous_time, present_time):
     previous_sec_time = (previous_hour * 60 * 60)+ (previous_min * 60) + previous_sec
     present_sec_time = (present_hour * 60 * 60)+ (present_min * 60) + present_sec
 
-    if 540 >= (present_sec_time - previous_sec_time):
+    if 60 >= (present_sec_time - previous_sec_time):
         return True
     else:
         return False

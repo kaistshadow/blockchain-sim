@@ -2,7 +2,7 @@
 `BLEEPlib`은 시뮬레이션을 위한 합의 알고리즘 중 하나로 PoS를 제공한다. PoS 관련 처리는 `ProtocolLayerPoS.cpp`, `ProtocolLayerPoS.h` 파일을 중심으로 이뤄지며, 수행되는 내용은 다음과 같다.
 - PoS 관련 메세지 핸들링: 수신된 Inventory 메세지, Block 요청 메세지, Transaction 요청 메세지, 블록 전송 메세지 등을 처리
 - 타이머 함수 처리: 주기적인 트랜잭션 생성 및 PoS 슬롯 마다의 블록생성 리더 선정 로직 수행
-
+ (TODO: pos 처리흐름 그림 추가)
 # Message Handling Function Detail
 외부로부터 수신한 Protocol layer 관련 메세지를 핸들링 하는 코드는 다음과 같다 (`ProtocolLayerPoS.cpp`).
 ```

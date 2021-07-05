@@ -33,33 +33,33 @@
   <!-- our nodes -->
   <kill time="9000"/>
   <node id="posnode0">
-    <application plugin="NODE" time="0" arguments="-id=posnode0 -stakefile=stakefile.txt -slotinterval=30 -creatorid=1 -connect=posnode1"/>
+    <application plugin="NODE" time="0" arguments="-id=posnode0 -stakefile=stakefile.txt -slotinterval=30 -creatorid=0 -connect=posnode1"/>
   </node>
   <node id="posnode1">
-    <application plugin="NODE" time="0" arguments="-id=posnode1 -stakefile=stakefile.txt -slotinterval=30 -creatorid=2 -connect=posnode2"/>
+    <application plugin="NODE" time="0" arguments="-id=posnode1 -stakefile=stakefile.txt -slotinterval=30 -creatorid=1 -connect=posnode2"/>
   </node>
   <node id="posnode2">
-    <application plugin="NODE" time="0" arguments="-id=posnode2 -stakefile=stakefile.txt -slotinterval=30 -creatorid=3 -connect=posnode3"/>
+    <application plugin="NODE" time="0" arguments="-id=posnode2 -stakefile=stakefile.txt -slotinterval=30 -creatorid=2 -connect=posnode3"/>
   </node>
   <node id="posnode3">
-    <application plugin="NODE" time="0" arguments="-id=posnode3 -stakefile=stakefile.txt -slotinterval=30 -creatorid=4 -connect=posnode4"/>
+    <application plugin="NODE" time="0" arguments="-id=posnode3 -stakefile=stakefile.txt -slotinterval=30 -creatorid=3 -connect=posnode4"/>
   </node>
   <node id="posnode4">
     <application plugin="NODE" time="0" arguments="-id=posnode4 -stakefile=stakefile.txt -slotinterval=30 -creatorid=4 -connect=posnode5"/>
   </node>
   <node id="posnode5">
-    <application plugin="NODE" time="0" arguments="-id=posnode5 -stakefile=stakefile.txt -slotinterval=30 -creatorid=4 -connect=posnode6"/>
+    <application plugin="NODE" time="0" arguments="-id=posnode5 -stakefile=stakefile.txt -slotinterval=30 -creatorid=5 -connect=posnode6"/>
   </node>
   <node id="posnode6">
-    <application plugin="NODE" time="0" arguments="-id=posnode6 -stakefile=stakefile.txt -slotinterval=30 -creatorid=4 -connect=posnode7"/>
+    <application plugin="NODE" time="0" arguments="-id=posnode6 -stakefile=stakefile.txt -slotinterval=30 -creatorid=6 -connect=posnode7"/>
   </node>
   <node id="posnode7">
-    <application plugin="NODE" time="0" arguments="-id=posnode7 -stakefile=stakefile.txt -slotinterval=30 -creatorid=4 -connect=posnode8"/>
+    <application plugin="NODE" time="0" arguments="-id=posnode7 -stakefile=stakefile.txt -slotinterval=30 -creatorid=7 -connect=posnode8"/>
   </node>
   <node id="posnode8">
-    <application plugin="NODE" time="0" arguments="-id=posnode8 -stakefile=stakefile.txt -slotinterval=30 -creatorid=4 -connect=posnode9"/>
+    <application plugin="NODE" time="0" arguments="-id=posnode8 -stakefile=stakefile.txt -slotinterval=30 -creatorid=8 -connect=posnode9"/>
   </node>
   <node id="posnode9">
-    <application plugin="NODE" time="0" arguments="-id=posnode9 -stakefile=stakefile.txt -slotinterval=30 -creatorid=4 -connect=posnode0"/>
+    <application plugin="NODE" time="0" arguments="-id=posnode9 -stakefile=stakefile.txt -slotinterval=30 -creatorid=9 -connect=posnode0"/>
   </node>
 </shadow>

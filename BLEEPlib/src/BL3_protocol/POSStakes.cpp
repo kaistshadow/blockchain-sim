@@ -70,6 +70,14 @@ namespace libBLEEP_BL {
         return totalStakedValue;
     }
 
+    void StakeList::show_stake_peerlist() {
+        std::cout<< "genesis stake setting ... " << "\n";
+        for(auto iter = leadermap.begin(); iter != leadermap.end(); iter ++) {
+            std::cout << iter->first << " " << iter->second << "\n";
+        }
+        std::cout << "----------------------------" << "\n";
+    }
+
     void StakeList::load(std::string stakefile) {
         std::ifstream file(stakefile);
         if (!file.is_open()) {

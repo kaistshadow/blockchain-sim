@@ -16,5 +16,7 @@ void POSMiner::AsyncMakeBlock(std::shared_ptr<POSBlock> blk) {
     // push asynchronous event
     AsyncEvent event(AsyncEventEnum::EmuBlockMiningComplete);
     event.GetData().SetMinedPOSBlock(blk);
+    std::cout << "blockID:" << blk->GetBlockIdx() << "\n";
+    std::cout << "blockhash:" << blk->GetBlockHash().str() << "\n";
     MainEventManager::Instance()->PushAsyncEvent(event);
 }

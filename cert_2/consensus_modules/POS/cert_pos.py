@@ -153,6 +153,98 @@ def check_node_liveness(posnode_output_data):
     else:
         return False
 
+def show_peer_stake_status(posnode_output_data):
+    condition_value = 0
+    total_present_stake = 0
+    stake_list = []
+    f = open(posnode_output_data, "r")
+    while True:
+        line = f.readline()
+        if not line: break
+
+        if condition_value == 0:
+            result = line.find("genesis stake setting ...")
+            if result != -1:
+                condition_value = 1
+                continue
+        
+        result = line.find("----------------------------")
+        if result != -1:
+            break
+
+        if condition_value == 1:
+            stake_list.append(int(line.split(" ")[1][:-1]))
+    f.close()
+    
+    fd = open("pos_process_proof.txt", "w")
+    for i in range(0,len(stake_list)):
+        if i == 0:
+            fd.write(str(i))
+            fd.write(": 0 ~ ")
+            fd.write(str(stake_list[i]))
+            fd.write("\n")
+            total_present_stake += stake_list[i]
+            continue
+        else:
+            fd.write(str(i))
+            fd.write(" : ")
+            fd.write(str(total_present_stake))
+            fd.write(" ~ ")
+            total_present_stake += stake_list[i]
+            fd.write(str(total_present_stake))
+            fd.write("\n")
+    fd.close()
+
+def pos_process_proof(posnode_output_data):
+
+    target_node = posnode_output_data.split("-")[2].split(".")[0]
+    target_node_id = int(target_node[len(target_node)-1])
+    condition_value = 0
+    fd = open("pos_process_proof.txt", "a")
+    fd.write("--------------------------------------------------------------------\n")
+    fd.write(posnode_output_data)
+    fd.write("\n--------------------------------------------------------------------\n")
+    fd.write("\n")
+    f = open(posnode_output_data, "r")
+    while True:
+        line = f.readline()
+        if not line: break
+
+        if condition_value == 0:
+            result = line.find("Debug Selected")
+            if result != -1:
+                if target_node_id == int(line.split(":")[1]):
+                    fd.write(line)
+                    condition_value = 1
+                    continue
+
+        if condition_value == 1:
+            result = line.find("POS_process_proof -> number:")
+            if result != -1:
+                fd.write(line)
+                continue
+        
+            result = line.find("POS_process_proof -> stakes.getTotal:")
+            if result != -1:
+                fd.write(line)
+                continue
+
+            result = line.find("blockID:")
+            if result != -1:
+                fd.write(line)
+                continue
+            
+            result = line.find("blockhash:")
+            if result != -1:
+                fd.write(line)
+                fd.write("----------------------------------------\n")
+                condition_value = 0
+                continue
+
+    f.close()
+    fd.write("\n-----------------------------------------------------------------------\n")
+    fd.close()
+
 def check_block_fork(posnode_output_data):
     condition_count = 0
     present_target_list = []
@@ -218,6 +310,7 @@ if __name__ == '__main__':
     else:
         LOGLEVEL = args.log
 
+    exec_shell_cmd("rm -rf pos_process_proof.txt")
     print("Start POS consensus certification test ...")
     emulated_time = time.time()
     print("Start emulate POS consensus ... ")
@@ -250,8 +343,10 @@ if __name__ == '__main__':
         if i == 0:
             block_count = get_blockCount(target_path)
             liveness_result = check_node_liveness(target_path)
+            show_peer_stake_status(target_path)
 
         fork_count, blockCount = check_block_fork(target_path)
+        pos_process_proof(target_path)
         if (fork_count/blockCount) == 0:
             continue
         else:

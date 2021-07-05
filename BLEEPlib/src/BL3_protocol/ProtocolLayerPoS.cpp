@@ -263,7 +263,9 @@ unsigned long BL_ProtocolLayerPoS::random_selection(unsigned long slot_id) {
         std::cout << "Debug Selected:" << stakes.last() << "\n";
         return stakes.last();
     } else {
-        std::cout << "Debug Selected:" << stakes.pickLeader((unsigned long)(number * stakes.getTotal())) << "\n";
+        std::cout << "\nDebug Selected:" << stakes.pickLeader((unsigned long)(number * stakes.getTotal())) << "\n";
+        std::cout << "POS_process_proof -> number:" << number << "\n";
+        std::cout << "POS_process_proof -> stakes.getTotal:" << stakes.getTotal() << "\n";
         return stakes.pickLeader((unsigned long)(number * stakes.getTotal()));
     }
 }
@@ -286,6 +288,9 @@ void BL_ProtocolLayerPoS::_slottimerCallback(ev::timer &w, int revents) {
         return;
     }
     if (random_selection((unsigned long)_current_slot) == _creatorNodeId) {
+        std::cout<<"Start pos block mining ... "<<"\n";
+        std::cout << "_creatorNodeId:" << _creatorNodeId << "\n";
+
         std::shared_ptr<POSBlock> blk = makeBlockTemplate(_current_slot);
         _posMiner.AsyncMakeBlock(blk);
     }
@@ -303,6 +308,7 @@ bool BL_ProtocolLayerPoS::InitiateProtocol() {
         _startPeriodicSlotStart(slot_interval);
         _initiated = true;
         stakes.load(stakeDatafile);
+        stakes.show_stake_peerlist();
         return true;
     } else {
         std::cout << "already initiated protocol" << "\n";
@@ -322,6 +328,7 @@ bool BL_ProtocolLayerPoS::InitiateProtocol(ProtocolParameter* params) {
         _creatorNodeId = posparams->creatorNodeId;
         stakeDatafile = posparams->stakeDatafile;
         stakes.load(stakeDatafile);
+        stakes.show_stake_peerlist();
         return true;
     } else {
         std::cout << "already initiated protocol" << "\n";

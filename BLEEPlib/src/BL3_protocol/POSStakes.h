@@ -32,6 +32,7 @@ namespace libBLEEP_BL {
 	    unsigned long pickLeader(unsigned long v);
 	    unsigned long getTotal();
 	    void load(std::string stakefile);
+		void show_stake_peerlist();
 	};
 }
 

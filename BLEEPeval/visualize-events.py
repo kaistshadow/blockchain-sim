@@ -90,7 +90,6 @@ def run_visualization_server(eventlogs, configfile, port, background=False):
     # Relative path from this file (visualize-event.py) to web-gui/
     relpath = "/web-gui"
     wd = os.path.dirname(os.path.realpath(__file__)) + relpath
-
     if background:
         web_server = Popen(["node", "server.js", eventlogs_path, port], cwd=wd, close_fds=True)
     else:

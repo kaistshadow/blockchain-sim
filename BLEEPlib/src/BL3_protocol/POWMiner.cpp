@@ -22,6 +22,7 @@ void POWMiner::AsyncEmulateBlockMining(std::shared_ptr<POWBlock> candidateBlk, d
     _timer.set(waiting_time, 0.);
     _timer.start();
     std::cout << "block mining timer started!" << "\n";
+    std::cout << "pow_proof_process-> timer:" << waiting_time << "\n";
     _isMining = true;
 
     // append shadow api log

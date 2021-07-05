@@ -75,6 +75,8 @@ namespace libBLEEP_BL {
             event.GetData().SetMinedBlock(validBlk);
             MainEventManager::Instance()->PushAsyncEvent(event);
             std::cout<<"blockhash:"<<validBlk->GetBlockHash().str()<<"\n";
+            std::cout << "pow_proof_process-> timercb start" << "\n";
+
             _isMining = false;
             libBLEEP::PrintTimespec("POW miningTimer callback ended");
             /* next_shadow_clock_update("==== done handling miningTimer callback"); */

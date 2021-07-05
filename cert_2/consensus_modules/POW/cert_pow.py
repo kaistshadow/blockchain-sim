@@ -197,6 +197,46 @@ def check_block_fork(pownode_output_data):
     fork_count = fork_rate_list.count(False)
     return int(fork_count), len(fork_rate_list)
 
+def pow_process_proof(pownode_output_data):
+    condition_value = 0
+    f = open(pownode_output_data, "r")
+    fd_path = open("pow_process_proof.txt", "a")
+    fd_path.write("----------------------------------------------------------------------------------\n")
+    fd_path.write(pownode_output_data)
+    fd_path.write("\n")
+    for line in f.readlines()[::-1]:
+        if condition_value == 0:
+            result = line.find("pow_proof_process-> timercb start")
+            if result != -1:
+                condition_value = 1
+                continue
+        
+        if condition_value == 1:
+            result = line.find("blockhash")
+            if result != -1:
+                fd_path.write(line)
+                condition_value = 2
+                continue
+        
+        if condition_value == 2:
+            result = line.find("blockID")
+            if result != -1:
+                fd_path.write(line)
+                condition_value = 3
+                continue
+        
+        if condition_value == 3:
+            result = line.find("pow_proof_process-> timer:")
+            if result != -1:
+                fd_path.write(line)
+                condition_value = 0
+                continue       
+
+    f.close()
+    fd_path.write("----------------------------------------------------------------------------------\n")
+    fd_path.close()
+
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
@@ -218,6 +258,8 @@ if __name__ == '__main__':
         LOGLEVEL = "message"
     else:
         LOGLEVEL = args.log
+
+    exec_shell_cmd("rm -rf pow_process_proof.txt")
 
     print("Start POW consensus certification test ...")
     emulated_time = time.time()
@@ -253,6 +295,7 @@ if __name__ == '__main__':
             liveness_result = check_node_liveness(target_path)
 
         fork_count, blockCount = check_block_fork(target_path)
+        pow_process_proof(target_path,)
         if (fork_count/blockCount) == 0:
             continue
         else:

@@ -10,9 +10,11 @@ var shadowoutputfile = '';
 var webSocketsServerPort;
 
 process.argv.forEach(function (val, index, array) {
+    val = "12345";
     if (index == 2) {
         shadowoutputfile = val;
-        webSocketsServerPort = 1337;
+        // webSocketsServerPort = 1337;
+        webSocketsServerPort = 12345;
     }
     if (index == 3) {
         webSocketsServerPort = parseInt(val);

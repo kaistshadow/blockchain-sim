@@ -203,6 +203,7 @@ def pow_process_proof(pownode_output_data):
     fd_path = open("pow_process_proof.txt", "a")
     fd_path.write("----------------------------------------------------------------------------------\n")
     fd_path.write(pownode_output_data)
+    fd_path.write("\n----------------------------------------------------------------------------------\n")
     fd_path.write("\n")
     for line in f.readlines()[::-1]:
         if condition_value == 0:
@@ -229,6 +230,7 @@ def pow_process_proof(pownode_output_data):
             result = line.find("pow_proof_process-> timer:")
             if result != -1:
                 fd_path.write(line)
+                fd_path.write("-----------------------\n")
                 condition_value = 0
                 continue       
 

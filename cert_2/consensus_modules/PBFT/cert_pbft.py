@@ -153,6 +153,57 @@ def check_node_liveness(pbftnode_output_data):
     else:
         return False
 
+def pbft_process_proof(pbftnode_output_data):
+    
+    condition_value = 0
+
+    fw = open("pbft_process_proof.txt", "a")
+    fw.write(pbftnode_output_data)
+    fw.write("\n--------------------------------------------------------------------------------------------------\n")
+    fw.write("\n")
+    fr = open(pbftnode_output_data, "r")
+    
+    while True:
+        line = fr.readline()
+        if not line: break
+
+        if condition_value == 0:
+            result = line.find("Debug StartPreprepare called")
+            if result != -1:
+                condition_value = 1
+                fw.write(line)
+                continue
+
+        if condition_value == 1:
+            result = line.find("Result_prePrepared:True")
+            if result != -1:
+                condition_value = 2
+                fw.write(line)
+                continue
+
+        if condition_value == 2:
+            result = line.find("Result_commit:True")
+            if result != -1:
+                condition_value = 3
+                fw.write(line)
+                continue
+
+        if condition_value == 3:
+            result = line.find("Debug commit called for")
+            if result != -1:
+                condition_value = 0
+                fw.write("blockHash:")
+                fw.write(line.split(",")[2])
+                fw.write("\n")
+                fw.write("-----------------------------\n")
+                continue
+
+
+    fr.close()
+    fw.close()
+# Debug commit called for 0, 1, 0bc9828d9eca813acad819246ebd48b0aba1b9a24ed7eacc6efbd8b1389eec0c, 0
+
+
 def check_block_fork(pbftnode_output_data):
     condition_count = 0
     present_target_list = []
@@ -232,12 +283,6 @@ if __name__ == '__main__':
     xmlfile = path + "/pbft.xml"
     running_time, node_count = get_infos_fromXML(xmlfile)
 
-    emulated_time = time.time()
-    print("Start emulate PBFT consensus ... ")
-    exec_shell_cmd("shadow pbft.xml > /dev/null 2>&1")
-    print("Finish emulate PBFT consensus ...")
-    emulated_time = time.time() - emulated_time
-
     result_value = node_count
     blockHash_list, result_value = get_blockhash(path, result_value)
     safety_value = False
@@ -251,6 +296,10 @@ if __name__ == '__main__':
     block_count = 0
     liveness_result = False
 
+    fw = open("pbft_process_proof.txt", "w")
+    fw.write("------------------------------------------------------------------------------------------------\n")
+    fw.close()
+
     for i in range(0,node_count):
         target_path = path + "/" + "shadow.data/hosts/pbftnode%d/stdout-pbftnode%d.NODE.1000.log" %(i, i)
         if i == 0:
@@ -258,6 +307,7 @@ if __name__ == '__main__':
             liveness_result = check_node_liveness(target_path)
 
         fork_count = check_block_fork(target_path)
+        pbft_process_proof(target_path)
         if fork_count != 0:
             break
     print("-------------------------------------------------------------------------------")

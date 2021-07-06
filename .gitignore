@@ -148,4 +148,5 @@ cert_2/consensus_modules/*.pyc
 cert_2/consensus_modules/node_modules/
 cert_2/consensus_modules/POW/pow_process_proof.txt
 cert_2/consensus_modules/POS/pos_process_proof.txt
+cert_2/consensus_modules/PBFT/pbft_process_proof.txt
 node_modules/

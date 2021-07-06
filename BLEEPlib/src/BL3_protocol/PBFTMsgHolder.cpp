@@ -139,6 +139,8 @@ namespace libBLEEP_BL {
             return false;
         }
 
+        std::cout << "Result_prePrepared:True" << "\n";
+
         return true;
     }
     // predPrepared(m, v, n, i), 2 x f + 1 commit(v, n, d) from others
@@ -184,6 +186,9 @@ namespace libBLEEP_BL {
             std::cout << "predCommittedLocal::commit count does not match to _f:" << (2*_f + 1) << "\n";
             return false;
         }
+
+        std::cout << "Result_commit:True" << "\n";
+
         return true;
     }
     std::shared_ptr<PBFTBlock> PBFTViewMsgHolder::getMessage(unsigned int n) {
@@ -207,6 +212,7 @@ namespace libBLEEP_BL {
         }
     }
     int PBFTMsgHolder::addPrepared(unsigned long v, unsigned int n, std::string d, unsigned long i) {
+        std::cout<< "Prepared added for (" << v << ", " << n << ", " << i << ")\n";
         auto it = viewMaps.find(v);
         if (it == viewMaps.end()) {
             std::cout << "Debug PBFTMsgHolder::addPrepared::no it\n";

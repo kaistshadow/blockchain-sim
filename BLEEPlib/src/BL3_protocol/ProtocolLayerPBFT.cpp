@@ -48,13 +48,13 @@ void BL_ProtocolLayerPBFT::_joinTimerCallback(ev::timer &w, int revents) {
         _v = 0;
         _n = 0;
         // pick a _config member as first primary
-        _p = _v % _config.size();
+        _p = _v % (_config.size() + 1);
         // setup faulty limit
         if (_config.size() < 4) {
             // cannot make proper PBFT algorithm
             return;
         }
-        _f = (_config.size() - 1) / 3;
+        _f = _config.size() / 3;
         _msgs.setFaultyLimit(_f);
         // setup checkout boundary
         _h = 0;
@@ -236,6 +236,7 @@ void BL_ProtocolLayerPBFT::_RecvPBFTPreprepareHandler(std::shared_ptr<Message> m
     }
 
     _msgs.addPreprepared(v, n, m);
+    _msgs.addPrepared(_v, n, d, i);
     if (_msgs.predPreparedOnce(v, n)) {
         _Commit(v, n, d, _consensusNodeID);
     }

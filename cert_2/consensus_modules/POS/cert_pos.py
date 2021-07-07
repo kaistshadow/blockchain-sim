@@ -179,6 +179,7 @@ def show_peer_stake_status(posnode_output_data):
     fd = open("pos_process_proof.txt", "w")
     for i in range(0,len(stake_list)):
         if i == 0:
+            fd.write("Node")
             fd.write(str(i))
             fd.write(": 0 ~ ")
             fd.write(str(stake_list[i]))
@@ -186,6 +187,7 @@ def show_peer_stake_status(posnode_output_data):
             total_present_stake += stake_list[i]
             continue
         else:
+            fd.write("Node")
             fd.write(str(i))
             fd.write(" : ")
             fd.write(str(total_present_stake))
@@ -200,6 +202,11 @@ def pos_process_proof(posnode_output_data):
     target_node = posnode_output_data.split("-")[2].split(".")[0]
     target_node_id = int(target_node[len(target_node)-1])
     condition_value = 0
+
+    randomValue = 0
+    getTotalValue = 0
+    whoIsCreator = 0
+
     fd = open("pos_process_proof.txt", "a")
     fd.write("--------------------------------------------------------------------\n")
     fd.write(posnode_output_data)
@@ -222,11 +229,17 @@ def pos_process_proof(posnode_output_data):
             result = line.find("POS_process_proof -> number:")
             if result != -1:
                 fd.write(line)
+                randomValue = float(line.split(":")[1])
                 continue
         
             result = line.find("POS_process_proof -> stakes.getTotal:")
             if result != -1:
                 fd.write(line)
+                getTotalValue = int(line.split(":")[1])
+                whoIsCreator = randomValue * getTotalValue
+                fd.write("randomValue * getTotalValue : ")
+                fd.write(str(whoIsCreator))
+                fd.write("\n")
                 continue
 
             result = line.find("blockID:")

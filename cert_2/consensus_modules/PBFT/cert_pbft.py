@@ -175,14 +175,14 @@ def pbft_process_proof(pbftnode_output_data):
                 continue
 
         if condition_value == 1:
-            result = line.find("Result_prePrepared:True")
+            result = line.find("predicate Prepared for block hash")
             if result != -1:
                 condition_value = 2
                 fw.write(line)
                 continue
 
         if condition_value == 2:
-            result = line.find("Result_commit:True")
+            result = line.find("predicate CommittedLocal for block hash")
             if result != -1:
                 condition_value = 3
                 fw.write(line)

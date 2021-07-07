@@ -140,7 +140,13 @@ namespace libBLEEP_BL {
         }
 
         std::cout << "Result_prePrepared:True" << "\n";
-
+        std::cout << "predicate Prepared for block hash " << m->GetBlockHash().str() << " become true with: { ";
+        auto it = prds->begin();
+        while (it != prds->end()) {
+            std::cout << (*it) << " ";
+            it++;
+        }
+        std::cout << "}\n";
         return true;
     }
     // predPrepared(m, v, n, i), 2 x f + 1 commit(v, n, d) from others
@@ -186,7 +192,13 @@ namespace libBLEEP_BL {
             std::cout << "predCommittedLocal::commit count does not match to _f:" << (2*_f + 1) << "\n";
             return false;
         }
-
+        std::cout << "predicate CommittedLocal for block hash " << m->GetBlockHash().str() << " become true with: { ";
+        auto it = cmds->begin();
+        while (it != cmds->end()) {
+            std::cout << (*it) << " ";
+            it++;
+        }
+        std::cout << "}\n";
         std::cout << "Result_commit:True" << "\n";
 
         return true;

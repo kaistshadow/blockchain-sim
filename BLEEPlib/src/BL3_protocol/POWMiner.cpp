@@ -29,6 +29,7 @@ void POWMiner::AsyncEmulateBlockMining(std::shared_ptr<POWBlock> candidateBlk, d
     char buf[256];
     sprintf(buf, "API,AsyncEmulateBlockMining,%f", lambda);
     shadow_push_eventlog(buf);
+    
 }
 
 void POWMiner::StopMining() {

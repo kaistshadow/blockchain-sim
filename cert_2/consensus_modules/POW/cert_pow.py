@@ -104,14 +104,17 @@ def get_blockCount(pownode_output_data):
 
 # compare previous longest chain with present longest chain 
 def compare_longestChain_hash(post_chain, present_chain):
+
     check_count = len(post_chain)
+    fork_list = []
     for i in range(0,len(post_chain)):
         if post_chain[i] in present_chain:
             check_count -= 1
-    if check_count == 0:
-        return True
-    else:
-        return False
+        else:
+            fork_list.append(post_chain[i])
+    
+    return fork_list
+
         
 def compare_previousTime_with_presentTime(previous_time, present_time):
     previous_hour = int(previous_time.split(":")[0])
@@ -154,6 +157,17 @@ def check_node_liveness(pownode_output_data):
     else:
         return False
 
+def remove_duplication_fork(fork_block_list):
+    target_block_list = []
+    for i in range(0,len(fork_block_list)):
+        for j in range(0,len(fork_block_list[i])):
+            target_block_list.append(fork_block_list[i][j])
+
+    target_block_list = set(target_block_list)
+    target_block_list = list(target_block_list)
+    return target_block_list
+
+
 def check_block_fork(pownode_output_data):
     condition_count = 0
     present_target_list = []
@@ -163,6 +177,7 @@ def check_block_fork(pownode_output_data):
 
     previous_time = ""
     present_time = ""
+    fork_count = 0
 
     f = open(pownode_output_data, "r")
     while True:
@@ -187,15 +202,14 @@ def check_block_fork(pownode_output_data):
         if condition_count == 1:
             result = line.find("========================")
             if result != -1:
-                fork_rate_list.append(compare_longestChain_hash(post_target_list, present_target_list))
+                fork_block_list.append(compare_longestChain_hash(post_target_list, present_target_list))
                 condition_count = 0
-                continue
-            present_target_list.append(filter_rawblockHash(line[:-1]))
+            else:
+                present_target_list.append(filter_rawblockHash(line[:-1]))
             
     f.close()
 
-    fork_count = fork_rate_list.count(False)
-    return int(fork_count), len(fork_rate_list)
+    return remove_duplication_fork(fork_block_list)
 
 def pow_process_proof(pownode_output_data):
     condition_value = 0
@@ -286,7 +300,7 @@ if __name__ == '__main__':
     else:
         safety_value = False
 
-    fork_count, blockCount = 0, 0
+    fork_block_list = []
     block_count = 0
     liveness_result = False
 
@@ -296,12 +310,10 @@ if __name__ == '__main__':
             block_count = get_blockCount(target_path)
             liveness_result = check_node_liveness(target_path)
 
-        fork_count, blockCount = check_block_fork(target_path)
-        pow_process_proof(target_path,)
-        if (fork_count/blockCount) == 0:
-            continue
-        else:
-            break
+        fork_block_list.append(check_block_fork(target_path))
+        pow_process_proof(target_path)
+
+    fork_block_list = remove_duplication_fork(fork_block_list)
 
     print("-------------------------------------------------------------------------------")
     print("\t\t\t POW module test result")
@@ -309,7 +321,7 @@ if __name__ == '__main__':
     print("\t\t Run time : %d" %emulated_time)
     print("\t\t Simulate time : %d" %running_time)
     print("\t\t Block count : %d" %block_count)
-    print("\t\t Fork count : %d" %fork_count)
+    print("\t\t Fork count : %d" %len(fork_block_list))
     # print("\t\t Fork rate : %f" %fork_rate)
     if safety_value == True:
         print("\t\t POW module safety result : Success")

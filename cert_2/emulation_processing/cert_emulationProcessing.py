@@ -137,8 +137,8 @@ if __name__ == '__main__':
     print("1. Real time : %d Sec" %emulation_time)
     print("2. Emulation time : %d Sec" %running_time )
     print("3. Running nodes : %d nodes" %node_count)
-    print("4. Successful emulated nodes : %d" %result_value)
-    print("5. Emulation processing speed : %0.2f" %result_emulation_processingSpeed)
+    print("4. Successful emulated nodes : %d nodes" %result_value)
+    print("5. Emulation processing speed : %0.2f (node*sim_sec/sec)" %result_emulation_processingSpeed)
     print("---------------------------------------------------")
     if result_value == node_count:
         if int(emulation_time) < int(running_time):

@@ -313,10 +313,10 @@ if __name__ == '__main__':
     print("-------------------------------------------------------------------------------")
     print("\t\t\t PBFT module test result")
     print("-------------------------------------------------------------------------------")
-    print("\t\t Run time : %d" %emulated_time)
-    print("\t\t Simulate time : %d" %running_time)
-    print("\t\t Block count : %d" %block_count)
-    print("\t\t Fork count : %d" %fork_count)
+    print("\t\t Run time : %d Sec" %emulated_time)
+    print("\t\t Simulate time : %d Sec" %running_time)
+    print("\t\t Block count : %d count" %block_count)
+    print("\t\t Fork count : %d count" %fork_count)
     if safety_value == True:
         print("\t\t PBFT module safety result : Success")
     else:

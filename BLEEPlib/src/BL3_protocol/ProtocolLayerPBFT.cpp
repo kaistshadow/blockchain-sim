@@ -146,6 +146,14 @@ void BL_ProtocolLayerPBFT::_StartPreprepare() {
     std::cout<< "Request block hash = "<<blk->GetBlockHash()<<" / v: "<<_v<<" / n: "<<n<<"\n";
     std::cout<< "blockID:" << blk->GetBlockIdx() << "\n";
     std::cout<< "blockhash:" << blk->GetBlockHash() << "\n";
+    
+    double timestamp = blk->GetTimestamp();
+    int Geneted_tx_days = (int(timestamp/60));
+    int Gerated_tx_min = (int(timestamp)/60)%60;
+    int Gerated_tx_hour = ((int(timestamp/3600))/24)%24;
+    int Gerated_tx_sec = int(timestamp)%60;
+    std::cout<<"Generated time:"<<Geneted_tx_days<<"/"<<Gerated_tx_hour<<":"<<Gerated_tx_min<<":"<<Gerated_tx_sec<<"\n";
+
    // send preprepare message to everyone in the consensus
    for (auto consensusNeighbor : _config.getConsensusMap()) {
        std::shared_ptr<Message> message = std::make_shared<Message>(consensusNeighbor.second, "PBFT-PREPREPARE", ptrToObj);

@@ -139,7 +139,7 @@ def check_node_liveness(posnode_output_data):
     while True:
         line = f.readline()
         if not line: break
-        result = line.find("Gererated time:")
+        result = line.find("Generated time:")
         if result != -1:
             previousTime = presentTime
             presentTime = line.split("/")[1][:-1]

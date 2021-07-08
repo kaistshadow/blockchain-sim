@@ -158,6 +158,14 @@ void BL_ProtocolLayerPoS::_RecvPOSBlockBlkHandler(std::shared_ptr<Message> msg) 
     // add block on blockchain, whether or not the block is main-chain family.
     std::cout << "blockID:" << blkptr->GetBlockIdx() << "\n";
     std::cout << "blockhash:" << blkptr->GetBlockHash().str() << "\n";
+
+    double timestamp = blkptr->GetTimestamp();
+
+    int Geneted_tx_days = (int(timestamp/60));
+    int Gerated_tx_min = (int(timestamp)/60)%60;
+    int Gerated_tx_hour = ((int(timestamp/3600))/24)%24;
+    int Gerated_tx_sec = int(timestamp)%60;
+    std::cout<<"Generated time:"<<Geneted_tx_days<<"/"<<Gerated_tx_hour<<":"<<Gerated_tx_min<<":"<<Gerated_tx_sec<<"\n";
     if (!_blocktree.ContainBlock(blkptr->GetBlockHash().str())) {
         _blocktree.AppendBlock(blkptr);
         // Future TODO: every blockchain system has different besttip rule, so it might be separated from BlockTree code,
@@ -217,6 +225,13 @@ void BL_ProtocolLayerPoS::SwitchAsyncEventHandler(AsyncEvent& event) {
             std::cout << "blockhash:" << minedBlk->GetBlockHash().str() << "\n";
             std::cout << "blockhash(str):" << minedBlk->GetBlockHash().str() << "\n";
             std::cout << "blockhash:" << libBLEEP::UINT256_t((const unsigned char*)minedBlk->GetBlockHash().str().c_str(), 32) << "\n";
+            double timestamp = minedBlk->GetTimestamp();
+
+            int Geneted_tx_days = (int(timestamp/60));
+            int Gerated_tx_min = (int(timestamp)/60)%60;
+            int Gerated_tx_hour = ((int(timestamp/3600))/24)%24;
+            int Gerated_tx_sec = int(timestamp)%60;
+            std::cout<<"Generated time:"<<Geneted_tx_days<<"/"<<Gerated_tx_hour<<":"<<Gerated_tx_min<<":"<<Gerated_tx_sec<<"\n";
             // append block to ledger
             _blkPool.push_back(minedBlk);
             _blocktree.AppendBlock(minedBlk);

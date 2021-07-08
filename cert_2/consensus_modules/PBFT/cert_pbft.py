@@ -250,19 +250,16 @@ def check_block_fork(pbftnode_output_data):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
-    parser.add_argument("configfile", help="filepath for blockchain network configuration file (shadow xml configuration)")
-    parser.add_argument("-p", "--port", metavar="port", default="1337", help="Port where we'll run the websocket server")
-    parser.add_argument("--background", action="store_true", help="Run server as background daemon.")
-    parser.add_argument("--log", help="Shadow Log LEVEL above which to filter messages ('error' < 'critical' < 'warning' < 'message' < 'info' < 'debug') ['message']")
-    parser.add_argument("--noserver", action="store_true", help="Don't run visualization server")
-    parser.add_argument("--force", action="store_true", help="Run visualization even if the test is failed ['false']")
-
+    parser.add_argument("configfile", default="pbft.xml", help="filepath for blockchain network configuration file (shadow xml configuration)")
+    parser.add_argument("-p", "--port",default="1337", metavar="port", help="Port where we'll run the websocket server")
+    parser.add_argument("--log", default="None", help="Shadow Log LEVEL above which to filter messages ('error' < 'critical' < 'warning' < 'message' < 'info' < 'debug') ['message']")
     args = parser.parse_args()
-    configfile = args.configfile
+
+    configfile = "pbft.xml"
     port = args.port
-    OPT_BACKGROUND = args.background
-    OPT_NOSERVER = args.noserver
-    OPT_FORCE = args.force
+    OPT_BACKGROUND = False
+    OPT_NOSERVER = False
+    OPT_FORCE = False
 
     if not args.log:
         LOGLEVEL = "message"

@@ -128,9 +128,10 @@ def compare_previousTime_with_presentTime(previous_time, present_time):
     previous_sec_time = (previous_hour * 60 * 60)+ (previous_min * 60) + previous_sec
     present_sec_time = (present_hour * 60 * 60)+ (present_min * 60) + present_sec
 
-    if 60 >= (present_sec_time - previous_sec_time):
+    if 100 >= (present_sec_time - previous_sec_time):
         return True
     else:
+        print(present_sec_time - previous_sec_time)
         return False
 
 def check_node_liveness(pownode_output_data):
@@ -143,12 +144,15 @@ def check_node_liveness(pownode_output_data):
     while True:
         line = f.readline()
         if not line: break
-        result = line.find("Gererated time:")
+        result = line.find("Generated time:")
         if result != -1:
             previousTime = presentTime
             presentTime = line.split("/")[1][:-1]
             if liveness_condition_value != 0:
                 liveness_check_flags.append(compare_previousTime_with_presentTime(previousTime, presentTime))
+                if compare_previousTime_with_presentTime(previousTime, presentTime) == False:
+                    print(line)
+                    print(pownode_output_data)
             liveness_condition_value = 1
     f.close()
 
@@ -264,7 +268,7 @@ if __name__ == '__main__':
     parser.add_argument("--force", action="store_true", help="Run visualization even if the test is failed ['false']")
 
     args = parser.parse_args()
-    configfile = args.configfile
+    configfile = "pow.xml"
     port = args.port
     OPT_BACKGROUND = args.background
     OPT_NOSERVER = args.noserver

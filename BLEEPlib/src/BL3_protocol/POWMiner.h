@@ -60,6 +60,7 @@ namespace libBLEEP_BL {
             sha256_update(&ctx, (const unsigned char*)_candidateBlk->GetPrevBlockHash().str().c_str(), _candidateBlk->GetPrevBlockHash().str().size());
 
             double timestamp = libBLEEP::GetGlobalClock();
+            std::cout << "DEBUG Block created with timestamp: " << timestamp << "\n";
             sha256_update(&ctx, (const unsigned char*)&timestamp, sizeof(double));
             sha256_final(&ctx, hash_out);
 

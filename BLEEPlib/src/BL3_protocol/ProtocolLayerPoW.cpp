@@ -162,6 +162,14 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockBlkHandler(std::shared_ptr<Message> msg) 
     // append a block to ledger
     std::cout<<"blockID:"<<blkptr->GetBlockIdx()<<"\n";
     std::cout << "blockhash:" << blkptr->GetBlockHash().str() << "\n";
+    double timestamp = blkptr->GetTimestamp();
+    std::cout << "timestamp:" <<int(timestamp)<<"\n";
+
+    int Geneted_tx_days = (int(timestamp/60));
+    int Gerated_tx_min = (int(timestamp)/60)%60;
+    int Gerated_tx_hour = ((int(timestamp/3600))/24)%24;
+    int Gerated_tx_sec = int(timestamp)%60;
+    std::cout<<"Generated time:"<<Geneted_tx_days<<"/"<<Gerated_tx_hour<<":"<<Gerated_tx_min<<":"<<Gerated_tx_sec<<"\n";
     if (!_blocktree.ContainBlock(blkptr->GetBlockHash().str()))  {
         std::list<SimpleTransactionId> txids;
         for (auto tx: blkptr->GetTransactions()) {
@@ -256,6 +264,13 @@ void BL_ProtocolLayerPoW::SwitchAsyncEventHandler(AsyncEvent& event) {
             hashes.push_back(minedBlk->GetBlockHash().str());
             std::shared_ptr<MessageObject> ptrToObj = std::make_shared<POWBlockGossipInventory>(hashes);
 
+            double timestamp = minedBlk->GetTimestamp();
+            std::cout << "timestamp:" <<int(timestamp)<<"\n";
+            int Geneted_tx_days = (int(timestamp/(3600 * 24)));
+            int Gerated_tx_min = (int(timestamp)/60)%60;
+            int Gerated_tx_hour = ((int(timestamp/3600))/24)%24;
+            int Gerated_tx_sec = int(timestamp)%60;
+            std::cout<<"Generated time:"<<Geneted_tx_days<<"/"<<Gerated_tx_hour<<":"<<Gerated_tx_min<<":"<<Gerated_tx_sec<<"\n";
             std::vector<PeerId> neighborIds = BL_PeerConnectivityLayer_API::Instance()->GetNeighborPeerIds();
             for (auto &neighborId : neighborIds) {
                 std::cout << "send POWBlockinv to " << neighborId.GetId() << "\n";

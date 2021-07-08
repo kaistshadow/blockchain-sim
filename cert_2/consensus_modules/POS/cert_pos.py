@@ -312,7 +312,7 @@ if __name__ == '__main__':
     parser.add_argument("--force", action="store_true", help="Run visualization even if the test is failed ['false']")
 
     args = parser.parse_args()
-    configfile = args.configfile
+    configfile = "pos.xml"
     port = args.port
     OPT_BACKGROUND = args.background
     OPT_NOSERVER = args.noserver

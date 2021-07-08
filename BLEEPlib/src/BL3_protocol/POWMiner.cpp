@@ -15,7 +15,9 @@ void POWMiner::AsyncEmulateBlockMining(std::shared_ptr<POWBlock> candidateBlk, d
         libBLEEP::M_Assert(0, "average value of the time should be positive value");
     }
 
+    std::cout << "DEBUG blockmining waiting time generation\n";
     double waiting_time = libBLEEP::get_global_random_source().get_exp_value(lambda);
+    std::cout << "waiting time: " << waiting_time << "\n";
 
     _candidateBlk = candidateBlk;
     _timer.set<POWMiner, &POWMiner::_timerCallback>(this);

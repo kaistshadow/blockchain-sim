@@ -3,6 +3,7 @@ from subprocess import check_output
 import argparse
 import sys
 import time
+import xmlGenerator
 
 def exec_shell_cmd(cmd):
     if os.system(cmd) != 0:
@@ -58,6 +59,7 @@ def get_blockhash(path, result_value):
         if len(target_value) > 4:
             blockHash_list.append(target_value)
         else:
+            print(node_outputfile_list)
             result_value -= 1
 
     return blockHash_list, result_value
@@ -85,6 +87,35 @@ def get_infos_fromXML(xmlfile):
 
 if __name__ == '__main__':
 
+    condition_count = -1
+    node_count_ = 0
+
+    while(1):
+        if condition_count == -1:
+            try:
+                node_count_ = int(input("Input node count (only integer more than 1) : "))
+                if (node_count_ < 0) | (node_count_ == 0):
+                    print("Only input integer ... (more than 1)")
+                else:
+                    condition_count = 0
+            except:
+                print("Only input integer ... (more than 1) ")
+                continue
+            
+        if condition_count == 0:
+            try: 
+                sim_time = input("Input simulation time (sec) : ")    
+                if int(sim_time) > 0:
+                    xmlGenerator.setup_multiple_node_xml(node_count_, sim_time, 3)
+                    break
+                else:
+                    print("simulation time not negative ... ")
+                    continue
+            except ValueError as e:
+                print("input only integer ...")
+                continue
+
+
     print("Start emulation processing certification test ...")
     path = os.path.abspath("./")
 
@@ -100,12 +131,14 @@ if __name__ == '__main__':
 
     result_value = node_count
     blockHash_list, result_value = get_blockhash(path, result_value)
+    result_emulation_processingSpeed = (node_count * running_time) / emulation_time
 
     print("---------------------------------------------------")
     print("1. Real time : %d Sec" %emulation_time)
     print("2. Emulation time : %d Sec" %running_time )
     print("3. Running nodes : %d nodes" %node_count)
     print("4. Successful emulated nodes : %d" %result_value)
+    print("5. Emulation processing speed : %0.2f" %result_emulation_processingSpeed)
     print("---------------------------------------------------")
     if result_value == node_count:
         if int(emulation_time) < int(running_time):

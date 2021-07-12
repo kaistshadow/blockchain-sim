@@ -17,7 +17,7 @@ def get_target_blockhash(target_path_file):
     f = open(target_path_file, "r")
     for line in f.readlines()[::-1]:
         if condition_value == 0:
-            result = line.find("========================")
+            result = line.find("======== LongestChain ========")
             if result != -1:
                 condition_value = 1
                 continue
@@ -41,11 +41,18 @@ def get_lastSix_blockhash(target_path_file, input_target_blockhash):
     target_blockid = 0
 
     f = open(target_path_file, "r")
-    for line in f.readlines()[::-1]:       
-        result = line.find(input_target_blockhash)
-        if result != -1:
-            f.close()
-            return input_target_blockhash
+    for line in f.readlines()[::-1]:      
+        if condition_count == 0: 
+            result = line.find("======== LongestChain ========")
+            if result != -1:
+                condition_count = 1
+                continue
+
+        if condition_count == 1:
+            result = line.find(input_target_blockhash)
+            if result != -1:
+                f.close()
+                return input_target_blockhash
 
     f.close()
     return "Fail"

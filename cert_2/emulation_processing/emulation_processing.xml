@@ -31,155 +31,95 @@
   <plugin id="NODE" path="libBLEEPlib-pow-node.so"/>
   <!-- the length of our experiment in seconds  1404101800-->
   <!-- our nodes -->
-  <kill time="300"/>
+  <kill time="100"/>
   <node id="pownode0">
-    <application arguments="-id=pownode0 -miningtime=3 -miningnodecnt=50 -txgenstartat=0 -txgeninterval=3" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode0 -miningtime=3 -miningnodecnt=30 -txgenstartat=0 -txgeninterval=3" plugin="NODE" time="0"/>
   </node>
   <node id="pownode1">
-    <application arguments="-id=pownode1 -miningtime=3 -miningnodecnt=50 -connect=pownode0" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode1 -miningtime=3 -miningnodecnt=30 -connect=pownode0" plugin="NODE" time="0"/>
   </node>
   <node id="pownode2">
-    <application arguments="-id=pownode2 -miningtime=3 -miningnodecnt=50 -connect=pownode0" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode2 -miningtime=3 -miningnodecnt=30 -connect=pownode0" plugin="NODE" time="0"/>
   </node>
   <node id="pownode3">
-    <application arguments="-id=pownode3 -miningtime=3 -miningnodecnt=50 -connect=pownode0" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode3 -miningtime=3 -miningnodecnt=30 -connect=pownode0" plugin="NODE" time="0"/>
   </node>
   <node id="pownode4">
-    <application arguments="-id=pownode4 -miningtime=3 -miningnodecnt=50 -connect=pownode0" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode4 -miningtime=3 -miningnodecnt=30 -connect=pownode0" plugin="NODE" time="0"/>
   </node>
   <node id="pownode5">
-    <application arguments="-id=pownode5 -miningtime=3 -miningnodecnt=50 -connect=pownode1" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode5 -miningtime=3 -miningnodecnt=30 -connect=pownode1" plugin="NODE" time="0"/>
   </node>
   <node id="pownode6">
-    <application arguments="-id=pownode6 -miningtime=3 -miningnodecnt=50 -connect=pownode1" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode6 -miningtime=3 -miningnodecnt=30 -connect=pownode1" plugin="NODE" time="0"/>
   </node>
   <node id="pownode7">
-    <application arguments="-id=pownode7 -miningtime=3 -miningnodecnt=50 -connect=pownode1" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode7 -miningtime=3 -miningnodecnt=30 -connect=pownode1" plugin="NODE" time="0"/>
   </node>
   <node id="pownode8">
-    <application arguments="-id=pownode8 -miningtime=3 -miningnodecnt=50 -connect=pownode1" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode8 -miningtime=3 -miningnodecnt=30 -connect=pownode1" plugin="NODE" time="0"/>
   </node>
   <node id="pownode9">
-    <application arguments="-id=pownode9 -miningtime=3 -miningnodecnt=50 -connect=pownode2" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode9 -miningtime=3 -miningnodecnt=30 -connect=pownode2" plugin="NODE" time="0"/>
   </node>
   <node id="pownode10">
-    <application arguments="-id=pownode10 -miningtime=3 -miningnodecnt=50 -connect=pownode2" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode10 -miningtime=3 -miningnodecnt=30 -connect=pownode2" plugin="NODE" time="0"/>
   </node>
   <node id="pownode11">
-    <application arguments="-id=pownode11 -miningtime=3 -miningnodecnt=50 -connect=pownode2" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode11 -miningtime=3 -miningnodecnt=30 -connect=pownode2" plugin="NODE" time="0"/>
   </node>
   <node id="pownode12">
-    <application arguments="-id=pownode12 -miningtime=3 -miningnodecnt=50 -connect=pownode2" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode12 -miningtime=3 -miningnodecnt=30 -connect=pownode2" plugin="NODE" time="0"/>
   </node>
   <node id="pownode13">
-    <application arguments="-id=pownode13 -miningtime=3 -miningnodecnt=50 -connect=pownode3" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode13 -miningtime=3 -miningnodecnt=30 -connect=pownode3" plugin="NODE" time="0"/>
   </node>
   <node id="pownode14">
-    <application arguments="-id=pownode14 -miningtime=3 -miningnodecnt=50 -connect=pownode3" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode14 -miningtime=3 -miningnodecnt=30 -connect=pownode3" plugin="NODE" time="0"/>
   </node>
   <node id="pownode15">
-    <application arguments="-id=pownode15 -miningtime=3 -miningnodecnt=50 -connect=pownode3" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode15 -miningtime=3 -miningnodecnt=30 -connect=pownode3" plugin="NODE" time="0"/>
   </node>
   <node id="pownode16">
-    <application arguments="-id=pownode16 -miningtime=3 -miningnodecnt=50 -connect=pownode3" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode16 -miningtime=3 -miningnodecnt=30 -connect=pownode3" plugin="NODE" time="0"/>
   </node>
   <node id="pownode17">
-    <application arguments="-id=pownode17 -miningtime=3 -miningnodecnt=50 -connect=pownode4" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode17 -miningtime=3 -miningnodecnt=30 -connect=pownode4" plugin="NODE" time="0"/>
   </node>
   <node id="pownode18">
-    <application arguments="-id=pownode18 -miningtime=3 -miningnodecnt=50 -connect=pownode4" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode18 -miningtime=3 -miningnodecnt=30 -connect=pownode4" plugin="NODE" time="0"/>
   </node>
   <node id="pownode19">
-    <application arguments="-id=pownode19 -miningtime=3 -miningnodecnt=50 -connect=pownode4" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode19 -miningtime=3 -miningnodecnt=30 -connect=pownode4" plugin="NODE" time="0"/>
   </node>
   <node id="pownode20">
-    <application arguments="-id=pownode20 -miningtime=3 -miningnodecnt=50 -connect=pownode4" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode20 -miningtime=3 -miningnodecnt=30 -connect=pownode4" plugin="NODE" time="0"/>
   </node>
   <node id="pownode21">
-    <application arguments="-id=pownode21 -miningtime=3 -miningnodecnt=50 -connect=pownode5" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode21 -miningtime=3 -miningnodecnt=30 -connect=pownode5" plugin="NODE" time="0"/>
   </node>
   <node id="pownode22">
-    <application arguments="-id=pownode22 -miningtime=3 -miningnodecnt=50 -connect=pownode5" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode22 -miningtime=3 -miningnodecnt=30 -connect=pownode5" plugin="NODE" time="0"/>
   </node>
   <node id="pownode23">
-    <application arguments="-id=pownode23 -miningtime=3 -miningnodecnt=50 -connect=pownode5" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode23 -miningtime=3 -miningnodecnt=30 -connect=pownode5" plugin="NODE" time="0"/>
   </node>
   <node id="pownode24">
-    <application arguments="-id=pownode24 -miningtime=3 -miningnodecnt=50 -connect=pownode5" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode24 -miningtime=3 -miningnodecnt=30 -connect=pownode5" plugin="NODE" time="0"/>
   </node>
   <node id="pownode25">
-    <application arguments="-id=pownode25 -miningtime=3 -miningnodecnt=50 -connect=pownode6" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode25 -miningtime=3 -miningnodecnt=30 -connect=pownode6" plugin="NODE" time="0"/>
   </node>
   <node id="pownode26">
-    <application arguments="-id=pownode26 -miningtime=3 -miningnodecnt=50 -connect=pownode6" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode26 -miningtime=3 -miningnodecnt=30 -connect=pownode6" plugin="NODE" time="0"/>
   </node>
   <node id="pownode27">
-    <application arguments="-id=pownode27 -miningtime=3 -miningnodecnt=50 -connect=pownode6" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode27 -miningtime=3 -miningnodecnt=30 -connect=pownode6" plugin="NODE" time="0"/>
   </node>
   <node id="pownode28">
-    <application arguments="-id=pownode28 -miningtime=3 -miningnodecnt=50 -connect=pownode6" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode28 -miningtime=3 -miningnodecnt=30 -connect=pownode6" plugin="NODE" time="0"/>
   </node>
   <node id="pownode29">
-    <application arguments="-id=pownode29 -miningtime=3 -miningnodecnt=50 -connect=pownode7" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode30">
-    <application arguments="-id=pownode30 -miningtime=3 -miningnodecnt=50 -connect=pownode7" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode31">
-    <application arguments="-id=pownode31 -miningtime=3 -miningnodecnt=50 -connect=pownode7" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode32">
-    <application arguments="-id=pownode32 -miningtime=3 -miningnodecnt=50 -connect=pownode7" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode33">
-    <application arguments="-id=pownode33 -miningtime=3 -miningnodecnt=50 -connect=pownode8" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode34">
-    <application arguments="-id=pownode34 -miningtime=3 -miningnodecnt=50 -connect=pownode8" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode35">
-    <application arguments="-id=pownode35 -miningtime=3 -miningnodecnt=50 -connect=pownode8" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode36">
-    <application arguments="-id=pownode36 -miningtime=3 -miningnodecnt=50 -connect=pownode8" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode37">
-    <application arguments="-id=pownode37 -miningtime=3 -miningnodecnt=50 -connect=pownode9" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode38">
-    <application arguments="-id=pownode38 -miningtime=3 -miningnodecnt=50 -connect=pownode9" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode39">
-    <application arguments="-id=pownode39 -miningtime=3 -miningnodecnt=50 -connect=pownode9" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode40">
-    <application arguments="-id=pownode40 -miningtime=3 -miningnodecnt=50 -connect=pownode9" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode41">
-    <application arguments="-id=pownode41 -miningtime=3 -miningnodecnt=50 -connect=pownode10" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode42">
-    <application arguments="-id=pownode42 -miningtime=3 -miningnodecnt=50 -connect=pownode10" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode43">
-    <application arguments="-id=pownode43 -miningtime=3 -miningnodecnt=50 -connect=pownode10" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode44">
-    <application arguments="-id=pownode44 -miningtime=3 -miningnodecnt=50 -connect=pownode10" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode45">
-    <application arguments="-id=pownode45 -miningtime=3 -miningnodecnt=50 -connect=pownode11" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode46">
-    <application arguments="-id=pownode46 -miningtime=3 -miningnodecnt=50 -connect=pownode11" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode47">
-    <application arguments="-id=pownode47 -miningtime=3 -miningnodecnt=50 -connect=pownode11" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode48">
-    <application arguments="-id=pownode48 -miningtime=3 -miningnodecnt=50 -connect=pownode11" plugin="NODE" time="0"/>
-  </node>
-  <node id="pownode49">
-    <application arguments="-id=pownode49 -miningtime=3 -miningnodecnt=50 -connect=pownode12" plugin="NODE" time="0"/>
+    <application arguments="-id=pownode29 -miningtime=3 -miningnodecnt=30 -connect=pownode7" plugin="NODE" time="0"/>
   </node>
 </shadow>

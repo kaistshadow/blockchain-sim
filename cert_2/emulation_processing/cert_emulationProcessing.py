@@ -11,22 +11,29 @@ def exec_shell_cmd(cmd):
         exit(-1)
 
 def get_target_blockhash(target_path_file):
-    condition_count = 6
+    lastsixblock_count = 6
+    condition_value = 0
     blockhash = ""
     f = open(target_path_file, "r")
     for line in f.readlines()[::-1]:
-        result = line.find("blockhash:")
-        if result != -1:
-            if blockhash == line.split(":")[1][:-1]:
+        if condition_value == 0:
+            result = line.find("========================")
+            if result != -1:
+                condition_value = 1
                 continue
-            else:
-                if condition_count == 0:
-                    f.close()
-                    return blockhash
-                else:
-                    blockhash = line.split(":")[1][:-1]
-                    condition_count -= 1
+        
+        if condition_value == 1:
+            lastsixblock_count -= 1
+            if lastsixblock_count == 0:
+                f.close()
+                blockhash = line[:-1]
+                blockhash = blockhash.replace("[", "")
+                blockhash = blockhash.replace("]", "")
+                return blockhash
+    
     f.close()
+    print("Fail get last six block ... ")
+    sys.exit(1)
 
 def get_lastSix_blockhash(target_path_file, input_target_blockhash):
     condition_count = 0

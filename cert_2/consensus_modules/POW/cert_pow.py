@@ -13,25 +13,34 @@ def exec_shell_cmd(cmd):
         exit(-1)
 
 def get_target_blockhash(target_path_file):
+    block_hash_list = []
     lastsixblock_count = 6
     condition_value = 0
     blockhash = ""
     f = open(target_path_file, "r")
+
     for line in f.readlines()[::-1]:
         if condition_value == 0:
-            result = line.find("======== LongestChain ========")
+            result = line.find("========================")
             if result != -1:
                 condition_value = 1
                 continue
         
         if condition_value == 1:
-            lastsixblock_count -= 1
-            if lastsixblock_count == 0:
-                f.close()
-                blockhash = line[:-1]
-                blockhash = blockhash.replace("[", "")
-                blockhash = blockhash.replace("]", "")
-                return blockhash
+            result = line.find("======== LongestChain ========")
+            if result != -1:
+                condition_value = 2
+                continue
+
+            blockhash = line[:-1]
+            blockhash = blockhash.replace("[", "")
+            blockhash = blockhash.replace("]", "")
+            block_hash_list.append(blockhash)
+        
+        if condition_value == 2:
+            f.close()
+            print(block_hash_list[len(block_hash_list)-6])
+            return block_hash_list[len(block_hash_list)-6]
     
     f.close()
     print("Fail get last six block ... ")

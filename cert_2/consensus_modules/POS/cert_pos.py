@@ -304,7 +304,7 @@ def check_block_fork(posnode_output_data):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
-    parser.add_argument("configfile", help="filepath for blockchain network configuration file (shadow xml configuration)")
+    # parser.add_argument("configfile", help="filepath for blockchain network configuration file (shadow xml configuration)")
     parser.add_argument("-p", "--port", metavar="port", default="12345", help="Port where we'll run the websocket server")
     parser.add_argument("--background", action="store_true", help="Run server as background daemon.")
     parser.add_argument("--log", help="Shadow Log LEVEL above which to filter messages ('error' < 'critical' < 'warning' < 'message' < 'info' < 'debug') ['message']")
@@ -370,8 +370,8 @@ if __name__ == '__main__':
     print("-------------------------------------------------------------------------------")
     print("\t\t Run time : %d Sec" %emulated_time)
     print("\t\t Simulate time : %d Sec" %running_time)
-    print("\t\t Block count : %d count" %block_count)
-    print("\t\t Fork count : %d count" %fork_count)
+    print("\t\t Block count : %d " %block_count)
+    print("\t\t Fork count : %d " %fork_count)
     # print("\t\t Fork rate : %f" %fork_rate)
     if safety_value == True:
         print("\t\t POS module safety result : Success")

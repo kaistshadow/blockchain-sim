@@ -633,7 +633,7 @@ function removeEdge(from, to) {
 
 function appendBlockMap(peerId, hash, prevHash, timestamp) {
     let newNodes = [
-        {id: hash, label: timestamp, title: hash},
+        {id: hash, label: hash, title: hash},
         {id: peerId, label: peerId}
     ];
     let newEdges = [

@@ -31,9 +31,6 @@ def get_target_blockhash(target_path_file):
     f.close()
 
 def get_lastSix_blockhash(target_path_file, input_target_blockhash):
-    condition_count = 0
-    target_blockHash = ""
-    target_blockid = 0
 
     f = open(target_path_file, "r")
     for line in f.readlines()[::-1]:       
@@ -53,6 +50,7 @@ def get_blockhash(path, result_value):
     target_path_file = target_path + "/" + node_outputfile_list[0] 
     target_path_file = target_path_file + "/" + os.listdir(target_path_file)[0]        
     target_blockhash = get_target_blockhash(target_path_file)
+    print("target blockhash", target_blockhash)
 
     for i in range(0,len(node_outputfile_list)):
         target_path_file = target_path + "/" + node_outputfile_list[i] 
@@ -260,7 +258,7 @@ def pow_process_proof(pownode_output_data):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
-    parser.add_argument("configfile", help="filepath for blockchain network configuration file (shadow xml configuration)")
+    # parser.add_argument("configfile", help="filepath for blockchain network configuration file (shadow xml configuration)")
     parser.add_argument("-p", "--port", metavar="port", default="1337", help="Port where we'll run the websocket server")
     parser.add_argument("--background", action="store_true", help="Run server as background daemon.")
     parser.add_argument("--log", help="Shadow Log LEVEL above which to filter messages ('error' < 'critical' < 'warning' < 'message' < 'info' < 'debug') ['message']")
@@ -324,8 +322,8 @@ if __name__ == '__main__':
     print("-------------------------------------------------------------------------------")
     print("\t\t Run time : %d Sec" %emulated_time)
     print("\t\t Simulate time : %d Sec" %running_time)
-    print("\t\t Block count : %d count" %block_count)
-    print("\t\t Fork count : %d count" %len(fork_block_list))
+    print("\t\t Block count : %d " %block_count)
+    print("\t\t Fork count : %d " %len(fork_block_list))
     # print("\t\t Fork rate : %f" %fork_rate)
     if safety_value == True:
         print("\t\t POW module safety result : Success")

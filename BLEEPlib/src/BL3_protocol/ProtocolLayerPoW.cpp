@@ -52,10 +52,6 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockInvHandler(std::shared_ptr<Message> msg) 
         std::cout << "receive block hash:" << hash << "\n";
     }
 
-    // if the node already is processing previously received inventory, then returns immediately
-    if (HasProcessingInv())
-        return;
-
     UINT256_t lasthash = _blocktree.GetLastHash(); // for sanity check
     // if there's no block hash on BlockTree, send back 'getblocks' msg for retrieving block hashes
     // if there exists block hash but no actual block data on BlockTree, send back 'getdata' msg for retrieving actual block
@@ -70,30 +66,17 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockInvHandler(std::shared_ptr<Message> msg) 
         std::shared_ptr<Message> message = std::make_shared<Message>(msg->GetSource(), "POWBLOCK-GETBLOCKS", ptrToObj);
         BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(msg->GetSource(), message);
     } else {
-        // Register processing inventory
-        SetProcessingInv(hashes);
-        StartProcessingInv();
-
-        // Second, if block tree lacks of actual block, request the block
-        bool containAll = true;
         for (std::string h : hashes) {
             if (!_blocktree.ContainBlock(h)) {
                 std::cout << "send POW getdata message" << "\n";
-
                 std::shared_ptr<MessageObject> ptrToObj = std::make_shared<POWBlockGossipGetData>(h);
                 std::shared_ptr<Message> message = std::make_shared<Message>(msg->GetSource(), "POWBLOCK-GETDATA", ptrToObj);
                 BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(msg->GetSource(), message);
-
-                containAll = false;
-                break; // request only a single block
+                orphanage.insertInv(inv, msg->GetSource(), h);
+                break;
             }
             else
                 std::cout << "blocktree contains" << h << "\n";
-        }
-
-        if (containAll) {
-            std::cout << "stop processing inv" << "\n";
-            StopProcessingInv();
         }
     }
     libBLEEP::M_Assert( lasthash == _blocktree.GetLastHash(), "Lasthash should not be changed");
@@ -177,46 +160,25 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockBlkHandler(std::shared_ptr<Message> msg) 
         }
         _txPool->RemoveTxs(txids);
         _blocktree.AppendBlock(blkptr);
-    }
 
-    // if lasthash is changed, restart mining
-    if (lasthash != _blocktree.GetLastHash()) {
-        // stop mining
-        if (_powMiner.IsMining()) {
-            _powMiner.StopMining();
-        }
-        // restart mining for new block
-        if (_txPool->GetPendingTxNum() >= txNumPerBlock) {
-            std::shared_ptr<POWBlock> candidateBlk = _makeCandidateBlock();
-            _powMiner.AsyncEmulateBlockMining(candidateBlk, 1/miningtime/miningnodecnt);
-        }
-    }
-
-    if (HasProcessingInv()) {
-        std::vector<std::string>& inv = GetProcessingInv();
-
-        // if hash tree lacks of actual block, request the block
-        // else, finish the inv processing.
-        bool invAllProcessed = true;
-        for (std::string h : inv) {
-            if (!_blocktree.ContainBlock(h)) {
-                std::cout << "sending POW protocol getdata for" << h << "\n";
-
-                std::shared_ptr<MessageObject> ptrToObj = std::make_shared<POWBlockGossipGetData>(h);
-                std::shared_ptr<Message> message = std::make_shared<Message>(msg->GetSource(), "POWBLOCK-GETDATA", ptrToObj);
-                BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(msg->GetSource(), message);
-
-                invAllProcessed = false;
-                break; // request only a single block
+        // if lasthash is changed, restart mining
+        if (lasthash != _blocktree.GetLastHash()) {
+            // stop mining
+            if (_powMiner.IsMining()) {
+                _powMiner.StopMining();
+            }
+            // restart mining for new block
+            if (_txPool->GetPendingTxNum() >= txNumPerBlock) {
+                std::shared_ptr<POWBlock> candidateBlk = _makeCandidateBlock();
+                _powMiner.AsyncEmulateBlockMining(candidateBlk, 1/miningtime/miningnodecnt);
             }
         }
 
-        if (invAllProcessed) {
-            std::cout << "stop processing inv" << "\n";
-            StopProcessingInv();
-
-            // relay POWBLOCK-INV message??
-            std::shared_ptr<MessageObject> ptrToObj = std::make_shared<POWBlockGossipInventory>(inv);
+        orphanage.solveHash(blkptr->GetBlockHash().str());
+        auto invs = orphanage.getSolvedInvs();
+        for (std::shared_ptr<POWBlockGossipInventory> inv : invs) {
+            // relay
+            std::shared_ptr<MessageObject> ptrToObj = std::make_shared<POWBlockGossipInventory>(inv->GetHashlist());
             std::vector<PeerId> neighborIds = BL_PeerConnectivityLayer_API::Instance()->GetNeighborPeerIds();
             for (auto neighborId : neighborIds) {
                 if (neighborId.GetId() != msg->GetSource().GetId()) {
@@ -226,6 +188,16 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockBlkHandler(std::shared_ptr<Message> msg) 
                 }
             }
         }
+        auto requests = orphanage.getNextRequest();
+        for (std::pair<PeerId, std::string> request : requests) {
+            // get block
+            std::cout << "sending POW protocol getdata for" << request.second << "\n";
+
+            std::shared_ptr<MessageObject> ptrToObj = std::make_shared<POWBlockGossipGetData>(request.second);
+            std::shared_ptr<Message> message = std::make_shared<Message>(request.first, "POWBLOCK-GETDATA", ptrToObj);
+            BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(request.first, message);
+        }
+        orphanage.clearResults();
     }
 }
 

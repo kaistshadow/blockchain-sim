@@ -14,7 +14,7 @@ def get_target_blockhash(target_path_file):
     block_hash_list = []
     lastsixblock_count = 6
     condition_value = 0
-    blockhash = ""
+
     f = open(target_path_file, "r")
 
     for line in f.readlines()[::-1]:
@@ -23,7 +23,7 @@ def get_target_blockhash(target_path_file):
             if result != -1:
                 condition_value = 1
                 continue
-        
+
         if condition_value == 1:
             result = line.find("======== LongestChain ========")
             if result != -1:
@@ -31,37 +31,39 @@ def get_target_blockhash(target_path_file):
                 continue
 
             blockhash = line[:-1]
-            blockhash = blockhash.replace("[", "")
-            blockhash = blockhash.replace("]", "")
             block_hash_list.append(blockhash)
-        
+
         if condition_value == 2:
             f.close()
-            return block_hash_list[len(block_hash_list)-6]
-    
+            print(block_hash_list[len(block_hash_list)-lastsixblock_count])
+            return block_hash_list[len(block_hash_list)-lastsixblock_count]
+
     f.close()
     print("Fail get last six block ... ")
     sys.exit(1)
 
 def get_lastSix_blockhash(target_path_file, input_target_blockhash):
     condition_count = 0
-    target_blockHash = ""
-    target_blockid = 0
 
     f = open(target_path_file, "r")
-    for line in f.readlines()[::-1]:      
-        if condition_count == 0: 
-            result = line.find("======== LongestChain ========")
+    for line in f.readlines()[::-1]:
+        if condition_count == 0:
+            result = line.find("========================")
             if result != -1:
                 condition_count = 1
                 continue
 
         if condition_count == 1:
-            result = line.find(input_target_blockhash)
+            result = line.find("======== LongestChain ========")
             if result != -1:
-                f.close()
-                return input_target_blockhash
+                condition_count = 0
+                continue
+            elif line.split("\n")[0] == input_target_blockhash :
+                condition_count = 2
 
+        if condition_count == 2:
+            f.close()
+            return line
     f.close()
     return "Fail"
 
@@ -81,7 +83,7 @@ def get_blockhash(path, result_value):
         if len(target_value) > 4:
             blockHash_list.append(target_value)
         else:
-            print(node_outputfile_list)
+            print("Fail :" ,node_outputfile_list[i] )
             result_value -= 1
 
     return blockHash_list, result_value
@@ -128,7 +130,7 @@ if __name__ == '__main__':
             try: 
                 sim_time = input("Input simulation time (sec) : ")    
                 if int(sim_time) > 0:
-                    xmlGenerator.setup_multiple_node_xml(node_count_, sim_time, 3)
+                    xmlGenerator.setup_multiple_node_xml(node_count_, sim_time, 80)
                     break
                 else:
                     print("simulation time not negative ... ")

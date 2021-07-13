@@ -12,34 +12,59 @@ def exec_shell_cmd(cmd):
         exit(-1)
 
 def get_target_blockhash(target_path_file):
-    condition_count = 6
-    blockhash = ""
+    block_hash_list = []
+    lastsixblock_count = 6
+    condition_value = 0
+
     f = open(target_path_file, "r")
+
     for line in f.readlines()[::-1]:
-        result = line.find("appended block:")
-        if result != -1:
-            if blockhash == line.split(":")[1][:-1]:
+        if condition_value == 0:
+            result = line.find("========================")
+            if result != -1:
+                condition_value = 1
                 continue
-            else:
-                if condition_count == 0:
-                    f.close()
-                    return blockhash
-                else:
-                    blockhash = line.split(":")[1][:-1]
-                    condition_count -= 1
+
+        if condition_value == 1:
+            result = line.find("======== LongestChain ========")
+            if result != -1:
+                condition_value = 2
+                continue
+
+            blockhash = line[:-1]
+            block_hash_list.append(blockhash)
+
+        if condition_value == 2:
+            f.close()
+            print(block_hash_list[len(block_hash_list)-lastsixblock_count])
+            return block_hash_list[len(block_hash_list)-lastsixblock_count]
+
     f.close()
+    print("Fail get last six block ... ")
+    sys.exit(1)
 
 def get_lastSix_blockhash(target_path_file, input_target_blockhash):
+    condition_count = 0
+
     f = open(target_path_file, "r")
     for line in f.readlines()[::-1]:
-        result = line.find("appended block:")
-        if result != -1:
-            blockhash =line.split("appended block:")[1].split("\n")[0]
-            if blockhash == input_target_blockhash:
-                f.close()
-                return input_target_blockhash
-            else:
+        if condition_count == 0:
+            result = line.find("========================")
+            if result != -1:
+                condition_count = 1
                 continue
+
+        if condition_count == 1:
+            result = line.find("======== LongestChain ========")
+            if result != -1:
+                condition_count = 0
+                continue
+            elif line.split("\n")[0] == input_target_blockhash :
+                condition_count = 2
+
+        if condition_count == 2:
+            f.close()
+            return line
     f.close()
     return "Fail"
 

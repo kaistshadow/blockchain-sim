@@ -274,15 +274,19 @@ def check_block_fork(pbftnode_output_data):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
-    parser.add_argument("-p", "--port",default="1337", metavar="port", help="Port where we'll run the websocket server")
-    parser.add_argument("--log", default="None", help="Shadow Log LEVEL above which to filter messages ('error' < 'critical' < 'warning' < 'message' < 'info' < 'debug') ['message']")
-    args = parser.parse_args()
+    parser.add_argument("-p", "--port", metavar="port", default="1337", help="Port where we'll run the websocket server")
+    parser.add_argument("--background", action="store_true", help="Run server as background daemon.")
+    parser.add_argument("--log", help="Shadow Log LEVEL above which to filter messages ('error' < 'critical' < 'warning' < 'message' < 'info' < 'debug') ['message']")
+    parser.add_argument("--noserver", action="store_true", help="Don't run visualization server")
+    parser.add_argument("--force", action="store_true", help="Run visualization even if the test is failed ['false']")
 
+    args = parser.parse_args()
     configfile = "pbft.xml"
     port = args.port
-    OPT_BACKGROUND = False
-    OPT_NOSERVER = False
-    OPT_FORCE = False
+    OPT_BACKGROUND = args.background
+    OPT_NOSERVER = args.noserver
+    OPT_FORCE = args.force
+
 
     if not args.log:
         LOGLEVEL = "message"

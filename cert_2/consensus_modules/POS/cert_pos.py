@@ -329,7 +329,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Script for installation and simulation')
     # parser.add_argument("configfile", help="filepath for blockchain network configuration file (shadow xml configuration)")
-    parser.add_argument("-p", "--port", metavar="port", default="12345", help="Port where we'll run the websocket server")
+    parser.add_argument("-p", "--port", metavar="port", default="1337", help="Port where we'll run the websocket server")
     parser.add_argument("--background", action="store_true", help="Run server as background daemon.")
     parser.add_argument("--log", help="Shadow Log LEVEL above which to filter messages ('error' < 'critical' < 'warning' < 'message' < 'info' < 'debug') ['message']")
     parser.add_argument("--noserver", action="store_true", help="Don't run visualization server")

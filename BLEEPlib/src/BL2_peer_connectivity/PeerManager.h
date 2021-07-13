@@ -13,7 +13,10 @@ namespace libBLEEP_BL {
         std::map<PeerId, std::shared_ptr<Peer>, PeerIdCompare> _peers;
 
     public:
-        PeerManager(std::string id) : _myPeerId(PeerId(id)) {}
+        PeerManager(std::string id) : _myPeerId(PeerId(id)) {
+            _outPeerNum = 0;
+            _inPeerNum = 0;
+        }
         PeerId& GetMyPeerId() { return _myPeerId; }
 
         

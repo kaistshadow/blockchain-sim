@@ -22,12 +22,86 @@ namespace libBLEEP_BL {
 //    extern double miningtime;
 //    extern int miningnodecnt;
 
+    class OrphanElement {
+    public:
+        std::shared_ptr<POWBlockGossipInventory> inv;
+        PeerId source;
+        std::vector<std::string>::iterator current;
+
+        OrphanElement(std::shared_ptr<POWBlockGossipInventory> inv, PeerId source, std::string hash) {
+            this->inv = inv;
+            this->source = source;
+
+            auto it = this->inv->GetHashlist().begin();
+            while (it != this->inv->GetHashlist().end()) {
+                if (*it == hash) {
+                    current = it;
+                }
+                it++;
+            }
+        }
+        PeerId getSource() { return source; }
+        std::string getCurrent() {
+            return *current;
+        }
+        void proceed() {
+            if (current != inv->GetHashlist().end()) {
+                current++;
+            }
+        }
+        std::shared_ptr<POWBlockGossipInventory> getInv() { return inv; }
+    };
+
+
+    class Orphanage {
+        std::map<std::pair<std::string, std::string>, OrphanElement> invs;
+        std::vector<std::shared_ptr<POWBlockGossipInventory>> solved_invs;
+        std::vector<std::pair<PeerId, std::string>> next_request;
+
+    public:
+        Orphanage() {}
+        int insertInv(std::shared_ptr<POWBlockGossipInventory> inv, PeerId peer, std::string hash){
+            std::string front = inv->GetHashlist().front();
+            std::string back = inv->GetHashlist().back();
+            auto it = invs.find({front, back});
+            if (it != invs.end()) {
+                return 0;
+            }
+            invs.insert({{front, back}, OrphanElement(inv, peer, hash)});
+            return 1;
+        }
+        void solveHash(std::string hash) {
+            auto it = invs.begin();
+            while (it != invs.end()) {
+                if (it->first.second == hash) {
+                    solved_invs.push_back(it->second.getInv());
+                    auto prev_it = it;
+                    it++;
+                    invs.erase(prev_it);
+                } else if(it->second.getCurrent() == hash) {
+                    it->second.proceed();
+                    next_request.push_back({it->second.getSource(), it->second.getCurrent()});
+                    it++;
+                } else {
+                    it++;
+                }
+            }
+        }
+        std::vector<std::shared_ptr<POWBlockGossipInventory>> getSolvedInvs() { return solved_invs; }
+        std::vector<std::pair<PeerId, std::string>> getNextRequest() { return next_request; }
+        void clearResults() {
+            solved_invs.clear();
+            next_request.clear();
+        }
+    };
+
     class BL_ProtocolLayerPoW : public BL_ProtocolLayer_API {
     private:
         TxGossipProtocol _txGossipProtocol;
     private:
         POWMiner _powMiner;
         BlockTree<POWBlock> _blocktree;
+        Orphanage orphanage;
     public:
         BlockTree<POWBlock>& GetBlockTree() { return _blocktree; }
     private: // PoW parameter

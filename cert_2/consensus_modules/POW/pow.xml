@@ -31,7 +31,7 @@
   <plugin id="NODE" path="libBLEEPlib-pow-node.so"/>
   <!-- the length of our experiment in seconds  1404101800-->
   <!-- our nodes -->
-  <kill time="2000"/>
+  <kill time="15000"/>
   <node id="pownode0">
     <application arguments="-id=pownode0 -miningtime=10 -miningnodecnt=10 -txgenstartat=0 -txgeninterval=3" plugin="NODE" time="0"/>
   </node>

@@ -37,7 +37,6 @@ def get_target_blockhash(target_path_file):
         
         if condition_value == 2:
             f.close()
-            print(block_hash_list[len(block_hash_list)-lastsixblock_count])
             return block_hash_list[len(block_hash_list)-lastsixblock_count]
     
     f.close()

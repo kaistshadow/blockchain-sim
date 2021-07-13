@@ -31,7 +31,7 @@
   <plugin id="NODE" path="libBLEEPemul-test-pos-node.so"/>
   <!-- the length of our experiment in seconds  1404101800-->
   <!-- our nodes -->
-  <kill time="9000"/>
+  <kill time="30000"/>
   <node id="posnode0">
     <application plugin="NODE" time="0" arguments="-id=posnode0 -stakefile=stakefile.txt -slotinterval=30 -creatorid=0 -connect=posnode1"/>
   </node>

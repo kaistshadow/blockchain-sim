@@ -42,6 +42,47 @@ def get_target_blockhash(target_path_file):
     print("Fail get last six block ... ")
     sys.exit(1)
 
+def pow_process_proof(pownode_output_data):
+    condition_value = 0
+    f = open(pownode_output_data, "r")
+    fd_path = open("pow_process_proof.txt", "a")
+    fd_path.write("----------------------------------------------------------------------------------\n")
+    fd_path.write(pownode_output_data)
+    fd_path.write("\n----------------------------------------------------------------------------------\n")
+    fd_path.write("\n")
+    for line in f.readlines()[::-1]:
+        if condition_value == 0:
+            result = line.find("pow_proof_process-> timercb start")
+            if result != -1:
+                condition_value = 1
+                continue
+        
+        if condition_value == 1:
+            result = line.find("blockhash")
+            if result != -1:
+                fd_path.write(line)
+                condition_value = 2
+                continue
+        
+        if condition_value == 2:
+            result = line.find("blockID")
+            if result != -1:
+                fd_path.write(line)
+                condition_value = 3
+                continue
+        
+        if condition_value == 3:
+            result = line.find("pow_proof_process-> timer:")
+            if result != -1:
+                fd_path.write(line)
+                fd_path.write("-----------------------\n")
+                condition_value = 0
+                continue       
+
+    f.close()
+    fd_path.write("----------------------------------------------------------------------------------\n")
+    fd_path.close()
+
 def get_lastSix_blockhash(target_path_file, input_target_blockhash):
     condition_count = 0
 
@@ -113,6 +154,7 @@ if __name__ == '__main__':
 
     condition_count = -1
     node_count_ = 0
+    exec_shell_cmd("rm -rf pow_process_proof.txt")
 
     while(1):
         if condition_count == -1:
@@ -152,6 +194,10 @@ if __name__ == '__main__':
     exec_shell_cmd("shadow -w 3 emulation_processing.xml > /dev/null 2>&1")
     emulation_time = time.time() - emulation_time
     print("Success POW blockchain simulation ...")
+
+    for i in range(0,node_count):
+        target_path = path + "/" + "shadow.data/hosts/pownode%d/stdout-pownode%d.NODE.1000.log" %(i, i)
+        pow_process_proof(target_path)
 
     result_value = node_count
     blockHash_list, result_value = get_blockhash(path, result_value)

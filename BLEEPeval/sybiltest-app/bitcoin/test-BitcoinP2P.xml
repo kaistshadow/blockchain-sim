@@ -31,10 +31,10 @@
   </topology>
 
   <!-- the plug-ins we will be using -->
-  <plugin id="bitcoind" path="libBITCOIND_0.19.1DEV.so"/>
-  <plugin id="BITCOINP2P_TESTER" path="libBITCOINP2P_TESTER.so"/>
+  <plugin id="bitcoind" path="libBITCOIND_0.10.0DEV.so"/>
+<!--  <plugin id="BITCOINP2P_TESTER" path="libBITCOINP2P_TESTER.so"/>-->
 
-  <kill time="17776000"/>
+  <kill time="100"/>
   <node id="bcdnode0" iphint="1.0.0.1">
     <application
             arguments="-debug -datadir=data/bcdnode0 -port=8333 -rpcuser=a -rpcpassword=1234 -rpcport=11111 -rpcallowip=1.0.0.1/0 -rpcbind=1.0.0.1 -erebustest"
@@ -42,9 +42,9 @@
   </node>
 
 
-  <node id="tester" iphint="99.99.0.1">
-    <application plugin="BITCOINP2P_TESTER" time="5" arguments=""/>
-  </node>
+<!--  <node id="tester" iphint="99.99.0.1">-->
+<!--    <application plugin="BITCOINP2P_TESTER" time="5" arguments=""/>-->
+<!--  </node>-->
 
 
   <!--  <node id="attacker">-->

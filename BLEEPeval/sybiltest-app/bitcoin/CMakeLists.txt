@@ -25,9 +25,17 @@ target_sources(BITCOINP2P_TESTER
         tester.cpp)
 
 # copy plugins into source directory
+#add_custom_target(sybil-API-bitcoin-copy-plugin ALL
+#        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1dev::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
+#add_dependencies(sybil-API-bitcoin-copy-plugin Bitcoin_0_19_1dev::Plugin)
+
 add_custom_target(sybil-API-bitcoin-copy-plugin ALL
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1dev::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
-add_dependencies(sybil-API-bitcoin-copy-plugin Bitcoin_0_19_1dev::Plugin)
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_19_1tt::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
+add_dependencies(sybil-API-bitcoin-copy-plugin Bitcoin_0_19_1tt::Plugin)
+
+add_custom_target(sybil-API-bitcoin-copy-plugin2 ALL
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Bitcoin_0_10_0dev::Plugin> ${CMAKE_CURRENT_SOURCE_DIR})
+add_dependencies(sybil-API-bitcoin-copy-plugin2 Bitcoin_0_10_0dev::Plugin)
 
 add_custom_command(TARGET BITCOINP2P_TESTER
         POST_BUILD

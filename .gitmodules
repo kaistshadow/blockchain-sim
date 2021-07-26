@@ -10,6 +10,8 @@
 [submodule "external/bitcoin/0.10.0dev"]
 	path = external/bitcoin/0.10.0dev
 	url = https://github.com/jaehyunh1/bitcoin.git
+	branch = master
 [submodule "external/openssl/1.0.1k"]
 	path = external/openssl/1.0.1k
 	url = https://github.com/jaehyunh1/openssl.git
+	branch = 1.0.1k

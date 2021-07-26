@@ -1,15 +1,11 @@
 add_subdirectory(BLEEPP2P)
 
-
 if (ALL_OPT STREQUAL ON)
     add_subdirectory(bitcoin)
-    add_subdirectory(monero)
 elseif (GIT_OPT STREQUAL ON)
     add_subdirectory(bitcoin)
 elseif (BITCOIN_OPT STREQUAL ON)
     add_subdirectory(bitcoin)
-elseif (MONERO_OPT STREQUAL ON)
-    add_subdirectory(monero)
 else (ALL_OPT STREQUAL ON)
     add_subdirectory(bitcoin)
 endif (ALL_OPT STREQUAL ON)

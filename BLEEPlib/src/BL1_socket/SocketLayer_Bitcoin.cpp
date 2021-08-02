@@ -1,22 +1,22 @@
+// "Copyright [2021] <kaistshadow>"
 //
 // Created by ilios on 20. 8. 26..
 //
 
-#include <iostream>
+#include <string>
+#include <memory>
 #include <unistd.h>
 #include <fcntl.h> /* Added for the nonblocking socket */
 #include <arpa/inet.h>
-
-#include "SocketLayer_Bitcoin.h"
-#include "../utility/Assert.h"
-
-
-#include "../BL2_peer_connectivity/Message.h"
-
+#include <iostream>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/serialization/export.hpp>
+
+#include "SocketLayer_Bitcoin.h"
+#include "../utility/Assert.h"
+#include "../BL2_peer_connectivity/Message.h"
 
 using namespace libBLEEP_BL;
 
@@ -47,13 +47,11 @@ void BL_SocketLayer_Bitcoin::RecvHandler(int fd) {
             std::cout << "received data:[" << string_read << "]" << "\n";
             memset(string_read, 0, 2000);
             continue;
-        }
-        else if (0 < n) {
+        } else if (0 < n) {
             _recvBuffManager.AppendToBuffer(fd, string_read, n);
             std::cout << "received data:[" << string_read << "]" << "\n";
             break;
-        }
-        else if (n == 0) {
+        } else if (n == 0) {
             std::cout << "connection closed while recv" << "\n";
             // TODO : notify socketClose event?
             AsyncEvent event(AsyncEventEnum::PeerSocketClose);
@@ -63,8 +61,7 @@ void BL_SocketLayer_Bitcoin::RecvHandler(int fd) {
             _socketManager.RemoveDataSocket(fd);
             _recvBuffManager.RemoveRecvBuffer(fd);
             break;
-        }
-        else if (n < 0) {
+        } else if (n < 0) {
             if (errno != EAGAIN && errno != EWOULDBLOCK) {
                 std::cout << "recv failed errno=" << errno << strerror(errno) << "\n";
                 exit(-1);
@@ -87,13 +84,11 @@ void BL_SocketLayer_Bitcoin::RecvHandler(int fd) {
                 // retrieve the size of the msg if possible
                 uint32_t payload_size = 0;
                 if (recvBuffer->recv_str.size() >= BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t)) {
-
                     memcpy(&payload_size, recvBuf + BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE, sizeof(uint32_t));
                     std::cout << "msg length received : " << payload_size << "\n";
-                }
-                else
+                } else {
                     break;
-
+                }
                 // recv entire msg if possible
                 if (payload_size && recvBuffer->recv_str.size() >= BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t) * 2 + payload_size) {
                     std::string command(recvBuf+BITCOIN_MAGIC_SIZE, BITCOIN_COMMAND_SIZE);
@@ -119,8 +114,7 @@ void BL_SocketLayer_Bitcoin::RecvHandler(int fd) {
                     // TODO : recvBuffer should be updated efficiently. (minimizing a duplication)
                     std::string remain = recvBuffer->recv_str.substr(BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t)*2 + payload_size);
                     recvBuffer->recv_str = remain;
-                }
-                else if (payload_size == 0 && recvBuffer->recv_str.size() >= BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t) * 2) {
+                } else if (payload_size == 0 && recvBuffer->recv_str.size() >= BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t) * 2) {
                     std::string command(recvBuf+BITCOIN_MAGIC_SIZE, BITCOIN_COMMAND_SIZE);
                     uint32_t checksum;
                     memcpy(&checksum, recvBuf + BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t), sizeof(uint32_t));
@@ -135,12 +129,12 @@ void BL_SocketLayer_Bitcoin::RecvHandler(int fd) {
                     // TODO : recvBuffer should be updated efficiently. (minimizing a duplication)
                     std::string remain = recvBuffer->recv_str.substr(BITCOIN_MAGIC_SIZE + BITCOIN_COMMAND_SIZE + sizeof(uint32_t)*2);
                     recvBuffer->recv_str = remain;
-                }
-                else
+                } else {
                     break;
-            }
-            else
+                }
+            } else {
                 break;
+            }
         }
     }
 }

@@ -1,16 +1,17 @@
+// "Copyright [2021] <kaistshadow>"
 //
 // Created by ilios on 20. 8. 26..
 //
 
-#ifndef BLEEP_SOCKETLAYER_BITCOIN_H
-#define BLEEP_SOCKETLAYER_BITCOIN_H
+#ifndef BLEEPLIB_SRC_BL1_SOCKET_SOCKETLAYER_BITCOIN_H_
+#define BLEEPLIB_SRC_BL1_SOCKET_SOCKETLAYER_BITCOIN_H_
 
 
-#include "../BL_MainEventManager.h"
 
 #include "SocketLayer_API.h"
 #include "SocketManager.h"
 #include "RecvBufferManager.h"
+#include "../BL_MainEventManager.h"
 
 #define BITCOIN_MAGIC "\xf9\xbe\xb4\xd9"
 #define BITCOIN_MAGIC_SIZE 4
@@ -18,25 +19,23 @@
 
 namespace libBLEEP_BL {
 
-    class BL_SocketLayer_Bitcoin: public BL_SocketLayer_API {
+class BL_SocketLayer_Bitcoin: public BL_SocketLayer_API {
+ protected:
+    BL_SocketLayer_Bitcoin();
 
-    protected:
-        BL_SocketLayer_Bitcoin();
+ public:
+    static void RegisterInstance();
 
-    public:
-        static void RegisterInstance();
+    static BL_SocketLayer_Bitcoin *Instance();
 
-        static BL_SocketLayer_Bitcoin *Instance();
-
-        /* public API functions */
-        void CreateSocketForShadowIP(int port, const char *shadow_ip_addr);
+    /* public API functions */
+    void CreateSocketForShadowIP(int port, const char *shadow_ip_addr);
 
 
-    protected:
-        void RecvHandler(int fd);
+ protected:
+    void RecvHandler(int fd);
+};
 
-    };
+} // namespace libBLEEP_BL
 
-}
-
-#endif //BLEEP_SOCKETLAYER_BITCOIN_H
+#endif // BLEEPLIB_SRC_BL1_SOCKET_SOCKETLAYER_BITCOIN_H_

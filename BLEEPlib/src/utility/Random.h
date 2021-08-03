@@ -1,3 +1,5 @@
+// "Copyright [2021] <kaistshadow>"
+
 #include<iostream>
 #include<set>
 #include <list>
@@ -5,20 +7,22 @@
 
 namespace libBLEEP {
 
-    std::list<int> GenRandomNumSet(int maxNum, int maxCount);
+std::list<int> GenRandomNumSet(int maxNum, int maxCount);
 
 #define RAND_DROP_NO        0
 #define RAND_DROP_NEGATIVE  1
-    class random_source {
-    private:
-        std::default_random_engine* default_random_source = NULL;
-    public:
-        random_source();
-        std::default_random_engine* get_default_random_source() { return default_random_source;}
-        double get_normal_value(double avg, double stddev, int flag);
-        double get_exp_value(double lambda);
-    };
-    random_source& get_global_random_source();
-}
+class random_source {
+ private:
+    std::default_random_engine* default_random_source = NULL;
+ public:
+    random_source();
+    std::default_random_engine* get_default_random_source() { return default_random_source;}
+    double get_normal_value(double avg, double stddev, int flag);
+    double get_exp_value(double lambda);
+};
+
+random_source& get_global_random_source();
+
+} // namespace libBLEEP
 
 

@@ -1,5 +1,7 @@
-#ifndef ASSERT_H
-#define ASSERT_H
+// "Copyright [2021] <kaistshadow>"
+
+#ifndef BLEEPLIB_SRC_UTILITY_ASSERT_H_
+#define BLEEPLIB_SRC_UTILITY_ASSERT_H_
 
 #include <iostream>
 
@@ -16,5 +18,6 @@ namespace libBLEEP {
 
     void __M_Assert(const char *expr_str, bool expr, const char *file, int line, const char *msg);
 
-}
-#endif
+} // namespace libBLEEP
+
+#endif // BLEEPLIB_SRC_UTILITY_ASSERT_H_

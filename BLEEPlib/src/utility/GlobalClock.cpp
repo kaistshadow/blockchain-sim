@@ -1,3 +1,5 @@
+// "Copyright [2021] <kaistshadow>"
+
 #include "GlobalClock.h"
 #include <iostream>
 #include <string.h>
@@ -43,18 +45,17 @@ double libBLEEP::GetGlobalClock() {
     /* use gettimeofday */
     // struct timeval tv;
     // gettimeofday(&tv, NULL);
-    // unsigned long long milliiseconds = 
+    // unsigned long long milliiseconds =
     //     (unsigned long long)(tv.tv_sec - 946684800) * 1000 +
     //     (unsigned long long)(tv.tv_usec) / 1000;
     // printf("%f second passed\n", (double)milliiseconds/1000);
-    
     /* use clock_gettime */
     time_t s;
     struct timespec spec;
     long ms;
     clock_gettime(CLOCK_MONOTONIC, &spec);
     s = spec.tv_sec;
-    ms = spec.tv_nsec / 1000000; 
+    ms = spec.tv_nsec / 1000000;
     s -= globalclock_starttime;
     double curtime = (double)s + (double)ms/1000;
 

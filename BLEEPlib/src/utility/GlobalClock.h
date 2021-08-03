@@ -1,5 +1,7 @@
-#ifndef GLOBALCLOCK_H
-#define GLOBALCLOCK_H
+// "Copyright [2021] <kaistshadow>"
+
+#ifndef BLEEPLIB_SRC_UTILITY_GLOBALCLOCK_H_
+#define BLEEPLIB_SRC_UTILITY_GLOBALCLOCK_H_
 
 #include <chrono>
 #include <time.h>
@@ -17,4 +19,4 @@ namespace libBLEEP {
 
 
 
-#endif
+#endif // BLEEPLIB_SRC_UTILITY_GLOBALCLOCK_H_

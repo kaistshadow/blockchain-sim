@@ -1,3 +1,5 @@
+// "Copyright [2021] <kaistshadow>"
+
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
@@ -10,7 +12,7 @@
 
 int main(int argc, char* argv[]) {
     // init
-    std::cout<<"start client \n";
+    std::cout << "start client \n";
     url = std::string(argv[1]);
     id_pwd = "a:1234";
     Json::Value params;
@@ -19,9 +21,9 @@ int main(int argc, char* argv[]) {
     // method 1: generate node's wallet
     params = Json::arrayValue;
     std::string wallet = rpc_request_with_no_params("getnewaddress");
-    std::cout<<"wallet:";
-    std::cout<<wallet;
-    std::cout<<"\n";
+    std::cout << "wallet:";
+    std::cout << wallet;
+    std::cout << "\n";
     params.clear();
     params = Json::arrayValue;
     std::list<std::string> params_list;
@@ -30,12 +32,12 @@ int main(int argc, char* argv[]) {
     params = Json::arrayValue;
     params.append(wallet);
 
-    if(!url.compare("1.0.0.1:11111")){
-        std::cout<<"---------------------------------"<<"\n";
-        for(int i=0;i<7;i++){
-        bitcoin_rpc_request("setgeneratetoaddressnotime",params);
+    if (!url.compare("1.0.0.1:11111")) {
+        std::cout << "---------------------------------" << "\n";
+        for (int i = 0; i < 7; i++) {
+            bitcoin_rpc_request("setgeneratetoaddressnotime", params);
         }
-        std::cout<<"---------------------------------"<<"\n";
+        std::cout << "---------------------------------" << "\n";
     }
     rpc_reqeust_with_params("validateaddress", params_list);
     rpc_reqeust_with_params("setgeneratetoaddress", params_list);
@@ -44,6 +46,6 @@ int main(int argc, char* argv[]) {
     rpc_request_no_return_no_params("getmempoolinfo");
     rpc_request_no_return_no_params("getblockchaininfo");
     rpc_request_no_return_no_params("getpeerinfo");
-    
+
     return 0;
 }

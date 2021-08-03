@@ -1,3 +1,5 @@
+// "Copyright [2021] <kaistshadow>"
+
 //
 // Created by ilios on 21. 1. 26..
 //

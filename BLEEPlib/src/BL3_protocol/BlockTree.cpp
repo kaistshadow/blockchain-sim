@@ -1,6 +1,14 @@
+// "Copyright [2021] <kaistshadow>"
+
 //
 // Created by Yonggon Kim on 2021/05/01.
 //
+
+#include <utility>
+#include <list>
+#include <vector>
+#include <memory>
+#include <string>
 #include <iostream>
 #include "BlockTree.h"
 #include "shadow_interface.h"
@@ -40,7 +48,6 @@ std::vector<std::string> BlockTree<T>::GetBlockLocator() {
 
     std::vector<std::string> blockLocator;
 
-
     if (_treeheight == 1) {
         blockLocator.push_back(_lasthash.str());
         return blockLocator;
@@ -53,20 +60,18 @@ std::vector<std::string> BlockTree<T>::GetBlockLocator() {
 
         if (blockLocator.size() >= 10) {
             break;
-        }
-        else if (blockLocator.size() < 5) {
+        } else if (blockLocator.size() < 5) {
             // get prevblock Index
             std::string prevBlockHash = blockIndex->GetPrevBlockHash();
             if (prevBlockHash == "") {
-                M_Assert ( _genesis == blockIndex->GetBlock()->GetBlockHash(), "it should be genesis block");
+                M_Assert(_genesis == blockIndex->GetBlock()->GetBlockHash(), "it should be genesis block");
                 blockLocator.push_back(_genesis.str());
                 return blockLocator;
             }
 
             M_Assert(_ledgermap.find(prevBlockHash) != _ledgermap.end(), "ledger should contain prevBlockHash");
             blockIndex = _ledgermap[prevBlockHash];
-        }
-        else {
+        } else {
             // get blockIndex by walking up the tree (2, 4, 8, 16, 32 steps upward)
             int step = 2;
             for (int i = 0; i < (int)blockLocator.size() - 5; i++)
@@ -76,7 +81,7 @@ std::vector<std::string> BlockTree<T>::GetBlockLocator() {
                 std::cout << "i:" << i << "\n";
                 std::string prevBlockHash = blockIndex->GetPrevBlockHash();
                 if (_ledgermap.find(prevBlockHash) == _ledgermap.end()) {
-                    M_Assert ( _genesis == blockIndex->GetBlock()->GetBlockHash(), "it should be genesis block");
+                    M_Assert(_genesis == blockIndex->GetBlock()->GetBlockHash(), "it should be genesis block");
                     blockLocator.push_back(_genesis.str());
                     return blockLocator;
                 }
@@ -170,7 +175,7 @@ void BlockTree<T>::AppendBlockHash(std::string hash) {
 //    else {
 //        _ledgermap.insert(std::make_pair(hash, nullptr ));
 //    }
-    _ledgermap.insert(std::make_pair(hash, nullptr ));
+    _ledgermap.insert(std::make_pair(hash, nullptr));
 }
 
 template <class T>
@@ -188,13 +193,13 @@ void BlockTree<T>::AppendBlock(std::shared_ptr<T> blk) {
 //    else {
     std::string prevBlockHash = blk->GetPrevBlockHash().str();
     auto previt = _ledgermap.find(prevBlockHash);
-    if (previt == _ledgermap.end())
+    if (previt == _ledgermap.end()) {
         std::cout << "no valid prev block hash for " << blk->GetPrevBlockHash();
-    else {
+    } else {
         std::shared_ptr<BlockTreeBlockIndex<T> > blockIndex = std::make_shared< BlockTreeBlockIndex<T> >(blk, prevBlockHash);
         std::cout << "make_shared called" << "\n";
 
-        _ledgermap.insert(std::make_pair(blk->GetBlockHash().str(), blockIndex ));
+        _ledgermap.insert(std::make_pair(blk->GetBlockHash().str(), blockIndex));
         std::cout << "insert called" << "\n";
 
         auto curit = _ledgermap.find(blk->GetBlockHash().str());
@@ -207,10 +212,9 @@ void BlockTree<T>::AppendBlock(std::shared_ptr<T> blk) {
             std::cout << "insert succeeded" << "\n";
             std::cout << "parent block:" << blk->GetPrevBlockHash() << "\n";
             std::cout << "appended block:" << blk->GetBlockHash().str() << "\n";
-        }
-        else
+        } else {
             std::cout << "insert failed" << "\n";
-
+        }
 
         if (_lasthash == blk->GetPrevBlockHash()) {
             _lasthash = blk->GetBlockHash();

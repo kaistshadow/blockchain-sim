@@ -1,9 +1,11 @@
+// "Copyright [2021] <kaistshadow>"
+
 //
 // Created by Yonggon Kim on 2021/04/25.
 //
+
 #include "../utility/Assert.h"
 #include "../utility/Random.h"
-
 #include "shadow_interface.h"
 
 #include "POWMiner.h"

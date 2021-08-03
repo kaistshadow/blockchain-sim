@@ -1,12 +1,18 @@
+// "Copyright [2021] <kaistshadow>"
+
+#include <list>
+#include <string>
+#include <vector>
+#include <memory>
 #include "ProtocolLayerPoW.h"
 #include "POWProtocolParameter.h"
 #include "POWBlockGossipProtocolMsg.h"
 
-//int libBLEEP_BL::txNumPerBlock = 2;
-//double libBLEEP_BL::txGenStartAt = 0;
-//double libBLEEP_BL::txGenInterval = 4;
-//double libBLEEP_BL::miningtime = 2;
-//int libBLEEP_BL::miningnodecnt = 1;
+// int libBLEEP_BL::txNumPerBlock = 2;
+// double libBLEEP_BL::txGenStartAt = 0;
+// double libBLEEP_BL::txGenInterval = 4;
+// double libBLEEP_BL::miningtime = 2;
+// int libBLEEP_BL::miningnodecnt = 1;
 
 #include "shadow_memshare_interface.h"
 
@@ -86,9 +92,9 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockInvHandler(std::shared_ptr<Message> msg) 
 
                 containAll = false;
                 break; // request only a single block
-            }
-            else
+            } else {
                 std::cout << "blocktree contains" << h << "\n";
+            }
         }
 
         if (containAll) {
@@ -96,8 +102,7 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockInvHandler(std::shared_ptr<Message> msg) 
             StopProcessingInv();
         }
     }
-    libBLEEP::M_Assert( lasthash == _blocktree.GetLastHash(), "Lasthash should not be changed");
-
+    libBLEEP::M_Assert(lasthash == _blocktree.GetLastHash(), "Lasthash should not be changed");
 }
 
 void BL_ProtocolLayerPoW::_RecvPOWBlockGetBlocksHandler(std::shared_ptr<Message> msg) {

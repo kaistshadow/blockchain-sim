@@ -1,3 +1,6 @@
+// "Copyright [2021] <kaistshadow>"
+
+#include <memory>
 #include "ProtocolLayerEx1.h"
 
 using namespace libBLEEP_BL;
@@ -38,8 +41,7 @@ bool BL_ProtocolLayerEx1::InitiateProtocol() {
 }
 
 bool BL_ProtocolLayerEx1::StopProtocol() {
-    // TODO : implement 
-
+    // TODO : implement
     // do nothing?
     return true;
 }

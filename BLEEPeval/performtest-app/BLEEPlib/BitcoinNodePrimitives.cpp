@@ -1,6 +1,12 @@
+// "Copyright [2021] <kaistshadow>"
+
 //
 // Created by ilios on 21. 2. 15..
 //
+
+#include <string>
+#include <vector>
+#include <list>
 #include <iostream>
 #include "BitcoinNodePrimitives.h"
 #include <random>
@@ -69,7 +75,6 @@ void BitcoinNodePrimitives::OpAfterConnected(int data_fd) {
 
 
 BitcoinNodePrimitives::BlockInfo BitcoinNodePrimitives::MakeBlockInfo(uint256 _blockhash, uint256 _prevblockhash, uint32_t _timestamp, unsigned long _txcount) {
-
     struct BitcoinNodePrimitives::BlockInfo newBlock;
     newBlock.prevblockhash = _prevblockhash.ToString();
     newBlock.blockhash = _blockhash.ToString();
@@ -98,8 +103,9 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                     if (recvbufstr.size() >= BLEEP_MAGIC_SIZE + sizeof(int)) {
                         memcpy(&msg_size, recvBuf + BLEEP_MAGIC_SIZE, sizeof(int));
                         // msg length received
-                    } else
+                    } else {
                         break;
+                    }
 
                     // recv entire msg if possible
                     if (msg_size && recvbufstr.size() >= BLEEP_MAGIC_SIZE + sizeof(int) + msg_size) {
@@ -113,7 +119,6 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
 
                         // deserializing MSG complete
                         std::cout << "OpAfterRecv: deserializing MSG complete, MSG type:" << msg->GetType() << "\n";
-
                         if (msg->GetType() == "PING") {
                             // send PONG message
                             std::shared_ptr<libBLEEP_BL::Message> pongMsg = std::make_shared<libBLEEP_BL::Message>(
@@ -130,18 +135,16 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                             SendMsg(data_fd, BLEEP_MAGIC);
                             SendMsg(data_fd, serial_str.size());
                             SendMsg(data_fd, serial_str);
-                            std::cout<<"send Pong message to "<<data_fd<<" \n";
-
-                        } else if( msg->GetType() == "POWBLOCK-INV") {
-
-                            //1. msg hash 값 확인
+                            std::cout << "send Pong message to " << data_fd << " \n";
+                        } else if (msg->GetType() == "POWBLOCK-INV") {
+                            // 1. msg hash 값 확인
                             std::shared_ptr<libBLEEP_BL::POWBlockGossipInventory> inv = std::static_pointer_cast<libBLEEP_BL::POWBlockGossipInventory>(msg->GetObject());
                             auto hashes = inv->GetHashlist();
                             for (auto hash : hashes) {
-                                //2. getdata 메세지 보내기
+                                // 2. getdata 메세지 보내기
                                 std::shared_ptr<libBLEEP_BL::MessageObject> ptrToObj = std::make_shared<libBLEEP_BL::POWBlockGossipGetData>(hash);
                                 std::shared_ptr<libBLEEP_BL::Message> Msg = std::make_shared<libBLEEP_BL::Message>(
-                                        libBLEEP_BL::PeerId(GetIP()), libBLEEP_BL::PeerId(""), "POWBLOCK-GETDATA",ptrToObj);
+                                libBLEEP_BL::PeerId(GetIP()), libBLEEP_BL::PeerId(""), "POWBLOCK-GETDATA", ptrToObj);
 
                                 // serialize message obj into an std::string
                                 std::string serial_str;
@@ -158,41 +161,43 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                         } else if (msg->GetType() == "POWBLOCK-BLK") {
                             std::shared_ptr<libBLEEP_BL::POWBlockGossipBlk> getdata = std::static_pointer_cast<libBLEEP_BL::POWBlockGossipBlk>(msg->GetObject());
                             std::shared_ptr<libBLEEP_BL::POWBlock> blkptr = getdata->GetBlock();
-                            std::cout<<"powblock-blk message "<<blkptr->GetBlockHash()<<" / prevhash = "<<blkptr->GetPrevBlockHash()<<" / tx cont = "<<blkptr->GetTransactions().size()<<"\n";
+                            std::cout << "powblock-blk message " << blkptr->GetBlockHash() << " / prevhash = " << blkptr->GetPrevBlockHash() << " / tx cont = " << blkptr->GetTransactions().size() << "\n";
 
-                            //block insert to blockforest
+                            // block insert to blockforest
                             std::vector<std::string> txlist;
                             std::list<std::shared_ptr<libBLEEP_BL::SimpleTransaction>> block_txs = blkptr->GetTransactions();
-                            for(auto transaction : block_txs) {
+                            for (auto transaction : block_txs) {
                                 txlist.push_back(transaction->_id.GetTxHash().str());
                             }
 
-                            if(blkptr->GetPrevBlockHash()==libBLEEP::UINT256_t(NULL)){
-                                isMonitoring=true;
+                            if (blkptr->GetPrevBlockHash() == libBLEEP::UINT256_t(NULL)) {
+                                isMonitoring = true;
                             }
-                            if(isMonitoring) {
+                            if (isMonitoring) {
                                 uint32_t time = uint32_t(blkptr->GetTimestamp());
-                                if(!UpdateBlock(blkptr->GetBlockHash().str(), blkptr->GetPrevBlockHash().str(),time, txlist)){
-                                    std::cout<<"block is already exist / blockhash = "<<blkptr->GetBlockHash().str()<< "\n";
+                                if (!UpdateBlock(blkptr->GetBlockHash().str(), blkptr->GetPrevBlockHash().str(), time, txlist)) {
+                                    std::cout << "block is already exist / blockhash = " << blkptr->GetBlockHash().str() << "\n";
                                 }
-                                std::cout<<"block successfully register / blockhash = "<<blkptr->GetBlockHash().str()<<" \n";
+                                std::cout << "block successfully register / blockhash = " << blkptr->GetBlockHash().str() << "\n";
                             }
                         } else if (msg->GetType() =="TXGOSSIP-INV") {
                             std::shared_ptr<libBLEEP_BL::TxGossipInventory> inv = std::static_pointer_cast<libBLEEP_BL::TxGossipInventory>(msg->GetObject());
                             auto tids = inv->GetTransactionIds();
                             std::vector<libBLEEP_BL::SimpleTransactionId> getdataIds;
-                            for(auto tid: tids){
-                                global_txtimepool->register_txtime(tid.GetTxHash().str(),libBLEEP::GetGlobalClock());
+                            for (auto tid: tids) {
+                                global_txtimepool->register_txtime(tid.GetTxHash().str(), libBLEEP::GetGlobalClock());
                             }
                         }
 
                         // Maybe, recvBuffer can be updated efficiently. (minimizing a duplication)
                         std::string remain = recvbufstr.substr(BLEEP_MAGIC_SIZE + sizeof(int) + msg_size);
                         tcpControl.SetRecvBuffer(remain);
-                    } else
+                    } else {
                         break;
-                } else
+                    }
+                } else {
                     break;
+                }
             }
             break;
         }
@@ -259,14 +264,13 @@ std::string BitcoinNodePrimitives::generate() {
 
     std::shared_ptr<libBLEEP_BL::MessageObject> ptrToObj = std::make_shared<libBLEEP_BL::TxGossipTxs>(txs);
     _txToBroadcast = ptrToObj;
-    global_txtimepool->register_txtime(hash_out_256.str(),libBLEEP::GetGlobalClock());
-    std::cout<<"txgentimer generate new tx = "<<tx->_id.GetTxHash()<<"\n";
+    global_txtimepool->register_txtime(hash_out_256.str(), libBLEEP::GetGlobalClock());
+    std::cout << "txgentimer generate new tx = " << tx->_id.GetTxHash() << "\n";
 
     return tx->_id.GetTxHash().str();
 }
 
 void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {
-
     std::shared_ptr<libBLEEP_BL::MessageObject> ptrToObj = _txToBroadcast;
     std::shared_ptr<libBLEEP_BL::Message> message = std::make_shared<libBLEEP_BL::Message>(
             libBLEEP_BL::PeerId(GetIP()), libBLEEP_BL::PeerId(""), "TXGOSSIP-TXS", ptrToObj);
@@ -278,15 +282,12 @@ void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {
     boost::archive::binary_oarchive oa(s);
     oa << message;
     s.flush();
-
     SendMsg(data_fd, BLEEP_MAGIC);
     SendMsg(data_fd, serial_str.size());
     SendMsg(data_fd, serial_str);
     std::cout << "send tx message to " << data_fd << "\n";
-
 }
 
-void BitcoinNodePrimitives::LoadBlock(int data_fd) {
-//    if(!UpdateBlock(blkptr->GetBlockHash().str(), blkptr->GetPrevBlockHash().str(),time, txlist)){
-
-}
+// void BitcoinNodePrimitives::LoadBlock(int data_fd) {
+// //    if(!UpdateBlock(blkptr->GetBlockHash().str(), blkptr->GetPrevBlockHash().str(),time, txlist)){
+// }

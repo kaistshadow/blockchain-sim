@@ -1,3 +1,5 @@
+// "Copyright [2021] <kaistshadow>"
+
 #include "BL_MainEventManager.h"
 #include "BL1_socket/SocketLayer_API.h"
 #include "BL2_peer_connectivity/PeerConnectivityLayer_API.h"
@@ -11,7 +13,6 @@ using namespace libBLEEP_BL;
 using namespace libBLEEP;
 
 int main(int argc, char *argv[]) {
-
     gArgs.ParseParameters(argc, argv);
 
     if (gArgs.IsArgSet("-?") || gArgs.IsArgSet("-h") ||  gArgs.IsArgSet("-help") || gArgs.IsArgSet("-version")) {
@@ -47,7 +48,7 @@ int main(int argc, char *argv[]) {
     std::cout << "after connect" << "\n";
 
     /* loop mainEventManager */
-    while(true) {
+    while (true) {
         std::cout << "while" << "\n";
         MainEventManager::Instance()->Wait(); // main event loop (wait for next event)
 

@@ -1,11 +1,15 @@
+// "Copyright [2021] <kaistshadow>"
+
+
+#include <string>
+#include <memory>
+
+#include "AddrManager.h"
+using namespace libBLEEP_BL;
 #include "utility/UInt256.h"
 #include "utility/GlobalClock.h"
 #include "utility/Random.h"
 #include "crypto/SHA256.h"
-
-#include "AddrManager.h"
-using namespace libBLEEP_BL;
-
 
 // private methods
 int AddrManager::GetNewBucket(Address& addr) {
@@ -23,7 +27,6 @@ int AddrManager::GetNewBucket(Address& addr) {
     libBLEEP::UINT256_t hash(hash_buf,32);
     hash = hash % 1024;
 
-    
     uint64_t Nbucket = hash.getint();
     std::cout << "1024 mod result:" << Nbucket << "\n";
     return Nbucket;
@@ -59,7 +62,6 @@ AddrManager::AddrManager() {
 void AddrManager::Add(Address addr) {
     int bucket = GetNewBucket(addr);
     int bucketPosition = GetBucketPosition(addr, bucket);
-            
     bool fInsert = (vvNew[bucket][bucketPosition] == -1);
     if (!fInsert) {
         // if there's already valid address in bucket
@@ -67,15 +69,12 @@ void AddrManager::Add(Address addr) {
         // if it's the same address, update the timestamp.
         // otherwise just ignore the new address.
         // (TODO : replacement algorithm should be implemented)
-        
         int existAddrId = vvNew[bucket][bucketPosition];
         if (mapAddr[existAddrId].GetString() == addr.GetString()) {
             mapAddr[existAddrId].UpdateTimestamp(libBLEEP::GetGlobalClock());
         }
-            
         // // remove prev addr
         // mapAddr.erase(vvNew[bucket][bucketPosition]);
-
         // // overwrite
         // vvNew[bucket][bucketPosition] = addrId;
         // mapAddr[addrId] = addr;
@@ -105,7 +104,6 @@ std::vector<Address> AddrManager::GetAddresses() {
     for (unsigned int n = 0; n < vIds.size(); n++) {
         if (vAddr.size() >= 1000) // maximum size of address vector is 1000
             break;
-                
         const Address& addr = mapAddr[vIds[n]];
         vAddr.push_back(addr);
     }
@@ -116,7 +114,6 @@ std::vector<Address> AddrManager::GetAddresses() {
 std::shared_ptr<Address> AddrManager::SelectAddressFromTable() {
     if (mapAddr.size() == 0)
         return nullptr;
-    
     // get all ids
     std::vector<int> vIds;
     vIds.reserve(mapAddr.size());
@@ -126,7 +123,6 @@ std::shared_ptr<Address> AddrManager::SelectAddressFromTable() {
     // random shuffle
     auto rng = *(libBLEEP::get_global_random_source().get_default_random_source());
     std::shuffle(std::begin(vIds), std::end(vIds), rng);
-            
     return std::make_shared<Address>(mapAddr[vIds[0]]);
 }
 

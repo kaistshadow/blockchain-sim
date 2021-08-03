@@ -1,9 +1,11 @@
+// "Copyright [2021] <kaistshadow>"
+
 //
 // Created by csrc on 21. 4. 12..
 //
 
-#ifndef BLEEP_BLOCKS_H
-#define BLEEP_BLOCKS_H
+#ifndef BLEEPEVAL_PERFORMTEST_LIBRARY_SRC_UTILITY_BLOCKS_H_
+#define BLEEPEVAL_PERFORMTEST_LIBRARY_SRC_UTILITY_BLOCKS_H_
 
 #include <map>
 #include <queue>
@@ -17,16 +19,17 @@ class blocktreebase;
 class blockforest;
 
 class shared_timepool {
-private:
+ private:
     std::unordered_map<std::string, uint32_t> txtimes;
     std::mutex _lock;
-public:
+
+ public:
     void register_txtime(std::string txhash, uint32_t time);
     uint32_t get_txtime(std::string txhash);
 };
 extern shared_timepool* global_txtimepool;
 class block {
-private:
+ private:
     std::string hexHash;
     std::string hexPrevHash;
     uint32_t time;
@@ -34,7 +37,8 @@ private:
     blocktreebase* treebase;
     std::vector<std::string> txHashes;
     unsigned long int net_tx_latency;
-public:
+
+ public:
     block(std::string hexHash, std::string hexPrevHash, uint32_t time);
     std::string getHexHash();
     std::string getHexPrevHash();
@@ -50,11 +54,12 @@ public:
     void setNetTxLatency(unsigned long int netLatency);
 };
 class blocktreebase {
-private:
+ private:
     block* besttip;
     int height;
     std::queue<block*> blocks;
-public:
+
+ public:
     blocktreebase(block* bp);
     void add_block(block* bp);
     void recalc_height_from_block(block* bp);
@@ -64,12 +69,13 @@ public:
 };
 
 class blockforest {
-private:
+ private:
     std::map<std::string, block*> blockmap;
     std::multimap<std::string, block*> blockchilds;
     int height;
     block* besttip;
-public:
+
+ public:
     blockforest();
     int add_block(block* bp);
     block* get_besttip();
@@ -79,4 +85,4 @@ blockforest bf;
 blockforest get_blockforest() { return bf; }
 bool UpdateBlock(std::string hexHash, std::string hexPrevHash, uint32_t time, std::vector<std::string> txs);
 
-#endif //BLEEP_BLOCKS_H
+#endif  // BLEEPEVAL_PERFORMTEST_LIBRARY_SRC_UTILITY_BLOCKS_H_

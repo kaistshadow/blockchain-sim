@@ -1,3 +1,5 @@
+// "Copyright [2021] <kaistshadow>"
+
 //
 // Created by csrc on 21. 4. 12..
 //
@@ -77,7 +79,7 @@ void blocktreebase::add_block(block* bp) {
 void blocktreebase::recalc_height_from_block(block* bp) {
     block* cur = bp;
     int cur_height = 0;
-    while(cur->getParent()) {
+    while (cur->getParent()) {
         cur_height++;
         cur = cur->getParent();
     }
@@ -157,10 +159,10 @@ block* blockforest::get_besttip() {
 }
 
 bool UpdateBlock(std::string hexHash, std::string hexPrevHash, uint32_t time, std::vector<std::string> txs) {
-    block* bp = new block(hexHash, hexPrevHash,time);
-    if(!bp)
+    block* bp = new block(hexHash, hexPrevHash, time);
+    if (!bp)
         return false;
-    for (int i = 0; i<txs.size(); i++) {
+    for (int i = 0; i < txs.size(); i++) {
         bp->pushTxHash(txs[i]);
     }
     // add block to forest

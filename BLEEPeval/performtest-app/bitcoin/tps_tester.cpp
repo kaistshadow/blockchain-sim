@@ -1,3 +1,5 @@
+// "Copyright [2021] <kaistshadow>"
+
 //
 // Created by ilios on 21. 2. 23..
 //
@@ -13,7 +15,7 @@ int main(int argc, char* argv[]) {
     std::string txgenIP = argv[1];
     std::string monitorIP = argv[2];
     int targetNum = atoi(argv[3]);
-    std::cout<<"tps_tester start "<<txgenIP<<", "<<monitorIP<<"\n";
+    std::cout << "tps_tester start " << txgenIP << ", " << monitorIP << "\n";
     exported_main(); // initialize bitcoin
     ECC_Start();
     ECCVerifyHandle* ecc = new ECCVerifyHandle();
@@ -21,7 +23,7 @@ int main(int argc, char* argv[]) {
     TxBox<TPSPolicy, BitcoinNodePrimitives> tpsBox;
     tpsBox.addNode(txgenIP, monitorIP, 18333);
 
-    for(int i=0; i<targetNum; i++){
+    for (int i = 0; i < targetNum; i++) {
         std::string address;
         int port = 18333;
         sprintf(&address[0], "1.%d.0.1", i);

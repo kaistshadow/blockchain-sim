@@ -1,6 +1,11 @@
+// "Copyright [2021] <kaistshadow>"
+
 //
 // Created by ilios on 21. 2. 15..
 //
+
+#include <string>
+#include <vector>
 #include <iostream>
 #include "BitcoinNodePrimitives.h"
 #include <random>
@@ -20,7 +25,7 @@ void BitcoinNodePrimitives::OpAfterConnect(int conn_fd) {
     switch (_type) {
         case NodeType::Attacker: {
             // send initializing version message
-            const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
+            const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9};  // for mainnet f9beb4d9
 
             // their_addr
             assert(_targetPort != -1 && _targetIP != "");
@@ -47,7 +52,7 @@ void BitcoinNodePrimitives::OpAfterConnect(int conn_fd) {
                                                                           myNodeStartingHeight, true);
 
             size_t nMessageSize = msg.data.size();
-            //size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
+            // size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
             LogPrint(BCLog::NET, "sending %s (%d bytes) \n", SanitizeString(msg.command.c_str()), nMessageSize);
 
             vector<unsigned char> serializedHeader;
@@ -90,20 +95,23 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
     while (recvbufstr.size() > 0) {
         // first, dump a message header
         CNetMessage msg(Params().MessageStart(), SER_NETWORK,
-                        INIT_PROTO_VERSION); // error when bitcoin is not initialized
+                        INIT_PROTO_VERSION);  // error when bitcoin is not initialized
         int headerReadSize = msg.readHeader(recvbufstr.c_str(), recvbufstr.size());
-        if (headerReadSize < 0) {// error while reading header
+        if (headerReadSize < 0) {
+            // error while reading header
             std::cout << "error while reading header" << "\n";
             assert(-1);
         }
-        if (!msg.in_data) // header is not fully received
+        if (!msg.in_data)
+             // header is not fully received
             return;
 
         // second, dump a message
         string msgstr = recvbufstr.substr(headerReadSize);
         int msgReadSize = msg.readData(msgstr.c_str(),
                                        msgstr.size());  // TODO : can be optimized to check size before dumping
-        if (msgReadSize < 0) {// error??
+        if (msgReadSize < 0) {
+            // error??
             std::cout << "unrecognized error while reading data" << "\n";
             assert(-1);
         }
@@ -118,7 +126,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
             return;
         } else {
             // data is fully received, so handle the message
-            const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
+            const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9};  // for mainnet f9beb4d9
 
             if (memcmp(msg.hdr.pchMessageStart, MessageStartChars, CMessageHeader::MESSAGE_START_SIZE) != 0) {
                 cout << "INVALID MESSAGESTART " << msg.hdr.GetCommand() << "\n";
@@ -198,7 +206,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                                                                                        myNodeStartingHeight, true);
 
                     size_t nMessageSize = replymsg.data.size();
-                    //size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
+                    // size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
                     LogPrint(BCLog::NET, "sending %s (%d bytes) \n", SanitizeString(replymsg.command.c_str()),
                              nMessageSize);
 
@@ -242,7 +250,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 CSerializedNetMsg replymsg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::PONG, nonce);
 
                 size_t nMessageSize = replymsg.data.size();
-                //size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
+                // size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
                 // LogPrint(BCLog::NET, "sending %s (%d bytes) \n", SanitizeString(msg.command.c_str()), nMessageSize);
 
                 vector<unsigned char> serializedHeader;
@@ -258,7 +266,6 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                     SendMsg(data_fd, replymsg.data);
 
                 if (_type == NodeType::Shadow && !_informed) {
-
                     // print attack success message
                     cout
                             << "Interception of target node's outgoing connection is confirmed"
@@ -304,10 +311,10 @@ void BitcoinNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::du
         unreLegiIPcount = min(unreLegiIPcount, (int) vUnreachIP.size());
         if (!vReachableIP.empty())
             sample(vReachableIP.begin(), vReachableIP.end(), back_inserter(vAddr), legiIPcount,
-                   mt19937{random_device{}()});
+                   mt19937{random_device {}()});
         if (!vUnreachIP.empty())
             sample(vUnreachIP.begin(), vUnreachIP.end(), back_inserter(vAddr), unreLegiIPcount,
-                   mt19937{random_device{}()});
+                   mt19937{random_device {}()});
     } else {
         // if it's attack phase
         int totalIPCount = std::min(1000, (int) (periodLength * ipPerSec));
@@ -321,13 +328,13 @@ void BitcoinNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::du
 
         if (!vReachableIP.empty())
             std::sample(vReachableIP.begin(), vReachableIP.end(), std::back_inserter(vAddr), legiIPcount,
-                        std::mt19937{std::random_device{}()});
+                        std::mt19937{std::random_device {}()});
         if (!vUnreachIP.empty())
             std::sample(vUnreachIP.begin(), vUnreachIP.end(), std::back_inserter(vAddr), unreLegiIPcount,
-                        std::mt19937{std::random_device{}()});
+                        std::mt19937{std::random_device {}()});
         if (!vShadowIP.empty())
             std::sample(vShadowIP.begin(), vShadowIP.end(), std::back_inserter(vAddr), shadowIPcount,
-                        std::mt19937{std::random_device{}()});
+                        std::mt19937{std::random_device {}()});
         std::cout << "debug print start (attack phase)" << "\n";
         std::cout << "legiIPcount:" << legiIPcount << ", unreachable legiIPCount:" << unreLegiIPcount
                   << ", shadowIPcount:" << shadowIPcount << "\n";
@@ -339,7 +346,7 @@ void BitcoinNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::du
 
     // Create a ADDR message for `vIP`,
     // then push it to message queue
-    const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
+    const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9};  // for mainnet f9beb4d9
 
     ServiceFlags nLocalNodeServices = ServiceFlags(NODE_NETWORK | NODE_WITNESS | NODE_NETWORK_LIMITED);
     std::vector<CAddress> vCAddr;

@@ -1,3 +1,5 @@
+// "Copyright [2021] <kaistshadow>"
+
 //
 // Created by ilios on 21. 4. 6..
 //
@@ -23,6 +25,5 @@ int main() {
     }
     attackBox.startAttack();
     std::cout << "attack finished" << "\n";
-
     return 0;
 }

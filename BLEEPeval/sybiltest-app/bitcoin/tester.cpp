@@ -1,3 +1,5 @@
+// "Copyright [2021] <kaistshadow>"
+
 //
 // Created by ilios on 21. 2. 23..
 //
@@ -13,7 +15,7 @@
 using namespace sybiltest;
 
 int main() {
-    exported_main(); // initialize bitcoin
+    exported_main();  // initialize bitcoin
 
     AttackBox<ErebusAttackPolicy, BitcoinNodePrimitives, BitcoinNodeParams, BitcoinIPDatabase> attackBox;
     attackBox.setTarget("1.0.0.1", 8333);

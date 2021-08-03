@@ -1,6 +1,9 @@
+// "Copyright [2021] <kaistshadow>"
+
 //
 // Created by ilios on 21. 2. 15..
 //
+#include <string>
 #include <iostream>
 #include "BLNodePrimitives.h"
 
@@ -67,8 +70,9 @@ void BLNodePrimitives::OpAfterRecv(int data_fd, std::string recv_str) {
                     if (recvbufstr.size() >= BLEEP_MAGIC_SIZE + sizeof(int)) {
                         memcpy(&msg_size, recvBuf + BLEEP_MAGIC_SIZE, sizeof(int));
                         // msg length received
-                    } else
+                    } else {
                         break;
+                    }
 
                     // recv entire msg if possible
                     if (msg_size && recvbufstr.size() >= BLEEP_MAGIC_SIZE + sizeof(int) + msg_size) {
@@ -110,14 +114,15 @@ void BLNodePrimitives::OpAfterRecv(int data_fd, std::string recv_str) {
                             SendMsg(data_fd, serial_str.size());
                             SendMsg(data_fd, serial_str);
                         }
-
                         // Maybe, recvBuffer can be updated efficiently. (minimizing a duplication)
                         std::string remain = recvbufstr.substr(BLEEP_MAGIC_SIZE + sizeof(int) + msg_size);
                         tcpControl.SetRecvBuffer(remain);
-                    } else
+                    } else {
                         break;
-                } else
+                    }
+                } else {
                     break;
+                }
             }
             break;
         }

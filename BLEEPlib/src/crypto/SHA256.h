@@ -6,8 +6,8 @@
  * Details:    Defines the API for the corresponding SHA1 implementation.
  *********************************************************************/
 
-#ifndef SHA256_H
-#define SHA256_H
+#ifndef BLEEPLIB_SRC_CRYPTO_SHA256_H_
+#define BLEEPLIB_SRC_CRYPTO_SHA256_H_
 
 /*************************** HEADER FILES ***************************/
 #include <stddef.h>
@@ -32,4 +32,4 @@ void sha256_update(SHA256_CTX *ctx, const BYTE data[], size_t len);
 void sha256_update(SHA256_CTX *ctx, const char data[], size_t len);
 void sha256_final(SHA256_CTX *ctx, BYTE hash[]);
 
-#endif   // SHA256_H
+#endif   // BLEEPLIB_SRC_CRYPTO_SHA256_H_

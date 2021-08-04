@@ -51,6 +51,6 @@ class TxBox : public TestPolicy <NodePrimitives> {
         return 0;
     }
 };
-} // namespace tpstest
+}  // namespace tpstest
 
-#endif // BLEEPEVAL_PERFORMTEST_LIBRARY_SRC_TXBOX_H_
+#endif  // BLEEPEVAL_PERFORMTEST_LIBRARY_SRC_TXBOX_H_

@@ -106,11 +106,11 @@ class BL_PeerConnectivityLayer_API {
                     PeerId peerId(addr->GetString());
                     std::shared_ptr<Peer> peer = _peerManager.FindPeer(peerId);
                     /* std::cout << "Addr:" << addr->GetString() << "\n"; */
-                    if (peer && peer->IsActive())
+                    if (peer && peer->IsActive()) {
                         continue;
-                    else if (peer && peer->IsTryConnect())
+                    } else if (peer && peer->IsTryConnect()) {
                         continue;
-                    else if (peer) {
+                    } else if (peer) {
                         std::cout << "connect to existing peer " << addr->GetString() << "\n";
                         // TODO : when it is happened? and what is the correct implementation?
                         libBLEEP::M_Assert(0, "to be implemented");
@@ -131,6 +131,6 @@ class BL_PeerConnectivityLayer_API {
         _timer.start();
     }
 };
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL2_PEER_CONNECTIVITY_PEERCONNECTIVITYLAYER_API_H_
+#endif  // BLEEPLIB_SRC_BL2_PEER_CONNECTIVITY_PEERCONNECTIVITYLAYER_API_H_

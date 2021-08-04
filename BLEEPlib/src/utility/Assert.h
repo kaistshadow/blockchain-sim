@@ -18,6 +18,6 @@ namespace libBLEEP {
 
     void __M_Assert(const char *expr_str, bool expr, const char *file, int line, const char *msg);
 
-} // namespace libBLEEP
+}  // namespace libBLEEP
 
-#endif // BLEEPLIB_SRC_UTILITY_ASSERT_H_
+#endif  // BLEEPLIB_SRC_UTILITY_ASSERT_H_

@@ -88,4 +88,4 @@ namespace libBLEEP_BL {
     };
 
 }
-#endif //BLEEP_TXGOSSIPPROTOCOLMSG_H
+#endif  // BLEEP_TXGOSSIPPROTOCOLMSG_H

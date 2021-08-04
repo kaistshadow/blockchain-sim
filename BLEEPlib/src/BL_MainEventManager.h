@@ -254,6 +254,6 @@ class MainEventManager {
     bool ExistAsyncEvent() { return !_eventQueue.empty(); }
     AsyncEvent PopAsyncEvent();
 };
-}  // namespace libBLEEP_BL
+}   // namespace libBLEEP_BL
 
-#endif  // BLEEPLIB_SRC_BL_MAINEVENTMANAGER_H_
+#endif   // BLEEPLIB_SRC_BL_MAINEVENTMANAGER_H_

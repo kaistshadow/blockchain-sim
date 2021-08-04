@@ -20,7 +20,7 @@ class AdvertisementManager {
     Address _selfAddr;
     std::map<PeerId, std::vector< Address >, PeerIdCompare> _addrToSend;
     // TODO : Maybe, change to unordered_map which is more efficient for large data
-    std::map<PeerId, std::unordered_set<Address>, PeerIdCompare> _addrKnown; // already known address
+    std::map<PeerId, std::unordered_set<Address>, PeerIdCompare> _addrKnown;  // already known address
     // TODO : we need to convert _addrKnown as Bloom Filter (similar to Bitcoin)
 
     // send addr message to peers
@@ -60,7 +60,7 @@ class AdvertisementManager {
             _outer = outer;
             _time = time;
             _timer.set<AdvertisementTimer, &AdvertisementTimer::_timerCallback>(this);
-            _timer.set(1, time); //repeat every 'time' seconds
+            _timer.set(1, time);  //repeat every 'time' seconds
             // TODO : add a randomness for timer's 'time'
             _timer.start();
         }
@@ -70,6 +70,6 @@ class AdvertisementManager {
     };
     std::unique_ptr<AdvertisementTimer> _advTimer;
 };
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL2_PEER_CONNECTIVITY_ADVERTISEMENTMANAGER_H_
+#endif  // BLEEPLIB_SRC_BL2_PEER_CONNECTIVITY_ADVERTISEMENTMANAGER_H_

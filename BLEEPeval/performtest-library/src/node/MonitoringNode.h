@@ -144,6 +144,6 @@ class MonitoringNode : public Node<NodePrimitives> {
         return true;
     }
 };
-} // namespace tpstest
+}  // namespace tpstest
 
-#endif // BLEEPEVAL_PERFORMTEST_LIBRARY_SRC_NODE_MONITORINGNODE_H_
+#endif  // BLEEPEVAL_PERFORMTEST_LIBRARY_SRC_NODE_MONITORINGNODE_H_

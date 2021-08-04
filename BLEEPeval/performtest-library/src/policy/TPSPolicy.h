@@ -100,6 +100,6 @@ class TPSPolicy {
  protected:
     struct ev_loop *libev_loop = nullptr;
 };
-} // namespace tpstest
+}  // namespace tpstest
 
-#endif // BLEEPEVAL_PERFORMTEST_LIBRARY_SRC_POLICY_TPSPOLICY_H_
+#endif  // BLEEPEVAL_PERFORMTEST_LIBRARY_SRC_POLICY_TPSPOLICY_H_

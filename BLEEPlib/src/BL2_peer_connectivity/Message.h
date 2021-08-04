@@ -37,7 +37,7 @@ class Message {
     std::shared_ptr<MessageObject> _ptrToObj;
     std::string _messageId; // TODO : should include message_hashid
 
-    static std::string GenMessageHash(std::string msg){
+    static std::string GenMessageHash(std::string msg) {
         unsigned char digest[SHA256_BLOCK_SIZE];
         SHA256_CTX ctx;
         sha256_init(&ctx);
@@ -77,7 +77,7 @@ class Message {
     PeerId GetDest() const { return _dest; }
 
     /* std::string GenMessageHash(std::string msg);         */
- private: // boost serialization
+ private:  // boost serialization
     friend class boost::serialization::access;
     // When the class Archive corresponds to an output archive, the
     // & operator is defined similar to <<.  Likewise, when the class Archive
@@ -101,9 +101,9 @@ class Message {
     }
 };
 
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
 
 
 
-#endif // BLEEPLIB_SRC_BL2_PEER_CONNECTIVITY_MESSAGE_H_
+#endif  // BLEEPLIB_SRC_BL2_PEER_CONNECTIVITY_MESSAGE_H_

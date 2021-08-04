@@ -30,7 +30,7 @@ class Inventory : public MessageObject {
     }
 };
 
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
 
-#endif // BLEEPLIB_SRC_BL3_PROTOCOL_INVENTORY_H_
+#endif  // BLEEPLIB_SRC_BL3_PROTOCOL_INVENTORY_H_

@@ -21,7 +21,7 @@ class Address {
     std::string GetString() const { return _addr; }
     void UpdateTimestamp(double timestamp) { _timestamp = timestamp; }
 
- private: // boost serialization
+ private:  // boost serialization
     friend class boost::serialization::access;
     // When the class Archive corresponds to an output archive, the
     // & operator is defined similar to <<.  Likewise, when the class Archive
@@ -31,27 +31,26 @@ class Address {
         ar & _addr;
     }
 
- public: // for unordered_set
+ public:  // for unordered_set
     bool operator==(const Address &addr) const {
         if (_addr == addr.GetString()) {
             return true;
-        } else { 
+        } else {
             return false;
         }
     }
 };
 
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-// in order to use Address as a key of associative container
+//  in order to use Address as a key of associative container
 namespace std {
-    template<>
-        struct hash<libBLEEP_BL::Address> {
-        size_t operator()(const libBLEEP_BL::Address& obj) const {
-            return hash<string>()(obj.GetString());
-        }
-    };
+template<>
+struct hash<libBLEEP_BL::Address> {
+size_t operator()(const libBLEEP_BL::Address& obj) const {
+    return hash<string>()(obj.GetString());
+}
+};
 }
 
-
-#endif // BLEEPLIB_SRC_BL2_PEER_CONNECTIVITY_ADDRESS_H_
+#endif  // BLEEPLIB_SRC_BL2_PEER_CONNECTIVITY_ADDRESS_H_

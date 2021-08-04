@@ -15,7 +15,7 @@
 namespace libBLEEP_BL {
 class AddrManager {
  private:
-    int nIdCount; // TODO : need to reset at some point
+    int nIdCount;  // TODO : need to reset at some point
     std::map<int, Address> mapAddr;
     int vvNew[NUM_BUCKET][BUCKET_SIZE];
 
@@ -27,9 +27,9 @@ class AddrManager {
     void Add(Address addr);
     std::vector<Address> GetAddresses();
     // TODO : new outgoing connection based on addresstable
-    std::shared_ptr<Address> SelectAddressFromTable(); // if duplicated connection?
+    std::shared_ptr<Address> SelectAddressFromTable();  // if duplicated connection?
     void PrintAddressTable();
 };
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL2_PEER_CONNECTIVITY_ADDRMANAGER_H_
+#endif  // BLEEPLIB_SRC_BL2_PEER_CONNECTIVITY_ADDRMANAGER_H_

@@ -56,7 +56,7 @@ void MainEventManager::Wait() {
     while (!_eventQueue.empty()) {
         AsyncEvent event = _eventQueue.front();
         if (_internalHandleEventEnum < event.GetType()) {
-            return; // The event should be handled externally. So return
+            return;  // The event should be handled externally. So return
         } else {
             // The event should be handled internally, so pop the event from the queue
             // and transmit to the proper layer

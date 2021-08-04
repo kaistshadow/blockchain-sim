@@ -37,7 +37,7 @@ class POWMiner {
     void StopMining();
 
  private:
-    ev::timer _timer; //mining timer
+    ev::timer _timer;  //mining timer
     std::shared_ptr<const POWBlock> _candidateBlk;
     bool _isMining = false;
 
@@ -82,6 +82,6 @@ class POWMiner {
         /* next_shadow_clock_update("==== done handling miningTimer callback"); */
     }
 };
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL3_PROTOCOL_POWMINER_H_
+#endif  // BLEEPLIB_SRC_BL3_PROTOCOL_POWMINER_H_

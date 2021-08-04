@@ -25,6 +25,6 @@ struct MoneroNodeParams {
     // static constexpr std::chrono::system_clock::duration preparePhaseTimeLength = std::chrono::hours(30*24);
     static constexpr std::chrono::system_clock::duration preparePhaseTimeLength = std::chrono::hours(1);
 };
-} // namespace sybiltest
+}  // namespace sybiltest
 
 #endif  // BLEEPEVAL_SYBILTEST_APP_MONERO_MONERONODEPARAMS_H_

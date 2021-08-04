@@ -22,7 +22,7 @@ class BL_SocketLayer_API {
 
 
  public:
-    virtual ~BL_SocketLayer_API(){};
+    virtual ~BL_SocketLayer_API() {}
 
     /* Switch asynchronous event to proper handler */
     virtual void SwitchAsyncEventHandler(AsyncEvent &event);
@@ -36,7 +36,7 @@ class BL_SocketLayer_API {
 
     virtual void DisconnectSocket(int fd);
 
-    virtual void CloseAllListenSocket() {_socketManager.CloseAllListenSocket();} ;
+    virtual void CloseAllListenSocket() {_socketManager.CloseAllListenSocket();}
 
  protected:
     SocketManager _socketManager;
@@ -54,6 +54,6 @@ class BL_SocketLayer_API {
     virtual void ConnectFailedHandler(int fd, std::string domain);
 };
 
-}
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL1_SOCKET_SOCKETLAYER_API_H_
+#endif  // BLEEPLIB_SRC_BL1_SOCKET_SOCKETLAYER_API_H_

@@ -180,7 +180,7 @@ class Node : public NodePrimitives {
     }
 
     void listencb(ev::io &w, int revents) {
-        struct sockaddr_in their_addr; /* connector's address information */
+        struct sockaddr_in their_addr;  /* connector's address information */
         int sock_fd;
         socklen_t sin_size;
 

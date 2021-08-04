@@ -31,7 +31,7 @@ class Socket {
     int _fd;
 
  public:
-    virtual ~Socket() {};
+    virtual ~Socket() {}
     virtual SocketTypeEnum GetType() = 0;
 
     int GetFD() { return _fd; }
@@ -45,7 +45,7 @@ class ListenSocket : public Socket {
      private:
         ev::io _watcher;
 
-        void _listenSocketIOCallback (ev::io &w, int revents) {
+        void _listenSocketIOCallback(ev::io &w, int revents) {
             std::cout << "listen socket IO callback called!" << "\n";
 
             AsyncEvent event(AsyncEventEnum::SocketAccept);
@@ -70,7 +70,7 @@ class ListenSocket : public Socket {
 
  public:
     ListenSocket(int port = DEFAULT_SOCKET_PORT);
-    ListenSocket(int port, const char* shadow_addr); // constructor for shadow-ip
+    ListenSocket(int port, const char* shadow_addr);  // constructor for shadow-ip
 
     int DoAccept(); /* do accept and return file descriptor */
 
@@ -132,7 +132,7 @@ class ConnectSocket : public Socket {
         // But, watcher should be stop
         // A class’s destructor (whether or not you explicitly define one) automatically invokes the destructors for member objects.
         // They are destroyed in the reverse order they appear within the declaration for the class.
-    };
+    }
 
     virtual SocketTypeEnum GetType() { return SocketTypeEnum::ConnectSocket; }
 };
@@ -216,6 +216,6 @@ class DataSocket : public Socket {
     virtual SocketTypeEnum GetType() { return SocketTypeEnum::DataSocket; }
 };
 
-}
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL1_SOCKET_SOCKET_H_
+#endif  // BLEEPLIB_SRC_BL1_SOCKET_SOCKET_H_

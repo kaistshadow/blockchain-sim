@@ -135,6 +135,6 @@ class SimpleTransaction {
         ar & amount;
     }
 };
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL3_PROTOCOL_TRANSACTION_H_
+#endif  // BLEEPLIB_SRC_BL3_PROTOCOL_TRANSACTION_H_

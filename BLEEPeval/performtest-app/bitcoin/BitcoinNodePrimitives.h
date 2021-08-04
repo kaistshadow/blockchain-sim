@@ -113,7 +113,7 @@ class BitcoinNodePrimitives {
     // method for Monitoring node
     void LoadBlock(int data_fd);
 };
-} // namespace tpstest
+}  // namespace tpstest
 
 
-#endif // BLEEPEVAL_PERFORMTEST_APP_BITCOIN_BITCOINNODEPRIMITIVES_H_
+#endif  // BLEEPEVAL_PERFORMTEST_APP_BITCOIN_BITCOINNODEPRIMITIVES_H_

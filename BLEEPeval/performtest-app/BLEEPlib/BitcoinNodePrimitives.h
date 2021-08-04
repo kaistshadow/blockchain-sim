@@ -122,7 +122,7 @@ class BitcoinNodePrimitives {
     bool isMonitoring = false;
     std::shared_ptr<libBLEEP_BL::MessageObject> _txToBroadcast;
 };
-} // namespace tpstest
+}  // namespace tpstest
 
 
-#endif // BLEEPEVAL_PERFORMTEST_APP_BLEEPLIB_BITCOINNODEPRIMITIVES_H_
+#endif  // BLEEPEVAL_PERFORMTEST_APP_BLEEPLIB_BITCOINNODEPRIMITIVES_H_

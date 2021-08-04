@@ -24,7 +24,7 @@ int AddrManager::GetNewBucket(Address& addr) {
     std::cout << "addrStr:" << addrStr << "\n";
     sha256_update(&ctx, addrStr.c_str(), addrStr.size());
     sha256_final(&ctx, hash_buf);
-    libBLEEP::UINT256_t hash(hash_buf,32);
+    libBLEEP::UINT256_t hash(hash_buf, 32);
     hash = hash % 1024;
 
     uint64_t Nbucket = hash.getint();
@@ -41,7 +41,7 @@ int AddrManager::GetBucketPosition(Address& addr, int Nbucket) {
     sha256_update(&ctx, addrStr.c_str(), addrStr.size());
     sha256_update(&ctx, (unsigned char*)&Nbucket, sizeof(int));
     sha256_final(&ctx, hash_buf);
-    libBLEEP::UINT256_t hash(hash_buf,32);
+    libBLEEP::UINT256_t hash(hash_buf, 32);
     hash = hash % 64;
     uint64_t bucketPos = hash.getint();
     std::cout << "bucket position:" << bucketPos << "\n";
@@ -84,7 +84,6 @@ void AddrManager::Add(Address addr) {
         vvNew[bucket][bucketPosition] = addrId;
         mapAddr[addrId] = addr;
     }
-
 }
 
 std::vector<Address> AddrManager::GetAddresses() {
@@ -94,15 +93,16 @@ std::vector<Address> AddrManager::GetAddresses() {
     // get all ids
     std::vector<int> vIds;
     vIds.reserve(mapAddr.size());
-    for (auto const& imap: mapAddr)
+    for (auto const& imap : mapAddr) {
         vIds.push_back(imap.first);
+    }
 
     // random shuffle
     auto rng = *(libBLEEP::get_global_random_source().get_default_random_source());
     std::shuffle(std::begin(vIds), std::end(vIds), rng);
 
     for (unsigned int n = 0; n < vIds.size(); n++) {
-        if (vAddr.size() >= 1000) // maximum size of address vector is 1000
+        if (vAddr.size() >= 1000)  // maximum size of address vector is 1000
             break;
         const Address& addr = mapAddr[vIds[n]];
         vAddr.push_back(addr);
@@ -117,7 +117,7 @@ std::shared_ptr<Address> AddrManager::SelectAddressFromTable() {
     // get all ids
     std::vector<int> vIds;
     vIds.reserve(mapAddr.size());
-    for (auto const& imap: mapAddr)
+    for (auto const& imap : mapAddr)
         vIds.push_back(imap.first);
 
     // random shuffle

@@ -43,7 +43,7 @@ BL_PeerConnectivityLayer_API::BL_PeerConnectivityLayer_API(std::string myPeerId)
 
     // Initiate timer for sending a ping message periodically.
     _ping_timer.set<BL_PeerConnectivityLayer_API, &BL_PeerConnectivityLayer_API::_pingtimerCallback>(this);
-    _ping_timer.set(60, 60); // ping-pong for every minute (60 seconds)
+    _ping_timer.set(60, 60);  // ping-pong for every minute (60 seconds)
     _ping_timer.start();
 
     // append shadow log
@@ -198,7 +198,7 @@ void BL_PeerConnectivityLayer_API::RecvMsgHandler(PeerId sourcePeerId,
             // relay address
             if (size <= 10) {
                 auto rng = *(libBLEEP::get_global_random_source().get_default_random_source());
-                std::uniform_int_distribution<> dist(1,2); // number of relay
+                std::uniform_int_distribution<> dist(1,2);  // number of relay
                 int relayCount = dist(rng);
                 std::map<PeerId, std::shared_ptr<Peer>, PeerIdCompare>& peers = _peerManager.GetPeers();
                 // std::set<int> indexset;

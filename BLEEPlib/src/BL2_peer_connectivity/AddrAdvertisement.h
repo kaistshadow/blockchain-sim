@@ -17,7 +17,7 @@ class AddrAd : public MessageObject  {
     AddrAd(std::vector< Address > vAddr) { _vAddr = vAddr; }
     std::vector< Address >& GetVAddr() { return _vAddr; }
 
- private: // boost serialization
+ private:  // boost serialization
     friend class boost::serialization::access;
     // When the class Archive corresponds to an output archive, the
     // & operator is defined similar to <<.  Likewise, when the class Archive
@@ -25,11 +25,11 @@ class AddrAd : public MessageObject  {
     template<class Archive>
         void serialize(Archive & ar, const unsigned int version) {
         ar & boost::serialization::base_object<MessageObject>(*this);
-        boost::serialization::void_cast_register<MessageObject,AddrAd>();
+        boost::serialization::void_cast_register<MessageObject, AddrAd>();
         ar & _vAddr;
     }
 };
 
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL2_PEER_CONNECTIVITY_ADDRADVERTISEMENT_H_
+#endif  // BLEEPLIB_SRC_BL2_PEER_CONNECTIVITY_ADDRADVERTISEMENT_H_

@@ -14,7 +14,7 @@ class DataSocket;
 
 class PeerId {
  private:
-    std::string _id; // unique identifier of the peer (e.g. : domain)
+    std::string _id;  // unique identifier of the peer (e.g. : domain)
  public:
     PeerId() {}
     PeerId(std::string id) {
@@ -23,7 +23,7 @@ class PeerId {
 
     std::string GetId() const { return _id; }
 
- private: // boost serialization
+ private:  // boost serialization
     friend class boost::serialization::access;
     // When the class Archive corresponds to an output archive, the
     // & operator is defined similar to <<.  Likewise, when the class Archive
@@ -106,6 +106,6 @@ class Peer {
     bool IsTryConnect() { return tryConnect; }
 };
 
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL2_PEER_CONNECTIVITY_PEER_H_
+#endif  // BLEEPLIB_SRC_BL2_PEER_CONNECTIVITY_PEER_H_

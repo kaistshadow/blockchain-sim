@@ -11,6 +11,7 @@ void shared_timepool::register_txtime(std::string txhash, uint32_t time) {
     txtimes.insert({txhash, time});
     _lock.unlock();
 }
+
 uint32_t shared_timepool::get_txtime(std::string txhash) {
     _lock.lock();
     auto it = txtimes.find(txhash);
@@ -20,6 +21,7 @@ uint32_t shared_timepool::get_txtime(std::string txhash) {
     }
     return 0;
 }
+
 shared_timepool* global_txtimepool = new shared_timepool();
 block::block(std::string hexHash, std::string hexPrevHash, uint32_t time) {
     this->hexHash = hexHash;
@@ -28,39 +30,51 @@ block::block(std::string hexHash, std::string hexPrevHash, uint32_t time) {
     parent = nullptr;
     net_tx_latency = 0;
 }
+
 std::string block::getHexHash() {
     return hexHash;
 }
+
 std::string block::getHexPrevHash() {
     return hexPrevHash;
 }
+
 uint32_t block::getTime() {
     return time;
 }
+
 size_t block::getTxCount() {
     return txHashes.size();
 }
+
 block* block::getParent() {
     return parent;
 }
+
 void block::setParent(block* bp) {
     parent = bp;
 }
+
 void block::pushTxHash(std::string txHash) {
     txHashes.push_back(txHash);
 }
+
 std::vector<std::string> block::getTxHashes() {
     return txHashes;
 }
+
 void block::setTreebase(blocktreebase* tb) {
     treebase = tb;
 }
+
 blocktreebase* block::getTreebase() {
     return treebase;
 }
+
 unsigned long int block::getNetTxLatency() {
     return net_tx_latency;
 }
+
 void block::setNetTxLatency(unsigned long int netLatency) {
     net_tx_latency = netLatency;
 }

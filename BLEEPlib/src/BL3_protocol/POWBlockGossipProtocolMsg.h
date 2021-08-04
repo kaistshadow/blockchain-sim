@@ -31,7 +31,7 @@ class POWBlockGossipInventory : public MessageObject {
 
     std::vector <std::string> &GetHashlist() { return _vHash; }
 
- private: // boost serialization
+ private:  // boost serialization
     friend class boost::serialization::access;
 
     template<class Archive>
@@ -55,7 +55,7 @@ class POWBlockGossipGetBlocks : public MessageObject {
 
     std::vector <std::string> &GetBlockLocator() { return _blkLocator; }
 
- private: // boost serialization
+ private:  // boost serialization
     friend class boost::serialization::access;
 
     template<class Archive>
@@ -77,7 +77,7 @@ class POWBlockGossipGetData : public MessageObject {
     }
     std::string &GetBlockHash() { return _blkhash; }
 
- private: // boost serialization
+ private:  // boost serialization
     friend class boost::serialization::access;
 
     template<class Archive>
@@ -99,7 +99,7 @@ class POWBlockGossipBlk : public MessageObject {
     }
     std::shared_ptr<POWBlock> &GetBlock() { return _blk; }
 
- private: // boost serialization
+ private:  // boost serialization
     friend class boost::serialization::access;
 
     template<class Archive>
@@ -108,6 +108,6 @@ class POWBlockGossipBlk : public MessageObject {
         ar & _blk;
     }
 };
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL3_PROTOCOL_POWBLOCKGOSSIPPROTOCOLMSG_H_
+#endif  // BLEEPLIB_SRC_BL3_PROTOCOL_POWBLOCKGOSSIPPROTOCOLMSG_H_

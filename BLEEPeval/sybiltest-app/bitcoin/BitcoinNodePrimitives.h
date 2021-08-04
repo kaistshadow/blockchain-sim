@@ -99,4 +99,4 @@ class BitcoinNodePrimitives {
 };
 }  // namespace sybiltest
 
-#endif // BLEEPEVAL_SYBILTEST_APP_BITCOIN_BITCOINNODEPRIMITIVES_H_
+#endif  // BLEEPEVAL_SYBILTEST_APP_BITCOIN_BITCOINNODEPRIMITIVES_H_

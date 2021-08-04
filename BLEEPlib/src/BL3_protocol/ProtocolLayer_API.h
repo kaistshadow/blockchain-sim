@@ -56,7 +56,7 @@ class BL_ProtocolLayer_API {
     virtual bool StopProtocol() = 0;
 };
 
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
 
-#endif // BLEEPLIB_SRC_BL3_PROTOCOL_PROTOCOLLAYER_API_H_
+#endif  // BLEEPLIB_SRC_BL3_PROTOCOL_PROTOCOLLAYER_API_H_

@@ -386,6 +386,6 @@ std::ostream & operator<<(std::ostream & stream, const UINT256_t & rhs);
 std::string gen_test(const UINT128_t & rhs);
 std::string gen_test(const UINT256_t & rhs);
 
-} // namespace libBLEEP
+}  // namespace libBLEEP
 
-#endif // BLEEPLIB_SRC_UTILITY_UINT256_H_
+#endif  // BLEEPLIB_SRC_UTILITY_UINT256_H_

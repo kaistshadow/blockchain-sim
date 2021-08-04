@@ -74,6 +74,6 @@ class ArgsManager {
 };
 
 extern ArgsManager gArgs;
-} // namespace libBLEEP
+}  // namespace libBLEEP
 
-#endif // BLEEPLIB_SRC_UTILITY_ARGSMANAGER_H_
+#endif  // BLEEPLIB_SRC_UTILITY_ARGSMANAGER_H_

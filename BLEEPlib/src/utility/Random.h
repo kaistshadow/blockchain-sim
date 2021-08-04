@@ -23,6 +23,6 @@ class random_source {
 
 random_source& get_global_random_source();
 
-} // namespace libBLEEP
+}  // namespace libBLEEP
 
 

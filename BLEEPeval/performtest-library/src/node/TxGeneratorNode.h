@@ -166,6 +166,6 @@ class TxGeneratorNode : public Node<NodePrimitives> {
         _txgenerateTimer.start();
     }
 };
-} // namespace tpstest
+}  // namespace tpstest
 
-#endif // BLEEPEVAL_PERFORMTEST_LIBRARY_SRC_NODE_TXGENERATORNODE_H_
+#endif  // BLEEPEVAL_PERFORMTEST_LIBRARY_SRC_NODE_TXGENERATORNODE_H_

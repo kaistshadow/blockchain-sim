@@ -72,6 +72,6 @@ class Block {
     }
 };
 
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL3_PROTOCOL_BLOCK_H_
+#endif  // BLEEPLIB_SRC_BL3_PROTOCOL_BLOCK_H_

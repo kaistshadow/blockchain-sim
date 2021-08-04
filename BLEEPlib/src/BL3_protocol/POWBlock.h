@@ -88,8 +88,8 @@ class POWBlock : public Block {
     libBLEEP::UINT256_t prev_block_hash;
 
     double timestamp = 0;
-    libBLEEP::UINT256_t difficulty = 0;  // Currently, it's just threshold value. (unlike real bitcoin formula)
+    libBLEEP::UINT256_t difficulty = 0;   // Currently, it's just threshold value. (unlike real bitcoin formula)
 };
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL3_PROTOCOL_POWBLOCK_H_
+#endif  // BLEEPLIB_SRC_BL3_PROTOCOL_POWBLOCK_H_

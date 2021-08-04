@@ -64,6 +64,6 @@ class TxGossipProtocol {
 
     void RecvTxsHandler(std::shared_ptr<Message> msg);
 };
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL3_PROTOCOL_TXGOSSIPPROTOCOL_H_
+#endif  // BLEEPLIB_SRC_BL3_PROTOCOL_TXGOSSIPPROTOCOL_H_

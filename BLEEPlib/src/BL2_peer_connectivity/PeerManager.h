@@ -44,6 +44,6 @@ class PeerManager {
     int GetIncomingPeerNum() { return _inPeerNum; }
 };
 
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL2_PEER_CONNECTIVITY_PEERMANAGER_H_
+#endif  // BLEEPLIB_SRC_BL2_PEER_CONNECTIVITY_PEERMANAGER_H_

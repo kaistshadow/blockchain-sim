@@ -134,5 +134,5 @@ class ShadowLayer {
 
 extern std::unique_ptr<ShadowLayer> g_ShadowLayer;
 
-}
-#endif // BLEEPLIB_SRC_BL_SHADOWLAYER_H_
+}  // namespace libBLEEP_BL
+#endif  // BLEEPLIB_SRC_BL_SHADOWLAYER_H_

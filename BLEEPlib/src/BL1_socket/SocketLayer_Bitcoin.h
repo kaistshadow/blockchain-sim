@@ -36,6 +36,6 @@ class BL_SocketLayer_Bitcoin: public BL_SocketLayer_API {
     void RecvHandler(int fd);
 };
 
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL1_SOCKET_SOCKETLAYER_BITCOIN_H_
+#endif  // BLEEPLIB_SRC_BL1_SOCKET_SOCKETLAYER_BITCOIN_H_

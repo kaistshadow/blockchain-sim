@@ -20,6 +20,6 @@ class MessageObject {
         void serialize(Archive & ar, const unsigned int version) {
     }
 };
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL2_PEER_CONNECTIVITY_MESSAGEOBJECT_H_
+#endif  // BLEEPLIB_SRC_BL2_PEER_CONNECTIVITY_MESSAGEOBJECT_H_

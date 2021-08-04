@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <memory>
 
-//#include <boost/shared_ptr.hpp>
+// #include <boost/shared_ptr.hpp>
 
 #include "Transaction.h"
 
@@ -35,6 +35,6 @@ class TxPool {
     void PrintPool();
 };
 
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL3_PROTOCOL_TXPOOL_H_
+#endif  // BLEEPLIB_SRC_BL3_PROTOCOL_TXPOOL_H_

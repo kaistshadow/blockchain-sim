@@ -56,6 +56,6 @@ class SocketManager {
     std::shared_ptr<DataSocket> GetDataSocket(int fd);
 };
 
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL1_SOCKET_SOCKETMANAGER_H_
+#endif  // BLEEPLIB_SRC_BL1_SOCKET_SOCKETMANAGER_H_

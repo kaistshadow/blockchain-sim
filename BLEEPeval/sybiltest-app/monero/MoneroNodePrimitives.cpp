@@ -25,8 +25,7 @@ using namespace std;
 
 // to deal with peerlist
 static nodetool::peerlist_entry create_peerlist_entry(std::string _ip_str, int _port) {
-//    nodetool::peerlist_entry ple;
-
+    // nodetool::peerlist_entry ple;
     std::uint32_t ip = inet_addr(_ip_str.c_str());
     if (INADDR_NONE == ip) {
         std::cout << "inet_addr failed" << "\n";
@@ -106,9 +105,9 @@ void MoneroNodePrimitives::OpAfterConnect(int conn_fd) {
             SendMsgUsingMsgHdr(conn_fd, buff_to_send);
 
 
-//            boost::program_options::variables_map vm;
-//            daemonize::t_core core{vm};
-//            t_protocol_raw m_protocol{core.get(), nullptr, false};
+    // boost::program_options::variables_map vm;
+    // daemonize::t_core core{vm};
+    // t_protocol_raw m_protocol{core.get(), nullptr, false};
 
             break;
         }
@@ -290,25 +289,24 @@ void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                         }
                         break;
                     }
-//                    case nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA>::ID:
-//                    {
-//                        typedef nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA> COMMAND_HANDSHAKE;
-//                        typedef COMMAND_HANDSHAKE::request t_req;
-//                        typedef COMMAND_HANDSHAKE::response t_resp;
-//                        epee::serialization::portable_storage strg;
-//                        if (!strg.load_from_binary(buff_to_invoke)) {
-//                            std::cout << "Failed to load_from_binary in command " << command << "\n";
-//                            exit(-1);
-//                        }
-//                        boost::value_initialized<t_req> in_struct;
-//                        boost::value_initialized<t_resp> out_struct;
-//                        if (!static_cast<t_req&>(in_struct).load(strg)) {
-//                            std::cout << "Failed to load in_struct in command " << command << "\n";
-//                            exit(-1);
-//                        }
-//
-//                        // try_ping? back_ping? at handle_handshake
-//                    }
+        // case nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA>::ID:
+        // {
+        //     typedef nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA> COMMAND_HANDSHAKE;
+        //     typedef COMMAND_HANDSHAKE::request t_req;
+        //     typedef COMMAND_HANDSHAKE::response t_resp;
+        //     epee::serialization::portable_storage strg;
+        //     if (!strg.load_from_binary(buff_to_invoke)) {
+        //         std::cout << "Failed to load_from_binary in command " << command << "\n";
+        //         exit(-1);
+        //     }
+        //     boost::value_initialized<t_req> in_struct;
+        //     boost::value_initialized<t_resp> out_struct;
+        //     if (!static_cast<t_req&>(in_struct).load(strg)) {
+        //         std::cout << "Failed to load in_struct in command " << command << "\n";
+        //         exit(-1);
+        //     }
+        //     // try_ping? back_ping? at handle_handshake
+        // }
                     default:
                         break;
                 }
@@ -321,27 +319,26 @@ void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
 
 
 
-//        int command;
-//        COMMAND::ID == command
-//        typedef nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA>::request t_req;
-//        typedef nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA>::response t_resp;
-//        epee::serialization::portable_storage strg;
-//        if(!strg.load_from_binary(epee::strspan<uint8_t>(recvbufstr)))
-//        {
-//            std::cout << "Failed to load_from_binary" << "\n";
-//            return;
-//        }
-//        typename COMMAND::request, typename COMMAND::response
-//        boost::value_initialized<t_in_type> in_struct;
-//        boost::value_initialized<t_out_type> out_struct;
-//
-//        if (!static_cast<t_in_type&>(in_struct).load(strg))
-//        {
-//            on_levin_traffic(context, false, false, true, in_buff.size(), command);
-//            LOG_ERROR("Failed to load in_struct in command " << command);
-//            return -1;
-//        }
-//        on_levin_traffic(context, false, false, false, in_buff.size(), command);
+    // int command;
+    // COMMAND::ID == command
+    // typedef nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA>::request t_req;
+    // typedef nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA>::response t_resp;
+    // epee::serialization::portable_storage strg;
+    // if(!strg.load_from_binary(epee::strspan<uint8_t>(recvbufstr)))
+    // {
+    // std::cout << "Failed to load_from_binary" << "\n";
+    // return;
+    // }
+    // typename COMMAND::request, typename COMMAND::response
+    // boost::value_initialized<t_in_type> in_struct;
+    // boost::value_initialized<t_out_type> out_struct;
+    // if (!static_cast<t_in_type&>(in_struct).load(strg))
+    // {
+    // on_levin_traffic(context, false, false, true, in_buff.size(), command);
+    // LOG_ERROR("Failed to load in_struct in command " << command);
+    // return -1;
+    // }
+    // on_levin_traffic(context, false, false, false, in_buff.size(), command);
 
 
         // first, dump a message header

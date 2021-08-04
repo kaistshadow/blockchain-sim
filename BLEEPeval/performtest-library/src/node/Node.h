@@ -298,4 +298,4 @@ class Node : public NodePrimitives {
 };
 }  // namespace tpstest
 
-#endif // BLEEPEVAL_PERFORMTEST_LIBRARY_SRC_NODE_NODE_H_
+#endif  // BLEEPEVAL_PERFORMTEST_LIBRARY_SRC_NODE_NODE_H_

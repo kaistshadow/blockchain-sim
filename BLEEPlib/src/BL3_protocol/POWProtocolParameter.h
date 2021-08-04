@@ -19,4 +19,4 @@ class POWProtocolParameter : public ProtocolParameter {
     int miningnodecnt = 1;
 };
 }
-#endif // BLEEPLIB_SRC_BL3_PROTOCOL_POWPROTOCOLPARAMETER_H_
+#endif  // BLEEPLIB_SRC_BL3_PROTOCOL_POWPROTOCOLPARAMETER_H_

@@ -49,6 +49,6 @@ class Logger {
 };
 
 extern Logger gLog;
-} // namespace libBLEEP
+}  // namespace libBLEEP
 
-#endif // BLEEPLIB_SRC_UTILITY_LOGGER_H_
+#endif  // BLEEPLIB_SRC_UTILITY_LOGGER_H_

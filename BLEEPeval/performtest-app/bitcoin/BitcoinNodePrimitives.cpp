@@ -399,9 +399,7 @@ void BitcoinNodePrimitives::LoadBlock(int data_fd) {
             CSerializedNetMsg replymsg2 = CNetMsgMaker(PROTOCOL_VERSION).Make(SERIALIZE_TRANSACTION_NO_WITNESS, NetMsgType::GETDATA, vInv2);
 
             size_t nMessageSize2 = replymsg2.data.size();
-//            std::cout<<"sending %s (%d bytes) "<<block_hash2.ToString()<<" \n";
-
-
+            // std::cout<<"sending %s (%d bytes) "<<block_hash2.ToString()<<" \n";
             vector<unsigned char> serializedHeader2;
             serializedHeader2.reserve(CMessageHeader::HEADER_SIZE);
             uint256 hash2 = Hash(replymsg2.data.data(), replymsg2.data.data() + nMessageSize2);

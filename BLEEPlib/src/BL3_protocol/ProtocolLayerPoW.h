@@ -22,11 +22,11 @@
 namespace libBLEEP_BL {
 
     // PoW parameters
-//    extern int txNumPerBlock;
-//    extern double txGenStartAt;
-//    extern double txGenInterval;
-//    extern double miningtime;
-//    extern int miningnodecnt;
+    // extern int txNumPerBlock;
+    // extern double txGenStartAt;
+    // extern double txGenInterval;
+    // extern double miningtime;
+    // extern int miningnodecnt;
 
 class BL_ProtocolLayerPoW : public BL_ProtocolLayer_API {
  private:
@@ -39,14 +39,14 @@ class BL_ProtocolLayerPoW : public BL_ProtocolLayer_API {
  public:
     BlockTree<POWBlock>& GetBlockTree() { return _blocktree; }
 
- private: // PoW parameter
+ private:  // PoW parameter
     int txNumPerBlock = 2;
     double txGenStartAt = 0;
     double txGenInterval = 4;
     double miningtime = 2;
     int miningnodecnt = 1;
 
- private: // Block propagation protocol-related data structure (processing inventory)
+ private:  // Block propagation protocol-related data structure (processing inventory)
     std::vector <std::string> _processingBlkinv;
     bool _processing = false;
     bool HasProcessingInv() { return _processing; }
@@ -134,6 +134,6 @@ class BL_ProtocolLayerPoW : public BL_ProtocolLayer_API {
     virtual bool InitiateProtocol(ProtocolParameter* params);
     virtual bool StopProtocol();
 };
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL3_PROTOCOL_PROTOCOLLAYERPOW_H_
+#endif  // BLEEPLIB_SRC_BL3_PROTOCOL_PROTOCOLLAYERPOW_H_

@@ -27,6 +27,7 @@ class shared_timepool {
     void register_txtime(std::string txhash, uint32_t time);
     uint32_t get_txtime(std::string txhash);
 };
+
 extern shared_timepool* global_txtimepool;
 class block {
  private:
@@ -53,6 +54,7 @@ class block {
     unsigned long int getNetTxLatency();
     void setNetTxLatency(unsigned long int netLatency);
 };
+
 class blocktreebase {
  private:
     block* besttip;

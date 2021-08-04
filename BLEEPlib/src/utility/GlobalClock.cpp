@@ -6,7 +6,7 @@
 
 using namespace libBLEEP;
 
-long libBLEEP::globalclock_starttime = 946684800; // hardcoded for shadow start time
+long libBLEEP::globalclock_starttime = 946684800;  // hardcoded for shadow start time
 
 // buf needs to store 30 characters
 static int timespec2str(char *buf, uint len, struct timespec *ts) {

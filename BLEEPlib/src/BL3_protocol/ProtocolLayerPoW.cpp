@@ -203,7 +203,7 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockBlkHandler(std::shared_ptr<Message> msg) 
                 BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(msg->GetSource(), message);
 
                 invAllProcessed = false;
-                break; // request only a single block
+                break;  // request only a single block
             }
         }
 
@@ -287,7 +287,7 @@ bool BL_ProtocolLayerPoW::InitiateProtocol() {
 }
 
 bool BL_ProtocolLayerPoW::InitiateProtocol(ProtocolParameter* params) {
-//    POWProtocolParameter& powparams = dynamic_cast<POWProtocolParameter &>(params);
+    // POWProtocolParameter& powparams = dynamic_cast<POWProtocolParameter &>(params);
     POWProtocolParameter* powparams = dynamic_cast<POWProtocolParameter*>(params);
     assert(powparams != nullptr);
     if (!_initiated) {

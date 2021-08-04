@@ -30,7 +30,7 @@ void BL_ProtocolLayer_API::InitInstance(std::string protocolType) {
         _instance = new BL_ProtocolLayerEx1();
     else if (protocolType == "PoW")
         _instance = new BL_ProtocolLayerPoW();
-    else // default protocol
+    else  // default protocol
         _instance = new BL_ProtocolLayerEx1();
 }
 

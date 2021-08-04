@@ -282,7 +282,7 @@ void BlockTree<T>::PrintLongestChain() {
         std::cout << blk->GetBlockHash() << "\n";
 
         std::string prevBlockHash = blockIndex->GetPrevBlockHash();
-        if (prevBlockHash == "") { // if blk is genesis block
+        if (prevBlockHash == "") {  // if blk is genesis block
             break;
         } else {
             M_Assert(_ledgermap.find(prevBlockHash) != _ledgermap.end(), "ledger should contain prevBlockHash");

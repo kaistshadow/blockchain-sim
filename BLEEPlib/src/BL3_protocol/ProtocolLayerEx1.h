@@ -54,6 +54,6 @@ class BL_ProtocolLayerEx1 : public BL_ProtocolLayer_API {
     virtual bool InitiateProtocol(ProtocolParameter* params) { return false; }
     virtual bool StopProtocol();
 };
-} // namespace libBLEEP_BL
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL3_PROTOCOL_PROTOCOLLAYEREX1_H_
+#endif  // BLEEPLIB_SRC_BL3_PROTOCOL_PROTOCOLLAYEREX1_H_

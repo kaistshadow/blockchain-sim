@@ -16,13 +16,13 @@ class SocketRecvBuffer {
 
 class RecvBufferManager {
  private:
-    std::map<int, std::shared_ptr<SocketRecvBuffer> > _recvBuffMap; // map fd -> SocketRecvBuffer structure
+    std::map<int, std::shared_ptr<SocketRecvBuffer> > _recvBuffMap;  //  map fd -> SocketRecvBuffer structure
  public:
     void AppendToBuffer(int fd, char* buf, int size);
     std::shared_ptr<SocketRecvBuffer> GetRecvBuffer(int fd);
     void RemoveRecvBuffer(int fd);
 };
 
-}
+}  // namespace libBLEEP_BL
 
-#endif // BLEEPLIB_SRC_BL1_SOCKET_RECVBUFFERMANAGER_H_
+#endif  // BLEEPLIB_SRC_BL1_SOCKET_RECVBUFFERMANAGER_H_

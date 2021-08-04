@@ -361,7 +361,7 @@ void BitcoinNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::du
     CSerializedNetMsg msg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::ADDR, vCAddr);
 
     size_t nMessageSize = msg.data.size();
-//    size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
+    // size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
     LogPrint(BCLog::NET, "sending %s (%d bytes) \n", SanitizeString(msg.command.c_str()), nMessageSize);
 
     std::vector<unsigned char> serializedHeader;

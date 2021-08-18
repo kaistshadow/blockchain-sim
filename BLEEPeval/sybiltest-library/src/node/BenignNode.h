@@ -14,7 +14,7 @@
 #include <netinet/tcp.h>
 #include <errno.h>
 #include <strings.h>
-
+#include <set>
 #include "shadow_interface.h"
 #include "Node.h"
 
@@ -24,8 +24,11 @@ namespace sybiltest {
     template<class NodePrimitives>
     class BenignNode : public Node<NodePrimitives> {
     public:
+
         BenignNode(AttackStat *stat, IPDatabase *ipdb, std::string virtualIp, int listenPort = 0)
-                : Node<NodePrimitives>(stat, ipdb, virtualIp, listenPort, NodeType::Benign) {}
+                : Node<NodePrimitives>(stat, ipdb, virtualIp, listenPort, NodeType::Benign) {
+            _aliveSet = &(ipdb->GetSAliveIP());
+        }
 
         // move constructor
         BenignNode(BenignNode &&other) = default;
@@ -102,7 +105,7 @@ namespace sybiltest {
 
     private:
         ev::timer _connStartTimer;
-
+        std::set<std::string> *_aliveSet;
     private:
 
         int CreateNewSocket() {
@@ -155,26 +158,72 @@ namespace sybiltest {
 
     private:
         ev::timer _churnoutTimer;
-
+        std::set<ev::timer *> churnTimers;
         void _churnoutcb(ev::timer &w, int revents) {
-            for (auto &[fd, watcher] : Node<NodePrimitives>::_mDataSocketWatcher) {
-                watcher.stop();
-                close(fd);
-            }
-            for (auto &[fd, watcher] : Node<NodePrimitives>::_mConnSocketWatcher) {
-                watcher.stop();
-                close(fd);
-            }
-            Node<NodePrimitives>::_listen_watcher.stop();
-            close(Node<NodePrimitives>::_listen_sockfd);
+            Node<NodePrimitives>::ChurnOut();
+            _aliveSet->erase(Node<NodePrimitives>::_targetIP);
             std::cout << "churn out timer is called at " << Node<NodePrimitives>::GetIP() << "\n";
+        }
+        void _churntogglecb(ev::timer &w, int revents) {
+            Node<NodePrimitives>::ChurnToggle();
+            
+            if(Node<NodePrimitives>::isChurnedIn()) {
+                //Only for debugging purpose, erase at deploy
+                if(_aliveSet->count(Node<NodePrimitives>::GetIP()) != 0) {
+
+                    std::cout<<"alive set corrupted: "<<Node<NodePrimitives>::GetIP()<<" should be 0, actually "<<_aliveSet->count(Node<NodePrimitives>::GetIP())<<"\n";
+                    std::cout<<"alive set contents : ";
+                    for(auto ip: *_aliveSet) {
+                        std::cout<<ip<<' ';
+                    }
+
+                    exit(1);
+                }
+                _aliveSet->insert(Node<NodePrimitives>::GetIP());
+            }
+
+            else {
+                if(_aliveSet->count(Node<NodePrimitives>::GetIP()) != 1) {
+                    std::cout<<"alive set corrupted: "<<Node<NodePrimitives>::GetIP()<<" should be 1, actually "<<_aliveSet->count(Node<NodePrimitives>::GetIP())<<"\n";
+                    std::cout<<"alive set contents : ";
+                    for(auto ip: *_aliveSet) {
+                        std::cout<<ip<<' ';
+                    }
+                    exit(1);
+                }
+                _aliveSet->erase(Node<NodePrimitives>::GetIP());
+            }
+
+            if(churnTimers.find(&w) == churnTimers.end()) {
+                std::cout << "ChurnToggle Timers set is corrupted" << "\n";
+                exit(1);
+            }
+            delete &w;
+            churnTimers.erase(&w);
         }
 
     public:
         void SetChurnOutTimer(int uptime) {
+            // Called for legacy code - assumes that the node is already churned in
+            // should churn in the node first
+            //std::cout << "set churn out timer called at " << Node<NodePrimitives>::GetIP() << "\n";
+            Node<NodePrimitives>::ChurnIn();
+            SetChurnToggleTimer(uptime);
+            //std::cout << "set churn out timer success at " << Node<NodePrimitives>::GetIP() << "\n";
+            /*
             _churnoutTimer.set<BenignNode, &BenignNode<NodePrimitives>::_churnoutcb>(this);
             _churnoutTimer.set(uptime, 0.);
             _churnoutTimer.start();
+             */
+        }
+        void SetChurnToggleTimer(int toggletime) {
+            //std::cout << "set churn toggle timer called at " << Node<NodePrimitives>::GetIP() << "\n";
+            ev::timer *toggleTimer = new ev::timer();
+            toggleTimer->set<BenignNode, &BenignNode<NodePrimitives>::_churntogglecb>(this);
+            toggleTimer->set(toggletime, 0.);
+            toggleTimer->start();
+            churnTimers.insert(toggleTimer);
+            //std::cout << "set churn toggle timer success at " << Node<NodePrimitives>::GetIP() << "\n";
         }
     };
 }

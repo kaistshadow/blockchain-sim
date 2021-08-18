@@ -12,8 +12,8 @@ namespace sybiltest {
     struct BitcoinNodeParams {
         //============================== parameters related to EREBUS attack test ======================================
         static constexpr int targetPort = 8333;
-        static constexpr int targetOutgoingConnNum = 5;
-        static constexpr int reachableIPNum = 100000;
+        static constexpr int targetOutgoingConnNum = 8;
+        static constexpr int reachableIPNum = 10;
         static constexpr int unreachableIPNum = 1000000;
         static constexpr int shadowIPNum = 200000;
         static constexpr int addrInjectionStartTime = 15;

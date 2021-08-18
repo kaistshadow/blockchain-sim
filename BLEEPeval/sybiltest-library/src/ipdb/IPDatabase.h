@@ -8,11 +8,12 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <set>
 
 namespace sybiltest {
     class IPDatabase {
     public:
-        std::vector<std::pair<std::string, int>> &GetIPDurationpair() { return _vIPDurationPair; };
+        std::vector<std::pair<std::string, std::vector<int>>> &GetIPDurationpair() { return _vIPDurationPair; };
 
         virtual void Initialize(int reachableIPNum, int unreachableIPNum, int shadowIPNum) = 0;
 
@@ -24,24 +25,28 @@ namespace sybiltest {
 
         std::vector<std::string> &GetVShadowIP() { return _vShadowIP; }
 
-        std::map<std::string, int> &GetMIPDuration() { return _mIPDuration; }
+        std::map<std::string, std::vector<int>> &GetMIPDuration() { return _mIPDuration; }
 
-
+        std::set<std::string> &GetSAliveIP() { return _sAliveIP; }
     protected:
-        void InsertIPDurationPair(std::string ip, int uptimesec) {
-            _vIPDurationPair.push_back({ip, uptimesec});
+        void InsertIPDurationPair(std::string ip, int uptime) {
+            _vIPDurationPair.push_back({ip, {0, uptime}});
+        }
+        void InsertIPDurationPair(std::string ip, std::vector<int> duration) {
+            _vIPDurationPair.push_back({ip, duration});
         }
 
         void InsertAttackerIP(std::string ip) {
             _vAttackerIP.push_back(ip);
         }
 
-        std::vector<std::pair<std::string, int>> _vIPDurationPair;
+        std::vector<std::pair<std::string, std::vector<int>>> _vIPDurationPair;
         std::vector<std::string> _vReachableIP;
-        std::map<std::string, int> _mIPDuration;
+        std::map<std::string, std::vector<int>> _mIPDuration;
         std::vector<std::string> _vUnreachableIP; // not used for basic IPDatabase
         std::vector<std::string> _vAttackerIP; // malicious IPs
         std::vector<std::string> _vShadowIP; // not used for basic IPDatabase
+        std::set<std::string> _sAliveIP; // used for managing alive IP
     };
 }
 #endif //BLEEP_IPDATABASE_H

@@ -21,22 +21,85 @@ namespace sybiltest {
     public:
         BitcoinIPDatabase() {
             // Load and store IP address database from churn.txt
-            std::ifstream read("churn.txt");
+            std::ifstream read("../churn_8333.txt");
             if (read.fail()) {
                 std::cout << "failed to read churn.txt file" << "\n";
                 exit(-1);
             }
-            std::regex re("\\d+\\.\\d+\\.\\d+\\.\\d+");
+            std::regex re("\\d+\\.\\d+\\.\\d+\\.\\d+:8333");
+            //int mintime = 1541030644; // current minimum is 2018-11/1541030644.json
+            /*
+             * 0.19.0 release date: 2019-11-24
+             * use next date of release date as the earliest simulation date
+             *
+             * 2019-11-25: 1577199600
+             * 2021-07-01: 1627743600
+             *
+             * a = 1577199600
+             * b = 1627743600
+             * list(range(a, b, (b-a)//10))
+             * >> [1577199600, 1582254000, 1587308400, 1592362800, 1597417200, 1602471600, 1607526000, 1612580400, 1617634800, 1622689200]
+             */
+            int begintime = 1577199600; // 2018-01-01: 1517410800, minimum time in 2018-11: 1541030644
             for (std::string line; std::getline(read, line);) {
                 auto pos = line.find(' ');
+                /*
+                // Previous version of churn data
                 std::string ip = line.substr(0, pos);
                 int duration = std::stoi(line.substr(pos));
 
                 if (duration > 0 && std::regex_match(ip, re)) {
+                    InsertIPDurationPair(ip, {0, duration});
+                    _mIPDuration[ip] = {0, duration};
+                }
+                 */
+                std::string ipport = line.substr(0, pos);
+                if(!std::regex_match(ipport, re)) {
+                    // Only supports IPv4 with port 8333
+                    continue;
+                }
+                auto delimiter = ipport.find(':');
+                std::string ip = ipport.substr(0, delimiter);
+                int port = stoi(ipport.substr(delimiter+1));
+                vector<int> duration;
+                std::string timestamp;
+
+                /*
+                // For testing, all nodes churned in at beginning, and churned out after one week
+                duration.push_back(0);
+                duration.push_back(60 * 60 * 24 * 7);
+                InsertIPDurationPair(ip, duration);
+                _mIPDuration[ip] = duration;
+                */
+
+                bool alive = false; // indicating if the node is alive
+                bool firstchurn = true; // indicating if first timestamp has been pushed to duration vector
+                // setting small value can cut off churn data, boosting up testing
+                // to test with whole data, set this value at zero or negative value
+                int maxchurn = 0;
+                std::stringstream ss = std::stringstream(line.substr(pos+1));
+                while(std::getline(ss, timestamp, ' ')) {
+                    if(firstchurn && stoi(timestamp) >= begintime) {
+                        // first timestamp to push in
+                        // if alive, the node should be churned out at this timestamp,
+                        // so churn in at the beginning of the simulation
+                        if(alive) duration.push_back(0);
+                        firstchurn = !firstchurn;
+                    }
+                    // After handling first churn in, just push timestamp into duration
+                    if (!firstchurn) {
+                        assert(stoi(timestamp) >= begintime);
+                        duration.push_back(stoi(timestamp) - begintime);
+                        if(--maxchurn == 0) break;
+                    }
+                    alive = !alive;
+                }
+                if (duration.size() > 0) {
                     InsertIPDurationPair(ip, duration);
                     _mIPDuration[ip] = duration;
                 }
             }
+            std::cout<<"parsed benign ip size : "<<_mIPDuration.size()<<"\n";
         }
         void Initialize(int reachableIPNum, int unreachableIPNum, int shadowIPNum) {
             std::set<std::string> sLegiIP;
@@ -47,8 +110,8 @@ namespace sybiltest {
             for (auto&[ip, duration] : _vIPDurationPair) {
                 sLegiIP.insert(ip);
                 reachableIPCount++;
-                if (reachableIPCount == reachableIPNum)
-                    break;
+                //if (reachableIPCount == reachableIPNum)
+                //    break;
             }
 
             if (reachableIPCount < reachableIPNum) {
@@ -69,27 +132,31 @@ namespace sybiltest {
             }
 
             // Collect shadow IPs
+            std::cout<< "shadow IP collecting begin\n";
             for (int i = 0; i < shadowIPNum; i++) {
                 while (true) {
                     std::string randIP = _generateRandomIP();
                     if (sLegiIP.find(randIP) == sLegiIP.end() && sUnreachLegiIP.find(randIP) == sUnreachLegiIP.end() &&
                         sShadowIP.find(randIP) == sShadowIP.end()) {
                         sShadowIP.insert(randIP);
+                        std::cout<<randIP<<"\n";
                         break;
                     }
                 }
             }
+            std::cout<< "shadow IP collecting done\n";
 
             _vReachableIP = std::vector<std::string>(sLegiIP.begin(), sLegiIP.end());
             _vUnreachableIP = std::vector<std::string>(sUnreachLegiIP.begin(), sUnreachLegiIP.end());
             _vShadowIP = std::vector<std::string>(sShadowIP.begin(), sShadowIP.end());
-
+            int attackerNum = 100;
             while (true) {
                 std::string randIP = _generateRandomIP();
                 if (sLegiIP.find(randIP) == sLegiIP.end() && sUnreachLegiIP.find(randIP) == sUnreachLegiIP.end() &&
                     sShadowIP.find(randIP) == sShadowIP.end()) {
                     _vAttackerIP.push_back(randIP);
-                    break;
+                    attackerNum--;
+                    if(attackerNum == 0)break;
                 }
             }
         }

@@ -23,15 +23,17 @@ namespace sybiltest {
 
         // step 1. construct virtual network using sybil nodes
         bool ConstructSybilNet(IPDatabase &ipdb, std::string targetIP, int targetPort) {
-            vector<pair<string, int>> &vIPDurationPair = ipdb.GetIPDurationpair();
+            vector<pair<string, vector<int>>> &vIPDurationPair = ipdb.GetIPDurationpair();
             vector<string> &vAttackerIP = ipdb.GetVAttackerIP();
 
             // Spawn network consisting of benign nodes
-            for (auto &[ip, uptime] : vIPDurationPair) {
+            for (auto &[ip, duration] : vIPDurationPair) {
                 auto &benignNode = _benignNodes.emplace_back(&_attackStat, &ipdb, ip);
 
                 // set a churnout timer for all the benign nodes
-                benignNode.SetChurnOutTimer(uptime);
+                for(auto timestamp: duration) {
+                    benignNode.SetChurnToggleTimer(timestamp);
+                }
             }
             std::cout << "benign node objects are constructed" << "\n";
 

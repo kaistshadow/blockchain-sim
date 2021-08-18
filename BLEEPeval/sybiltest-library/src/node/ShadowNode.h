@@ -18,6 +18,7 @@ namespace sybiltest {
         ShadowNode(AttackStat *stat, IPDatabase *ipdb, std::string virtualIp, int listenPort = 0)
                 : Node<NodePrimitives>(stat, ipdb, virtualIp, listenPort,
                                        NodeType::Shadow) {
+            Node<NodePrimitives>::ChurnIn();
         }
 
         // move constructor

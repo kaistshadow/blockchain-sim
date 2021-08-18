@@ -29,11 +29,11 @@ namespace sybiltest {
         // step 1. construct virtual network using sybil nodes
         bool ConstructSybilNet(IPDatabase &ipdb, std::string targetIP,
                                int targetPort) {
-            vector<pair<string, int>> &vIPDurationPair = ipdb.GetIPDurationpair();
+            vector<pair<string, vector<int>>> &vIPDurationPair = ipdb.GetIPDurationpair();
             ipdb.Initialize(NodeParams::reachableIPNum, NodeParams::unreachableIPNum, NodeParams::shadowIPNum);
 
             vector<string> &vReachableIP = ipdb.GetVReachableIP();
-            map<string, int> &mIPDuration = ipdb.GetMIPDuration();
+            map<string, vector<int>> &mIPDuration = ipdb.GetMIPDuration();
             vector<string> &vAttackerIP = ipdb.GetVAttackerIP();
             vector<string> &vShadowIP = ipdb.GetVShadowIP();
 
@@ -43,9 +43,11 @@ namespace sybiltest {
                 auto &benignNode = _benignNodes.emplace_back(&_attackStat, &ipdb, ip, NodeParams::targetPort);
                 benignNode.SetTarget(targetIP, targetPort);
 
-                // set a churnout timer for all the benign nodes
-                int uptime = mIPDuration[ip];
-                benignNode.SetChurnOutTimer(uptime);
+                // set a churn toggle timer for all the benign nodes
+                vector<int> duration = mIPDuration[ip];
+                for(auto timestamp : duration) {
+                    benignNode.SetChurnToggleTimer(timestamp);
+                }
             }
             std::cout << "benign node objects are constructed" << "\n";
             std::cout << "size of reachable IP:" << vReachableIP.size() << "\n";
@@ -55,19 +57,25 @@ namespace sybiltest {
                 auto &shadowNode = _shadowNodes.emplace_back(&_attackStat, &ipdb, ip, NodeParams::targetPort);
                 shadowNode.SetTarget(targetIP, targetPort);
             }
-
+            std::cout << "spawned shadow nodes\n" ;
             // Spawn attacker node
-            assert(vAttackerIP.size() > 0);
-            _attackerNode = make_unique<ShadowActiveNode<NodePrimitives>>(&_attackStat, &ipdb, vAttackerIP[0]);
+            int attackerNum = 100;
+            assert(vAttackerIP.size() >= attackerNum);
 
-            // Let attacker node to connect to the target
-            _attackerNode->tryConnectToTarget(targetIP, targetPort, 1);
-
+            std::cout << "enough attacker IPs found\n";
+            for(int i=0; i < attackerNum; i++) {
+                ShadowActiveNode<NodePrimitives> *_attackerNode = new ShadowActiveNode<NodePrimitives>(&_attackStat, &ipdb, vAttackerIP[i]);
+                std::cout << "Attacker " << i << ": " << vAttackerIP[i] <<"\n";
+                // Let attacker node to connect to the target
+                _attackerNode->tryConnectToTarget(targetIP, targetPort, 1);
+                _attackerNodes.push_back(_attackerNode);
+            }
+            std::cout << "spawned attacker nodes\n";
             // Let attacker node to periodically call ADDR injection API
             _addrInjectTimer.set<ErebusAttackPolicy, &ErebusAttackPolicy::_timercb>(this);
             _addrInjectTimer.set(NodeParams::addrInjectionStartTime, NodeParams::addrInjectionDelay);
             _addrInjectTimer.start();
-
+            std::cout<< "addrInjectTimer set\n";
 
             return true;
         }
@@ -79,10 +87,14 @@ namespace sybiltest {
 
     private:
         void _timercb(ev::timer &w, int revents) {
-            _attackerNode->OpAddrInjectionTimeout(NodeParams::preparePhaseTimeLength, NodeParams::addrInjectionDelay,
+            std::cout<<"Injecting from attacker "<<attackerNodeIdx<<"\n";
+            _attackerNodes[attackerNodeIdx]->OpAddrInjectionTimeout(NodeParams::preparePhaseTimeLength, NodeParams::addrInjectionDelay,
                                                   NodeParams::addrInjectionIPPerSec,
                                                   NodeParams::addrInjectionShadowRate);
-            _attackerNode->UpdateDataSocketWatcher();
+            _attackerNodes[attackerNodeIdx]->UpdateDataSocketWatcher();
+            attackerNodeIdx++;
+            if(attackerNodeIdx == _attackerNodes.size())
+                attackerNodeIdx = 0;
         }
 
         ev::timer _addrInjectTimer;
@@ -90,8 +102,8 @@ namespace sybiltest {
     private:
         list <BenignNode<NodePrimitives>> _benignNodes;
         list <ShadowNode<NodePrimitives>> _shadowNodes;
-        unique_ptr<ShadowActiveNode<NodePrimitives>> _attackerNode;
-
+        vector<ShadowActiveNode<NodePrimitives> *> _attackerNodes;
+        int attackerNodeIdx = 0;
         AttackStat _attackStat;
 
     private:

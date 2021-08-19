@@ -27,7 +27,7 @@ namespace sybiltest {
         IPDB _ipDatabase;
 
     public:
-        std::vector<ev::timer *> backupTimers;
+        ev::timer *backupTimer;
         int backuptime = 0;
         AttackBox() : AttackPolicy<NodePrimitives, NodeParams>() {}
 
@@ -36,13 +36,12 @@ namespace sybiltest {
             _targetPort = targetPort;
         }
         void BackupPeersDat(ev::timer &w, int revents) {
-            std::string datpath = "";
+            std::string datpath = "data/bcdnode0/";
             // copy file https://stackoverflow.com/a/10195497
             std::ifstream src(datpath + "peers.dat", std::ios::binary);
             std::ofstream dst(datpath + "peers_backup_" + std::to_string(backuptime) + ".dat", std::ios::binary);
             dst << src.rdbuf();
             backuptime++;
-            delete &w;
         }
         bool setupAttack() {
             if (_targetIP == "" || _targetPort == -1)
@@ -51,14 +50,10 @@ namespace sybiltest {
             if (!AttackPolicy<NodePrimitives, NodeParams>::ConstructSybilNet(_ipDatabase, _targetIP,
                                                                              _targetPort))
                 return false;
-            for(int i=0; i < 1000; i++) {
-                // a thousand days is enough
-                ev::timer *backuptimer = new ev::timer();
-                backuptimer->set<AttackBox, &AttackBox::BackupPeersDat>(this);
-                backuptimer->set(24 * 60 * 60 * i, 0.);
-                backuptimer->start();
-                backupTimers.push_back(backuptimer);
-            }
+            backupTimer = new ev::timer();
+            backupTimer->set<AttackBox, &AttackBox::BackupPeersDat>(this);
+            backupTimer->set(0, 24 * 60 * 60);
+            backupTimer->start();
             return true;
         }
 

@@ -12,9 +12,6 @@ sudo sh -c " echo 0 > /proc/sys/kernel/kptr_restrict"
 XMLROOT="../../../../tests/regtest"
 CORECNT=$(nproc)
 
-xmls=(
-	/shadow-bitcoin/5_storage-share/target_example.xml
-	)
 for (( i=0; i<${#xmls[@]}; i++ )); do
 	FILE_DEST="$XMLROOT"${xmls[i]}
 	DIR=${FILE_DEST%/*}

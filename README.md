@@ -24,9 +24,9 @@
 
 - Evaluation <br>
 	- Sybil Attack (e.g., monerod) <br>
-		시빌 공격이란 한 개인이 다수의 노드를 구성해 네트워크를 장악하려는 보안 위협 중 하나이다. BLEEP은 시빌 공격을 에뮬레이션 하기위한 BLEEPeval/sybiltest-app 폴더가 있다. sybiltest-app 폴더안에는 ........
+		시빌 공격이란 한 개인이 다수의 노드를 구성해 네트워크를 장악하려는 보안 위협 중 하나이다. BLEEP은 시빌 공격을 에뮬레이션 하기위한 BLEEPeval/sybiltest-app 폴더가 있다. sybiltest-app 폴더안에는 BLEEPlib(BLEEPP2P), bitcoin, monero에 대해서 실행 해 볼 수 있도록 디렉터리가 구성 되어 있다. 
 	- TPS 및 Latency 측정(e.g., bitcoind) <br>
-		 TPS와 Latency는 네트워크 환경에 따른 어플리케이션의 성능을 측정하하기 위한 대표적인 성능 지표이다. BLEEP은 TPS와 Latency를 에뮬레이션 하기 위한 BLEEPeval/tpstest-app 폴더가 있다. tpstest-app 폴더안에는............
+		 TPS와 Latency는 네트워크 환경에 따른 어플리케이션의 성능을 측정하하기 위한 대표적인 성능 지표이다. BLEEP은 TPS와 Latency를 에뮬레이션 하기 위한 BLEEPeval/performtest-app 폴더가 있다. performtest-app 폴더안에는 bitcoin과 BLEEPlib의 성능을 측정할 수 있도록 디렉터리가 구성 되어 있다.
 
 
 ## What you have to do?

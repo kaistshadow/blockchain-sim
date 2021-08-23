@@ -54,8 +54,11 @@ double libBLEEP::GetGlobalClock() {
     long ms;
     clock_gettime(CLOCK_MONOTONIC, &spec);
     s = spec.tv_sec;
-    ms = spec.tv_nsec / 1000000; 
+    std::cout << "Debug time: " << s <<"\n";
+    ms = spec.tv_nsec / 1000000;
+    std::cout << "Debug time(ms): " << ms <<"\n";
     s -= globalclock_starttime;
+    std::cout << "Debug s-start: " << s <<"\n";
     double curtime = (double)s + (double)ms/1000;
 
     return curtime;

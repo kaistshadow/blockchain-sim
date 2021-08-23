@@ -1,0 +1,4 @@
+add_subdirectory(1_Genesis)
+add_subdirectory(2_peerConnection)
+add_subdirectory(3_stake)
+add_subdirectory(4_blockCreator)

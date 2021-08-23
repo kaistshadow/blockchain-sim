@@ -1,11 +1,14 @@
 ## ensure cmake version
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
-# cmake_policy(SET CMP0048 NEW)
-# project(BLEEPlib VERSION 1.0 LANGUAGES CXX)
+cmake_policy(SET CMP0048 NEW)
+project(BLEEPlib VERSION 1.0 LANGUAGES CXX)
 
 project(BLEEPlib)
 
+add_compile_options(
+        $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,9.3.0>>:-std=c++2a>
+        $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.3.0>>:-std=c++17>)
 
 ## ensure out-of-source build
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
@@ -18,34 +21,10 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/../Install")
 # debug option
 if(BLEEP_DEBUG STREQUAL ON)
   message(STATUS "Debug enabled.")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -std=c++17 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-parentheses -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch") # suppress error for manually installed boost (1.58)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-parentheses -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch") # suppress error for manually installed boost (1.58)
 else(BLEEP_DEBUG STREQUAL ON)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-parentheses -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wno-delete-non-virtual-dtor -Wno-parentheses -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-address -Wno-switch")
 endif(BLEEP_DEBUG STREQUAL ON)
-
-set(SRCS
-        src/BL_MainEventManager.cpp
-        src/BL1_socket/Socket.cpp
-        src/BL1_socket/SocketLayer.cpp
-        src/BL1_socket/SocketManager.cpp
-        src/BL1_socket/RecvBufferManager.cpp
-        src/BL1_socket/SocketLayer_Bitcoin.cpp
-        src/BL2_peer_connectivity/PeerConnectivityLayer.cpp
-        src/BL2_peer_connectivity/PeerManager.cpp
-        src/BL2_peer_connectivity/AddrManager.cpp
-        src/BL2_peer_connectivity/AdvertisementManager.cpp
-        src/BL3_protocol/ProtocolLayerEx1.cpp
-        src/BL3_protocol/TxGossipProtocol.cpp
-        src/BL3_protocol/TxPool.cpp
-        src/utility/UInt256.cpp
-        src/utility/Assert.cpp
-        src/utility/Random.cpp
-        src/utility/ArgsManager.cpp
-        src/utility/tinyxml2.cpp
-        src/utility/Logger.cpp
-        src/crypto/SHA256.cpp
-        src/utility/GlobalClock.cpp)
-
 
 include(GNUInstallDirs)
 
@@ -56,8 +35,60 @@ message(STATUS "CMAKE_INSTALL_INCLUDEDIR:" ${CMAKE_INSTALL_INCLUDEDIR})
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_CURRENT_SOURCE_DIR}/boost/lib")
 
-add_library(BLEEP SHARED ${SRCS})
+add_library(BLEEP SHARED)
 
+target_sources(BLEEP
+        PRIVATE
+        src/BL_MainEventManager.cpp
+        src/BL_MainEventManager.h
+        src/BL1_socket/Socket.cpp
+        src/BL1_socket/SocketLayer_API.cpp
+        src/BL1_socket/SocketManager.cpp
+        src/BL1_socket/RecvBufferManager.cpp
+        src/BL1_socket/SocketLayer_Bitcoin.cpp
+        src/BL2_peer_connectivity/PeerConnectivityLayer_API.cpp
+        src/BL2_peer_connectivity/PeerManager.cpp
+        src/BL2_peer_connectivity/AddrManager.cpp
+        src/BL2_peer_connectivity/AdvertisementManager.cpp
+        src/BL3_protocol/ProtocolLayer_API.cpp
+        src/BL3_protocol/ProtocolLayer_API.h
+        src/BL3_protocol/ProtocolLayerEx1.cpp
+        src/BL3_protocol/ProtocolLayerEx1.h
+        src/BL3_protocol/ProtocolLayerPoW.cpp
+        src/BL3_protocol/ProtocolLayerPoS.cpp
+        src/BL3_protocol/ProtocolLayerPoW.h
+        src/BL3_protocol/ProtocolLayerPoS.h
+        src/BL3_protocol/POWProtocolParameter.h
+        src/BL3_protocol/POSProtocolParameter.h
+        src/BL3_protocol/Block.h
+        src/BL3_protocol/BlockTree.h
+        src/BL3_protocol/BlockTree.cpp
+        src/BL3_protocol/POWBlock.h
+        src/BL3_protocol/POSBlock.h
+        src/BL3_protocol/POWBlock.cpp
+        src/BL3_protocol/POSBlock.cpp
+        src/BL3_protocol/POWMiner.cpp
+        src/BL3_protocol/POSMiner.cpp
+        src/BL3_protocol/POWBlockGossipProtocolMsg.h
+        src/BL3_protocol/POSBlockGossipProtocolMsg.h
+        src/BL3_protocol/TxGossipProtocol.cpp
+        src/BL3_protocol/TxGossipProtocol.h
+        src/BL3_protocol/TxGossipProtocolMsg.h
+        src/BL3_protocol/POSStakes.cpp
+        src/BL3_protocol/TxPool.cpp
+        src/BL3_protocol/PBFTConfig.cpp
+        src/BL3_protocol/PBFTBlock.cpp
+        src/BL3_protocol/PBFTSigning.cpp
+        src/BL3_protocol/PBFTMsgHolder.cpp
+        src/BL3_protocol/ProtocolLayerPBFT.cpp
+        src/utility/UInt256.cpp
+        src/utility/Assert.cpp
+        src/utility/Random.cpp
+        src/utility/ArgsManager.cpp
+        src/utility/tinyxml2.cpp
+        src/utility/Logger.cpp
+        src/crypto/SHA256.cpp
+        src/utility/GlobalClock.cpp)
 
 target_include_directories(BLEEP
   PUBLIC 
@@ -109,12 +140,11 @@ find_package(Libev_4_33 REQUIRED)
 target_link_libraries(BLEEP Libev_4_33::Libev)
 #target_link_libraries(BLEEP -lev)
 target_link_libraries(BLEEP SHADOW_INTERFACE)
+target_link_libraries(BLEEP SHADOW_MEMSHARE_INTERFACE)
 target_link_libraries(BLEEP ${Boost_LIBRARIES})
 
 
 include_directories(${CMAKE_ROOT_SOURCE_DIR}/interfaces/shadow_interface)
+include_directories(${CMAKE_ROOT_SOURCE_DIR}/interfaces/shadow_memshare_interface)
 include_directories(${Boost_INCLUDE_DIRS})
 
-# add tests
-# enable_testing()
-# add_subdirectory(libtest)

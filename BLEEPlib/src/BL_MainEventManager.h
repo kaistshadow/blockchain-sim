@@ -7,30 +7,33 @@
 
 #include "BL2_peer_connectivity/Peer.h"
 #include "BL2_peer_connectivity/Message.h"
+#include "BL3_protocol/POWBlock.h"
+#include "BL3_protocol/POSBlock.h"
 
 namespace libBLEEP_BL {
 
     class DataSocket;
 
     enum class AsyncEventEnum {
-        Base,
-        Layer1_Event_Start,
-        SocketAccept,
-        SocketConnect,
-        SocketConnectFailed,
-        SocketRecv,
-        SocketWrite,
+        Base,                       //0
+        Layer1_Event_Start,         //1
+        SocketAccept,               //2
+        SocketConnect,              //3
+        SocketConnectFailed,        //4
+        SocketRecv,                 //5
+        SocketWrite,                //6
         Layer1_Event_End,
 
 
         Layer2_Event_Start,
-        BitcoinRecvMsg,
+        BitcoinRecvMsg,             //9
 
         //
-        PeerSocketConnect,
-        PeerSocketClose,
-        PeerRecvMsg,
-        PeerNotifyRecv,
+        PeerSocketConnect,          //10
+        PeerSocketConnectFailed,    //11
+        PeerSocketClose,            //12
+        PeerRecvMsg,                //13
+        PeerRecvNotifyPeerId,       //14
         // CompleteAsyncConnectPeer,
         // ErrorAsyncConnectPeer,
         // NewPeerConnected,  /* connection estabilished by neighbor peer */
@@ -39,15 +42,20 @@ namespace libBLEEP_BL {
 
 
         Layer3_Event_Start,
-        ProtocolRecvMsg,
-        Layer3_Event_End,    
+        ProtocolRecvMsg,            //17
+        EmuBlockMiningComplete,     //18
+        Layer3_Event_End,
+
+        UnitTest_Event_Start,
+        FinishTest,                 //21
+        UnitTest_Event_End,
 
         Layer5_Event_END,
         AllEvent,
     };
 
     /* class for data */
-    /* It needs a refactoring! Use polymorphism to reduce data overhead! */
+    /* TODO: It needs a refactoring! Use polymorphism to reduce data overhead! */
     class AsyncEventDataManager {
     private:
         // data for SocketAccept event
@@ -79,7 +87,7 @@ namespace libBLEEP_BL {
         // data for PeerSocketClose event
         std::shared_ptr<DataSocket> _closedSocket;
 
-        // data for PeerNotifyRecv event
+        // data for PeerRecvNotifyPeerId event
         PeerId _neighborId;
         std::shared_ptr<DataSocket> _incomingSocket;
 
@@ -89,6 +97,12 @@ namespace libBLEEP_BL {
 
         // data for ProtocolRecvMsg event
         std::shared_ptr<Message> _protocolMsg;
+
+        // data for EmuBlockMiningComplete
+        std::shared_ptr<POWBlock> _minedBlk;
+
+        // data for POS block minting
+        std::shared_ptr<POSBlock> _minedPOSBlk;
 
     public:
         // data set function for SocketAccept
@@ -131,27 +145,39 @@ namespace libBLEEP_BL {
         uint32_t GetBitcoinPayloadLen() { return _bitcoinPayloadLen; }
         uint32_t GetBitcoinPayloadChecksum() { return _bitcoinPayloadChecksum; }
 
-        // data set function for PeerNotifyRecv
+        // data set function for PeerRecvNotifyPeerId
         void SetNeighborId(PeerId peerId) { _neighborId = peerId; }
+
         void SetIncomingSocket(std::shared_ptr<DataSocket> sock) { _incomingSocket = sock; }
-        // data access function for PeerNotifyRecv
+
+        // data access function for PeerRecvNotifyPeerId
         PeerId GetNeighborId() { return _neighborId; }
+
         std::shared_ptr<DataSocket> GetIncomingSocket() { return _incomingSocket; }
-        
+
         // data set function for PeerSocketConnect
         void SetDataSocket(std::shared_ptr<DataSocket> sock) { _dataSocket = sock; }
+
         // data access function for PeerSocketConnect
         std::shared_ptr<DataSocket> GetDataSocket() { return _dataSocket; }
 
+        // data set function for PeerSocketConnectFailed
+        // SetFailedDomain
+        // data access function for PeerSocketConnectFailed
+        // GetFailedDomain
+
         // data set function for PeerSocketClose
         void SetClosedSocket(std::shared_ptr<DataSocket> sock) { _closedSocket = sock; }
+
         // data access function for PeerSocketClose
         std::shared_ptr<DataSocket> GetClosedSocket() { return _closedSocket; }
 
-        // data set function for PeerNotifyRecv
+        // data set function for PeerRecvNotifyPeerId
         void SetMsgSourceId(PeerId peerId) { _sourceId = peerId; }
+
         void SetMsg(std::shared_ptr<Message> msg) { _message = msg; }
-        // data access function for PeerNotifyRecv
+
+        // data access function for PeerRecvNotifyPeerId
         PeerId GetMsgSourceId() { return _sourceId; }
         std::shared_ptr<Message> GetMsg() { return _message; }
 
@@ -159,6 +185,16 @@ namespace libBLEEP_BL {
         void SetProtocolMsg(std::shared_ptr<Message> msg) { _protocolMsg = msg; }
         // data access function for ProtocolRecvMsg
         std::shared_ptr<Message> GetProtocolMsg() { return _protocolMsg; }
+
+        // data set function for EmuBlockMiningComplete, BlockMiningComplete
+        void SetMinedBlock(std::shared_ptr<POWBlock> block) { _minedBlk = block; }
+        // data access function for EmuBlockMiningComplete, BlockMiningComplete
+        std::shared_ptr<POWBlock> GetMinedBlock() { return _minedBlk; }
+
+        // data set function for EmuBlockMiningComplete, BlockMiningComplete (POS)
+        void SetMinedPOSBlock(std::shared_ptr<POSBlock> block) { _minedPOSBlk = block; }
+        // data access function for EmuBlockMiningComplete, BlockMiningComplete
+        std::shared_ptr<POSBlock> GetMinedPOSBlock() { return _minedPOSBlk; }
     };
 
     class AsyncEvent {
@@ -176,23 +212,49 @@ namespace libBLEEP_BL {
 
     class MainEventManager {
     private:
+        ev::timer _timeout;
+        bool _timeout_triggered = false;
+        void _timercallback(ev::timer &w, int revents) {
+            _timeout_triggered = true;
+        }
+        void _startTimer(double timeout) {
+            _timeout.set<MainEventManager, &MainEventManager::_timercallback>(this);
+            _timeout.set(timeout, 0);
+            _timeout.start();
+        }
+
+    private:
         /* internal event loop variable */
         struct ev_loop *_libev_loop;
 
         /* Internal data structures
            for managing the triggered asynchronous event */
-        std::queue<AsyncEvent> _eventQueue;        
+        std::queue<AsyncEvent> _eventQueue;
 
         /* Internally handling async events whose value is less than _intervalHanldeEventEnum */
         AsyncEventEnum _internalHandleEventEnum;
 
+        /*********************************************************/
+        /* Singleton Pattern */
+        /*********************************************************/
+    public:
+        static MainEventManager *Instance();
 
+        static void InitInstance(AsyncEventEnum internalEventEnum = AsyncEventEnum::Base);
+
+        static void InitInstance(double timeout, AsyncEventEnum internalEventEnum = AsyncEventEnum::Base);
+
+    protected:
+        MainEventManager(AsyncEventEnum internalEventEnum = AsyncEventEnum::Base);
+        MainEventManager(double timeout, AsyncEventEnum internalEventEnum = AsyncEventEnum::Base);
+
+    private:
+        static MainEventManager *_instance;
 
     public:
         /*********************************************************/
         /* Public API designed for main event loop controls */
         /*********************************************************/
-        MainEventManager(AsyncEventEnum internalEventEnum = AsyncEventEnum::Base);
 
         /* blocking API that awaits for next asynchronous event */
         void Wait();
@@ -203,7 +265,6 @@ namespace libBLEEP_BL {
         AsyncEvent PopAsyncEvent();
     };
 
-    extern std::unique_ptr<MainEventManager> g_mainEventManager;
 
 }
 

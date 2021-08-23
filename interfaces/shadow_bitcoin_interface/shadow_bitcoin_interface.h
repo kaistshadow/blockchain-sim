@@ -8,12 +8,9 @@ extern "C"
 {
 #endif
 
-void shadow_bitcoin_register_hash(const char hash[]);
+void shadow_bitcoin_register_hash(const char hash[],int reindex);
 int shadow_bitcoin_check_hash(const char hash[]);
-
-void update_log_map(const char prevblockhash[], const char blockhash[],const int txcount, const int height);
-int get_tx_total_count(void);
-int get_tx_count(const char blockhash[]);
+void shadow_bitcoin_load_hash();
 
 #ifdef __cplusplus
 }

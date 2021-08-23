@@ -17,11 +17,6 @@ Welcome to the BLEEP documentation <br>
        * [Proof of Stake](BLEEPlib-POS.md)
        * [Byzantine Fault Tolerant](BLEEPlib-BFT.md)
    * Scalability Features for the Emulation
-     * [Memory Sharing](Emulation-Scalability.md)   
- * Getting Started: Evaluation
-   * Security Test
-     * [Sybil Attack](Evaluation-Security-Sybil.md)
-   * Performance Test    
-     * [TPS, Latency](Evaluation-perf-TPS_Latency.md)
+     * [Memory Sharing](Emulation-Scalability.md)
  * [Developer Guide (with CLion IDE)](developerGuide.md)
  * [Contributing Guide (with Github)](contributingGuide.md)

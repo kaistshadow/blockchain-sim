@@ -29,7 +29,7 @@ def run_cpplint(target_list):
         if result != -1:
             continue
 
-        command_target = "cpplint --quiet --linelength=500 --filter=-build/include_order,-build/include_subdir,-legal/copyright,-build/namespaces,-runtime/int,-readability/todo,-runtime/printf,-readability/casting,-runtime/references,-runtime/threadsafe_fn,-build/include " + target_list[i]
+        command_target = "cpplint --quiet --linelength=500 --filter=-build/c++11,-readability/inheritance,-runtime/explicit,-build/include_order,-build/include_subdir,-legal/copyright,-build/namespaces,-runtime/int,-readability/todo,-runtime/printf,-readability/casting,-runtime/references,-runtime/threadsafe_fn,-build/include " + target_list[i]
         exec_shell_cmd(command_target)
         
 
@@ -40,4 +40,6 @@ if __name__ == '__main__':
 
     print("Run cpplint ...")
     run_cpplint(cpp_file_list)
+    run_cpplint(header_file_list)
+    run_cpplint(hpp_file_list)
     print("Success cpplint ...")

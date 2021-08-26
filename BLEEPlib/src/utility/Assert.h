@@ -11,7 +11,7 @@ namespace libBLEEP {
 #   define M_Assert(Expr, Msg)                          \
     __M_Assert(#Expr, Expr, __FILE__, __LINE__, Msg)
 #else
-    //Use same assert for the release mode
+    // Use same assert for the release mode
 #   define M_Assert(Expr, Msg)                          \
     __M_Assert(#Expr, Expr, __FILE__, __LINE__, Msg)
 #endif

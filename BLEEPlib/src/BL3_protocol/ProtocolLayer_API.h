@@ -11,7 +11,7 @@
 
 namespace libBLEEP_BL {
 class ProtocolParameter {
-public:
+ public:
     virtual ~ProtocolParameter() {}
 };
 

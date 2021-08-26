@@ -1,4 +1,6 @@
 // "Copyright [2021] <kaistshadow>"
+#ifndef BLEEPLIB_SRC_UTILITY_RANDOM_H_
+#define BLEEPLIB_SRC_UTILITY_RANDOM_H_
 
 #include<iostream>
 #include<set>
@@ -24,5 +26,4 @@ class random_source {
 random_source& get_global_random_source();
 
 }  // namespace libBLEEP
-
-
+#endif  // BLEEPLIB_SRC_UTILITY_RANDOM_H_

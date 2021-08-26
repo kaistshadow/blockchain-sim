@@ -37,7 +37,7 @@ class POWMiner {
     void StopMining();
 
  private:
-    ev::timer _timer;  //mining timer
+    ev::timer _timer;  // mining timer
     std::shared_ptr<const POWBlock> _candidateBlk;
     bool _isMining = false;
 

@@ -24,7 +24,7 @@ class BL_ProtocolLayerEx1 : public BL_ProtocolLayer_API {
     // periodic tx generation for experimental purpose
     ev::timer _txgentimer;
     void _txgentimerCallback(ev::timer &w, int revents) {
-        // generate random transaction 
+        // generate random transaction
         srand((unsigned int)time(0));
         int sender_id = rand() % 100;
         int receiver_id = rand() % 100;

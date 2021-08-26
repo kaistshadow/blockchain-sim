@@ -35,7 +35,7 @@ class Message {
     PeerId _dest;
     MessageType _type;
     std::shared_ptr<MessageObject> _ptrToObj;
-    std::string _messageId; // TODO : should include message_hashid
+    std::string _messageId;  // TODO : should include message_hashid
 
     static std::string GenMessageHash(std::string msg) {
         unsigned char digest[SHA256_BLOCK_SIZE];

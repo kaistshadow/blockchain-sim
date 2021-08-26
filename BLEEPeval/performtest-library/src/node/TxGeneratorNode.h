@@ -29,7 +29,7 @@ class TxGeneratorNode : public Node<NodePrimitives> {
 
  public:
     TxGeneratorNode(std::string virtualIp, int listenPort = 0)
-            :Node<NodePrimitives>( virtualIp, listenPort, NodeType::TxGenerator) {
+            :Node<NodePrimitives>(virtualIp, listenPort, NodeType::TxGenerator) {
     }
 
     // move constructor

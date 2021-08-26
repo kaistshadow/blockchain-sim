@@ -33,7 +33,7 @@ class TPSPolicy {
         for (auto &_txGeneratorNode : _txGeneratorNodes) {
             _txGeneratorNode.bootstrap("./data/state.txt", "./data/key.txt");
             for (auto &[_targetIP, _targetPort] : targets) {
-                std::cout << "target_ip : " << _targetIP<<" / targetport = " << _targetPort << "\n";
+                std::cout << "target_ip : " << _targetIP <<" / targetport = " << _targetPort << "\n";
                 int conn_fd = _txGeneratorNode.tryConnectToTarget(_targetIP, _targetPort);
                 std::cout << "try connect to target finish \n";
             }

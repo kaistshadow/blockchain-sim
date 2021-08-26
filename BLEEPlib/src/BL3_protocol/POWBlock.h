@@ -72,7 +72,7 @@ class POWBlock : public Block {
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version) {
         ar & boost::serialization::base_object<Block>(*this);
-        boost::serialization::void_cast_register<Block,POWBlock>();
+        boost::serialization::void_cast_register<Block, POWBlock>();
         ar & nonce;
         ar & tx_hash;
         ar & prev_block_hash;

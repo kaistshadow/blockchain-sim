@@ -26,7 +26,7 @@ class Logger {
     bool shouldFilter(LogLevel level);
 
  public:
-    //Constructor: User provides custom output stream, or uses default (std::cout).
+    // Constructor: User provides custom output stream, or uses default (std::cout).
     Logger(LogLevel level = LOGLEVEL_DEBUG, std::ostream& stream = std::cout):
     _loglevel(level), _out_stream(stream) {}
 

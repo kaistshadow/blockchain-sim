@@ -60,7 +60,7 @@ class AdvertisementManager {
             _outer = outer;
             _time = time;
             _timer.set<AdvertisementTimer, &AdvertisementTimer::_timerCallback>(this);
-            _timer.set(1, time);  //repeat every 'time' seconds
+            _timer.set(1, time);  // repeat every 'time' seconds
             // TODO : add a randomness for timer's 'time'
             _timer.start();
         }

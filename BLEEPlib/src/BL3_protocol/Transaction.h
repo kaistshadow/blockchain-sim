@@ -8,43 +8,6 @@
 #include "../utility/UInt256.h"
 
 namespace libBLEEP_BL {
-    /* class TransactionId { */
-    /* public: */
-    /*     TransactionId() {} */
-    /*     virtual bool operator<(const TransactionId& id) const */
-    /*     { */
-            
-    /*     }; */
-    /* private: */
-    /*     friend class boost::serialization::access; */
-    /*     // When the class Archive corresponds to an output archive, the */
-    /*     // & operator is defined similar to <<.  Likewise, when the class Archive */
-    /*     // is a type of input archive the & operator is defined similar to >> */
-    /*     template<class Archive> */
-    /*         void serialize(Archive & ar, const unsigned int version) { */
-    /*     } */
-    /* }; */
-
-    /* class Transaction { */
-    /* private: */
-    /*     TransactionId _id; */
-    /* public: */
-    /*     Transaction() {} */
-    /*     Transaction(TransactionId id) { _id = id; } */
-
-    /*     virtual TransactionId GetId() { return _id; } */
-        
-    /* private: */
-    /*     friend class boost::serialization::access; */
-    /*     // When the class Archive corresponds to an output archive, the */
-    /*     // & operator is defined similar to <<.  Likewise, when the class Archive */
-    /*     // is a type of input archive the & operator is defined similar to >> */
-    /*     template<class Archive> */
-    /*         void serialize(Archive & ar, const unsigned int version) { */
-    /*         ar & _id; */
-    /*     } */
-    /* }; */
-
 class SimpleTransactionId {
  public:
     int sender;
@@ -93,7 +56,7 @@ class SimpleTransaction {
  public:
     SimpleTransaction() {}
     SimpleTransaction(int sid, int rid, float a) {
-        sender_id=sid; receiver_id=rid; amount=a;
+        sender_id = sid; receiver_id = rid; amount = a;
         _id = SimpleTransactionId(sid, rid, a);
     }
     SimpleTransactionId _id;

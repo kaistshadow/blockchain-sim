@@ -46,5 +46,5 @@ class IPDatabase {
     std::vector<std::string> _vAttackerIP;  // malicious IPs
     std::vector<std::string> _vShadowIP;  // not used for basic IPDatabase
 };
-}
+}  // namespace sybiltest
 #endif  // BLEEPEVAL_SYBILTEST_LIBRARY_SRC_IPDB_IPDATABASE_H_

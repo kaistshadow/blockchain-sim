@@ -17,7 +17,7 @@ class Inventory : public MessageObject {
  public:
     Inventory() {}
 
- private: // boost serialization
+ private:  // boost serialization
     friend class boost::serialization::access;
     // When the class Archive corresponds to an output archive, the
     // & operator is defined similar to <<.  Likewise, when the class Archive
@@ -25,7 +25,7 @@ class Inventory : public MessageObject {
     template<class Archive>
         void serialize(Archive & ar, const unsigned int version) {
         ar & boost::serialization::base_object<MessageObject>(*this);
-        boost::serialization::void_cast_register<MessageObject,Inventory>();
+        boost::serialization::void_cast_register<MessageObject, Inventory>();
         ar & _a;
     }
 };

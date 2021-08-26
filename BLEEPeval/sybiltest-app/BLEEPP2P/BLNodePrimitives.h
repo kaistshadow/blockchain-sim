@@ -69,7 +69,7 @@ class BLNodePrimitives {
 
     void OpAfterConnect(int conn_fd);
 
-    void OpAfterConnected(int data_fd); // called when the socket connection is established by peer
+    void OpAfterConnected(int data_fd);  // called when the socket connection is established by peer
 
     void OpAfterRecv(int data_fd, std::string recv_str);
 

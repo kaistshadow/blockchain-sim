@@ -17,8 +17,7 @@ using namespace std;
 namespace sybiltest {
 template<class NodePrimitives, class NodeParams>
 class EclipseIncomingAttackPolicy {
-
-public:
+ public:
     EclipseIncomingAttackPolicy() : libev_loop(EV_DEFAULT) {
         _checkWatcher.set<EclipseIncomingAttackPolicy, &EclipseIncomingAttackPolicy<NodePrimitives, NodeParams>::_checkAttack>(
                 this);

@@ -127,7 +127,7 @@ class BitcoinIPDatabase : public IPDatabase {
     bool _dns_isRestricted(std::string ip) {
         struct in_addr netIP;
         inet_pton(AF_INET, ip.c_str(), &netIP);
-        /*  http://en.wikipedia.org/wiki/Reserved_IP_addresses#Reserved_IPv4_addresses */
+        //  http://en.wikipedia.org/wiki/Reserved_IP_addresses#Reserved_IPv4_addresses
         if (_dns_isIPInRange(netIP, "0.0.0.0/8") ||
             _dns_isIPInRange(netIP, "10.0.0.0/8") ||
             _dns_isIPInRange(netIP, "100.64.0.0/10") ||

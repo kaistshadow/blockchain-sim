@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     std::string monitorIP = argv[2];
     int targetNum = atoi(argv[3]);
     std::cout << "tps_tester start " << txgenIP << ", " << monitorIP << "\n";
-    exported_main(); // initialize bitcoin
+    exported_main();  // initialize bitcoin
     ECC_Start();
     ECCVerifyHandle* ecc = new ECCVerifyHandle();
 

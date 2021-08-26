@@ -35,7 +35,7 @@ void BitcoinNodePrimitives::OpAfterConnect(int conn_fd) {
         case NodeType::TxGenerator:
         case NodeType::MonitoringNode: {
           // send initializing version message
-          const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
+          const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9};  // for mainnet f9beb4d9
 
           // their_addr
           assert(_targetPort != -1 && _targetIP != "");
@@ -99,7 +99,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
     while (recvbufstr.size() > 0) {
         // first, dump a message header
         CNetMessage msg(Params().MessageStart(), SER_NETWORK,
-        INIT_PROTO_VERSION); // error when bitcoin is not initialized
+        INIT_PROTO_VERSION);  // error when bitcoin is not initialized
         int headerReadSize = msg.readHeader(recvbufstr.c_str(), recvbufstr.size());
         if (headerReadSize < 0) {
             // error while reading header

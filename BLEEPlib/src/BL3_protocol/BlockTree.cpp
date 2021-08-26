@@ -239,7 +239,7 @@ void BlockTree<T>::AppendBlock(std::shared_ptr<T> blk) {
                 sprintf(buf, "BlockAppend,%lu,%s,%s,%f",
                         pow_blk->GetBlockIdx(),
                         blockHash.substr(2, 10).c_str(),
-                        prevBlockHashstr.substr(2,10).c_str(),
+                        prevBlockHashstr.substr(2, 10).c_str(),
                         pow_blk->GetTimestamp());
                 shadow_push_eventlog(buf);
             }
@@ -264,7 +264,7 @@ void BlockTree<T>::AppendBlock(std::shared_ptr<T> blk) {
                 sprintf(buf, "BlockAppend,%lu,%s,%s,%f",
                         pow_blk->GetBlockIdx(),
                         blockHash.substr(2, 10).c_str(),
-                        prevBlockHashstr.substr(2,10).c_str(),
+                        prevBlockHashstr.substr(2, 10).c_str(),
                         pow_blk->GetTimestamp());
                 shadow_push_eventlog(buf);
             }

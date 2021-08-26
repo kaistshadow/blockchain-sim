@@ -86,7 +86,7 @@ int ListenSocket::DoAccept() {
 
         return sock_fd;
     } else {
-        if((errno != EAGAIN) && (errno != EWOULDBLOCK)) {
+        if ((errno != EAGAIN) && (errno != EWOULDBLOCK)) {
             std::cout << "accept() failed errno=" << errno << strerror(errno) << "\n";
             exit(-1);
         }

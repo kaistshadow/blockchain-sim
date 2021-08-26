@@ -129,8 +129,7 @@ void BL_PeerConnectivityLayer_API::SocketCloseHandler(std::shared_ptr<DataSocket
     }
     // First, find peer for given data socket
     auto it = std::find_if(peers.begin(), peers.end(),
-                           [closedSocket](const std::pair<PeerId, std::shared_ptr<Peer> > &t) -> bool
-                           {
+                           [closedSocket](const std::pair<PeerId, std::shared_ptr<Peer> > &t) -> bool {
                                if (t.second->GetDataSocket() &&
                                    (t.second->GetDataSocket()->GetFD() == closedSocket->GetFD()))
                                    return true;
@@ -198,7 +197,7 @@ void BL_PeerConnectivityLayer_API::RecvMsgHandler(PeerId sourcePeerId,
             // relay address
             if (size <= 10) {
                 auto rng = *(libBLEEP::get_global_random_source().get_default_random_source());
-                std::uniform_int_distribution<> dist(1,2);  // number of relay
+                std::uniform_int_distribution<> dist(1, 2);  // number of relay
                 int relayCount = dist(rng);
                 std::map<PeerId, std::shared_ptr<Peer>, PeerIdCompare>& peers = _peerManager.GetPeers();
                 // std::set<int> indexset;
@@ -426,7 +425,7 @@ bool BL_PeerConnectivityLayer_API::SendMsgToPeer(PeerId id, std::shared_ptr<Mess
 
 bool BL_PeerConnectivityLayer_API::Shutdown() {
     auto peers = _peerManager.GetPeerIds();
-    for ( auto peerId : peers) {
+    for (auto peerId : peers) {
         DisconnectPeer(peerId);
         std::cout << "DisconnectPeer " << peerId.GetId() << "\n";
     }

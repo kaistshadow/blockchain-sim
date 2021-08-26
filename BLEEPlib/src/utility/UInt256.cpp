@@ -307,7 +307,7 @@ libBLEEP::UINT256_t::UINT256_t()
     : UPPER(0), LOWER(0)
 {}
 
-libBLEEP::UINT256_t::UINT256_t (const UINT256_t & rhs)
+libBLEEP::UINT256_t::UINT256_t(const UINT256_t & rhs)
     : UPPER(rhs.UPPER), LOWER(rhs.LOWER)
 {}
 

@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
     /* loop mainEventManager */
     while (true) {
         std::cout << "while" << "\n";
-        MainEventManager::Instance()->Wait(); // main event loop (wait for next event)
+        MainEventManager::Instance()->Wait();  // main event loop (wait for next event)
 
         // loop returned
         PrintTimespec("mainEventManager.Wait returned");

@@ -184,7 +184,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                             std::shared_ptr<libBLEEP_BL::TxGossipInventory> inv = std::static_pointer_cast<libBLEEP_BL::TxGossipInventory>(msg->GetObject());
                             auto tids = inv->GetTransactionIds();
                             std::vector<libBLEEP_BL::SimpleTransactionId> getdataIds;
-                            for (auto tid: tids) {
+                            for (auto tid : tids) {
                                 global_txtimepool->register_txtime(tid.GetTxHash().str(), libBLEEP::GetGlobalClock());
                             }
                         }

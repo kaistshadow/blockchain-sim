@@ -1,3 +1,5 @@
+// "Copyright [2021] <kaistshadow>"
+
 #include "ArgsManager.h"
 #include "Assert.h"
 #include "Logger.h"
@@ -8,18 +10,15 @@ using namespace libBLEEP;
 ArgsManager libBLEEP::gArgs;
 
 /** Interpret string as boolean, for argument parsing */
-static bool InterpretBool(const std::string& strValue)
-{
+static bool InterpretBool(const std::string& strValue) {
     if (strValue.empty())
         return true;
     return (std::stoi(strValue) != 0);
 }
 
 /** Turn -noX into -X=0 */
-static void InterpretNegativeSetting(std::string& strKey, std::string& strValue)
-{
-    if (strKey.length()>3 && strKey[0]=='-' && strKey[1]=='n' && strKey[2]=='o')
-    {
+static void InterpretNegativeSetting(std::string& strKey, std::string& strValue) {
+    if (strKey.length() > 3 && strKey[0] == '-' && strKey[1] == 'n' && strKey[2] == 'o') {
         strKey = "-" + strKey.substr(3);
         strValue = InterpretBool(strValue) ? "0" : "1";
     }
@@ -29,13 +28,11 @@ static const int screenWidth = 79;
 static const int optIndent = 2;
 static const int msgIndent = 7;
 
-static std::string FormatParagraph(const std::string& in, size_t width, size_t indent)
-{
+static std::string FormatParagraph(const std::string& in, size_t width, size_t indent) {
     std::stringstream out;
     size_t ptr = 0;
     size_t indented = 0;
-    while (ptr < in.size())
-    {
+    while (ptr < in.size()) {
         size_t lineend = in.find_first_of('\n', ptr);
         if (lineend == std::string::npos) {
             lineend = in.size();
@@ -75,8 +72,8 @@ static std::string HelpMessageGroup(const std::string &message) {
 }
 
 static std::string HelpMessageOpt(const std::string &option, const std::string &message) {
-    return std::string(optIndent,' ') + std::string(option) +
-           std::string("\n") + std::string(msgIndent,' ') +
+    return std::string(optIndent, ' ') + std::string(option) +
+           std::string("\n") + std::string(msgIndent, ' ') +
            FormatParagraph(message, screenWidth - msgIndent, msgIndent) +
            std::string("\n\n");
 }
@@ -99,27 +96,24 @@ std::string ArgsManager::HelpMessage() {
 
     strUsage += HelpMessageGroup("Blockchain Consensus Options (POW):");
     strUsage += HelpMessageOpt("-blocktxnum=<n>", "Number of transactions in one block. default:5");
-    strUsage += HelpMessageOpt("-miningtime=<n>", "Emulated mean time for mining a block. default:10");    
-    strUsage += HelpMessageOpt("-miningtimedev=<n>", "Standard deviation time for mining a block. default:2");    
+    strUsage += HelpMessageOpt("-miningtime=<n>", "Emulated mean time for mining a block. default:10");
+    strUsage += HelpMessageOpt("-miningtimedev=<n>", "Standard deviation time for mining a block. default:2");
     strUsage += HelpMessageGroup("Random Gossip Protocol Options:");
     strUsage += HelpMessageOpt("-fanout=<n>", "Number of fanout. default:7");
-    strUsage += HelpMessageOpt("-outpeernum=<n>", "Number of outpeer connection. default:10");    
+    strUsage += HelpMessageOpt("-outpeernum=<n>", "Number of outpeer connection. default:10");
 
     return strUsage;
 }
 
-void ArgsManager::ParseParameters(int argc, const char* const argv[])
-{
+void ArgsManager::ParseParameters(int argc, const char* const argv[]) {
     mapArgs.clear();
     mapMultiArgs.clear();
 
-    for (int i = 1; i < argc; i++)
-    {
+    for (int i = 1; i < argc; i++) {
         std::string str(argv[i]);
         std::string strValue;
         size_t is_index = str.find('=');
-        if (is_index != std::string::npos)
-        {
+        if (is_index != std::string::npos) {
             strValue = str.substr(is_index+1);
             str = str.substr(0, is_index);
         }
@@ -139,34 +133,33 @@ void ArgsManager::ParseParameters(int argc, const char* const argv[])
 
     if (IsArgSet("-l")) {
         std::string loglevel = GetArg("-l");
-        if (loglevel == "error") 
+        if (loglevel == "error") {
             gLog.SetLogLevel(LOGLEVEL_ERROR);
-        else if (loglevel == "critical")
+        } else if (loglevel == "critical") {
             gLog.SetLogLevel(LOGLEVEL_CRITICAL);
-        else if (loglevel == "message")
+        } else if (loglevel == "message") {
             gLog.SetLogLevel(LOGLEVEL_MESSAGE);
-        else if (loglevel == "info")
+        } else if (loglevel == "info") {
             gLog.SetLogLevel(LOGLEVEL_INFO);
-        else if (loglevel == "debug")
+        } else if (loglevel == "debug") {
             gLog.SetLogLevel(LOGLEVEL_DEBUG);
-        else 
+        } else {
             gLog.SetLogLevel(LOGLEVEL_UNSET);
-    } else
+        }
+    } else {
         gLog.SetLogLevel(LOGLEVEL_UNSET);
+    }
 }
 
-std::vector<std::string> ArgsManager::GetArgs(const std::string& strArg) const
-{
+std::vector<std::string> ArgsManager::GetArgs(const std::string& strArg) const {
     auto it = mapMultiArgs.find(strArg);
     if (it != mapMultiArgs.end()) return it->second;
     return {};
 }
 
-std::string ArgsManager::GetArg(const std::string& strArg) const 
-{
+std::string ArgsManager::GetArg(const std::string& strArg) const {
     auto it = mapArgs.find(strArg);
     if (it != mapArgs.end()) return it->second;
-    
     // return default
     if (strArg == "-id") {
         return "noid";
@@ -189,27 +182,23 @@ std::string ArgsManager::GetArg(const std::string& strArg) const
     return "";
 }
 
-bool ArgsManager::IsArgSet(const std::string& strArg) const
-{
+bool ArgsManager::IsArgSet(const std::string& strArg) const {
     return mapArgs.count(strArg);
 }
 
-std::string ArgsManager::GetArg(const std::string& strArg, const std::string& strDefault) const
-{
+std::string ArgsManager::GetArg(const std::string& strArg, const std::string& strDefault) const {
     auto it = mapArgs.find(strArg);
     if (it != mapArgs.end()) return it->second;
     return strDefault;
 }
 
-int ArgsManager::GetArg(const std::string& strArg, int nDefault) const
-{
+int ArgsManager::GetArg(const std::string& strArg, int nDefault) const {
     auto it = mapArgs.find(strArg);
     if (it != mapArgs.end()) return std::stoi(it->second);
     return nDefault;
 }
 
-bool ArgsManager::GetBoolArg(const std::string& strArg, bool fDefault) const
-{
+bool ArgsManager::GetBoolArg(const std::string& strArg, bool fDefault) const {
     auto it = mapArgs.find(strArg);
     if (it != mapArgs.end()) return InterpretBool(it->second);
     return fDefault;

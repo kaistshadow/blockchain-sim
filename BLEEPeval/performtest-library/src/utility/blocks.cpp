@@ -1,3 +1,5 @@
+// "Copyright [2021] <kaistshadow>"
+
 //
 // Created by csrc on 21. 4. 12..
 //
@@ -9,6 +11,7 @@ void shared_timepool::register_txtime(std::string txhash, uint32_t time) {
     txtimes.insert({txhash, time});
     _lock.unlock();
 }
+
 uint32_t shared_timepool::get_txtime(std::string txhash) {
     _lock.lock();
     auto it = txtimes.find(txhash);
@@ -18,6 +21,7 @@ uint32_t shared_timepool::get_txtime(std::string txhash) {
     }
     return 0;
 }
+
 shared_timepool* global_txtimepool = new shared_timepool();
 block::block(std::string hexHash, std::string hexPrevHash, uint32_t time) {
     this->hexHash = hexHash;
@@ -26,39 +30,51 @@ block::block(std::string hexHash, std::string hexPrevHash, uint32_t time) {
     parent = nullptr;
     net_tx_latency = 0;
 }
+
 std::string block::getHexHash() {
     return hexHash;
 }
+
 std::string block::getHexPrevHash() {
     return hexPrevHash;
 }
+
 uint32_t block::getTime() {
     return time;
 }
+
 size_t block::getTxCount() {
     return txHashes.size();
 }
+
 block* block::getParent() {
     return parent;
 }
+
 void block::setParent(block* bp) {
     parent = bp;
 }
+
 void block::pushTxHash(std::string txHash) {
     txHashes.push_back(txHash);
 }
+
 std::vector<std::string> block::getTxHashes() {
     return txHashes;
 }
+
 void block::setTreebase(blocktreebase* tb) {
     treebase = tb;
 }
+
 blocktreebase* block::getTreebase() {
     return treebase;
 }
+
 unsigned long int block::getNetTxLatency() {
     return net_tx_latency;
 }
+
 void block::setNetTxLatency(unsigned long int netLatency) {
     net_tx_latency = netLatency;
 }
@@ -77,7 +93,7 @@ void blocktreebase::add_block(block* bp) {
 void blocktreebase::recalc_height_from_block(block* bp) {
     block* cur = bp;
     int cur_height = 0;
-    while(cur->getParent()) {
+    while (cur->getParent()) {
         cur_height++;
         cur = cur->getParent();
     }
@@ -157,10 +173,10 @@ block* blockforest::get_besttip() {
 }
 
 bool UpdateBlock(std::string hexHash, std::string hexPrevHash, uint32_t time, std::vector<std::string> txs) {
-    block* bp = new block(hexHash, hexPrevHash,time);
-    if(!bp)
+    block* bp = new block(hexHash, hexPrevHash, time);
+    if (!bp)
         return false;
-    for (int i = 0; i<txs.size(); i++) {
+    for (int i = 0; i < txs.size(); i++) {
         bp->pushTxHash(txs[i]);
     }
     // add block to forest

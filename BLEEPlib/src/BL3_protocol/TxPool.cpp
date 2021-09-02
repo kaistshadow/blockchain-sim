@@ -1,3 +1,5 @@
+// "Copyright [2021] <kaistshadow>"
+
 #include "TxPool.h"
 #include <iostream>
 

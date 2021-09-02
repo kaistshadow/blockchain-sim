@@ -1,6 +1,10 @@
+// "Copyright [2021] <kaistshadow>"
+
 //
 // Created by ilios on 21. 2. 15..
 //
+#include <string>
+#include <vector>
 #include <iostream>
 #include "BitcoinNodePrimitives.h"
 #include <random>
@@ -31,7 +35,7 @@ void BitcoinNodePrimitives::OpAfterConnect(int conn_fd) {
         case NodeType::TxGenerator:
         case NodeType::MonitoringNode: {
           // send initializing version message
-          const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
+          const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9};  // for mainnet f9beb4d9
 
           // their_addr
           assert(_targetPort != -1 && _targetIP != "");
@@ -58,7 +62,7 @@ void BitcoinNodePrimitives::OpAfterConnect(int conn_fd) {
                                                                         myNodeStartingHeight, true);
 
           size_t nMessageSize = msg.data.size();
-          //size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
+          // size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
           LogPrint(BCLog::NET, "sending %s (%d bytes) \n", SanitizeString(msg.command.c_str()), nMessageSize);
 
           vector<unsigned char> serializedHeader;
@@ -95,20 +99,24 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
     while (recvbufstr.size() > 0) {
         // first, dump a message header
         CNetMessage msg(Params().MessageStart(), SER_NETWORK,
-                        INIT_PROTO_VERSION); // error when bitcoin is not initialized
+        INIT_PROTO_VERSION);  // error when bitcoin is not initialized
         int headerReadSize = msg.readHeader(recvbufstr.c_str(), recvbufstr.size());
-        if (headerReadSize < 0) {// error while reading header
+        if (headerReadSize < 0) {
+            // error while reading header
             std::cout << "error while reading header" << "\n";
             assert(-1);
         }
-        if (!msg.in_data) // header is not fully received
+        if (!msg.in_data) {
+            // header is not fully received
             return;
+        }
 
         // second, dump a message
         string msgstr = recvbufstr.substr(headerReadSize);
         int msgReadSize = msg.readData(msgstr.c_str(),
                                        msgstr.size());  // TODO : can be optimized to check size before dumping
-        if (msgReadSize < 0) {// error??
+        if (msgReadSize < 0) {
+            // error??
             std::cout << "unrecognized error while reading data" << "\n";
             assert(-1);
         }
@@ -123,7 +131,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
             return;
         } else {
             // data is fully received, so handle the message
-            const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
+            const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9};  // for mainnet f9beb4d9
 
             if (memcmp(msg.hdr.pchMessageStart, MessageStartChars, CMessageHeader::MESSAGE_START_SIZE) != 0) {
                 cout << "INVALID MESSAGESTART " << msg.hdr.GetCommand() << "\n";
@@ -195,7 +203,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 CSerializedNetMsg replymsg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::PONG, nonce);
 
                 size_t nMessageSize = replymsg.data.size();
-                //size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
+                // size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
                 // LogPrint(BCLog::NET, "sending %s (%d bytes) \n", SanitizeString(msg.command.c_str()), nMessageSize);
 
                 vector<unsigned char> serializedHeader;
@@ -207,23 +215,20 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, serializedHeader, 0, replymsghdr};
 
                 SendMsg(data_fd, serializedHeader);
-                if (nMessageSize)
+                if (nMessageSize) {
                     SendMsg(data_fd, replymsg.data);
+                }
 
-            } else if (strCommand == NetMsgType::INV){
-
+            } else if (strCommand == NetMsgType::INV) {
                 std::vector<CInv> vInv;
                 vRecv >> vInv;
-                for (CInv &inv : vInv)
-                {
-
+                for (CInv &inv : vInv) {
                     if (inv.type == MSG_TX) {
-//                        std::cout<<"[INV] MSGTX: hash = "<<inv.hash.ToString()<<" from = "<<data_fd<<"\n";
-
+                        // std::cout<<"[INV] MSGTX: hash = "<<inv.hash.ToString()<<" from = "<<data_fd<<"\n";
                     } else if (inv.type == MSG_BLOCK) {
                         std::string block_hash = inv.hash.ToString();
 
-                         //send block message
+                         // send block message
                         CSerializedNetMsg replymsg = CNetMsgMaker(PROTOCOL_VERSION).Make(NetMsgType::GETDATA, vInv);
 
                         size_t nMessageSize = replymsg.data.size();
@@ -241,22 +246,20 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                             SendMsg(data_fd, replymsg.data);
                     } else {
                         std::string invhash = inv.hash.ToString();
-                            cout<<"inv msg else "<<invhash<<"\n";
+                        std::cout << "inv msg else " << invhash << "\n";
                     }
                 }
-
-            }else if(strCommand == NetMsgType::VERACK) {
+            } else if (strCommand == NetMsgType::VERACK) {
                 BitcoinNodePrimitives::LoadBlock(data_fd);
-
             } else if (strCommand == NetMsgType::BLOCK) {
-                switch(_type){
+                switch (_type) {
                     case NodeType::MonitoringNode: {
                         std::shared_ptr<CBlock> pblock = std::make_shared<CBlock>();
                         vRecv >> *pblock;
 
-                        std::cout<<"[INV] MSGBLOCK: hash = "<<pblock->GetHash().ToString()<<" txcnt = "<<pblock->vtx.size()<<" from = "<<data_fd <<"\n";
+                        std::cout << "[INV] MSGBLOCK: hash = " << pblock->GetHash().ToString() << " txcnt = " << pblock->vtx.size() << " from = " << data_fd  << "\n";
                         std::vector<std::string> txlist;
-                        for (int i = 0; i<pblock->vtx.size(); i++) {
+                        for (int i = 0; i < pblock->vtx.size(); i++) {
                             txlist.push_back(pblock->vtx[i]->GetHash().GetHex());
                         }
                         UpdateBlock(pblock->GetHash().GetHex(), pblock->hashPrevBlock.GetHex(), pblock->nTime, txlist);
@@ -324,7 +327,7 @@ std::string BitcoinNodePrimitives::generate() {
 
     // txout build
     std::vector<CKey> predata;
-    for(int i=0; i<dividing_factor; i++) {
+    for (int i = 0; i < dividing_factor; i++) {
         CKey dest = _generateKey();
         CTxDestination receiveDest = GetDestinationForKey(dest.GetPubKey(), OutputType::LEGACY);
         CScript scriptReceive = GetScriptForDestination(receiveDest);
@@ -349,10 +352,10 @@ std::string BitcoinNodePrimitives::generate() {
     tx_logs.push(sourceTx);
     unspent_keyvalues.pop();
     CTransaction* tx = new CTransaction(txNew);
-    for(uint32_t i=0; i<dividing_factor; i++) {
+    for (uint32_t i = 0; i < dividing_factor; i++) {
         unspent_keyvalues.push({predata[i], tx, i});
     }
-    std::cout<<"Debug - created tx's hash:"<<tx->GetHash().GetHex()<<"\n";
+    std::cout << "Debug - created tx's hash:" << tx->GetHash().GetHex() << "\n";
 
     return EncodeHexTx(*tx);
 }
@@ -362,7 +365,7 @@ void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {
     if (!DecodeHexTx(mtx, hexTx, true))
         throw std::runtime_error("invalid transaction encoding");
     CTransaction tx(mtx);
-    const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
+    const unsigned char MessageStartChars[4] = {0xf9, 0xbe, 0xb4, 0xd9};  // for mainnet f9beb4d9
     CSerializedNetMsg msg = CNetMsgMaker(PROTOCOL_VERSION).Make(SERIALIZE_TRANSACTION_NO_WITNESS, NetMsgType::TX, tx);
     size_t nMessageSize = msg.data.size();
     std::vector<unsigned char> serializedHeader;
@@ -377,32 +380,26 @@ void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {
     if (nMessageSize) {
         SendMsg(data_fd, msg.data);
     }
-
 }
 
 void BitcoinNodePrimitives::LoadBlock(int data_fd) {
-    //load block message in coinflip_hash.txt
+    // load block message in coinflip_hash.txt
     std::string path = "./data/coinflip_hash.txt";
 
-    const unsigned char MessageStartChars2[4] = {0xf9, 0xbe, 0xb4, 0xd9}; // for mainnet f9beb4d9
-    ifstream file (path);
+    const unsigned char MessageStartChars2[4] = {0xf9, 0xbe, 0xb4, 0xd9};  // for mainnet f9beb4d9
+    ifstream file(path);
     std::string line;
-    if (file.is_open())
-    {
-        while ( getline (file,line) )
-        {
-
+    if (file.is_open()) {
+        while (getline(file, line)) {
             std::vector<CInv> vInv2(1);
             uint256 block_hash2 = uint256S(line);
             vInv2[0] = CInv(2, block_hash2);
 
-            //send block message
-            CSerializedNetMsg replymsg2 = CNetMsgMaker(PROTOCOL_VERSION).Make(SERIALIZE_TRANSACTION_NO_WITNESS,NetMsgType::GETDATA, vInv2);
+            // send block message
+            CSerializedNetMsg replymsg2 = CNetMsgMaker(PROTOCOL_VERSION).Make(SERIALIZE_TRANSACTION_NO_WITNESS, NetMsgType::GETDATA, vInv2);
 
             size_t nMessageSize2 = replymsg2.data.size();
-//            std::cout<<"sending %s (%d bytes) "<<block_hash2.ToString()<<" \n";
-
-
+            // std::cout<<"sending %s (%d bytes) "<<block_hash2.ToString()<<" \n";
             vector<unsigned char> serializedHeader2;
             serializedHeader2.reserve(CMessageHeader::HEADER_SIZE);
             uint256 hash2 = Hash(replymsg2.data.data(), replymsg2.data.data() + nMessageSize2);
@@ -414,9 +411,7 @@ void BitcoinNodePrimitives::LoadBlock(int data_fd) {
             SendMsg(data_fd, serializedHeader2);
             if (nMessageSize2)
                 SendMsg(data_fd, replymsg2.data);
-
         }
         file.close();
     }
-
 }

@@ -1,12 +1,18 @@
+// "Copyright [2021] <kaistshadow>"
+
+#include <list>
+#include <string>
+#include <vector>
+#include <memory>
 #include "ProtocolLayerPoW.h"
 #include "POWProtocolParameter.h"
 #include "POWBlockGossipProtocolMsg.h"
 
-//int libBLEEP_BL::txNumPerBlock = 2;
-//double libBLEEP_BL::txGenStartAt = 0;
-//double libBLEEP_BL::txGenInterval = 4;
-//double libBLEEP_BL::miningtime = 2;
-//int libBLEEP_BL::miningnodecnt = 1;
+// int libBLEEP_BL::txNumPerBlock = 2;
+// double libBLEEP_BL::txGenStartAt = 0;
+// double libBLEEP_BL::txGenInterval = 4;
+// double libBLEEP_BL::miningtime = 2;
+// int libBLEEP_BL::miningnodecnt = 1;
 
 #include "shadow_memshare_interface.h"
 
@@ -56,7 +62,7 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockInvHandler(std::shared_ptr<Message> msg) 
     if (HasProcessingInv())
         return;
 
-    UINT256_t lasthash = _blocktree.GetLastHash(); // for sanity check
+    UINT256_t lasthash = _blocktree.GetLastHash();  // for sanity check
     // if there's no block hash on BlockTree, send back 'getblocks' msg for retrieving block hashes
     // if there exists block hash but no actual block data on BlockTree, send back 'getdata' msg for retrieving actual block
     if (!_blocktree.ContainBlockHash(hashes.front())) {
@@ -85,10 +91,10 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockInvHandler(std::shared_ptr<Message> msg) 
                 BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(msg->GetSource(), message);
 
                 containAll = false;
-                break; // request only a single block
-            }
-            else
+                break;  // request only a single block
+            } else {
                 std::cout << "blocktree contains" << h << "\n";
+            }
         }
 
         if (containAll) {
@@ -96,8 +102,7 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockInvHandler(std::shared_ptr<Message> msg) 
             StopProcessingInv();
         }
     }
-    libBLEEP::M_Assert( lasthash == _blocktree.GetLastHash(), "Lasthash should not be changed");
-
+    libBLEEP::M_Assert(lasthash == _blocktree.GetLastHash(), "Lasthash should not be changed");
 }
 
 void BL_ProtocolLayerPoW::_RecvPOWBlockGetBlocksHandler(std::shared_ptr<Message> msg) {
@@ -133,7 +138,6 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockGetBlocksHandler(std::shared_ptr<Message>
 }
 
 void BL_ProtocolLayerPoW::_RecvPOWBlockGetDataHandler(std::shared_ptr<Message> msg) {
-
     std::cout << "received POW protocol getdata message" << "\n";
 
     std::shared_ptr<POWBlockGossipGetData> getdata = std::static_pointer_cast<POWBlockGossipGetData>(msg->GetObject());
@@ -163,7 +167,7 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockBlkHandler(std::shared_ptr<Message> msg) 
     std::cout << "blockhash:" << blkptr->GetBlockHash().str() << "\n";
     if (!_blocktree.ContainBlock(blkptr->GetBlockHash().str()))  {
         std::list<SimpleTransactionId> txids;
-        for (auto tx: blkptr->GetTransactions()) {
+        for (auto tx : blkptr->GetTransactions()) {
             txids.push_back(tx->GetId());
         }
         _txPool->RemoveTxs(txids);
@@ -198,7 +202,7 @@ void BL_ProtocolLayerPoW::_RecvPOWBlockBlkHandler(std::shared_ptr<Message> msg) 
                 BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(msg->GetSource(), message);
 
                 invAllProcessed = false;
-                break; // request only a single block
+                break;  // request only a single block
             }
         }
 
@@ -245,7 +249,7 @@ void BL_ProtocolLayerPoW::SwitchAsyncEventHandler(AsyncEvent& event) {
 
             // remove tx from txpool
             std::list<SimpleTransactionId> txids;
-            for (auto tx: minedBlk->GetTransactions()) {
+            for (auto tx : minedBlk->GetTransactions()) {
                 txids.push_back(tx->GetId());
             }
             _txPool->RemoveTxs(txids);
@@ -282,7 +286,7 @@ bool BL_ProtocolLayerPoW::InitiateProtocol() {
 }
 
 bool BL_ProtocolLayerPoW::InitiateProtocol(ProtocolParameter* params) {
-//    POWProtocolParameter& powparams = dynamic_cast<POWProtocolParameter &>(params);
+    // POWProtocolParameter& powparams = dynamic_cast<POWProtocolParameter &>(params);
     POWProtocolParameter* powparams = dynamic_cast<POWProtocolParameter*>(params);
     assert(powparams != nullptr);
     if (!_initiated) {

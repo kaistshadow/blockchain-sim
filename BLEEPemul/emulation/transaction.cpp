@@ -1,4 +1,5 @@
-// #include <stdlib.h>
+// "Copyright [2021] <kaistshadow>"
+
 #include <curl/curl.h>
 #include <jsoncpp/json/json.h>
 #include <string>
@@ -9,11 +10,10 @@
 #include "rpc_client.h"
 
 int main(int argc, char* argv[]) {
-
     int interval = atoi(argv[3]);
     int txcnt = atoi(argv[2]);
     std::string amount = argv[4];
-    std::cout<<"start client \n";
+    std::cout << "start client \n";
     url = std::string(argv[1]);
     id_pwd = "a:1234";
     Json::Value params;
@@ -21,22 +21,22 @@ int main(int argc, char* argv[]) {
 
     // method 1: generate node's wallet
     bitcoin_rpc_request("listaddressgroupings", params);
-    std::cout<<"-- wallet --\n";
+    std::cout << "-- wallet --\n";
     std::string wallet = json_resp["result"][0][0][0].asString();
-    std::cout<<wallet<<"\n";
+    std::cout << wallet << "\n";
     sleep(1);
-    int blockcnt=0;
-    while(blockcnt <= 6) {
+    int blockcnt = 0;
+    while (blockcnt <= 6) {
         rpc_request_no_return_no_params("getblockchaininfo");
         blockcnt = json_resp["result"]["blocks"].asInt();
         sleep(1);
     }
 
-    int i=0;
+    int i = 0;
     std::list<std::string> params_list;
 
-    if(txcnt == -1) {
-        while(1) {
+    if (txcnt == -1) {
+        while (1) {
             params_list.push_front(amount);
             params_list.push_front(wallet);
             rpc_reqeust_with_params("sendtoaddress", params_list);
@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
             params_list.clear();
         }
     } else {
-        for(i=0; i<txcnt; i++) {
+        for (i = 0; i < txcnt; i++) {
             params_list.push_front(amount);
             params_list.push_front(wallet);
             rpc_reqeust_with_params("sendtoaddress", params_list);

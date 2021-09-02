@@ -1,6 +1,4 @@
-#include "Socket.h"
-#include "../utility/Assert.h"
-#include "shadow_interface.h"
+// "Copyright [2021] <kaistshadow>"
 
 #include <fcntl.h> /* Added for the nonblocking socket */
 #include <arpa/inet.h>
@@ -8,12 +6,18 @@
 #include <strings.h>
 #include <unistd.h>
 #include <string.h>
+#include <string>
+#include <memory>
+
+#include "shadow_interface.h"
+#include "Socket.h"
+#include "../utility/Assert.h"
 
 using namespace libBLEEP_BL;
 
 ListenSocket::ListenSocket(int port) {
-    int 			listenfd;     /* listen on sock_fd */
-    struct 	sockaddr_in 	my_addr;    /* my address information */
+    int listenfd;     /* listen on sock_fd */
+    struct sockaddr_in my_addr;    /* my address information */
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("socket");
         exit(1);
@@ -32,8 +36,7 @@ ListenSocket::ListenSocket(int port) {
         exit(1);
     }
     int flags = fcntl(listenfd, F_GETFL, 0);
-    fcntl(listenfd, F_SETFL, flags | O_NONBLOCK); /* Change the socket into non-blocking state	*/
-    
+    fcntl(listenfd, F_SETFL, flags|O_NONBLOCK);
     _fd = listenfd;
 
     // create event watcher for the ListenSocket
@@ -41,8 +44,8 @@ ListenSocket::ListenSocket(int port) {
 }
 
 ListenSocket::ListenSocket(int port, const char* shadow_addr) {
-    int 			listenfd;     /* listen on sock_fd */
-    struct 	sockaddr_in 	my_addr;    /* my address information */
+    int listenfd; /* listen on sock_fd */
+    struct sockaddr_in my_addr;    /* my address information */
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("socket");
         exit(1);
@@ -61,8 +64,7 @@ ListenSocket::ListenSocket(int port, const char* shadow_addr) {
         exit(1);
     }
     int flags = fcntl(listenfd, F_GETFL, 0);
-    fcntl(listenfd, F_SETFL, flags | O_NONBLOCK); /* Change the socket into non-blocking state	*/
-
+    fcntl(listenfd, F_SETFL, flags | O_NONBLOCK);
     _fd = listenfd;
 
     // create event watcher for the ListenSocket
@@ -71,9 +73,9 @@ ListenSocket::ListenSocket(int port, const char* shadow_addr) {
 
 
 int ListenSocket::DoAccept() {
-    struct 	sockaddr_in 	their_addr; /* connector's address information */
+    struct sockaddr_in their_addr; /* connector's address information */
     int sock_fd;
-    socklen_t 			sin_size;
+    socklen_t sin_size;
 
     sin_size = sizeof(struct sockaddr_in);
     sock_fd = accept(_fd, (struct sockaddr *)&their_addr, &sin_size);
@@ -83,9 +85,8 @@ int ListenSocket::DoAccept() {
         fcntl(sock_fd, F_SETFL, O_NONBLOCK);
 
         return sock_fd;
-    }
-    else {
-        if( errno != EAGAIN && errno != EWOULDBLOCK ) {
+    } else {
+        if ((errno != EAGAIN) && (errno != EWOULDBLOCK)) {
             std::cout << "accept() failed errno=" << errno << strerror(errno) << "\n";
             exit(-1);
         }
@@ -104,13 +105,13 @@ ListenSocket::~ListenSocket() {
 
 ConnectSocket::ConnectSocket(std::string domain) : _domain(domain) {
     int remote_fd;
-    if ( (remote_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+    if ((remote_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("socket");
         libBLEEP::M_Assert(0, "error on open connect socket");
     }
 
     int flags = fcntl(remote_fd, F_GETFL, 0);
-    fcntl(remote_fd, F_SETFL, flags | O_NONBLOCK); /* Change the socket into non-blocking state	*/
+    fcntl(remote_fd, F_SETFL, flags | O_NONBLOCK);
 
     struct addrinfo* servinfo;
     int n = getaddrinfo(domain.c_str(), NULL, NULL, &servinfo);
@@ -133,19 +134,17 @@ ConnectSocket::ConnectSocket(std::string domain) : _domain(domain) {
         perror("connect");
         std::cout << "Unable to connect to " << domain << "\n";
         libBLEEP::M_Assert(0, "connect error returned");
-    }
-    else if (n == 0) {
+    } else if (n == 0) {
         std::cout << "connection established" << "\n";
         libBLEEP::M_Assert(0, "non-blocking socket is immediately suceeded. is it possible?");
-    }
-    else if (n > 0) {
+    } else if (n > 0) {
         libBLEEP::M_Assert(0, "unexpected return value of non-blocking connect");
     }
 
     _fd = remote_fd;
 
     // create event watcher for the ConnectSocket
-    _watcher = std::unique_ptr<ConnectSocketWatcher>(new ConnectSocketWatcher(_fd));    
+    _watcher = std::unique_ptr<ConnectSocketWatcher>(new ConnectSocketWatcher(_fd));
 }
 
 DataSocket::DataSocket(int sfd) {
@@ -156,7 +155,7 @@ DataSocket::DataSocket(int sfd) {
 }
 
 DataSocket::~DataSocket() {
-    if ( close(_fd) == -1) {
+    if (close(_fd) == -1) {
         perror("close");
         libBLEEP::M_Assert(0, "error on close data socket");
     }
@@ -170,7 +169,7 @@ void DataSocket::AppendToSendBuff(const char *buf, int size) {
 
 void DataSocket::DoSend() {
     if (_sendBuff.empty()) {
-        _watcher->UnsetWritable(); // no data left to send. so, make the watcher to not monitor write event.
+        _watcher->UnsetWritable();
     }
 
     while (!_sendBuff.empty()) {
@@ -185,7 +184,7 @@ void DataSocket::DoSend() {
         if (msg->nbytes() == 0) {
             _sendBuff.pop_front();
             if (_sendBuff.empty()) {
-                _watcher->UnsetWritable(); // no data left to send. so, make the watcher to not monitor write event.
+                _watcher->UnsetWritable();
                 std::cout << "all sent" << "\n";
                 return;
             }

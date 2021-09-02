@@ -1,9 +1,11 @@
+// "Copyright [2021] <kaistshadow>"
+
 //
 // Created by Yonggon Kim on 2021/04/25.
 //
+
 #include "../utility/Assert.h"
 #include "../utility/Random.h"
-
 #include "shadow_interface.h"
 
 #include "POWMiner.h"
@@ -24,7 +26,7 @@ void POWMiner::AsyncEmulateBlockMining(std::shared_ptr<POWBlock> candidateBlk, d
     std::cout << "block mining timer started!" << "\n";
     _isMining = true;
 
-    // append shadow api log
+    //  append shadow api log
     char buf[256];
     sprintf(buf, "API,AsyncEmulateBlockMining,%f", lambda);
     shadow_push_eventlog(buf);
@@ -34,7 +36,7 @@ void POWMiner::StopMining() {
     _timer.stop();
     _isMining = false;
 
-    // append shadow api log
+    //  append shadow api log
     char buf[256];
     sprintf(buf, "API,StopMining");
     shadow_push_eventlog(buf);

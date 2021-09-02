@@ -1,6 +1,11 @@
+// "Copyright [2021] <kaistshadow>"
+
 //
 // Created by ilios on 21. 2. 15..
 //
+
+#include <string>
+#include <vector>
 #include <iostream>
 #include "MoneroNodePrimitives.h"
 #include <random>
@@ -20,11 +25,9 @@ using namespace std;
 
 // to deal with peerlist
 static nodetool::peerlist_entry create_peerlist_entry(std::string _ip_str, int _port) {
-//    nodetool::peerlist_entry ple;
-
+    // nodetool::peerlist_entry ple;
     std::uint32_t ip = inet_addr(_ip_str.c_str());
-    if(INADDR_NONE == ip)
-    {
+    if (INADDR_NONE == ip) {
         std::cout << "inet_addr failed" << "\n";
         exit(-1);
     }
@@ -68,7 +71,7 @@ get_msgstr_from_struct(t_out_type &rsp, int command, uint32_t flags, bool respon
     epee::levin::bucket_head2 head = epee::levin::make_header(command, return_buff.size(),
                                                               flags, response_required);
     if (flags == LEVIN_PACKET_RESPONSE)
-        head.m_return_code = SWAP32LE(1); // return value of invoke function for this command
+        head.m_return_code = SWAP32LE(1);  // return value of invoke function for this command
     return_buff.insert(0, reinterpret_cast<const char *>(&head), sizeof(head));
 
     return return_buff;
@@ -83,7 +86,7 @@ void MoneroNodePrimitives::OpAfterConnect(int conn_fd) {
             typedef nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA>::request t_req;
             t_req arg;
             arg.node_data.peer_id = crypto::rand<uint64_t>();
-            arg.node_data.my_port = 38080; // listening port
+            arg.node_data.my_port = 38080;  // listening port
             arg.node_data.rpc_port = 0;
             arg.node_data.rpc_credits_per_hash = 0;
             memcpy(&arg.node_data.network_id, &::config::testnet::NETWORK_ID, 16);
@@ -102,9 +105,9 @@ void MoneroNodePrimitives::OpAfterConnect(int conn_fd) {
             SendMsgUsingMsgHdr(conn_fd, buff_to_send);
 
 
-//            boost::program_options::variables_map vm;
-//            daemonize::t_core core{vm};
-//            t_protocol_raw m_protocol{core.get(), nullptr, false};
+    // boost::program_options::variables_map vm;
+    // daemonize::t_core core{vm};
+    // t_protocol_raw m_protocol{core.get(), nullptr, false};
 
             break;
         }
@@ -120,8 +123,7 @@ void MoneroNodePrimitives::OpAfterConnected(int data_fd) {
     // do nothing
     if (_type == NodeType::Benign) {
         _attackStat->benignNodeConnNum++;
-    }
-    else if (_type == NodeType::Shadow) {
+    } else if (_type == NodeType::Shadow) {
         _attackStat->shadowNodeConnNum++;
     }
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -195,7 +197,6 @@ void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                              << ", NodeIP:" << GetIP() << "\n";
 
                         if (_type == NodeType::Shadow && !_informed) {
-
                             // print attack success message
                             cout
                                     << "Interception of target node's outgoing connection is confirmed"
@@ -288,25 +289,24 @@ void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                         }
                         break;
                     }
-//                    case nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA>::ID:
-//                    {
-//                        typedef nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA> COMMAND_HANDSHAKE;
-//                        typedef COMMAND_HANDSHAKE::request t_req;
-//                        typedef COMMAND_HANDSHAKE::response t_resp;
-//                        epee::serialization::portable_storage strg;
-//                        if (!strg.load_from_binary(buff_to_invoke)) {
-//                            std::cout << "Failed to load_from_binary in command " << command << "\n";
-//                            exit(-1);
-//                        }
-//                        boost::value_initialized<t_req> in_struct;
-//                        boost::value_initialized<t_resp> out_struct;
-//                        if (!static_cast<t_req&>(in_struct).load(strg)) {
-//                            std::cout << "Failed to load in_struct in command " << command << "\n";
-//                            exit(-1);
-//                        }
-//
-//                        // try_ping? back_ping? at handle_handshake
-//                    }
+        // case nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA>::ID:
+        // {
+        //     typedef nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA> COMMAND_HANDSHAKE;
+        //     typedef COMMAND_HANDSHAKE::request t_req;
+        //     typedef COMMAND_HANDSHAKE::response t_resp;
+        //     epee::serialization::portable_storage strg;
+        //     if (!strg.load_from_binary(buff_to_invoke)) {
+        //         std::cout << "Failed to load_from_binary in command " << command << "\n";
+        //         exit(-1);
+        //     }
+        //     boost::value_initialized<t_req> in_struct;
+        //     boost::value_initialized<t_resp> out_struct;
+        //     if (!static_cast<t_req&>(in_struct).load(strg)) {
+        //         std::cout << "Failed to load in_struct in command " << command << "\n";
+        //         exit(-1);
+        //     }
+        //     // try_ping? back_ping? at handle_handshake
+        // }
                     default:
                         break;
                 }
@@ -315,32 +315,30 @@ void MoneroNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 // For example, node might receive following commands
                 // BC_COMMANDS_POOL_BASE + 10 : NOTIFY_GET_TXPOOL_COMPLEMENT (2010)
             }
-
         }
 
 
 
-//        int command;
-//        COMMAND::ID == command
-//        typedef nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA>::request t_req;
-//        typedef nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA>::response t_resp;
-//        epee::serialization::portable_storage strg;
-//        if(!strg.load_from_binary(epee::strspan<uint8_t>(recvbufstr)))
-//        {
-//            std::cout << "Failed to load_from_binary" << "\n";
-//            return;
-//        }
-//        typename COMMAND::request, typename COMMAND::response
-//        boost::value_initialized<t_in_type> in_struct;
-//        boost::value_initialized<t_out_type> out_struct;
-//
-//        if (!static_cast<t_in_type&>(in_struct).load(strg))
-//        {
-//            on_levin_traffic(context, false, false, true, in_buff.size(), command);
-//            LOG_ERROR("Failed to load in_struct in command " << command);
-//            return -1;
-//        }
-//        on_levin_traffic(context, false, false, false, in_buff.size(), command);
+    // int command;
+    // COMMAND::ID == command
+    // typedef nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA>::request t_req;
+    // typedef nodetool::COMMAND_HANDSHAKE_T<cryptonote::CORE_SYNC_DATA>::response t_resp;
+    // epee::serialization::portable_storage strg;
+    // if(!strg.load_from_binary(epee::strspan<uint8_t>(recvbufstr)))
+    // {
+    // std::cout << "Failed to load_from_binary" << "\n";
+    // return;
+    // }
+    // typename COMMAND::request, typename COMMAND::response
+    // boost::value_initialized<t_in_type> in_struct;
+    // boost::value_initialized<t_out_type> out_struct;
+    // if (!static_cast<t_in_type&>(in_struct).load(strg))
+    // {
+    // on_levin_traffic(context, false, false, true, in_buff.size(), command);
+    // LOG_ERROR("Failed to load in_struct in command " << command);
+    // return -1;
+    // }
+    // on_levin_traffic(context, false, false, false, in_buff.size(), command);
 
 
         // first, dump a message header
@@ -375,8 +373,7 @@ void MoneroNodePrimitives::OpAfterDisconnect() {
 
     if (_type == NodeType::Benign) {
         _attackStat->benignNodeConnNum--;
-    }
-    else if (_type == NodeType::Shadow) {
+    } else if (_type == NodeType::Shadow) {
         _attackStat->shadowNodeConnNum--;
     }
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -410,13 +407,13 @@ void MoneroNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::dur
         unreLegiIPcount = min(unreLegiIPcount, (int) vUnreachIP.size());
         if (!vReachableIP.empty())
             sample(vReachableIP.begin(), vReachableIP.end(), back_inserter(vAddr), legiIPcount,
-                   mt19937{random_device{}()});
+                   mt19937{random_device {}()});
         if (!vUnreachIP.empty())
             sample(vUnreachIP.begin(), vUnreachIP.end(), back_inserter(vAddr), unreLegiIPcount,
-                   mt19937{random_device{}()});
+                   mt19937{random_device {}()});
     } else {
         // if it's attack phase
-        int totalIPCount = std::min(1000, (int) (periodLength * ipPerSec));
+        int totalIPCount = std::min(1000, (int) (periodLength* ipPerSec));
         int legiIPcount = totalIPCount * (1 - shadowRate) * 0.3;
         int unreLegiIPcount = totalIPCount * (1 - shadowRate) * 0.7;
         int shadowIPcount = totalIPCount * shadowRate;
@@ -427,13 +424,13 @@ void MoneroNodePrimitives::OpAddrInjectionTimeout(std::chrono::system_clock::dur
 
         if (!vReachableIP.empty())
             std::sample(vReachableIP.begin(), vReachableIP.end(), std::back_inserter(vAddr), legiIPcount,
-                        std::mt19937{std::random_device{}()});
+                        std::mt19937{std::random_device {}()});
         if (!vUnreachIP.empty())
             std::sample(vUnreachIP.begin(), vUnreachIP.end(), std::back_inserter(vAddr), unreLegiIPcount,
-                        std::mt19937{std::random_device{}()});
+                        std::mt19937{std::random_device {}()});
         if (!vShadowIP.empty())
             std::sample(vShadowIP.begin(), vShadowIP.end(), std::back_inserter(vAddr), shadowIPcount,
-                        std::mt19937{std::random_device{}()});
+                        std::mt19937{std::random_device {}()});
         std::cout << "debug print start (attack phase)" << "\n";
         std::cout << "legiIPcount:" << legiIPcount << ", unreachable legiIPCount:" << unreLegiIPcount
                   << ", shadowIPcount:" << shadowIPcount << "\n";

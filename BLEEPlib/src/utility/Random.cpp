@@ -1,19 +1,23 @@
+// "Copyright [2021] <kaistshadow>"
+
 #include "Random.h"
 #include "shadow_interface.h"
 
-std::list<int> libBLEEP::GenRandomNumSet(int maxNum, int maxCount){
+std::list<int> libBLEEP::GenRandomNumSet(int maxNum, int maxCount) {
     srand(time(NULL));
     std::set<int> numSet;
     std::list<int> numList;
     int maxSize = (maxNum < maxCount) ? maxNum : maxCount;
-    if (maxNum == maxCount){
-        for(int i = 0; i < maxSize; i++) numList.push_back(i);
-    }else{
-        while(1){
+    if (maxNum == maxCount) {
+        for (int i = 0; i < maxSize; i++) {
+            numList.push_back(i);
+        }
+    } else {
+        while (1) {
             int num = rand() % maxNum;
-            if (numSet.insert(num).second) 
+            if (numSet.insert(num).second)
                 numList.push_back(num);
-            if(int(numSet.size()) == maxSize) break;
+            if (int(numSet.size()) == maxSize) break;
         }
     }
     return numList;
@@ -35,11 +39,11 @@ double libBLEEP::random_source::get_normal_value(double avg, double stddev, int 
         std::normal_distribution<double> distribution(avg, stddev);
         result = distribution(*this->default_random_source);
         continueFlag = (flag & RAND_DROP_NEGATIVE) && result < 0;
-        if(continueFlag) {
+        if (continueFlag) {
             usleep(1);
             continue;
         }
-    } while(continueFlag);
+    } while (continueFlag);
     return result;
 }
 double libBLEEP::random_source::get_exp_value(double lambda) {

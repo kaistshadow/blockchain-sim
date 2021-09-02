@@ -1,3 +1,4 @@
+// "Copyright [2021] <kaistshadow>"
 #include "BL_MainEventManager.h"
 #include "BL1_socket/SocketLayer_API.h"
 #include "BL2_peer_connectivity/PeerConnectivityLayer_API.h"
@@ -34,7 +35,6 @@ MainEventManager::MainEventManager(AsyncEventEnum internalEventEnum) {
 MainEventManager::MainEventManager(double timeout, AsyncEventEnum internalEventEnum) {
     _libev_loop = EV_DEFAULT;
     _internalHandleEventEnum = internalEventEnum;
-
     _startTimer(timeout);
 }
 
@@ -50,27 +50,24 @@ static void HandleAsyncEvent(AsyncEvent &event) {
         BL_ProtocolLayer_API::Instance()->SwitchAsyncEventHandler(event);
         break;
     }
-
 }
 
 void MainEventManager::Wait() {
-    while(!_eventQueue.empty()) {
+    while (!_eventQueue.empty()) {
         AsyncEvent event = _eventQueue.front();
-        if (_internalHandleEventEnum < event.GetType())
-            return; // The event should be handled externally. So return
-        else {
+        if (_internalHandleEventEnum < event.GetType()) {
+            return;  // The event should be handled externally. So return
+        } else {
             // The event should be handled internally, so pop the event from the queue
             // and transmit to the proper layer
-            _eventQueue.pop();       
+            _eventQueue.pop();
             HandleAsyncEvent(event);
         }
     }
 
     while (true) {
         std::cout << "before ev_run" << "\n";
-
-        ev_run (_libev_loop, EVRUN_ONCE);
-
+        ev_run(_libev_loop, EVRUN_ONCE);
         libBLEEP::PrintTimespec("ev_run returned");
 
         while (!_eventQueue.empty()) {
@@ -78,9 +75,9 @@ void MainEventManager::Wait() {
             if (event.GetType() > _internalHandleEventEnum) {
                 return;
                 // The event should be handled externally. So return.
-            }
-            else {
-                // The event should be handled internally, so pop the event from the queue
+            } else {
+                // The event should be handled internally,
+                // so pop the event from the queue
                 // and transmit to the proper layer
                 _eventQueue.pop();
                 HandleAsyncEvent(event);
@@ -99,7 +96,6 @@ void MainEventManager::PushAsyncEvent(AsyncEvent event) {
 
 AsyncEvent MainEventManager::PopAsyncEvent() {
     libBLEEP::M_Assert(!_eventQueue.empty(), "queue needs a element to pop");
-    
     AsyncEvent element = _eventQueue.front();
     _eventQueue.pop();
     return element;

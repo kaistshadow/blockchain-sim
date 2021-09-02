@@ -1,3 +1,5 @@
+// "Copyright [2021] <kaistshadow>"
+
 //
 // Created by Yonggon Kim on 2021/04/26.
 //
@@ -63,7 +65,7 @@ std::ostream& POWBlock::print(std::ostream& out) const {
     out << GetId() << ":" << "Block has following transactions" << "\n";
     const std::list<std::shared_ptr<SimpleTransaction> >& tx_list = GetTransactions();
     for (std::list<std::shared_ptr<SimpleTransaction> >::const_iterator it=tx_list.begin();
-            it!=tx_list.end(); it++) {
+            it != tx_list.end(); it++) {
         out << GetId() << ":" << *(*it) << "\n";
     }
     out << GetId() << ":" << "Block idx=" << GetBlockIdx() << ",";

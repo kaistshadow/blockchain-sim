@@ -1,3 +1,6 @@
+// "Copyright [2021] <kaistshadow>"
+
+#include <memory>
 #include <iostream>
 
 #include "PeerManager.h"
@@ -11,8 +14,7 @@ void PeerManager::AddPeer(std::shared_ptr<Peer> peer) {
 
     if (peer->GetPeerType() == PeerType::IncomingPeer) {
         _inPeerNum += 1;
-    }
-    else if (peer->GetPeerType() == PeerType::OutgoingPeer) {
+    } else if (peer->GetPeerType() == PeerType::OutgoingPeer) {
         _outPeerNum += 1;
     }
 }
@@ -36,9 +38,8 @@ void PeerManager::RemovePeer(std::shared_ptr<Peer> peer) {
 
     if (peer->GetPeerType() == PeerType::IncomingPeer) {
         _inPeerNum -= 1;
-        libBLEEP::M_Assert(_inPeerNum >= 0, "wrong peernum" );
-    }
-    else if (peer->GetPeerType() == PeerType::OutgoingPeer) {
+        libBLEEP::M_Assert(_inPeerNum >= 0, "wrong peernum");
+    } else if (peer->GetPeerType() == PeerType::OutgoingPeer) {
         _outPeerNum -= 1;
         libBLEEP::M_Assert(_outPeerNum >= 0, "wrong peernum");
     }

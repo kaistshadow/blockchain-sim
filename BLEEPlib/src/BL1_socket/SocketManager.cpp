@@ -1,4 +1,8 @@
+// "Copyright [2021] <kaistshadow>"
+
 #include <netdb.h>
+#include <string>
+#include <memory>
 #include "SocketManager.h"
 
 
@@ -46,9 +50,8 @@ int SocketManager::CreateNonblockConnectSocket(std::string dest) {
 
 void SocketManager::RemoveConnectSocket(int fd) {
     auto it = _connectSockets.find(fd);
-    if ( it != _connectSockets.end())
+    if (it != _connectSockets.end())
         _connectSockets.erase(it);
-
 }
 
 std::shared_ptr<ConnectSocket> SocketManager::GetConnectSocket(int fd) {
@@ -70,9 +73,8 @@ void SocketManager::CreateDataSocket(int sfd) {
 
 void SocketManager::RemoveDataSocket(int fd) {
     auto it = _dataSockets.find(fd);
-    if ( it != _dataSockets.end())
+    if (it != _dataSockets.end())
         _dataSockets.erase(it);
-
 }
 
 std::shared_ptr<DataSocket> SocketManager::GetDataSocket(int fd) {

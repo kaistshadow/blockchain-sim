@@ -1,3 +1,5 @@
+// "Copyright [2021] <kaistshadow>"
+
 #include "Logger.h"
 
 #include <stdio.h>

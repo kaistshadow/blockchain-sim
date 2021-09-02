@@ -1,15 +1,19 @@
+// "Copyright [2021] <kaistshadow>"
+
 //
 // Created by ilios on 21. 1. 26..
 //
 
-#include "SocketLayer_API.h"
-#include "utility/Assert.h"
-#include <arpa/inet.h>
+#include <memory>
+#include <string>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <iostream>
 #include <unistd.h>
+#include <arpa/inet.h>
 
+#include "SocketLayer_API.h"
+#include "utility/Assert.h"
 using namespace libBLEEP_BL;
 
 BL_SocketLayer_API *BL_SocketLayer_API::_instance = 0;
@@ -46,7 +50,7 @@ void BL_SocketLayer_API::ConnectHandler(int fd) {
     int err = 0;
     socklen_t len = sizeof(err);
     if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &err, &len) < 0) {
-        perror("getsockopt"); // Solaris pending error?
+        perror("getsockopt");  // Solaris pending error?
         exit(-1);
     }
 
@@ -76,11 +80,9 @@ void BL_SocketLayer_API::ConnectHandler(int fd) {
     // remove ConnectSocket
     _socketManager.RemoveConnectSocket(fd);
 
-    // TODO : push event 'PeerSocketConnect'
     AsyncEvent event(AsyncEventEnum::PeerSocketConnect);
     event.GetData().SetDataSocket(_socketManager.GetDataSocket(fd));
     MainEventManager::Instance()->PushAsyncEvent(event);
-
 }
 
 void BL_SocketLayer_API::ConnectFailedHandler(int fd, std::string domain) {
@@ -142,12 +144,12 @@ void BL_SocketLayer_API::RecvHandler(int fd) {
                 if (recvBuffer->recv_str.size() >= BLEEP_MAGIC_SIZE + sizeof(int)) {
                     memcpy(&msg_size, recvBuf + BLEEP_MAGIC_SIZE, sizeof(int));
                     std::cout << "msg length received : " << msg_size << "\n";
-                } else
+                } else {
                     break;
+                }
 
                 // recv entire msg if possible
                 if (msg_size && recvBuffer->recv_str.size() >= BLEEP_MAGIC_SIZE + sizeof(int) + msg_size) {
-
                     std::cout << "start deserializing MSG" << "\n";
                     recvBuf = recvBuffer->recv_str.c_str();
                     recvBuf += BLEEP_MAGIC_SIZE + sizeof(int);
@@ -178,13 +180,11 @@ void BL_SocketLayer_API::RecvHandler(int fd) {
                         // PONG message is handled by generic (Layer2) PeerRecvMsg event
                     } else if (msg->GetType().find("POWBLOCK", 0) == 0) {
                         // POWBlock sync protocol messages are handled by generic (LAyer2) PeerRecvMsg event
-                    }
+                    } else {
                         // If any new message is added, new statement should be added here.
                         // (This is for integrity check)
-                    else
                         libBLEEP::M_Assert(0, "Unexpected message");
-
-
+                    }
                     if (msg->GetType() != "notifyPeerId") {
                         /* For notifyPeerId message, it is handled by PeerNotifyRecv event
                          * so PeerRecvMsg doesn't need to be triggered */
@@ -197,10 +197,12 @@ void BL_SocketLayer_API::RecvHandler(int fd) {
                     // TODO : recvBuffer should be updated efficiently. (minimizing a duplication)
                     std::string remain = recvBuffer->recv_str.substr(BLEEP_MAGIC_SIZE + sizeof(int) + msg_size);
                     recvBuffer->recv_str = remain;
-                } else
+                } else {
                     break;
-            } else
+                }
+            } else {
                 break;
+            }
         }
     }
 }

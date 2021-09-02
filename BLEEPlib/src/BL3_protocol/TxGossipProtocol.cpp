@@ -1,3 +1,6 @@
+// "Copyright [2021] <kaistshadow>"
+
+#include <memory>
 #include "TxGossipProtocol.h"
 
 #include "../BL2_peer_connectivity/Message.h"
@@ -14,7 +17,7 @@ void TxGossipProtocol::RecvInventoryHandler(std::shared_ptr<Message> msg) {
     std::vector<SimpleTransactionId> getdataIds;
     for (auto tid : tids) {
         std::cout << "receive transaction id:" << tid << "\n";
-        
+
         // check whether the txpool has the tx
         if (!_txPool->ContainTx(tid))
             getdataIds.push_back(tid);
@@ -34,7 +37,7 @@ void TxGossipProtocol::RecvGetdataHandler(std::shared_ptr<Message> msg) {
     std::vector<std::shared_ptr<SimpleTransaction>> txs;
     for (auto tid : tids) {
         std::cout << "receive getdata tx id:" << tid << "\n";
-        
+
         // check whether the txpool has the tx
         if (_txPool->ContainTx(tid))
             txs.push_back(_txPool->GetTx(tid));
@@ -52,8 +55,8 @@ void TxGossipProtocol::RecvTxsHandler(std::shared_ptr<Message> msg) {
     std::shared_ptr<TxGossipTxs> txsObject = std::static_pointer_cast<TxGossipTxs>(msg->GetObject());
     auto txs = txsObject->GetTransactions();
     for (auto tx : txs) {
-        std::cout << "receive tx:" << tx->_id.GetTxHash()<<" sender = "<<tx->sender_id<<" / receiver = "<<tx->receiver_id<<" / amount = "<<tx->amount<<"\n";
-        
+        std::cout << "receive tx:" << tx->_id.GetTxHash() << " sender = "<< tx->sender_id << " / receiver = " << tx->receiver_id <<" / amount = " << tx->amount << "\n";
+
         // Add to txpool
         tx = memshare::lookup(tx);
         _txPool->AddTx(tx);
@@ -73,5 +76,4 @@ void TxGossipProtocol::RecvTxsHandler(std::shared_ptr<Message> msg) {
             BL_PeerConnectivityLayer_API::Instance()->SendMsgToPeer(neighborId, message);
         }
     }
-
 }

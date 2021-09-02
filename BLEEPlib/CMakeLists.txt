@@ -72,7 +72,6 @@ target_sources(BLEEP
         src/utility/Assert.cpp
         src/utility/Random.cpp
         src/utility/ArgsManager.cpp
-        src/utility/tinyxml2.cpp
         src/utility/Logger.cpp
         src/crypto/SHA256.cpp
         src/utility/GlobalClock.cpp)

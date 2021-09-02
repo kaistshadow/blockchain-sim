@@ -1,4 +1,8 @@
+// "Copyright [2021] <kaistshadow>"
+
 #include "PeerConnectivityLayer_API.h"
+
+#include <memory>
 
 #include "AdvertisementManager.h"
 #include "Message.h"

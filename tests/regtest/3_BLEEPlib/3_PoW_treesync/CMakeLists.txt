@@ -13,10 +13,8 @@ endif()
 ## enable CTEST
 enable_testing()
 
-
-add_shadow_plugin(BLEEPlib-test-pow-node node-pow.cpp)
-target_link_libraries(BLEEPlib-test-pow-node
-        BLEEP)
+add_custom_target(BLEEPlib-treesynctest-pow-node ALL
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BLEEPlib-test-pow-node> ${CMAKE_CURRENT_SOURCE_DIR})
 # copy resulting plugins into source directory
 add_custom_command(TARGET BLEEPlib-test-pow-node
         POST_BUILD

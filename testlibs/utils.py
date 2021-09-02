@@ -8,7 +8,6 @@ import os
 from subprocess import check_output
 import argparse
 import sys
-import os
 import lxml.etree as ET
 import subprocess
 import math

@@ -218,6 +218,7 @@ void BitcoinNodePrimitives::OpAfterRecv(int data_fd, string recv_str) {
                 {
 
                     if (inv.type == MSG_TX) {
+                        // std::cout<<"GetAdjustedTime() : "<<GetAdjustedTime()<<"\n";
 //                        std::cout<<"[INV] MSGTX: hash = "<<inv.hash.ToString()<<" from = "<<data_fd<<"\n";
 
                     } else if (inv.type == MSG_BLOCK) {
@@ -282,7 +283,7 @@ void BitcoinNodePrimitives::bootstrap(const char* statefile, const char* keyfile
     std::ifstream state_ifs(statefile);
     std::string txstr((std::istreambuf_iterator<char>(state_ifs)), (std::istreambuf_iterator<char>()));
     CMutableTransaction mtx;
-    DecodeHexTx(mtx, txstr, true);
+    bool return_value = DecodeHexTx(mtx, txstr, true);
     CTransaction* tx = new CTransaction(mtx);
 
     std::ifstream key_ifs(keyfile);
@@ -353,6 +354,15 @@ std::string BitcoinNodePrimitives::generate() {
         unspent_keyvalues.push({predata[i], tx, i});
     }
     std::cout<<"Debug - created tx's hash:"<<tx->GetHash().GetHex()<<"\n";
+    uint32_t txTime = GetAdjustedTime();
+    
+    std::string filePath = "transactionTable.txt";
+    std::ofstream p;
+    p.open(filePath, std::ios_base::out | std::ios_base::app);
+    p << tx->GetHash().GetHex();
+    p << "/";
+    p << txTime << "\n";
+    p.close();
 
     return EncodeHexTx(*tx);
 }
@@ -370,8 +380,8 @@ void BitcoinNodePrimitives::sendTx(int data_fd, std::string hexTx) {
     uint256 hash = Hash(msg.data.data(), msg.data.data() + nMessageSize);
     CMessageHeader hdr(MessageStartChars, msg.command.c_str(), nMessageSize);
     memcpy(hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
-
     CVectorWriter{SER_NETWORK, PROTOCOL_VERSION, serializedHeader, 0, hdr};
+    std::cout<<"TxHash:"<<hexTx<<"/GetAdjustedTime() : "<<GetAdjustedTime()<<"\n";
     global_txtimepool->register_txtime(tx.GetHash().GetHex(), GetAdjustedTime());
     SendMsg(data_fd, serializedHeader);
     if (nMessageSize) {

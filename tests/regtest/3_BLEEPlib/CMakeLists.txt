@@ -1,4 +1,6 @@
 add_subdirectory(1_peer)
 add_subdirectory(2_PoW)
 add_subdirectory(3_PoW_treesync)
-add_subdirectory(4_PoS)
+add_subdirectory(4_Difficulty)
+add_subdirectory(5_PeerConnection)
+add_subdirectory(6_Transaction)

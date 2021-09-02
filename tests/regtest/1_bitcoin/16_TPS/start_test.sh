@@ -8,10 +8,10 @@ if [ $1 -gt 3 ]; then
 fi
 SHELL_PATH=`pwd -P`
 
-path=../../../testlibs/dump/difficulty_$1
+path=../../../../testlibs/dump/difficulty_$1
 if [ ! -e $path/coinflip_hash.txt ]; then
   echo "start to dump!"
-  cd ../../../testlibs/datadirDump/
+  cd ../../../../testlibs/datadirDump/
   sh startdump.sh $1
 fi
 
@@ -21,7 +21,6 @@ sh clean_data.sh $1
 if [ $2 = "TPS" ]; then
   shadow test-BitcoinTPS.xml > data/output.txt
 elif [ $2 = "Latency" ]; then
-  rm -rf transactionTable.txt
   shadow test-BitcoinLatency.xml > data/output.txt
 else
   echo "policy is not exist"

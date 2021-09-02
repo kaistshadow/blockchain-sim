@@ -165,8 +165,13 @@ def get_address_list(xml_file):
         if not line: break
         result = line.find("iphint")
         if result != -1:
-            IP_address = line.split("iphint")[1].split("=")[1].split(">")[0]
-            ip_list.append(IP_address[1:len(IP_address)-1])
+            # 주석 처리된 경우
+            result = line.find("!")
+            if result != -1:
+                continue
+            else:
+                IP_address = line.split("iphint")[1].split("=")[1].split(">")[0]
+                ip_list.append(IP_address[1:len(IP_address)-1])
     f.close()
     return ip_list
         
@@ -317,7 +322,7 @@ def filter_block_hash(plugin_output_files, node_count):
             while True:
                 line = f.readline()
                 if not line: break
-                result = line.find("[INV] MSGBLOCK : blockhash =")
+                result = line.find("[INV] MSGBLOCK: hash =")
                 if result != -1:
                     split_result = line.split("=")
                     block_hash = split_result[1].split("tx")[0].strip()
@@ -344,3 +349,143 @@ def overlap_blockHash(bitcoind_log):
                 hash_list.append(input_data)
     f.close()
     return hash_list
+
+def geBlockTime_fromTxGenerator(txgenerator_log):
+    lastBlock = ""
+    firstBlock = ""
+    txc = ""
+    f = open(txgenerator_log, "r")
+    for line in f.readlines()[::-1]:
+        result = line.find("txcount")
+        if result != -1:
+            split_list = line.split('/')
+            lastBlock = split_list[0].split(':')[1]
+            txc = split_list[3].split('=')[1]
+            firstBlock = split_list[1].split('/')[0].split(':')[1]
+            break
+
+    return firstBlock, lastBlock, int(txc)
+    f.close()
+
+def getBlockTime_fromBitcoind(bitcoind_log):
+    blockTimeList = []
+    Tx_list = []
+    f = open(bitcoind_log, "r")
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("UpdateTip")
+        if result != -1:
+            BlockTime = line.split(' ')[8].split('Z')[1][:-1]
+            blockTimeList.append(int(BlockTime))
+            Txc = line.split(' ')[7].split('=')[1]
+            Tx_list.append(int(Txc))
+
+    FirstBlockTime = min(blockTimeList)
+    LastBlockTime = max(blockTimeList)
+    TotalTxc = max(Tx_list)
+    f.close()    
+    return str(FirstBlockTime), str(LastBlockTime), int(TotalTxc)
+
+def getEachTxHashFromBitcoin_log(bitcoind_log):
+    condition_count = 0
+    Each_hash_list = []
+    block_count = 0
+    f = open(bitcoind_log)
+
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("UpdateTip")
+        if result != -1:
+            block_count += 1
+    for i in range(0,block_count):
+        blank_list = []
+        Each_hash_list.append(blank_list)
+    f.close()
+    f = open(bitcoind_log)
+    i = 0
+    while True:
+        line = f.readline()
+        if not line: break
+        result = line.find("tx:")
+        if result != -1:
+            # except genesis transaction 
+            if i == 0:
+                continue
+            else:
+                TxHash = line.split('/')[0].split(':')[1]
+                Each_hash_list[i].append(TxHash)
+                continue
+
+        result = line.find("UpdateTip")
+        if result != -1:
+            bitcoind_timestamp = line.split("=")[6].split(" ")[0].split('Z')[1][:-1]
+            Each_hash_list[i].append(bitcoind_timestamp)
+            i += 1
+            continue
+
+    f.close()
+    return Each_hash_list
+
+def getHashTableFile(target_path):
+    total_list = []
+
+    f = open(target_path, "r")
+    while True:
+        line = f.readline()
+        if not line: break
+        total_list.append(line[:-1])
+    f.close()
+    return total_list
+
+def get_coinbase_txFromBitcoin_log(bitcoind_log):
+    coinbase_tx = []
+    condition_count = 0
+    f = open(bitcoind_log)
+    while True:
+        line = f.readline()
+        if not line: break
+        if condition_count == 0:
+            result = line.find('tx:')
+            if result != -1:
+                coinbase_tx.append(line.split(':')[1].split('/')[0])
+                condition_count = 1
+        else:
+            result = line.find('UpdateTip')
+            if result != -1:
+                condition_count = 0
+            
+    f.close()
+
+    return coinbase_tx
+
+def get_coinbase_txTimestamp(bitcoind_log):
+    coinbase_timestamp = []
+    condition_count = 0
+    f = open(bitcoind_log)
+    while True:
+        line = f.readline()
+        if not line: break
+        if condition_count == 0:
+            result = line.find('tx:')
+            if result != -1:
+                coinbase_timestamp.append(line.split(':')[1].split('/')[1][:-1])
+                condition_count = 1
+        else:
+            result = line.find('UpdateTip')
+            if result != -1:
+                condition_count = 0
+            
+    f.close()
+
+    return coinbase_timestamp
+
+def open_txgenResult(txgen_path):
+    f = open(txgen_path, "r")
+    for line in f.readlines()[::-1]:
+        result = line.find("targetdata")
+        if result != -1:
+            print("txgen_result: %s" %(line.split(':')[1]))
+            break
+    f.close()

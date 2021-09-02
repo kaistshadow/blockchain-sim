@@ -8,10 +8,10 @@ if [ $1 -gt 3 ]; then
 fi
 SHELL_PATH=`pwd -P`
 
-path=../../../testlibs/dump/difficulty_$1
+path=../../../../testlibs/dump/difficulty_$1
 if [ ! -e $path/coinflip_hash.txt ]; then
   echo "start to dump!"
-  cd ../../../testlibs/datadirDump/
+  cd ../../../../testlibs/datadirDump/
   sh startdump.sh $1
 fi
 

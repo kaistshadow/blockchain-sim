@@ -53,7 +53,7 @@ namespace libBLEEP_BL {
         virtual std::ostream& print(std::ostream& out) const override;
 
         std::size_t hash() {
-            return (std::hash<std::string>()(block_hash.str()));
+            return (std::hash<std::string>()(block_hash.rawstr()));
         }
         bool operator==(const POWBlock& other) {
             return nonce == other.nonce

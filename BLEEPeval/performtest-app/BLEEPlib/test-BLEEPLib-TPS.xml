@@ -39,7 +39,7 @@
   <!-- our nodes -->
 
   <node id="pownode0" iphint="1.0.0.1">
-    <application plugin="NODE" time="5" arguments="-id=pownode0 -txgenstartat=0 -txgeninterval=4" />
+    <application plugin="NODE" time="5" arguments="-id=pownode0 -txgenstartat=0 -txgeninterval=4 -connect=pownode1" />
     <!-- <command id="setMyId" starttime="5" arguments="bleep0" /> -->
   </node>
 

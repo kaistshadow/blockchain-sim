@@ -13,7 +13,7 @@ BLEEP은 비트코인 에뮬레이션 실험을 위한 스크립트 코드(`BLEE
 실험을 위한 `plugin`인의 구성, `xml` 파일 정의 그리고 스크립트 코드를 이용한 실험 방법은 아래와 같다. 
 
 # Plugin Guides
-비트코인 에뮬레이션을 위한 주요 구성은 다음과 같다. 자세한 사용법은 shadow에서 제공하는 [매뉴얼](https://github.com/shadow/shadow/blob/main/docs/2-Getting-Started-Tutorial.md#configuration)을 참고바란다. 
+비트코인 에뮬레이션을 위한 주요 구성은 다음과 같다.
 
 ### Workflow 
 - `shadow` 프로세스는 `xml`파일에 정의된 내용을 기반으로 네트워크 및 노드를 구성한다. 

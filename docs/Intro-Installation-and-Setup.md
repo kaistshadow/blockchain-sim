@@ -3,7 +3,7 @@
 
 # Dependencies
 #### Required:
-  - [Shadow](https://github.com/shadow/shadow/blob/main/docs/1.1-Shadow.md)  
+  - Shadow  
     ```bash
     sudo apt-get install libc6-dbg     
     sudo apt-get install -y python python-pyelftools python-pip python-matplotlib python-numpy python-scipy python-networkx python-lxml

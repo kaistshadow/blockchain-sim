@@ -10,16 +10,13 @@ BLEEP을 이용한다면 다양한 블록체인 어플리케이션의 실제 동
   - [(1) 다양한 언어로 구현된 블록체인 바이너리의 동작을 에뮬레이션](Intro-Overview.md#1-blockchain-emulationtesting-platform)
   - [(2) 블록체인 동작 검증을 위한 기능 및 성능, 취약성 등의 테스팅 환경 제공](Intro-Overview.md#2-blockchain-evaluationtesting-platform)
 
-- 아래와 같이 3개의 핵심 컴포넌트로 제공하고 있다. 
+- 현재 아래와 같이 2개의 핵심 컴포넌트로 제공하고 있다. 
 
   - shadow (Blockchain Emulator/Simulator) : 
     * [https://github.com/kaistshadow/blockchain-sim/tree/master/shadow](https://github.com/kaistshadow/shadow)
 
   - BLEEPemul (Blockchain Emulation) : 
     * [https://github.com/kaistshadow/blockchain-sim/tree/master/BLEEPemul](https://github.com/kaistshadow/blockchain-sim/tree/master/BLEEPemul)
-
-  - BLEEPeval (Blockchain Evaluation) : 
-    * [https://github.com/kaistshadow/blockchain-sim/tree/master/BLEEPeval](https://github.com/kaistshadow/blockchain-sim/tree/master/BLEEPeval)
 
 
 - BLEEP은 그림1과 같이 설계 되었고,
@@ -51,15 +48,5 @@ BLEEP을 이용해, 블록체인 개발자들은 자신들이 개발한 혹은 �
 * 블록체인(비트코인) 노드에게 채굴 등의 메시지를 보내는 RPC 노드 지원 
 * 블록체인(비트코인) 노드의 채굴, 트랜잭션 등의 동작을 모니터링하는 노드 지원
 * 블록체인(비트코인) 에뮬레이션을 동작을 지원(노드 개수, 시뮬레이션 시간, 마이닝 방법, 난이도, 트랜잭션 생성 유무 등)하는 스크립트 코드 지원 
-
-# (2) Blockchain evaluation(testing) platform 
-
-BLEEP은 임의의 블록체인 프로그램의 동작을 평가하기 위한 테스트 프레임워크를 제공한다. 
-BLEEP을 이용해, 블록체인 개발자들은 자신들이 개발한 혹은 사용하고자하는 임의의 블록체인에 대하여 블록체인의 성능, 안전성, 보안성 등을 테스트할 수 있다. 
-블록체인 평가를 위한 프레임워크는 아래의 기능들을 제공하는 것을 목적으로 한다.
-* 1\~10개의 노드로 이루어진 소규모 블록체인 네트워크부터 1000\~10000개의 노드로 이루어진 대규모 네트워크까지 하나의 플랫폼 상에서 동작시키는 기능
-* 네트워크 노드 failure, link failure, 네트워크 파티셔닝 등 네트워크 레벨에서의 다양한 실패 상황을 injection하는 기능(TODO)
-* 블록체인이 처리할 수 있는 transaction들의 throughput (TPS) 및 latency에 대한 측정 기능
-* 블록체인이 기반하는 P2P 모듈에 대한 취약성 검증 기능 
 
 

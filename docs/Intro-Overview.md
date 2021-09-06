@@ -8,7 +8,6 @@ BLEEP을 이용한다면 다양한 블록체인 어플리케이션의 실제 동
 
 - 이를위해 BLEEP은 다음과 같은 핵심 목표를 추구하고 있으며,
   - [(1) 다양한 언어로 구현된 블록체인 바이너리의 동작을 에뮬레이션](Intro-Overview.md#1-blockchain-emulationtesting-platform)
-  - [(2) 블록체인 동작 검증을 위한 기능 및 성능, 취약성 등의 테스팅 환경 제공](Intro-Overview.md#2-blockchain-evaluationtesting-platform)
 
 - 현재 아래와 같이 2개의 핵심 컴포넌트로 제공하고 있다. 
 
@@ -30,8 +29,6 @@ BLEEP을 이용한다면 다양한 블록체인 어플리케이션의 실제 동
     - `Shadow` : Shadow는 Tor 네트워크의 동작을 시뮬레이션 하기 위한 오픈 프로젝트이며, BLEEP팀은 Shadow를 기반으로 블록체인의 에뮬레이션 환경을 제공
   - 블록체인 노드 Emulation 테스트
     - `BLEEPemul` : 현재 비트코인 노드에 대한 채굴, 트랜잭션, 노드 확장 등을 에뮬레이션할 수 있는 프레임워크를 제공(자동화된 스크립트 코드 제공)
-  - 블록체인 노드 Evaluation 테스트
-    - `BLEEPeval` : 블록체인의 구현체의 동작을 평가하기 위한 보안성, 성능 등을 테스트할 수 있는 프레임워크를 제공
   - BLEEP 인스톨 파일
     - `Install`
       - BLEEP에서 공통적으로 사용하는 플러그인, 라이브러리, 헤더파일, CMake파일 등을 제공 <br><br>

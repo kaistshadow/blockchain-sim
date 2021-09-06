@@ -34,6 +34,31 @@ Program arguments로 $FileName$을 세팅하고, Working directory에는 $FileDi
 이제 원하는 설정에 대한 emulation을 동작시켜 디버깅을 진행할 수 있다. 
 위의 단계에서 세팅한 CMake 설정 및 Run/Debug 설정을 선택한 뒤, Run->Debug 'run-with-shadow'를 수행한다. 
 이 때, 동작시키는 plugin의 코드를 디버깅하기 위해서는 plugin의 디버깅 심볼을 로드해야만 한다.
-이에 대한 자세한 방법은 [Shadow Developer Guide](https://github.com/shadow/shadow/blob/main/docs/5-Developer-Guide.md#debugging-plugins-with-gdb)을 참고하자. 
+이를 위하여 다음을 수행한다.
 
-간단하게 말하자면, Shadow simulator가 각각의 plugin을 로드한 직후 (`shd-process.c`에서 `_process_loadPlugin`함수가 수행 완료된 직후) GDB 창에서 `p vdl_linkmap_abi_update()` 를 실행하면 로드된 plugin의 디버깅 심볼이 모두 로드되고, 따라서 plugin 코드 영역에 breakpoint를 거는 등의 디버깅이 가능해진다.
+1. 유저 홈 디렉토리에 .gdbinit파일을 생성 (해당 파일 존재시 수정)
+2. .gdbinit파일에 다음 내용 추가
+```
+py
+def bt_load():
+  frame=gdb.newest_frame()
+  frameaddrs=""
+  count=0
+  while(frame):
+    frameaddrs += ", " + (str(frame.pc()))
+    count += 1
+    frame=frame.older()
+  command = "p vdl_linkmap_abi_from_addrs(" + str(count) + frameaddrs + ")"
+  gdb.execute(command)
+  command = "p vdl_linkmap_abi_update()"
+  gdb.execute(command)
+end
+catch signal SIGILL SIGFPE SIGSEGV SIGSYS SIGKILL
+commands
+set scheduler-locking on
+py bt_load()
+end
+```
+3. 이후 SIGILL, SIGFPE, SIGSEGV, SIGSYS, SIGKILL 시그널이 발생하여 CLion 디버깅이 멈출 때, shadow의 디버깅 심볼 로드 함수가 실행된다.
+4. 이후 bt 등의 명령어로 코드 확인시, 심볼이 로드되지 않아 보이지 않던 함수 정보를 확인 할 수 있다.
+5. 이외에도 Shadow simulator가 각각의 plugin을 로드한 직후 (`shd-process.c`에서 `_process_loadPlugin`함수가 수행 완료된 직후) GDB 창에서 `p vdl_linkmap_abi_update()` 를 실행하면 로드된 plugin의 디버깅 심볼이 모두 로드되고, 따라서 plugin 코드 영역에 breakpoint를 거는 등의 디버깅이 가능해진다.
